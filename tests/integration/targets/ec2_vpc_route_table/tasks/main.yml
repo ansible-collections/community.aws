@@ -168,7 +168,7 @@
       routes:
       - dest: 0.0.0.0/0
         gateway_id: igw
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].id') }}"
       <<: *aws_connection_info
     check_mode: True
     register: check_mode_results
@@ -187,7 +187,7 @@
       routes:
       - dest: 0.0.0.0/0
         gateway_id: igw
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].id') }}"
       <<: *aws_connection_info
     register: add_subnets
 
@@ -216,7 +216,7 @@
         Public: "true"
         Name: "Public route table"
       purge_routes: no
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].id') }}"
       <<: *aws_connection_info
     check_mode: True
     register: check_mode_results
@@ -233,7 +233,7 @@
         Public: "true"
         Name: "Public route table"
       purge_routes: no
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].id') }}"
       <<: *aws_connection_info
     register: no_purge_routes
 
@@ -272,7 +272,7 @@
         gateway_id: igw
       lookup: id
       route_table_id: "{{ create_public_table.route_table.id }}"
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].id') }}"
       <<: *aws_connection_info
     register: no_purge_tags
 
@@ -343,7 +343,7 @@
       routes:
       - dest: 0.0.0.0/0
         gateway_id: igw
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].cidr_block') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].cidr_block') }}"
       lookup: id
       route_table_id: "{{ create_public_table.route_table.id }}"
       <<: *aws_connection_info
@@ -379,7 +379,7 @@
       routes:
       - dest: 0.0.0.0/0
         gateway_id: igw
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `True`].tags.Name') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `True`].tags.Name') }}"
       lookup: id
       route_table_id: "{{ create_public_table.route_table.id }}"
       <<: *aws_connection_info
@@ -480,7 +480,7 @@
       routes:
       - gateway_id: "{{ nat_gateway.nat_gateway_id }}"
         dest: 0.0.0.0/0
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `False`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `False`].id') }}"
       <<: *aws_connection_info
     check_mode: True
     register: check_mode_results
@@ -499,7 +499,7 @@
       routes:
       - gateway_id: "{{ nat_gateway.nat_gateway_id }}"
         dest: 0.0.0.0/0
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `False`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `False`].id') }}"
       <<: *aws_connection_info
     register: create_private_table
 
@@ -637,7 +637,7 @@
       routes:
       - nat_gateway_id: "{{ nat_gateway.nat_gateway_id }}"
         dest: 0.0.0.0/0
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `False`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `False`].id') }}"
       <<: *aws_connection_info
     register: recreate_private_table
 
@@ -666,7 +666,7 @@
       routes:
       - nat_gateway_id: "{{ nat_gateway.nat_gateway_id }}"
         dest: 0.0.0.0/0
-      subnets: "{{ vpc_subnets|json_query('subnets[?tags.Public == `False`].id') }}"
+      subnets: "{{ vpc_subnets|community.general.json_query('subnets[?tags.Public == `False`].id') }}"
       purge_routes: true
       <<: *aws_connection_info
     register: result

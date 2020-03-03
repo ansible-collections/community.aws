@@ -68,7 +68,7 @@
       that:
       - eip_info_start is defined
       - '"addresses" in eip_info_start'
-      - ( eip_info_start.addresses | length ) == ( eip_info_start | json_query("addresses[].association_id") | length )
+      - ( eip_info_start.addresses | length ) == ( eip_info_start | community.general.json_query("addresses[].association_id") | length )
   - name: Allocate a new eip (no conditions)
     ec2_eip:
       state: present
