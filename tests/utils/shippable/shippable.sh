@@ -82,7 +82,7 @@ mkdir -p "${HOME}/.ansible/ansible_collections/google"
 mkdir -p "${HOME}/.ansible/ansible_collections/openstack"
 cwd=$(pwd)
 cd "${HOME}/.ansible/ansible_collections/"
-git clone https://github.com/ansible-collections/general community/general
+git clone https://github.com/ansible-collections/community.general community/general
 git clone https://github.com/ansible-collection-migration/ansible.amazon ansible/amazon
 # community.general requires a lot of things we need to manual pull in
 # once community.general is published this will be handled by galaxy cli
