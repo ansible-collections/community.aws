@@ -296,9 +296,8 @@ def set_tag(client, module, tags, function):
 
     try:
         current_tags = client.list_tags(Resource=arn).get('Tags', {})
-    except ClientError as e:
-        module.fail_json(msg="Unable to list tags: {0}".format(to_native(e)),
-                         exception=traceback.format_exc())
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Unable to list tags")
 
     tags_to_add, tags_to_remove = compare_aws_tags(current_tags, tags, purge_tags=True)
 
@@ -317,13 +316,8 @@ def set_tag(client, module, tags, function):
             )
             changed = True
 
-    except ClientError as e:
-        module.fail_json(msg="Unable to tag resource {0}: {1}".format(arn,
-                         to_native(e)), exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
-    except BotoCoreError as e:
-        module.fail_json(msg="Unable to tag resource {0}: {1}".format(arn,
-                         to_native(e)), exception=traceback.format_exc())
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Unable to tag resource {0}".format(arn))
 
     return changed
 
