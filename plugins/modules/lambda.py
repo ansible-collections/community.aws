@@ -212,9 +212,9 @@ configuration:
 '''
 
 from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info, boto3_conn, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 import base64
@@ -373,13 +373,8 @@ def main():
     check_mode = module.check_mode
     changed = False
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg='region must be specified')
-
     try:
-        client = boto3_conn(module, conn_type='client', resource='lambda',
-                            region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        client = module.client('lambda')
     except (ClientError, BotoCoreError) as e:
         module.fail_json_aws(e, msg="Trying to connect to AWS")
 
