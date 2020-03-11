@@ -221,7 +221,7 @@ import traceback
 import re
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError, ValidationError, ParamValidationError
+    from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass  # protected by AnsibleAWSModule
 
@@ -388,7 +388,7 @@ def main():
     try:
         client = boto3_conn(module, conn_type='client', resource='lambda',
                             region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except (ClientError, ValidationError) as e:
+    except (ClientError, BotoCoreError) as e:
         module.fail_json_aws(e, msg="Trying to connect to AWS")
 
     if tags is not None:
@@ -471,7 +471,7 @@ def main():
                     response = client.update_function_configuration(**func_kwargs)
                     current_version = response['Version']
                 changed = True
-            except (ParamValidationError, ClientError) as e:
+            except (BotoCoreError, ClientError) as e:
                 module.fail_json_aws(e, msg="Trying to update lambda configuration")
 
         # Update code configuration
@@ -512,7 +512,7 @@ def main():
                     response = client.update_function_code(**code_kwargs)
                     current_version = response['Version']
                 changed = True
-            except (ParamValidationError, ClientError) as e:
+            except (BotoCoreError, ClientError) as e:
                 module.fail_json_aws(e, msg="Trying to upload new code")
 
         # Describe function code and configuration
@@ -583,7 +583,7 @@ def main():
                 response = client.create_function(**func_kwargs)
                 current_version = response['Version']
             changed = True
-        except (ParamValidationError, ClientError) as e:
+        except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg="Trying to create function")
 
         # Tag Function
@@ -602,7 +602,7 @@ def main():
             if not check_mode:
                 client.delete_function(FunctionName=name)
             changed = True
-        except (ParamValidationError, ClientError) as e:
+        except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg="Trying to delete Lambda function")
 
         module.exit_json(changed=changed)
