@@ -430,9 +430,7 @@ def main():
             func_kwargs.update({'TracingConfig': {'Mode': tracing_mode}})
 
         # If VPC configuration is desired
-        if vpc_subnet_ids or vpc_security_group_ids:
-            if not vpc_subnet_ids or not vpc_security_group_ids:
-                module.fail_json(msg='vpc connectivity requires at least one security group and one subnet')
+        if vpc_subnet_ids:
 
             if 'VpcConfig' in current_config:
                 # Compare VPC config with current config
@@ -556,10 +554,7 @@ def main():
             func_kwargs.update({'TracingConfig': {'Mode': tracing_mode}})
 
         # If VPC configuration is given
-        if vpc_subnet_ids or vpc_security_group_ids:
-            if not vpc_subnet_ids or not vpc_security_group_ids:
-                module.fail_json(msg='vpc connectivity requires at least one security group and one subnet')
-
+        if vpc_subnet_ids:
             func_kwargs.update({'VpcConfig': {'SubnetIds': vpc_subnet_ids,
                                               'SecurityGroupIds': vpc_security_group_ids}})
 
