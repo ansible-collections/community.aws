@@ -290,8 +290,6 @@ def sha256sum(filename):
 
 
 def set_tag(client, module, tags, function):
-    if not hasattr(client, "list_tags"):
-        module.fail_json(msg="Using tags requires botocore 1.5.40 or above")
 
     changed = False
     arn = function['Configuration']['FunctionArn']
@@ -398,6 +396,10 @@ def main():
                             region=region, endpoint=ec2_url, **aws_connect_kwargs)
     except (ClientError, ValidationError) as e:
         module.fail_json_aws(e, msg="Trying to connect to AWS")
+
+    if tags is not None:
+        if not hasattr(client, "list_tags"):
+            module.fail_json(msg="Using tags requires botocore 1.5.40 or above")
 
     if state == 'present':
         if re.match(r'^arn:aws(-([a-z\-]+))?:iam', role):
