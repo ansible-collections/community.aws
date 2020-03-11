@@ -213,8 +213,10 @@ configuration:
 
 from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info, boto3_conn, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+
 import base64
 import hashlib
 import traceback
@@ -268,13 +270,8 @@ def get_current_function(connection, function_name, qualifier=None):
         if qualifier is not None:
             return connection.get_function(FunctionName=function_name, Qualifier=qualifier)
         return connection.get_function(FunctionName=function_name)
-    except ClientError as e:
-        try:
-            if e.response['Error']['Code'] == 'ResourceNotFoundException':
-                return None
-        except (KeyError, AttributeError):
-            pass
-        raise e
+    except is_boto3_error_code('ResourceNotFoundException'):
+        return None
 
 
 def sha256sum(filename):
