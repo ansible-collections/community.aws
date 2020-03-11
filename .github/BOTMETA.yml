@@ -1,5 +1,6 @@
 automerge: false
 files:
+  $connections/aws_ssm.py:
   $modules/:
     authors: wimnat
     maintainers: $team_aws
@@ -339,9 +340,7 @@ files:
     authors: bekelchik piontas
   $modules/sts_session_token.py:
     authors: pwnall
-  $plugins/aws_ssm.py:
 macros:
   connections: plugins/connection
   modules: plugins/modules
-  plugins: plugins/plugins
   team_aws: jillr s-hertel tremble
