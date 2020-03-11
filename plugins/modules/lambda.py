@@ -228,7 +228,7 @@ except ImportError:
     pass  # protected by AnsibleAWSModule
 
 
-def get_account_info(module, region=None, endpoint=None, **aws_connect_kwargs):
+def get_account_info(module):
     """return the account information (account id and partition) we are currently working on
 
     get_account_info tries too find out the account that we are working
@@ -239,27 +239,22 @@ def get_account_info(module, region=None, endpoint=None, **aws_connect_kwargs):
     account_id = None
     partition = None
     try:
-        sts_client = boto3_conn(module, conn_type='client', resource='sts',
-                                region=region, endpoint=endpoint, **aws_connect_kwargs)
+        sts_client = module.client('sts')
         caller_id = sts_client.get_caller_identity()
         account_id = caller_id.get('Account')
         partition = caller_id.get('Arn').split(':')[1]
-    except ClientError:
+    except (BotoCoreError, ClientError):
         try:
-            iam_client = boto3_conn(module, conn_type='client', resource='iam',
-                                    region=region, endpoint=endpoint, **aws_connect_kwargs)
+            iam_client = module.client('iam')
             arn, partition, service, reg, account_id, resource = iam_client.get_user()['User']['Arn'].split(':')
-        except ClientError as e:
-            if (e.response['Error']['Code'] == 'AccessDenied'):
-                except_msg = to_native(e.message)
-                m = except_msg.search(r"arn:(aws(-([a-z\-]+))?):iam::([0-9]{12,32}):\w+/")
-                account_id = m.group(4)
-                partition = m.group(1)
-            if account_id is None:
+        except is_boto3_error_code('AccessDenied') as e:
+            except_msg = to_native(e.message)
+            m = re.search(r"arn:(aws(-([a-z\-]+))?):iam::([0-9]{12,32}):\w+/", except_msg)
+            if m is None:
                 module.fail_json_aws(e, msg="getting account information")
-            if partition is None:
-                module.fail_json_aws(e, msg="getting account information: partition")
-        except Exception as e:
+            account_id = m.group(4)
+            partition = m.group(1)
+        except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg="getting account information")
 
     return account_id, partition
@@ -397,7 +392,7 @@ def main():
             role_arn = role
         else:
             # get account ID and assemble ARN
-            account_id, partition = get_account_info(module, region=region, endpoint=ec2_url, **aws_connect_kwargs)
+            account_id, partition = get_account_info(module)
             role_arn = 'arn:{0}:iam::{1}:role/{2}'.format(partition, account_id, role)
 
     # Get function configuration if present, False otherwise
