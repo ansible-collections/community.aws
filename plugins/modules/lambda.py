@@ -215,6 +215,7 @@ from ansible.module_utils._text import to_native
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 import base64
@@ -239,14 +240,14 @@ def get_account_info(module):
     account_id = None
     partition = None
     try:
-        sts_client = module.client('sts')
-        caller_id = sts_client.get_caller_identity()
+        sts_client = module.client('sts', retry_decorator=AWSRetry.jittered_backoff())
+        caller_id = sts_client.get_caller_identity(aws_retry=True)
         account_id = caller_id.get('Account')
         partition = caller_id.get('Arn').split(':')[1]
     except (BotoCoreError, ClientError):
         try:
-            iam_client = module.client('iam')
-            arn, partition, service, reg, account_id, resource = iam_client.get_user()['User']['Arn'].split(':')
+            iam_client = module.client('iam', retry_decorator=AWSRetry.jittered_backoff())
+            arn, partition, service, reg, account_id, resource = iam_client.get_user(aws_retry=True)['User']['Arn'].split(':')
         except is_boto3_error_code('AccessDenied') as e:
             except_msg = to_native(e.message)
             m = re.search(r"arn:(aws(-([a-z\-]+))?):iam::([0-9]{12,32}):\w+/", except_msg)
@@ -263,8 +264,8 @@ def get_account_info(module):
 def get_current_function(connection, function_name, qualifier=None):
     try:
         if qualifier is not None:
-            return connection.get_function(FunctionName=function_name, Qualifier=qualifier)
-        return connection.get_function(FunctionName=function_name)
+            return connection.get_function(FunctionName=function_name, Qualifier=qualifier, aws_retry=True)
+        return connection.get_function(FunctionName=function_name, aws_retry=True)
     except is_boto3_error_code('ResourceNotFoundException'):
         return None
 
@@ -287,7 +288,7 @@ def set_tag(client, module, tags, function):
     arn = function['Configuration']['FunctionArn']
 
     try:
-        current_tags = client.list_tags(Resource=arn).get('Tags', {})
+        current_tags = client.list_tags(Resource=arn, aws_retry=True).get('Tags', {})
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Unable to list tags")
 
@@ -297,14 +298,16 @@ def set_tag(client, module, tags, function):
         if tags_to_remove:
             client.untag_resource(
                 Resource=arn,
-                TagKeys=tags_to_remove
+                TagKeys=tags_to_remove,
+                aws_retry=True
             )
             changed = True
 
         if tags_to_add:
             client.tag_resource(
                 Resource=arn,
-                Tags=tags_to_add
+                Tags=tags_to_add,
+                aws_retry=True
             )
             changed = True
 
@@ -374,7 +377,7 @@ def main():
     changed = False
 
     try:
-        client = module.client('lambda')
+        client = module.client('lambda', retry_decorator=AWSRetry.jittered_backoff())
     except (ClientError, BotoCoreError) as e:
         module.fail_json_aws(e, msg="Trying to connect to AWS")
 
@@ -453,7 +456,7 @@ def main():
         if len(func_kwargs) > 1:
             try:
                 if not check_mode:
-                    response = client.update_function_configuration(**func_kwargs)
+                    response = client.update_function_configuration(aws_retry=True, **func_kwargs)
                     current_version = response['Version']
                 changed = True
             except (BotoCoreError, ClientError) as e:
@@ -494,7 +497,7 @@ def main():
         if len(code_kwargs) > 2:
             try:
                 if not check_mode:
-                    response = client.update_function_code(**code_kwargs)
+                    response = client.update_function_code(aws_retry=True, **code_kwargs)
                     current_version = response['Version']
                 changed = True
             except (BotoCoreError, ClientError) as e:
@@ -562,7 +565,7 @@ def main():
         current_version = None
         try:
             if not check_mode:
-                response = client.create_function(**func_kwargs)
+                response = client.create_function(aws_retry=True, **func_kwargs)
                 current_version = response['Version']
             changed = True
         except (BotoCoreError, ClientError) as e:
@@ -582,7 +585,7 @@ def main():
     if state == 'absent' and current_function:
         try:
             if not check_mode:
-                client.delete_function(FunctionName=name)
+                client.delete_function(FunctionName=name, aws_retry=True)
             changed = True
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg="Trying to delete Lambda function")
