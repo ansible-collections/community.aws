@@ -25,8 +25,8 @@ options:
 author:
   - Will Thames (@willthames)
 extends_documentation_fragment:
-- ansible.amazon.aws
-- ansible.amazon.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 
 '''
 
@@ -226,8 +226,8 @@ elasticache_clusters:
         Environment: test
 '''
 
-from ansible_collections.ansible.amazon.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (get_aws_connection_info,
+from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
                                                                          camel_dict_to_snake_dict,
                                                                          AWSRetry,
                                                                          boto3_tag_list_to_ansible_dict,

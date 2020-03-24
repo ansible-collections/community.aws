@@ -97,8 +97,8 @@ author:
     - "Jonathan I. Davila (@defionscode)"
     - "Paul Seiffert (@seiffert)"
 extends_documentation_fragment:
-- ansible.amazon.aws
-- ansible.amazon.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 
 '''
 
@@ -189,7 +189,7 @@ except ImportError:
     pass  # Taken care of by ec2.HAS_BOTO
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (HAS_BOTO,
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO,
                                                                          boto_exception,
                                                                          connect_to_aws,
                                                                          ec2_argument_spec,

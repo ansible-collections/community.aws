@@ -23,8 +23,8 @@ description:
       Note that the M(aws_s3_bucket_info) module no longer returns C(ansible_facts)!
 author: "Gerben Geijteman (@hyperized)"
 extends_documentation_fragment:
-- ansible.amazon.aws
-- ansible.amazon.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 
 '''
 
@@ -61,7 +61,7 @@ except ImportError:
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (boto3_conn,
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn,
                                                                          ec2_argument_spec,
                                                                          HAS_BOTO3,
                                                                          camel_dict_to_snake_dict,

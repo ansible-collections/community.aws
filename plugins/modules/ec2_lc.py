@@ -184,8 +184,8 @@ options:
     type: bool
 
 extends_documentation_fragment:
-- ansible.amazon.aws
-- ansible.amazon.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 
 
 requirements:
@@ -454,7 +454,7 @@ security_groups:
 
 
 import traceback
-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (get_aws_connection_info,
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
                                                                          ec2_argument_spec,
                                                                          ec2_connect,
                                                                          camel_dict_to_snake_dict,

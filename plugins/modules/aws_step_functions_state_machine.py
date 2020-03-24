@@ -60,8 +60,8 @@ options:
         type: bool
 
 extends_documentation_fragment:
-- ansible.amazon.aws
-- ansible.amazon.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 
 
 author:
@@ -101,8 +101,8 @@ state_machine_arn:
     returned: always
 '''
 
-from ansible_collections.ansible.amazon.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (ansible_dict_to_boto3_tag_list,
+from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_tag_list,
                                                                          AWSRetry,
                                                                          compare_aws_tags,
                                                                          boto3_tag_list_to_ansible_dict,

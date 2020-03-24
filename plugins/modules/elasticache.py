@@ -96,8 +96,8 @@ options:
     type: bool
     default: false
 extends_documentation_fragment:
-- ansible.amazon.aws
-- ansible.amazon.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 
 '''
 
@@ -133,7 +133,7 @@ EXAMPLES = """
 from time import sleep
 from traceback import format_exc
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (ec2_argument_spec,
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
                                                                          get_aws_connection_info,
                                                                          boto3_conn,
                                                                          HAS_BOTO3,
