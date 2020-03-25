@@ -85,12 +85,12 @@ mkdir -p "${HOME}/.ansible/ansible_collections/amazon"
 cwd=$(pwd)
 cd "${HOME}/.ansible/ansible_collections/"
 git clone https://github.com/ansible-collections/community.general community/general
-git clone https://github.com/ansible-collection-migration/amazon.aws amazon/aws
+git clone https://github.com/ansible-collections/amazon.aws amazon/aws
 # community.general requires a lot of things we need to manual pull in
 # once community.general is published this will be handled by galaxy cli
-git clone https://github.com/ansible-collection-migration/google.cloud google/cloud
-git clone https://github.com/ansible-collection-migration/openstack.cloud openstack/cloud
-git clone https://github.com/ansible-collection-migration/ansible.netcommon ansible/netcommon
+git clone https://github.com/ansible-collections/google.cloud google/cloud
+git clone https://github.com/ansible-collections/openstack.cloud openstack/cloud
+git clone https://github.com/ansible-collections/ansible.netcommon ansible/netcommon
 #ansible-galaxy collection install ansible.netcommon
 cd "${cwd}"
 
