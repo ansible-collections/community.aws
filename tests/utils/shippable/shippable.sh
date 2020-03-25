@@ -74,16 +74,18 @@ set +ux
 . ~/ansible-venv/bin/activate
 set -ux
 
+pip install setuptools==44.1.0
 pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 
 #ansible-galaxy collection install community.general
 mkdir -p "${HOME}/.ansible/ansible_collections/community"
 mkdir -p "${HOME}/.ansible/ansible_collections/google"
 mkdir -p "${HOME}/.ansible/ansible_collections/openstack"
+mkdir -p "${HOME}/.ansible/ansible_collections/amazon"
 cwd=$(pwd)
 cd "${HOME}/.ansible/ansible_collections/"
 git clone https://github.com/ansible-collections/community.general community/general
-git clone https://github.com/ansible-collection-migration/amazon.aws ansible/amazon
+git clone https://github.com/ansible-collection-migration/amazon.aws amazon/aws
 # community.general requires a lot of things we need to manual pull in
 # once community.general is published this will be handled by galaxy cli
 git clone https://github.com/ansible-collection-migration/google.cloud google/cloud
