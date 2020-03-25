@@ -103,10 +103,10 @@ state_machine_arn:
 
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_tag_list,
-                                                                         AWSRetry,
-                                                                         compare_aws_tags,
-                                                                         boto3_tag_list_to_ansible_dict,
-                                                                         )
+                                                                     AWSRetry,
+                                                                     compare_aws_tags,
+                                                                     boto3_tag_list_to_ansible_dict,
+                                                                     )
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError

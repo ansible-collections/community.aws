@@ -165,18 +165,18 @@ region:
 """
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
-                                                                         ec2_argument_spec,
-                                                                         HAS_BOTO3,
-                                                                         get_aws_connection_info,
-                                                                         boto3_conn,
-                                                                         AWSRetry,
-                                                                         )
+                                                                     ec2_argument_spec,
+                                                                     HAS_BOTO3,
+                                                                     get_aws_connection_info,
+                                                                     boto3_conn,
+                                                                     AWSRetry,
+                                                                     )
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.amazon.aws.plugins.module_utils.aws.direct_connect import (DirectConnectError,
-                                                                                        delete_connection,
-                                                                                        delete_virtual_interface,
-                                                                                        disassociate_connection_and_lag,
-                                                                                        )
+                                                                                    delete_connection,
+                                                                                    delete_virtual_interface,
+                                                                                    disassociate_connection_and_lag,
+                                                                                    )
 import traceback
 import time
 

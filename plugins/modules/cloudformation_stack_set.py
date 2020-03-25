@@ -313,10 +313,10 @@ except ImportError:
     pass
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
-                                                                         boto3_tag_list_to_ansible_dict,
-                                                                         ansible_dict_to_boto3_tag_list,
-                                                                         camel_dict_to_snake_dict,
-                                                                         )
+                                                                     boto3_tag_list_to_ansible_dict,
+                                                                     ansible_dict_to_boto3_tag_list,
+                                                                     camel_dict_to_snake_dict,
+                                                                     )
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
 from ansible.module_utils._text import to_native
 

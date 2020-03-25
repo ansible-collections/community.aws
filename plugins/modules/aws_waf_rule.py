@@ -151,14 +151,14 @@ except ImportError:
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.aws.waf import (run_func_with_change_token_backoff,
-                                                                             list_rules_with_backoff,
-                                                                             list_regional_rules_with_backoff,
-                                                                             MATCH_LOOKUP,
-                                                                             )
+                                                                         list_rules_with_backoff,
+                                                                         list_regional_rules_with_backoff,
+                                                                         MATCH_LOOKUP,
+                                                                         )
 from ansible_collections.amazon.aws.plugins.module_utils.aws.waf import (get_web_acl_with_backoff,
-                                                                             list_web_acls_with_backoff,
-                                                                             list_regional_web_acls_with_backoff,
-                                                                             )
+                                                                         list_web_acls_with_backoff,
+                                                                         list_regional_web_acls_with_backoff,
+                                                                         )
 
 
 def get_rule_by_name(client, module, name):
