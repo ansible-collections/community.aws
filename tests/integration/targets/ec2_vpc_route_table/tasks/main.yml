@@ -13,6 +13,9 @@
         region: "{{ aws_region }}"
     no_log: yes
 
+  - debug:
+      msg: "I'm a small change, to trigger an unstable test in shippable"
+
   - name: create VPC
     ec2_vpc_net:
       cidr_block: 10.228.228.0/22

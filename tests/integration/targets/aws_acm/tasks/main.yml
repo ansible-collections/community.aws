@@ -7,6 +7,9 @@
   - set_fact:
       virtualenv_interpreter: "{{ virtualenv }}/bin/python"
 
+  - debug:
+      msg: "I'm a small change, to trigger an unstable test in shippable"
+
   # The CI runs many of these tests in parallel
   # Use this random ID to differentiate which resources
   # are from which test
