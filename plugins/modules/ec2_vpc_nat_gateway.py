@@ -209,6 +209,7 @@ except ImportError:
     pass  # caught by imported HAS_BOTO3
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
                                                                      get_aws_connection_info,
                                                                      boto3_conn,
@@ -706,12 +707,11 @@ def create(client, subnet_id, allocation_id, client_token=None,
                 )
 
     except botocore.exceptions.ClientError as e:
-        if "IdempotentParameterMismatch" in e.message:
+        err_msg = to_native(e)
+        if "IdempotentParameterMismatch" in message:
             err_msg = (
-                'NAT Gateway does not support update and token has already been provided: ' + str(e)
+                'NAT Gateway does not support update and token has already been provided: ' + err_msg
             )
-        else:
-            err_msg = str(e)
         success = False
         changed = False
         result = None

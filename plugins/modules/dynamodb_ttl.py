@@ -77,6 +77,7 @@ except ImportError:
     pass
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
                                                                      boto3_conn,
                                                                      camel_dict_to_snake_dict,
@@ -166,9 +167,9 @@ def main():
             result['current_status'] = current_state
 
     except botocore.exceptions.ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
     except botocore.exceptions.ParamValidationError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc())
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc())
     except ValueError as e:
         module.fail_json(msg=str(e))
 

@@ -126,6 +126,7 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn,
                                                                      AWSRetry,
                                                                      camel_dict_to_snake_dict,
@@ -145,7 +146,7 @@ class Ec2CustomerGatewayManager:
                 module.fail_json(msg="Region must be specified as a parameter, in EC2_REGION or AWS_REGION environment variables or in boto configuration file")
             self.ec2 = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
         except ClientError as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
 
     @AWSRetry.jittered_backoff(delay=2, max_delay=30, retries=6, catch_extra_error_codes=['IncorrectState'])
     def ensure_cgw_absent(self, gw_id):

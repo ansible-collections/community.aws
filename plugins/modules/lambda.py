@@ -253,7 +253,7 @@ def get_account_info(module, region=None, endpoint=None, **aws_connect_kwargs):
             arn, partition, service, reg, account_id, resource = iam_client.get_user()['User']['Arn'].split(':')
         except ClientError as e:
             if (e.response['Error']['Code'] == 'AccessDenied'):
-                except_msg = to_native(e.message)
+                except_msg = to_native(e)
                 m = except_msg.search(r"arn:(aws(-([a-z\-]+))?):iam::([0-9]{12,32}):\w+/")
                 account_id = m.group(4)
                 partition = m.group(1)

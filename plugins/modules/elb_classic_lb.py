@@ -454,7 +454,7 @@ class ElbManager(object):
         try:
             self.elb = self._get_elb()
         except boto.exception.BotoServerError as e:
-            module.fail_json(msg='unable to get all load balancers: %s' % e.message, exception=traceback.format_exc())
+            module.fail_json(msg='unable to get all load balancers: %s' % to_native(e), exception=traceback.format_exc())
 
         self.ec2_conn = self._get_ec2_connection()
 
@@ -815,7 +815,7 @@ class ElbManager(object):
         try:
             self.elb.enable_zones(zones)
         except boto.exception.BotoServerError as e:
-            self.module.fail_json(msg='unable to enable zones: %s' % e.message, exception=traceback.format_exc())
+            self.module.fail_json(msg='unable to enable zones: %s' % to_native(e), exception=traceback.format_exc())
 
         self.changed = True
 
@@ -823,7 +823,7 @@ class ElbManager(object):
         try:
             self.elb.disable_zones(zones)
         except boto.exception.BotoServerError as e:
-            self.module.fail_json(msg='unable to disable zones: %s' % e.message, exception=traceback.format_exc())
+            self.module.fail_json(msg='unable to disable zones: %s' % to_native(e), exception=traceback.format_exc())
         self.changed = True
 
     def _attach_subnets(self, subnets):

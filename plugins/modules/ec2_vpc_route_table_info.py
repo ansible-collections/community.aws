@@ -62,6 +62,7 @@ except ImportError:
     HAS_BOTO = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, connect_to_aws, ec2_argument_spec, get_aws_connection_info
 
 
@@ -93,7 +94,7 @@ def list_ec2_vpc_route_tables(connection, module):
     try:
         all_route_tables = connection.get_all_route_tables(filters=filters)
     except BotoServerError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     for route_table in all_route_tables:
         route_table_dict_array.append(get_route_table_info(route_table))

@@ -173,6 +173,7 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
                                                                      boto3_conn,
                                                                      camel_dict_to_snake_dict,
@@ -229,7 +230,7 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
     try:
         bucket_website = resource_connection.BucketWebsite(bucket_name)
     except ClientError as e:
-        module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
 
     try:
         website_config = client_connection.get_bucket_website(Bucket=bucket_name)
@@ -237,14 +238,14 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
         if e.response['Error']['Code'] == 'NoSuchWebsiteConfiguration':
             website_config = None
         else:
-            module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
 
     if website_config is None:
         try:
             bucket_website.put(WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests))
             changed = True
         except (ClientError, ParamValidationError) as e:
-            module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
         except ValueError as e:
             module.fail_json(msg=str(e))
     else:
@@ -257,13 +258,13 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
                     bucket_website.put(WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests))
                     changed = True
                 except (ClientError, ParamValidationError) as e:
-                    module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+                    module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
         except KeyError as e:
             try:
                 bucket_website.put(WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests))
                 changed = True
             except (ClientError, ParamValidationError) as e:
-                module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+                module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
         except ValueError as e:
             module.fail_json(msg=str(e))
 
@@ -285,13 +286,13 @@ def disable_bucket_as_website(client_connection, module):
         if e.response['Error']['Code'] == 'NoSuchWebsiteConfiguration':
             module.exit_json(changed=changed)
         else:
-            module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
 
     try:
         client_connection.delete_bucket_website(Bucket=bucket_name)
         changed = True
     except ClientError as e:
-        module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
 
     module.exit_json(changed=changed)
 

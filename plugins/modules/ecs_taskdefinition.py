@@ -218,7 +218,7 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible.module_utils._text import to_text
+from ansible.module_utils._text import to_text, to_native
 
 
 class EcsTaskManager:
@@ -277,7 +277,7 @@ class EcsTaskManager:
         try:
             response = self.ecs.register_task_definition(**params)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            self.module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
 
         return response['taskDefinition']
 

@@ -163,6 +163,7 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
                                                                      boto3_conn,
                                                                      camel_dict_to_snake_dict,
@@ -183,7 +184,7 @@ def list_launch_configs(connection, module):
         pg = connection.get_paginator('describe_launch_configurations')
         launch_configs = pg.paginate(LaunchConfigurationNames=launch_config_name).build_full_result()
     except ClientError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     snaked_launch_configs = []
     for launch_config in launch_configs['LaunchConfigurations']:

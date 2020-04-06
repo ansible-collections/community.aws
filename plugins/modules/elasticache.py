@@ -133,6 +133,7 @@ EXAMPLES = """
 from time import sleep
 from traceback import format_exc
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
                                                                      get_aws_connection_info,
                                                                      boto3_conn,
@@ -233,7 +234,7 @@ class ElastiCacheManager(object):
             self.conn.create_cache_cluster(**kwargs)
 
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
+            self.module.fail_json(msg=to_native(e), exception=format_exc(),
                                   **camel_dict_to_snake_dict(e.response))
 
         self._refresh_data()
@@ -261,7 +262,7 @@ class ElastiCacheManager(object):
         try:
             response = self.conn.delete_cache_cluster(CacheClusterId=self.name)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
+            self.module.fail_json(msg=to_native(e), exception=format_exc(),
                                   **camel_dict_to_snake_dict(e.response))
 
         cache_cluster_data = response['CacheCluster']
@@ -312,7 +313,7 @@ class ElastiCacheManager(object):
                                            ApplyImmediately=True,
                                            EngineVersion=self.cache_engine_version)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
+            self.module.fail_json(msg=to_native(e), exception=format_exc(),
                                   **camel_dict_to_snake_dict(e.response))
 
         self._refresh_data()
@@ -341,7 +342,7 @@ class ElastiCacheManager(object):
             self.conn.reboot_cache_cluster(CacheClusterId=self.name,
                                            CacheNodeIdsToReboot=cache_node_ids)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
+            self.module.fail_json(msg=to_native(e), exception=format_exc(),
                                   **camel_dict_to_snake_dict(e.response))
 
         self._refresh_data()
@@ -461,7 +462,7 @@ class ElastiCacheManager(object):
                     self.status = 'gone'
                     return
                 else:
-                    self.module.fail_json(msg=e.message, exception=format_exc(),
+                    self.module.fail_json(msg=to_native(e), exception=format_exc(),
                                           **camel_dict_to_snake_dict(e.response))
             cache_cluster_data = response['CacheClusters'][0]
         self.data = cache_cluster_data

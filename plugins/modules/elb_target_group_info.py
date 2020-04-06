@@ -218,6 +218,7 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn,
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      camel_dict_to_snake_dict,
@@ -231,7 +232,7 @@ def get_target_group_attributes(connection, module, target_group_arn):
     try:
         target_group_attributes = boto3_tag_list_to_ansible_dict(connection.describe_target_group_attributes(TargetGroupArn=target_group_arn)['Attributes'])
     except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
 
     # Replace '.' with '_' in attribute key names to make it more Ansibley
     return dict((k.replace('.', '_'), v)
@@ -243,7 +244,7 @@ def get_target_group_tags(connection, module, target_group_arn):
     try:
         return boto3_tag_list_to_ansible_dict(connection.describe_tags(ResourceArns=[target_group_arn])['TagDescriptions'][0]['Tags'])
     except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
 
 
 def get_target_group_targets_health(connection, module, target_group_arn):
@@ -251,7 +252,7 @@ def get_target_group_targets_health(connection, module, target_group_arn):
     try:
         return connection.describe_target_health(TargetGroupArn=target_group_arn)['TargetHealthDescriptions']
     except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
 
 
 def list_target_groups(connection, module):
@@ -275,9 +276,9 @@ def list_target_groups(connection, module):
         if e.response['Error']['Code'] == 'TargetGroupNotFound':
             module.exit_json(target_groups=[])
         else:
-            module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+            module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
     except NoCredentialsError as e:
-        module.fail_json(msg="AWS authentication problem. " + e.message, exception=traceback.format_exc())
+        module.fail_json(msg="AWS authentication problem. " + to_native(e), exception=traceback.format_exc())
 
     # Get the attributes and tags for each target group
     for target_group in target_groups['TargetGroups']:

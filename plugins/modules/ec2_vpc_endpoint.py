@@ -190,6 +190,7 @@ except ImportError:
     pass  # will be picked up by imported HAS_BOTO3
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
                                                                      boto3_conn,
                                                                      ec2_argument_spec,
@@ -296,18 +297,19 @@ def create_vpc_endpoint(client, module):
             if not status_achieved:
                 module.fail_json(msg='Error waiting for vpc endpoint to become available - please check the AWS console')
     except botocore.exceptions.ClientError as e:
-        if "DryRunOperation" in e.message:
+        message = to_native(e)
+        if "DryRunOperation" in message:
             changed = True
             result = 'Would have created VPC Endpoint if not in check mode'
-        elif "IdempotentParameterMismatch" in e.message:
+        elif "IdempotentParameterMismatch" in message:
             module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
-        elif "RouteAlreadyExists" in e.message:
+        elif "RouteAlreadyExists" in message:
             module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
         else:
-            module.fail_json(msg=str(e), exception=traceback.format_exc(),
+            module.fail_json(msg=message, exception=traceback.format_exc(),
                              **camel_dict_to_snake_dict(e.response))
     except Exception as e:
-        module.fail_json(msg=str(e), exception=traceback.format_exc(),
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
                          **camel_dict_to_snake_dict(e.response))
 
     return changed, result
@@ -326,14 +328,15 @@ def setup_removal(client, module):
         if not module.check_mode and (result != []):
             module.fail_json(msg=result)
     except botocore.exceptions.ClientError as e:
-        if "DryRunOperation" in e.message:
+        message = to_native(e)
+        if "DryRunOperation" in message:
             changed = True
             result = 'Would have deleted VPC Endpoint if not in check mode'
         else:
-            module.fail_json(msg=str(e), exception=traceback.format_exc(),
+            module.fail_json(msg=message, exception=traceback.format_exc(),
                              **camel_dict_to_snake_dict(e.response))
     except Exception as e:
-        module.fail_json(msg=str(e), exception=traceback.format_exc(),
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
                          **camel_dict_to_snake_dict(e.response))
     return changed, result
 
@@ -374,7 +377,7 @@ def main():
         region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
     except NameError as e:
         # Getting around the get_aws_connection_info boto reliance for region
-        if "global name 'boto' is not defined" in e.message:
+        if "global name 'boto' is not defined" in to_native(e):
             module.params['region'] = botocore.session.get_session().get_config_variable('region')
             if not module.params['region']:
                 module.fail_json(msg="Error - no region provided")

@@ -70,6 +70,7 @@ except ImportError:
     HAS_BOTO = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO, ec2_argument_spec, get_aws_connection_info
 
 
@@ -111,7 +112,7 @@ def main():
     try:
         conn = connect_to_region(region_name=region, **aws_connect_kwargs)
     except boto.exception.NoAuthHandlerFound as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     try:
         changed = False

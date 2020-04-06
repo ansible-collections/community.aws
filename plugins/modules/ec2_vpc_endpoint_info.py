@@ -117,6 +117,7 @@ except ImportError:
     pass  # will be picked up from imported HAS_BOTO3
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
                                                                      boto3_conn,
                                                                      get_aws_connection_info,
@@ -162,7 +163,7 @@ def get_endpoints(client, module):
     try:
         results = json.loads(json.dumps(results, default=date_handler))
     except Exception as e:
-        module.fail_json(msg=str(e.message))
+        module.fail_json(msg=to_native(e))
     return dict(vpc_endpoints=[camel_dict_to_snake_dict(result) for result in results])
 
 

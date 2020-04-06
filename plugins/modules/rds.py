@@ -539,6 +539,7 @@ except ImportError:
     HAS_RDS2 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO, connect_to_aws, ec2_argument_spec, get_aws_connection_info
 
@@ -987,7 +988,7 @@ def create_db_instance(module, conn):
                                              module.params.get('username'), module.params.get('password'), **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg="Failed to create instance: %s" % e.message)
+            module.fail_json(msg="Failed to create instance: %s" % to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1014,7 +1015,7 @@ def replicate_db_instance(module, conn):
             result = conn.create_db_instance_read_replica(instance_name, source_instance, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg="Failed to create replica instance: %s " % e.message)
+            module.fail_json(msg="Failed to create replica instance: %s " % to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1053,7 +1054,7 @@ def delete_db_instance_or_snapshot(module, conn):
         else:
             result = conn.delete_db_snapshot(snapshot)
     except RDSException as e:
-        module.fail_json(msg="Failed to delete instance: %s" % e.message)
+        module.fail_json(msg="Failed to delete instance: %s" % to_native(e))
 
     # If we're not waiting for a delete to complete then we're all done
     # so just return
@@ -1066,7 +1067,7 @@ def delete_db_instance_or_snapshot(module, conn):
         if e.code == 'DBInstanceNotFound':
             module.exit_json(changed=True)
         else:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
     except Exception as e:
         module.fail_json(msg=str(e))
 
@@ -1103,7 +1104,7 @@ def modify_db_instance(module, conn):
     try:
         result = conn.modify_db_instance(instance_name, **params)
     except RDSException as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
     if params.get('apply_immediately'):
         if new_instance_name:
             # Wait until the new instance name is valid
@@ -1141,7 +1142,7 @@ def promote_db_instance(module, conn):
             result = conn.promote_read_replica(instance_name, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
     else:
         changed = False
 
@@ -1166,7 +1167,7 @@ def snapshot_db_instance(module, conn):
             result = conn.create_db_snapshot(snapshot, instance_name, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1191,7 +1192,7 @@ def reboot_db_instance(module, conn):
         result = conn.reboot_db_instance(instance_name, **params)
         changed = True
     except RDSException as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1222,7 +1223,7 @@ def restore_db_instance(module, conn):
             result = conn.restore_db_instance_from_db_snapshot(instance_name, snapshot, instance_type, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)

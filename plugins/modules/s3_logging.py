@@ -71,6 +71,7 @@ except ImportError:
     HAS_BOTO = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, ec2_argument_spec, get_aws_connection_info
 
 
@@ -93,7 +94,7 @@ def enable_bucket_logging(connection, module):
     try:
         bucket = connection.get_bucket(bucket_name)
     except S3ResponseError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     try:
         if not compare_bucket_logging(bucket, target_bucket, target_prefix):
@@ -104,14 +105,14 @@ def enable_bucket_logging(connection, module):
                 if e.status == 301:
                     module.fail_json(msg="the logging target bucket must be in the same region as the bucket being logged")
                 else:
-                    module.fail_json(msg=e.message)
+                    module.fail_json(msg=to_native(e))
             target_bucket_obj.set_as_logging_target()
 
             bucket.enable_logging(target_bucket, target_prefix)
             changed = True
 
     except S3ResponseError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     module.exit_json(changed=changed)
 
@@ -127,7 +128,7 @@ def disable_bucket_logging(connection, module):
             bucket.disable_logging()
             changed = True
     except S3ResponseError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     module.exit_json(changed=changed)
 

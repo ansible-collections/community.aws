@@ -503,6 +503,7 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_filter_list,
                                                                      boto3_conn,
                                                                      boto3_tag_list_to_ansible_dict,
@@ -521,7 +522,7 @@ def list_ec2_instances(connection, module):
         reservations_paginator = connection.get_paginator('describe_instances')
         reservations = reservations_paginator.paginate(InstanceIds=instance_ids, Filters=filters).build_full_result()
     except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
 
     # Get instances from reservations
     instances = []

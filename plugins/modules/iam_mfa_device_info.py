@@ -70,6 +70,7 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
                                                                      boto3_conn,
                                                                      camel_dict_to_snake_dict,
@@ -88,7 +89,7 @@ def list_mfa_devices(connection, module):
     try:
         response = connection.list_mfa_devices(**args)
     except ClientError as e:
-        module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+        module.fail_json(msg=to_native(e), **camel_dict_to_snake_dict(e.response))
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(response))
 
