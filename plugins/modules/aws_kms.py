@@ -821,20 +821,22 @@ def create_key(connection, module):
     if module.params.get('policy'):
         params['Policy'] = module.params['policy']
 
-    try:
-        result = connection.create_key(**params)['KeyMetadata']
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to create initial key")
-    key = get_key_details(connection, module, result['KeyId'])
+    if not module.check_mode:
+        try:
+            result = connection.create_key(**params)['KeyMetadata']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to create initial key")
+        key = get_key_details(connection, module, result['KeyId'])
+        update_alias(connection, module, key, module.params['alias'])
+        update_key_rotation(connection, module, key, module.params.get('enable_key_rotation'))
 
-    update_alias(connection, module, key, module.params['alias'])
-    update_key_rotation(connection, module, key, module.params.get('enable_key_rotation'))
+        ensure_enabled_disabled(connection, module, key, module.params.get('enabled'))
+        update_grants(connection, module, key, module.params.get('grants'), False)
+        # make results consistent with kms_facts
+        result = get_key_details(connection, module, key['key_id'])
+    else:
+        result = {}
 
-    ensure_enabled_disabled(connection, module, key, module.params.get('enabled'))
-    update_grants(connection, module, key, module.params.get('grants'), False)
-
-    # make results consistent with kms_facts
-    result = get_key_details(connection, module, key['key_id'])
     result['changed'] = True
     return result
 
