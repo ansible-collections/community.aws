@@ -94,9 +94,12 @@ try:
 except ImportError:
     pass  # caught by imported HAS_BOTO3
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils.ec2 import (boto3_conn, HAS_BOTO3, ec2_argument_spec,
-                                      get_aws_connection_info, camel_dict_to_snake_dict)
+from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn, HAS_BOTO3,
+                                                                     ec2_argument_spec,
+                                                                     get_aws_connection_info,
+                                                                     camel_dict_to_snake_dict)
+
 
 def is_policy_present(policies, policy_arn):
     policy_present = False
@@ -105,6 +108,7 @@ def is_policy_present(policies, policy_arn):
             policy_present = True
             break
     return policy_present
+
 
 def get_attached_role_policies(module, iam, role_name):
     try:
@@ -120,6 +124,7 @@ def get_attached_role_policies(module, iam, role_name):
                          **camel_dict_to_snake_dict(e.response))
     return policies
 
+
 def get_attached_user_policies(module, iam, user_name):
     try:
         response = iam.list_attached_user_policies(UserName=user_name)
@@ -133,6 +138,7 @@ def get_attached_user_policies(module, iam, user_name):
                          exception=traceback.format_exc(),
                          **camel_dict_to_snake_dict(e.response))
     return policies
+
 
 def get_attached_group_policies(module, iam, group_name):
     try:
@@ -148,6 +154,7 @@ def get_attached_group_policies(module, iam, group_name):
                          **camel_dict_to_snake_dict(e.response))
     return policies
 
+
 def role_action(module, iam, role_name, policy_arn, state):
     changed = False
     policies = get_attached_role_policies(module, iam, role_name)
@@ -162,8 +169,8 @@ def role_action(module, iam, role_name, policy_arn, state):
                 changed = True
             except botocore.exceptions.ClientError as e:
                 module.fail_json(msg="Couldn't attach role policy: %s" % str(e),
-                                exception=traceback.format_exc(),
-                                **camel_dict_to_snake_dict(e.response))
+                                 exception=traceback.format_exc(),
+                                 **camel_dict_to_snake_dict(e.response))
     else:
         if policy_present:
             try:
@@ -171,8 +178,8 @@ def role_action(module, iam, role_name, policy_arn, state):
                 changed = True
             except botocore.exceptions.ClientError as e:
                 module.fail_json(msg="Couldn't detach role policy: %s" % str(e),
-                                exception=traceback.format_exc(),
-                                **camel_dict_to_snake_dict(e.response))
+                                 exception=traceback.format_exc(),
+                                 **camel_dict_to_snake_dict(e.response))
         else:
             changed = False
 
@@ -180,6 +187,7 @@ def role_action(module, iam, role_name, policy_arn, state):
         policies = get_attached_role_policies(module, iam, role_name)
 
     return changed, policies
+
 
 def user_action(module, iam, user_name, policy_arn, state):
     changed = False
@@ -195,8 +203,8 @@ def user_action(module, iam, user_name, policy_arn, state):
                 changed = True
             except botocore.exceptions.ClientError as e:
                 module.fail_json(msg="Couldn't attach user policy: %s" % str(e),
-                                exception=traceback.format_exc(),
-                                **camel_dict_to_snake_dict(e.response))
+                                 exception=traceback.format_exc(),
+                                 **camel_dict_to_snake_dict(e.response))
     else:
         if policy_present:
             try:
@@ -204,8 +212,8 @@ def user_action(module, iam, user_name, policy_arn, state):
                 changed = True
             except botocore.exceptions.ClientError as e:
                 module.fail_json(msg="Couldn't detach user policy: %s" % str(e),
-                                exception=traceback.format_exc(),
-                                **camel_dict_to_snake_dict(e.response))
+                                 exception=traceback.format_exc(),
+                                 **camel_dict_to_snake_dict(e.response))
         else:
             changed = False
 
@@ -213,6 +221,7 @@ def user_action(module, iam, user_name, policy_arn, state):
         policies = get_attached_user_policies(module, iam, user_name)
 
     return changed, policies
+
 
 def group_action(module, iam, group_name, policy_arn, state):
     changed = False
@@ -228,8 +237,8 @@ def group_action(module, iam, group_name, policy_arn, state):
                 changed = True
             except botocore.exceptions.ClientError as e:
                 module.fail_json(msg="Couldn't attach group policy: %s" % str(e),
-                                exception=traceback.format_exc(),
-                                **camel_dict_to_snake_dict(e.response))
+                                 exception=traceback.format_exc(),
+                                 **camel_dict_to_snake_dict(e.response))
     else:
         if policy_present:
             try:
@@ -237,8 +246,8 @@ def group_action(module, iam, group_name, policy_arn, state):
                 changed = True
             except botocore.exceptions.ClientError as e:
                 module.fail_json(msg="Couldn't detach group policy: %s" % str(e),
-                                exception=traceback.format_exc(),
-                                **camel_dict_to_snake_dict(e.response))
+                                 exception=traceback.format_exc(),
+                                 **camel_dict_to_snake_dict(e.response))
         else:
             changed = False
 
@@ -246,6 +255,7 @@ def group_action(module, iam, group_name, policy_arn, state):
         policies = get_attached_group_policies(module, iam, group_name)
 
     return changed, policies
+
 
 def main():
     argument_spec = ec2_argument_spec()
@@ -258,7 +268,7 @@ def main():
             default=None, required=True, choices=['present', 'absent']),
     ))
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
     )
 
@@ -290,12 +300,13 @@ def main():
     elif iam_type == 'role':
         changed, current_policies = role_action(module, iam, iam_name, policy_arn, state)
 
-    current_policies = [ camel_dict_to_snake_dict(p) for p in current_policies ]
+    current_policies = [camel_dict_to_snake_dict(p) for p in current_policies]
 
     module.exit_json(changed=changed, iam_name=iam_name, iam_type=iam_type,
                      policies=current_policies)
 
 # end main
+
 
 if __name__ == '__main__':
     main()
