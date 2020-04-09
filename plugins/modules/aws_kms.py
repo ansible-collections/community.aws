@@ -822,7 +822,7 @@ def create_key(connection, module):
         params['Policy'] = module.params['policy']
 
     if module.check_mode:
-        return {'changed': True }
+        return {'changed': True}
 
     try:
         result = connection.create_key(**params)['KeyMetadata']
