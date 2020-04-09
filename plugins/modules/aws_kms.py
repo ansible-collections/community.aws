@@ -836,6 +836,7 @@ def create_key(connection, module):
     update_grants(connection, module, key, module.params.get('grants'), False)
     # make results consistent with kms_facts
     result = get_key_details(connection, module, key['key_id'])
+    result['changed'] = True
     return result
 
 
