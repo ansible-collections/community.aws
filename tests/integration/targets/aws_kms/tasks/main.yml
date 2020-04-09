@@ -40,6 +40,7 @@
           Hello: World
         state: present
         enabled: yes
+      register: create_kms_check
 
     - name: find facts about the check mode key
       aws_kms_info:
@@ -47,10 +48,11 @@
           alias: "{{ resource_prefix }}-kms-check"
       register: check_key
 
-    - name: ensure that the check mode key wasn't created
+    - name: ensure that check mode worked as expected
       assert:
         that:
           - check_key["keys"]|length == 0
+          - create_kms_check is changed
 
     - name: create a key
       aws_kms:
@@ -90,7 +92,11 @@
       aws_kms:
         alias: "{{ resource_prefix }}-kms"
         state: absent
+      register: delete_kms_check
 
+    - assert:
+        that:
+          - delete_kms_check is changed
 
     - name: find facts about the key
       aws_kms_info:
