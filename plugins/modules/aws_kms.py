@@ -816,13 +816,14 @@ def create_key(connection, module):
                   Tags=ansible_dict_to_boto3_tag_list(module.params['tags'], tag_name_key_name='TagKey', tag_value_key_name='TagValue'),
                   KeyUsage='ENCRYPT_DECRYPT',
                   Origin='AWS_KMS')
+
+    if module.check_mode:
+        return {'changed': True}
+
     if module.params.get('description'):
         params['Description'] = module.params['description']
     if module.params.get('policy'):
         params['Policy'] = module.params['policy']
-
-    if module.check_mode:
-        return {'changed': True}
 
     try:
         result = connection.create_key(**params)['KeyMetadata']
