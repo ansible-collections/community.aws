@@ -1,0 +1,40 @@
+- name: set up aws connection info
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token }}"
+      region: "{{ aws_region }}"
+
+  block:
+
+    - name: create glue job
+      aws_glue_job:
+        command_script_location: s3bucket/script.py
+        name: my-glue-job
+        role: my-iam-role
+        state: present
+      register: result
+
+    - assert:
+        that:
+          - result.changed
+
+    - name: test idempotence when creating same glue job
+      aws_glue_job:
+        command_script_location: s3bucket/script.py
+        name: my-glue-job
+        role: my-iam-role
+        state: present
+      register: result
+
+    - assert:
+        that: 
+          - not result.changed
+  
+  always:
+    - name: delete glue job
+      aws_glue_job:
+        name: my-glue-job
+        state: absent
+       
