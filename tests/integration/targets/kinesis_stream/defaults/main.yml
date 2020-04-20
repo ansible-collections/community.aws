@@ -1,0 +1,2 @@
+---
+kinesis_stream_name: "{{ resource_prefix }}"

@@ -1,0 +1,169 @@
+---
+- name: 'Setup AWS Module Defaults'
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+
+  block:
+  # ============================================================
+  - name: 'Create a basic Kinesis stream (CHECK_MODE)'
+    check_mode: yes
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 1
+    register: result
+  - name: 'Assert state is changed when first creating a stream (CHECK_MODE)'
+    assert:
+      that:
+      - result is success
+      - result is changed
+
+  - name: 'Create a basic Kinesis stream'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 1
+    register: result
+  - name: 'Assert state is changed when first creating a stream'
+    assert:
+      that:
+      - result is success
+      - result is changed
+      - result.stream_arn.startswith('arn:aws:kinesis:')
+      - result.stream_arn.endswith(':stream/' + kinesis_stream_name)
+      - result.stream_status == 'ACTIVE'
+
+  - name: 'Create a basic Kinesis stream - Idempotency (CHECK_MODE)'
+    check_mode: yes
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 1
+    register: result
+  - name: 'Assert state is not changed when re-running the create (CHECK_MODE)'
+    assert:
+      that:
+      - result is success
+      - result is not changed
+
+  - name: 'Create a basic Kinesis stream - Idempotency'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 1
+    register: result
+  - name: 'Assert state is not changed when re-running the create'
+    assert:
+      that:
+      - result is success
+      - result is not changed
+      - result.stream_arn.startswith('arn:aws:kinesis:')
+      - result.stream_arn.endswith(':stream/' + kinesis_stream_name)
+      - result.stream_status == 'ACTIVE'
+
+  # ============================================================
+  - name: 'Change the number of shards (CHECK_MODE)'
+    check_mode: yes
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 2
+    register: result
+  - name: 'Assert state is changed when changing the number of shards (CHECK_MODE)'
+    assert:
+      that:
+      - result is success
+      - result is changed
+
+  - name: 'Change the number of shards'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 2
+    register: result
+  - name: 'Assert state is changed when changing the number of shards'
+    assert:
+      that:
+      - result is success
+      - result is changed
+      - result.stream_arn.startswith('arn:aws:kinesis:')
+      - result.stream_arn.endswith(':stream/' + kinesis_stream_name)
+      - result.stream_status == 'ACTIVE'
+
+  - name: 'Change the number of shards - Idempotency (CHECK_MODE)'
+    check_mode: yes
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 2
+    register: result
+  - name: 'Assert state is not changed when not changing the number of shards (CHECK_MODE)'
+    assert:
+      that:
+      - result is success
+      - result is not changed
+
+  - name: 'Change the number of shards - Idempotency'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      shards: 2
+    register: result
+  - name: 'Assert state is not changed when not changing the number of shards'
+    assert:
+      that:
+      - result is success
+      - result is not changed
+      - result.stream_arn.startswith('arn:aws:kinesis:')
+      - result.stream_arn.endswith(':stream/' + kinesis_stream_name)
+      - result.stream_status == 'ACTIVE'
+
+  # ============================================================
+  - name: 'Delete stream (CHECK_MODE)'
+    check_mode: yes
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      state: absent
+    register: result
+  - name: 'Assert state is changed when deleting a stream (CHECK_MODE)'
+    assert:
+      that:
+      - result is success
+      - result is changed
+
+  - name: 'Delete stream'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      state: absent
+    register: result
+  - name: 'Assert state is changed when deleting a stream'
+    assert:
+      that:
+      - result is success
+      - result is changed
+
+  - name: 'Delete stream - Idempotency (CHECK_MODE)'
+    check_mode: yes
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      state: absent
+    register: result
+  - name: 'Assert state is not changed when deleting a stream that was previously deleted (CHECK_MODE)'
+    assert:
+      that:
+      - result is success
+      - result is not changed
+
+  - name: 'Delete stream - Idempotency'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      state: absent
+    register: result
+  - name: 'Assert state is not changed when deleting a stream that was previously deleted'
+    assert:
+      that:
+      - result is success
+      - result is not changed
+
+  always:
+  # ============================================================
+  - name: 'Ensure Kinesis stream is gone'
+    kinesis_stream:
+      name: '{{ kinesis_stream_name }}'
+      state: absent
