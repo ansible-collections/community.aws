@@ -234,7 +234,7 @@ EXAMPLES = '''
 - name: Example using lookup for policy json
   aws_kms:
     alias: my-kms-key
-    policy: "{{ lookup('template', 'kms_iam_policy_template.json.js') }}"
+    policy: "{{ lookup('template', 'kms_iam_policy_template.json.j2') }}"
     state: present
 '''
 
