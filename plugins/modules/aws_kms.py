@@ -228,7 +228,7 @@ EXAMPLES = '''
 - name: Update IAM policy on an existing KMS key
   aws_kms:
     alias: my-kms-key
-    policy: '{"Version": "2012-10-17", "Id": "my-kms-key-permissions", "Statement": [{ "Sid": "AllowIAMAccess", "Effect": "Allow", "Principal": { "AWS": "arn:aws:iam::123:root" },"Action": "kms:*", "Resource": "*" } ]}'
+    policy: '{"Version": "2012-10-17", "Id": "my-kms-key-permissions", "Statement": [ { <SOME STATEMENT> } ]}'
     state: present
 
 - name: Example using lookup for policy json
