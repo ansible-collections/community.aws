@@ -1,4 +1,5 @@
-- name: set up aws connection info
+---
+- name: run aws_glue_job integration tests
   module_defaults:
     group/aws:
       aws_access_key: "{{ aws_access_key }}"
@@ -7,12 +8,28 @@
       region: "{{ aws_region }}"
 
   block:
+    
+    # integration test setup
+    - name: create aws glue iam role for integration tests
+      iam_role:
+        name: my-glue-iam-role
+        description: IAM role needed for aws_glue_job integration tests.
+        assume_role_policy_document: "{{ lookup('file', 'policy.json') }}"
+        state: present
 
-    - name: create glue job
+    - name: create second aws glue iam role for integration tests
+      iam_role:
+        name: my-glue-iam-role-2
+        description: IAM role needed for aws_glue_job integration tests.
+        assume_role_policy_document: "{{ lookup('file', 'policy.json') }}"
+        state: present
+    
+    # resource creation 
+    - name: test create glue job
       aws_glue_job:
-        command_script_location: s3bucket/script.py
         name: my-glue-job
-        role: my-iam-role
+        command_script_location: s3bucket/glue-job-script.py
+        role: my-glue-iam-role
         state: present
       register: result
 
@@ -20,21 +37,186 @@
         that:
           - result.changed
 
+    # resource creation idempotence
     - name: test idempotence when creating same glue job
       aws_glue_job:
-        command_script_location: s3bucket/script.py
         name: my-glue-job
-        role: my-iam-role
+        command_script_location: s3bucket/glue-job-script.py
+        role: my-glue-iam-role
         state: present
       register: result
 
     - assert:
         that: 
           - not result.changed
+
+    # resource modification
+    - name: test update glue job - updated connections
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        connections: [ my-test-connection ]
+        role: my-glue-iam-role
+        state: present
+      register: result
+
+    - assert:
+      that:
+        - result.changed
+        - result.connections | length == 1
+
+    - name: test update glue job - updated connections - removed
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        connections: []
+        role: my-glue-iam-role
+        state: present
+      register: result
+
+    - assert:
+      that:
+        - result.changed
+        - result.connections | length == 0
+
+    - name: test update glue job - updated default args - set
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        default_arguments: "{{ lookup('file', 'args.json') }}"
+        role: my-glue-iam-role
+        state: present
+      register: result
+
+    - assert:
+      that:
+        - result.changed
+        - result.default_arguments is defined
+
+    - name: test update glue job - updated default args - change
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        default_arguments: "{{ lookup('file', 'args2.json') }}"
+        role: my-glue-iam-role
+        state: present
+      register: result
+
+    - assert:
+      that:
+        - result.changed
+        - result.default_arguments is defined
+
+    - name: test update glue job - updated default args - remove
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        role: my-glue-iam-role
+        state: present
+      register: result
+
+    - assert:
+      that:
+        - result.changed
+        - result.default_arguments is not defined
+
+    - name: test update glue job - update max retries
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        max_retries: 2
+        role: my-glue-iam-role
+        state: present
+      register: result
+    
+    - assert: 
+      that:
+        - result.changed
+        - result.max_retries == 2
+
+    - name: test update glue job - updated maximum concurrent runs
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        max_concurrent_runs: 5
+        role: my-glue-iam-role
+        state: present
+      register: result
+    
+    - assert: 
+      that: 
+        - result.changed
+        - result.execution_property.max_concurrent_runs == 5
+
+    - name: test update glue job - updated maximum concurrent runs - reset to default
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        role: my-glue-iam-role
+        state: present
+      register: result
+    
+    - assert: 
+      that: 
+        - result.changed
+        - result.execution_property.max_concurrent_runs == 1
+    
+    - name: test update glue job - updated role
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        role: my-glue-iam-role-2
+        state: present
+      register: result
+
+    - assert:
+      that: 
+        - result.changed
+        - result.role == 'my-glue-iam-role-2'
+    
+    - name: test update glue job - updated timeout
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        role: my-glue-iam-role-2
+        timeout: 5760
+        state: present
+      register: result
+
+    - assert:
+      that:
+        - result.changed 
+        - result.timeout == 5760
+
+    - name: test update glue job - updated script location
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script2.py
+        role: my-glue-iam-role-2
+        state: present
+      register: result
+    
+    - assert:
+      that:
+        - result.changed
+        - result.command.name == 'glueetl'
+        - result.command.script_location == 's3bucket/glue-job-script2.py'
+    
+    # resource deletion 
+    - name: test delete glue job
+      aws_glue_job:
+        name: my-glue-job
+        state: absent
+      register: result
+    
+    - assert:
+      that:
+        - result.changed
+        - result.job_name == 'my-glue-job'
+        - result.execution_property is defined
   
   always:
     - name: delete glue job
       aws_glue_job:
         name: my-glue-job
         state: absent
-       
