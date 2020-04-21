@@ -164,7 +164,7 @@ options:
             type: dict
   policy:
     description:
-      - policy to apply to the KMS key
+      - policy to apply to the KMS key. Provide a valid JSON string.
       - See U(https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
     type: str
 author:
@@ -224,6 +224,18 @@ EXAMPLES = '''
         operations:
           - Decrypt
           - RetireGrant
+
+- name: Update IAM policy on an existing KMS key
+  aws_kms:
+    alias: my-kms-key
+    policy: '{"Version": "2012-10-17", "Id": "my-kms-key-permissions", "Statement": [{ "Sid": "AllowIAMAccess", "Effect": "Allow", "Principal": { "AWS": "arn:aws:iam::123:root" },"Action": "kms:*", "Resource": "*" } ]}'
+    state: present
+
+- name: Example using lookup for policy json
+  aws_kms:
+    alias: my-kms-key
+    policy: "{{ lookup('template', 'kms_iam_policy_template.json.js') }}"
+    state: present
 '''
 
 RETURN = '''
@@ -1017,7 +1029,7 @@ def main():
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=False),
         grants=dict(type='list', default=[]),
-        policy=dict(),
+        policy=dict(type='json'),
         purge_grants=dict(type='bool', default=False),
         state=dict(default='present', choices=['present', 'absent']),
         enable_key_rotation=(dict(type='bool'))
