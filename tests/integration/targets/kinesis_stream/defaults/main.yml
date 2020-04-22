@@ -1,8 +1,9 @@
 ---
 kinesis_stream_name: '{{ resource_prefix }}'
 
-kms_cmk_alias_1: '{{ resource_prefix }}-kinesis-1'
-kms_cmk_alias_2: '{{ resource_prefix }}-kinesis-2'
+kms_cmk_alias_1: '{{ resource_prefix }}-1'
+kms_cmk_alias_2: '{{ resource_prefix }}-2'
+
 # A variety of camelCase and PascalCase to test things don't get re-cased
 # underneath us
 kinesis_stream_tags_1:
