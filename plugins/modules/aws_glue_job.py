@@ -207,7 +207,13 @@ def _get_glue_job(connection, module, glue_job_name):
     """
 
     try:
-        return connection.get_job(JobName=glue_job_name)['Job']
+        (region, account_id) = (module.region, _get_aws_account_id(module))
+
+        glue_job_arn = f"arn:aws:glue:{region}:{account_id}:job/{glue_job_name}"
+        glue_job = connection.get_job(JobName=glue_job_name)['Job']
+        glue_job['arn'] = glue_job_arn
+
+        return glue_job
     except (BotoCoreError, ClientError) as e:
         if e.response['Error']['Code'] == 'EntityNotFoundException':
             return None
@@ -251,6 +257,13 @@ def _compare_glue_job_params(user_params, current_params):
 
     return False
 
+
+def _get_aws_account_id(module):
+    try:
+        client = module.client('sts')
+        return client.get_caller_identity()['Account']
+    except (ClientError, BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to obtain AWS account id")
 
 def create_or_update_glue_job(connection, module, glue_job):
     """
