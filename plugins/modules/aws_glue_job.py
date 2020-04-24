@@ -106,6 +106,11 @@ allocated_capacity:
     returned: when state is present
     type: int
     sample: 10
+arn:
+    description: 
+    returned: when state is present
+    type: str
+    sample: arn:aws:glue:us-east-1:123456789:job/my-glue-job
 command:
     description: The JobCommand that executes this job.
     returned: when state is present
