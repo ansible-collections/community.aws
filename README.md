@@ -5,7 +5,6 @@
 The Ansible Community AWS collection includes a variety of Ansible content to help automate the management of AWS instances. This collection is maintained by the Ansible community.
 
 ## Included content
-
 <!--start collection content-->
 ## Connection plugins
 Name | Description
@@ -210,6 +209,7 @@ collections:
   - name: community.aws
     version: 0.1.1
 ```
+## Using this collection
 
 You can either call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
 
