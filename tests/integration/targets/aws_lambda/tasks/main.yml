@@ -51,7 +51,7 @@
     assert:
       that:
       - result.failed
-      - result.msg == "region must be specified"
+      - '"requires a region and none was found" in result.msg'
   - name: test with all module required variables, no region and all possible variables set to blank
     lambda:
       name: ansible-testing-fake-should-not-be-created
@@ -74,7 +74,7 @@
     assert:
       that:
       - result.failed
-      - result.msg == "region must be specified"
+      - '"requires a region and none was found" in result.msg'
   - name: move lambda into place for archive module
     copy:
       src: mini_lambda.py
