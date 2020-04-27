@@ -65,12 +65,19 @@ options:
       - The name or ARN of the IAM role associated with this job.
       - Required when I(state=present).
     type: str
+  purge_tags:
+    description:
+    default: yes
+    type: 
   state:
     description:
       - Create or delete the AWS Glue job.
     required: true
     choices: [ 'present', 'absent' ]
     type: str
+  tags:
+    description: 
+    type: dict
   timeout:
     description:
       - The job timeout in minutes.
@@ -191,7 +198,7 @@ timeout:
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict, compare_aws_tags, boto3_tag_list_to_ansible_dict, ansible_dict_to_boto3_tag_list)
 
 # Non-ansible imports
 import copy
@@ -212,11 +219,11 @@ def _get_glue_job(connection, module, glue_job_name):
     """
 
     try:
-        (region, account_id) = (module.region, _get_aws_account_id(module))
-
-        glue_job_arn = f"arn:aws:glue:{region}:{account_id}:job/{glue_job_name}"
         glue_job = connection.get_job(JobName=glue_job_name)['Job']
+        glue_job_arn = _get_glue_job_arn(module, glue_job_name)
+
         glue_job['arn'] = glue_job_arn
+        glue_job['tags'] = connection.get_tags(ResourceArn=glue_job_arn).get('Tags')
 
         return glue_job
     except (BotoCoreError, ClientError) as e:
@@ -261,6 +268,11 @@ def _compare_glue_job_params(user_params, current_params):
         return True
 
     return False
+
+
+def _get_glue_job_arn(module, job_name):
+    (region, account_id) = (module.region, _get_aws_account_id(module))
+    return f"arn:aws:glue:{region}:{account_id}:job/{job_name}"
 
 
 def _get_aws_account_id(module):
@@ -318,6 +330,20 @@ def create_or_update_glue_job(connection, module, glue_job):
             changed = True
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e)
+    
+    # handle resource tags
+    resource_arn = _get_glue_job_arn(module, params['Name'])
+
+    new_tags = module.params.get('tags')
+    existing_tags = connection.get_tags(ResourceArn=resource_arn).get('Tags')
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags if new_tags else {}, module.params.get('purge_tags'))
+    
+    if tags_to_remove:
+        connection.untag_resource(ResourceArn=resource_arn, TagsToRemove=tags_to_remove)
+        changed = True
+    if tags_to_add :
+        connection.tag_resource(ResourceArn=resource_arn, TagsToAdd=tags_to_add)
+        changed = True
 
     # If changed, get the Glue job again
     if changed:
@@ -361,8 +387,10 @@ def main():
             max_concurrent_runs=dict(type='int'),
             max_retries=dict(type='int'),
             name=dict(required=True, type='str'),
+            purge_tags=dict(default=True, type='bool'),
             role=dict(type='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
+            tags=dict(type='dict'),
             timeout=dict(type='int')
         )
     )
@@ -383,7 +411,6 @@ def main():
         create_or_update_glue_job(connection, module, glue_job)
     else:
         delete_glue_job(connection, module, glue_job)
-
 
 if __name__ == '__main__':
     main()
