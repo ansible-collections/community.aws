@@ -66,8 +66,30 @@
           - result.tags is defined
           - result.tags.Environment == 'IntegrationTest'
           - ((result.tags | dict2items) | length) == 1
+    
+    - name: test update glue job - update tags w/o purge
+      aws_glue_job:
+        name: my-glue-job
+        command_script_location: s3bucket/glue-job-script.py
+        connections: [ my-test-connection ]
+        role: my-glue-iam-role
+        purge_tags: no
+        tags:
+          AnotherTag: foobar
+          YetAnotherTag: hello_world
+        state: present
+      register: result
 
-    - name: test update glue job - update tags
+    - assert:
+        that:
+          - result.changed 
+          - result.tags is defined
+          - result.tags.Environment == 'IntegrationTest'
+          - result.tags.AnotherTag == 'foobar'
+          - result.tags.YetAnotherTag == 'hello_world'
+          - ((result.tags | dict2items) | length) == 3
+
+    - name: test update glue job - update tags w/ purge
       aws_glue_job:
         name: my-glue-job
         command_script_location: s3bucket/glue-job-script.py
