@@ -66,7 +66,7 @@ options:
       - Required when I(state=present).
     type: str
   purge_tags:
-    description: 
+    description:
       - If yes, existing tags will be deleted if they are not specified in I(tags)
     default: yes
     type: bool
@@ -77,7 +77,7 @@ options:
     choices: [ 'present', 'absent' ]
     type: str
   tags:
-    description: 
+    description:
       - The hash/dictionary resource tags to associate with this job.
     type: dict
   timeout:
@@ -205,7 +205,11 @@ timeout:
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict, compare_aws_tags, boto3_tag_list_to_ansible_dict, ansible_dict_to_boto3_tag_list)
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
+                                                                     compare_aws_tags,
+                                                                     boto3_tag_list_to_ansible_dict,
+                                                                     ansible_dict_to_boto3_tag_list
+                                                                     )
 
 # Non-ansible imports
 import copy
@@ -289,6 +293,7 @@ def _get_aws_account_id(module):
     except (ClientError, BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to obtain AWS account id")
 
+
 def create_or_update_glue_job(connection, module, glue_job):
     """
     Create or update an AWS Glue job
@@ -337,18 +342,18 @@ def create_or_update_glue_job(connection, module, glue_job):
             changed = True
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e)
-    
+
     # handle resource tags
     resource_arn = _get_glue_job_arn(module, params['Name'])
 
     new_tags = module.params.get('tags')
     existing_tags = connection.get_tags(ResourceArn=resource_arn).get('Tags')
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags if new_tags else {}, module.params.get('purge_tags'))
-    
+
     if tags_to_remove:
         connection.untag_resource(ResourceArn=resource_arn, TagsToRemove=tags_to_remove)
         changed = True
-    if tags_to_add :
+    if tags_to_add:
         connection.tag_resource(ResourceArn=resource_arn, TagsToAdd=tags_to_add)
         changed = True
 
@@ -418,6 +423,7 @@ def main():
         create_or_update_glue_job(connection, module, glue_job)
     else:
         delete_glue_job(connection, module, glue_job)
+
 
 if __name__ == '__main__':
     main()
