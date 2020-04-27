@@ -66,9 +66,10 @@ options:
       - Required when I(state=present).
     type: str
   purge_tags:
-    description:
+    description: 
+      - If yes, existing tags will be deleted if they are not specified in I(tags)
     default: yes
-    type: 
+    type: bool
   state:
     description:
       - Create or delete the AWS Glue job.
@@ -77,6 +78,7 @@ options:
     type: str
   tags:
     description: 
+      - The hash/dictionary resource tags to associate with this job.
     type: dict
   timeout:
     description:
@@ -114,7 +116,7 @@ allocated_capacity:
     type: int
     sample: 10
 arn:
-    description: 
+    description: the Amazon Resource Name (ARN) specifying the job
     returned: when state is present
     type: str
     sample: arn:aws:glue:us-east-1:123456789:job/my-glue-job
@@ -190,6 +192,11 @@ role:
     returned: when state is present
     type: str
     sample: my-iam-role
+tags:
+    description: The resource tags associated with this job.
+    returned: when state is present
+    type: dict
+    sample: "{ 'mytag1': 'myvalue1' }"
 timeout:
     description: The job timeout in minutes.
     returned: when state is present
@@ -387,7 +394,7 @@ def main():
             max_concurrent_runs=dict(type='int'),
             max_retries=dict(type='int'),
             name=dict(required=True, type='str'),
-            purge_tags=dict(default=True, type='bool'),
+            purge_tags=dict(type='bool', default=True),
             role=dict(type='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
             tags=dict(type='dict'),
