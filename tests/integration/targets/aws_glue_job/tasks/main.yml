@@ -17,7 +17,7 @@
         description: IAM role needed for aws_glue_job integration tests.
         assume_role_policy_document: "{{ lookup('file', 'policy.json') }}"
         state: present
-    
+
     # resource creation 
     - name: test create glue job
       aws_glue_job:
@@ -31,6 +31,8 @@
     - assert:
         that:
           - result.changed
+          - result.arn is defined
+          - "result.arn | regex_search('^arn:aws:glue:([a-zA-Z0-9\\-]+):([0-9]+):job/my-glue-job$')"
 
     # resource creation idempotence
     - name: test idempotence when creating same glue job
@@ -116,13 +118,15 @@
         that:
           - result.changed
           - result.default_arguments is defined
+          - ((result.default_arguments | dict2items) | length) == 2
 
     - name: test update glue job - updated default args - change
       aws_glue_job:
         name: my-glue-job
         command_script_location: s3bucket/glue-job-script.py
         connections: [ my-test-connection ]
-        default_arguments: "{{ lookup('file', 'args2.json') }}"
+        default_arguments: 
+          '--job-bookmark-option': job-bookmark-disable
         role: my-glue-iam-role
         state: present
       register: result
@@ -131,6 +135,8 @@
         that:
           - result.changed
           - result.default_arguments is defined
+          - ((result.default_arguments | dict2items) | length) == 1
+          - "result.default_arguments['--job-bookmark-option'] == 'job-bookmark-disable'"
 
     - name: test update glue job - updated default args - remove
       aws_glue_job:
@@ -146,6 +152,7 @@
         that:
           - result.changed
           - result.default_arguments is defined
+          - ((result.default_arguments | dict2items) | length) == 0
 
     - name: test update glue job - update max retries
       aws_glue_job:
@@ -204,9 +211,8 @@
     - assert:
         that:
           - result.changed
-          - result.command.name == 'glueetl'
           - result.command.script_location == 's3bucket/glue-job-script2.py'
-    
+
     # resource deletion 
     - name: test delete glue job
       aws_glue_job:
