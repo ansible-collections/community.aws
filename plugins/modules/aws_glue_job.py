@@ -283,7 +283,7 @@ def _compare_glue_job_params(user_params, current_params):
 
 def _get_glue_job_arn(module, job_name):
     (region, account_id) = (module.region, _get_aws_account_id(module))
-    return f"arn:aws:glue:{region}:{account_id}:job/{job_name}"
+    return "arn:aws:glue:" + region + ":" + account_id + ":" + "job/" + job_name
 
 
 def _get_aws_account_id(module):
