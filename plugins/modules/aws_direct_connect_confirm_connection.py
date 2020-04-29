@@ -14,7 +14,7 @@ DOCUMENTATION = '''
 module: aws_direct_connect_confirm_connection
 short_description: Confirms the creation of a hosted DirectConnect connection.
 description:
-  - Confirms the creation of a hosted DirectConnect, which requires approval before it can be used.  
+  - Confirms the creation of a hosted DirectConnect, which requires approval before it can be used.
   - DirectConnect connections that require approval would be in the 'ordering'.
   - After confirmation, they will move to the 'pending' state and finally the 'available' state.
 author: "Matt Traynham (@mtraynham)"
