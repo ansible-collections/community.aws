@@ -164,7 +164,7 @@ options:
             type: dict
   policy:
     description:
-      - policy to apply to the KMS key. Provide a valid JSON string.
+      - policy to apply to the KMS key.
       - See U(https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
     type: json
 author:
