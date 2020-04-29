@@ -166,7 +166,7 @@ options:
     description:
       - policy to apply to the KMS key. Provide a valid JSON string.
       - See U(https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
-    type: str
+    type: json
 author:
   - Ted Timmons (@tedder)
   - Will Thames (@willthames)
