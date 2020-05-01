@@ -1,0 +1,2 @@
+role_name: '{{ resource_prefix }}-role'
+job_name: '{{ resource_prefix }}-job'
