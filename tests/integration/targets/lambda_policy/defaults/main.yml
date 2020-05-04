@@ -1,3 +1,4 @@
 ---
-# defaults file for aws_lambda test
-lambda_function_name: '{{resource_prefix}}-api-endpoint'
+# defaults file for lambda_policy integration test
+lambda_function_name: '{{ resource_prefix }}-api-endpoint'
+lambda_role_name: '{{ resource_prefix }}-lambda-policy'
