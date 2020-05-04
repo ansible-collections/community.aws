@@ -15,6 +15,8 @@
       name: '{{ lambda_role_name }}'
       assume_role_policy_document: '{{ lookup("file", "minimal_trust_policy.json") }}'
       create_instance_profile: false
+      managed_policies:
+      - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
     register: iam_role
   - name: wait 10 seconds for role to become available
     pause:

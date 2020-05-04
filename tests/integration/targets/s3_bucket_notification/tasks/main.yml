@@ -11,6 +11,18 @@
     - amazon.aws
     - community.general
   block:
+  - name: create minimal lambda role
+    iam_role:
+      name: '{{ lambda_role_name }}'
+      assume_role_policy_document: '{{ lookup("file", "lambda-trust-policy.json") }}'
+      create_instance_profile: false
+      managed_policies:
+      - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
+    register: iam_role
+  - name: pause if role was created
+    pause:
+      seconds: 10
+    when: iam_role is changed
   - name: move lambda into place for archive module
     copy:
       src: mini_lambda.py
