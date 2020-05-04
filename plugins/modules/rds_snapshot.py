@@ -9,7 +9,6 @@ __metaclass__ = type
 
 
 ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
                     'metadata_version': '1.1'}
 
 DOCUMENTATION = '''

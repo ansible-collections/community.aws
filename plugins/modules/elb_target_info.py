@@ -4,8 +4,7 @@
 from __future__ import absolute_import, division, print_function
 
 ANSIBLE_METADATA = {"metadata_version": "1.1",
-                    "status": ["preview"],
-                    "supported_by": "community"}
+                    "status": ["preview"]}
 
 
 DOCUMENTATION = '''
