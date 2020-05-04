@@ -9,8 +9,8 @@
   block:
   - name: create minimal lambda role
     iam_role:
-      name: ansible_lambda_role
-      assume_role_policy_document: '{{ lookup(''file'', ''lambda-trust-policy.json'', convert_data=False) }}'
+      name: '{{ sns_topic_lambda_role }}'
+      assume_role_policy_document: '{{ lookup("file", "lambda-trust-policy.json") }}'
       create_instance_profile: false
       managed_policies:
       - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
@@ -169,7 +169,7 @@
       state: present
       zip_file: '{{ tempdir.path }}/{{ sns_topic_lambda_function }}.zip'
       runtime: python2.7
-      role: ansible_lambda_role
+      role: '{{ sns_topic_lambda_role }}'
       handler: '{{ sns_topic_lambda_function }}.handler'
     register: lambda_result
   - set_fact:
@@ -295,4 +295,9 @@
       path: '{{ tempdir.path }}'
       state: absent
     when: tempdir is defined
+    ignore_errors: true
+  - name: remove iam role
+    iam_role:
+      name: '{{ sns_topic_lambda_role }}'
+      state: absent
     ignore_errors: true
