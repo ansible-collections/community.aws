@@ -8,6 +8,18 @@
   collections:
     - community.general
   block:
+  - name: create minimal lambda role
+    iam_role:
+      name: '{{ lambda_role_name }}'
+      assume_role_policy_document: '{{ lookup("file", "minimal_trust_policy.json") }}'
+      create_instance_profile: false
+    register: iam_role
+
+  - name: wait 10 seconds for role to become available
+    pause:
+      seconds: 10
+    when: iam_role.changed
+
   - name: test with no parameters
     lambda:
     register: result
@@ -68,7 +80,7 @@
       name: '{{ lambda_function_name }}'
       runtime: python2.7
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{ zip_res.dest }}'
     register: result
   - name: assert lambda upload succeeded
@@ -93,7 +105,7 @@
       runtime: nodejs10.x
       tracing_mode: Active
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
     register: update_result
   - name: assert that update succeeded
     assert:
@@ -108,7 +120,7 @@
       runtime: nodejs10.x
       tracing_mode: Active
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
     register: update_result
   - name: assert that update succeeded
     assert:
@@ -123,7 +135,7 @@
       runtime: python2.7
       tracing_mode: PassThrough
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
     register: result
   - name: assert that reset succeeded
     assert:
@@ -208,7 +220,7 @@
     lambda:
       name: '{{lambda_function_name}}'
       runtime: python2.7
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
       handler: '{{ omit }}'
       description: '{{ omit }}'
@@ -229,7 +241,7 @@
     lambda:
       name: '{{lambda_function_name}}'
       runtime: python2.7
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
       handler: mini_lambda.handler
       description: null
@@ -248,7 +260,7 @@
       name: '{{lambda_function_name}}'
       runtime: python2.7
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
       environment_variables:
         EXTRA_MESSAGE: I think you are great!!
@@ -274,7 +286,7 @@
     lambda:
       name: '{{lambda_function_name}}'
       runtime: python2.7
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       ec2_url: https://noexist.example.com
       ec2_region: '{{ec2_region}}'
       ec2_access_key: iamnotreallyanaccesskey
@@ -303,7 +315,7 @@
       name: '{{lambda_function_name}}_1'
       runtime: python2.7
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
     async: 1000
     register: async_1
@@ -312,7 +324,7 @@
       name: '{{lambda_function_name}}_2'
       runtime: python2.7
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
     async: 1000
     register: async_2
@@ -321,7 +333,7 @@
       name: '{{lambda_function_name}}_3'
       runtime: python2.7
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
     async: 1000
     register: async_3
@@ -330,7 +342,7 @@
       name: '{{lambda_function_name}}_4'
       runtime: python2.7
       handler: mini_lambda.handler
-      role: ansible_lambda_role
+      role: '{{ lambda_role_name }}'
       zip_file: '{{zip_res.dest}}'
     register: result
   - name: assert lambda manages to respond as expected
@@ -402,5 +414,10 @@
   - name: ensure function is absent at end of test
     lambda:
       name: '{{lambda_function_name}}'
+      state: absent
+    ignore_errors: true
+  - name: ensure role has been removed at end of test
+    iam_role:
+      name: '{{ lambda_role_name }}'
       state: absent
     ignore_errors: true
