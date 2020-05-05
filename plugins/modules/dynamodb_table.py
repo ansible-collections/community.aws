@@ -1,9 +1,8 @@
 #!/usr/bin/python
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
-import traceback
 from __future__ import absolute_import, division, print_function
+import traceback
 __metaclass__ = type
 
 
@@ -236,17 +235,17 @@ table_status:
 
 
 try:
-    from ansible.module_utils.ec2 import (
+    from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
         AWSRetry,
         ansible_dict_to_boto3_tag_list,
         boto3_tag_list_to_ansible_dict,
         compare_aws_tags,
     )
-    from ansible.module_utils.aws.core import (
+    from ansible_collections.amazon.aws.plugins.module_utils.aws.core import (
         AnsibleAWSModule,
         is_boto3_error_code,
     )
-    from ansible.module_utils.common.dict_transformations import dict_merge
+    from ansible_collections.amazon.aws.plugins.module_utils.common.dict_transformations import dict_merge
     from botocore.exceptions import (
         ClientError,
         NoCredentialsError,
@@ -740,9 +739,8 @@ def update_dynamo_table(
     )
 
     # Ignore ProvisionedThroughput if desired BillingMode is 'PAY_PER_REQUEST'.
-    if ((set_billing_mode is None and current_billing_mode == 'PROVISIONED')
-            or set_billing_mode == 'PROVISIONED'
-        ) and has_throughput_changed(table, throughput):
+    if ((set_billing_mode is None and current_billing_mode == 'PROVISIONED') or set_billing_mode == 'PROVISIONED') and \
+            has_throughput_changed(table, throughput):
         set_prov_throughput = {
             'ReadCapacityUnits': throughput['read'],
             'WriteCapacityUnits': throughput['write']

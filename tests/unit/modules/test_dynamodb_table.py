@@ -1,7 +1,7 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-from ansible.modules.cloud.amazon import dynamodb_table as dynamodb_table_module
+from ansible_collections.community.aws.plugins.modules import dynamodb_table as dynamodb_table_module
 import unittest
 import json
 
