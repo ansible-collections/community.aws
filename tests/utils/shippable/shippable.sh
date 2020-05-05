@@ -93,6 +93,7 @@ ansible-galaxy collection install community.crypto
 cd "${cwd}"
 
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible/"
+SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${HOME}/.ansible/collections/ansible_collections/community/aws/"
 mkdir -p "${TEST_DIR}"
 cp -aT "${SHIPPABLE_BUILD_DIR}" "${TEST_DIR}"
@@ -110,11 +111,11 @@ function cleanup
             fi
 
             # shellcheck disable=SC2086
-            ansible-test coverage xml --color -v --requirements --group-by command --group-by version ${stub:+"$stub"}
-            cp -a tests/output/reports/coverage=*.xml shippable/codecoverage/
+            ansible-test coverage xml --color --requirements --group-by command --group-by version ${stub:+"$stub"}
+            cp -a tests/output/reports/coverage=*.xml "$SHIPPABLE_RESULT_DIR/codecoverage/"
 
             # analyze and capture code coverage aggregated by integration test target
-            ansible-test coverage analyze targets generate -v "shippable/testresults/coverage-analyze-targets.json"
+            ansible-test coverage analyze targets generate -v "$SHIPPABLE_RESULT_DIR/testresults/coverage-analyze-targets.json"
 
             # upload coverage report to codecov.io only when using complete on-demand coverage
             if [ "${COVERAGE}" == "--coverage" ] && [ "${CHANGED}" == "" ]; then
@@ -144,15 +145,15 @@ function cleanup
     fi
 
     if [ -d  tests/output/junit/ ]; then
-      cp -aT tests/output/junit/ shippable/testresults/
+      cp -aT tests/output/junit/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
 
     if [ -d tests/output/data/ ]; then
-      cp -a tests/output/data/ shippable/testresults/
+      cp -a tests/output/data/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
 
     if [ -d  tests/output/bot/ ]; then
-      cp -aT tests/output/bot/ shippable/testresults/
+      cp -aT tests/output/bot/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
 }
 
