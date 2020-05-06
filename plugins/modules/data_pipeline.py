@@ -132,7 +132,7 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     objects: "{{pipelineObjects}}"
@@ -144,7 +144,7 @@ EXAMPLES = '''
     state: present
 
 # Example populating and activating a pipeline that demonstrates two ways of providing pipeline objects
-- data_pipeline:
+- community.aws.data_pipeline:
   name: test-dp
   objects:
     - "id": "DefaultSchedule"
@@ -167,13 +167,13 @@ EXAMPLES = '''
   state: active
 
 # Activate pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     state: active
 
 # Delete pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     state: absent
