@@ -313,10 +313,6 @@ def get_component(connection, module, arn):
         return None
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e)
-        if e.response['Error']['Code'] == 'ResourceNotFoundException':
-            return None
-        else:
-            module.fail_json_aws(e)
 
 
 def has_component_params_changed(params, current_component_params):
