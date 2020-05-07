@@ -205,15 +205,9 @@ from ansible_collections.amazon.aws.plugins.module_utils.aws.core import Ansible
 
 try:
     import botocore
-except ImportError:
-    pass  # caught by AnsibleAWSModule
-
-
-# Non-ansible imports
-try:
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
-    pass
+    pass  # caught by AnsibleAWSModule
 
 
 def construct_component_arn(region, account_id, name, semantic_version):
