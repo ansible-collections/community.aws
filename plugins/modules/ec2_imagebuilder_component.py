@@ -309,7 +309,10 @@ def get_component(connection, module, arn):
 
     try:
         return connection.get_component(componentBuildVersionArn=arn)['component']
+    except is_boto3_error_code('ResourceNotFoundException'):
+        return None
     except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e)
         if e.response['Error']['Code'] == 'ResourceNotFoundException':
             return None
         else:
