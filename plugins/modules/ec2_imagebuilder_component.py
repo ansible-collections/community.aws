@@ -199,7 +199,7 @@ component:
 '''
 
 import copy
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info, camel_dict_to_snake_dict, snake_dict_to_camel_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info, camel_dict_to_snake_dict, snake_dict_to_camel_dict, compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
 
 
@@ -329,16 +329,25 @@ def has_component_params_changed(params, current_component_params):
 
 
 def have_component_tags_changed(params, current_component_params):
-    return 'tags' in params and params['tags'] != current_component_params['tags']
+    if 'tags' not in params:
+        return False
+
+    tags_to_modify, tags_to_remove = compare_aws_tags(
+        current_component_params['tags'], params['tags'])
+
+    return tags_to_modify != {} or tags_to_remove != []
 
 
 def update_component_tags(connection, arn, params, current_component_params):
-    if len(params['tags']) == 0:
-        existing_tag_keys = list(current_component_params['tags'])
+    tags_to_modify, tags_to_remove = compare_aws_tags(
+        current_component_params['tags'], params['tags'])
+
+    if tags_to_remove != []:
         connection.untag_resource(
-            resourceArn=arn, tagKeys=existing_tag_keys)
-    else:
-        connection.tag_resource(resourceArn=arn, tags=params['tags'])
+            resourceArn=arn, tagKeys=tags_to_remove)
+
+    if tags_to_modify != {}:
+        connection.tag_resource(resourceArn=arn, tags=tags_to_modify)
 
 
 def main():
