@@ -287,7 +287,8 @@ class TestEC2ImageBuilderComponentModule(ModuleTestCase):
         set_module_args({
             'name': test_component['name'],
             'semantic_version': test_component['version'],  # thanks aws
-            'state': 'absent'
+            'state': 'absent',
+            'aws_region': 'ap-southeast-2'
         })
         with pytest.raises(AnsibleExitJson) as context:
             ec2_imagebuilder_component.main()

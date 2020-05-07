@@ -200,7 +200,8 @@ component:
 
 import copy
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info, camel_dict_to_snake_dict, snake_dict_to_camel_dict
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+
 
 try:
     import botocore
