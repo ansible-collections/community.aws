@@ -119,7 +119,6 @@ def test_construct_private_vi_with_virtual_gateway_id():
                         virtual_gateway_id="xxxx",
                         direct_connect_gateway_id="yyyy")
     vi = aws_direct_connect_virtual_interface.assemble_params_for_creating_vi(module.params)
-    print(vi)
     assert vi == {
         "virtualInterfaceName": "aaaaaaaa",
         "vlan": 1,
