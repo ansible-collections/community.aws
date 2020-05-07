@@ -34,7 +34,7 @@ class DynamodbTable_IndexTests(unittest.TestCase):
             }
         ]
         indexes, global_indexes, attr_definitions = dynamodb_table_module.serialize_indexes(
-            param_gsi_index)
+            param_gsi_index, "PROVISIONED")
         actual = dynamodb_table_module.get_changed_global_indexes(
             table_gsi_indexs, global_indexes)
         expected = {"Create": {
