@@ -376,7 +376,7 @@ def main():
 
     connection = module.client('imagebuilder')
 
-    region = get_aws_connection_info(module, boto3=True)[0]
+    region = module.region
 
     try:
         account_id = get_aws_account_id(module)
