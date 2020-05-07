@@ -131,7 +131,7 @@ class DynamodbTable_IndexTests(unittest.TestCase):
             table_gsi_indexes, global_indexes)
         expected = [{'Update': {'ProvisionedThroughput': {'WriteCapacityUnits': 100, 'ReadCapacityUnits': 100}, 'IndexName': 'NamedIndexV2'}},
                     {'Update': {'ProvisionedThroughput': {'WriteCapacityUnits': 100, 'ReadCapacityUnits': 100}, 'IndexName': 'NamedIndex'}}]
-        self.assertEqual(len(actual), 0)
+        self.assertEqual(actual, None)
 
     def test_gsi_get_changed_indexes_update(self):
         table_gsi_indexes = [{
@@ -270,4 +270,4 @@ class DynamodbTable_IndexTests(unittest.TestCase):
         actual = dynamodb_table_module.get_changed_global_indexes(
             table_gsi_indexes, global_indexes)
         expected = [{'Delete': {'IndexName': 'NamedIndexV2'}}]
-        self.assertEqual(actual, None)
+        self.assertEqual(len(actual), 1)
