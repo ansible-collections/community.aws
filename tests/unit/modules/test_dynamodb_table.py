@@ -18,7 +18,7 @@ class DynamodbTable_IndexTests(unittest.TestCase):
             }
         ]
         indexes, global_indexes, attr_definitions = dynamodb_table_module.serialize_indexes(
-            param_local_index, "PROVISIONED" )
+            param_local_index, "PROVISIONED")
         self.assertEqual(len(indexes), 1)
         self.assertEqual(indexes[0]['Projection']['ProjectionType'], 'ALL')
 

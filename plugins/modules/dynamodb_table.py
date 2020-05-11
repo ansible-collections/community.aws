@@ -245,7 +245,7 @@ try:
         AnsibleAWSModule,
         is_boto3_error_code,
     )
-    from ansible_collections.amazon.aws.plugins.module_utils.common.dict_transformations import dict_merge
+    from ansible.module_utils.common.dict_transformations import dict_merge
     from botocore.exceptions import (
         ClientError,
         NoCredentialsError,
