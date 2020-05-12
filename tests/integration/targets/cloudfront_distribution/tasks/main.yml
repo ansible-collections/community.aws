@@ -410,6 +410,23 @@
       that:
         - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed
 
+  - name: Update distribution to use specific access identity
+    cloudfront_distribution_fixed:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+        - id: "{{ targetBucket }}"
+          domain_name: "{{ targetBucket }}.s3.amazonaws.com"
+          s3_origin_access_identity_enabled: true
+          s3_origin_config:
+            origin_access_identity: origin-access-identity/cloudfront/ANYTHING
+    register: update_distribution_with_specific_access_identity
+
+  - name: check that custom origin with origin access identity fails
+    assert:
+      that:
+        - update_distribution_with_specific_access_identity.changed
+        - update_distribution_with_specific_access_identity.origins.items[0].s3_origin_config.origin_access_identity == 'origin-access-identity/cloudfront/ANYTHING'
+
   always:
   # TEARDOWN STARTS HERE
   - name: delete the s3 bucket
