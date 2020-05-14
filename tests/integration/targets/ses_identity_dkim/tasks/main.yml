@@ -12,7 +12,6 @@
 
 - block:
 
-
     ## prepare SES identity to run tests on
 
     - name: Create SES identity for running DKIM module tests on (domain identity)
@@ -127,12 +126,11 @@
         state: disabled
       register: email_result
 
-    - name: assert result changed
+    - name: assert result not changed
       assert:
         that:
           - email_result.changed == False
           - email_result.dkim_attributes.dkim_enabled == False
-
 
   always:
     ## ensure cleanup
