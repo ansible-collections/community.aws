@@ -1,0 +1,206 @@
+---
+# tasks file for aws_ses_identity_dkim test
+
+- name: set up aws connection info
+  set_fact:
+    aws_connection_info: &aws_connection_info
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token }}"
+      region: "{{ aws_region }}"
+  no_log: yes
+
+- block:
+
+    ## prepare SES idenitiy to run tests on
+
+    - name: Create SES identity for running DKIM module tests on (domain identity)
+      aws_ses_identity:
+        identity: "{{ dkim_identity_domain }}"
+        state: present
+        <<: *aws_connection_info
+      register: ses_domain_identity
+
+    - name: Create SES identity for running DKIM module tests on (email identity)
+      aws_ses_identity:
+        identity: "{{ dkim_identity_email }}"
+        state: present
+        <<: *aws_connection_info
+      register: ses_email_identity
+
+    ## DKIM check mode enable test (nothing should change, dry-run)
+
+    - name: Enable DKIM verification on email identity (check-mode)
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_email }}"
+        state: enabled
+        <<: *aws_connection_info
+      check_mode: True
+      register: email_result
+
+    - name: assert results report being changed (check-mode, doesn't really make change on AWS)
+      assert:
+        that:
+          - email_result.changed == True
+          # Note, if actually changed, the subsequent enable test will fail
+
+    ## DKIM enable test
+
+    - name: Enable DKIM verification on domain identity
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_domain }}"
+        state: enabled
+        <<: *aws_connection_info
+      register: domain_result
+
+    - name: assert successful result
+      assert:
+        that:
+          - domain_result.changed == True
+          - domain_result.dkim_attributes.dkim_enabled == True
+          - domain_result.dkim_attributes.dkim_tokens|length > 0
+
+    - name: Enable DKIM verification on email identity
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_email }}"
+        state: enabled
+        <<: *aws_connection_info
+      register: email_result
+
+    - name: assert successful result
+      assert:
+        that:
+          - email_result.changed == True
+          - email_result.dkim_attributes.dkim_enabled == True
+          - email_result.dkim_attributes.dkim_tokens|length > 0
+
+    ## DKIM enable idempotence test (rerun)
+
+    - name: Enable DKIM verification on domain identity (rerun)
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_domain }}"
+        state: enabled
+        <<: *aws_connection_info
+      register: domain_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: enabled
+
+    - name: assert no change (itempotence)
+      assert:
+        that:
+          - domain_result.changed == False
+          - domain_result.dkim_attributes.dkim_enabled == True
+
+    - name: Enable DKIM verification on email identity (rerun)
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_email }}"
+        state: enabled
+        <<: *aws_connection_info
+      register: email_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: enabled
+
+    - name: assert no change (idempotence)
+      assert:
+        that:
+          - email_result.changed == False
+          - email_result.dkim_attributes.dkim_enabled == True
+
+    ## DKIM check mode disable test (nothing should change, dry-run)
+
+    - name: Disable DKIM verification on email identity (check-mode)
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_email }}"
+        state: disabled
+        <<: *aws_connection_info
+      check_mode: True
+      register: email_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: enabled
+
+    - name: assert results report being unchanged (check-mode)
+      assert:
+        that:
+          - email_result.changed == True
+          # Note, if actually changed, the subsequent disable test will fail
+
+    ## DKIM disable test
+
+    - name: Disable DKIM verification on domain identity
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_domain }}"
+        state: disabled
+        <<: *aws_connection_info
+      register: domain_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: enabled
+
+    - name: assert result changed
+      assert:
+        that:
+          - domain_result.changed == True
+          - domain_result.dkim_attributes.dkim_enabled == False
+
+    - name: Disable DKIM verification on email identity
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_email }}"
+        state: disabled
+        <<: *aws_connection_info
+      register: email_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: enabled
+
+    - name: assert result changed
+      assert:
+        that:
+          - email_result.changed == True
+          - email_result.dkim_attributes.dkim_enabled == False
+
+    ## DKIM disable idempotence test (rerun)
+
+    - name: Disable DKIM verification on domain identity (rerun)
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_domain }}"
+        state: disabled
+        <<: *aws_connection_info
+      register: domain_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: disabled
+
+    - name: assert result changed
+      assert:
+        that:
+          - domain_result.changed == False
+          - domain_result.dkim_attributes.dkim_enabled == False
+
+    - name: Disable DKIM verification on email identity (rerun)
+      aws_ses_identity_dkim:
+        identity: "{{ dkim_identity_email }}"
+        state: disabled
+        <<: *aws_connection_info
+      register: email_result
+      environment:
+        TEST_ONLY_FORCE_INITIAL_STATE: disabled
+
+    - name: assert result changed
+      assert:
+        that:
+          - email_result.changed == False
+          - email_result.dkim_attributes.dkim_enabled == False
+
+
+  always:
+    ## ensure cleanup
+
+    - name: Delete SES testing identity again
+      aws_ses_identity:
+        identity: "{{ item }}"
+        state: absent
+        <<: *aws_connection_info
+      with_items:
+        - '{{ dkim_identity_domain }}'
+        - '{{ dkim_identity_email }}'
+        # DKIM verifictation for emails registers the domain
+        # as an identity too so must be cleaned up.
+        - '{{ dkim_identity_email_domain }}'
+      ignore_errors: yes
