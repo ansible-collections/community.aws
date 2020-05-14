@@ -12,7 +12,7 @@
 
 - block:
 
-    ## prepare SES idenitiy to run tests on
+    ## prepare SES identity to run tests on
 
     - name: Create SES identity for running DKIM module tests on (domain identity)
       aws_ses_identity:
@@ -27,22 +27,6 @@
         state: present
         <<: *aws_connection_info
       register: ses_email_identity
-
-    ## DKIM check mode enable test (nothing should change, dry-run)
-
-    - name: Enable DKIM verification on email identity (check-mode)
-      aws_ses_identity_dkim:
-        identity: "{{ dkim_identity_email }}"
-        state: enabled
-        <<: *aws_connection_info
-      check_mode: True
-      register: email_result
-
-    - name: assert results report being changed (check-mode, doesn't really make change on AWS)
-      assert:
-        that:
-          - email_result.changed == True
-          # Note, if actually changed, the subsequent enable test will fail
 
     ## DKIM enable test
 
@@ -101,22 +85,6 @@
         that:
           - email_result.changed == False
           - email_result.dkim_attributes.dkim_enabled == True
-
-    ## DKIM check mode disable test (nothing should change, dry-run)
-
-    - name: Disable DKIM verification on email identity (check-mode)
-      aws_ses_identity_dkim:
-        identity: "{{ dkim_identity_email }}"
-        state: disabled
-        <<: *aws_connection_info
-      check_mode: True
-      register: email_result
-
-    - name: assert results report being unchanged (check-mode)
-      assert:
-        that:
-          - email_result.changed == True
-          # Note, if actually changed, the subsequent disable test will fail
 
     ## DKIM disable test
 
@@ -187,6 +155,6 @@
         - '{{ dkim_identity_domain }}'
         - '{{ dkim_identity_email }}'
         # DKIM verifictation for emails registers the domain
-        # as an identity too so must be cleaned up.
+        # as an identity too, so it must be cleaned up.
         - '{{ dkim_identity_email_domain }}'
       ignore_errors: yes
