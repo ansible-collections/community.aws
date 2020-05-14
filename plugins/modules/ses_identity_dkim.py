@@ -89,7 +89,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 try:
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by imported AnsibleAWSModule
 
 
 def get_identity_dkim_settings(module, client, identity):
@@ -114,7 +114,7 @@ def ses_verify_dkim_domain(module, client, identity):
 
 def enable_identity_dkim_settings(module, client, identity):
     try:
-        response = client.set_identity_dkim_enabled(DkimEnabled=True, Identity=identity)
+        response = client.set_identity_dkim_enabled(DkimEnabled=True, Identity=identity, aws_retry=True)
         return response
     except (BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to enable DKIM for {identity}.'.format(identity=identity))

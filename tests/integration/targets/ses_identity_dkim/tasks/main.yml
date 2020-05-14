@@ -1,16 +1,17 @@
 ---
 # tasks file for ses_identity_dkim test
 
-- name: set up aws connection info
-  set_fact:
-    aws_connection_info: &aws_connection_info
+- name: Set AWS module defaults
+  module_defaults:
+    aws_ses_identity:
       aws_access_key: "{{ aws_access_key }}"
       aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token }}"
+      security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   no_log: yes
 
 - block:
+
 
     ## prepare SES identity to run tests on
 
@@ -18,14 +19,12 @@
       aws_ses_identity:
         identity: "{{ dkim_identity_domain }}"
         state: present
-        <<: *aws_connection_info
       register: ses_domain_identity
 
     - name: Create SES identity for running DKIM module tests on (email identity)
       aws_ses_identity:
         identity: "{{ dkim_identity_email }}"
         state: present
-        <<: *aws_connection_info
       register: ses_email_identity
 
     ## DKIM enable test
@@ -34,7 +33,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: enabled
-        <<: *aws_connection_info
       register: domain_result
 
     - name: assert successful result
@@ -48,7 +46,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: enabled
-        <<: *aws_connection_info
       register: email_result
 
     - name: assert successful result
@@ -64,7 +61,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: enabled
-        <<: *aws_connection_info
       register: domain_result
 
     - name: assert no change (itempotence)
@@ -77,7 +73,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: enabled
-        <<: *aws_connection_info
       register: email_result
 
     - name: assert no change (idempotence)
@@ -92,7 +87,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: disabled
-        <<: *aws_connection_info
       register: domain_result
 
     - name: assert result changed
@@ -105,7 +99,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: disabled
-        <<: *aws_connection_info
       register: email_result
 
     - name: assert result changed
@@ -120,7 +113,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: disabled
-        <<: *aws_connection_info
       register: domain_result
 
     - name: assert result changed
@@ -133,7 +125,6 @@
       ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: disabled
-        <<: *aws_connection_info
       register: email_result
 
     - name: assert result changed
@@ -150,7 +141,6 @@
       aws_ses_identity:
         identity: "{{ item }}"
         state: absent
-        <<: *aws_connection_info
       with_items:
         - '{{ dkim_identity_domain }}'
         - '{{ dkim_identity_email }}'
