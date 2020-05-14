@@ -7,7 +7,7 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: aws_ses_identity_dkim
+module: ses_identity_dkim
 short_description: Manages SES email and domain identity
 description:
     - This module allows a user to enable DKIM settings on an existing SES identity. It will also return
@@ -30,22 +30,21 @@ requirements: [ 'botocore', 'boto3' ]
 extends_documentation_fragment:
     - aws
     - ec2
-
 '''
 
 EXAMPLES = '''
-# Note: to setup SES identities use the aws_ses_identity module.
+# Note: to setup SES identities use the ses_identity module.
 
-- name: Enable DKIM setting for identity example@example.com
-  aws_ses_identity_dkim:
+- name: Enable DKIM setting for identity example@example.com (email-address)
+  ses_identity_dkim:
       identity: example@example.com
 
-- name: Enable DKIM setting for identity example.com
-  aws_ses_identity_dkim:
+- name: Enable DKIM setting for identity example.com (whole domain)
+  ses_identity_dkim:
     identity: example.com
   register: dkim_results
 
-- name: Example how to aws_ses_identity_dkim results to set DNS records for validation (if you use Route53 service for DNS)
+- name: Example how to use ses_identity_dkim results to set DNS records for validation (if you use Route53 service for DNS)
   route53:
     record: "{{ item }}._domainkey.example.com"
     value: "{{ item }}.dkim.amazonses.com"
@@ -54,7 +53,7 @@ EXAMPLES = '''
   with_items: "{{ dkim_results.dkim_attributes.dkim_tokens }}"
 
 - name: Disable DKIM setting for identity example.com
-  aws_ses_identity_dkim:
+  ses_identity_dkim:
     identity: example.com
     state: disabled
 '''
@@ -144,8 +143,8 @@ def main():
 
     # SES APIs seem to have a much lower throttling threshold than most of the rest of the AWS APIs.
     # Docs say 1 call per second. This shouldn't actually be a big problem for normal usage, but
-    # the ansible build runs multiple instances of the test in parallel that's caused throttling
-    # failures so apply a jittered backoff to call SES calls.
+    # the Ansible build runs multiple instances of tests in parallel which caused throttling
+    # failures, so we apply a jittered backoff to SES calls.
     client = module.client('ses', retry_decorator=AWSRetry.jittered_backoff())
 
     identity = module.params.get('identity')

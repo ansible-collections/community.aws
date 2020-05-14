@@ -208,6 +208,7 @@ aws:
 - s3_logging
 - s3_sync
 - s3_website
+- ses_identity_dkim
 - sns
 - sns_topic
 - sqs_queue

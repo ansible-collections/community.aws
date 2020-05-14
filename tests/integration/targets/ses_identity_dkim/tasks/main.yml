@@ -1,5 +1,5 @@
 ---
-# tasks file for aws_ses_identity_dkim test
+# tasks file for ses_identity_dkim test
 
 - name: set up aws connection info
   set_fact:
@@ -31,7 +31,7 @@
     ## DKIM enable test
 
     - name: Enable DKIM verification on domain identity
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: enabled
         <<: *aws_connection_info
@@ -45,7 +45,7 @@
           - domain_result.dkim_attributes.dkim_tokens|length > 0
 
     - name: Enable DKIM verification on email identity
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: enabled
         <<: *aws_connection_info
@@ -61,7 +61,7 @@
     ## DKIM enable idempotence test (rerun)
 
     - name: Enable DKIM verification on domain identity (rerun)
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: enabled
         <<: *aws_connection_info
@@ -74,7 +74,7 @@
           - domain_result.dkim_attributes.dkim_enabled == True
 
     - name: Enable DKIM verification on email identity (rerun)
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: enabled
         <<: *aws_connection_info
@@ -89,7 +89,7 @@
     ## DKIM disable test
 
     - name: Disable DKIM verification on domain identity
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: disabled
         <<: *aws_connection_info
@@ -102,7 +102,7 @@
           - domain_result.dkim_attributes.dkim_enabled == False
 
     - name: Disable DKIM verification on email identity
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: disabled
         <<: *aws_connection_info
@@ -117,7 +117,7 @@
     ## DKIM disable idempotence test (rerun)
 
     - name: Disable DKIM verification on domain identity (rerun)
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_domain }}"
         state: disabled
         <<: *aws_connection_info
@@ -130,7 +130,7 @@
           - domain_result.dkim_attributes.dkim_enabled == False
 
     - name: Disable DKIM verification on email identity (rerun)
-      aws_ses_identity_dkim:
+      ses_identity_dkim:
         identity: "{{ dkim_identity_email }}"
         state: disabled
         <<: *aws_connection_info
