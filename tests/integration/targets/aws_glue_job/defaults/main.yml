@@ -1,2 +1,2 @@
-role_name: '{{ resource_prefix }}-role'
-job_name: '{{ resource_prefix }}-job'
+glue_role_name: '{{ resource_prefix }}-role'
+glue_job_name: '{{ resource_prefix }}-job'
