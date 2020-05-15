@@ -230,6 +230,10 @@ except ImportError:
     pass  # protected by AnsibleAWSModule
 
 
+def change_a_thing():
+    print('ci_coverage')
+
+
 def get_account_info(module, region=None, endpoint=None, **aws_connect_kwargs):
     """return the account information (account id and partition) we are currently working on
 
