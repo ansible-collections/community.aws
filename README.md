@@ -20,10 +20,16 @@ You can also include it in a `requirements.yml` file and install it with `ansibl
 ---
 collections:
   - name: community.aws
+```
+
+A specific version of the collection can be installed by using the `version` keyword in the `requirements.yml` file:
+
+```yaml
+---
+collections:
+  - name: community.aws
     version: 0.1.1
 ```
-## Using this collection
-
 
 You can either call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
 
