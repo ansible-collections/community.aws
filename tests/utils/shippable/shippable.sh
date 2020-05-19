@@ -132,12 +132,12 @@ function cleanup
                     flags="${flags//=/,}"
                     flags="${flags//[^a-zA-Z0-9_,]/_}"
 
-                    codecov \
+                    bash <(curl -s https://codecov.io/bash) \
                         -f "${file}" \
                         -F "${flags}" \
                         -n "${test}" \
                         -t 8a86e979-f37b-4d5d-95a4-960c280d5eaa \
-                        -X pycov \
+                        -X coveragepy \
                         -X gcov \
                         -X fix \
                         -X search \
