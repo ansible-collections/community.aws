@@ -1,5 +1,5 @@
 boto3
-botocore > 1.15.38 ; python_version > '3.8'
+botocore > 1.15.38
 placebo
 pycrypto
 passlib
