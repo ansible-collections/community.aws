@@ -96,7 +96,7 @@ metric_filters:
             "metric_namespace": "made_with_ansible",
             "metric_value": "$.value"
         }
-    ],
+    ]
 
 """
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
