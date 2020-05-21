@@ -655,8 +655,14 @@ def main():
         repeat=dict(required=False, type='int', default=10),
         force_new_deployment=dict(required=False, default=False, type='bool'),
         deployment_configuration=dict(required=False, default={}, type='dict'),
-        placement_constraints=dict(required=False, default=[], type='list'),
-        placement_strategy=dict(required=False, default=[], type='list'),
+        placement_constraints=dict(required=False, default=[], type='list', options=dict(
+            type=dict(type='str'),
+            expression=dict(type='str')
+        )),
+        placement_strategy=dict(required=False, default=[], type='list', options=dict(
+            type=dict(type='str'),
+            field=dict(type='str'),
+        )),
         health_check_grace_period_seconds=dict(required=False, type='int'),
         network_configuration=dict(required=False, type='dict', options=dict(
             subnets=dict(type='list'),
