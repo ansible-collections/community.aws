@@ -411,7 +411,7 @@
         - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed
 
   - name: Update distribution to use specific access identity
-    cloudfront_distribution_fixed:
+    cloudfront_distribution:
       distribution_id: "{{ distribution_id }}"
       origins:
         - id: "{{ targetBucket }}"
