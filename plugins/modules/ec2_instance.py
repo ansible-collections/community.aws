@@ -1355,7 +1355,7 @@ def diff_instance_and_params(instance, params, ec2=None, skip=None):
                 else:
                     default_vpc = get_default_vpc(ec2)
                     if default_vpc is None:
-                        raise module.fail_json(
+                        module.fail_json(
                             msg="No default subnet could be found - you must include a VPC subnet ID (vpc_subnet_id parameter) to create an instance")
                     else:
                         sub = get_default_subnet(ec2, default_vpc)
