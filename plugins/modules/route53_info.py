@@ -203,6 +203,68 @@ EXAMPLES = '''
         start_record_name: "host1.workshop.test.io"
       register: RECORDS
 '''
+
+RETURN = '''
+get_change:
+    description: returns the current status of a change batch request.
+    returned: always (change_id is required)
+    type: dict
+get_checker_ip_ranges:
+    description: >
+        a complex type that contains sorted list of IP ranges in CIDR format
+        for Amazon Route 53 health checkers
+    returned: always
+    type: dict
+get_health_check_count:
+    description: retrieves the number of health checks that are associated
+    with the current AWS account.
+    returned: always
+    type: dict
+get_hosted_zone:
+    description: >
+        gets information about a specified hosted zone including the four
+        name servers assigned to the hosted zone.
+    returned: always (hosted_zone_id is required)
+    type: dict
+list_hosted_zones:
+    description: >
+        retrieves a list of the public and private hosted zones that
+        are associated with the current AWS account.
+    returned: always
+    type: dict
+list_hosted_zones_by_name:
+    description: retrieves a list of your hosted zones in lexicographic order.
+    returned: always
+    type: dict
+list_tags_for_resources:
+    description: lists tags for up to 10 health checks or hosted zones.
+    returned: always (resource_id' is required)
+    type: dict
+list_health_checks:
+    description: >
+        retrieve a list of the health checks that are associated with
+        the current AWS account.
+    returned: always
+    type: dict
+list_resource_record_sets:
+    description: lists the resource record sets in a specified hosted zone.
+    returned: always
+    type: dict
+get_reusable_delegation_set:
+    description: >
+        Retrieves information about a specified reusable delegation set,
+        including the four name servers that are assigned to the
+        delegation set.
+    returned: always (if delegation_set_id is not provided)
+    type: dict
+list_reusable_delegation_sets:
+    description: >
+        retrieves a list of the reusable delegation sets that are associated
+        with the current AWS account.
+    returned: always (if delegation_set_id is provided)
+    type: dict
+'''
+
 try:
     import boto
     import botocore
