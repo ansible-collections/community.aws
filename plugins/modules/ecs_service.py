@@ -72,13 +72,14 @@ options:
         type: str
     delay:
         description:
-          - The time to wait before checking that the service is available.
+          - The time to wait before checking that the service is available or
+            removed. Set to 0 to disable check.
         required: false
         default: 10
         type: int
     repeat:
         description:
-          - The number of times to check that the service is available.
+          - The number of times to check that the service is available or removed
         required: false
         default: 10
         type: int
@@ -730,8 +731,10 @@ def main():
                 update = True
 
         if not matching:
-            if not module.check_mode:
+            if module.check_mode:
+                results['changed'] = True
 
+            else:
                 role = module.params['role']
                 clientToken = module.params['client_token']
 
@@ -794,9 +797,32 @@ def main():
                     except botocore.exceptions.ClientError as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
 
-                results['service'] = response
+                results['changed'] = True
+                delay = module.params['delay']
+                repeat = module.params['repeat']
+                existing = None
+                if delay != 0:
+                    time.sleep(delay)
+                    while repeat != 0:
+                        existing = service_mgr.describe_service(module.params['cluster'], module.params['name'])
+                        primary_deployment = [d for d in
+                                              existing['deployments']
+                                              if d['status'] == 'PRIMARY']
+                        if (primary_deployment and
+                                primary_deployment[0]['desiredCount'] == primary_deployment[0]['runningCount']):
+                            break
 
-            results['changed'] = True
+                        repeat -= 1
+                        if repeat == 0:
+                            module.fail_json(
+                                service=existing,
+                                msg="Couldn't verify successful deployment, tried with delay %s, %s times" %
+                                (delay, module.params['repeat'])
+                            )
+                        else:
+                            time.sleep(delay)
+
+                results['service'] = existing or response
 
     elif module.params['state'] == 'absent':
         if not existing:
@@ -828,17 +854,18 @@ def main():
         # return info about the cluster deleted
         delay = module.params['delay']
         repeat = module.params['repeat']
-        time.sleep(delay)
-        for i in range(repeat):
-            existing = service_mgr.describe_service(module.params['cluster'], module.params['name'])
-            status = existing['status']
-            if status == "INACTIVE":
-                results['changed'] = True
-                break
+        if delay != 0:
             time.sleep(delay)
-        if i is repeat - 1:
-            module.fail_json(msg="Service still not deleted after " + str(repeat) + " tries of " + str(delay) + " seconds each.")
-            return
+            for i in range(repeat):
+                existing = service_mgr.describe_service(module.params['cluster'], module.params['name'])
+                status = existing['status']
+                if status == "INACTIVE":
+                    results['changed'] = True
+                    break
+                time.sleep(delay)
+            if i is repeat - 1:
+                module.fail_json(msg="Service still not deleted after " + str(repeat) + " tries of " + str(delay) + " seconds each.")
+                return
 
     module.exit_json(**results)
 
