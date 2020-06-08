@@ -362,6 +362,7 @@ def find_stream(client, stream_name, check_mode=False):
                 )
                 shards.extend(results.pop('Shards'))
                 has_more_shards = results['HasMoreShards']
+                params['ExclusiveStartShardId'] = shards[-1]['ShardId']
             results['Shards'] = shards
             num_closed_shards = len([s for s in shards if 'EndingSequenceNumber' in s['SequenceNumberRange']])
             results['OpenShardsCount'] = len(shards) - num_closed_shards
