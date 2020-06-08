@@ -8,7 +8,6 @@ IFS='/:' read -ra args <<< "$1"
 script="${args[0]}"
 
 test="$1"
-ansible_version="${ANSIBLE_BASE_REV:-devel}"
 
 docker images ansible/ansible
 docker images quay.io/ansible/*
@@ -75,7 +74,12 @@ set +ux
 set -ux
 
 pip install setuptools==44.1.0
-pip install https://github.com/ansible/ansible/archive/${ansible_version}.tar.gz --disable-pip-version-check
+
+if [ -z "${ANSIBLE_BASE_REV}" ]; then
+    pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
+else
+    pip install "ansible~=${ANSIBLE_BASE_REV}"
+fi
 
 #ansible-galaxy collection install community.general
 mkdir -p "${HOME}/.ansible/collections/ansible_collections/community"
