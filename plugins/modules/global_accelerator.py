@@ -1,3 +1,4 @@
+
 from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     AWSRetry,
@@ -12,6 +13,107 @@ try:
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
     pass
+
+
+DOCUMENTATION = """
+module: global_accelerator
+short_description: Manage a Global Accelerator
+description:
+    - Manage an AWS Global Accelerator. See U(https://docs.aws.amazon.com/global-accelerator/index.html) for details.
+
+requirements: [ boto3, botocore ]
+author: "Tyler Lubeck (@TylerLubeck)"
+options:
+  arn:
+    description:
+      - The ARN of a Global Accelerator to modify
+    type: str
+  enabled:
+    description:
+      - Whether or not the Global Accelerator is enabled
+      - Must be false in order to delete a Global Accelerator
+    type: bool
+  flow_logs_enabled:
+    description:
+      - Whether or not to enable flow logs
+      - When set, I(flow_logs_s3_bucket) and I(flow_logs_s3_prefix) must also be set
+    type: bool
+  flow_logs_s3_bucket:
+    description:
+      - The name of the S3 bucket for access logs.
+      - The bucket must exist and 
+        have a bucket policy that grants AWS Global Accelerator permission to write to the bucket.
+      - Must be set if I(flow_logs_enabled) is set
+    type: str
+  flow_logs_s3_prefix:
+    description:
+      - The prefix for the log location in the S3 bucket
+      - Cannot end with a slash
+      - Must be set if I(flow_logs_enabled) is set
+    type: str
+  idempotency_token:
+    description:
+      - A unique, case-sensitive identifier that you provide to ensure the uniquenes of an accelerator.
+      - if not set, a random string is generated for you
+    type: str
+  ip_address_type:
+    description:
+      - The type of ip address to use
+      - Currently, this must be IPV4
+    type: str
+  ip_addresses:
+    description:
+      - IP Addresses from your pool to assign to the Accelerator
+      - Two IPs maximum
+      - If not supplied, AWS will provision IPs for you
+      - If you only supply one, AWS will provision a second one for you
+      - See U(https://docs.aws.amazon.com/global-accelerator/latest/dg/using-byoip.html) for more information
+    type: list
+  name:
+    description:
+      - The name of the Accelerator
+      - If performing an update and more than one accelerator exists with this name, the module will abort and fail
+      - Mutually exclusive with I(arn)
+    type: str
+  purge_tags:
+    description:
+      - If yes, existing tags will be purged from the resource to match exactly what is defined by I(tags) parameter.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    type: bool
+  region:
+    description:
+      - Global Accelerators must currently be created and modified in us-west-2
+      - Global Accelerators still operate across all regions
+    type: str
+  state: 
+    description:
+      - Create or destroy the global accelerator
+      - I(enabled) must be false to destroy an accelerator
+    type: str
+  tags:
+    description:
+      - A dictionary of one or more tags to assign to the load balancer.
+    type: dict
+"""
+
+EXAMPLES = """
+# Note: These examples do not set authentication details, see the AWS Guide for details
+
+# Create a Global Accelerator
+- global_accelerator:
+    enabled: true
+    name: myga
+    state: present
+
+# Create a Global Accelerator with BYOIP
+- global_accelerator:
+    enabled: true
+    name: myga
+    ip_addresses:
+      - 1.2.3.4
+      - 5.6.7.8
+"""
+
 
 def get_accelerator(connection, module, name, arn):
     accelerator = None
@@ -264,19 +366,19 @@ def delete_accelerator(accelerator_obj):
 
 def main():
     argument_spec = dict(
-        name=dict(type='str'),
         arn=dict(type='str'),
-        ip_address_type=dict(default='IPV4', choices=['IPV4']),  # I assume there will eventually be ipv6 but not yet. Case matters.
-        ip_addresses=dict(type='list', default=[]),  # Max 2
         enabled=dict(type='bool', default=True),
-        idempotency_token=dict(type='str', required=False),
-        tags=dict(type='dict'),
-        state=dict(choices=['present', 'absent'], default='present'),
-        purge_tags=dict(type='bool', default=False),
         flow_logs_enabled=dict(type='bool', default=False),
         flow_logs_s3_bucket=dict(type='str'),
         flow_logs_s3_prefix=dict(type='str'),
+        idempotency_token=dict(type='str', required=False),
+        ip_address_type=dict(default='IPV4', choices=['IPV4']),  # I assume there will eventually be ipv6 but not yet. Case matters.
+        ip_addresses=dict(type='list', default=[]),  # Max 2
+        name=dict(type='str'),
+        purge_tags=dict(type='bool', default=False),
         region=dict(default='us-west-2', choices=['us-west-2']),  # Only supported in us-west-2
+        state=dict(choices=['present', 'absent'], default='present'),
+        tags=dict(type='dict'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
