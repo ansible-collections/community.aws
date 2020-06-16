@@ -2,7 +2,8 @@ namespace: community
 name: aws
 version: 0.1.0
 readme: README.md
-authors: null
+authors:
+  - Ansible (https://github.com/ansible)
 description: null
 license_file: COPYING
 tags: [community, aws, cloud, amazon]
