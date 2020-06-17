@@ -216,8 +216,9 @@ get_checker_ip_ranges:
     returned: always
     type: dict
 get_health_check_count:
-    description: retrieves the number of health checks that are associated
-    with the current AWS account.
+    description: >
+        retrieves the number of health checks that are associated
+        with the current AWS account.
     returned: always
     type: dict
 get_hosted_zone:
