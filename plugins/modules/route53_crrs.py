@@ -10,35 +10,28 @@ from ansible_collections.amazon.aws.plugins.module_utils.aws.core import (
 
 __metaclass__ = type
 
-
-DOCUMENTATION = """
+DOCUMENTATION = '''
 module: route53_crrs
 short_description: create, update or delete route53 resource record sets.
-description: >
-    - create, update or delete route53 resource record sets.
-
-requirements: [ boto3, botocore, python >= 3.5 ]
-
+description: create, update or delete route53 resource record sets.
+requirements: [boto3, botocore, python>=3.5]
 options:
-
   action:
     description: >
       - The action to perform:
-        CREATE : Creates a resource record set that has the specified values.
-        DELETE : Deletes a existing resource record set.
-        UPSERT : If a resource record set doesn't already exist, Route 53
-                 creates it. If a resource record set does exist, Route 53
-                 updates it with the values in the request.
+        CREATE  Creates a resource record set that has the specified values.
+        DELETE  Deletes a existing resource record set.
+        UPSERT  If a resource record set doesn't already exist, Route 53
+                creates it. If a resource record set does exist, Route 53
+                updates it with the values in the request.
     required: true
     choices: ['CREATE', 'DELETE', 'UPSERT']
     type: str
-
   name:
     description: >
       - The name of the record that you want to create, update, or delete.
     required: true
     type: str
-
   type:
     description: >
       - The DNS record type.
@@ -46,33 +39,28 @@ options:
     choices: ['SOA', 'A', 'TXT', 'NS', 'CNAME', 'MX',
               'NAPTR', 'PTR', 'SRV', 'SPF', 'AAAA', 'CAA']
     type: str
-
   ttl:
     description: >
       - The resource record cache time to live (TTL), in seconds.
     required: true
     type: int
-
   resource_records:
     description: >
       - list of the current or new DNS record value(ip address).
     required: true
     type: list
-
   hosted_zone_id:
     description: >
       - The ID of the hosted zone that contains the resource
         record sets that you want to change.
     required: true
     type: str
-
   set_identifier:
     description: >
       - A unique string to identify each resource record set.
         it is required if acting upon any of the 'weight', 'region',
         'failover', 'geo_location', 'multi_value_answer'.
     type: str
-
   weight:
     description: >
       - A value that determines the proportion of DNS queries
@@ -80,7 +68,6 @@ options:
         resource record set.
     required: true
     type: int
-
   region:
     description: >
       - Route 53 selects the latency resource record set that has the
@@ -88,33 +75,28 @@ options:
         EC2 Region.
     required: true
     choices: [
-              'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
-              'ca-central-1', 'eu-west-1', 'eu-west-2', 'eu-west-3',
-              'eu-central-1', 'ap-southeast-1', 'ap-southeast-2',
-              'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
-              'eu-north-1', 'sa-east-1', 'cn-north-1', 'cn-northwest-1',
-              'ap-east-1', 'me-south-1', 'ap-south-1', 'af-south-1',
-              'eu-south-1'
+      'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
+      'ca-central-1', 'eu-west-1', 'eu-west-2', 'eu-west-3',
+      'eu-central-1', 'ap-southeast-1', 'ap-southeast-2',
+      'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
+      'eu-north-1', 'sa-east-1', 'cn-north-1', 'cn-northwest-1',
+      'ap-east-1', 'me-south-1', 'ap-south-1', 'af-south-1',
+      'eu-south-1'
     ]
     type: str
-
-
   geo_location:
     description: >
       - A complex type that lets you control how Amazon Route 53 responds
         to DNS queries based on the geographic origin of the query.
         Select either of continent_code or country_code.
         subdivision_code is only acceptable when country_code is US.
-    type: dict
         continent_code:
             type: str
-
         country_code:
             type: str
-
         subdivision_code:
             type:str
-
+    type: dict
   failover:
     description: >
       - Add the Failover element to resource record sets.
@@ -124,7 +106,6 @@ options:
         each resource record set.
     choices: ['PRIMARY', 'SECONDARY']
     type: str
-
   health_check_id:
     description: >
       - If you want Amazon Route 53 to return this resource record set
@@ -132,164 +113,163 @@ options:
         is healthy, include the HealthCheckId element and specify the ID
         of the applicable health check.
     type: str
-
   multi_value_answer:
     description: >
       - To route traffic approximately randomly to multiple resources.
     type: bool
-
   alias_target:
     description: >
       - Alias resource record set.
-    type: dict
         hosted_zone_id:
         type: str
-
         dns_name:
         type: str
-
         evaluate_target_health:
         type: str
-"""
+    type: dict
+author:
+    - Sydo Luciani (@sydoluciani)
+extends_documentation_fragment:
+    - aws
+    - ec2
+'''
 
-EXAMPLES = """
-    - name: Create a simple resource record set
-      community.aws.route53_crrs:
-        action: CREATE
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-      register: std_out_of_above
+EXAMPLES = '''
+- name: Create a simple resource record set
+  route53_crrs:
+    action: CREATE
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+  register: std_out_of_above
 
-    - name: Update a simple resource record set
-      community.aws.route53_crrs:
-        action: UPSERT
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-          - 2.2.2.2
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-      register: std_out_of_above
+- name: Update a simple resource record set
+  route53_crrs:
+    action: UPSERT
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+      - 2.2.2.2
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+  register: std_out_of_above
 
-    - name: Create a geo location resource record set
-      community.aws.route53_crrs:
-        action: CREATE
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-        geo_location:
-          continent_code: NA
-      register: std_out_of_above
+- name: Create a geo location resource record set
+  route53_crrs:
+    action: CREATE
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+    geo_location:
+      continent_code: NA
+  register: std_out_of_above
 
-    - name: Update a geo location resource record set
-      community.aws.route53_crrs:
-        action: UPSERT
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-        geo_location:
-          country_code: US
-          subdivision_code: TX
-      register: std_out_of_above
+- name: Update a geo location resource record set
+  route53_crrs:
+    action: UPSERT
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+    geo_location:
+      country_code: US
+      subdivision_code: TX
+  register: std_out_of_above
 
-    - name: Update to a failover resource record set
-      community.aws.route53_crrs:
-        action: UPSERT
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-        failover: PRIMARY
-        health_check_id: cdac2615-e127-4ede-ba91-298908970560
-      register: std_out_of_above
+- name: Update to a failover resource record set
+  route53_crrs:
+    action: UPSERT
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+    failover: PRIMARY
+    health_check_id: cdac2615-e127-4ede-ba91-298908970560
+  register: std_out_of_above
 
-    - name: Update to a weighted resource record set
-      community.aws.route53_crrs:
-        action: UPSERT
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-        weight: 123
-      register: std_out_of_above
+- name: Update to a weighted resource record set
+  route53_crrs:
+    action: UPSERT
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+    weight: 123
+  register: std_out_of_above
 
-    - name: Update to a multi variable resource record set
-      community.aws.route53_crrs:
-        action: UPSERT
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-        multi_value_answer: true
-      register: std_out_of_above
+- name: Update to a multi variable resource record set
+  route53_crrs:
+    action: UPSERT
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+    multi_value_answer: true
+  register: std_out_of_above
 
-    - name: Delete a resource record set
-      community.aws.route53_crrs:
-        action: DELETE
-        name: www.domain_name.com.
-        type: A
-        ttl: 987
-        resource_records:
-          - 1.1.1.1
-          - 2.2.2.2
-          - 3.3.3.3
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        set_identifier: "Unique Identifier String"
-      register: std_out_of_above
+- name: Delete a resource record set
+  route53_crrs:
+    action: DELETE
+    name: www.domain_name.com.
+    type: A
+    ttl: 987
+    resource_records:
+      - 1.1.1.1
+      - 2.2.2.2
+      - 3.3.3.3
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    set_identifier: "Unique Identifier String"
+  register: std_out_of_above
 
-    - name: Delete an alias target
-      community.aws.route53_crrs:
-        action: DELETE
-        name: www.domain_name.com.
-        type: A
-        hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-        alias_target:
-          hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
-          dns_name: www.domain_name.com
-          evaluate_target_health: false
-      register: std_out_of_above
-"""
+- name: Delete an alias target
+  route53_crrs:
+    action: DELETE
+    name: www.domain_name.com.
+    type: A
+    hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+    alias_target:
+      hosted_zone_id: XXXXXXXXXXXXXXXXXXXXX
+      dns_name: www.domain_name.com
+      evaluate_target_health: false
+  register: std_out_of_above
+'''
 
-RETURN = """
-
+RETURN = '''
 sample:
     {
         'ChangeInfo': {
             'Id': 'string',
-            'Status': 'PENDING'|'INSYNC',
+            'Status': 'PENDING OR INSYNC',
             'SubmittedAt': datetime(2015, 1, 1),
             'Comment': 'string'
         }
     }
-"""
-
+'''
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError # noqa
+    from botocore.exceptions import BotoCoreError, ClientError  # noqa
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
@@ -444,8 +424,7 @@ def get_batch_info(module):
                 resource_record_set['AliasTarget'].update({
                     'EvaluateTargetHealth':
                         module.params['alias_target']['evaluate_target_health']
-                    }
-                )
+                })
 
         if module.params.get('health_check_id') is not None:
             resource_record_set.update(
@@ -476,11 +455,11 @@ def main():
         weight=dict(type=int),
         region=dict(
             choices=[
-              'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
-              'ca-central-1', 'eu-west-1', 'eu-west-2', 'eu-west-3',
-              'eu-central-1', 'ap-southeast-1', 'ap-southeast-2',
-              'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
-              'eu-north-1', 'sa-east-1', 'cn-north-1', 'cn-northwest-1',
+                'us-east-1', 'us-east-2', 'us-west-1', 'us-west-2',
+                'ca-central-1', 'eu-west-1', 'eu-west-2', 'eu-west-3',
+                'eu-central-1', 'ap-southeast-1', 'ap-southeast-2',
+                'ap-northeast-1', 'ap-northeast-2', 'ap-northeast-3',
+                'eu-north-1', 'sa-east-1', 'cn-north-1', 'cn-northwest-1',
             ]
         ),
         geo_location=dict(type=dict),
