@@ -75,10 +75,10 @@ set -ux
 
 pip install setuptools==44.1.0
 
-if [ -z "${ANSIBLE_BASE_REV}" ]; then
-    pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
-else
+if [ -n "${ANSIBLE_BASE_REV:-}" ]; then
     pip install "ansible~=${ANSIBLE_BASE_REV}"
+else
+    pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 fi
 
 #ansible-galaxy collection install community.general
