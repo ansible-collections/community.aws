@@ -75,8 +75,8 @@ set -ux
 
 pip install setuptools==44.1.0
 
-if [ -n "${ANSIBLE_BASE_REV:-}" ]; then
-    pip install "ansible~=${ANSIBLE_BASE_REV}"
+if [ -n "${A_REV:-}" ]; then
+    pip install "ansible~=${A_REV}"
 else
     pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
 fi
@@ -120,7 +120,7 @@ function cleanup
             cp -a tests/output/reports/coverage=*.xml "$SHIPPABLE_RESULT_DIR/codecoverage/"
 
             # analyze and capture code coverage aggregated by integration test target if not on 2.9, defaults to devel if unset
-            if [ -n "${ANSIBLE_BASE_REV:-}" ] || [ "${ANSIBLE_BASE_REV:-}" != "2.9" ]; then
+            if [ -z "${A_REV:-}" ] || [ "${A_REV:-}" != "2.9" ]; then
                 ansible-test coverage analyze targets generate -v "$SHIPPABLE_RESULT_DIR/testresults/coverage-analyze-targets.json"
             fi
 
