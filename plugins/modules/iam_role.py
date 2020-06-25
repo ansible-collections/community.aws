@@ -208,7 +208,7 @@ except ImportError:
 
 
 def compare_assume_role_policy_doc(current_policy_doc, new_policy_doc):
-    if not compare_policies(current_policy_doc, json.loads(new_policy_doc)):
+    if not compare_policies(json.loads(current_policy_doc), json.loads(new_policy_doc)):
         return True
     else:
         return False

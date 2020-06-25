@@ -1410,7 +1410,7 @@
     register: iam_role
   - assert:
       that:
-      - iam_role is changed
+      - iam_role is not changed
       - iam_role.iam_role.role_name == test_role
       - 'iam_role.iam_role.arn.startswith("arn")'
       - 'iam_role.iam_role.arn.endswith("role" + test_path + test_role )'
