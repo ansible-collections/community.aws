@@ -249,7 +249,10 @@ def get_account_info(module):
             iam_client = module.client('iam', retry_decorator=AWSRetry.jittered_backoff())
             arn, partition, service, reg, account_id, resource = iam_client.get_user(aws_retry=True)['User']['Arn'].split(':')
         except is_boto3_error_code('AccessDenied') as e:
-            except_msg = to_native(e.message)
+            try:
+                except_msg = to_native(e.message)
+            except AttributeError:
+                except_msg = to_native(e)
             m = re.search(r"arn:(aws(-([a-z\-]+))?):iam::([0-9]{12,32}):\w+/", except_msg)
             if m is None:
                 module.fail_json_aws(e, msg="getting account information")
