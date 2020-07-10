@@ -27,41 +27,45 @@
   # ============================================================
   # Set up some additional resources for later user
 
-  # KMS Keys
-  # Note: Because we're not a producer / consumer we don't actually need
-  # access to the keys
-  - name: 'Create KMS key 1'
-    aws_kms:
-      alias: '{{ kms_cmk_alias_1 }}'
-      state: present
-      enabled: yes
-    register: create_kms_1
-  - name: 'Create KMS key 2'
-    aws_kms:
-      alias: '{{ kms_cmk_alias_2 }}'
-      state: present
-      enabled: yes
-    register: create_kms_2
-  - name: 'Assert that we sucessfully created our keys'
-    assert:
-      that:
-      - create_kms_1 is success
-      - create_kms_2 is success
-  - name: 'Store the Key IDs for later'
-    set_fact:
-        kms_cmk_id_1: '{{ create_kms_1.key_id }}'
-        kms_cmk_arn_1: '{{ create_kms_1.key_arn }}'
-        kms_cmk_id_2: '{{ create_kms_2.key_id }}'
-        kms_cmk_arn_2: '{{ create_kms_2.key_arn }}'
-        # All of the valid ways to describe the CMK
-        kms_cmk_1:
-        - '{{ create_kms_1.key_id }}'
-        - 'alias/{{ kms_cmk_alias_1 }}'
-        - '{{ create_kms_1.key_arn }}'
-        kms_cmk_2:
-        - '{{ create_kms_1.key_id }}'
-        - 'alias/{{ kms_cmk_alias_1 }}'
-        - '{{ create_kms_1.key_arn }}'
+  - name: 'KMS test preperation - only run when explicitly enabled'
+    when:
+    - run_kms_tests | default(False) | bool
+    block:
+    # KMS Keys
+    # Note: Because we're not a producer / consumer we don't actually need
+    # access to the keys
+    - name: 'Create KMS key 1'
+      aws_kms:
+        alias: '{{ kms_cmk_alias_1 }}'
+        state: present
+        enabled: yes
+      register: create_kms_1
+    - name: 'Create KMS key 2'
+      aws_kms:
+        alias: '{{ kms_cmk_alias_2 }}'
+        state: present
+        enabled: yes
+      register: create_kms_2
+    - name: 'Assert that we sucessfully created our keys'
+      assert:
+        that:
+        - create_kms_1 is success
+        - create_kms_2 is success
+    - name: 'Store the Key IDs for later'
+      set_fact:
+          kms_cmk_id_1: '{{ create_kms_1.key_id }}'
+          kms_cmk_arn_1: '{{ create_kms_1.key_arn }}'
+          kms_cmk_id_2: '{{ create_kms_2.key_id }}'
+          kms_cmk_arn_2: '{{ create_kms_2.key_arn }}'
+          # All of the valid ways to describe the CMK
+          kms_cmk_1:
+          - '{{ create_kms_1.key_id }}'
+          - 'alias/{{ kms_cmk_alias_1 }}'
+          - '{{ create_kms_1.key_arn }}'
+          kms_cmk_2:
+          - '{{ create_kms_1.key_id }}'
+          - 'alias/{{ kms_cmk_alias_1 }}'
+          - '{{ create_kms_1.key_arn }}'
 
   # ============================================================
   # Basic creation
@@ -502,131 +506,136 @@
       - result is changed
       - result.open_shards_count == 1
 
-  # ============================================================
-  # Encryption
-  - name: 'Test encryption'
-    vars:
-      key_type: '{{ item.type }}'
-      kinesis_key: '{{ item.key }}'
-      kinesis_key_id: '{{ kms_cmk_id_1 }}'
-      kinesis_key_alias: 'alias/{{ kms_cmk_alias_1 }}'
-      kinesis_key_arn: '{{ kms_cmk_arn_1 }}'
-    include_tasks: 'test_encryption.yml'
-    # Loop through and test the management and idempotency when using the
-    # various combinations of ID, alias and ARN of a CMK
-    loop:
-    - type: 'ID'
-      key: '{{ kms_cmk_id_1 }}'
-    - type: 'Alias'
-      key: 'alias/{{ kms_cmk_alias_1 }}'
-    - type: 'ARN'
-      key: '{{ kms_cmk_arn_1 }}'
+  # DISABLED BY DEFAULT - KMS key creation/deletion not supported in CI at this time
+  - name: 'KMS tests - only run when explicitly enabled'
+    when:
+    - run_kms_tests | default(False) | bool
+    block:
+    # ============================================================
+    # Encryption
+    - name: 'Test encryption'
+      vars:
+        key_type: '{{ item.type }}'
+        kinesis_key: '{{ item.key }}'
+        kinesis_key_id: '{{ kms_cmk_id_1 }}'
+        kinesis_key_alias: 'alias/{{ kms_cmk_alias_1 }}'
+        kinesis_key_arn: '{{ kms_cmk_arn_1 }}'
+      include_tasks: 'test_encryption.yml'
+      # Loop through and test the management and idempotency when using the
+      # various combinations of ID, alias and ARN of a CMK
+      loop:
+      - type: 'ID'
+        key: '{{ kms_cmk_id_1 }}'
+      - type: 'Alias'
+        key: 'alias/{{ kms_cmk_alias_1 }}'
+      - type: 'ARN'
+        key: '{{ kms_cmk_arn_1 }}'
 
-  - name: 'Disable encryption - Idempotency (CHECK_MODE)'
-    kinesis_stream:
-      name: '{{ kinesis_stream_name }}'
-      encryption_state: 'disabled'
-  - name: 'Assert state is not changed when encryption_state not changed (CHECK_MODE)'
-    ignore_errors: yes
-    assert:
-      that:
-      - result is success
-      - result is not changed
-    # XXX BUG (Enc_idemp)
+    - name: 'Disable encryption - Idempotency (CHECK_MODE)'
+      kinesis_stream:
+        name: '{{ kinesis_stream_name }}'
+        encryption_state: 'disabled'
+    - name: 'Assert state is not changed when encryption_state not changed (CHECK_MODE)'
+      ignore_errors: yes
+      assert:
+        that:
+        - result is success
+        - result is not changed
+      # XXX BUG (Enc_idemp)
 
-  - name: 'Disable encryption - Idempotency'
-    kinesis_stream:
-      name: '{{ kinesis_stream_name }}'
-      encryption_state: 'disabled'
-  - name: 'Assert state is not changed when encryption_state not changed (CHECK_MODE)'
-    assert:
-      that:
-      - result is success
-      - result is not changed
-    # XXX BUG (Enc_idemp)
-    ignore_errors: yes
-  # Merge this into the main assertion when the main return keys are
-  # snake_cased
-  - name: 'Assert expected return values'
-    assert:
-      that:
-      - result.encryption_type == 'NONE'
-      - result.open_shards_count == 1
-      - result.retention_period_hours == 48
-      - result.stream_arn == kinesis_stream_arn
-      - result.stream_name == kinesis_stream_name
-      - result.stream_status == 'ACTIVE'
-      #- result.tags == kinesis_stream_tags_2
-  # XXX BUG (Enc_snake)
-    ignore_errors: yes
-  # Merge this into the main assertion when the tag keys are no longer
-  # snake_cased
-  - name: 'Assert tags return as expected (tags2)'
-    assert:
-      that:
-      - result.tags == kinesis_stream_tags_2
-    # XXX BUG (Tag_snake)
-    ignore_errors: yes
-
-  - name: 'Enable encryption'
-    kinesis_stream:
-      name: '{{ kinesis_stream_name }}'
-      encryption_state: 'enabled'
-      encryption_type: 'KMS'
-      key_id: '{{ kms_cmk_id_1 }}'
-  - name: 'Assert that state is changed when enabling encryption'
-    assert:
-      that:
-      - result is success
-      - result is changed
-
-  - name: 'Test encryption changed state when updating key (CHECK_MODE)'
-    check_mode: yes
-    kinesis_stream:
-      name: '{{ kinesis_stream_name }}'
-      encryption_state: 'enabled'
-      encryption_type: 'KMS'
-      key_id: '{{ kms_cmk_id_2 }}'
-  - name: 'Assert state is changed when stream encryption key is changed (CHECK_MODE)'
-    assert:
-      that:
-      - result is success
-      - result is changed
-
-  - name: 'Test encryption changed state when updating key'
-    kinesis_stream:
-      name: '{{ kinesis_stream_name }}'
-      encryption_state: 'enabled'
-      encryption_type: 'KMS'
-      key_id: '{{ kms_cmk_id_2 }}'
-  - name: 'Assert state is changed when stream encryption key is changed'
-    assert:
-      that:
-      - result is success
-      - result is changed
-  # Merge this into the main assertion when the main return keys are
-  # snake_cased
-  - name: 'Assert expected return values'
-    assert:
-      that:
-      - result.encryption_type == 'KMS'
-      - result.key_id in kms_cmk_2
-      - result.open_shards_count == 1
-      - result.retention_period_hours == 48
-      - result.stream_arn == kinesis_stream_arn
-      - result.stream_name == kinesis_stream_name
-      - result.stream_status == 'ACTIVE'
-      #- result.tags == kinesis_stream_tags_2
+    - name: 'Disable encryption - Idempotency'
+      kinesis_stream:
+        name: '{{ kinesis_stream_name }}'
+        encryption_state: 'disabled'
+    - name: 'Assert state is not changed when encryption_state not changed (CHECK_MODE)'
+      assert:
+        that:
+        - result is success
+        - result is not changed
+      # XXX BUG (Enc_idemp)
+      ignore_errors: yes
+    # Merge this into the main assertion when the main return keys are
+    # snake_cased
+    - name: 'Assert expected return values'
+      assert:
+        that:
+        - result.encryption_type == 'NONE'
+        - result.open_shards_count == 1
+        - result.retention_period_hours == 48
+        - result.stream_arn == kinesis_stream_arn
+        - result.stream_name == kinesis_stream_name
+        - result.stream_status == 'ACTIVE'
+        #- result.tags == kinesis_stream_tags_2
     # XXX BUG (Enc_snake)
-    ignore_errors: yes
-  # Merge this into the main assertion when the tag keys are no longer
-  # snake_cased
-  - name: 'Assert tags return as expected (tags2)'
-    assert:
-      that:
-      - result.tags == kinesis_stream_tags_2
-    # XXX BUG (Tag_snake)
-    ignore_errors: yes
+      ignore_errors: yes
+    # Merge this into the main assertion when the tag keys are no longer
+    # snake_cased
+    - name: 'Assert tags return as expected (tags2)'
+      assert:
+        that:
+        - result.tags == kinesis_stream_tags_2
+      # XXX BUG (Tag_snake)
+      ignore_errors: yes
+
+    - name: 'Enable encryption'
+      kinesis_stream:
+        name: '{{ kinesis_stream_name }}'
+        encryption_state: 'enabled'
+        encryption_type: 'KMS'
+        key_id: '{{ kms_cmk_id_1 }}'
+    - name: 'Assert that state is changed when enabling encryption'
+      assert:
+        that:
+        - result is success
+        - result is changed
+
+    - name: 'Test encryption changed state when updating key (CHECK_MODE)'
+      check_mode: yes
+      kinesis_stream:
+        name: '{{ kinesis_stream_name }}'
+        encryption_state: 'enabled'
+        encryption_type: 'KMS'
+        key_id: '{{ kms_cmk_id_2 }}'
+    - name: 'Assert state is changed when stream encryption key is changed (CHECK_MODE)'
+      assert:
+        that:
+        - result is success
+        - result is changed
+
+    - name: 'Test encryption changed state when updating key'
+      kinesis_stream:
+        name: '{{ kinesis_stream_name }}'
+        encryption_state: 'enabled'
+        encryption_type: 'KMS'
+        key_id: '{{ kms_cmk_id_2 }}'
+    - name: 'Assert state is changed when stream encryption key is changed'
+      assert:
+        that:
+        - result is success
+        - result is changed
+    # Merge this into the main assertion when the main return keys are
+    # snake_cased
+    - name: 'Assert expected return values'
+      assert:
+        that:
+        - result.encryption_type == 'KMS'
+        - result.key_id in kms_cmk_2
+        - result.open_shards_count == 1
+        - result.retention_period_hours == 48
+        - result.stream_arn == kinesis_stream_arn
+        - result.stream_name == kinesis_stream_name
+        - result.stream_status == 'ACTIVE'
+        #- result.tags == kinesis_stream_tags_2
+      # XXX BUG (Enc_snake)
+      ignore_errors: yes
+    # Merge this into the main assertion when the tag keys are no longer
+    # snake_cased
+    - name: 'Assert tags return as expected (tags2)'
+      assert:
+        that:
+        - result.tags == kinesis_stream_tags_2
+      # XXX BUG (Tag_snake)
+      ignore_errors: yes
 
   # ============================================================
 
@@ -690,11 +699,15 @@
       name: '{{ kinesis_stream_name }}'
       state: absent
 
-#  - name: 'Delete the KMS keys'
-#    ignore_errors: yes
-#    aws_kms:
-#      state: absent
-#      alias: '{{ item }}'
-#    loop:
-#    - '{{ kms_cmk_alias_1 }}'
-#    - '{{ kms_cmk_alias_2 }}'
+  - name: 'KMS test preperation - only run when explicitly enabled'
+    when:
+    - run_kms_tests | default(False) | bool
+    block:
+    - name: 'Delete the KMS keys'
+      ignore_errors: yes
+      aws_kms:
+        state: absent
+        alias: '{{ item }}'
+      loop:
+      - '{{ kms_cmk_alias_1 }}'
+      - '{{ kms_cmk_alias_2 }}'
