@@ -69,7 +69,7 @@ def main():
         filters=dict(default={}, type='dict')
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'aws_region_facts':
         module.deprecate("The 'aws_region_facts' module has been renamed to 'aws_region_info'", date='2021-12-01', collection_name='community.aws')
 
