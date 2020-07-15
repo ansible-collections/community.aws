@@ -17,10 +17,12 @@ author: 'Henrique Rodrigues (@Sodki)'
 options:
   filters:
     description:
-      - A dict of filters to apply. Each dict item consists of a filter key and a filter value. See
-        U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRegions.html) for
-        possible filters. Filter names and values are case sensitive. You can also use underscores
-        instead of dashes (-) in the filter keys, which will take precedence in case of conflict.
+      - A dict of filters to apply.
+      - Each dict item consists of a filter key and a filter value.
+      - See U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeRegions.html) for possible filters.
+      - Filter names and values are case sensitive.
+      - You can use underscores instead of dashes (-) in the filter keys.
+      - Filter keys with underscores will take precedence in case of conflict.
     default: {}
     type: dict
 extends_documentation_fragment:
@@ -76,7 +78,11 @@ def main():
     connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
 
     # Replace filter key underscores with dashes, for compatibility
-    sanitized_filters = dict((k.replace('_', '-'), v) for k, v in module.params.get('filters').items())
+    sanitized_filters = dict(module.params.get('filters'))
+    for k in module.params.get('filters').keys():
+        if "_" in k:
+            sanitized_filters[k.replace('_', '-')] = sanitized_filters[k]
+            del sanitized_filters[k]
 
     try:
         regions = connection.describe_regions(
