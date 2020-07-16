@@ -224,7 +224,7 @@
       - result is failed
       - result.msg != "MODULE FAILURE"
       - result.changed == False
-      - '"requires at least one security group and one subnet" in result.msg'
+      - '"parameters are required together" in result.msg'
   - name: test state=present with all nullable variables explicitly set to null
     lambda:
       name: '{{lambda_function_name}}'
