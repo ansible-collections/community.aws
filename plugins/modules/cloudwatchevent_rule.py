@@ -5,7 +5,6 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-
 DOCUMENTATION = r'''
 ---
 module: cloudwatchevent_rule
@@ -157,7 +156,6 @@ except ImportError:
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
-
 class CloudWatchEventRule(object):
     def __init__(self, module, name, client, schedule_expression=None,
                  event_pattern=None, description=None, role_arn=None):
@@ -302,13 +300,27 @@ class CloudWatchEventRule(object):
                     target_request['EcsParameters']['TaskDefinitionArn'] = ecs_parameters['task_definition_arn']
                 if 'task_count' in target['ecs_parameters']:
                     target_request['EcsParameters']['TaskCount'] = ecs_parameters['task_count']
+                if 'launch_type' in target['ecs_parameters']:
+                    target_request['EcsParameters']['LaunchType'] = ecs_parameters['launch_type']
+                if 'network_configuration' in target['ecs_parameters']:
+                    network_configuration = ecs_parameters['network_configuration']
+                    _network_config = {}
+                    if 'awsvpc_configuration' in network_configuration:
+                        _network_config['awsvpcConfiguration'] = {}
+                        if 'assign_public_ip' in network_configuration['awsvpc_configuration']:
+                            _network_config['awsvpcConfiguration']['AssignPublicIp'] = network_configuration['awsvpc_configuration']['assign_public_ip']
+                        if 'security_groups' in network_configuration['awsvpc_configuration']:
+                            _network_config['awsvpcConfiguration']['SecurityGroups'] = network_configuration['awsvpc_configuration']['security_groups']
+                        if 'subnets' in network_configuration['awsvpc_configuration']:
+                            _network_config['awsvpcConfiguration']['Subnets'] = network_configuration['awsvpc_configuration']['subnets']
+                    target_request['EcsParameters']['NetworkConfiguration'] = _network_config
+
             targets_request.append(target_request)
         return targets_request
 
     def _snakify(self, dict):
         """Converts camel case to snake case"""
         return camel_dict_to_snake_dict(dict)
-
 
 class CloudWatchEventRuleManager(object):
     RULE_FIELDS = ['name', 'event_pattern', 'schedule_expression', 'description', 'role_arn']
@@ -420,7 +432,6 @@ class CloudWatchEventRuleManager(object):
             return
         return description['state']
 
-
 def main():
     argument_spec = dict(
         name=dict(required=True),
@@ -454,7 +465,6 @@ def main():
         module.fail_json(msg="Invalid state '{0}' provided".format(state))
 
     module.exit_json(**cwe_rule_manager.fetch_aws_state())
-
 
 if __name__ == '__main__':
     main()
