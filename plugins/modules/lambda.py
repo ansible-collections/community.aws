@@ -258,7 +258,7 @@ def get_account_info(module):
                 module.fail_json_aws(e, msg="getting account information")
             account_id = m.group(4)
             partition = m.group(1)
-        except (BotoCoreError, ClientError) as e:
+        except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="getting account information")
 
     return account_id, partition
