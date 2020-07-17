@@ -518,7 +518,7 @@ def main():
                    default='present'),
         description=dict(),
         role_arn=dict(),
-        targets=dict(type='list', default=[], elements='dict', options=target_options),
+        targets=dict(type='list', default=[], elements='dict', suboptions=target_options),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
