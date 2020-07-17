@@ -103,6 +103,30 @@ options:
           task_count:
             type: int
             description: The number of tasks to create based on I(task_definition).
+          launch_type:
+            type: str
+            description: Either EC2 or FARGATE.
+          network_configuration:
+            type: dict
+            description: Contains network configuration parameters.
+            suboptions:
+              awsvpc_configuration:
+                type: dict
+                description: Specific VPC parameters.
+                suboptions:
+                  assign_public_ip:
+                    type: str
+                    description:
+                      - For FARGATE, values can be either ENABLED or DISABLED.
+                      - For EC2, it can only be DISABLED.
+                  security_groups:
+                    type: list
+                    elements: str
+                    description: List of security groups.
+                  subnets:
+                    type: list
+                    elements: str
+                    description: List of subnets.
     required: false
 '''
 
@@ -128,6 +152,26 @@ EXAMPLES = r'''
 - community.aws.cloudwatchevent_rule:
     name: MyCronTask
     state: absent
+
+- cloudwatchevent_rule:
+    name: run_foo
+    state: enabled
+    schedule_expression: "rate(60 minutes)"
+    targets:
+    - id: run-job-foo
+      arn: arn:aws:ecs:ap-southeast-2:123456789123:cluster/jobs-cluster
+      role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+      ecs_parameters:
+        launch_type: FARGATE
+        network_configuration:
+          awsvpc_configuration:
+            assign_public_ip: ENABLED
+            security_groups:
+            - sg-58519c0e3db6f851
+            subnets:
+            - subnet-0c4b66b1d07e4e0c
+        task_definition_arn: arn:aws:ecs:ap-southeast-2:123456789123:task-definition/task-to-run:1
+        task_count: 1
 '''
 
 RETURN = r'''
