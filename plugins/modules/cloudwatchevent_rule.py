@@ -106,6 +106,7 @@ options:
             description: The number of tasks to create based on I(task_definition).
           launch_type:
             type: str
+            choices: ['EC2', 'FARGATE']
             description: Either EC2 or FARGATE.
           network_configuration:
             type: dict
@@ -117,6 +118,7 @@ options:
                 suboptions:
                   assign_public_ip:
                     type: str
+                    choices: ['ENABLED', 'DISABLED']
                     description:
                       - For FARGATE, values can be either ENABLED or DISABLED.
                       - For EC2, it can only be DISABLED.
