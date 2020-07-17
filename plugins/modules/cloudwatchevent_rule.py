@@ -493,18 +493,26 @@ def main():
         id=dict(type='str', required=True),
         arn=dict(type='str', required=True),
         role_arn=dict(type='str'),
+        input=dict(type='str'),
+        input_path=dict(type='str'),
         ecs_parameters=dict(
             type='dict',
-            launch_type=dict(type='str', choices=['EC2', 'FARGATE']),
-            task_definition_arn=dict(type='str'),
-            task_count=dict(type='int'),
-            network_configuration=dict(
-                type='dict',
-                awsvpc_configuration=dict(
+            options=dict(
+                launch_type=dict(type='str', choices=['EC2', 'FARGATE']),
+                task_definition_arn=dict(type='str'),
+                task_count=dict(type='int'),
+                network_configuration=dict(
                     type='dict',
-                    assign_public_ip=dict(type='str', choices=['ENABLED', 'DISABLED']),
-                    security_groups=dict(type='list', elements='str'),
-                    subnets=dict(type='list', elements='str')
+                    options=dict(
+                        awsvpc_configuration=dict(
+                            type='dict',
+                            options=dict(
+                                assign_public_ip=dict(type='str', choices=['ENABLED', 'DISABLED']),
+                                security_groups=dict(type='list', elements='str'),
+                                subnets=dict(type='list', elements='str')
+                            )
+                        )
+                    )
                 )
             )
         )
@@ -518,7 +526,7 @@ def main():
                    default='present'),
         description=dict(),
         role_arn=dict(),
-        targets=dict(type='list', default=[], elements='dict', suboptions=target_options),
+        targets=dict(type='list', default=[], elements='dict', options=target_options),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
