@@ -108,17 +108,21 @@ options:
             type: str
             choices: ['EC2', 'FARGATE']
             description: Either EC2 or FARGATE.
+            required: false
           network_configuration:
             type: dict
             description: Contains network configuration parameters.
+            required: false
             suboptions:
               awsvpc_configuration:
                 type: dict
                 description: Specific VPC parameters.
+                required: false
                 suboptions:
                   assign_public_ip:
                     type: str
                     choices: ['ENABLED', 'DISABLED']
+                    required: false
                     description:
                       - For FARGATE, values can be either ENABLED or DISABLED.
                       - For EC2, it can only be DISABLED.
@@ -126,10 +130,12 @@ options:
                     type: list
                     elements: str
                     description: List of security groups.
+                    required: false
                   subnets:
                     type: list
                     elements: str
                     description: List of subnets.
+                    required: false
     required: false
 '''
 
@@ -484,8 +490,8 @@ class CloudWatchEventRuleManager(object):
 
 def main():
     target_options = dict(
-        id=dict(type='str'),
-        arn=dict(type='str'),
+        id=dict(type='str', required=True),
+        arn=dict(type='str', required=True),
         role_arn=dict(type='str'),
         ecs_params=dict(
             type='dict',
@@ -495,10 +501,10 @@ def main():
             network_configuration=dict(
                 type='dict',
                 awsvpc_configuration=dict(
-                  type='dict',
-                  assign_public_ip=dict(type='str', choices=['ENABLED', 'DISABLED']),
-                  security_groups=dict(type='list', elements='str'),
-                  subnets=dict(type='list', elements='str')
+                    type='dict',
+                    assign_public_ip=dict(type='str', choices=['ENABLED', 'DISABLED']),
+                    security_groups=dict(type='list', elements='str'),
+                    subnets=dict(type='list', elements='str')
                 )
             )
         )
