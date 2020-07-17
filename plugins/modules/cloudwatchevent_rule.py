@@ -481,6 +481,27 @@ class CloudWatchEventRuleManager(object):
 
 
 def main():
+    target_options = dict(
+        id=dict(type='str'),
+        arn=dict(type='str'),
+        role_arn=dict(type='str'),
+        ecs_params=dict(
+            type='dict',
+            launch_type=dict(type='str', choices=['EC2', 'FARGATE']),
+            task_definition_arn=dict(type='str'),
+            task_count=dict(type='int'),
+            network_configuration=dict(
+                type='dict',
+                awsvpc_configuration=dict(
+                  type='dict',
+                  assign_public_ip=dict(type='str', choices=['ENABLED', 'DISABLED']),
+                  security_groups=dict(type='list', elements='str'),
+                  subnets=dict(type='list', elements='str')
+                )
+            )
+        )
+    )
+
     argument_spec = dict(
         name=dict(required=True),
         schedule_expression=dict(),
@@ -489,7 +510,7 @@ def main():
                    default='present'),
         description=dict(),
         role_arn=dict(),
-        targets=dict(type='list', default=[], elements='dict'),
+        targets=dict(type='list', default=[], elements='dict', options=target_options),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
