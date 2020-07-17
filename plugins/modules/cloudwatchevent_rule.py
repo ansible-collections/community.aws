@@ -493,7 +493,7 @@ def main():
         id=dict(type='str', required=True),
         arn=dict(type='str', required=True),
         role_arn=dict(type='str'),
-        ecs_params=dict(
+        ecs_parameters=dict(
             type='dict',
             launch_type=dict(type='str', choices=['EC2', 'FARGATE']),
             task_definition_arn=dict(type='str'),
