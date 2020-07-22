@@ -67,12 +67,12 @@
             task_definition_arn: arn:aws:ecs:ap-southeast-2:123456789123:task-definition/task-to-run:1
             task_count: 1
 
-    - name: check event rule update
+    - name: check event rule update with invalid launch type
       asserts:
         that:
           - result is not changed
           - result.error.code == "ValidationException"
-          - result.error.message == "1 validation error detected: Value 'INVALID_TYPE' at 'targets.1.member.ecsParameters.launchType' failed to satisfy constraint: Member must satisfy enum value set: [FARGATE, EC2]"
+          - "result.error.message == \"1 validation error detected: Value 'INVALID_TYPE' at 'targets.1.member.ecsParameters.launchType' failed to satisfy constraint: Member must satisfy enum value set: [FARGATE, EC2]\""
 
     - name: update cloudwarch event rule with invalid assign public ip option
       register: result
@@ -97,9 +97,9 @@
             task_definition_arn: arn:aws:ecs:ap-southeast-2:123456789123:task-definition/task-to-run:1
             task_count: 1
 
-    - name: check created event rule
+    - name: check event rule update with invalid assign public ip option
       asserts:
         that:
           - result is not changed
           - result.error.code == "ValidationException"
-          - result.error.message == "1 validation error detected: Value 'INVALID_OPTION' at 'targets.1.member.ecsParameters.networkConfiguration.awsvpcConfiguration.assignPublicIp' failed to satisfy constraint: Member must satisfy enum value set: [ENABLED, DISABLED]"
+          - "result.error.message == \"1 validation error detected: Value 'INVALID_OPTION' at 'targets.1.member.ecsParameters.networkConfiguration.awsvpcConfiguration.assignPublicIp' failed to satisfy constraint: Member must satisfy enum value set: [ENABLED, DISABLED]\""
