@@ -1,0 +1,105 @@
+---
+
+- module_detauls:
+  group/aws:
+    aws_access_key: "{{ aws_access_key }}"
+    aws_secret_key: "{{ aws_secret_key }}"
+    security_token: "{{ security_token | default(omit) }}"
+    region: "{{ aws_region }}"
+
+  block:
+    - name: create cloudwarch event rule for integration test
+      register: result
+      cloudwatchevent_rule:
+        name: run_foo
+        description: 'Run Foo'
+        state: enabled
+        schedule_expression: "rate(60 minutes)"
+        targets:
+        - id: run-job-foo
+          arn: arn:aws:ecs:ap-southeast-2:123456789123:cluster/jobs-cluster
+          role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+          ecs_parameters:
+            launch_type: FARGATE
+            network_configuration:
+              awsvpc_configuration:
+                assign_public_ip: ENABLED
+                security_groups:
+                - sg-58519c0e3db6f851
+                subnets:
+                - subnet-0c4b66b1d07e4e0c
+            task_definition_arn: arn:aws:ecs:ap-southeast-2:123456789123:task-definition/task-to-run:1
+            task_count: 1
+
+    - name: check created event rule
+      asserts:
+        that:
+          - result is changed
+          - result.rule.description == "Run Foo"
+          - result.rule.name == "run_foo"
+          - result.schedule_expression == "rate(60 minutes)"
+          - result.state == "ENABLED"
+          - result.targets[0].arn == "arn:aws:ecs:ap-southeast-2:123456789123:cluster/jobs-cluster"
+          - result.targets[0].id == "run-job-foo"
+          - result.targets[0].ecs_parameters.launch_type == "FARGATE"
+          - result.targets[0].ecs_parameters.network_configuration.awsvpc_configuration.assign_public_ip == "ENABLED"
+
+    - name: update cloudwarch event rule with invalid launch type
+      register: result
+      cloudwatchevent_rule:
+        name: run_foo
+        description: 'Run Foo'
+        state: enabled
+        schedule_expression: "rate(60 minutes)"
+        targets:
+        - id: run-job-foo
+          arn: arn:aws:ecs:ap-southeast-2:123456789123:cluster/jobs-cluster
+          role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+          ecs_parameters:
+            launch_type: INVALID_TYPE
+            network_configuration:
+              awsvpc_configuration:
+                assign_public_ip: ENABLED
+                security_groups:
+                - sg-58519c0e3db6f851
+                subnets:
+                - subnet-0c4b66b1d07e4e0c
+            task_definition_arn: arn:aws:ecs:ap-southeast-2:123456789123:task-definition/task-to-run:1
+            task_count: 1
+
+    - name: check event rule update
+      asserts:
+        that:
+          - result is not changed
+          - result.error.code == "ValidationException"
+          - result.error.message == "1 validation error detected: Value 'INVALID_TYPE' at 'targets.1.member.ecsParameters.launchType' failed to satisfy constraint: Member must satisfy enum value set: [FARGATE, EC2]"
+
+    - name: update cloudwarch event rule with invalid assign public ip option
+      register: result
+      cloudwatchevent_rule:
+        name: run_foo
+        description: 'Run Foo'
+        state: enabled
+        schedule_expression: "rate(60 minutes)"
+        targets:
+        - id: run-job-foo
+          arn: arn:aws:ecs:ap-southeast-2:123456789123:cluster/jobs-cluster
+          role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+          ecs_parameters:
+            launch_type: FARGATE
+            network_configuration:
+              awsvpc_configuration:
+                assign_public_ip: INVALID_OPTION
+                security_groups:
+                - sg-58519c0e3db6f851
+                subnets:
+                - subnet-0c4b66b1d07e4e0c
+            task_definition_arn: arn:aws:ecs:ap-southeast-2:123456789123:task-definition/task-to-run:1
+            task_count: 1
+
+    - name: check created event rule
+      asserts:
+        that:
+          - result is not changed
+          - result.error.code == "ValidationException"
+          - result.error.message == "1 validation error detected: Value 'ENABLEDkk' at 'targets.1.member.ecsParameters.networkConfiguration.awsvpcConfiguration.assignPublicIp' failed to satisfy constraint: Member must satisfy enum value set: [ENABLED, DISABLED]"
