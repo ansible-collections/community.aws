@@ -102,4 +102,4 @@
         that:
           - result is not changed
           - result.error.code == "ValidationException"
-          - result.error.message == "1 validation error detected: Value 'ENABLEDkk' at 'targets.1.member.ecsParameters.networkConfiguration.awsvpcConfiguration.assignPublicIp' failed to satisfy constraint: Member must satisfy enum value set: [ENABLED, DISABLED]"
+          - result.error.message == "1 validation error detected: Value 'INVALID_OPTION' at 'targets.1.member.ecsParameters.networkConfiguration.awsvpcConfiguration.assignPublicIp' failed to satisfy constraint: Member must satisfy enum value set: [ENABLED, DISABLED]"
