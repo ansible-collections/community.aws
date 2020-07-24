@@ -155,6 +155,11 @@ options:
         required: false
         choices: ["EC2", "FARGATE"]
         type: str
+    platform_version:
+        type: str
+        choices: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', 'LATEST']
+        description: Numeric part of platform version or LATEST
+        required: false
     health_check_grace_period_seconds:
         description:
           - Seconds to wait before health checking the freshly added/updated services.
@@ -559,7 +564,8 @@ class EcsServiceManager:
     def create_service(self, service_name, cluster_name, task_definition, load_balancers,
                        desired_count, client_token, role, deployment_configuration,
                        placement_constraints, placement_strategy, health_check_grace_period_seconds,
-                       network_configuration, service_registries, launch_type, scheduling_strategy):
+                       network_configuration, service_registries, launch_type, platform_version,
+                       scheduling_strategy):
 
         params = dict(
             cluster=cluster_name,
@@ -576,6 +582,8 @@ class EcsServiceManager:
             params['networkConfiguration'] = network_configuration
         if launch_type:
             params['launchType'] = launch_type
+        if platform_version:
+            params['platformVersion'] = platform_version
         if self.health_check_setable(params) and health_check_grace_period_seconds is not None:
             params['healthCheckGracePeriodSeconds'] = health_check_grace_period_seconds
         if service_registries:
@@ -683,6 +691,7 @@ def main():
             assign_public_ip=dict(type='bool')
         )),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
+        platform_version=dict(required=False, choices=['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', 'LATEST']),
         service_registries=dict(required=False, type='list', default=[], elements='dict'),
         scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA'])
     )
@@ -802,6 +811,7 @@ def main():
                                                               network_configuration,
                                                               serviceRegistries,
                                                               module.params['launch_type'],
+                                                              module.params['platform_version'],
                                                               module.params['scheduling_strategy']
                                                               )
                     except botocore.exceptions.ClientError as e:
