@@ -109,6 +109,15 @@ options:
             choices: ['EC2', 'FARGATE']
             description: Either EC2 or FARGATE.
             required: false
+          platform_version:
+            type: str
+            choices: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', 'LATEST']
+            description: Numeric part of platform version or LATEST
+            required: false
+          group:
+            type: str
+            description: ECS group name for the task.
+            required: false
           network_configuration:
             type: dict
             description: Contains network configuration parameters.
@@ -172,6 +181,8 @@ EXAMPLES = r'''
       role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
       ecs_parameters:
         launch_type: FARGATE
+        platform_version: LATEST
+        group: web-tasks
         network_configuration:
           awsvpc_configuration:
             assign_public_ip: ENABLED
@@ -356,6 +367,10 @@ class CloudWatchEventRule(object):
                     target_request['EcsParameters']['TaskCount'] = ecs_parameters['task_count']
                 if 'launch_type' in target['ecs_parameters']:
                     target_request['EcsParameters']['LaunchType'] = ecs_parameters['launch_type']
+                if 'platform_version' in target['ecs_parameters']:
+                    target_request['EcsParameters']['PlatformVersion'] = ecs_parameters['platform_version']
+                if 'group' in target['ecs_parameters']:
+                    target_request['EcsParameters']['Group'] = ecs_parameters['group']
                 if 'network_configuration' in target['ecs_parameters']:
                     network_configuration = ecs_parameters['network_configuration']
                     _network_config = {}
@@ -501,6 +516,8 @@ def main():
                 launch_type=dict(type='str', choices=['EC2', 'FARGATE']),
                 task_definition_arn=dict(type='str'),
                 task_count=dict(type='int'),
+                platform_version=dict(type='str', choices=['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', 'LATEST']),
+                group=dict(type='str'),
                 network_configuration=dict(
                     type='dict',
                     options=dict(
