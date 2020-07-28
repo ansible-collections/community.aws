@@ -34,20 +34,20 @@ export PATH="${PWD}/bin:${PATH}"
 export PYTHONIOENCODING='utf-8'
 
 if [ "${JOB_TRIGGERED_BY_NAME:-}" == "nightly-trigger" ]; then
-#    COVERAGE=yes
+    COVERAGE=yes
     COMPLETE=yes
 fi
 
-#if [ -n "${COVERAGE:-}" ]; then
-#    # on-demand coverage reporting triggered by setting the COVERAGE environment variable to a non-empty value
-#    export COVERAGE="--coverage"
-#elif [[ "${COMMIT_MESSAGE}" =~ ci_coverage ]]; then
-#    # on-demand coverage reporting triggered by having 'ci_coverage' in the latest commit message
-#    export COVERAGE="--coverage"
-#else
-#    # on-demand coverage reporting disabled (default behavior, always-on coverage reporting remains enabled)
-#    export COVERAGE="--coverage-check"
-#fi
+if [ -n "${COVERAGE:-}" ]; then
+    # on-demand coverage reporting triggered by setting the COVERAGE environment variable to a non-empty value
+    export COVERAGE="--coverage"
+elif [[ "${COMMIT_MESSAGE}" =~ ci_coverage ]]; then
+    # on-demand coverage reporting triggered by having 'ci_coverage' in the latest commit message
+    export COVERAGE="--coverage"
+else
+    # on-demand coverage reporting disabled (default behavior, always-on coverage reporting remains enabled)
+    export COVERAGE="--coverage-check"
+fi
 
 if [ -n "${COMPLETE:-}" ]; then
     # disable change detection triggered by setting the COMPLETE environment variable to a non-empty value
@@ -74,7 +74,8 @@ set +ux
 set -ux
 
 pip install setuptools==44.1.0
-pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
+
+pip install https://github.com/ansible/ansible/archive/"${A_REV:-devel}".tar.gz --disable-pip-version-check
 
 #ansible-galaxy collection install community.general
 mkdir -p "${HOME}/.ansible/collections/ansible_collections/community"
@@ -87,12 +88,13 @@ git clone https://github.com/ansible-collections/community.general community/gen
 # once community.general is published this will be handled by galaxy cli
 git clone https://github.com/ansible-collections/ansible_collections_google google/cloud
 git clone https://opendev.org/openstack/ansible-collections-openstack openstack/cloud
-ansible-galaxy collection install amazon.aws
+git clone https://github.com/ansible-collections/amazon.aws amazon/aws
 ansible-galaxy collection install ansible.netcommon
 ansible-galaxy collection install community.crypto
 cd "${cwd}"
 
 export ANSIBLE_COLLECTIONS_PATHS="${HOME}/.ansible/"
+SHIPPABLE_RESULT_DIR="$(pwd)/shippable"
 TEST_DIR="${HOME}/.ansible/collections/ansible_collections/community/aws/"
 mkdir -p "${TEST_DIR}"
 cp -aT "${SHIPPABLE_BUILD_DIR}" "${TEST_DIR}"
@@ -110,21 +112,52 @@ function cleanup
             fi
 
             # shellcheck disable=SC2086
-            ansible-test coverage xml --color -v --requirements --group-by command --group-by version ${stub:+"$stub"}
-            cp -a tests/output/reports/coverage=*.xml shippable/codecoverage/
+            ansible-test coverage xml --color --requirements --group-by command --group-by version ${stub:+"$stub"}
+            cp -a tests/output/reports/coverage=*.xml "$SHIPPABLE_RESULT_DIR/codecoverage/"
+
+            # analyze and capture code coverage aggregated by integration test target if not on 2.9, defaults to devel if unset
+            if [ -z "${A_REV:-}" ] || [ "${A_REV:-}" != "stable-2.9" ]; then
+                ansible-test coverage analyze targets generate -v "$SHIPPABLE_RESULT_DIR/testresults/coverage-analyze-targets.json"
+            fi
+
+
+            # upload coverage report to codecov.io only when using complete on-demand coverage
+            if [ "${COVERAGE}" == "--coverage" ] && [ "${CHANGED}" == "" ]; then
+                for file in tests/output/reports/coverage=*.xml; do
+                    flags="${file##*/coverage=}"
+                    flags="${flags%-powershell.xml}"
+                    flags="${flags%.xml}"
+                    # remove numbered component from stub files when converting to tags
+                    flags="${flags//stub-[0-9]*/stub}"
+                    flags="${flags//=/,}"
+                    flags="${flags//[^a-zA-Z0-9_,]/_}"
+
+                    bash <(curl -s https://codecov.io/bash) \
+                        -f "${file}" \
+                        -F "${flags}" \
+                        -n "${test}" \
+                        -t 8a86e979-f37b-4d5d-95a4-960c280d5eaa \
+                        -X coveragepy \
+                        -X gcov \
+                        -X fix \
+                        -X search \
+                        -X xcode \
+                    || echo "Failed to upload code coverage report to codecov.io: ${file}"
+                done
+            fi
         fi
     fi
 
     if [ -d  tests/output/junit/ ]; then
-      cp -aT tests/output/junit/ shippable/testresults/
+      cp -aT tests/output/junit/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
 
     if [ -d tests/output/data/ ]; then
-      cp -a tests/output/data/ shippable/testresults/
+      cp -a tests/output/data/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
 
     if [ -d  tests/output/bot/ ]; then
-      cp -aT tests/output/bot/ shippable/testresults/
+      cp -aT tests/output/bot/ "$SHIPPABLE_RESULT_DIR/testresults/"
     fi
 }
 

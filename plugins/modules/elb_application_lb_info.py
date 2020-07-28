@@ -6,13 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_application_lb_info
+version_added: 1.0.0
 short_description: Gather information about application ELBs in AWS
 description:
     - Gather information about application ELBs in AWS
@@ -25,11 +22,13 @@ options:
       - The Amazon Resource Names (ARN) of the load balancers. You can specify up to 20 load balancers in a single call.
     required: false
     type: list
+    elements: str
   names:
     description:
       - The names of the load balancers.
     required: false
     type: list
+    elements: str
 
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -37,33 +36,33 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather information about all target groups
-- elb_application_lb_info:
+- name: Gather information about all target groups
+  community.aws.elb_application_lb_info:
 
-# Gather information about the target group attached to a particular ELB
-- elb_application_lb_info:
+- name: Gather information about the target group attached to a particular ELB
+  community.aws.elb_application_lb_info:
     load_balancer_arns:
       - "arn:aws:elasticloadbalancing:ap-southeast-2:001122334455:loadbalancer/app/my-elb/aabbccddeeff"
 
-# Gather information about a target groups named 'tg1' and 'tg2'
-- elb_application_lb_info:
+- name: Gather information about a target groups named 'tg1' and 'tg2'
+  community.aws.elb_application_lb_info:
     names:
       - elb1
       - elb2
 
-# Gather information about specific ALB
-- elb_application_lb_info:
+- name: Gather information about specific ALB
+  community.aws.elb_application_lb_info:
     names: "alb-name"
     region: "aws-region"
   register: alb_info
-- debug:
+- ansible.builtin.debug:
     var: alb_info
 '''
 
-RETURN = '''
+RETURN = r'''
 load_balancers:
     description: a list of load balancers
     returned: always
@@ -268,8 +267,8 @@ def main():
     argument_spec = ec2_argument_spec()
     argument_spec.update(
         dict(
-            load_balancer_arns=dict(type='list'),
-            names=dict(type='list')
+            load_balancer_arns=dict(type='list', elements='str'),
+            names=dict(type='list', elements='str')
         )
     )
 
@@ -278,7 +277,8 @@ def main():
                            supports_check_mode=True
                            )
     if module._name == 'elb_application_lb_facts':
-        module.deprecate("The 'elb_application_lb_facts' module has been renamed to 'elb_application_lb_info'", version='2.13')
+        module.deprecate("The 'elb_application_lb_facts' module has been renamed to 'elb_application_lb_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

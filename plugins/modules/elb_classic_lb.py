@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_classic_lb
+version_added: 1.0.0
 description:
   - Returns information about the load balancer.
   - Will be marked changed when called only if state is changed.
@@ -36,6 +32,7 @@ options:
     description:
       - List of ports/protocols for this ELB to listen on (see example)
     type: list
+    elements: dict
   purge_listeners:
     description:
       - Purge existing listeners on ELB that are not found in listeners
@@ -45,6 +42,7 @@ options:
     description:
       - List of instance ids to attach to this ELB
     type: list
+    elements: str
   purge_instance_ids:
     description:
       - Purge existing instance ids on ELB that are not found in instance_ids
@@ -54,6 +52,7 @@ options:
     description:
       - List of availability zones to enable on this ELB
     type: list
+    elements: str
   purge_zones:
     description:
       - Purge existing availability zones on ELB that are not found in zones
@@ -63,10 +62,12 @@ options:
     description:
       - A list of security groups to apply to the elb
     type: list
+    elements: str
   security_group_names:
     description:
       - A list of security group names to apply to the elb
     type: list
+    elements: str
   health_check:
     description:
       - An associative array of health check configuration settings (see example)
@@ -79,6 +80,7 @@ options:
     description:
       - A list of VPC subnets to use when creating ELB. Zones should be empty if using this.
     type: list
+    elements: str
   purge_subnets:
     description:
       - Purge existing subnet on ELB that are not found in subnets
@@ -137,13 +139,13 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
 # Basic provisioning example (non-VPC)
 
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -164,7 +166,7 @@ EXAMPLES = """
 
 # Internal ELB example
 
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-vpc"
     scheme: internal
     state: present
@@ -181,7 +183,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Configure a health check and the access logs
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -205,20 +207,20 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Ensure ELB is gone
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: absent
   delegate_to: localhost
 
 # Ensure ELB is gone and wait for check (for default timeout)
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: absent
     wait: yes
   delegate_to: localhost
 
 # Ensure ELB is gone and wait for check with timeout value
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: absent
     wait: yes
@@ -228,7 +230,7 @@ EXAMPLES = """
 # Normally, this module will purge any listeners that exist on the ELB
 # but aren't specified in the listeners parameter. If purge_listeners is
 # false it leaves them alone
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -244,7 +246,7 @@ EXAMPLES = """
 # Normally, this module will leave availability zones that are enabled
 # on the ELB alone. If purge_zones is true, then any extraneous zones
 # will be removed
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -258,7 +260,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Creates a ELB and assigns a list of subnets to it.
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     state: present
     name: 'New ELB'
     security_group_ids: 'sg-123456, sg-67890'
@@ -273,7 +275,7 @@ EXAMPLES = """
 
 # Create an ELB with connection draining, increased idle timeout and cross availability
 # zone load balancing
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     connection_draining_timeout: 60
@@ -290,7 +292,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Create an ELB with load balancer stickiness enabled
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -308,7 +310,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Create an ELB with application stickiness enabled
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -326,7 +328,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Create an ELB and add tags
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -344,7 +346,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Delete all tags from an ELB
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -1225,16 +1227,16 @@ def main():
     argument_spec.update(dict(
         state={'required': True, 'choices': ['present', 'absent']},
         name={'required': True},
-        listeners={'default': None, 'required': False, 'type': 'list'},
+        listeners={'default': None, 'required': False, 'type': 'list', 'elements': 'dict'},
         purge_listeners={'default': True, 'required': False, 'type': 'bool'},
-        instance_ids={'default': None, 'required': False, 'type': 'list'},
+        instance_ids={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         purge_instance_ids={'default': False, 'required': False, 'type': 'bool'},
-        zones={'default': None, 'required': False, 'type': 'list'},
+        zones={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         purge_zones={'default': False, 'required': False, 'type': 'bool'},
-        security_group_ids={'default': None, 'required': False, 'type': 'list'},
-        security_group_names={'default': None, 'required': False, 'type': 'list'},
+        security_group_ids={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
+        security_group_names={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         health_check={'default': None, 'required': False, 'type': 'dict'},
-        subnets={'default': None, 'required': False, 'type': 'list'},
+        subnets={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         purge_subnets={'default': False, 'required': False, 'type': 'bool'},
         scheme={'default': 'internet-facing', 'required': False, 'choices': ['internal', 'internet-facing']},
         connection_draining_timeout={'default': None, 'required': False, 'type': 'int'},

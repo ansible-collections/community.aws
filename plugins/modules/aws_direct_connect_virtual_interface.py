@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_direct_connect_virtual_interface
+version_added: 1.0.0
 short_description: Manage Direct Connect virtual interfaces
 description:
   - Create, delete, or modify a Direct Connect public or private virtual interface.
@@ -86,7 +83,7 @@ extends_documentation_fragment:
 
 '''
 
-RETURN = '''
+RETURN = r'''
 address_family:
   description: The address family for the BGP peer.
   returned: always
@@ -220,17 +217,17 @@ vlan:
   sample: 100
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 ---
 - name: create an association between a LAG and connection
-  aws_direct_connect_virtual_interface:
+  community.aws.aws_direct_connect_virtual_interface:
     state: present
     name: "{{ name }}"
     link_aggregation_group_id: LAG-XXXXXXXX
     connection_id: dxcon-XXXXXXXX
 
 - name: remove an association between a connection and virtual interface
-  aws_direct_connect_virtual_interface:
+  community.aws.aws_direct_connect_virtual_interface:
     state: absent
     connection_id: dxcon-XXXXXXXX
     virtual_interface_id: dxv-XXXXXXXX
@@ -238,8 +235,8 @@ EXAMPLES = '''
 '''
 
 import traceback
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.direct_connect import DirectConnectError, delete_virtual_interface
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError, delete_virtual_interface
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict
 
 try:
@@ -470,7 +467,7 @@ def main():
         amazon_address=dict(),
         customer_address=dict(),
         address_type=dict(),
-        cidr=dict(type='list'),
+        cidr=dict(type='list', elements='str'),
         virtual_gateway_id=dict(),
         virtual_interface_id=dict()
     )

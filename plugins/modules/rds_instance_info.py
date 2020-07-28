@@ -8,13 +8,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'metadata_version': '1.1'}
-
 DOCUMENTATION = '''
 ---
 module: rds_instance_info
+version_added: 1.0.0
 short_description: obtain information about one or more RDS instances
 description:
   - Obtain information about one or more RDS instances.
@@ -45,13 +42,13 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Get information about an instance
-- rds_instance_info:
+- name: Get information about an instance
+  community.aws.rds_instance_info:
     db_instance_identifier: new-database
   register: new_database_info
 
-# Get all RDS instances
-- rds_instance_info:
+- name: Get all RDS instances
+  community.aws.rds_instance_info:
 '''
 
 RETURN = '''
@@ -347,7 +344,7 @@ instances:
           sample: sg-abcd1234
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_filter_list,
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      AWSRetry,
@@ -400,7 +397,7 @@ def main():
         supports_check_mode=True,
     )
     if module._name == 'rds_instance_facts':
-        module.deprecate("The 'rds_instance_facts' module has been renamed to 'rds_instance_info'", version='2.13')
+        module.deprecate("The 'rds_instance_facts' module has been renamed to 'rds_instance_info'", date='2021-12-01', collection_name='community.aws')
 
     conn = module.client('rds', retry_decorator=AWSRetry.jittered_backoff(retries=10))
 

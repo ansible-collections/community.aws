@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_nacl
 short_description: create and delete Network ACLs.
+version_added: 1.0.0
 description:
   - Read the AWS documentation for Network ACLS
     U(https://docs.aws.amazon.com/AmazonVPC/latest/UserGuide/VPC_ACLs.html)
@@ -43,6 +39,7 @@ options:
       - Each subnet can be specified as subnet ID, or its tagged name.
     required: false
     type: list
+    elements: str
   egress:
     description:
       - A list of rules for outgoing traffic. Each rule must be specified as a list.
@@ -54,6 +51,7 @@ options:
     default: []
     required: false
     type: list
+    elements: list
   ingress:
     description:
       - List of rules for incoming traffic. Each rule must be specified as a list.
@@ -65,6 +63,7 @@ options:
     default: []
     required: false
     type: list
+    elements: list
   tags:
     description:
       - Dictionary of tags to look for and apply when creating a network ACL.
@@ -86,12 +85,12 @@ extends_documentation_fragment:
 requirements: [ botocore, boto3, json ]
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 
 # Complete example to create and delete a network ACL
 # that allows SSH, HTTP and ICMP in, and all traffic out.
 - name: "Create and associate production DMZ network ACL with DMZ subnets"
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: vpc-12345678
     name: prod-dmz-nacl
     region: ap-southeast-2
@@ -111,7 +110,7 @@ EXAMPLES = '''
     state: 'present'
 
 - name: "Remove the ingress and egress rules - defaults to deny all"
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: vpc-12345678
     name: prod-dmz-nacl
     region: ap-southeast-2
@@ -125,24 +124,24 @@ EXAMPLES = '''
     state: present
 
 - name: "Remove the NACL subnet associations and tags"
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: 'vpc-12345678'
     name: prod-dmz-nacl
     region: ap-southeast-2
     state: present
 
 - name: "Delete nacl and subnet associations"
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     vpc_id: vpc-12345678
     name: prod-dmz-nacl
     state: absent
 
 - name: "Delete nacl by its id"
-  ec2_vpc_nacl:
+  community.aws.ec2_vpc_nacl:
     nacl_id: acl-33b4ee5b
     state: absent
 '''
-RETURN = '''
+RETURN = r'''
 task:
   description: The result of the create, or delete action.
   returned: success
@@ -159,7 +158,7 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 # VPC-supported IANA protocol numbers
@@ -606,10 +605,10 @@ def main():
         vpc_id=dict(),
         name=dict(),
         nacl_id=dict(),
-        subnets=dict(required=False, type='list', default=list()),
+        subnets=dict(required=False, type='list', default=list(), elements='str'),
         tags=dict(required=False, type='dict'),
-        ingress=dict(required=False, type='list', default=list()),
-        egress=dict(required=False, type='list', default=list()),
+        ingress=dict(required=False, type='list', default=list(), elements='list'),
+        egress=dict(required=False, type='list', default=list(), elements='list'),
         state=dict(default='present', choices=['present', 'absent']),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec,

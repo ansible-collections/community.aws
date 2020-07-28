@@ -6,14 +6,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = r'''
 ---
 module: aws_secret
+version_added: 1.0.0
 short_description: Manage secrets stored in AWS Secrets Manager.
 description:
     - Create, update, and delete secrets stored in AWS Secrets Manager.
@@ -80,14 +77,14 @@ extends_documentation_fragment:
 
 EXAMPLES = r'''
 - name: Add string to AWS Secrets Manager
-  aws_secret:
+  community.aws.aws_secret:
     name: 'test_secret_string'
     state: present
     secret_type: 'string'
     secret: "{{ super_secret_string }}"
 
 - name: remove string from AWS Secrets Manager
-  aws_secret:
+  community.aws.aws_secret:
     name: 'test_secret_string'
     state: absent
     secret_type: 'string'
@@ -134,7 +131,7 @@ secret:
 '''
 
 from ansible.module_utils._text import to_bytes
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, compare_aws_tags, ansible_dict_to_boto3_tag_list
 

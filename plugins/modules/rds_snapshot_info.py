@@ -8,13 +8,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'metadata_version': '1.1'}
-
 DOCUMENTATION = '''
 ---
 module: rds_snapshot_info
+version_added: 1.0.0
 short_description: obtain information about one or more RDS snapshots
 description:
   - Obtain information about one or more RDS snapshots. These can be for unclustered snapshots or snapshots of clustered DBs (Aurora).
@@ -66,13 +63,13 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Get information about an snapshot
-- rds_snapshot_info:
+- name: Get information about an snapshot
+  community.aws.rds_snapshot_info:
     db_snapshot_identifier: snapshot_name
   register: new_database_info
 
-# Get all RDS snapshots for an RDS instance
-- rds_snapshot_info:
+- name: Get all RDS snapshots for an RDS instance
+  community.aws.rds_snapshot_info:
     db_instance_identifier: helloworld-rds-master
 '''
 
@@ -296,7 +293,7 @@ cluster_snapshots:
       sample: vpc-abcd1234
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, boto3_tag_list_to_ansible_dict, camel_dict_to_snake_dict
 
 try:
@@ -380,7 +377,7 @@ def main():
         mutually_exclusive=[['db_snapshot_identifier', 'db_instance_identifier', 'db_cluster_identifier', 'db_cluster_snapshot_identifier']]
     )
     if module._name == 'rds_snapshot_facts':
-        module.deprecate("The 'rds_snapshot_facts' module has been renamed to 'rds_snapshot_info'", version='2.13')
+        module.deprecate("The 'rds_snapshot_facts' module has been renamed to 'rds_snapshot_info'", date='2021-12-01', collection_name='community.aws')
 
     conn = module.client('rds', retry_decorator=AWSRetry.jittered_backoff(retries=10))
     results = dict()

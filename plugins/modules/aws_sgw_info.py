@@ -7,13 +7,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: aws_sgw_info
+version_added: 1.0.0
 short_description: Fetch AWS Storage Gateway information
 description:
     - Fetch AWS Storage Gateway information
@@ -168,14 +166,14 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: "Get AWS storage gateway information"
-  aws_sgw_info:
+  community.aws.aws_sgw_info:
 
 - name: "Get AWS storage gateway information for region eu-west-3"
-  aws_sgw_info:
+  community.aws.aws_sgw_info:
     region: eu-west-3
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:
@@ -348,7 +346,7 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
     if module._name == 'aws_sgw_facts':
-        module.deprecate("The 'aws_sgw_facts' module has been renamed to 'aws_sgw_info'", version='2.13')
+        module.deprecate("The 'aws_sgw_facts' module has been renamed to 'aws_sgw_info'", date='2021-12-01', collection_name='community.aws')
     client = module.client('storagegateway')
 
     if client is None:  # this should never happen

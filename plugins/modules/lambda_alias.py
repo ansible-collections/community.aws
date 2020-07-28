@@ -6,19 +6,15 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: lambda_alias
+version_added: 1.0.0
 short_description: Creates, updates or deletes AWS Lambda function aliases
 description:
     - This module allows the management of AWS Lambda functions aliases via the Ansible
-      framework.  It is idempotent and supports "Check" mode.    Use module M(lambda) to manage the lambda function
-      itself and M(lambda_event) to manage event source mappings.
+      framework.  It is idempotent and supports "Check" mode.    Use module M(community.aws.lambda) to manage the lambda function
+      itself and M(community.aws.lambda_event) to manage event source mappings.
 
 
 author: Pierre Jodouin (@pjodouin), Ryan Scott Brown (@ryansb)
@@ -90,12 +86,12 @@ EXAMPLES = '''
       name: myLambdaFunction
     register: lambda_info
   - name: show results
-    debug:
+    ansible.builtin.debug:
       msg: "{{ lambda_info['lambda_facts'] }}"
 
 # The following will set the Dev alias to the latest version ($LATEST) since version is omitted (or = 0)
   - name: "alias 'Dev' for function {{ lambda_info.lambda_facts.FunctionName }} "
-    lambda_alias:
+    community.aws.lambda_alias:
       state: "{{ state | default('present') }}"
       function_name: "{{ lambda_info.lambda_facts.FunctionName }}"
       name: Dev
@@ -103,7 +99,7 @@ EXAMPLES = '''
 
 # The QA alias will only be created when a new version is published (i.e. not = '$LATEST')
   - name: "alias 'QA' for function {{ lambda_info.lambda_facts.FunctionName }} "
-    lambda_alias:
+    community.aws.lambda_alias:
       state: "{{ state | default('present') }}"
       function_name: "{{ lambda_info.lambda_facts.FunctionName }}"
       name: QA
@@ -113,7 +109,7 @@ EXAMPLES = '''
 
 # The Prod alias will have a fixed version based on a variable
   - name: "alias 'Prod' for function {{ lambda_info.lambda_facts.FunctionName }} "
-    lambda_alias:
+    community.aws.lambda_alias:
       state: "{{ state | default('present') }}"
       function_name: "{{ lambda_info.lambda_facts.FunctionName }}"
       name: Prod

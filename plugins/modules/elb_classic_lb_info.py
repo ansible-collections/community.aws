@@ -16,14 +16,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_classic_lb_info
+version_added: 1.0.0
 short_description: Gather information about EC2 Elastic Load Balancers in AWS
 description:
     - Gather information about EC2 Elastic Load Balancers in AWS
@@ -36,6 +33,7 @@ options:
     description:
       - List of ELB names to gather information about. Pass this option to gather information about a set of ELBs, otherwise, all ELBs are returned.
     type: list
+    elements: str
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -45,40 +43,40 @@ requirements:
   - boto3
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-# Output format tries to match ec2_elb_lb module input parameters
+# Output format tries to match amazon.aws.ec2_elb_lb module input parameters
 
 # Gather information about all ELBs
-- elb_classic_lb_info:
+- community.aws.elb_classic_lb_info:
   register: elb_info
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
 # Gather information about a particular ELB
-- elb_classic_lb_info:
+- community.aws.elb_classic_lb_info:
     names: frontend-prod-elb
   register: elb_info
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ elb_info.elbs.0.dns_name }}"
 
 # Gather information about a set of ELBs
-- elb_classic_lb_info:
+- community.aws.elb_classic_lb_info:
     names:
     - frontend-prod-elb
     - backend-prod-elb
   register: elb_info
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
 '''
 
-RETURN = '''
+RETURN = r'''
 elbs:
   description: a list of load balancers
   returned: always
@@ -104,7 +102,7 @@ elbs:
         backend_server_description: []
         canonical_hosted_zone_name: test-lb-XXXXXXXXXXXX.us-east-1.elb.amazonaws.com
         canonical_hosted_zone_name_id: XXXXXXXXXXXXXX
-        created_time: 2017-08-23T18:25:03.280000+00:00
+        created_time: '2017-08-23T18:25:03.280000+00:00'
         dns_name: test-lb-XXXXXXXXXXXX.us-east-1.elb.amazonaws.com
         health_check:
           healthy_threshold: 10
@@ -144,7 +142,7 @@ elbs:
         vpc_id: vpc-c248fda4
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     AWSRetry,
     camel_dict_to_snake_dict,
@@ -196,12 +194,12 @@ def lb_instance_health(connection, load_balancer_name, instances, state):
 
 def main():
     argument_spec = dict(
-        names={'default': [], 'type': 'list'}
+        names={'default': [], 'type': 'list', 'elements': 'str'}
     )
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True)
     if module._name == 'elb_classic_lb_facts':
-        module.deprecate("The 'elb_classic_lb_facts' module has been renamed to 'elb_classic_lb_info'", version='2.13')
+        module.deprecate("The 'elb_classic_lb_facts' module has been renamed to 'elb_classic_lb_info'", date='2021-12-01', collection_name='community.aws')
 
     connection = module.client('elb')
 

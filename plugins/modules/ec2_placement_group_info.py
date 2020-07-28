@@ -5,14 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_placement_group_info
+version_added: 1.0.0
 short_description: List EC2 Placement Group(s) details
 description:
     - List details of EC2 Placement Group(s).
@@ -33,27 +30,28 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details or the AWS region,
 # see the AWS Guide for details.
 
-# List all placement groups.
-- ec2_placement_group_info:
+- name: List all placement groups.
+  community.aws.ec2_placement_group_info:
   register: all_ec2_placement_groups
 
-# List two placement groups.
-- ec2_placement_group_info:
+- name: List two placement groups.
+  community.aws.ec2_placement_group_info:
     names:
      - my-cluster
      - my-other-cluster
   register: specific_ec2_placement_groups
 
-- debug: msg="{{ specific_ec2_placement_groups | json_query(\"[?name=='my-cluster']\") }}"
+- ansible.builtin.debug:
+    msg: "{{ specific_ec2_placement_groups | json_query(\"[?name=='my-cluster']\") }}"
 
 '''
 
 
-RETURN = '''
+RETURN = r'''
 placement_groups:
   description: Placement group attributes
   returned: always
@@ -74,7 +72,7 @@ placement_groups:
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 try:
     from botocore.exceptions import (BotoCoreError, ClientError)
 except ImportError:
@@ -109,7 +107,7 @@ def get_placement_groups_details(connection, module):
 
 def main():
     argument_spec = dict(
-        names=dict(type='list', default=[])
+        names=dict(type='list', default=[], elements='str')
     )
 
     module = AnsibleAWSModule(
@@ -117,7 +115,8 @@ def main():
         supports_check_mode=True
     )
     if module._module._name == 'ec2_placement_group_facts':
-        module._module.deprecate("The 'ec2_placement_group_facts' module has been renamed to 'ec2_placement_group_info'", version='2.13')
+        module._module.deprecate("The 'ec2_placement_group_facts' module has been renamed to 'ec2_placement_group_info'",
+                                 date='2021-12-01', collection_name='community.aws')
 
     connection = module.client('ec2')
 

@@ -5,18 +5,15 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_asg
+version_added: 1.0.0
 short_description: Create or delete AWS AutoScaling Groups (ASGs)
 description:
   - Can create or delete AWS AutoScaling Groups.
-  - Can be used with the M(ec2_lc) module to manage Launch Configurations.
+  - Can be used with the M(community.aws.ec2_lc) module to manage Launch Configurations.
 author: "Gareth Rushgrove (@garethr)"
 requirements: [ "boto3", "botocore" ]
 options:
@@ -49,7 +46,7 @@ options:
     elements: str
   launch_config_name:
     description:
-      - Name of the Launch configuration to use for the group. See the M(ec2_lc) module for managing these.
+      - Name of the Launch configuration to use for the group. See the community.aws.ec2_lc) module for managing these.
       - If unspecified then the current group value will be used.  One of I(launch_config_name) or I(launch_template) must be provided.
     type: str
   launch_template:
@@ -244,10 +241,10 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Basic configuration with Launch Configuration
 
-- ec2_asg:
+- community.aws.ec2_asg:
     name: special
     load_balancers: [ 'lb1', 'lb2' ]
     availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
@@ -273,7 +270,7 @@ EXAMPLES = '''
 # will have the current launch configuration.
 
 - name: create launch config
-  ec2_lc:
+  community.aws.ec2_lc:
     name: my_new_lc
     image_id: ami-lkajsf
     key_name: mykey
@@ -282,7 +279,7 @@ EXAMPLES = '''
     instance_type: m1.small
     assign_public_ip: yes
 
-- ec2_asg:
+- community.aws.ec2_asg:
     name: myasg
     launch_config_name: my_new_lc
     health_check_period: 60
@@ -296,7 +293,7 @@ EXAMPLES = '''
 # To only replace a couple of instances instead of all of them, supply a list
 # to "replace_instances":
 
-- ec2_asg:
+- community.aws.ec2_asg:
     name: myasg
     launch_config_name: my_new_lc
     health_check_period: 60
@@ -311,7 +308,7 @@ EXAMPLES = '''
 
 # Basic Configuration with Launch Template
 
-- ec2_asg:
+- community.aws.ec2_asg:
     name: special
     load_balancers: [ 'lb1', 'lb2' ]
     availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
@@ -329,7 +326,7 @@ EXAMPLES = '''
 
 # Basic Configuration with Launch Template using mixed instance policy
 
-- ec2_asg:
+- community.aws.ec2_asg:
     name: special
     load_balancers: [ 'lb1', 'lb2' ]
     availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
@@ -351,7 +348,7 @@ EXAMPLES = '''
         propagate_at_launch: no
 '''
 
-RETURN = '''
+RETURN = r'''
 ---
 auto_scaling_group_name:
     description: The unique name of the auto scaling group
@@ -532,7 +529,7 @@ import time
 import traceback
 
 from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     AWSRetry,
     camel_dict_to_snake_dict
@@ -542,8 +539,6 @@ try:
     import botocore
 except ImportError:
     pass  # will be detected by imported HAS_BOTO3
-
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
 
 ASG_ATTRIBUTES = ('AvailabilityZones', 'DefaultCooldown', 'DesiredCapacity',
                   'HealthCheckGracePeriod', 'HealthCheckType', 'LaunchConfigurationName',
@@ -1681,9 +1676,9 @@ def asg_exists(connection):
 def main():
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        load_balancers=dict(type='list'),
-        target_group_arns=dict(type='list'),
-        availability_zones=dict(type='list'),
+        load_balancers=dict(type='list', elements='str'),
+        target_group_arns=dict(type='list', elements='str'),
+        availability_zones=dict(type='list', elements='str'),
         launch_config_name=dict(type='str'),
         launch_template=dict(
             type='dict',
@@ -1709,20 +1704,20 @@ def main():
         ),
         placement_group=dict(type='str'),
         desired_capacity=dict(type='int'),
-        vpc_zone_identifier=dict(type='list'),
+        vpc_zone_identifier=dict(type='list', elements='str'),
         replace_batch_size=dict(type='int', default=1),
         replace_all_instances=dict(type='bool', default=False),
-        replace_instances=dict(type='list', default=[]),
+        replace_instances=dict(type='list', default=[], elements='str'),
         lc_check=dict(type='bool', default=True),
         lt_check=dict(type='bool', default=True),
         wait_timeout=dict(type='int', default=300),
         state=dict(default='present', choices=['present', 'absent']),
-        tags=dict(type='list', default=[]),
+        tags=dict(type='list', default=[], elements='dict'),
         health_check_period=dict(type='int', default=300),
         health_check_type=dict(default='EC2', choices=['EC2', 'ELB']),
         default_cooldown=dict(type='int', default=300),
         wait_for_instances=dict(type='bool', default=True),
-        termination_policies=dict(type='list', default='Default'),
+        termination_policies=dict(type='list', default='Default', elements='str'),
         notification_topic=dict(type='str', default=None),
         notification_types=dict(
             type='list',
@@ -1731,9 +1726,10 @@ def main():
                 'autoscaling:EC2_INSTANCE_LAUNCH_ERROR',
                 'autoscaling:EC2_INSTANCE_TERMINATE',
                 'autoscaling:EC2_INSTANCE_TERMINATE_ERROR'
-            ]
+            ],
+            elements='str'
         ),
-        suspend_processes=dict(type='list', default=[]),
+        suspend_processes=dict(type='list', default=[], elements='str'),
         metrics_collection=dict(type='bool', default=False),
         metrics_granularity=dict(type='str', default='1Minute'),
         metrics_list=dict(
@@ -1747,7 +1743,8 @@ def main():
                 'GroupStandbyInstances',
                 'GroupTerminatingInstances',
                 'GroupTotalInstances'
-            ]
+            ],
+            elements='str'
         )
     )
 

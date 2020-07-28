@@ -17,13 +17,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: iam_group
+version_added: 1.0.0
 short_description: Manage AWS IAM groups
 description:
   - Manage AWS IAM groups.
@@ -39,7 +37,7 @@ options:
   managed_policies:
     description:
       - A list of managed policy ARNs or friendly names to attach to the role.
-      - To embed an inline policy, use M(iam_policy).
+      - To embed an inline policy, use M(community.aws.iam_policy).
     required: false
     type: list
     elements: str
@@ -76,23 +74,23 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Create a group
-- iam_group:
+- name: Create a group
+  community.aws.iam_group:
     name: testgroup1
     state: present
 
-# Create a group and attach a managed policy using its ARN
-- iam_group:
+- name: Create a group and attach a managed policy using its ARN
+  community.aws.iam_group:
     name: testgroup1
     managed_policies:
       - arn:aws:iam::aws:policy/AmazonSNSFullAccess
     state: present
 
-# Create a group with users as members and attach a managed policy using its ARN
-- iam_group:
+- name: Create a group with users as members and attach a managed policy using its ARN
+  community.aws.iam_group:
     name: testgroup1
     managed_policies:
       - arn:aws:iam::aws:policy/AmazonSNSFullAccess
@@ -101,28 +99,27 @@ EXAMPLES = '''
       - test_user2
     state: present
 
-# Remove all managed policies from an existing group with an empty list
-- iam_group:
+- name: Remove all managed policies from an existing group with an empty list
+  community.aws.iam_group:
     name: testgroup1
     state: present
     purge_policies: true
 
-# Remove all group members from an existing group
-- iam_group:
+- name: Remove all group members from an existing group
+  community.aws.iam_group:
     name: testgroup1
     managed_policies:
       - arn:aws:iam::aws:policy/AmazonSNSFullAccess
     purge_users: true
     state: present
 
-
-# Delete the group
-- iam_group:
+- name: Delete the group
+  community.aws.iam_group:
     name: testgroup1
     state: absent
 
 '''
-RETURN = '''
+RETURN = r'''
 iam_group:
     description: dictionary containing all the group information including group membership
     returned: success
@@ -180,7 +177,7 @@ iam_group:
                     sample: /
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
@@ -413,8 +410,8 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True),
-        managed_policies=dict(default=[], type='list', aliases=['managed_policy']),
-        users=dict(default=[], type='list'),
+        managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
+        users=dict(default=[], type='list', elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_users=dict(default=False, type='bool'),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies'])

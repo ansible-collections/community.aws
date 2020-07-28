@@ -6,16 +6,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_snapshot_copy
+version_added: 1.0.0
 short_description: Copies an EC2 snapshot and returns the new Snapshot ID.
 description:
     - Copies an EC2 Snapshot from a source region to a destination region.
@@ -67,14 +62,14 @@ requirements:
 '''
 
 EXAMPLES = '''
-# Basic Snapshot Copy
-- ec2_snapshot_copy:
+- name: Basic Snapshot Copy
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
 
-# Copy Snapshot and wait until available
-- ec2_snapshot_copy:
+- name: Copy Snapshot and wait until available
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
@@ -82,23 +77,23 @@ EXAMPLES = '''
     wait_timeout: 1200   # Default timeout is 600
   register: snapshot_id
 
-# Tagged Snapshot copy
-- ec2_snapshot_copy:
+- name: Tagged Snapshot copy
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
     tags:
         Name: Snapshot-Name
 
-# Encrypted Snapshot copy
-- ec2_snapshot_copy:
+- name: Encrypted Snapshot copy
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
     encrypted: yes
 
-# Encrypted Snapshot copy with specified key
-- ec2_snapshot_copy:
+- name: Encrypted Snapshot copy with specified key
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx

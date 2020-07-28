@@ -17,14 +17,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: iam_cert
+version_added: 1.0.0
 short_description: Manage server certificates for use on ELBs and CloudFront
 description:
      - Allows for the management of server certificates.
@@ -87,24 +84,24 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Basic server certificate upload from local file
-- iam_cert:
+- name: Basic server certificate upload from local file
+  community.aws.iam_cert:
     name: very_ssl
     state: present
     cert: "{{ lookup('file', 'path/to/cert') }}"
     key: "{{ lookup('file', 'path/to/key') }}"
     cert_chain: "{{ lookup('file', 'path/to/certchain') }}"
 
-# Basic server certificate upload
-- iam_cert:
+- name: Basic server certificate upload
+  community.aws.iam_cert:
     name: very_ssl
     state: present
     cert: path/to/cert
     key: path/to/key
     cert_chain: path/to/certchain
 
-# Server certificate upload using key string
-- iam_cert:
+- name: Server certificate upload using key string
+  community.aws.iam_cert:
     name: very_ssl
     state: present
     path: "/a/cert/path/"
@@ -112,8 +109,8 @@ EXAMPLES = '''
     key: vault_body_of_privcertkey
     cert_chain: body_of_myverytrustedchain
 
-# Basic rename of existing certificate
-- iam_cert:
+- name: Basic rename of existing certificate
+  community.aws.iam_cert:
     name: very_ssl
     new_name: new_very_ssl
     state: present

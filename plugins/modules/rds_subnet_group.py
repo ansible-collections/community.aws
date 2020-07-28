@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: rds_subnet_group
+version_added: 1.0.0
 short_description: manage RDS database subnet groups
 description:
      - Creates, modifies, and deletes RDS database subnet groups. This module has a dependency on python-boto >= 2.5.
@@ -39,6 +35,7 @@ options:
       - List of subnet IDs that make up the database subnet group.
       - Required when I(state=present).
     type: list
+    elements: str
 author: "Scott Anderson (@tastychutney)"
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -46,9 +43,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# Add or change a subnet group
-- rds_subnet_group:
+EXAMPLES = r'''
+- name: Add or change a subnet group
+  community.aws.rds_subnet_group:
     state: present
     name: norwegian-blue
     description: My Fancy Ex Parrot Subnet Group
@@ -56,13 +53,13 @@ EXAMPLES = '''
       - subnet-aaaaaaaa
       - subnet-bbbbbbbb
 
-# Remove a subnet group
-- rds_subnet_group:
+- name: Remove a subnet group
+  community.aws.rds_subnet_group:
     state: absent
     name: norwegian-blue
 '''
 
-RETURN = '''
+RETURN = r'''
 subnet_group:
     description: Dictionary of DB subnet group values
     returned: I(state=present)
@@ -129,7 +126,7 @@ def main():
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(required=True),
         description=dict(required=False),
-        subnets=dict(required=False, type='list'),
+        subnets=dict(required=False, type='list', elements='str'),
     )
     )
     module = AnsibleModule(argument_spec=argument_spec)

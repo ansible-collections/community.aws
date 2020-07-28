@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: iam_password_policy
+version_added: 1.0.0
 short_description: Update an IAM Password Policy
 description:
     - Module updates an IAM Password Policy on a given AWS account
@@ -87,7 +83,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Password policy for AWS account
-  iam_password_policy:
+  community.aws.iam_password_policy:
     state: present
     min_pw_length: 8
     require_symbols: false
@@ -107,7 +103,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 

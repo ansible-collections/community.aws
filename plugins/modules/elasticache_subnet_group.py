@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elasticache_subnet_group
+version_added: 1.0.0
 short_description: manage ElastiCache subnet groups
 description:
      - Creates, modifies, and deletes ElastiCache subnet groups. This module has a dependency on python-boto >= 2.5.
@@ -45,9 +41,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# Add or change a subnet group
-- elasticache_subnet_group:
+EXAMPLES = r'''
+- name: Add or change a subnet group
+  community.aws.elasticache_subnet_group:
     state: present
     name: norwegian-blue
     description: My Fancy Ex Parrot Subnet Group
@@ -55,8 +51,8 @@ EXAMPLES = '''
       - subnet-aaaaaaaa
       - subnet-bbbbbbbb
 
-# Remove a subnet group
-- elasticache_subnet_group:
+- name: Remove a subnet group
+  community.aws.elasticache_subnet_group:
     state: absent
     name: norwegian-blue
 '''
@@ -80,7 +76,7 @@ def main():
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(required=True),
         description=dict(required=False),
-        subnets=dict(required=False, type='list'),
+        subnets=dict(required=False, type='list', elements='str'),
     )
     )
     module = AnsibleModule(argument_spec=argument_spec)

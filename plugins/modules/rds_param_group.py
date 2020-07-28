@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: rds_param_group
+version_added: 1.0.0
 short_description: manage RDS parameter groups
 description:
      - Creates, modifies, and deletes RDS parameter groups.
@@ -59,7 +55,7 @@ options:
     type: dict
   purge_tags:
     description:
-      - Whether or not to remove tags that do not appear in the M(tags) list.
+      - Whether or not to remove tags that do not appear in the C(tags) list.
     type: bool
     default: False
 author:
@@ -72,8 +68,8 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Add or change a parameter group, in this case setting auto_increment_increment to 42 * 1024
-- rds_param_group:
+- name: Add or change a parameter group, in this case setting auto_increment_increment to 42 * 1024
+  community.aws.rds_param_group:
       state: present
       name: norwegian-blue
       description: 'My Fancy Ex Parrot Group'
@@ -84,8 +80,8 @@ EXAMPLES = '''
           Environment: production
           Application: parrot
 
-# Remove a parameter group
-- rds_param_group:
+- name: Remove a parameter group
+  community.aws.rds_param_group:
       state: absent
       name: norwegian-blue
 '''

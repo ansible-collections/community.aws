@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: iam_server_certificate_info
+version_added: 1.0.0
 short_description: Retrieve the information of a server certificate
 description:
   - Retrieve the attributes of a server certificate.
@@ -32,13 +28,13 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Retrieve server certificate
-- iam_server_certificate_info:
+- name: Retrieve server certificate
+  community.aws.iam_server_certificate_info:
     name: production-cert
   register: server_cert
 
-# Fail if the server certificate name was not found
-- iam_server_certificate_info:
+- name: Fail if the server certificate name was not found
+  community.aws.iam_server_certificate_info:
     name: production-cert
   register: server_cert
   failed_when: "{{ server_cert.results | length == 0 }}"
@@ -152,7 +148,8 @@ def main():
 
     module = AnsibleModule(argument_spec=argument_spec,)
     if module._name == 'iam_server_certificate_facts':
-        module.deprecate("The 'iam_server_certificate_facts' module has been renamed to 'iam_server_certificate_info'", version='2.13')
+        module.deprecate("The 'iam_server_certificate_facts' module has been renamed to 'iam_server_certificate_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

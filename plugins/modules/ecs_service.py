@@ -6,14 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ecs_service
+version_added: 1.0.0
 short_description: Create, terminate, start or stop a service in ECS
 description:
   - Creates or terminates ECS. services.
@@ -108,10 +104,17 @@ options:
     placement_constraints:
         description:
           - The placement constraints for the tasks in the service.
+          - See U(https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PlacementConstraint.html) for more details.
         required: false
         type: list
         elements: dict
         suboptions:
+          type:
+            description: The type of constraint.
+            type: str
+          expression:
+            description: A cluster query language expression to apply to the constraint.
+            type: str
     placement_strategy:
         description:
           - The placement strategy objects to use for tasks in your service. You can specify a maximum of 5 strategy rules per service.
@@ -189,11 +192,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Basic provisioning example
-- ecs_service:
+- community.aws.ecs_service:
     state: present
     name: console-test-service
     cluster: new_cluster
@@ -201,7 +204,7 @@ EXAMPLES = '''
     desired_count: 0
 
 - name: create ECS service on VPC network
-  ecs_service:
+  community.aws.ecs_service:
     state: present
     name: console-test-service
     cluster: new_cluster
@@ -215,13 +218,13 @@ EXAMPLES = '''
       - my_security_group
 
 # Simple example to delete
-- ecs_service:
+- community.aws.ecs_service:
     name: default
     state: absent
     cluster: new_cluster
 
 # With custom deployment configuration (added in version 2.3), placement constraints and strategy (added in version 2.4)
-- ecs_service:
+- community.aws.ecs_service:
     state: present
     name: test-service
     cluster: test-cluster
@@ -238,7 +241,7 @@ EXAMPLES = '''
         field: memory
 '''
 
-RETURN = '''
+RETURN = r'''
 service:
     description: Details of created service.
     returned: when creating a service
@@ -473,7 +476,7 @@ DEPLOYMENT_CONFIGURATION_TYPE_MAP = {
     'minimum_healthy_percent': 'int'
 }
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict, map_complex_type, get_ec2_security_group_ids_from_names
 
 try:
@@ -645,7 +648,7 @@ def main():
         name=dict(required=True, type='str'),
         cluster=dict(required=False, type='str'),
         task_definition=dict(required=False, type='str'),
-        load_balancers=dict(required=False, default=[], type='list'),
+        load_balancers=dict(required=False, default=[], type='list', elements='str'),
         desired_count=dict(required=False, type='int'),
         client_token=dict(required=False, default='', type='str'),
         role=dict(required=False, default='', type='str'),
@@ -653,16 +656,34 @@ def main():
         repeat=dict(required=False, type='int', default=10),
         force_new_deployment=dict(required=False, default=False, type='bool'),
         deployment_configuration=dict(required=False, default={}, type='dict'),
-        placement_constraints=dict(required=False, default=[], type='list'),
-        placement_strategy=dict(required=False, default=[], type='list'),
+        placement_constraints=dict(
+            required=False,
+            default=[],
+            type='list',
+            elements='dict',
+            options=dict(
+                type=dict(type='str'),
+                expression=dict(type='str')
+            )
+        ),
+        placement_strategy=dict(
+            required=False,
+            default=[],
+            type='list',
+            elements='dict',
+            options=dict(
+                type=dict(type='str'),
+                field=dict(type='str'),
+            )
+        ),
         health_check_grace_period_seconds=dict(required=False, type='int'),
         network_configuration=dict(required=False, type='dict', options=dict(
-            subnets=dict(type='list'),
-            security_groups=dict(type='list'),
+            subnets=dict(type='list', elements='str'),
+            security_groups=dict(type='list', elements='str'),
             assign_public_ip=dict(type='bool')
         )),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
-        service_registries=dict(required=False, type='list', default=[]),
+        service_registries=dict(required=False, type='list', default=[], elements='dict'),
         scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA'])
     )
 

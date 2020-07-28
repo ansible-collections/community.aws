@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: aws_config_delivery_channel
+version_added: 1.0.0
 short_description: Manage AWS Config delivery channels
 description:
     - This module manages AWS Config delivery locations for rule checks and configuration info.
@@ -59,7 +55,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Create Delivery Channel for AWS Config
-  aws_config_delivery_channel:
+  community.aws.aws_config_delivery_channel:
     name: test_delivery_channel
     state: present
     s3_bucket: 'test_aws_config_bucket'
@@ -76,7 +72,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, AWSRetry
 
 

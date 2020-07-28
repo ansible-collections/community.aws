@@ -5,13 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 module: aws_waf_info
 short_description: Retrieve information for WAF ACLs, Rule , Conditions and Filters.
+version_added: 1.0.0
 description:
   - Retrieve information for WAF ACLs, Rule , Conditions and Filters.
   - This module was called C(aws_waf_facts) before Ansible 2.9. The usage did not change.
@@ -38,14 +36,14 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: obtain all WAF information
-  aws_waf_info:
+  community.aws.aws_waf_info:
 
 - name: obtain all information for a single WAF
-  aws_waf_info:
+  community.aws.aws_waf_info:
     name: test_waf
 
 - name: obtain all information for a single WAF Regional
-  aws_waf_info:
+  community.aws.aws_waf_info:
     name: test_waf
     waf_regional: true
 '''
@@ -118,8 +116,8 @@ wafs:
             ]
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.waf import list_web_acls, get_web_acl
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.waf import list_web_acls, get_web_acl
 
 
 def main():
@@ -129,7 +127,7 @@ def main():
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'aws_waf_facts':
-        module.deprecate("The 'aws_waf_facts' module has been renamed to 'aws_waf_info'", version='2.13')
+        module.deprecate("The 'aws_waf_facts' module has been renamed to 'aws_waf_info'", date='2021-12-01', collection_name='community.aws')
 
     resource = 'waf' if not module.params['waf_regional'] else 'waf-regional'
     client = module.client(resource)

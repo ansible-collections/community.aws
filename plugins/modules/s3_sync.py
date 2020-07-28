@@ -17,14 +17,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: s3_sync
+version_added: 1.0.0
 short_description: Efficiently upload multiple files to S3
 description:
      - The S3 module is great, but it is very slow for a large volume of files- even a dozen will be noticeable. In addition to speed, it handles globbing,
@@ -113,7 +110,7 @@ options:
     type: bool
   retries:
     description:
-      - The I(retries) option does nothing and will be removed in Ansible 2.14.
+      - The I(retries) option does nothing and will be removed after 2022-06-01
     type: str
 
 requirements:
@@ -130,12 +127,12 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: basic upload
-  s3_sync:
+  community.aws.s3_sync:
     bucket: tedder
     file_root: roles/s3/files/
 
 - name: all the options
-  s3_sync:
+  community.aws.s3_sync:
     bucket: tedder
     file_root: roles/s3/files
     mime_map:
@@ -516,7 +513,7 @@ def main():
         file_root=dict(required=True, type='path'),
         permission=dict(required=False, choices=['private', 'public-read', 'public-read-write', 'authenticated-read',
                                                  'aws-exec-read', 'bucket-owner-read', 'bucket-owner-full-control']),
-        retries=dict(required=False, removed_in_version='2.14'),
+        retries=dict(required=False, removed_at_date='2022-06-01', removed_from_collection='community.aws'),
         mime_map=dict(required=False, type='dict'),
         exclude=dict(required=False, default=".*"),
         include=dict(required=False, default="*"),

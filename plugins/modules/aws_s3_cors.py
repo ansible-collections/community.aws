@@ -6,13 +6,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_s3_cors
+version_added: 1.0.0
 short_description: Manage CORS for S3 buckets in AWS
 description:
     - Manage CORS for S3 buckets in AWS
@@ -27,6 +25,7 @@ options:
     description:
       - Cors rules to put on the s3 bucket
     type: list
+    elements: str
   state:
     description:
       - Create or remove cors on the s3 bucket
@@ -39,11 +38,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create a simple cors for s3 bucket
-- aws_s3_cors:
+- community.aws.aws_s3_cors:
     name: mys3bucket
     state: present
     rules:
@@ -60,12 +59,12 @@ EXAMPLES = '''
         max_age_seconds: 30000
 
 # Remove cors for s3 bucket
-- aws_s3_cors:
+- community.aws.aws_s3_cors:
     name: mys3bucket
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 changed:
   description: check to see if a change was made to the rules
   returned: always
@@ -101,7 +100,7 @@ try:
 except Exception:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict, compare_policies
 
 
@@ -148,7 +147,7 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        rules=dict(type='list'),
+        rules=dict(type='list', elements='str'),
         state=dict(type='str', choices=['present', 'absent'], required=True)
     )
 

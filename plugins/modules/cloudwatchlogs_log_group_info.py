@@ -6,13 +6,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: cloudwatchlogs_log_group_info
+version_added: 1.0.0
 short_description: Get information about log_group in CloudWatchLogs
 description:
     - Lists the specified log groups. You can list all your log groups or filter the results by prefix.
@@ -33,7 +31,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-- cloudwatchlogs_log_group_info:
+- community.aws.cloudwatchlogs_log_group_info:
     log_group_name: test-log-group
 '''
 
@@ -113,7 +111,8 @@ def main():
 
     module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'cloudwatchlogs_log_group_facts':
-        module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'", version='2.13')
+        module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 is required.')

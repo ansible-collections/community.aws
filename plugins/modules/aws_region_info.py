@@ -5,15 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'supported_by': 'community',
-    'status': ['preview']
-}
 
 DOCUMENTATION = '''
 module: aws_region_info
 short_description: Gather information about AWS regions.
+version_added: 1.0.0
 description:
     - Gather information about AWS regions.
     - This module was called C(aws_region_facts) before Ansible 2.9. The usage did not change.
@@ -38,10 +34,10 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Gather information about all regions
-- aws_region_info:
+- community.aws.aws_region_info:
 
 # Gather information about a single region
-- aws_region_info:
+- community.aws.aws_region_info:
     filters:
       region-name: eu-west-1
 '''
@@ -59,7 +55,7 @@ regions:
     }]"
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, ansible_dict_to_boto3_filter_list, camel_dict_to_snake_dict
 
 try:
@@ -75,7 +71,7 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
     if module._name == 'aws_region_facts':
-        module.deprecate("The 'aws_region_facts' module has been renamed to 'aws_region_info'", version='2.13')
+        module.deprecate("The 'aws_region_facts' module has been renamed to 'aws_region_info'", date='2021-12-01', collection_name='community.aws')
 
     connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
 

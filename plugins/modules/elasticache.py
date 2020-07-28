@@ -7,14 +7,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elasticache
+version_added: 1.0.0
 short_description: Manage cache clusters in Amazon ElastiCache
 description:
   - Manage cache clusters in Amazon ElastiCache.
@@ -101,12 +97,12 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
-# Basic example
-- elasticache:
+- name: Basic example
+  community.aws.elasticache:
     name: "test-please-delete"
     state: present
     engine: memcached
@@ -119,13 +115,13 @@ EXAMPLES = """
     zone: us-east-1d
 
 
-# Ensure cache cluster is gone
-- elasticache:
+- name: Ensure cache cluster is gone
+  community.aws.elasticache:
     name: "test-please-delete"
     state: absent
 
-# Reboot cache cluster
-- elasticache:
+- name: Reboot cache cluster
+  community.aws.elasticache:
     name: "test-please-delete"
     state: rebooted
 
@@ -502,8 +498,8 @@ def main():
         cache_parameter_group=dict(default="", aliases=['parameter_group']),
         cache_port=dict(type='int'),
         cache_subnet_group=dict(default=""),
-        cache_security_groups=dict(default=[], type='list'),
-        security_group_ids=dict(default=[], type='list'),
+        cache_security_groups=dict(default=[], type='list', elements='str'),
+        security_group_ids=dict(default=[], type='list', elements='str'),
         zone=dict(),
         wait=dict(default=True, type='bool'),
         hard_modify=dict(type='bool')

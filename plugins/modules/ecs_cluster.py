@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ecs_cluster
+version_added: 1.0.0
 short_description: Create or terminate ECS clusters.
 notes:
     - When deleting a cluster, the information returned is the state of the cluster prior to deletion.
@@ -55,18 +51,18 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Cluster creation
-- ecs_cluster:
+- name: Cluster creation
+  community.aws.ecs_cluster:
     name: default
     state: present
 
-# Cluster deletion
-- ecs_cluster:
+- name: Cluster deletion
+  community.aws.ecs_cluster:
     name: default
     state: absent
 
 - name: Wait for register
-  ecs_cluster:
+  community.aws.ecs_cluster:
     name: "{{ new_cluster }}"
     state: has_instances
     delay: 10

@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: elasticache_snapshot
+version_added: 1.0.0
 short_description: Manage cache snapshots in Amazon ElastiCache
 description:
   - Manage cache snapshots in Amazon ElastiCache.
@@ -57,16 +53,13 @@ options:
 EXAMPLES = """
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
----
-- hosts: localhost
-  connection: local
-  tasks:
-    - name: 'Create a snapshot'
-      elasticache_snapshot:
-        name: 'test-snapshot'
-        state: 'present'
-        cluster_id: '{{ cluster }}'
-        replication_id: '{{ replication }}'
+
+- name: 'Create a snapshot'
+  community.aws.elasticache_snapshot:
+    name: 'test-snapshot'
+    state: 'present'
+    cluster_id: '{{ cluster }}'
+    replication_id: '{{ replication }}'
 """
 
 RETURN = """
@@ -78,7 +71,7 @@ response_metadata:
     http_headers:
       content-length: 1490
       content-type: text/xml
-      date: Tue, 07 Feb 2017 16:43:04 GMT
+      date: 'Tue, 07 Feb 2017 16:43:04 GMT'
       x-amzn-requestid: 7f436dea-ed54-11e6-a04c-ab2372a1f14d
     http_status_code: 200
     request_id: 7f436dea-ed54-11e6-a04c-ab2372a1f14d
@@ -89,7 +82,7 @@ snapshot:
   type: dict
   sample:
     auto_minor_version_upgrade: true
-    cache_cluster_create_time: 2017-02-01T17:43:58.261000+00:00
+    cache_cluster_create_time: '2017-02-01T17:43:58.261000+00:00'
     cache_cluster_id: test-please-delete
     cache_node_type: cache.m1.small
     cache_parameter_group_name: default.redis3.2
@@ -97,7 +90,7 @@ snapshot:
     engine: redis
     engine_version: 3.2.4
     node_snapshots:
-      cache_node_create_time: 2017-02-01T17:43:58.261000+00:00
+      cache_node_create_time: '2017-02-01T17:43:58.261000+00:00'
       cache_node_id: 0001
       cache_size:
     num_cache_nodes: 1

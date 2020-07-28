@@ -6,13 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_instance_info
+version_added: 1.0.0
 short_description: Gather information about ec2 instances in AWS
 description:
     - Gather information about ec2 instances in AWS
@@ -27,6 +24,7 @@ options:
       - If you specify one or more instance IDs, only instances that have the specified IDs are returned.
     required: false
     type: list
+    elements: str
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value. See
@@ -42,35 +40,35 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather information about all instances
-- ec2_instance_info:
+- name: Gather information about all instances
+  community.aws.ec2_instance_info:
 
-# Gather information about all instances in AZ ap-southeast-2a
-- ec2_instance_info:
+- name: Gather information about all instances in AZ ap-southeast-2a
+  community.aws.ec2_instance_info:
     filters:
       availability-zone: ap-southeast-2a
 
-# Gather information about a particular instance using ID
-- ec2_instance_info:
+- name: Gather information about a particular instance using ID
+  community.aws.ec2_instance_info:
     instance_ids:
       - i-12345678
 
-# Gather information about any instance with a tag key Name and value Example
-- ec2_instance_info:
+- name: Gather information about any instance with a tag key Name and value Example
+  community.aws.ec2_instance_info:
     filters:
       "tag:Name": Example
 
-# Gather information about any instance in states "shutting-down", "stopping", "stopped"
-- ec2_instance_info:
+- name: Gather information about any instance in states "shutting-down", "stopping", "stopped"
+  community.aws.ec2_instance_info:
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
 
 '''
 
-RETURN = '''
+RETURN = r'''
 instances:
     description: a list of ec2 instances
     returned: always
@@ -544,7 +542,7 @@ def main():
     argument_spec = ec2_argument_spec()
     argument_spec.update(
         dict(
-            instance_ids=dict(default=[], type='list'),
+            instance_ids=dict(default=[], type='list', elements='str'),
             filters=dict(default={}, type='dict')
         )
     )
@@ -556,7 +554,7 @@ def main():
                            supports_check_mode=True
                            )
     if module._name == 'ec2_instance_facts':
-        module.deprecate("The 'ec2_instance_facts' module has been renamed to 'ec2_instance_info'", version='2.13')
+        module.deprecate("The 'ec2_instance_facts' module has been renamed to 'ec2_instance_info'", date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

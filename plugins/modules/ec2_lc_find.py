@@ -8,14 +8,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ec2_lc_find
+version_added: 1.0.0
 short_description: Find AWS Autoscaling Launch Configurations
 description:
   - Returns list of matching Launch Configurations for a given name, along with other useful information.
@@ -54,8 +50,8 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Search for the Launch Configurations that start with "app"
-- ec2_lc_find:
+- name: Search for the Launch Configurations that start with "app"
+  community.aws.ec2_lc_find:
     name_regex: app.*
     sort_order: descending
     limit: 2

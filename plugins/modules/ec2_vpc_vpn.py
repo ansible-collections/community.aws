@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_vpc_vpn
+version_added: 1.0.0
 short_description: Create, modify, and delete EC2 VPN connections.
 description:
   - This module creates, modifies, and deletes VPN connections. Idempotence is achieved by using the filters
@@ -144,18 +141,18 @@ options:
     default: 15
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
 - name: create a VPN connection
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     vpn_gateway_id: vgw-XXXXXXXX
     customer_gateway_id: cgw-XXXXXXXX
 
 - name: modify VPN connection tags
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     vpn_connection_id: vpn-XXXXXXXX
     tags:
@@ -163,12 +160,12 @@ EXAMPLES = """
       Other: ansible-tag-2
 
 - name: delete a connection
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     vpn_connection_id: vpn-XXXXXXXX
     state: absent
 
 - name: modify VPN tags (identifying VPN by filters)
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     filters:
       cidr: 194.168.1.0/24
@@ -181,7 +178,7 @@ EXAMPLES = """
     static_only: true
 
 - name: set up VPN with tunnel options utilizing 'TunnelInsideCidr' only
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     filters:
       vpn: vpn-XXXXXXXX
@@ -193,7 +190,7 @@ EXAMPLES = """
         TunnelInsideCidr: '169.254.100.5/30'
 
 - name: add routes and remove any preexisting ones
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     filters:
       vpn: vpn-XXXXXXXX
@@ -203,21 +200,21 @@ EXAMPLES = """
     purge_routes: true
 
 - name: remove all routes
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     vpn_connection_id: vpn-XXXXXXXX
     routes: []
     purge_routes: true
 
 - name: delete a VPN identified by filters
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: absent
     filters:
       tags:
         Ansible: Tag
 """
 
-RETURN = """
+RETURN = r"""
 changed:
   description: If the VPN connection has changed.
   type: bool
@@ -288,7 +285,7 @@ vgw_telemetry:
     vgw_telemetry: [{
                      'outside_ip_address': 'string',
                      'status': 'up',
-                     'last_status_change': datetime(2015, 1, 1),
+                     'last_status_change': 'datetime(2015, 1, 1)',
                      'status_message': 'string',
                      'accepted_route_count': 123
                     }]
@@ -300,7 +297,7 @@ vpn_connection_id:
     vpn_connection_id: vpn-781e0e19
 """
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible.module_utils._text import to_text
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     camel_dict_to_snake_dict,
@@ -745,12 +742,12 @@ def main():
         vpn_gateway_id=dict(type='str'),
         tags=dict(default={}, type='dict'),
         connection_type=dict(default='ipsec.1', type='str'),
-        tunnel_options=dict(no_log=True, type='list', default=[]),
+        tunnel_options=dict(no_log=True, type='list', default=[], elements='dict'),
         static_only=dict(default=False, type='bool'),
         customer_gateway_id=dict(type='str'),
         vpn_connection_id=dict(type='str'),
         purge_tags=dict(type='bool', default=False),
-        routes=dict(type='list', default=[]),
+        routes=dict(type='list', default=[], elements='str'),
         purge_routes=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=600),
         delay=dict(type='int', default=15),

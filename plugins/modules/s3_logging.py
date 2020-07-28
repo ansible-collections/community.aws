@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: s3_logging
+version_added: 1.0.0
 short_description: Manage logging facility of an s3 bucket in AWS
 description:
     - Manage logging facility of an s3 bucket in AWS
@@ -49,14 +45,14 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Enable logging of s3 bucket mywebsite.com to s3 bucket mylogs
-  s3_logging:
+  community.aws.s3_logging:
     name: mywebsite.com
     target_bucket: mylogs
     target_prefix: logs/mywebsite.com
     state: present
 
 - name: Remove logging on an s3 bucket
-  s3_logging:
+  community.aws.s3_logging:
     name: mywebsite.com
     state: absent
 

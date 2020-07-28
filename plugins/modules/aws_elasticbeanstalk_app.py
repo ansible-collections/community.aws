@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'
-                    }
 
 DOCUMENTATION = '''
 ---
 module: aws_elasticbeanstalk_app
+version_added: 1.0.0
 
 short_description: Create, update, and delete an elastic beanstalk application
 
@@ -52,13 +49,13 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 # Create or update an application
-- aws_elasticbeanstalk_app:
+- community.aws.aws_elasticbeanstalk_app:
     app_name: Sample_App
     description: "Hello World App"
     state: present
 
 # Delete application
-- aws_elasticbeanstalk_app:
+- community.aws.aws_elasticbeanstalk_app:
     app_name: Sample_App
     state: absent
 
@@ -92,7 +89,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def describe_app(ebs, app_name, module):

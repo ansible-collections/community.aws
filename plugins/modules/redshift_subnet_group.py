@@ -7,16 +7,12 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 author:
   - "Jens Carl (@j-carl), Hothead Games Inc."
 module: redshift_subnet_group
+version_added: 1.0.0
 short_description: manage Redshift cluster subnet groups
 description:
   - Create, modifies, and deletes Redshift cluster subnet groups.
@@ -51,10 +47,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# Create a Redshift subnet group
-- local_action:
-    module: redshift_subnet_group
+EXAMPLES = r'''
+- name: Create a Redshift subnet group
+  community.aws.redshift_subnet_group:
     state: present
     group_name: redshift-subnet
     group_description: Redshift subnet
@@ -62,13 +57,13 @@ EXAMPLES = '''
         - 'subnet-aaaaa'
         - 'subnet-bbbbb'
 
-# Remove subnet group
-- redshift_subnet_group:
+- name: Remove subnet group
+  community.aws.redshift_subnet_group:
     state: absent
     group_name: redshift-subnet
 '''
 
-RETURN = '''
+RETURN = r'''
 group:
     description: dictionary containing all Redshift subnet group information
     returned: success
@@ -103,7 +98,7 @@ def main():
         state=dict(required=True, choices=['present', 'absent']),
         group_name=dict(required=True, aliases=['name']),
         group_description=dict(required=False, aliases=['description']),
-        group_subnets=dict(required=False, aliases=['subnets'], type='list'),
+        group_subnets=dict(required=False, aliases=['subnets'], type='list', elements='str'),
     ))
     module = AnsibleModule(argument_spec=argument_spec)
 

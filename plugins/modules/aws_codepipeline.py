@@ -6,14 +6,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_codepipeline
+version_added: 1.0.0
 short_description: Create or delete AWS CodePipelines
 notes:
     - for details of the parameters and returns see U(http://boto3.readthedocs.io/en/latest/reference/services/codepipeline.html)
@@ -82,11 +79,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Example for creating a pipeline for continuous deploy of Github code to an ECS cluster (container)
-- aws_codepipeline:
+- community.aws.aws_codepipeline:
     name: my_deploy_pipeline
     role_arn: arn:aws:iam::123456:role/AWS-CodePipeline-Service
     artifact_store:
@@ -151,7 +148,7 @@ EXAMPLES = '''
     state: present
 '''
 
-RETURN = '''
+RETURN = r'''
 pipeline:
   description: Returns the dictionary describing the code pipeline configuration.
   returned: success
@@ -200,7 +197,7 @@ import copy
 import traceback
 
 from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, compare_policies
 
 
@@ -269,7 +266,7 @@ def main():
         name=dict(required=True, type='str'),
         role_arn=dict(required=True, type='str'),
         artifact_store=dict(required=True, type='dict'),
-        stages=dict(required=True, type='list'),
+        stages=dict(required=True, type='list', elements='dict'),
         version=dict(type='int'),
         state=dict(choices=['present', 'absent'], default='present')
     )

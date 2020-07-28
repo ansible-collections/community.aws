@@ -5,14 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_eip_info
+version_added: 1.0.0
 short_description: List EC2 EIP details
 description:
     - List details of EC2 Elastic IP addresses.
@@ -33,45 +30,46 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details or the AWS region,
 # see the AWS Guide for details.
 
-# List all EIP addresses in the current region.
-- ec2_eip_info:
+- name: List all EIP addresses in the current region.
+  community.aws.ec2_eip_info:
   register: regional_eip_addresses
 
-# List all EIP addresses for a VM.
-- ec2_eip_info:
+- name: List all EIP addresses for a VM.
+  community.aws.ec2_eip_info:
     filters:
        instance-id: i-123456789
   register: my_vm_eips
 
-- debug: msg="{{ my_vm_eips.addresses | json_query(\"[?private_ip_address=='10.0.0.5']\") }}"
+- ansible.builtin.debug:
+    msg: "{{ my_vm_eips.addresses | json_query(\"[?private_ip_address=='10.0.0.5']\") }}"
 
-# List all EIP addresses for several VMs.
-- ec2_eip_info:
+- name: List all EIP addresses for several VMs.
+  community.aws.ec2_eip_info:
     filters:
        instance-id:
          - i-123456789
          - i-987654321
   register: my_vms_eips
 
-# List all EIP addresses using the 'Name' tag as a filter.
-- ec2_eip_info:
+- name: List all EIP addresses using the 'Name' tag as a filter.
+  community.aws.ec2_eip_info:
     filters:
       tag:Name: www.example.com
   register: my_vms_eips
 
-# List all EIP addresses using the Allocation-id as a filter
-- ec2_eip_info:
+- name: List all EIP addresses using the Allocation-id as a filter
+  community.aws.ec2_eip_info:
     filters:
       allocation-id: eipalloc-64de1b01
   register: my_vms_eips
 
 # Set the variable eip_alloc to the value of the first allocation_id
 # and set the variable my_pub_ip to the value of the first public_ip
-- set_fact:
+- ansible.builtin.set_fact:
     eip_alloc: my_vms_eips.addresses[0].allocation_id
     my_pub_ip: my_vms_eips.addresses[0].public_ip
 
@@ -99,7 +97,7 @@ addresses:
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_filter_list,
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      camel_dict_to_snake_dict,
@@ -137,7 +135,7 @@ def main():
         supports_check_mode=True
     )
     if module._module._name == 'ec2_eip_facts':
-        module._module.deprecate("The 'ec2_eip_facts' module has been renamed to 'ec2_eip_info'", version='2.13')
+        module._module.deprecate("The 'ec2_eip_facts' module has been renamed to 'ec2_eip_info'", date='2021-12-01', collection_name='community.aws')
 
     module.exit_json(changed=False, addresses=get_eips_details(module))
 

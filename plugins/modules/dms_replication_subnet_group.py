@@ -6,14 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: dms_replication_subnet_group
+version_added: 1.0.0
 short_description: creates or destroys a data migration services subnet group
 description:
     - Creates or destroys a data migration services subnet group.
@@ -53,7 +49,7 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-- dms_replication_subnet_group:
+- community.aws.dms_replication_subnet_group:
     state: present
     identifier: "dev-sngroup"
     description: "Development Subnet Group asdasdas"
@@ -63,7 +59,7 @@ EXAMPLES = '''
 RETURN = ''' # '''
 
 import traceback
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, AWSRetry
 try:
     import botocore

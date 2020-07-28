@@ -6,13 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_target_group
+version_added: 1.0.0
 short_description: Manage a target group for an Application or Network load balancer
 description:
     - Manage an AWS Elastic Load Balancer target group. See
@@ -107,8 +104,8 @@ options:
     type: int
   stickiness_type:
     description:
-      - The type of sticky sessions. The possible value is lb_cookie.
-    default: lb_cookie
+      - The type of sticky sessions.
+      - If not set AWS will default to C(lb_cookie) for Application Load Balancers or C(source_ip) for Network Load Balancers.
     type: str
   successful_response_codes:
     description:
@@ -141,6 +138,7 @@ options:
         all existing targets will be removed from the group. The list should be an Id and a Port parameter. See the Examples for detail.
     required: false
     type: list
+    elements: dict
   unhealthy_threshold_count:
     description:
       - The number of consecutive health check failures required before considering a target unhealthy.
@@ -169,19 +167,19 @@ notes:
   - Once a target group has been created, only its health check can then be modified using subsequent calls
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Create a target group with a default health check
-- elb_target_group:
+- name: Create a target group with a default health check
+  community.aws.elb_target_group:
     name: mytargetgroup
     protocol: http
     port: 80
     vpc_id: vpc-01234567
     state: present
 
-# Modify the target group with a custom health check
-- elb_target_group:
+- name: Modify the target group with a custom health check
+  community.aws.elb_target_group:
     name: mytargetgroup
     protocol: http
     port: 80
@@ -196,13 +194,13 @@ EXAMPLES = '''
     unhealthy_threshold_count: 3
     state: present
 
-# Delete a target group
-- elb_target_group:
+- name: Delete a target group
+  community.aws.elb_target_group:
     name: mytargetgroup
     state: absent
 
-# Create a target group with instance targets
-- elb_target_group:
+- name: Create a target group with instance targets
+  community.aws.elb_target_group:
     name: mytargetgroup
     protocol: http
     port: 81
@@ -219,8 +217,8 @@ EXAMPLES = '''
     wait_timeout: 200
     wait: True
 
-# Create a target group with IP address targets
-- elb_target_group:
+- name: Create a target group with IP address targets
+  community.aws.elb_target_group:
     name: mytargetgroup
     protocol: http
     port: 81
@@ -243,10 +241,10 @@ EXAMPLES = '''
 # itself is allow to invoke the lambda function.
 # therefore you need first to create an empty target group
 # to receive its arn, second, allow the target group
-# to invoke the lamba function and third, add the target
+# to invoke the lambda function and third, add the target
 # to the target group
 - name: first, create empty target group
-  elb_target_group:
+  community.aws.elb_target_group:
     name: my-lambda-targetgroup
     target_type: lambda
     state: present
@@ -254,7 +252,7 @@ EXAMPLES = '''
   register: out
 
 - name: second, allow invoke of the lambda
-  lambda_policy:
+  community.aws.lambda_policy:
     state: "{{ state | default('present') }}"
     function_name: my-lambda-function
     statement_id: someID
@@ -263,7 +261,7 @@ EXAMPLES = '''
     source_arn: "{{ out.target_group_arn }}"
 
 - name: third, add target
-  elb_target_group:
+  community.aws.elb_target_group:
     name: my-lambda-targetgroup
     target_type: lambda
     state: present
@@ -272,7 +270,7 @@ EXAMPLES = '''
 
 '''
 
-RETURN = '''
+RETURN = r'''
 deregistration_delay_timeout_seconds:
     description: The amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused.
     returned: when state present
@@ -381,7 +379,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      compare_aws_tags,
@@ -547,7 +545,7 @@ def create_or_update_target_group(connection, module):
             # Only need to check response code and path for http(s) health checks
             if tg['HealthCheckProtocol'] in ['HTTP', 'HTTPS']:
                 # Health check path
-                if 'HealthCheckPath'in params and tg['HealthCheckPath'] != params['HealthCheckPath']:
+                if 'HealthCheckPath' in params and tg['HealthCheckPath'] != params['HealthCheckPath']:
                     health_check_params['HealthCheckPath'] = params['HealthCheckPath']
 
                 # Matcher (successful response codes)
@@ -744,8 +742,8 @@ def create_or_update_target_group(connection, module):
     if stickiness_lb_cookie_duration is not None:
         if str(stickiness_lb_cookie_duration) != current_tg_attributes['stickiness_lb_cookie_duration_seconds']:
             update_attributes.append({'Key': 'stickiness.lb_cookie.duration_seconds', 'Value': str(stickiness_lb_cookie_duration)})
-    if stickiness_type is not None and "stickiness_type" in current_tg_attributes:
-        if stickiness_type != current_tg_attributes['stickiness_type']:
+    if stickiness_type is not None:
+        if stickiness_type != current_tg_attributes.get('stickiness_type'):
             update_attributes.append({'Key': 'stickiness.type', 'Value': stickiness_type})
 
     if update_attributes:
@@ -825,13 +823,13 @@ def main():
         protocol=dict(choices=protocols_list),
         purge_tags=dict(default=True, type='bool'),
         stickiness_enabled=dict(type='bool'),
-        stickiness_type=dict(default='lb_cookie'),
+        stickiness_type=dict(),
         stickiness_lb_cookie_duration=dict(type='int'),
         state=dict(required=True, choices=['present', 'absent']),
         successful_response_codes=dict(),
         tags=dict(default={}, type='dict'),
         target_type=dict(choices=['instance', 'ip', 'lambda']),
-        targets=dict(type='list'),
+        targets=dict(type='list', elements='dict'),
         unhealthy_threshold_count=dict(type='int'),
         vpc_id=dict(),
         wait_timeout=dict(type='int', default=200),

@@ -6,13 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 
+version_added: 1.0.0
 module: cloudfront_distribution
 
 short_description: Create, update and delete AWS CloudFront distributions.
@@ -223,7 +220,7 @@ options:
                 whitelisted_names:
                   type: list
                   elements: str
-                  description: A list of coockies to forward to the origin for this cache behavior.
+                  description: A list of cookies to forward to the origin for this cache behavior.
             headers:
               description:
               - A list of headers to forward to the origin for this cache behavior.
@@ -340,7 +337,7 @@ options:
                 whitelisted_names:
                   type: list
                   elements: str
-                  description: A list of coockies to forward to the origin for this cache behavior.
+                  description: A list of cookies to forward to the origin for this cache behavior.
             headers:
               description:
               - A list of headers to forward to the origin for this cache behavior.
@@ -537,7 +534,7 @@ options:
         - A config element that is a complex object that describes how a distribution should restrict it's content.
       suboptions:
         geo_restriction:
-          description: Apply a restriciton based on the location of the requester.
+          description: Apply a restriction based on the location of the requester.
           type: dict
           suboptions:
             restriction_type:
@@ -584,11 +581,9 @@ options:
 
 '''
 
-EXAMPLES = '''
-
-# create a basic distribution with defaults and tags
-
-- cloudfront_distribution:
+EXAMPLES = r'''
+- name: create a basic distribution with defaults and tags
+  community.aws.cloudfront_distribution:
     state: present
     default_origin_domain_name: www.my-cloudfront-origin.com
     tags:
@@ -596,31 +591,27 @@ EXAMPLES = '''
       Project: example project
       Priority: '1'
 
-# update a distribution comment by distribution_id
-
-- cloudfront_distribution:
+- name: update a distribution comment by distribution_id
+  community.aws.cloudfront_distribution:
     state: present
     distribution_id: E1RP5A2MJ8073O
     comment: modified by ansible cloudfront.py
 
-# update a distribution comment by caller_reference
-
-- cloudfront_distribution:
+- name: update a distribution comment by caller_reference
+  community.aws.cloudfront_distribution:
     state: present
     caller_reference: my cloudfront distribution 001
     comment: modified by ansible cloudfront.py
 
-# update a distribution's aliases and comment using the distribution_id as a reference
-
-- cloudfront_distribution:
+- name: update a distribution's aliases and comment using the distribution_id as a reference
+  community.aws.cloudfront_distribution:
     state: present
     distribution_id: E1RP5A2MJ8073O
     comment: modified by cloudfront.py again
     aliases: [ 'www.my-distribution-source.com', 'zzz.aaa.io' ]
 
-# update a distribution's aliases and comment using an alias as a reference
-
-- cloudfront_distribution:
+- name: update a distribution's aliases and comment using an alias as a reference
+  community.aws.cloudfront_distribution:
     state: present
     caller_reference: my test distribution
     comment: modified by cloudfront.py again
@@ -628,9 +619,8 @@ EXAMPLES = '''
       - www.my-distribution-source.com
       - zzz.aaa.io
 
-# update a distribution's comment and aliases and tags and remove existing tags
-
-- cloudfront_distribution:
+- name: update a distribution's comment and aliases and tags and remove existing tags
+  community.aws.cloudfront_distribution:
     state: present
     distribution_id: E15BU8SDCGSG57
     comment: modified by cloudfront.py again
@@ -640,9 +630,8 @@ EXAMPLES = '''
       Project: distribution 1.2
     purge_tags: yes
 
-# create a distribution with an origin, logging and default cache behavior
-
-- cloudfront_distribution:
+- name: create a distribution with an origin, logging and default cache behavior
+  community.aws.cloudfront_distribution:
     state: present
     caller_reference: unique test distribution ID
     origins:
@@ -678,14 +667,13 @@ EXAMPLES = '''
     enabled: false
     comment: this is a CloudFront distribution with logging
 
-# delete a distribution
-
-- cloudfront_distribution:
+- name: delete a distribution
+  community.aws.cloudfront_distribution:
     state: absent
     caller_reference: replaceable distribution
 '''
 
-RETURN = '''
+RETURN = r'''
 active_trusted_signers:
   description: Key pair IDs that CloudFront is aware of for each trusted signer.
   returned: always
@@ -1376,8 +1364,8 @@ web_acl_id:
 '''
 
 from ansible.module_utils._text import to_text, to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.cloudfront_facts import CloudFrontFactsServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 from ansible.module_utils.common.dict_transformations import recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags, ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, snake_dict_to_camel_dict
@@ -2105,15 +2093,15 @@ def main():
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=False),
         alias=dict(),
-        aliases=dict(type='list', default=[]),
+        aliases=dict(type='list', default=[], elements='str'),
         purge_aliases=dict(type='bool', default=False),
         default_root_object=dict(),
-        origins=dict(type='list'),
+        origins=dict(type='list', elements='dict'),
         purge_origins=dict(type='bool', default=False),
         default_cache_behavior=dict(type='dict'),
-        cache_behaviors=dict(type='list'),
+        cache_behaviors=dict(type='list', elements='dict'),
         purge_cache_behaviors=dict(type='bool', default=False),
-        custom_error_responses=dict(type='list'),
+        custom_error_responses=dict(type='list', elements='dict'),
         purge_custom_error_responses=dict(type='bool', default=False),
         logging=dict(type='dict'),
         price_class=dict(),

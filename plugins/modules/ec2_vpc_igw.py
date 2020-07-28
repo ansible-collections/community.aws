@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ec2_vpc_igw
+version_added: 1.0.0
 short_description: Manage an AWS VPC Internet gateway
 description:
     - Manage an AWS VPC Internet gateway
@@ -49,10 +45,10 @@ EXAMPLES = '''
 
 # Ensure that the VPC has an Internet Gateway.
 # The Internet Gateway ID is can be accessed via {{igw.gateway_id}} for use in setting up NATs etc.
-ec2_vpc_igw:
-  vpc_id: vpc-abcdefgh
-  state: present
-register: igw
+- community.aws.ec2_vpc_igw:
+    vpc_id: vpc-abcdefgh
+    state: present
+  register: igw
 
 '''
 
@@ -89,8 +85,8 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.waiters import get_waiter
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     AWSRetry,
     camel_dict_to_snake_dict,

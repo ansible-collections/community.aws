@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_vpc_igw_info
+version_added: 1.0.0
 short_description: Gather information about internet gateways in AWS
 description:
     - Gather information about internet gateways in AWS.
@@ -37,17 +33,17 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all Internet Gateways for an account or profile
-  ec2_vpc_igw_info:
+  community.aws.ec2_vpc_igw_info:
     region: ap-southeast-2
     profile: production
   register: igw_info
 
 - name: Gather information about a filtered list of Internet Gateways
-  ec2_vpc_igw_info:
+  community.aws.ec2_vpc_igw_info:
     region: ap-southeast-2
     profile: production
     filters:
@@ -55,14 +51,14 @@ EXAMPLES = '''
   register: igw_info
 
 - name: Gather information about a specific internet gateway by InternetGatewayId
-  ec2_vpc_igw_info:
+  community.aws.ec2_vpc_igw_info:
     region: ap-southeast-2
     profile: production
     internet_gateway_ids: igw-c1231234
   register: igw_info
 '''
 
-RETURN = '''
+RETURN = r'''
 internet_gateways:
     description: The internet gateways for the account.
     returned: always
@@ -136,13 +132,13 @@ def main():
     argument_spec.update(
         dict(
             filters=dict(type='dict', default=dict()),
-            internet_gateway_ids=dict(type='list', default=None)
+            internet_gateway_ids=dict(type='list', default=None, elements='str')
         )
     )
 
     module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'ec2_vpc_igw_facts':
-        module.deprecate("The 'ec2_vpc_igw_facts' module has been renamed to 'ec2_vpc_igw_info'", version='2.13')
+        module.deprecate("The 'ec2_vpc_igw_facts' module has been renamed to 'ec2_vpc_igw_info'", date='2021-12-01', collection_name='community.aws')
 
     # Validate Requirements
     if not HAS_BOTO3:

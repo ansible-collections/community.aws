@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ecs_task
+version_added: 1.0.0
 short_description: Run, start or stop a task in ecs
 description:
     - Creates or deletes instances of task definitions.
@@ -92,10 +88,10 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of run task
 - name: Run task
-  ecs_task:
+  community.aws.ecs_task:
     operation: run
     cluster: console-sample-app-static-cluster
     task_definition: console-sample-app-static-taskdef
@@ -106,7 +102,7 @@ EXAMPLES = '''
 # Simple example of start task
 
 - name: Start a task
-  ecs_task:
+  community.aws.ecs_task:
       operation: start
       cluster: console-sample-app-static-cluster
       task_definition: console-sample-app-static-taskdef
@@ -128,7 +124,7 @@ EXAMPLES = '''
   register: task_output
 
 - name: RUN a task on Fargate
-  ecs_task:
+  community.aws.ecs_task:
       operation: run
       cluster: console-sample-app-static-cluster
       task_definition: console-sample-app-static-taskdef
@@ -144,13 +140,13 @@ EXAMPLES = '''
   register: task_output
 
 - name: Stop a task
-  ecs_task:
+  community.aws.ecs_task:
       operation: stop
       cluster: console-sample-app-static-cluster
       task_definition: console-sample-app-static-taskdef
       task: "arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
 '''
-RETURN = '''
+RETURN = r'''
 task:
     description: details about the task that was started
     returned: success
@@ -216,7 +212,7 @@ task:
             type: str
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible.module_utils.basic import missing_required_lib
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names, ansible_dict_to_boto3_tag_list
 
@@ -344,7 +340,7 @@ def main():
         overrides=dict(required=False, type='dict'),  # R S
         count=dict(required=False, type='int'),  # R
         task=dict(required=False, type='str'),  # P*
-        container_instances=dict(required=False, type='list'),  # S*
+        container_instances=dict(required=False, type='list', elements='str'),  # S*
         started_by=dict(required=False, type='str'),  # R S
         network_configuration=dict(required=False, type='dict'),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),

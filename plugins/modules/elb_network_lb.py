@@ -6,13 +6,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_network_lb
+version_added: 1.0.0
 short_description: Manage a Network Load Balancer
 description:
     - Manage an AWS Network Elastic Load Balancer. See
@@ -100,6 +98,7 @@ options:
       - Required when I(state=present).
       - This parameter is mutually exclusive with I(subnet_mappings).
     type: list
+    elements: str
   scheme:
     description:
       - Internet-facing or internal load balancer. An ELB scheme can not be modified after creation.
@@ -135,11 +134,11 @@ notes:
   - Listener rules are matched based on priority. If a rule's priority is changed then a new rule will be created.
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Create an ELB and attach a listener
-- elb_network_lb:
+- name: Create an ELB and attach a listener
+  community.aws.elb_network_lb:
     name: myelb
     subnets:
       - subnet-012345678
@@ -152,8 +151,8 @@ EXAMPLES = '''
             TargetGroupName: mytargetgroup # Required. The name of the target group
     state: present
 
-# Create an ELB with an attached Elastic IP address
-- elb_network_lb:
+- name: Create an ELB with an attached Elastic IP address
+  community.aws.elb_network_lb:
     name: myelb
     subnet_mappings:
       - SubnetId: subnet-012345678
@@ -166,14 +165,14 @@ EXAMPLES = '''
             TargetGroupName: mytargetgroup # Required. The name of the target group
     state: present
 
-# Remove an ELB
-- elb_network_lb:
+- name: Remove an ELB
+  community.aws.elb_network_lb:
     name: myelb
     state: absent
 
 '''
 
-RETURN = '''
+RETURN = r'''
 availability_zones:
     description: The Availability Zones for the load balancer.
     returned: when state is present
@@ -308,9 +307,9 @@ vpc_id:
     sample: vpc-0011223344
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, boto3_tag_list_to_ansible_dict, compare_aws_tags
-from ansible_collections.amazon.aws.plugins.module_utils.aws.elbv2 import NetworkLoadBalancer, ELBListeners, ELBListener
+from ansible_collections.amazon.aws.plugins.module_utils.elbv2 import NetworkLoadBalancer, ELBListeners, ELBListener
 
 
 def create_or_update_elb(elb_obj):
@@ -413,15 +412,15 @@ def main():
                                Protocol=dict(type='str', required=True),
                                Port=dict(type='int', required=True),
                                SslPolicy=dict(type='str'),
-                               Certificates=dict(type='list'),
-                               DefaultActions=dict(type='list', required=True)
+                               Certificates=dict(type='list', elements='dict'),
+                               DefaultActions=dict(type='list', required=True, elements='dict')
                            )
                            ),
             name=dict(required=True, type='str'),
             purge_listeners=dict(default=True, type='bool'),
             purge_tags=dict(default=True, type='bool'),
-            subnets=dict(type='list'),
-            subnet_mappings=dict(type='list'),
+            subnets=dict(type='list', elements='str'),
+            subnet_mappings=dict(type='list', elements='dict'),
             scheme=dict(default='internet-facing', choices=['internet-facing', 'internal']),
             state=dict(choices=['present', 'absent'], type='str'),
             tags=dict(type='dict'),
@@ -443,7 +442,7 @@ def main():
         # See below, unless state==present we delete.  Ouch.
         module.deprecate('State currently defaults to absent.  This is inconsistent with other modules'
                          ' and the default will be changed to `present` in Ansible 2.14',
-                         version='2.14')
+                         date='2022-06-01', collection_name='community.aws')
 
     # Quick check of listeners parameters
     listeners = module.params.get("listeners")

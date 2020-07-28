@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_vpc_route_table
+version_added: 1.0.0
 short_description: Manage route tables for AWS virtual private clouds
 description:
     - Manage route tables for AWS virtual private clouds
@@ -84,12 +81,12 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Basic creation example:
 - name: Set up public subnet route table
-  ec2_vpc_route_table:
+  community.aws.ec2_vpc_route_table:
     vpc_id: vpc-1245678
     region: us-west-1
     tags:
@@ -104,7 +101,7 @@ EXAMPLES = '''
   register: public_route_table
 
 - name: Set up NAT-protected route table
-  ec2_vpc_route_table:
+  community.aws.ec2_vpc_route_table:
     vpc_id: vpc-1245678
     region: us-west-1
     tags:
@@ -119,7 +116,7 @@ EXAMPLES = '''
   register: nat_route_table
 
 - name: delete route table
-  ec2_vpc_route_table:
+  community.aws.ec2_vpc_route_table:
     vpc_id: vpc-1245678
     region: us-west-1
     route_table_id: "{{ route_table.id }}"
@@ -127,7 +124,7 @@ EXAMPLES = '''
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 route_table:
   description: Route Table result
   returned: always
@@ -229,8 +226,8 @@ route_table:
 
 import re
 from time import sleep
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.waiters import get_waiter
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
@@ -713,14 +710,14 @@ def ensure_route_table_present(connection, module):
 def main():
     argument_spec = dict(
         lookup=dict(default='tag', choices=['tag', 'id']),
-        propagating_vgw_ids=dict(type='list'),
+        propagating_vgw_ids=dict(type='list', elements='str'),
         purge_routes=dict(default=True, type='bool'),
         purge_subnets=dict(default=True, type='bool'),
         purge_tags=dict(default=False, type='bool'),
         route_table_id=dict(),
-        routes=dict(default=[], type='list'),
+        routes=dict(default=[], type='list', elements='dict'),
         state=dict(default='present', choices=['present', 'absent']),
-        subnets=dict(type='list'),
+        subnets=dict(type='list', elements='str'),
         tags=dict(type='dict', aliases=['resource_tags']),
         vpc_id=dict()
     )

@@ -6,14 +6,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_codebuild
+version_added: 1.0.0
 short_description: Create or delete an AWS CodeBuild project
 notes:
     - For details of the parameters and returns see U(http://boto3.readthedocs.io/en/latest/reference/services/codebuild.html).
@@ -166,10 +163,10 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- aws_codebuild:
+- community.aws.aws_codebuild:
     name: my_project
     description: My nice little project
     service_role: "arn:aws:iam::123123:role/service-role/code-build-service-role"
@@ -194,7 +191,7 @@ EXAMPLES = '''
     state: present
 '''
 
-RETURN = '''
+RETURN = r'''
 project:
   description: Returns the dictionary describing the code project configuration.
   returned: success
@@ -289,7 +286,7 @@ project:
       sample: "2018-04-17T16:56:03.245000+02:00"
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, get_boto3_client_method_parameters
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, get_boto3_client_method_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 
 
@@ -382,7 +379,7 @@ def main():
         service_role=dict(),
         timeout_in_minutes=dict(type='int', default=60),
         encryption_key=dict(),
-        tags=dict(type='list'),
+        tags=dict(type='list', elements='dict'),
         vpc_config=dict(type='dict'),
         state=dict(choices=['present', 'absent'], default='present')
     )

@@ -6,14 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: elasticache_parameter_group
+version_added: 1.0.0
 short_description: Manage cache parameter groups in Amazon ElastiCache.
 description:
   - Manage cache security groups in Amazon ElastiCache.
@@ -60,24 +56,24 @@ EXAMPLES = """
   connection: local
   tasks:
     - name: 'Create a test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         group_family: 'redis3.2'
         description: 'This is a cache parameter group'
         state: 'present'
     - name: 'Modify a test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         values:
           activerehashing: yes
           client-output-buffer-limit-normal-hard-limit: 4
         state: 'present'
     - name: 'Reset all modifiable parameters for the test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         state: reset
     - name: 'Delete a test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         state: 'absent'
 """

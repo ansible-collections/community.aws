@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: s3_website
+version_added: 1.0.0
 short_description: Configure an s3 bucket as a website
 description:
     - Configure an s3 bucket as a website
@@ -57,19 +53,19 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Configure an s3 bucket to redirect all requests to example.com
-- s3_website:
+- name: Configure an s3 bucket to redirect all requests to example.com
+  community.aws.s3_website:
     name: mybucket.com
     redirect_all_requests: example.com
     state: present
 
-# Remove website configuration from an s3 bucket
-- s3_website:
+- name: Remove website configuration from an s3 bucket
+  community.aws.s3_website:
     name: mybucket.com
     state: absent
 
-# Configure an s3 bucket as a website with index and error pages
-- s3_website:
+- name: Configure an s3 bucket as a website with index and error pages
+  community.aws.s3_website:
     name: mybucket.com
     suffix: home.htm
     error_key: errors/404.htm

@@ -5,13 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: aws_inspector_target
+version_added: 1.0.0
 short_description: Create, Update and Delete Amazon Inspector Assessment
                    Targets
 description: Creates, updates, or deletes Amazon Inspector Assessment Targets
@@ -48,20 +46,20 @@ requirements:
 
 EXAMPLES = '''
 - name: Create my_target Assessment Target
-  aws_inspector_target:
+  community.aws.aws_inspector_target:
     name: my_target
     tags:
       role: scan_target
 
 - name: Update Existing my_target Assessment Target with Additional Tags
-  aws_inspector_target:
+  community.aws.aws_inspector_target:
     name: my_target
     tags:
       env: dev
       role: scan_target
 
 - name: Delete my_target Assessment Target
-  aws_inspector_target:
+  community.aws.aws_inspector_target:
     name: my_target
     state: absent
 '''
@@ -101,7 +99,7 @@ updated_at:
   sample: "2018-01-29T13:48:51.958000+00:00"
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     ansible_dict_to_boto3_tag_list,

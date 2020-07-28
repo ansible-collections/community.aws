@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: aws_config_rule
+version_added: 1.0.0
 short_description: Manage AWS Config resources
 description:
     - Module manages AWS Config rules
@@ -96,7 +92,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Create Config Rule for AWS Config
-  aws_config_rule:
+  community.aws.aws_config_rule:
     name: test_config_rule
     state: present
     description: 'This AWS Config rule checks for public write access on S3 buckets'
@@ -118,7 +114,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict
 
 

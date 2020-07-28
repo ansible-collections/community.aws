@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_lc_info
+version_added: 1.0.0
 short_description: Gather information about AWS Autoscaling Launch Configurations.
 description:
     - Gather information about AWS Autoscaling Launch Configurations.
@@ -56,23 +52,23 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather information about all launch configurations
-- ec2_lc_info:
+- name: Gather information about all launch configurations
+  community.aws.ec2_lc_info:
 
-# Gather information about launch configuration with name "example"
-- ec2_lc_info:
+- name: Gather information about launch configuration with name "example"
+  community.aws.ec2_lc_info:
     name: example
 
-# Gather information sorted by created_time from most recent to least recent
-- ec2_lc_info:
+- name: Gather information sorted by created_time from most recent to least recent
+  community.aws.ec2_lc_info:
     sort: created_time
     sort_order: descending
 '''
 
-RETURN = '''
+RETURN = r'''
 block_device_mapping:
     description: Block device mapping for the instances of launch configuration
     type: list
@@ -211,7 +207,7 @@ def main():
     argument_spec = ec2_argument_spec()
     argument_spec.update(
         dict(
-            name=dict(required=False, default=[], type='list'),
+            name=dict(required=False, default=[], type='list', elements='str'),
             sort=dict(required=False, default=None,
                       choices=['launch_configuration_name', 'image_id', 'created_time', 'instance_type', 'kernel_id', 'ramdisk_id', 'key_name']),
             sort_order=dict(required=False, default='ascending',
@@ -223,7 +219,7 @@ def main():
 
     module = AnsibleModule(argument_spec=argument_spec)
     if module._name == 'ec2_lc_facts':
-        module.deprecate("The 'ec2_lc_facts' module has been renamed to 'ec2_lc_info'", version='2.13')
+        module.deprecate("The 'ec2_lc_facts' module has been renamed to 'ec2_lc_info'", date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

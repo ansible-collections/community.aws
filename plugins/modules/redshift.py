@@ -7,17 +7,14 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 author:
   - "Jens Carl (@j-carl), Hothead Games Inc."
   - "Rafael Driutti (@rafaeldriutti)"
 module: redshift
+version_added: 1.0.0
 short_description: create, delete, or modify an Amazon Redshift instance
 description:
   - Creates, deletes, or modifies Amazon Redshift cluster instances.
@@ -177,24 +174,24 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# Basic cluster provisioning example
-- redshift: >
-    command=create
-    node_type=ds1.xlarge
-    identifier=new_cluster
-    username=cluster_admin
-    password=1nsecure
+EXAMPLES = r'''
+- name: Basic cluster provisioning example
+  community.aws.redshift:
+    command: create
+    node_type: ds1.xlarge
+    identifier: new_cluster
+    username: cluster_admin
+    password: 1nsecure
 
-# Cluster delete example
-- redshift:
+- name: Cluster delete example
+  community.aws.redshift:
     command: delete
     identifier: new_cluster
     skip_final_cluster_snapshot: true
     wait: true
 '''
 
-RETURN = '''
+RETURN = r'''
 cluster:
     description: dictionary containing all the cluster information
     returned: success
@@ -262,7 +259,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, snake_dict_to_camel_dict
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 
 
 def _collect_facts(resource):
@@ -559,8 +556,8 @@ def main():
         password=dict(no_log=True, required=False),
         db_name=dict(required=False),
         cluster_type=dict(choices=['multi-node', 'single-node'], default='single-node'),
-        cluster_security_groups=dict(aliases=['security_groups'], type='list'),
-        vpc_security_group_ids=dict(aliases=['vpc_security_groups'], type='list'),
+        cluster_security_groups=dict(aliases=['security_groups'], type='list', elements='str'),
+        vpc_security_group_ids=dict(aliases=['vpc_security_groups'], type='list', elements='str'),
         skip_final_cluster_snapshot=dict(aliases=['skip_final_snapshot'],
                                          type='bool', default=False),
         final_cluster_snapshot_identifier=dict(aliases=['final_snapshot_id'], required=False),

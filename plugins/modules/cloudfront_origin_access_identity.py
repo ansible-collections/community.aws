@@ -5,13 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 
+version_added: 1.0.0
 module: cloudfront_origin_access_identity
 
 short_description: Create, update and delete origin access identities for a
@@ -65,19 +63,19 @@ notes:
 EXAMPLES = '''
 
 - name: create an origin access identity
-  cloudfront_origin_access_identity:
+  community.aws.cloudfront_origin_access_identity:
     state: present
     caller_reference: this is an example reference
     comment: this is an example comment
 
 - name: update an existing origin access identity using caller_reference as an identifier
-  cloudfront_origin_access_identity:
+  community.aws.cloudfront_origin_access_identity:
      origin_access_identity_id: E17DRN9XUOAHZX
      caller_reference: this is an example reference
      comment: this is a new comment
 
 - name: delete an existing origin access identity using caller_reference as an identifier
-  cloudfront_origin_access_identity:
+  community.aws.cloudfront_origin_access_identity:
      state: absent
      caller_reference: this is an example reference
      comment: this is a new comment
@@ -122,9 +120,9 @@ location:
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.cloudfront_facts import CloudFrontFactsServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 import datetime
 from functools import partial
 import json

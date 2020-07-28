@@ -5,13 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: iam_user
+version_added: 1.0.0
 short_description: Manage AWS IAM users
 description:
   - Manage AWS IAM users.
@@ -25,9 +23,10 @@ options:
   managed_policies:
     description:
       - A list of managed policy ARNs or friendly names to attach to the user.
-      - To embed an inline policy, use M(iam_policy).
+      - To embed an inline policy, use M(community.aws.iam_policy).
     required: false
     type: list
+    elements: str
     aliases: ['managed_policy']
   state:
     description:
@@ -49,37 +48,37 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # Note: This module does not allow management of groups that users belong to.
 #       Groups should manage their membership directly using `iam_group`,
 #       as users belong to them.
 
-# Create a user
-- iam_user:
+- name: Create a user
+  community.aws.iam_user:
     name: testuser1
     state: present
 
-# Create a user and attach a managed policy using its ARN
-- iam_user:
+- name: Create a user and attach a managed policy using its ARN
+  community.aws.iam_user:
     name: testuser1
     managed_policies:
       - arn:aws:iam::aws:policy/AmazonSNSFullAccess
     state: present
 
-# Remove all managed policies from an existing user with an empty list
-- iam_user:
+- name: Remove all managed policies from an existing user with an empty list
+  community.aws.iam_user:
     name: testuser1
     state: present
     purge_policies: true
 
-# Delete the user
-- iam_user:
+- name: Delete the user
+  community.aws.iam_user:
     name: testuser1
     state: absent
 
 '''
-RETURN = '''
+RETURN = r'''
 user:
     description: dictionary containing all the user information
     returned: success
@@ -108,7 +107,7 @@ user:
 '''
 
 from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 import traceback
@@ -346,7 +345,7 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        managed_policies=dict(default=[], type='list', aliases=['managed_policy']),
+        managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies'])
     )

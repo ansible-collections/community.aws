@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: dynamodb_table
+version_added: 1.0.0
 short_description: Create, update or delete AWS Dynamo DB tables
 description:
   - Create or delete AWS Dynamo DB tables.
@@ -125,9 +121,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# Create dynamo table with hash and range primary key
-- dynamodb_table:
+EXAMPLES = r'''
+- name: Create dynamo table with hash and range primary key
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     hash_key_name: id
@@ -139,15 +135,15 @@ EXAMPLES = '''
     tags:
       tag_name: tag_value
 
-# Update capacity on existing dynamo table
-- dynamodb_table:
+- name: Update capacity on existing dynamo table
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     read_capacity: 10
     write_capacity: 10
 
-# set index on existing dynamo table
-- dynamodb_table:
+- name: set index on existing dynamo table
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     indexes:
@@ -161,14 +157,14 @@ EXAMPLES = '''
         read_capacity: 10
         write_capacity: 10
 
-# Delete dynamo table
-- dynamodb_table:
+- name: Delete dynamo table
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 table_status:
     description: The current status of the table.
     returned: success
@@ -200,12 +196,12 @@ except ImportError:
 
 try:
     import botocore
-    from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, boto3_conn
     HAS_BOTO3 = True
 except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, connect_to_aws, ec2_argument_spec, get_aws_connection_info
 
 
@@ -471,7 +467,7 @@ def main():
         range_key_type=dict(default='STRING', type='str', choices=['STRING', 'NUMBER', 'BINARY']),
         read_capacity=dict(default=1, type='int'),
         write_capacity=dict(default=1, type='int'),
-        indexes=dict(default=[], type='list'),
+        indexes=dict(default=[], type='list', elements='dict'),
         tags=dict(type='dict'),
         wait_for_active_timeout=dict(default=60, type='int'),
     ))

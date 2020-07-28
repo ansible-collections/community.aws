@@ -6,13 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
 DOCUMENTATION = '''
 ---
 module: iam_managed_policy
+version_added: 1.0.0
 short_description: Manage User Managed IAM policies
 description:
     - Allows creating and removing managed IAM policies
@@ -49,7 +46,7 @@ options:
     type: str
   fail_on_delete:
     description:
-    - The I(fail_on_delete) option does nothing and will be removed in Ansible 2.14.
+    - The I(fail_on_delete) option does nothing and will be removed after 2022-06-01
     type: bool
 
 author: "Dan Kozlowski (@dkhenry)"
@@ -65,7 +62,7 @@ requirements:
 EXAMPLES = '''
 # Create Policy ex nihilo
 - name: Create IAM Managed Policy
-  iam_managed_policy:
+  community.aws.iam_managed_policy:
     policy_name: "ManagedPolicy"
     policy_description: "A Helpful managed policy"
     policy: "{{ lookup('template', 'managed_policy.json.j2') }}"
@@ -73,14 +70,14 @@ EXAMPLES = '''
 
 # Update a policy with a new default version
 - name: Create IAM Managed Policy
-  iam_managed_policy:
+  community.aws.iam_managed_policy:
     policy_name: "ManagedPolicy"
     policy: "{{ lookup('file', 'managed_policy_update.json') }}"
     state: present
 
 # Update a policy with a new non default version
 - name: Create IAM Managed Policy
-  iam_managed_policy:
+  community.aws.iam_managed_policy:
     policy_name: "ManagedPolicy"
     policy: "{{ lookup('file', 'managed_policy_update.json') }}"
     make_default: false
@@ -88,7 +85,7 @@ EXAMPLES = '''
 
 # Update a policy and make it the only version and the default version
 - name: Create IAM Managed Policy
-  iam_managed_policy:
+  community.aws.iam_managed_policy:
     policy_name: "ManagedPolicy"
     policy: "{ 'Version': '2012-10-17', 'Statement':[{'Effect': 'Allow','Action': '*','Resource': '*'}]}"
     only_version: true
@@ -96,7 +93,7 @@ EXAMPLES = '''
 
 # Remove a policy
 - name: Create IAM Managed Policy
-  iam_managed_policy:
+  community.aws.iam_managed_policy:
     policy_name: "ManagedPolicy"
     state: absent
 '''
@@ -293,7 +290,7 @@ def main():
         policy=dict(type='json'),
         make_default=dict(type='bool', default=True),
         only_version=dict(type='bool', default=False),
-        fail_on_delete=dict(type='bool', removed_in_version='2.14'),
+        fail_on_delete=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
         state=dict(default='present', choices=['present', 'absent']),
     ))
 

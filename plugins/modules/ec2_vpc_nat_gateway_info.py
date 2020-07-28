@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_nat_gateway_info
 short_description: Retrieves AWS VPC Managed Nat Gateway details using AWS methods.
+version_added: 1.0.0
 description:
   - Gets various details related to AWS VPC Managed Nat Gateways
   - This module was called C(ec2_vpc_nat_gateway_facts) before Ansible 2.9. The usage did not change.
@@ -37,19 +33,19 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of listing all nat gateways
 - name: List all managed nat gateways in ap-southeast-2
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     region: ap-southeast-2
   register: all_ngws
 
 - name: Debugging the result
-  debug:
+  ansible.builtin.debug:
     msg: "{{ all_ngws.result }}"
 
 - name: Get details on specific nat gateways
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     nat_gateway_ids:
       - nat-1234567891234567
       - nat-7654321987654321
@@ -57,14 +53,14 @@ EXAMPLES = '''
   register: specific_ngws
 
 - name: Get all nat gateways with specific filters
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     region: ap-southeast-2
     filters:
       state: ['pending']
   register: pending_ngws
 
 - name: Get nat gateways with specific filter
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     region: ap-southeast-2
     filters:
       subnet-id: subnet-12345678
@@ -72,7 +68,7 @@ EXAMPLES = '''
   register: existing_nat_gateways
 '''
 
-RETURN = '''
+RETURN = r'''
 result:
   description: The result of the describe, converted to ansible snake case style.
     See http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#EC2.Client.describe_nat_gateways for the response.
@@ -132,14 +128,15 @@ def main():
     argument_spec.update(
         dict(
             filters=dict(default={}, type='dict'),
-            nat_gateway_ids=dict(default=[], type='list'),
+            nat_gateway_ids=dict(default=[], type='list', elements='str'),
         )
     )
 
     module = AnsibleModule(argument_spec=argument_spec,
                            supports_check_mode=True)
     if module._name == 'ec2_vpc_nat_gateway_facts':
-        module.deprecate("The 'ec2_vpc_nat_gateway_facts' module has been renamed to 'ec2_vpc_nat_gateway_info'", version='2.13')
+        module.deprecate("The 'ec2_vpc_nat_gateway_facts' module has been renamed to 'ec2_vpc_nat_gateway_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     # Validate Requirements
     if not HAS_BOTO3:

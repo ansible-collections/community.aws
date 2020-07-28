@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: route53_health_check
+version_added: 1.0.0
 short_description: Add or delete health-checks in Amazons Route53 DNS service
 description:
   - Creates and deletes DNS Health checks in Amazons Route53 service.
@@ -89,8 +85,8 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Create a health-check for host1.example.com and use it in record
-- route53_health_check:
+- name: Create a health-check for host1.example.com and use it in record
+  community.aws.route53_health_check:
     state: present
     fqdn: host1.example.com
     type: HTTP_STR_MATCH
@@ -100,7 +96,7 @@ EXAMPLES = '''
     failure_threshold: 2
   register: my_health_check
 
-- route53:
+- community.aws.route53:
     action: create
     zone: "example.com"
     type: CNAME
@@ -112,8 +108,8 @@ EXAMPLES = '''
     weight: 100
     health_check: "{{ my_health_check.health_check.id }}"
 
-# Delete health-check
-- route53_health_check:
+- name: Delete health-check
+  community.aws.route53_health_check:
     state: absent
     fqdn: host1.example.com
 

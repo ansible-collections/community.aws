@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 module: aws_direct_connect_gateway
 author: Gobin Sougrakpam (@gobins)
+version_added: 1.0.0
 short_description: Manage AWS Direct Connect gateway
 description:
   - Creates AWS Direct Connect Gateway.
@@ -60,7 +56,7 @@ options:
 
 EXAMPLES = '''
 - name: Create a new direct connect gateway attached to virtual private gateway
-  dxgw:
+  community.aws.aws_direct_connect_gateway:
     state: present
     name: my-dx-gateway
     amazon_asn: 7224
@@ -68,7 +64,7 @@ EXAMPLES = '''
   register: created_dxgw
 
 - name: Create a new unattached dxgw
-  dxgw:
+  community.aws.aws_direct_connect_gateway:
     state: present
     name: my-dx-gateway
     amazon_asn: 7224

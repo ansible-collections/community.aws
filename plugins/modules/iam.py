@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: iam
+version_added: 1.0.0
 short_description: Manage IAM users, groups, roles and keys
 description:
      - Allows for the management of IAM users, user API keys, groups, roles.
@@ -73,10 +69,12 @@ options:
     description:
       - A list of the keys that you want affected by the I(access_key_state) parameter.
     type: list
+    elements: str
   groups:
     description:
       - A list of groups the user should belong to. When I(state=update), will gracefully remove groups not listed.
     type: list
+    elements: str
   password:
     description:
       - When I(type=user) and either I(state=present) or I(state=update), define the users login password.
@@ -102,11 +100,10 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Basic user creation example
-tasks:
 - name: Create two new IAM users with API keys
-  iam:
+  community.aws.iam:
     iam_type: user
     name: "{{ item }}"
     state: present
@@ -118,9 +115,8 @@ tasks:
 
 # Advanced example, create two new groups and add the pre-existing user
 # jdavila to both groups.
-task:
 - name: Create Two Groups, Mario and Luigi
-  iam:
+  community.aws.iam:
     iam_type: group
     name: "{{ item }}"
     state: present
@@ -129,8 +125,8 @@ task:
      - Luigi
   register: new_groups
 
-- name:
-  iam:
+- name: Update user
+  community.aws.iam:
     iam_type: user
     name: jdavila
     state: update
@@ -139,7 +135,7 @@ task:
 
 # Example of role with custom trust policy for Lambda service
 - name: Create IAM role with custom trust relationship
-  iam:
+  community.aws.iam:
     iam_type: role
     name: AAALambdaTestRole
     state: present
@@ -152,7 +148,7 @@ task:
           Service: lambda.amazonaws.com
 
 '''
-RETURN = '''
+RETURN = r'''
 role_result:
     description: the IAM.role dict returned by Boto
     type: str
@@ -626,14 +622,14 @@ def main():
     argument_spec = ec2_argument_spec()
     argument_spec.update(dict(
         iam_type=dict(required=True, choices=['user', 'group', 'role']),
-        groups=dict(type='list', default=None, required=False),
+        groups=dict(type='list', default=None, required=False, elements='str'),
         state=dict(required=True, choices=['present', 'absent', 'update']),
         password=dict(default=None, required=False, no_log=True),
         update_password=dict(default='always', required=False, choices=['always', 'on_create']),
         access_key_state=dict(default=None, required=False, choices=[
             'active', 'inactive', 'create', 'remove',
             'Active', 'Inactive', 'Create', 'Remove']),
-        access_key_ids=dict(type='list', default=None, required=False),
+        access_key_ids=dict(type='list', default=None, required=False, elements='str'),
         key_count=dict(type='int', default=1, required=False),
         name=dict(required=True),
         trust_policy_filepath=dict(default=None, required=False),

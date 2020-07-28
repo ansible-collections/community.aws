@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_endpoint
 short_description: Create and delete AWS VPC Endpoints.
+version_added: 1.0.0
 description:
   - Creates AWS VPC endpoints.
   - Deletes AWS VPC endpoints.
@@ -27,7 +23,7 @@ options:
     type: str
   service:
     description:
-      - An AWS supported vpc endpoint service. Use the M(ec2_vpc_endpoint_info)
+      - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
         module to describe the supported endpoint services.
       - Required when creating an endpoint.
     required: false
@@ -100,11 +96,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create new vpc endpoint with a json template for policy
-  ec2_vpc_endpoint:
+  community.aws.ec2_vpc_endpoint:
     state: present
     region: ap-southeast-2
     vpc_id: vpc-12345678
@@ -116,7 +112,7 @@ EXAMPLES = '''
   register: new_vpc_endpoint
 
 - name: Create new vpc endpoint with the default policy
-  ec2_vpc_endpoint:
+  community.aws.ec2_vpc_endpoint:
     state: present
     region: ap-southeast-2
     vpc_id: vpc-12345678
@@ -127,7 +123,7 @@ EXAMPLES = '''
   register: new_vpc_endpoint
 
 - name: Create new vpc endpoint with json file
-  ec2_vpc_endpoint:
+  community.aws.ec2_vpc_endpoint:
     state: present
     region: ap-southeast-2
     vpc_id: vpc-12345678
@@ -139,13 +135,13 @@ EXAMPLES = '''
   register: new_vpc_endpoint
 
 - name: Delete newly created vpc endpoint
-  ec2_vpc_endpoint:
+  community.aws.ec2_vpc_endpoint:
     state: absent
     vpc_endpoint_id: "{{ new_vpc_endpoint.result['VpcEndpointId'] }}"
     region: ap-southeast-2
 '''
 
-RETURN = '''
+RETURN = r'''
 endpoints:
   description: The resulting endpoints from the module call
   returned: success
@@ -348,7 +344,7 @@ def main():
             state=dict(default='present', choices=['present', 'absent']),
             wait=dict(type='bool', default=False),
             wait_timeout=dict(type='int', default=320, required=False),
-            route_table_ids=dict(type='list'),
+            route_table_ids=dict(type='list', elements='str'),
             vpc_endpoint_id=dict(),
             client_token=dict(),
         )

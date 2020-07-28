@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: aws_config_recorder
+version_added: 1.0.0
 short_description: Manage AWS Config Recorders
 description:
     - Module manages AWS Config configuration recorder settings.
@@ -72,7 +68,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Create Configuration Recorder for AWS Config
-  aws_config_recorder:
+  community.aws.aws_config_recorder:
     name: test_configuration_recorder
     state: present
     role_arn: 'arn:aws:iam::123456789012:role/AwsConfigRecorder'
@@ -90,7 +86,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, AWSRetry
 
 

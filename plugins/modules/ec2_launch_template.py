@@ -4,20 +4,16 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_launch_template
+version_added: 1.0.0
 short_description: Manage EC2 launch templates
 description:
   - Create, modify, and delete EC2 Launch Templates, which can be used to
     create individual instances or with Autoscaling Groups.
-  - The I(ec2_instance) and I(ec2_asg) modules can, instead of specifying all
+  - The M(community.aws.ec2_instance) and M(community.aws.ec2_asg) modules can, instead of specifying all
     parameters on those tasks, be passed a Launch Template which contains
     settings like instance size, disk type, subnet, and more.
 requirements:
@@ -224,7 +220,7 @@ options:
     type: str
   key_name:
     description:
-    - The name of the key pair. You can create a key pair using M(ec2_key).
+    - The name of the key pair. You can create a key pair using M(amazon.aws.ec2_key).
     - If you do not specify a key pair, you can't connect to the instance
       unless you choose an AMI that is configured to allow users another way to
       log in.
@@ -331,7 +327,7 @@ options:
 
 EXAMPLES = '''
 - name: Create an ec2 launch template
-  ec2_launch_template:
+  community.aws.ec2_launch_template:
     name: "my_template"
     image_id: "ami-04b762b4289fba92b"
     key_name: my_ssh_key
@@ -342,13 +338,13 @@ EXAMPLES = '''
 - name: >
     Create a new version of an existing ec2 launch template with a different instance type,
     while leaving an older version as the default version
-  ec2_launch_template:
+  community.aws.ec2_launch_template:
     name: "my_template"
     default_version: 1
     instance_type: c5.4xlarge
 
 - name: Delete an ec2 launch template
-  ec2_launch_template:
+  community.aws.ec2_launch_template:
     name: "my_template"
     state: absent
 
@@ -369,7 +365,7 @@ import re
 from uuid import uuid4
 
 from ansible.module_utils._text import to_text
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_tag_list,
                                                                      AWSRetry,
@@ -571,6 +567,7 @@ def main():
     template_options = dict(
         block_device_mappings=dict(
             type='list',
+            elements='dict',
             options=dict(
                 device_name=dict(),
                 ebs=dict(
@@ -607,6 +604,7 @@ def main():
         elastic_gpu_specifications=dict(
             options=dict(type=dict()),
             type='list',
+            elements='dict',
         ),
         iam_instance_profile=dict(),
         image_id=dict(),
@@ -637,14 +635,15 @@ def main():
         ),
         network_interfaces=dict(
             type='list',
+            elements='dict',
             options=dict(
                 associate_public_ip_address=dict(type='bool'),
                 delete_on_termination=dict(type='bool'),
                 description=dict(),
                 device_index=dict(type='int'),
-                groups=dict(type='list'),
+                groups=dict(type='list', elements='str'),
                 ipv6_address_count=dict(type='int'),
-                ipv6_addresses=dict(type='list'),
+                ipv6_addresses=dict(type='list', elements='str'),
                 network_interface_id=dict(),
                 private_ip_address=dict(),
                 subnet_id=dict(),
@@ -661,8 +660,8 @@ def main():
             type='dict',
         ),
         ram_disk_id=dict(),
-        security_group_ids=dict(type='list'),
-        security_groups=dict(type='list'),
+        security_group_ids=dict(type='list', elements='str'),
+        security_groups=dict(type='list', elements='str'),
         tags=dict(type='dict'),
         user_data=dict(),
     )

@@ -6,13 +6,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'metadata_version': '1.1'}
 
 DOCUMENTATION = '''
 ---
 module: ec2_asg_lifecycle_hook
+version_added: 1.0.0
 short_description: Create, delete or update AWS ASG Lifecycle Hooks.
 description:
   - Will create a new hook when I(state=present) and no given Hook is found.
@@ -81,8 +79,8 @@ requirements: [ boto3>=1.4.4 ]
 '''
 
 EXAMPLES = '''
-# Create / Update lifecycle hook
-- ec2_asg_lifecycle_hook:
+- name: Create / Update lifecycle hook
+  community.aws.ec2_asg_lifecycle_hook:
     region: eu-central-1
     state: present
     autoscaling_group_name: example
@@ -91,8 +89,8 @@ EXAMPLES = '''
     heartbeat_timeout: 7000
     default_result: ABANDON
 
-# Delete lifecycle hook
-- ec2_asg_lifecycle_hook:
+- name: Delete lifecycle hook
+  community.aws.ec2_asg_lifecycle_hook:
     region: eu-central-1
     state: absent
     autoscaling_group_name: example
@@ -104,7 +102,7 @@ RETURN = '''
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 try:
     import botocore

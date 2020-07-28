@@ -6,14 +6,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: cloudwatchlogs_log_group
+version_added: 1.0.0
 short_description: create or delete log_group in CloudWatchLogs
 notes:
     - For details of the parameters and returns see U(http://boto3.readthedocs.io/en/latest/reference/services/logs.html).
@@ -75,21 +72,21 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     log_group_name: test-log-group
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     state: present
     log_group_name: test-log-group
     tags: { "Name": "test-log-group", "Env" : "QA" }
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     state: present
     log_group_name: test-log-group
     tags: { "Name": "test-log-group", "Env" : "QA" }
     kms_key_id: arn:aws:kms:region:account-id:key/key-id
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     state: absent
     log_group_name: test-log-group
 

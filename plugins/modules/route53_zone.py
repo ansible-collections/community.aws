@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 module: route53_zone
 short_description: add or delete Route53 zones
+version_added: 1.0.0
 description:
     - Creates and deletes Route53 private and public zones.
 requirements: [ boto3 ]
@@ -61,24 +57,24 @@ author: "Christopher Troup (@minichate)"
 
 EXAMPLES = '''
 - name: create a public zone
-  route53_zone:
+  community.aws.route53_zone:
     zone: example.com
     comment: this is an example
 
 - name: delete a public zone
-  route53_zone:
+  community.aws.route53_zone:
     zone: example.com
     state: absent
 
 - name: create a private zone
-  route53_zone:
+  community.aws.route53_zone:
     zone: devel.example.com
     vpc_id: '{{ myvpc_id }}'
     vpc_region: us-west-2
     comment: developer domain
 
 - name: create a public zone associated with a specific reusable delegation set
-  route53_zone:
+  community.aws.route53_zone:
     zone: example.com
     comment: reusable delegation set example
     delegation_set_id: A1BCDEF2GHIJKL
@@ -123,7 +119,7 @@ delegation_set_id:
 '''
 
 import time
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError

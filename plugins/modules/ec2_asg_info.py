@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ec2_asg_info
+version_added: 1.0.0
 short_description: Gather information about ec2 Auto Scaling Groups (ASGs) in AWS
 description:
   - Gather information about ec2 Auto Scaling Groups (ASGs) in AWS
@@ -43,37 +39,37 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Find all groups
-- ec2_asg_info:
+- name: Find all groups
+  community.aws.ec2_asg_info:
   register: asgs
 
-# Find a group with matching name/prefix
-- ec2_asg_info:
+- name: Find a group with matching name/prefix
+  community.aws.ec2_asg_info:
     name: public-webserver-asg
   register: asgs
 
-# Find a group with matching tags
-- ec2_asg_info:
+- name: Find a group with matching tags
+  community.aws.ec2_asg_info:
     tags:
       project: webapp
       env: production
   register: asgs
 
-# Find a group with matching name/prefix and tags
-- ec2_asg_info:
+- name: Find a group with matching name/prefix and tags
+  community.aws.ec2_asg_info:
     name: myproject
     tags:
       env: production
   register: asgs
 
-# Fail if no groups are found
-- ec2_asg_info:
+- name: Fail if no groups are found
+  community.aws.ec2_asg_info:
     name: public-webserver-asg
   register: asgs
   failed_when: "{{ asgs.results | length == 0 }}"
 
-# Fail if more than 1 group is found
-- ec2_asg_info:
+- name: Fail if more than 1 group is found
+  community.aws.ec2_asg_info:
     name: public-webserver-asg
   register: asgs
   failed_when: "{{ asgs.results | length > 1 }}"
@@ -227,7 +223,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -399,7 +395,7 @@ def main():
     )
     module = AnsibleAWSModule(argument_spec=argument_spec)
     if module._name == 'ec2_asg_facts':
-        module.deprecate("The 'ec2_asg_facts' module has been renamed to 'ec2_asg_info'", version='2.13')
+        module.deprecate("The 'ec2_asg_facts' module has been renamed to 'ec2_asg_info'", date='2021-12-01', collection_name='community.aws')
 
     asg_name = module.params.get('name')
     asg_tags = module.params.get('tags')

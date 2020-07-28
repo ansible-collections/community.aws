@@ -18,13 +18,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: iam_saml_federation
+version_added: 1.0.0
 short_description: Maintain IAM SAML federation configuration.
 requirements:
     - boto3
@@ -60,7 +58,7 @@ EXAMPLES = '''
 # It is assumed that their matching environment variables are set.
 # Creates a new iam saml identity provider if not present
 - name: saml provider
-  iam_saml_federation:
+  community.aws.iam_saml_federation:
       name: example1
       # the > below opens an indented block, so no escaping/quoting is needed when in the indentation level under this key
       saml_metadata_document: >
@@ -68,13 +66,13 @@ EXAMPLES = '''
           <md:EntityDescriptor
 # Creates a new iam saml identity provider if not present
 - name: saml provider
-  iam_saml_federation:
+  community.aws.iam_saml_federation:
       name: example2
       saml_metadata_document: "{{ item }}"
   with_file: /path/to/idp/metdata.xml
 # Removes iam saml identity provider
 - name: remove saml provider
-  iam_saml_federation:
+  community.aws.iam_saml_federation:
       name: example3
       state: absent
 '''
@@ -111,7 +109,7 @@ try:
 except ImportError:
     pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 

@@ -6,14 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'metadata_version': '1.1'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_vpc_vpn_info
+version_added: 1.0.0
 short_description: Gather information about VPN Connections in AWS.
 description:
     - Gather information about VPN Connections in AWS.
@@ -39,25 +35,25 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 - name: Gather information about all vpn connections
-  ec2_vpc_vpn_info:
+  community.aws.ec2_vpc_vpn_info:
 
 - name: Gather information about a filtered list of vpn connections, based on tags
-  ec2_vpc_vpn_info:
+  community.aws.ec2_vpc_vpn_info:
     filters:
       "tag:Name": test-connection
   register: vpn_conn_info
 
 - name: Gather information about vpn connections by specifying connection IDs.
-  ec2_vpc_vpn_info:
+  community.aws.ec2_vpc_vpn_info:
     filters:
       vpn-gateway-id: vgw-cbe66beb
   register: vpn_conn_info
 '''
 
-RETURN = '''
+RETURN = r'''
 vpn_connections:
     description: List of one or more VPN Connections.
     returned: always
@@ -169,7 +165,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_filter_list,
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      camel_dict_to_snake_dict,
@@ -202,7 +198,7 @@ def list_vpn_connections(connection, module):
 def main():
 
     argument_spec = dict(
-        vpn_connection_ids=dict(default=[], type='list'),
+        vpn_connection_ids=dict(default=[], type='list', elements='str'),
         filters=dict(default={}, type='dict')
     )
 
@@ -210,7 +206,7 @@ def main():
                               mutually_exclusive=[['vpn_connection_ids', 'filters']],
                               supports_check_mode=True)
     if module._module._name == 'ec2_vpc_vpn_facts':
-        module._module.deprecate("The 'ec2_vpc_vpn_facts' module has been renamed to 'ec2_vpc_vpn_info'", version='2.13')
+        module._module.deprecate("The 'ec2_vpc_vpn_facts' module has been renamed to 'ec2_vpc_vpn_info'", date='2021-12-01', collection_name='community.aws')
 
     connection = module.client('ec2')
 

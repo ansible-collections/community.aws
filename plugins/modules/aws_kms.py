@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_kms
+version_added: 1.0.0
 short_description: Perform various KMS management tasks.
 description:
      - Manage role/user access to a KMS key. Not designed for encrypting/decrypting.
@@ -21,7 +18,7 @@ options:
     description: An alias for a key. For safety, even though KMS does not require keys
       to have an alias, this module expects all new keys to be given an alias
       to make them easier to manage. Existing keys without an alias may be
-      referred to by I(key_id). Use M(aws_kms_info) to find key ids. Required
+      referred to by I(key_id). Use M(community.aws.aws_kms_info) to find key ids. Required
       if I(key_id) is not given. Note that passing a I(key_id) and I(alias)
       will only cause a new alias to be added, an alias will never be renamed.
       The 'alias/' prefix is optional.
@@ -164,9 +161,9 @@ options:
             type: dict
   policy:
     description:
-      - policy to apply to the KMS key
+      - policy to apply to the KMS key.
       - See U(https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html)
-    type: str
+    type: json
 author:
   - Ted Timmons (@tedder)
   - Will Thames (@willthames)
@@ -177,32 +174,32 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Managing the KMS IAM Policy via policy_mode and policy_grant_types is fragile
 # and has been deprecated in favour of the policy option.
 - name: grant user-style access to production secrets
-  aws_kms:
+  community.aws.aws_kms:
   args:
     alias: "alias/my_production_secrets"
     policy_mode: grant
     policy_role_name: "prod-appServerRole-1R5AQG2BSEL6L"
     policy_grant_types: "role,role grant"
 - name: remove access to production secrets from role
-  aws_kms:
+  community.aws.aws_kms:
   args:
     alias: "alias/my_production_secrets"
     policy_mode: deny
     policy_role_name: "prod-appServerRole-1R5AQG2BSEL6L"
 
 # Create a new KMS key
-- aws_kms:
+- community.aws.aws_kms:
     alias: mykey
     tags:
       Name: myKey
       Purpose: protect_stuff
 
 # Update previous key with more tags
-- aws_kms:
+- community.aws.aws_kms:
     alias: mykey
     tags:
       Name: myKey
@@ -212,7 +209,7 @@ EXAMPLES = '''
 # Update a known key with grants allowing an instance with the billing-prod IAM profile
 # to decrypt data encrypted with the environment: production, application: billing
 # encryption context
-- aws_kms:
+- community.aws.aws_kms:
     key_id: abcd1234-abcd-1234-5678-ef1234567890
     grants:
       - name: billing_prod
@@ -224,9 +221,21 @@ EXAMPLES = '''
         operations:
           - Decrypt
           - RetireGrant
+
+- name: Update IAM policy on an existing KMS key
+  community.aws.aws_kms:
+    alias: my-kms-key
+    policy: '{"Version": "2012-10-17", "Id": "my-kms-key-permissions", "Statement": [ { <SOME STATEMENT> } ]}'
+    state: present
+
+- name: Example using lookup for policy json
+  community.aws.aws_kms:
+    alias: my-kms-key
+    policy: "{{ lookup('template', 'kms_iam_policy_template.json.j2') }}"
+    state: present
 '''
 
-RETURN = '''
+RETURN = r'''
 key_id:
   description: ID of key
   type: str
@@ -396,7 +405,7 @@ statement_label = {
     'admin': 'Allow access for Key Administrators'
 }
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags, compare_policies
@@ -816,6 +825,10 @@ def create_key(connection, module):
                   Tags=ansible_dict_to_boto3_tag_list(module.params['tags'], tag_name_key_name='TagKey', tag_value_key_name='TagValue'),
                   KeyUsage='ENCRYPT_DECRYPT',
                   Origin='AWS_KMS')
+
+    if module.check_mode:
+        return {'changed': True}
+
     if module.params.get('description'):
         params['Description'] = module.params['description']
     if module.params.get('policy'):
@@ -825,8 +838,8 @@ def create_key(connection, module):
         result = connection.create_key(**params)['KeyMetadata']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to create initial key")
-    key = get_key_details(connection, module, result['KeyId'])
 
+    key = get_key_details(connection, module, result['KeyId'])
     update_alias(connection, module, key, module.params['alias'])
     update_key_rotation(connection, module, key, module.params.get('enable_key_rotation'))
 
@@ -1009,15 +1022,15 @@ def main():
         policy_mode=dict(aliases=['mode'], choices=['grant', 'deny'], default='grant'),
         policy_role_name=dict(aliases=['role_name']),
         policy_role_arn=dict(aliases=['role_arn']),
-        policy_grant_types=dict(aliases=['grant_types'], type='list'),
+        policy_grant_types=dict(aliases=['grant_types'], type='list', elements='str'),
         policy_clean_invalid_entries=dict(aliases=['clean_invalid_entries'], type='bool', default=True),
         key_id=dict(aliases=['key_arn']),
         description=dict(),
         enabled=dict(type='bool', default=True),
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=False),
-        grants=dict(type='list', default=[]),
-        policy=dict(),
+        grants=dict(type='list', default=[], elements='dict'),
+        policy=dict(type='json'),
         purge_grants=dict(type='bool', default=False),
         state=dict(default='present', choices=['present', 'absent']),
         enable_key_rotation=(dict(type='bool'))
@@ -1040,7 +1053,7 @@ def main():
 
     if module.params.get('policy_grant_types') or mode == 'deny':
         module.deprecate('Managing the KMS IAM Policy via policy_mode and policy_grant_types is fragile'
-                         ' and has been deprecated in favour of the policy option.', version='2.13')
+                         ' and has been deprecated in favour of the policy option.', date='2021-12-01', collection_name='community.aws')
         result = update_policy_grants(kms, module, key_metadata, mode)
         module.exit_json(**result)
 

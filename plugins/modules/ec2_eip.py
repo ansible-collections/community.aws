@@ -8,14 +8,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ec2_eip
+version_added: 1.0.0
 short_description: manages EC2 elastic IP (EIP) addresses.
 description:
     - This module can allocate or release an EIP.
@@ -83,7 +79,7 @@ options:
     type: str
   wait_timeout:
     description:
-      - The I(wait_timeout) option does nothing and will be removed in Ansible 2.14.
+      - The I(wait_timeout) option does nothing and will be removed after 2022-06-01
     type: int
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -104,48 +100,48 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: associate an elastic IP with an instance
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: i-1212f003
     ip: 93.184.216.119
 
 - name: associate an elastic IP with a device
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: eni-c8ad70f3
     ip: 93.184.216.119
 
 - name: associate an elastic IP with a device and allow reassociation
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: eni-c8ad70f3
     public_ip: 93.184.216.119
     allow_reassociation: true
 
 - name: disassociate an elastic IP from an instance
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: i-1212f003
     ip: 93.184.216.119
     state: absent
 
 - name: disassociate an elastic IP with a device
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: eni-c8ad70f3
     ip: 93.184.216.119
     state: absent
 
 - name: allocate a new elastic IP and associate it with an instance
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: i-1212f003
 
 - name: allocate a new elastic IP without associating it to anything
-  ec2_eip:
+  community.aws.ec2_eip:
     state: present
   register: eip
 
 - name: output the IP
-  debug:
+  ansible.builtin.debug:
     msg: "Allocated IP is {{ eip.public_ip }}"
 
 - name: provision new instances with ec2
-  ec2:
+  amazon.aws.ec2:
     keypair: mykey
     instance_type: c1.medium
     image: ami-40603AD1
@@ -155,29 +151,29 @@ EXAMPLES = '''
   register: ec2
 
 - name: associate new elastic IPs with each of the instances
-  ec2_eip:
+  community.aws.ec2_eip:
     device_id: "{{ item }}"
   loop: "{{ ec2.instance_ids }}"
 
 - name: allocate a new elastic IP inside a VPC in us-west-2
-  ec2_eip:
+  community.aws.ec2_eip:
     region: us-west-2
     in_vpc: true
   register: eip
 
 - name: output the IP
-  debug:
+  ansible.builtin.debug:
     msg: "Allocated IP inside a VPC is {{ eip.public_ip }}"
 
 - name: allocate eip - reuse unallocated ips (if found) with FREE tag
-  ec2_eip:
+  community.aws.ec2_eip:
     region: us-east-1
     in_vpc: true
     reuse_existing_ip_allowed: true
     tag_name: FREE
 
-- name: allocate eip - reuse unallocted ips if tag reserved is nope
-  ec2_eip:
+- name: allocate eip - reuse unallocated ips if tag reserved is nope
+  community.aws.ec2_eip:
     region: us-east-1
     in_vpc: true
     reuse_existing_ip_allowed: true
@@ -185,13 +181,13 @@ EXAMPLES = '''
     tag_value: nope
 
 - name: allocate new eip - from servers given ipv4 pool
-  ec2_eip:
+  community.aws.ec2_eip:
     region: us-east-1
     in_vpc: true
     public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
 
 - name: allocate eip - from a given pool (if no free addresses where dev-servers tag is dynamic)
-  ec2_eip:
+  community.aws.ec2_eip:
     region: us-east-1
     in_vpc: true
     reuse_existing_ip_allowed: true
@@ -199,7 +195,7 @@ EXAMPLES = '''
     public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
 
 - name: allocate eip from pool - check if tag reserved_for exists and value is our hostname
-  ec2_eip:
+  community.aws.ec2_eip:
     region: us-east-1
     in_vpc: true
     reuse_existing_ip_allowed: true
@@ -226,7 +222,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, ansible_dict_to_boto3_filter_list
 
 
@@ -530,7 +526,7 @@ def main():
                                        default=False),
         release_on_disassociation=dict(required=False, type='bool', default=False),
         allow_reassociation=dict(type='bool', default=False),
-        wait_timeout=dict(type='int', removed_in_version='2.14'),
+        wait_timeout=dict(type='int', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
         private_ip_address=dict(),
         tag_name=dict(),
         tag_value=dict(),

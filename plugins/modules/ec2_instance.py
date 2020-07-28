@@ -6,19 +6,16 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_instance
+version_added: 1.0.0
 short_description: Create & manage EC2 instances
 description:
   - Create and manage AWS EC2 instances.
   - >
     Note: This module does not support creating
-    L(EC2 Spot instances,https://aws.amazon.com/ec2/spot/). The M(ec2) module
+    L(EC2 Spot instances,https://aws.amazon.com/ec2/spot/). The M(amazon.aws.ec2) module
     can create and manage spot instances.
 author:
   - Ryan Scott Brown (@ryansb)
@@ -28,6 +25,7 @@ options:
     description:
       - If you specify one or more instance IDs, only instances that have the specified IDs are returned.
     type: list
+    elements: str
   state:
     description:
       - Goal state for the instances.
@@ -86,7 +84,7 @@ options:
     type: bool
   image:
     description:
-      - An image to use for the instance. The M(ec2_ami_info) module may be used to retrieve images.
+      - An image to use for the instance. The M(amazon.aws.ec2_ami_info) module may be used to retrieve images.
         One of I(image) or I(image_id) are required when instance is not already present.
     type: dict
     suboptions:
@@ -110,6 +108,7 @@ options:
     description:
       - A list of security group IDs or names (strings). Mutually exclusive with I(security_group).
     type: list
+    elements: str
   security_group:
     description:
       - A security group ID or name. Mutually exclusive with I(security_groups).
@@ -121,14 +120,14 @@ options:
   vpc_subnet_id:
     description:
       - The subnet ID in which to launch the instance (VPC)
-        If none is provided, ec2_instance will chose the default zone of the default VPC.
+        If none is provided, M(community.aws.ec2_instance) will chose the default zone of the default VPC.
     aliases: ['subnet_id']
     type: str
   network:
     description:
       - Either a dictionary containing the key 'interfaces' corresponding to a list of network interface IDs or
         containing specifications for a single network interface.
-      - Use the ec2_eni module to create ENIs with special settings.
+      - Use the M(amazon.aws.ec2_eni) module to create ENIs with special settings.
     type: dict
     suboptions:
       interfaces:
@@ -183,6 +182,7 @@ options:
       ebs.iops, and ebs.delete_on_termination.
     - For more information about each parameter, see U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_BlockDeviceMapping.html).
     type: list
+    elements: dict
   launch_template:
     description:
       - The EC2 launch template to base instance configuration on.
@@ -286,20 +286,20 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Terminate every running instance in a region. Use with EXTREME caution.
-- ec2_instance:
+- name: Terminate every running instance in a region. Use with EXTREME caution.
+  community.aws.ec2_instance:
     state: absent
     filters:
       instance-state-name: running
 
-# restart a particular instance by its ID
-- ec2_instance:
+- name: restart a particular instance by its ID
+  community.aws.ec2_instance:
     state: restarted
     instance_ids:
       - i-12345678
 
-# start an instance with a public IP address
-- ec2_instance:
+- name: start an instance with a public IP address
+  community.aws.ec2_instance:
     name: "public-compute-instance"
     key_name: "prod-ssh-key"
     vpc_subnet_id: subnet-5ca1ab1e
@@ -311,8 +311,8 @@ EXAMPLES = '''
     tags:
       Environment: Testing
 
-# start an instance and Add EBS
-- ec2_instance:
+- name: start an instance and Add EBS
+  community.aws.ec2_instance:
     name: "public-withebs-instance"
     vpc_subnet_id: subnet-5ca1ab1e
     instance_type: t2.micro
@@ -324,8 +324,8 @@ EXAMPLES = '''
           volume_size: 16
           delete_on_termination: true
 
-# start an instance with a cpu_options
-- ec2_instance:
+- name: start an instance with a cpu_options
+  community.aws.ec2_instance:
     name: "public-cpuoption-instance"
     vpc_subnet_id: subnet-5ca1ab1e
     tags:
@@ -339,8 +339,8 @@ EXAMPLES = '''
         core_count: 1
         threads_per_core: 1
 
-# start an instance and have it begin a Tower callback on boot
-- ec2_instance:
+- name: start an instance and have it begin a Tower callback on boot
+  community.aws.ec2_instance:
     name: "tower-callback-test"
     key_name: "prod-ssh-key"
     vpc_subnet_id: subnet-5ca1ab1e
@@ -357,8 +357,8 @@ EXAMPLES = '''
     tags:
       SomeThing: "A value"
 
-# start an instance with ENI (An existing ENI ID is required)
-- ec2_instance:
+- name: start an instance with ENI (An existing ENI ID is required)
+  community.aws.ec2_instance:
     name: "public-eni-instance"
     key_name: "prod-ssh-key"
     vpc_subnet_id: subnet-5ca1ab1e
@@ -374,8 +374,8 @@ EXAMPLES = '''
     instance_type: t2.micro
     image_id: ami-123456
 
-# add second ENI interface
-- ec2_instance:
+- name: add second ENI interface
+  community.aws.ec2_instance:
     name: "public-eni-instance"
     network:
       interfaces:
@@ -820,7 +820,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
                                                                      camel_dict_to_snake_dict,
                                                                      )
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 module = None
 
@@ -1684,7 +1684,7 @@ def main():
         ebs_optimized=dict(type='bool'),
         vpc_subnet_id=dict(type='str', aliases=['subnet_id']),
         availability_zone=dict(type='str'),
-        security_groups=dict(default=[], type='list'),
+        security_groups=dict(default=[], type='list', elements='str'),
         security_group=dict(type='str'),
         instance_role=dict(type='str'),
         name=dict(type='str'),
@@ -1703,9 +1703,9 @@ def main():
         instance_initiated_shutdown_behavior=dict(type='str', choices=['stop', 'terminate']),
         termination_protection=dict(type='bool'),
         detailed_monitoring=dict(type='bool'),
-        instance_ids=dict(default=[], type='list'),
+        instance_ids=dict(default=[], type='list', elements='str'),
         network=dict(default=None, type='dict'),
-        volumes=dict(default=None, type='list'),
+        volumes=dict(default=None, type='list', elements='dict'),
     )
     # running/present are synonyms
     # as are terminated/absent

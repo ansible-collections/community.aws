@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: sts_session_token
+version_added: 1.0.0
 short_description: Obtain a session token from the AWS Security Token Service
 description:
     - Obtain a session token from the AWS Security Token Service.
@@ -65,20 +61,21 @@ changed:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Get a session token (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html)
-sts_session_token:
-  duration_seconds: 3600
-register: session_credentials
+# (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html)
+- name: Get a session token
+  community.aws.sts_session_token:
+    duration_seconds: 3600
+  register: session_credentials
 
-# Use the session token obtained above to tag an instance in account 123456789012
-ec2_tag:
-  aws_access_key: "{{ session_credentials.sts_creds.access_key }}"
-  aws_secret_key: "{{ session_credentials.sts_creds.secret_key }}"
-  security_token: "{{ session_credentials.sts_creds.session_token }}"
-  resource: i-xyzxyz01
-  state: present
-  tags:
-    MyNewTag: value
+- name: Use the session token obtained above to tag an instance in account 123456789012
+  amazon.aws.ec2_tag:
+    aws_access_key: "{{ session_credentials.sts_creds.access_key }}"
+    aws_secret_key: "{{ session_credentials.sts_creds.secret_key }}"
+    security_token: "{{ session_credentials.sts_creds.session_token }}"
+    resource: i-xyzxyz01
+    state: present
+    tags:
+        MyNewTag: value
 
 '''
 

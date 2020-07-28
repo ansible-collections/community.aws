@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: kinesis_stream
+version_added: 1.0.0
 short_description: Manage a Kinesis Stream.
 description:
     - Create or Delete a Kinesis Stream.
@@ -88,7 +84,7 @@ EXAMPLES = '''
 
 # Basic creation example:
 - name: Set up Kinesis Stream with 10 shards and wait for the stream to become ACTIVE
-  kinesis_stream:
+  community.aws.kinesis_stream:
     name: test-stream
     shards: 10
     wait: yes
@@ -97,7 +93,7 @@ EXAMPLES = '''
 
 # Basic creation example with tags:
 - name: Set up Kinesis Stream with 10 shards, tag the environment, and wait for the stream to become ACTIVE
-  kinesis_stream:
+  community.aws.kinesis_stream:
     name: test-stream
     shards: 10
     tags:
@@ -108,7 +104,7 @@ EXAMPLES = '''
 
 # Basic creation example with tags and increase the retention period from the default 24 hours to 48 hours:
 - name: Set up Kinesis Stream with 10 shards, tag the environment, increase the retention period and wait for the stream to become ACTIVE
-  kinesis_stream:
+  community.aws.kinesis_stream:
     name: test-stream
     retention_period: 48
     shards: 10
@@ -120,7 +116,7 @@ EXAMPLES = '''
 
 # Basic delete example:
 - name: Delete Kinesis Stream test-stream and wait for it to finish deleting.
-  kinesis_stream:
+  community.aws.kinesis_stream:
     name: test-stream
     state: absent
     wait: yes
@@ -129,7 +125,7 @@ EXAMPLES = '''
 
 # Basic enable encryption example:
 - name: Encrypt Kinesis Stream test-stream.
-  kinesis_stream:
+  community.aws.kinesis_stream:
     name: test-stream
     state: present
     encryption_state: enabled
@@ -141,7 +137,7 @@ EXAMPLES = '''
 
 # Basic disable encryption example:
 - name: Encrypt Kinesis Stream test-stream.
-  kinesis_stream:
+  community.aws.kinesis_stream:
     name: test-stream
     state: present
     encryption_state: disabled

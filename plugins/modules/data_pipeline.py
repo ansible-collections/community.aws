@@ -7,13 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: data_pipeline
+version_added: 1.0.0
 author:
   - Raghu Udiyar (@raags) <raghusiddarth@gmail.com>
   - Sloane Hertel (@s-hertel) <shertel@redhat.com>
@@ -127,16 +124,15 @@ options:
     type: dict
   version:
     description:
-      - The version option has never had any effect and will be removed in
-        Ansible 2.14
+      - The version option has never had any effect and will be removed after 2022-06-01.
     type: str
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     objects: "{{pipelineObjects}}"
@@ -148,7 +144,7 @@ EXAMPLES = '''
     state: present
 
 # Example populating and activating a pipeline that demonstrates two ways of providing pipeline objects
-- data_pipeline:
+- community.aws.data_pipeline:
   name: test-dp
   objects:
     - "id": "DefaultSchedule"
@@ -171,20 +167,20 @@ EXAMPLES = '''
   state: active
 
 # Activate pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     state: active
 
 # Delete pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     state: absent
 
 '''
 
-RETURN = '''
+RETURN = r'''
 changed:
   description: whether the data pipeline has been modified
   type: bool
@@ -282,7 +278,7 @@ def pipeline_field(client, dp_id, field):
 
 
 def run_with_timeout(timeout, func, *func_args, **func_kwargs):
-    """Run func with the provided args and kwargs, and wait utill
+    """Run func with the provided args and kwargs, and wait until
     timeout for truthy return value
 
     :param int timeout: time to wait for status
@@ -609,15 +605,15 @@ def main():
     argument_spec.update(
         dict(
             name=dict(required=True),
-            version=dict(removed_in_version='2.14'),
+            version=dict(removed_at_date='2022-06-01', removed_from_collection='community.aws'),
             description=dict(required=False, default=''),
-            objects=dict(required=False, type='list', default=[]),
-            parameters=dict(required=False, type='list', default=[]),
+            objects=dict(required=False, type='list', default=[], elements='dict'),
+            parameters=dict(required=False, type='list', default=[], elements='dict'),
             timeout=dict(required=False, type='int', default=300),
             state=dict(default='present', choices=['present', 'absent',
                                                    'active', 'inactive']),
             tags=dict(required=False, type='dict', default={}),
-            values=dict(required=False, type='list', default=[])
+            values=dict(required=False, type='list', default=[], elements='dict')
         )
     )
     module = AnsibleModule(argument_spec, supports_check_mode=False)

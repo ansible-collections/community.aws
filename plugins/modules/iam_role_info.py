@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: iam_role_info
+version_added: 1.0.0
 short_description: Gather information on IAM roles
 description:
     - Gathers information about IAM roles.
@@ -41,16 +37,16 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# find all existing IAM roles
-- iam_role_info:
+- name: find all existing IAM roles
+  community.aws.iam_role_info:
   register: result
 
-# describe a single role
-- iam_role_info:
+- name: describe a single role
+  community.aws.iam_role_info:
     name: MyIAMRole
 
-# describe all roles matching a path prefix
-- iam_role_info:
+- name: describe all roles matching a path prefix
+  community.aws.iam_role_info:
     path_prefix: /application/path
 '''
 
@@ -156,7 +152,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, camel_dict_to_snake_dict, AWSRetry
 
 
@@ -247,7 +243,7 @@ def main():
                               supports_check_mode=True,
                               mutually_exclusive=[['name', 'path_prefix']])
     if module._name == 'iam_role_facts':
-        module.deprecate("The 'iam_role_facts' module has been renamed to 'iam_role_info'", version='2.13')
+        module.deprecate("The 'iam_role_facts' module has been renamed to 'iam_role_info'", date='2021-12-01', collection_name='community.aws')
 
     client = module.client('iam')
 

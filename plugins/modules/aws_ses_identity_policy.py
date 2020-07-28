@@ -5,15 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
 DOCUMENTATION = '''
 ---
 module: aws_ses_identity_policy
+version_added: 1.0.0
 short_description: Manages SES sending authorization policies
 description:
     - This module allows the user to manage sending authorization policies associated with an SES identity (email or domain).
@@ -51,28 +47,28 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: add sending authorization policy to domain identity
-  aws_ses_identity_policy:
+  community.aws.aws_ses_identity_policy:
     identity: example.com
     policy_name: ExamplePolicy
     policy: "{{ lookup('template', 'policy.json.j2') }}"
     state: present
 
 - name: add sending authorization policy to email identity
-  aws_ses_identity_policy:
+  community.aws.aws_ses_identity_policy:
     identity: example@example.com
     policy_name: ExamplePolicy
     policy: "{{ lookup('template', 'policy.json.j2') }}"
     state: present
 
 - name: add sending authorization policy to identity using ARN
-  aws_ses_identity_policy:
+  community.aws.aws_ses_identity_policy:
     identity: "arn:aws:ses:us-east-1:12345678:identity/example.com"
     policy_name: ExamplePolicy
     policy: "{{ lookup('template', 'policy.json.j2') }}"
     state: present
 
 - name: remove sending authorization policy
-  aws_ses_identity_policy:
+  community.aws.aws_ses_identity_policy:
     identity: example.com
     policy_name: ExamplePolicy
     state: absent
@@ -86,7 +82,7 @@ policies:
     sample: [ExamplePolicy]
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies, AWSRetry
 
 import json

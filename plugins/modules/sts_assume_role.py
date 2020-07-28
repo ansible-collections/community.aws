@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: sts_assume_role
+version_added: 1.0.0
 short_description: Assume a role using AWS Security Token Service and obtain temporary credentials
 description:
     - Assume a role using AWS Security Token Service and obtain temporary credentials.
@@ -73,7 +69,7 @@ sts_creds:
     type: dict
     sample:
       access_key: XXXXXXXXXXXXXXXXXXXX
-      expiration: 2017-11-11T11:11:11+00:00
+      expiration: '2017-11-11T11:11:11+00:00'
       secret_key: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
       session_token: XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 sts_user:
@@ -93,13 +89,13 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Assume an existing role (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)
-- sts_assume_role:
+- community.aws.sts_assume_role:
     role_arn: "arn:aws:iam::123456789012:role/someRole"
     role_session_name: "someRoleSession"
   register: assumed_role
 
 # Use the assumed role above to tag an instance in account 123456789012
-- ec2_tag:
+- amazon.aws.ec2_tag:
     aws_access_key: "{{ assumed_role.sts_creds.access_key }}"
     aws_secret_key: "{{ assumed_role.sts_creds.secret_key }}"
     security_token: "{{ assumed_role.sts_creds.session_token }}"
@@ -110,7 +106,7 @@ EXAMPLES = '''
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:

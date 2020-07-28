@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: aws_kms_info
+version_added: 1.0.0
 short_description: Gather information about AWS KMS keys
 description:
     - Gather information about AWS KMS keys including tags and grants
@@ -40,15 +37,15 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Gather information about all KMS keys
-- aws_kms_info:
+- community.aws.aws_kms_info:
 
 # Gather information about all keys with a Name tag
-- aws_kms_info:
+- community.aws.aws_kms_info:
     filters:
       tag-key: Name
 
 # Gather information about all keys with a specific name
-- aws_kms_info:
+- community.aws.aws_kms_info:
     filters:
       "tag:Name": Example
 '''
@@ -413,7 +410,7 @@ def main():
     module = AnsibleModule(argument_spec=argument_spec,
                            supports_check_mode=True)
     if module._name == 'aws_kms_facts':
-        module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", version='2.13')
+        module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 and botocore are required for this module')

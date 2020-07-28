@@ -5,14 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_placement_group
+version_added: 1.0.0
 short_description: Create or delete an EC2 Placement Group
 description:
     - Create an EC2 Placement Group; if the placement group already exists,
@@ -50,19 +47,19 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide
 # for details.
 
-# Create a placement group.
-- ec2_placement_group:
+- name: Create a placement group.
+  community.aws.ec2_placement_group:
     name: my-cluster
     state: present
 
-# Create a Spread placement group.
-- ec2_placement_group:
+- name: Create a Spread placement group.
+  community.aws.ec2_placement_group:
     name: my-cluster
     state: present
     strategy: spread
 
-# Delete a placement group.
-- ec2_placement_group:
+- name: Delete a placement group.
+  community.aws.ec2_placement_group:
     name: my-cluster
     state: absent
 
@@ -90,7 +87,7 @@ placement_group:
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 try:
     from botocore.exceptions import (BotoCoreError, ClientError)

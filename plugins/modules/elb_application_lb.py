@@ -17,13 +17,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_application_lb
+version_added: 1.0.0
 short_description: Manage an Application load balancer
 description:
     - Manage an AWS Application Elastic Load Balancer. See U(https://aws.amazon.com/blogs/aws/new-aws-application-load-balancer/) for details.
@@ -68,6 +66,7 @@ options:
       - A list of dicts containing listeners to attach to the ELB. See examples for detail of the dict required. Note that listener keys
         are CamelCased.
     type: list
+    elements: dict
     suboptions:
         Port:
             description: The port on which the load balancer is listening.
@@ -80,6 +79,7 @@ options:
         Certificates:
             description: The SSL server certificate.
             type: list
+            elements: dict
             suboptions:
                 CertificateArn:
                     description: The Amazon Resource Name (ARN) of the certificate.
@@ -91,6 +91,7 @@ options:
             description: The default actions for the listener.
             required: true
             type: list
+            elements: dict
             suboptions:
                 Type:
                     description: The type of action.
@@ -100,6 +101,7 @@ options:
                     type: str
         Rules:
             type: list
+            elements: dict
             description:
               - A list of ALB Listener Rules.
               - 'For the complete documentation of possible Conditions and Actions please see the boto3 documentation:'
@@ -138,12 +140,14 @@ options:
         at least two Availability Zones.
       - Required if I(state=present).
     type: list
+    elements: str
   security_groups:
     description:
       - A list of the names or IDs of the security groups to assign to the load balancer.
       - Required if I(state=present).
     default: []
     type: list
+    elements: str
   scheme:
     description:
       - Internet-facing or internal load balancer. An ELB scheme can not be modified after creation.
@@ -184,11 +188,11 @@ notes:
   - Listener rules are matched based on priority. If a rule's priority is changed then a new rule will be created.
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create an ELB and attach a listener
-- elb_application_lb:
+- community.aws.elb_application_lb:
     name: myelb
     security_groups:
       - sg-12345678
@@ -209,7 +213,7 @@ EXAMPLES = '''
     state: present
 
 # Create an ELB and attach a listener with logging enabled
-- elb_application_lb:
+- community.aws.elb_application_lb:
     access_logs_enabled: yes
     access_logs_s3_bucket: mybucket
     access_logs_s3_prefix: "logs"
@@ -233,7 +237,7 @@ EXAMPLES = '''
     state: present
 
 # Create an ALB with listeners and rules
-- elb_application_lb:
+- community.aws.elb_application_lb:
     name: test-alb
     subnets:
       - subnet-12345678
@@ -296,13 +300,13 @@ EXAMPLES = '''
     state: present
 
 # Remove an ELB
-- elb_application_lb:
+- community.aws.elb_application_lb:
     name: myelb
     state: absent
 
 '''
 
-RETURN = '''
+RETURN = r'''
 access_logs_s3_bucket:
     description: The name of the S3 bucket for the access logs.
     returned: when state is present
@@ -457,16 +461,17 @@ vpc_id:
     sample: vpc-0011223344
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, boto3_tag_list_to_ansible_dict, compare_aws_tags
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.elbv2 import (ApplicationLoadBalancer,
-                                                                           ELBListeners,
-                                                                           ELBListener,
-                                                                           ELBListenerRules,
-                                                                           ELBListenerRule,
-                                                                           )
-from ansible_collections.amazon.aws.plugins.module_utils.aws.elb_utils import get_elb_listener_rules
+from ansible_collections.amazon.aws.plugins.module_utils.elbv2 import (
+    ApplicationLoadBalancer,
+    ELBListener,
+    ELBListenerRule,
+    ELBListenerRules,
+    ELBListeners,
+)
+from ansible_collections.amazon.aws.plugins.module_utils.elb_utils import get_elb_listener_rules
 
 
 def create_or_update_elb(elb_obj):
@@ -604,16 +609,16 @@ def main():
                            Protocol=dict(type='str', required=True),
                            Port=dict(type='int', required=True),
                            SslPolicy=dict(type='str'),
-                           Certificates=dict(type='list'),
-                           DefaultActions=dict(type='list', required=True),
-                           Rules=dict(type='list')
+                           Certificates=dict(type='list', elements='dict'),
+                           DefaultActions=dict(type='list', required=True, elements='dict'),
+                           Rules=dict(type='list', elements='dict')
                        )
                        ),
         name=dict(required=True, type='str'),
         purge_listeners=dict(default=True, type='bool'),
         purge_tags=dict(default=True, type='bool'),
-        subnets=dict(type='list'),
-        security_groups=dict(type='list'),
+        subnets=dict(type='list', elements='str'),
+        security_groups=dict(type='list', elements='str'),
         scheme=dict(default='internet-facing', choices=['internet-facing', 'internal']),
         state=dict(choices=['present', 'absent'], default='present'),
         tags=dict(type='dict'),

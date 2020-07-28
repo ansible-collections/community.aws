@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 module: ec2_vpc_vgw
 short_description: Create and delete AWS VPN Virtual Gateways.
+version_added: 1.0.0
 description:
   - Creates AWS VPN Virtual Gateways
   - Deletes AWS VPN Virtual Gateways
@@ -69,7 +65,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Create a new vgw attached to a specific VPC
-  ec2_vpc_vgw:
+  community.aws.ec2_vpc_vgw:
     state: present
     region: ap-southeast-2
     profile: personal
@@ -79,7 +75,7 @@ EXAMPLES = '''
   register: created_vgw
 
 - name: Create a new unattached vgw
-  ec2_vpc_vgw:
+  community.aws.ec2_vpc_vgw:
     state: present
     region: ap-southeast-2
     profile: personal
@@ -91,7 +87,7 @@ EXAMPLES = '''
   register: created_vgw
 
 - name: Remove a new vgw using the name
-  ec2_vpc_vgw:
+  community.aws.ec2_vpc_vgw:
     state: absent
     region: ap-southeast-2
     profile: personal
@@ -100,7 +96,7 @@ EXAMPLES = '''
   register: deleted_vgw
 
 - name: Remove a new vgw using the vpn_gateway_id
-  ec2_vpc_vgw:
+  community.aws.ec2_vpc_vgw:
     state: absent
     region: ap-southeast-2
     profile: personal
@@ -125,8 +121,8 @@ try:
 except ImportError:
     HAS_BOTO3 = False
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.aws.waiters import get_waiter
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3, boto3_conn, ec2_argument_spec, get_aws_connection_info, AWSRetry
 from ansible.module_utils._text import to_native

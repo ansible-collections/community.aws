@@ -8,13 +8,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: ecs_ecr
+version_added: 1.0.0
 short_description: Manage Elastic Container Registry repositories
 description:
     - Manage Elastic Container Registry repositories.
@@ -46,7 +44,7 @@ options:
     purge_policy:
         description:
             - If yes, remove the policy from the repository.
-            - Alias C(delete_policy) has been deprecated and will be removed in Ansible 2.14
+            - Alias C(delete_policy) has been deprecated and will be removed after 2022-06-01.
         required: false
         default: false
         type: bool
@@ -88,16 +86,21 @@ EXAMPLES = '''
 # If the repository does not exist, it is created. If it does exist, would not
 # affect any policies already on it.
 - name: ecr-repo
-  ecs_ecr: name=super/cool
+  community.aws.ecs_ecr:
+    name: super/cool
 
 - name: destroy-ecr-repo
-  ecs_ecr: name=old/busted state=absent
+  community.aws.ecs_ecr:
+    name: old/busted
+    state: absent
 
 - name: Cross account ecr-repo
-  ecs_ecr: registry_id=999999999999 name=cross/account
+  community.aws.ecs_ecr:
+    registry_id: 999999999999
+    name: cross/account
 
 - name: set-policy as object
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-policy-object
     policy:
       Version: '2008-10-17'
@@ -112,22 +115,22 @@ EXAMPLES = '''
             - ecr:BatchCheckLayerAvailability
 
 - name: set-policy as string
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-policy-string
     policy: "{{ lookup('template', 'policy.json.j2') }}"
 
 - name: delete-policy
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-no-policy
     purge_policy: yes
 
 - name: create immutable ecr-repo
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: super/cool
     image_tag_mutability: immutable
 
 - name: set-lifecycle-policy
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-lifecycle-policy
     lifecycle_policy:
       rules:
@@ -142,7 +145,7 @@ EXAMPLES = '''
             type: expire
 
 - name: purge-lifecycle-policy
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-no-lifecycle-policy
     purge_lifecycle_policy: true
 '''
@@ -180,7 +183,7 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception, compare_policies, sort_json_policy_dict
 from ansible.module_utils.six import string_types
 
@@ -505,7 +508,7 @@ def main():
         image_tag_mutability=dict(required=False, choices=['mutable', 'immutable'],
                                   default='mutable'),
         purge_policy=dict(required=False, type='bool', aliases=['delete_policy'],
-                          deprecated_aliases=[dict(name='delete_policy', version='2.14')]),
+                          deprecated_aliases=[dict(name='delete_policy', date='2022-06-01', collection_name='community.aws')]),
         lifecycle_policy=dict(required=False, type='json'),
         purge_lifecycle_policy=dict(required=False, type='bool')
     )

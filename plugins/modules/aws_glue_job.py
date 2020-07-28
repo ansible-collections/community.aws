@@ -5,13 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_glue_job
+version_added: 1.0.0
 short_description: Manage an AWS Glue job
 description:
     - Manage an AWS Glue job. See U(https://aws.amazon.com/glue/) for details.
@@ -83,24 +81,24 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create an AWS Glue job
-- aws_glue_job:
+- community.aws.aws_glue_job:
     command_script_location: s3bucket/script.py
     name: my-glue-job
     role: my-iam-role
     state: present
 
 # Delete an AWS Glue job
-- aws_glue_job:
+- community.aws.aws_glue_job:
     name: my-glue-job
     state: absent
 
 '''
 
-RETURN = '''
+RETURN = r'''
 allocated_capacity:
     description: The number of AWS Glue data processing units (DPUs) allocated to runs of this job. From 2 to
                  100 DPUs can be allocated; the default is 10. A DPU is a relative measure of processing power
@@ -187,7 +185,7 @@ timeout:
     sample: 300
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 # Non-ansible imports
@@ -339,7 +337,7 @@ def main():
             allocated_capacity=dict(type='int'),
             command_name=dict(type='str', default='glueetl'),
             command_script_location=dict(type='str'),
-            connections=dict(type='list'),
+            connections=dict(type='list', elements='str'),
             default_arguments=dict(type='dict'),
             description=dict(type='str'),
             max_concurrent_runs=dict(type='int'),
