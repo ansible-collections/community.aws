@@ -414,14 +414,14 @@
     cloudfront_distribution:
       distribution_id: "{{ distribution_id }}"
       origins:
-        - id: "{{ targetBucket }}"
-          domain_name: "{{ targetBucket }}.s3.amazonaws.com"
+        - id: "{{ resource_prefix }}"
+          domain_name: "{{ resource_prefix }}.s3.amazonaws.com"
           s3_origin_access_identity_enabled: true
           s3_origin_config:
             origin_access_identity: origin-access-identity/cloudfront/ANYTHING
     register: update_distribution_with_specific_access_identity
 
-  - name: check that custom origin with origin access identity fails
+  - name: check that custom origin uses the provided origin_access_identity
     assert:
       that:
         - update_distribution_with_specific_access_identity.changed
