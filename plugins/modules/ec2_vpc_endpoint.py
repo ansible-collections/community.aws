@@ -197,6 +197,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_con
                                                                      HAS_BOTO3,
                                                                      camel_dict_to_snake_dict,
                                                                      )
+from ansible_collections.amazon.aws.plugins.module_utils.aws.core import is_boto3_error_code
 from ansible.module_utils.six import string_types
 
 
@@ -296,18 +297,13 @@ def create_vpc_endpoint(client, module):
             status_achieved, result = wait_for_status(client, module, result['vpc_endpoint_id'], 'available')
             if not status_achieved:
                 module.fail_json(msg='Error waiting for vpc endpoint to become available - please check the AWS console')
-    except botocore.exceptions.ClientError as e:
-        message = to_native(e)
-        if "DryRunOperation" in message:
-            changed = True
-            result = 'Would have created VPC Endpoint if not in check mode'
-        elif "IdempotentParameterMismatch" in message:
-            module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
-        elif "RouteAlreadyExists" in message:
-            module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
-        else:
-            module.fail_json(msg=message, exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+    except is_boto3_error_code('DryRunOperation'):
+        changed = True
+        result = 'Would have created VPC Endpoint if not in check mode'
+    except is_boto3_error_code('IdempotentParameterMismatch'):
+        module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
+    except is_boto3_error_code('RouteAlreadyExists'):
+        module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
     except Exception as e:
         module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
                          **camel_dict_to_snake_dict(e.response))
