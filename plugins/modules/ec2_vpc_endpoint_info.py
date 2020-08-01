@@ -116,7 +116,6 @@ except ImportError:
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
@@ -165,13 +164,10 @@ def get_endpoints(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            query=dict(choices=['services', 'endpoints'], required=True),
-            filters=dict(default={}, type='dict'),
-            vpc_endpoint_ids=dict(type='list', elements='str'),
-        )
+    argument_spec = dict(
+        query=dict(choices=['services', 'endpoints'], required=True),
+        filters=dict(default={}, type='dict'),
+        vpc_endpoint_ids=dict(type='list', elements='str'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)

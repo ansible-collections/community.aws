@@ -176,7 +176,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError
@@ -407,8 +406,7 @@ def ensure_absent(client, lag_id, lag_name, force_delete, delete_with_disassocia
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(),
         link_aggregation_group_id=dict(),
@@ -421,7 +419,7 @@ def main():
         force_delete=dict(type='bool', default=False),
         wait=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=120),
-    ))
+    )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,

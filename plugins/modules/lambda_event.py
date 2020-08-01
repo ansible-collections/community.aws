@@ -130,7 +130,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -405,16 +404,13 @@ def main():
     """Produce a list of function suffixes which handle lambda events."""
     source_choices = ["stream", "sqs"]
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            state=dict(required=False, default='present', choices=['present', 'absent']),
-            lambda_function_arn=dict(required=True, aliases=['function_name', 'function_arn']),
-            event_source=dict(required=False, default="stream", choices=source_choices),
-            source_params=dict(type='dict', required=True),
-            alias=dict(required=False, default=None),
-            version=dict(type='int', required=False, default=0),
-        )
+    argument_spec = dict(
+        state=dict(required=False, default='present', choices=['present', 'absent']),
+        lambda_function_arn=dict(required=True, aliases=['function_name', 'function_arn']),
+        event_source=dict(required=False, default="stream", choices=source_choices),
+        source_params=dict(type='dict', required=True),
+        alias=dict(required=False, default=None),
+        version=dict(type='int', required=False, default=0),
     )
 
     module = AnsibleAWSModule(

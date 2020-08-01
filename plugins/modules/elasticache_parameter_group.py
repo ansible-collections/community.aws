@@ -122,7 +122,6 @@ from ansible.module_utils.six import string_types
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -281,15 +280,12 @@ def get_info(conn, name):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            group_family=dict(type='str', choices=['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0']),
-            name=dict(required=True, type='str'),
-            description=dict(default='', type='str'),
-            state=dict(required=True, choices=['present', 'absent', 'reset']),
-            values=dict(type='dict'),
-        )
+    argument_spec = dict(
+        group_family=dict(type='str', choices=['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0']),
+        name=dict(required=True, type='str'),
+        description=dict(default='', type='str'),
+        state=dict(required=True, choices=['present', 'absent', 'reset']),
+        values=dict(type='dict'),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec)
 

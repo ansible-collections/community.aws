@@ -381,7 +381,6 @@ from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
@@ -1228,8 +1227,7 @@ class ElbManager(object):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state={'required': True, 'choices': ['present', 'absent']},
         name={'required': True},
         listeners={'default': None, 'required': False, 'type': 'list', 'elements': 'dict'},
@@ -1251,8 +1249,7 @@ def main():
         access_logs={'default': None, 'required': False, 'type': 'dict'},
         wait={'default': False, 'type': 'bool', 'required': False},
         wait_timeout={'default': 60, 'type': 'int', 'required': False},
-        tags={'default': None, 'required': False, 'type': 'dict'}
-    )
+        tags={'default': None, 'required': False, 'type': 'dict'},
     )
 
     module = AnsibleAWSModule(

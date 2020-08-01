@@ -205,7 +205,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -461,8 +460,7 @@ def get_indexes(all_indexes):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(default='present', choices=['present', 'absent']),
         name=dict(required=True, type='str'),
         hash_key_name=dict(type='str'),
@@ -474,7 +472,7 @@ def main():
         indexes=dict(default=[], type='list', elements='dict'),
         tags=dict(type='dict'),
         wait_for_active_timeout=dict(default=60, type='int'),
-    ))
+    )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,

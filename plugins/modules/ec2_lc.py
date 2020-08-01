@@ -460,7 +460,6 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_connect
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
@@ -652,32 +651,29 @@ def delete_launch_config(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            image_id=dict(),
-            instance_id=dict(),
-            key_name=dict(),
-            security_groups=dict(default=[], type='list', elements='str'),
-            user_data=dict(),
-            user_data_path=dict(type='path'),
-            kernel_id=dict(),
-            volumes=dict(type='list', elements='dict'),
-            instance_type=dict(),
-            state=dict(default='present', choices=['present', 'absent']),
-            spot_price=dict(type='float'),
-            ramdisk_id=dict(),
-            instance_profile_name=dict(),
-            ebs_optimized=dict(default=False, type='bool'),
-            associate_public_ip_address=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
-            instance_monitoring=dict(default=False, type='bool'),
-            assign_public_ip=dict(type='bool'),
-            classic_link_vpc_security_groups=dict(type='list', elements='str'),
-            classic_link_vpc_id=dict(),
-            vpc_id=dict(),
-            placement_tenancy=dict(choices=['default', 'dedicated'])
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        image_id=dict(),
+        instance_id=dict(),
+        key_name=dict(),
+        security_groups=dict(default=[], type='list', elements='str'),
+        user_data=dict(),
+        user_data_path=dict(type='path'),
+        kernel_id=dict(),
+        volumes=dict(type='list', elements='dict'),
+        instance_type=dict(),
+        state=dict(default='present', choices=['present', 'absent']),
+        spot_price=dict(type='float'),
+        ramdisk_id=dict(),
+        instance_profile_name=dict(),
+        ebs_optimized=dict(default=False, type='bool'),
+        associate_public_ip_address=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
+        instance_monitoring=dict(default=False, type='bool'),
+        assign_public_ip=dict(type='bool'),
+        classic_link_vpc_security_groups=dict(type='list', elements='str'),
+        classic_link_vpc_id=dict(),
+        vpc_id=dict(),
+        placement_tenancy=dict(choices=['default', 'dedicated'])
     )
 
     module = AnsibleAWSModule(

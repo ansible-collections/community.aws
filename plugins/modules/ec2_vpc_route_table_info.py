@@ -62,7 +62,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -103,11 +102,8 @@ def list_ec2_vpc_route_tables(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(default=None, type='dict')
-        )
+    argument_spec = dict(
+        filters=dict(default=None, type='dict'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,

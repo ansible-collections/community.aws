@@ -70,7 +70,6 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -134,14 +133,11 @@ def disable_bucket_logging(connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            target_bucket=dict(required=False, default=None),
-            target_prefix=dict(required=False, default=""),
-            state=dict(required=False, default='present', choices=['present', 'absent'])
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        target_bucket=dict(required=False, default=None),
+        target_prefix=dict(required=False, default=""),
+        state=dict(required=False, default='present', choices=['present', 'absent']),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)

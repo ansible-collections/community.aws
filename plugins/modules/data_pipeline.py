@@ -213,7 +213,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_text
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
@@ -606,20 +605,17 @@ def create_pipeline(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            version=dict(removed_at_date='2022-06-01', removed_from_collection='community.aws'),
-            description=dict(required=False, default=''),
-            objects=dict(required=False, type='list', default=[], elements='dict'),
-            parameters=dict(required=False, type='list', default=[], elements='dict'),
-            timeout=dict(required=False, type='int', default=300),
-            state=dict(default='present', choices=['present', 'absent',
-                                                   'active', 'inactive']),
-            tags=dict(required=False, type='dict', default={}),
-            values=dict(required=False, type='list', default=[], elements='dict')
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        version=dict(removed_at_date='2022-06-01', removed_from_collection='community.aws'),
+        description=dict(required=False, default=''),
+        objects=dict(required=False, type='list', default=[], elements='dict'),
+        parameters=dict(required=False, type='list', default=[], elements='dict'),
+        timeout=dict(required=False, type='int', default=300),
+        state=dict(default='present', choices=['present', 'absent',
+                                               'active', 'inactive']),
+        tags=dict(required=False, type='dict', default={}),
+        values=dict(required=False, type='list', default=[], elements='dict'),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False)
 

@@ -127,7 +127,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -200,15 +199,12 @@ class Ec2CustomerGatewayManager:
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            bgp_asn=dict(required=False, type='int'),
-            ip_address=dict(required=True),
-            name=dict(required=True),
-            routing=dict(default='dynamic', choices=['dynamic', 'static']),
-            state=dict(default='present', choices=['present', 'absent']),
-        )
+    argument_spec = dict(
+        bgp_asn=dict(required=False, type='int'),
+        ip_address=dict(required=True),
+        name=dict(required=True),
+        routing=dict(default='dynamic', choices=['dynamic', 'static']),
+        state=dict(default='present', choices=['present', 'absent']),
     )
 
     module = AnsibleAWSModule(

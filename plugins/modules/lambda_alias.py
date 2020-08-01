@@ -156,7 +156,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -355,15 +354,12 @@ def main():
 
     :return dict: ansible facts
     """
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            state=dict(required=False, default='present', choices=['present', 'absent']),
-            function_name=dict(required=True),
-            name=dict(required=True, aliases=['alias_name']),
-            function_version=dict(type='int', required=False, default=0, aliases=['version']),
-            description=dict(required=False, default=None),
-        )
+    argument_spec = dict(
+        state=dict(required=False, default='present', choices=['present', 'absent']),
+        function_name=dict(required=True),
+        name=dict(required=True, aliases=['alias_name']),
+        function_version=dict(type='int', required=False, default=0, aliases=['version']),
+        description=dict(required=False, default=None),
     )
 
     module = AnsibleAWSModule(

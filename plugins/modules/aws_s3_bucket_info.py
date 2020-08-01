@@ -61,7 +61,6 @@ from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
@@ -92,7 +91,7 @@ def main():
     result = {}
 
     # Including ec2 argument spec
-    module = AnsibleAWSModule(argument_spec=ec2_argument_spec(), supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec={}, supports_check_mode=True)
     is_old_facts = module._name == 'aws_s3_bucket_facts'
     if is_old_facts:
         module.deprecate("The 'aws_s3_bucket_facts' module has been renamed to 'aws_s3_bucket_info', "

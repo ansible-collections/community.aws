@@ -129,7 +129,6 @@ except ImportError:
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
 
@@ -244,8 +243,7 @@ def load_data(cert, key, cert_chain):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(required=True),
         cert=dict(),
@@ -254,8 +252,7 @@ def main():
         new_name=dict(),
         path=dict(default='/'),
         new_path=dict(),
-        dup_ok=dict(type='bool')
-    )
+        dup_ok=dict(type='bool'),
     )
 
     module = AnsibleAWSModule(

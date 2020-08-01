@@ -191,7 +191,6 @@ from ansible.module_utils.six import string_types
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
@@ -336,20 +335,17 @@ def setup_removal(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            vpc_id=dict(),
-            service=dict(),
-            policy=dict(type='json'),
-            policy_file=dict(type='path', aliases=['policy_path']),
-            state=dict(default='present', choices=['present', 'absent']),
-            wait=dict(type='bool', default=False),
-            wait_timeout=dict(type='int', default=320, required=False),
-            route_table_ids=dict(type='list', elements='str'),
-            vpc_endpoint_id=dict(),
-            client_token=dict(),
-        )
+    argument_spec = dict(
+        vpc_id=dict(),
+        service=dict(),
+        policy=dict(type='json'),
+        policy_file=dict(type='path', aliases=['policy_path']),
+        state=dict(default='present', choices=['present', 'absent']),
+        wait=dict(type='bool', default=False),
+        wait_timeout=dict(type='int', default=320, required=False),
+        route_table_ids=dict(type='list', elements='str'),
+        vpc_endpoint_id=dict(),
+        client_token=dict(),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,

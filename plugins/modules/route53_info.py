@@ -223,7 +223,6 @@ from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 
 
 def get_hosted_zone(client, module):
@@ -420,8 +419,7 @@ def hosted_zone_details(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         query=dict(choices=[
             'change',
             'checker_ip_range',
@@ -457,7 +455,6 @@ def main():
             'count',
             'tags',
         ], default='list'),
-    )
     )
 
     module = AnsibleAWSModule(

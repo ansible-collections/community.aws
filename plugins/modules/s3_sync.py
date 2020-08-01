@@ -247,7 +247,6 @@ from ansible.module_utils._text import to_text
 # import module snippets
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
@@ -505,8 +504,7 @@ def remove_files(s3, sourcelist, params):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         mode=dict(choices=['push'], default='push'),
         file_change_strategy=dict(choices=['force', 'date_size', 'checksum'], default='date_size'),
         bucket=dict(required=True),
@@ -521,7 +519,6 @@ def main():
         cache_control=dict(required=False, default=''),
         delete=dict(required=False, type='bool', default=False),
         # future options: encoding, metadata, storage_class, retries
-    )
     )
 
     module = AnsibleAWSModule(

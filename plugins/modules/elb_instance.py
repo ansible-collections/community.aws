@@ -101,7 +101,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -317,15 +316,13 @@ class ElbManager:
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state={'required': True, 'choices': ['present', 'absent']},
         instance_id={'required': True},
         ec2_elbs={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         enable_availability_zone={'default': True, 'required': False, 'type': 'bool'},
         wait={'required': False, 'default': True, 'type': 'bool'},
-        wait_timeout={'required': False, 'default': 0, 'type': 'int'}
-    )
+        wait_timeout={'required': False, 'default': 0, 'type': 'int'},
     )
 
     module = AnsibleAWSModule(

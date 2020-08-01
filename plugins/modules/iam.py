@@ -190,7 +190,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -620,8 +619,7 @@ def delete_role(module, iam, name, role_list, prof_list):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         iam_type=dict(required=True, choices=['user', 'group', 'role']),
         groups=dict(type='list', default=None, required=False, elements='str'),
         state=dict(required=True, choices=['present', 'absent', 'update']),
@@ -637,8 +635,7 @@ def main():
         trust_policy=dict(type='dict', default=None, required=False),
         new_name=dict(default=None, required=False),
         path=dict(default='/', required=False),
-        new_path=dict(default=None, required=False)
-    )
+        new_path=dict(default=None, required=False),
     )
 
     module = AnsibleAWSModule(

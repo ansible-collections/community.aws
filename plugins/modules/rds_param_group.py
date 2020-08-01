@@ -126,7 +126,6 @@ from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
@@ -316,18 +315,15 @@ def ensure_absent(module, connection):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            state=dict(required=True, choices=['present', 'absent']),
-            name=dict(required=True),
-            engine=dict(),
-            description=dict(),
-            params=dict(aliases=['parameters'], type='dict'),
-            immediate=dict(type='bool', aliases=['apply_immediately']),
-            tags=dict(type='dict', default={}),
-            purge_tags=dict(type='bool', default=False)
-        )
+    argument_spec = dict(
+        state=dict(required=True, choices=['present', 'absent']),
+        name=dict(required=True),
+        engine=dict(),
+        description=dict(),
+        params=dict(aliases=['parameters'], type='dict'),
+        immediate=dict(type='bool', aliases=['apply_immediately']),
+        tags=dict(type='dict', default={}),
+        purge_tags=dict(type='bool', default=False),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,

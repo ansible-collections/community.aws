@@ -90,7 +90,6 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -132,13 +131,10 @@ def get_session_token(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            duration_seconds=dict(required=False, default=None, type='int'),
-            mfa_serial_number=dict(required=False, default=None),
-            mfa_token=dict(required=False, default=None)
-        )
+    argument_spec = dict(
+        duration_seconds=dict(required=False, default=None, type='int'),
+        mfa_serial_number=dict(required=False, default=None),
+        mfa_token=dict(required=False, default=None),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)

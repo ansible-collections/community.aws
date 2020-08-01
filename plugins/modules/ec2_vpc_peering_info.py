@@ -78,7 +78,6 @@ from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
@@ -104,12 +103,9 @@ def get_vpc_peers(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(default=dict(), type='dict'),
-            peer_connection_ids=dict(default=None, type='list', elements='str'),
-        )
+    argument_spec = dict(
+        filters=dict(default=dict(), type='dict'),
+        peer_connection_ids=dict(default=None, type='list', elements='str'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,

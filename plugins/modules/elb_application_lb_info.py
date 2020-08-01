@@ -177,7 +177,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -264,12 +263,9 @@ def list_load_balancers(connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            load_balancer_arns=dict(type='list', elements='str'),
-            names=dict(type='list', elements='str')
-        )
+    argument_spec = dict(
+        load_balancer_arns=dict(type='list', elements='str'),
+        names=dict(type='list', elements='str')
     )
 
     module = AnsibleAWSModule(

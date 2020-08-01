@@ -507,7 +507,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -539,12 +538,9 @@ def list_ec2_instances(connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            instance_ids=dict(default=[], type='list', elements='str'),
-            filters=dict(default={}, type='dict')
-        )
+    argument_spec = dict(
+        instance_ids=dict(default=[], type='list', elements='str'),
+        filters=dict(default={}, type='dict')
     )
 
     module = AnsibleAWSModule(

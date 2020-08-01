@@ -110,7 +110,6 @@ from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 
@@ -341,13 +340,14 @@ def ensure_absent(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(state=dict(default='present', choices=['present', 'absent']),
-                              name=dict(),
-                              amazon_asn=dict(),
-                              virtual_gateway_id=dict(),
-                              direct_connect_gateway_id=dict(),
-                              wait_timeout=dict(type='int', default=320)))
+    argument_spec = dict(
+        state=dict(default='present', choices=['present', 'absent']),
+        name=dict(),
+        amazon_asn=dict(),
+        virtual_gateway_id=dict(),
+        direct_connect_gateway_id=dict(),
+        wait_timeout=dict(type='int', default=320),
+    )
     required_if = [('state', 'present', ['name', 'amazon_asn']),
                    ('state', 'absent', ['direct_connect_gateway_id'])]
     module = AnsibleAWSModule(argument_spec=argument_spec,

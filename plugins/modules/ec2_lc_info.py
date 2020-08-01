@@ -164,7 +164,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -204,17 +203,14 @@ def list_launch_configs(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=False, default=[], type='list', elements='str'),
-            sort=dict(required=False, default=None,
-                      choices=['launch_configuration_name', 'image_id', 'created_time', 'instance_type', 'kernel_id', 'ramdisk_id', 'key_name']),
-            sort_order=dict(required=False, default='ascending',
-                            choices=['ascending', 'descending']),
-            sort_start=dict(required=False, type='int'),
-            sort_end=dict(required=False, type='int'),
-        )
+    argument_spec = dict(
+        name=dict(required=False, default=[], type='list', elements='str'),
+        sort=dict(required=False, default=None,
+                  choices=['launch_configuration_name', 'image_id', 'created_time', 'instance_type', 'kernel_id', 'ramdisk_id', 'key_name']),
+        sort_order=dict(required=False, default='ascending',
+                        choices=['ascending', 'descending']),
+        sort_start=dict(required=False, type='int'),
+        sort_end=dict(required=False, type='int'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)

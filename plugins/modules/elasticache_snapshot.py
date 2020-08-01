@@ -125,7 +125,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -175,16 +174,13 @@ def delete(module, connection, name):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True, type='str'),
-            state=dict(required=True, type='str', choices=['present', 'absent', 'copy']),
-            replication_id=dict(type='str'),
-            cluster_id=dict(type='str'),
-            target=dict(type='str'),
-            bucket=dict(type='str'),
-        )
+    argument_spec = dict(
+        name=dict(required=True, type='str'),
+        state=dict(required=True, type='str', choices=['present', 'absent', 'copy']),
+        replication_id=dict(type='str'),
+        cluster_id=dict(type='str'),
+        target=dict(type='str'),
+        bucket=dict(type='str'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)

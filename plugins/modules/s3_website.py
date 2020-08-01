@@ -174,7 +174,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -295,15 +294,12 @@ def disable_bucket_as_website(client_connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(type='str', required=True),
-            state=dict(type='str', required=True, choices=['present', 'absent']),
-            suffix=dict(type='str', required=False, default='index.html'),
-            error_key=dict(type='str', required=False),
-            redirect_all_requests=dict(type='str', required=False)
-        )
+    argument_spec = dict(
+        name=dict(type='str', required=True),
+        state=dict(type='str', required=True, choices=['present', 'absent']),
+        suffix=dict(type='str', required=False, default='index.html'),
+        error_key=dict(type='str', required=False),
+        redirect_all_requests=dict(type='str', required=False),
     )
 
     module = AnsibleAWSModule(
@@ -311,7 +307,8 @@ def main():
         mutually_exclusive=[
             ['redirect_all_requests', 'suffix'],
             ['redirect_all_requests', 'error_key']
-        ])
+        ],
+    )
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

@@ -195,7 +195,6 @@ from ansible.module_utils._text import to_native
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
@@ -1330,20 +1329,17 @@ def stop_stream_encryption(client, stream_name, encryption_type='', key_id='',
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            shards=dict(default=None, required=False, type='int'),
-            retention_period=dict(default=None, required=False, type='int'),
-            tags=dict(default=None, required=False, type='dict', aliases=['resource_tags']),
-            wait=dict(default=True, required=False, type='bool'),
-            wait_timeout=dict(default=300, required=False, type='int'),
-            state=dict(default='present', choices=['present', 'absent']),
-            encryption_type=dict(required=False, choices=['NONE', 'KMS']),
-            key_id=dict(required=False, type='str'),
-            encryption_state=dict(required=False, choices=['enabled', 'disabled']),
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        shards=dict(default=None, required=False, type='int'),
+        retention_period=dict(default=None, required=False, type='int'),
+        tags=dict(default=None, required=False, type='dict', aliases=['resource_tags']),
+        wait=dict(default=True, required=False, type='bool'),
+        wait_timeout=dict(default=300, required=False, type='int'),
+        state=dict(default='present', choices=['present', 'absent']),
+        encryption_type=dict(required=False, choices=['NONE', 'KMS']),
+        key_id=dict(required=False, type='str'),
+        encryption_state=dict(required=False, choices=['enabled', 'disabled']),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
