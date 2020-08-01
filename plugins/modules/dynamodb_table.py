@@ -183,20 +183,15 @@ try:
     from boto.dynamodb2.types import STRING, NUMBER, BINARY
     from boto.exception import BotoServerError, NoAuthHandlerFound, JSONResponseError
     from boto.dynamodb2.exceptions import ValidationException
-    HAS_BOTO = True
     DYNAMO_TYPE_MAP = {
         'STRING': STRING,
         'NUMBER': NUMBER,
         'BINARY': BINARY
     }
-except ImportError:
-    HAS_BOTO = False
-
-try:
+    # Boto 2 is mandatory, Boto3 is only needed for tagging
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by ec2.HAS_BOTO and ec2.HAS_BOTO3
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -206,6 +201,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 DYNAMO_TYPE_DEFAULT = 'STRING'

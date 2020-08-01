@@ -84,9 +84,8 @@ group:
 try:
     import boto
     import boto.redshift
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
 from ansible.module_utils.basic import AnsibleModule
 

@@ -61,9 +61,8 @@ try:
     import boto
     from boto.elasticache import connect_to_region
     from boto.exception import BotoServerError
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
 from ansible.module_utils.basic import AnsibleModule
 
