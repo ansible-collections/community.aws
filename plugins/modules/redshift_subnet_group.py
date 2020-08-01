@@ -105,7 +105,7 @@ def main():
         group_description=dict(required=False, aliases=['description']),
         group_subnets=dict(required=False, aliases=['subnets'], type='list', elements='str'),
     ))
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, check_boto3=False)
 
     if not HAS_BOTO:
         module.fail_json(msg='boto v2.9.0+ required for this module')

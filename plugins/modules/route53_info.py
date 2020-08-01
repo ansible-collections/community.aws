@@ -460,12 +460,13 @@ def main():
     )
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
             ['hosted_zone_method', 'health_check_method'],
         ],
+        check_boto3=False,
     )
     if module._name == 'route53_facts':
         module.deprecate("The 'route53_facts' module has been renamed to 'route53_info'", date='2021-12-01', collection_name='community.aws')

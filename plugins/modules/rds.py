@@ -1355,8 +1355,9 @@ def main():
     )
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

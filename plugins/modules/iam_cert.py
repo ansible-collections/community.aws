@@ -258,7 +258,7 @@ def main():
     )
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['new_path', 'key'],
@@ -268,6 +268,7 @@ def main():
             ['new_name', 'cert'],
             ['new_name', 'cert_chain'],
         ],
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

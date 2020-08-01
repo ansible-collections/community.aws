@@ -476,9 +476,11 @@ def main():
         wait_for_active_timeout=dict(default=60, type='int'),
     ))
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True)
+        supports_check_mode=True,
+        check_boto3=False,
+    )
 
     if not HAS_BOTO:
         module.fail_json(msg='boto required for this module')

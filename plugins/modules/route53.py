@@ -519,7 +519,7 @@ def main():
         wait_timeout=dict(type='int', default=300),
     ))
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         required_one_of=[['zone', 'hosted_zone_id']],
@@ -540,6 +540,7 @@ def main():
             region=('identifier',),
             weight=('identifier',),
         ),
+        check_boto3=False,
     )
 
     if not HAS_BOTO:
