@@ -557,8 +557,8 @@ def main():
         tags=dict(default=None, required=False, type='dict', aliases=['resource_tags']),
     )
     )
-    module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=[['state', 'present', ['name']]])
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              required_if=[['state', 'present', ['name']]])
 
     if not HAS_BOTO3:
         module.fail_json(msg='json and boto3 is required.')

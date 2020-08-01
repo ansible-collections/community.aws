@@ -211,12 +211,13 @@ def main():
         )
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True,
-                           required_if=[
-                               ('routing', 'dynamic', ['bgp_asn'])
-                           ]
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        required_if=[
+            ('routing', 'dynamic', ['bgp_asn'])
+        ]
+    )
 
     if not HAS_BOTOCORE:
         module.fail_json(msg='botocore is required.')

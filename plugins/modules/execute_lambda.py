@@ -157,7 +157,7 @@ def main():
         version_qualifier=dict(),
         payload=dict(default={}, type='dict'),
     ))
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[

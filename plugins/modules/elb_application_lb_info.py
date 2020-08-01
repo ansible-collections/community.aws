@@ -272,10 +272,11 @@ def main():
         )
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=[['load_balancer_arns', 'names']],
-                           supports_check_mode=True
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[['load_balancer_arns', 'names']],
+        supports_check_mode=True,
+    )
     if module._name == 'elb_application_lb_facts':
         module.deprecate("The 'elb_application_lb_facts' module has been renamed to 'elb_application_lb_info'",
                          date='2021-12-01', collection_name='community.aws')

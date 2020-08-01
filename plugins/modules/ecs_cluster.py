@@ -170,7 +170,11 @@ def main():
     ))
     required_together = [['state', 'name']]
 
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True, required_together=required_together)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        required_together=required_together,
+    )
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 is required.')

@@ -680,9 +680,9 @@ def main():
         )
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        mutually_exclusive=[['user_data', 'user_data_path']]
+        mutually_exclusive=[['user_data', 'user_data_path']],
     )
 
     if not HAS_BOTO3:

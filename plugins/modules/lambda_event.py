@@ -417,11 +417,11 @@ def main():
         )
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[['alias', 'version']],
-        required_together=[]
+        required_together=[],
     )
 
     # validate dependencies

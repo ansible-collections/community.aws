@@ -621,7 +621,7 @@ def main():
             values=dict(required=False, type='list', default=[], elements='dict')
         )
     )
-    module = AnsibleModule(argument_spec, supports_check_mode=False)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False)
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 is required for the datapipeline module!')

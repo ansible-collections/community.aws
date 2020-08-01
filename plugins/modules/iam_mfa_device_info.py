@@ -100,7 +100,7 @@ def main():
         )
     )
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
     if module._name == 'iam_mfa_device_facts':
         module.deprecate("The 'iam_mfa_device_facts' module has been renamed to 'iam_mfa_device_info'", date='2021-12-01', collection_name='community.aws')
 

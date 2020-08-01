@@ -506,7 +506,7 @@ def main():
         hard_modify=dict(type='bool')
     ))
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
     )
 

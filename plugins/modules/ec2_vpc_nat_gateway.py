@@ -949,14 +949,14 @@ def main():
             client_token=dict(type='str'),
         )
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
             ['allocation_id', 'eip_address']
         ],
         required_if=[['state', 'absent', ['nat_gateway_id']],
-                     ['state', 'present', ['subnet_id']]]
+                     ['state', 'present', ['subnet_id']]],
     )
 
     # Validate Requirements

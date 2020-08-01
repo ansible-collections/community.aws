@@ -415,7 +415,7 @@ def main():
         ('state', 'reject', ['peering_id'])
     ]
 
-    module = AnsibleModule(argument_spec=argument_spec, required_if=required_if)
+    module = AnsibleAWSModule(argument_spec=argument_spec, required_if=required_if)
 
     if not HAS_BOTO3:
         module.fail_json(msg='json, botocore and boto3 are required.')

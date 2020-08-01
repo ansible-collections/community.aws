@@ -329,8 +329,10 @@ def main():
             purge_tags=dict(type='bool', default=False)
         )
     )
-    module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=[['state', 'present', ['description', 'engine']]])
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=[['state', 'present', ['description', 'engine']]],
+    )
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 and botocore are required for this module')

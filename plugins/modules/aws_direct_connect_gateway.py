@@ -350,8 +350,8 @@ def main():
                               wait_timeout=dict(type='int', default=320)))
     required_if = [('state', 'present', ['name', 'amazon_asn']),
                    ('state', 'absent', ['direct_connect_gateway_id'])]
-    module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=required_if)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              required_if=required_if)
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 is required for this module')

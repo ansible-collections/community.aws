@@ -335,9 +335,10 @@ def main():
         )
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=[['target_group_arn', 'target_group_name']]
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[['target_group_arn', 'target_group_name']],
+    )
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

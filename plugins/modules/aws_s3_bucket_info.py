@@ -92,7 +92,7 @@ def main():
     result = {}
 
     # Including ec2 argument spec
-    module = AnsibleModule(argument_spec=ec2_argument_spec(), supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=ec2_argument_spec(), supports_check_mode=True)
     is_old_facts = module._name == 'aws_s3_bucket_facts'
     if is_old_facts:
         module.deprecate("The 'aws_s3_bucket_facts' module has been renamed to 'aws_s3_bucket_info', "

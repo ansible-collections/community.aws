@@ -141,7 +141,7 @@ def main():
         )
     )
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 and botocore are required.')

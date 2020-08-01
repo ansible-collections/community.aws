@@ -1345,7 +1345,7 @@ def main():
             encryption_state=dict(required=False, choices=['enabled', 'disabled']),
         )
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
     )

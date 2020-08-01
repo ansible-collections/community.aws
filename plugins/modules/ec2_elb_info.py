@@ -226,8 +226,8 @@ def main():
         names={'default': [], 'type': 'list', 'elements': 'str'}
     )
     )
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              supports_check_mode=True)
     if module._name == 'ec2_elb_facts':
         module.deprecate("The 'ec2_elb_facts' module has been renamed to 'ec2_elb_info'", date='2021-12-01', collection_name='community.aws')
 

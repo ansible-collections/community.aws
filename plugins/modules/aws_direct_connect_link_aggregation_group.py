@@ -423,9 +423,11 @@ def main():
         wait_timeout=dict(type='int', default=120),
     ))
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           required_one_of=[('link_aggregation_group_id', 'name')],
-                           required_if=[('state', 'present', ('location', 'bandwidth'))])
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_one_of=[('link_aggregation_group_id', 'name')],
+        required_if=[('state', 'present', ('location', 'bandwidth'))],
+    )
 
     if not HAS_BOTO3:
         module.fail_json(msg='boto3 required for this module')

@@ -308,10 +308,11 @@ def main():
         )
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=[['load_balancer_arn', 'target_group_arns', 'names']],
-                           supports_check_mode=True
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[['load_balancer_arn', 'target_group_arns', 'names']],
+        supports_check_mode=True,
+    )
     if module._name == 'elb_target_group_facts':
         module.deprecate("The 'elb_target_group_facts' module has been renamed to 'elb_target_group_info'", date='2021-12-01', collection_name='community.aws')
 

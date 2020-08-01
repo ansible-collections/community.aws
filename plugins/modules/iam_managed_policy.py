@@ -293,11 +293,11 @@ def main():
         only_version=dict(type='bool', default=False),
         fail_on_delete=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
         state=dict(default='present', choices=['present', 'absent']),
-    ))
+    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        required_if=[['state', 'present', ['policy']]]
+        required_if=[['state', 'present', ['policy']]],
     )
 
     if not HAS_BOTO3:

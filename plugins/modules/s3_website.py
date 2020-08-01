@@ -306,7 +306,7 @@ def main():
         )
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['redirect_all_requests', 'suffix'],

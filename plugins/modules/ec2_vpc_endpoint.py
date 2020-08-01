@@ -351,14 +351,14 @@ def main():
             client_token=dict(),
         )
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[['policy', 'policy_file']],
         required_if=[
             ['state', 'present', ['vpc_id', 'service']],
             ['state', 'absent', ['vpc_endpoint_id']],
-        ]
+        ],
     )
 
     # Validate Requirements

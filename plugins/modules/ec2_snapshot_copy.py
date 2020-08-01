@@ -132,7 +132,7 @@ def copy_snapshot(module, ec2):
     """
     Copies an EC2 Snapshot to another region
 
-    module : AnsibleModule object
+    module : AnsibleAWSModule object
     ec2: ec2 connection object
     """
 
@@ -185,7 +185,7 @@ def main():
         wait_timeout=dict(type='int', default=600),
         tags=dict(type='dict')))
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
     if not HAS_BOTO3:
         module.fail_json(msg='botocore and boto3 are required.')

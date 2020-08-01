@@ -130,7 +130,7 @@ def main():
         table_name=dict(required=True),
         attribute_name=dict(required=True))
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
     )
 

@@ -111,7 +111,7 @@ def main():
         log_group_name=dict(),
     ))
 
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'cloudwatchlogs_log_group_facts':
         module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'",
                          date='2021-12-01', collection_name='community.aws')
