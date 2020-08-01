@@ -76,13 +76,12 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass  # will be detected by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
@@ -113,9 +112,6 @@ def main():
     if module._name == 'cloudwatchlogs_log_group_facts':
         module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'",
                          date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
 
     region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
     logs = boto3_conn(module, conn_type='client', resource='logs', region=region, endpoint=ec2_url, **aws_connect_kwargs)

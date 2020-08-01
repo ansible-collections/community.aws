@@ -205,9 +205,8 @@ import traceback
 try:
     import boto3
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_text
@@ -618,9 +617,6 @@ def main():
         values=dict(required=False, type='list', default=[], elements='dict'),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required for the datapipeline module!')
 
     try:
         region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)

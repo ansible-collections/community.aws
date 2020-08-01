@@ -101,9 +101,8 @@ import traceback
 
 try:
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
@@ -352,9 +351,6 @@ def main():
                    ('state', 'absent', ['direct_connect_gateway_id'])]
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               required_if=required_if)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required for this module')
 
     state = module.params.get('state')
 

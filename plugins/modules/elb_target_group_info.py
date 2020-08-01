@@ -212,9 +212,8 @@ import traceback
 try:
     import boto3
     from botocore.exceptions import ClientError, NoCredentialsError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -311,9 +310,6 @@ def main():
     )
     if module._name == 'elb_target_group_facts':
         module.deprecate("The 'elb_target_group_facts' module has been renamed to 'elb_target_group_info'", date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
 

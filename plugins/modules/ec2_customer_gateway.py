@@ -111,15 +111,9 @@ gateway.customer_gateways:
 
 try:
     from botocore.exceptions import ClientError
-    HAS_BOTOCORE = True
-except ImportError:
-    HAS_BOTOCORE = False
-
-try:
     import boto3
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -214,12 +208,6 @@ def main():
             ('routing', 'dynamic', ['bgp_asn'])
         ]
     )
-
-    if not HAS_BOTOCORE:
-        module.fail_json(msg='botocore is required.')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
 
     gw_mgr = Ec2CustomerGatewayManager(module)
 

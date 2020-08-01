@@ -114,9 +114,8 @@ from time import time, sleep
 try:
     import boto3
     from botocore.exceptions import ClientError, BotoCoreError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_native
 from ansible.module_utils.basic import AnsibleModule
@@ -335,9 +334,6 @@ def main():
         argument_spec=argument_spec,
         mutually_exclusive=[['target_group_arn', 'target_group_name']],
     )
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
     connection = boto3_conn(module, conn_type='client', resource='elbv2', region=region, endpoint=ec2_url, **aws_connect_params)

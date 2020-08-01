@@ -238,8 +238,7 @@ except ImportError:
 try:
     import botocore
 except ImportError:
-    # Handled by imported HAS_BOTO3
-    pass
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_text
@@ -249,7 +248,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
 
 
@@ -527,9 +525,6 @@ def main():
 
     if not HAS_DATEUTIL:
         module.fail_json(msg='dateutil required for this module')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     result = {}
     mode = module.params['mode']

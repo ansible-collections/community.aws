@@ -117,16 +117,14 @@ import traceback
 try:
     import botocore
     import boto3
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
@@ -556,9 +554,6 @@ def main():
     )
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               required_if=[['state', 'present', ['name']]])
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='json and boto3 is required.')
 
     state = module.params.get('state').lower()
 

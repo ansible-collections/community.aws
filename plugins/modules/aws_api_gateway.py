@@ -174,8 +174,7 @@ import json
 try:
     import botocore
 except ImportError:
-    # HAS_BOTOCORE taken care of in AnsibleAWSModule
-    pass
+    pass  # Handled by AnsibleAWSModule
 
 import traceback
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule

@@ -81,7 +81,7 @@ import json
 try:
     import botocore
 except ImportError:
-    pass  # will be detected by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -91,7 +91,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 def date_handler(obj):
@@ -133,10 +132,6 @@ def main():
     if module._name == 'ec2_vpc_nat_gateway_facts':
         module.deprecate("The 'ec2_vpc_nat_gateway_facts' module has been renamed to 'ec2_vpc_nat_gateway_info'",
                          date='2021-12-01', collection_name='community.aws')
-
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore/boto3 is required.')
 
     try:
         region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)

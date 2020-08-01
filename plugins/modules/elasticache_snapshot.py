@@ -116,9 +116,8 @@ import traceback
 try:
     import boto3
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -184,9 +183,6 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto required for this module')
 
     name = module.params.get('name')
     state = module.params.get('state')

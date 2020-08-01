@@ -82,9 +82,8 @@ upload_date:
 try:
     import boto3
     import botocore.exceptions
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -152,9 +151,6 @@ def main():
     if module._name == 'iam_server_certificate_facts':
         module.deprecate("The 'iam_server_certificate_facts' module has been renamed to 'iam_server_certificate_info'",
                          date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     try:
         region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)

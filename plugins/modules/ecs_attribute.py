@@ -113,9 +113,8 @@ attributes:
 try:
     import boto3
     from botocore.exceptions import ClientError, EndpointConnectionError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -271,9 +270,6 @@ def main():
         supports_check_mode=True,
         required_together=required_together,
     )
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
 
     cluster = module.params['cluster']
     ec2_instance_id = module.params['ec2_instance_id']

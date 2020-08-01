@@ -63,14 +63,12 @@ EXAMPLES = r'''
 try:
     import boto3
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
@@ -99,9 +97,6 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec)
     if module._name == 'iam_mfa_device_facts':
         module.deprecate("The 'iam_mfa_device_facts' module has been renamed to 'iam_mfa_device_info'", date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
     if region:

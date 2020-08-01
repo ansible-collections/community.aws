@@ -146,14 +146,12 @@ import re
 try:
     import boto3
     from botocore.exceptions import ClientError, ParamValidationError, MissingParametersError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
@@ -368,10 +366,6 @@ def main():
         mutually_exclusive=[],
         required_together=[],
     )
-
-    # validate dependencies
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required for this module.')
 
     aws = AWSConnection(module, ['lambda'])
 

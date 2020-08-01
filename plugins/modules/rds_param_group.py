@@ -118,7 +118,7 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.parsing.convert_bool import BOOLEANS_TRUE
@@ -129,7 +129,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
@@ -329,9 +328,6 @@ def main():
         argument_spec=argument_spec,
         required_if=[['state', 'present', ['description', 'engine']]],
     )
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 and botocore are required for this module')
 
     # Retrieve any AWS settings from the environment.
     region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)

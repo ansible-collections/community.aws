@@ -82,9 +82,8 @@ EXAMPLES = '''
 try:
     import boto3
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -138,9 +137,6 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 and botocore are required.')
 
     region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
     if region:

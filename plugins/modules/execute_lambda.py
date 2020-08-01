@@ -133,9 +133,8 @@ import traceback
 
 try:
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
@@ -163,9 +162,6 @@ def main():
         ]
     )
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
     name = module.params.get('name')
     function_arn = module.params.get('function_arn')
     await_return = module.params.get('wait')
@@ -174,13 +170,10 @@ def main():
     version_qualifier = module.params.get('version_qualifier')
     payload = module.params.get('payload')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='Python module "boto3" is missing, please install it')
-
     if not (name or function_arn):
         module.fail_json(msg="Must provide either a function_arn or a name to invoke.")
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=HAS_BOTO3)
+    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
     if not region:
         module.fail_json(msg="The AWS region must be specified as an "
                          "environment variable or in the AWS credentials "

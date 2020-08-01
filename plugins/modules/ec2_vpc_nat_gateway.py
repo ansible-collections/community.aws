@@ -202,7 +202,7 @@ import time
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -210,7 +210,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 DRY_RUN_GATEWAYS = [
@@ -954,10 +953,6 @@ def main():
         required_if=[['state', 'absent', ['nat_gateway_id']],
                      ['state', 'present', ['subnet_id']]],
     )
-
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore/boto3 is required.')
 
     state = module.params.get('state').lower()
     check_mode = module.check_mode

@@ -453,7 +453,7 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_text
 from ansible.module_utils.basic import AnsibleModule
@@ -465,7 +465,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 def create_block_device_meta(module, volume):
@@ -680,9 +679,6 @@ def main():
         argument_spec=argument_spec,
         mutually_exclusive=[['user_data', 'user_data_path']],
     )
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     try:
         region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)

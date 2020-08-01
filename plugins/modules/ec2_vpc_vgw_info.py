@@ -94,7 +94,7 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass  # will be captured by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -103,7 +103,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 def get_virtual_gateway_info(virtual_gateway):
@@ -142,10 +141,6 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'ec2_vpc_vgw_facts':
         module.deprecate("The 'ec2_vpc_vgw_facts' module has been renamed to 'ec2_vpc_vgw_info'", date='2021-12-01', collection_name='community.aws')
-
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='json and boto3 is required.')
 
     try:
         region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)

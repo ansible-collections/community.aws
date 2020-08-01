@@ -496,9 +496,8 @@ import traceback
 try:
     import boto3
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
@@ -552,9 +551,6 @@ def main():
     )
     if module._name == 'ec2_instance_facts':
         module.deprecate("The 'ec2_instance_facts' module has been renamed to 'ec2_instance_info'", date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
 

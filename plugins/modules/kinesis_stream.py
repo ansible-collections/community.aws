@@ -187,13 +187,12 @@ from functools import reduce
 try:
     import botocore.exceptions
 except ImportError:
-    pass  # Taken care of by ec2.HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
@@ -1363,9 +1362,6 @@ def main():
     if retention_period:
         if retention_period < 24:
             module.fail_json(msg='Retention period can not be less than 24 hours.')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
 
     check_mode = module.check_mode
     try:

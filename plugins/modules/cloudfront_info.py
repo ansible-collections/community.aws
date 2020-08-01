@@ -268,14 +268,13 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass  # will be caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
@@ -609,9 +608,6 @@ def main():
     if is_old_facts:
         module.deprecate("The 'cloudfront_facts' module has been renamed to 'cloudfront_info', "
                          "and the renamed one no longer returns ansible_facts", date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
 
     service_mgr = CloudFrontServiceManager(module)
 

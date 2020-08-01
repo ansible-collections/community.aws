@@ -219,7 +219,7 @@ task:
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 import distutils.version
 import traceback
@@ -229,7 +229,6 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
@@ -413,8 +412,6 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec, required_if=required_if)
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='json, botocore and boto3 are required.')
     state = module.params.get('state')
     peering_id = module.params.get('peering_id')
     vpc_id = module.params.get('vpc_id')

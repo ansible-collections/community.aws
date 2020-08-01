@@ -114,9 +114,8 @@ import traceback
 try:
     import boto3
     from botocore.exceptions import ClientError, WaiterError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
@@ -185,9 +184,6 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore and boto3 are required.')
 
     region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
     client = boto3_conn(module, conn_type='client', resource='ec2',
