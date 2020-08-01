@@ -377,6 +377,8 @@ except ImportError:
     HAS_BOTO = False
 
 from ansible.module_utils.basic import AnsibleModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 

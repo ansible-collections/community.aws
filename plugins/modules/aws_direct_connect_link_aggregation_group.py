@@ -171,7 +171,7 @@ except Exception:
     # handled by imported HAS_BOTO3
 
 from ansible.module_utils.basic import AnsibleModule
-
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn

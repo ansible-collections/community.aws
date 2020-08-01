@@ -188,6 +188,7 @@ except ImportError:
 from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.six import string_types
 
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec

@@ -380,6 +380,7 @@ from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
 
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError

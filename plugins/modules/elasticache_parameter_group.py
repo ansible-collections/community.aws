@@ -119,6 +119,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.six import string_types
 
 # import module snippets
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
