@@ -75,12 +75,12 @@ except ImportError:
     pass  # Taken care of by ec2.HAS_BOTO
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AnsibleAWSError,
-                                                                     HAS_BOTO,
-                                                                     connect_to_aws,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 def create_scaling_policy(connection, module):

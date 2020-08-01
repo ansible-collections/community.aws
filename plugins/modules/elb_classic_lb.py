@@ -377,9 +377,13 @@ except ImportError:
     HAS_BOTO = False
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, connect_to_aws, AnsibleAWSError, get_aws_connection_info
 from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 def _throttleable_operation(max_retries):

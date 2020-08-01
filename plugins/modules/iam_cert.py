@@ -116,8 +116,6 @@ EXAMPLES = '''
     state: present
 
 '''
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, get_aws_connection_info, connect_to_aws
 import os
 
 try:
@@ -127,6 +125,12 @@ try:
     HAS_BOTO = True
 except ImportError:
     HAS_BOTO = False
+
+from ansible.module_utils.basic import AnsibleModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
 
 
 def cert_meta(iam, name):

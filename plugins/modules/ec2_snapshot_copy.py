@@ -110,9 +110,6 @@ snapshot_id:
 '''
 
 import traceback
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn, ec2_argument_spec, get_aws_connection_info, camel_dict_to_snake_dict)
-from ansible.module_utils._text import to_native
 
 try:
     import boto3
@@ -120,6 +117,14 @@ try:
     HAS_BOTO3 = True
 except ImportError:
     HAS_BOTO3 = False
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def copy_snapshot(module, ec2):

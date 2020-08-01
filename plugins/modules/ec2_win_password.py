@@ -111,9 +111,12 @@ try:
 except ImportError:
     HAS_CRYPTOGRAPHY = False
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO, ec2_argument_spec, ec2_connect
 from ansible.module_utils._text import to_bytes
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_connect
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
 
 
 def setup_module_object():

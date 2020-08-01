@@ -229,17 +229,6 @@ import os
 import stat as osstat  # os.stat constants
 import traceback
 
-# import module snippets
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     boto3_conn,
-                                                                     get_aws_connection_info,
-                                                                     HAS_BOTO3,
-                                                                     boto_exception,
-                                                                     )
-from ansible.module_utils._text import to_text
-
 try:
     from dateutil import tz
     HAS_DATEUTIL = True
@@ -251,6 +240,17 @@ try:
 except ImportError:
     # Handled by imported HAS_BOTO3
     pass
+
+from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_text
+
+# import module snippets
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
 
 
 # the following function, calculate_multipart_etag, is from tlastowka

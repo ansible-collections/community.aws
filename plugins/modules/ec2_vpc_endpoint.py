@@ -186,13 +186,13 @@ except ImportError:
     pass  # will be picked up by imported HAS_BOTO3
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     ec2_argument_spec,
-                                                                     HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
 from ansible.module_utils.six import string_types
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def date_handler(obj):

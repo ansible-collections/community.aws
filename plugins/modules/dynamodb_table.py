@@ -184,13 +184,11 @@ try:
     from boto.exception import BotoServerError, NoAuthHandlerFound, JSONResponseError
     from boto.dynamodb2.exceptions import ValidationException
     HAS_BOTO = True
-
     DYNAMO_TYPE_MAP = {
         'STRING': STRING,
         'NUMBER': NUMBER,
         'BINARY': BINARY
     }
-
 except ImportError:
     HAS_BOTO = False
 
@@ -201,8 +199,13 @@ except ImportError:
     HAS_BOTO3 = False
 
 from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, connect_to_aws, ec2_argument_spec, get_aws_connection_info
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 DYNAMO_TYPE_DEFAULT = 'STRING'

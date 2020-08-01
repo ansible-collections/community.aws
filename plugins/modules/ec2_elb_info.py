@@ -74,14 +74,6 @@ EXAMPLES = r'''
 
 import traceback
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
-    AWSRetry,
-    connect_to_aws,
-    ec2_argument_spec,
-    get_aws_connection_info,
-)
-
 try:
     import boto.ec2.elb
     from boto.ec2.tag import Tag
@@ -89,6 +81,13 @@ try:
     HAS_BOTO = True
 except ImportError:
     HAS_BOTO = False
+
+from ansible.module_utils.basic import AnsibleModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 class ElbInformation(object):
