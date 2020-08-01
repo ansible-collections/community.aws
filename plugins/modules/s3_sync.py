@@ -240,7 +240,6 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_text
 
 # import module snippets

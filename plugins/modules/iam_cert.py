@@ -125,8 +125,6 @@ try:
 except ImportError:
     pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws

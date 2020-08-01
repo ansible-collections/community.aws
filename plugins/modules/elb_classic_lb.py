@@ -375,7 +375,6 @@ try:
 except ImportError:
     pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
 

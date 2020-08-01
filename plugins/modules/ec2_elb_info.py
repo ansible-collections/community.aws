@@ -81,8 +81,6 @@ try:
 except ImportError:
     pass  # Handled by ec2.HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws

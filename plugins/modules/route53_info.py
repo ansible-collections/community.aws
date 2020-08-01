@@ -211,7 +211,6 @@ try:
 except ImportError:
     pass  # Handled by HAS_BOTO and HAS_BOTO3
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
