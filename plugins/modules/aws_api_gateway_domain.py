@@ -248,17 +248,39 @@ def get_domain_mappings(client, domain_name):
 @AWSRetry.backoff(**retry_params)
 def create_domain_name(module, client, domain_name, certificate_arn, endpoint_type, security_policy):
     endpoint_configuration = {'types': [endpoint_type]}
+
+    # The securityPolicy param was only added in botocore 1.12.175, hence we don't set it if older version is installed.
+    # See diff at https://github.com/boto/botocore/compare/1.12.174...1.12.175
     if module.botocore_at_least('1.12.175'):
-        # The securityPolicy param was only added in botocore 1.12.175, hence we don't set it if older version is installed.
-        # See diff at https://github.com/boto/botocore/compare/1.12.174...1.12.175
-        return client.create_domain_name(
-            domainName=domain_name,
-            certificateArn=certificate_arn,
-            endpointConfiguration=endpoint_configuration,
-            securityPolicy=security_policy
-        )
+        if endpoint_type == 'EDGE':
+            return client.create_domain_name(
+                domainName=domain_name,
+                certificateArn=certificate_arn,
+                endpointConfiguration=endpoint_configuration,
+                securityPolicy=security_policy
+            )
+        else:
+            # Use regionalCertificateArn for regional domain deploys
+            return client.create_domain_name(
+                domainName=domain_name,
+                regionalCertificateArn=certificate_arn,
+                endpointConfiguration=endpoint_configuration,
+                securityPolicy=security_policy
+            )
     else:
-        return client.create_domain_name(domainName=domain_name, certificateArn=certificate_arn, endpointConfiguration=endpoint_configuration)
+        if endpoint_type == 'EDGE':
+            return client.create_domain_name(
+                domainName=domain_name,
+                certificateArn=certificate_arn,
+                endpointConfiguration=endpoint_configuration
+            )
+        else:
+            # Use regionalCertificateArn for regional domain deploys
+            return client.create_domain_name(
+                domainName=domain_name,
+                regionalCertificateArn=certificate_arn,
+                endpointConfiguration=endpoint_configuration
+            )
 
 
 @AWSRetry.backoff(**retry_params)
