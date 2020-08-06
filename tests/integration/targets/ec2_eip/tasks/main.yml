@@ -560,11 +560,15 @@
       state: present
       release_on_disassociation: yes
     register: instance_eip
+  - ec2_eip_info:
+      filters:
+        public-ip: '{{ instance_eip.public_ip }}'
+    register: eip_info
   - assert:
       that:
         - instance_eip is success
-        - instance_eip.allocation_id is defined
-        - instance_eip.release_on_disassociation == True
+        - eip_info.addresses[0].allocation_id is defined
+        - eip_info.addresses[0].instance_id == '{{ instance_info.instances[0].instance_id }}'
   # =====================================================
   - name: Cleanup IGW
     ec2_vpc_igw:
@@ -575,6 +579,10 @@
     ec2_instance:
       name: '{{ resource_prefix }}-instance'
       state: absent
+  - name: Cleanup instance eip
+    ec2_eip:
+      state: absent
+      public_ip: '{{ instance_eip.public_ip }}'
   - name: Cleanup security group
     ec2_group:
       state: absent
@@ -653,10 +661,17 @@
     ec2_instance:
       name: '{{ resource_prefix }}-instance'
       state: absent
+    ignore_errors: true
+  - name: Cleanup instance eip
+    ec2_eip:
+      state: absent
+      public_ip: '{{ instance_eip.public_ip }}'
+    ignore_errors: true
   - name: Cleanup security group
     ec2_group:
       state: absent
       name: '{{ resource_prefix }}-sg'
+    ignore_errors: true
   - name: Cleanup Subnet
     ec2_vpc_subnet:
       state: absent
