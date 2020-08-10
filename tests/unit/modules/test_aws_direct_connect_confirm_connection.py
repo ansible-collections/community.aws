@@ -2,7 +2,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-import pytest
 from ansible_collections.community.aws.tests.unit.compat.mock import MagicMock, patch, call
 from ansible_collections.community.aws.tests.unit.modules.utils import (AnsibleExitJson,
                                                                         AnsibleFailJson,
@@ -14,19 +13,19 @@ try:
 except ImportError:
     pass
 
-
+@patch('ansible_collections.amazon.aws.plugins.module_utils.core.HAS_BOTO3', new=True)
+@patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
 class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
-    def test_missing_required_parameters(self):
+    def test_missing_required_parameters(self, *args):
         set_module_args({})
-        with pytest.raises(AnsibleFailJson) as context:
+        with self.assertRaises(AnsibleFailJson) as exec_info:
             aws_direct_connect_confirm_connection.main()
 
-        result = context.value.args[0]
+        result = exec_info.exception.args[0]
         assert result["failed"] is True
         assert "name" in result["msg"]
         assert "connection_id" in result["msg"]
 
-    @patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
     def test_get_by_connection_id(self, mock_client):
         mock_client.return_value.describe_connections.return_value = {
             "connections": [
@@ -44,10 +43,10 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
         set_module_args({
             "connection_id": "dxcon-fgq9rgot"
         })
-        with pytest.raises(AnsibleExitJson) as context:
+        with self.assertRaises(AnsibleExitJson) as exec_info:
             aws_direct_connect_confirm_connection.main()
 
-        result = context.value.args[0]
+        result = exec_info.exception.args[0]
         assert result["changed"] is False
         assert result["connection_state"] == "requested"
         mock_client.return_value.describe_connections.assert_has_calls([
@@ -55,7 +54,6 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
         ])
         mock_client.return_value.confirm_connection.assert_not_called()
 
-    @patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
     def test_get_by_name(self, mock_client):
         mock_client.return_value.describe_connections.return_value = {
             "connections": [
@@ -73,10 +71,10 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
         set_module_args({
             "name": "ansible-test-connection"
         })
-        with pytest.raises(AnsibleExitJson) as context:
+        with self.assertRaises(AnsibleExitJson) as exec_info:
             aws_direct_connect_confirm_connection.main()
 
-        result = context.value.args[0]
+        result = exec_info.exception.args[0]
         assert result["changed"] is False
         assert result["connection_state"] == "requested"
         mock_client.return_value.describe_connections.assert_has_calls([
@@ -85,23 +83,21 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
         ])
         mock_client.return_value.confirm_connection.assert_not_called()
 
-    @patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
     def test_missing_connection_id(self, mock_client):
         mock_client.return_value.describe_connections.side_effect = ClientError(
             {'Error': {'Code': 'ResourceNotFoundException'}}, 'DescribeConnection')
         set_module_args({
             "connection_id": "dxcon-aaaabbbb"
         })
-        with pytest.raises(AnsibleFailJson) as context:
+        with self.assertRaises(AnsibleFailJson) as exec_info:
             aws_direct_connect_confirm_connection.main()
 
-        result = context.value.args[0]
+        result = exec_info.exception.args[0]
         assert result["failed"] is True
         mock_client.return_value.describe_connections.assert_has_calls([
             call(connectionId="dxcon-aaaabbbb")
         ])
 
-    @patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
     def test_missing_name(self, mock_client):
         mock_client.return_value.describe_connections.return_value = {
             "connections": [
@@ -119,16 +115,15 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
         set_module_args({
             "name": "foobar"
         })
-        with pytest.raises(AnsibleFailJson) as context:
+        with self.assertRaises(AnsibleFailJson) as exec_info:
             aws_direct_connect_confirm_connection.main()
 
-        result = context.value.args[0]
+        result = exec_info.exception.args[0]
         assert result["failed"] is True
         mock_client.return_value.describe_connections.assert_has_calls([
             call()
         ])
 
-    @patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
     def test_confirm(self, mock_client):
         mock_client.return_value.describe_connections.return_value = {
             "connections": [
@@ -147,10 +142,10 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
         set_module_args({
             "connection_id": "dxcon-fgq9rgot"
         })
-        with pytest.raises(AnsibleExitJson) as context:
+        with self.assertRaises(AnsibleExitJson) as exec_info:
             aws_direct_connect_confirm_connection.main()
 
-        result = context.value.args[0]
+        result = exec_info.exception.args[0]
         assert result["changed"] is True
         mock_client.return_value.describe_connections.assert_has_calls([
             call(connectionId="dxcon-fgq9rgot"),
