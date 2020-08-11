@@ -74,12 +74,17 @@ except Exception:
 retry_params = {"tries": 10, "delay": 5, "backoff": 1.2, "catch_extra_error_codes": ["DirectConnectClientException"]}
 
 
+@AWSRetry.backoff(**retry_params)
+def describe_connections(client, params):
+    return client.describe_connections(**params)
+
+
 def find_connection_id(client, connection_id=None, connection_name=None):
     params = {}
     if connection_id:
         params['connectionId'] = connection_id
     try:
-        response = AWSRetry.backoff(**retry_params)(client.describe_connections)(**params)
+        response = describe_connections(client, params)
     except (BotoCoreError, ClientError) as e:
         if connection_id:
             msg = "Failed to describe DirectConnect ID {0}".format(connection_id)
@@ -106,7 +111,7 @@ def find_connection_id(client, connection_id=None, connection_name=None):
 
 def get_connection_state(client, connection_id):
     try:
-        response = AWSRetry.backoff(**retry_params)(client.describe_connections)(connectionId=connection_id)
+        response = describe_connections(client, dict(connectionId=connection_id))
         return response['connections'][0]['connectionState']
     except (BotoCoreError, ClientError, IndexError) as e:
         raise DirectConnectError(msg="Failed to describe DirectConnect connection {0} state".format(connection_id),
