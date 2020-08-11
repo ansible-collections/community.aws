@@ -159,46 +159,46 @@ def test_construct_private_vi_with_direct_connect_gateway_id():
     }
 
 
-# def test_create_public_vi(placeboify, maybe_sleep):
-#     client = placeboify.client("directconnect")
-#     module = FakeModule(state="present",
-#                         id_to_associate='dxcon-aaaaaaaa',
-#                         virtual_interface_id=None,
-#                         public=True,
-#                         name="aaaaaaaa",
-#                         vlan=1,
-#                         bgp_asn=123,
-#                         authentication_key="aaaa",
-#                         customer_address="169.254.0.1/30",
-#                         amazon_address="169.254.0.2/30",
-#                         address_type="ipv4",
-#                         cidr=["10.88.0.0/30"],
-#                         virtual_gateway_id="xxxx",
-#                         direct_connect_gateway_id="yyyy")
-#     changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
-#     assert changed is True
-#     assert latest_state is not None
-#
-#
-# def test_create_private_vi(placeboify, maybe_sleep):
-#     client = placeboify.client("directconnect")
-#     module = FakeModule(state="present",
-#                         id_to_associate='dxcon-aaaaaaaa',
-#                         virtual_interface_id=None,
-#                         public=False,
-#                         name="aaaaaaaa",
-#                         vlan=1,
-#                         bgp_asn=123,
-#                         authentication_key="aaaa",
-#                         customer_address="169.254.0.1/30",
-#                         amazon_address="169.254.0.2/30",
-#                         address_type="ipv4",
-#                         cidr=["10.88.0.0/30"],
-#                         virtual_gateway_id="xxxx",
-#                         direct_connect_gateway_id="yyyy")
-#     changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
-#     assert changed is True
-#     assert latest_state is not None
+def test_create_public_vi(placeboify, maybe_sleep):
+    client = placeboify.client("directconnect")
+    module = FakeModule(state="present",
+                        id_to_associate='dxcon-aaaaaaaa',
+                        virtual_interface_id=None,
+                        public=True,
+                        name="aaaaaaaa",
+                        vlan=1,
+                        bgp_asn=123,
+                        authentication_key="aaaa",
+                        customer_address="169.254.0.1/30",
+                        amazon_address="169.254.0.2/30",
+                        address_type="ipv4",
+                        cidr=["10.88.0.0/30"],
+                        virtual_gateway_id="xxxx",
+                        direct_connect_gateway_id="yyyy")
+    changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
+    assert changed is True
+    assert latest_state is not None
+
+
+def test_create_private_vi(placeboify, maybe_sleep):
+    client = placeboify.client("directconnect")
+    module = FakeModule(state="present",
+                        id_to_associate='dxcon-aaaaaaaa',
+                        virtual_interface_id=None,
+                        public=False,
+                        name="aaaaaaaa",
+                        vlan=1,
+                        bgp_asn=123,
+                        authentication_key="aaaa",
+                        customer_address="169.254.0.1/30",
+                        amazon_address="169.254.0.2/30",
+                        address_type="ipv4",
+                        cidr=["10.88.0.0/30"],
+                        virtual_gateway_id="xxxx",
+                        direct_connect_gateway_id="yyyy")
+    changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
+    assert changed is True
+    assert latest_state is not None
 
 
 def test_delete_vi(placeboify, maybe_sleep):
