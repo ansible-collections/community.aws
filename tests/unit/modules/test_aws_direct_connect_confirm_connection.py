@@ -13,6 +13,7 @@ try:
 except ImportError:
     pass
 
+
 @patch('ansible_collections.amazon.aws.plugins.module_utils.core.HAS_BOTO3', new=True)
 @patch.object(aws_direct_connect_confirm_connection.AnsibleAWSModule, "client")
 class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
