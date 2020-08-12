@@ -1,14 +1,13 @@
-.. _community.aws.s3_bucket_notification_module:
+.. _community.aws.aws_direct_connect_confirm_connection_module:
 
 
-************************************
-community.aws.s3_bucket_notification
-************************************
+***************************************************
+community.aws.aws_direct_connect_confirm_connection
+***************************************************
 
-**Creates, updates or deletes S3 Bucket notification for lambda**
+**Confirms the creation of a hosted DirectConnect connection.**
 
 
-Version added: 1.0.0
 
 .. contents::
    :local:
@@ -17,7 +16,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module allows the management of AWS Lambda function bucket event mappings via the Ansible framework. Use module :ref:`community.aws.lambda <community.aws.lambda_module>` to manage the lambda function itself, :ref:`community.aws.lambda_alias <community.aws.lambda_alias_module>` to manage function aliases and :ref:`community.aws.lambda_policy <community.aws.lambda_policy_module>` to modify lambda permissions.
+- Confirms the creation of a hosted DirectConnect, which requires approval before it can be used.
+- DirectConnect connections that require approval would be in the 'ordering'.
+- After confirmation, they will move to the 'pending' state and finally the 'available' state.
 
 
 
@@ -27,6 +28,7 @@ The below requirements are needed on the host that executes this module.
 
 - boto
 - boto3
+- botocore
 - python >= 2.6
 
 
@@ -110,16 +112,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>bucket_name</b>
+                    <b>connection_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
- / <span style="color: red">required</span>                    </div>
+                    </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>S3 bucket name.</div>
+                        <div>The ID of the Direct Connect connection.</div>
+                        <div>One of <em>connection_id</em> or <em>name</em> must be specified.</div>
                 </td>
             </tr>
             <tr>
@@ -160,51 +163,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>event_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
- / <span style="color: red">required</span>                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Unique name for event notification on bucket.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>events</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
- / <span style="color: purple">elements=string</span>                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>s3:ObjectCreated:*</li>
-                                    <li>s3:ObjectCreated:Put</li>
-                                    <li>s3:ObjectCreated:Post</li>
-                                    <li>s3:ObjectCreated:Copy</li>
-                                    <li>s3:ObjectCreated:CompleteMultipartUpload</li>
-                                    <li>s3:ObjectRemoved:*</li>
-                                    <li>s3:ObjectRemoved:Delete</li>
-                                    <li>s3:ObjectRemoved:DeleteMarkerCreated</li>
-                                    <li>s3:ObjectRestore:Post</li>
-                                    <li>s3:ObjectRestore:Completed</li>
-                                    <li>s3:ReducedRedundancyLostObject</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Events that you want to be triggering notifications. You can select multiple events to send to the same destination, you can set up different events to send to different destinations, and you can set up a prefix or suffix for an event. However, for each bucket, individual events cannot have multiple configurations with overlapping prefixes or suffixes that could match the same object key.</div>
-                        <div>Required when <em>state=present</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>lambda_alias</b>
+                    <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -213,55 +172,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of the Lambda function alias.</div>
-                        <div>Mutually exclusive with <em>lambda_version</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>lambda_function_arn</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ARN of the lambda function.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: function_arn</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>lambda_version</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Version of the Lambda function.</div>
-                        <div>Mutually exclusive with <em>lambda_alias</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>prefix</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Optional prefix to limit the notifications to objects with keys that start with matching characters.</div>
+                        <div>The name of the Direct Connect connection.</div>
+                        <div>One of <em>connection_id</em> or <em>name</em> must be specified.</div>
                 </td>
             </tr>
             <tr>
@@ -315,40 +227,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                                    <li>absent</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Describes the desired state.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>suffix</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Optional suffix to limit the notifications to objects with keys that end with matching characters.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -373,7 +251,6 @@ Notes
 -----
 
 .. note::
-   - This module heavily depends on :ref:`community.aws.lambda_policy <community.aws.lambda_policy_module>` as you need to allow ``lambda:InvokeFunction`` permission for your lambda function.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_CA_BUNDLE``
    - Ansible uses the boto configuration file (typically ~/.boto) if no credentials are provided. See https://boto.readthedocs.io/en/latest/boto_config_tut.html
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be configured in the boto config file
@@ -385,17 +262,15 @@ Examples
 
 .. code-block:: yaml+jinja
 
-    ---
-    # Example that creates a lambda event notification for a bucket
-    - name: Process jpg image
-      community.aws.s3_bucket_notification:
-        state: present
-        event_name: on_file_add_or_remove
-        bucket_name: test-bucket
-        function_name: arn:aws:lambda:us-east-2:526810320200:function:test-lambda
-        events: ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
-        prefix: images/
-        suffix: .jpg
+    # confirm a Direct Connect by name
+    - name: confirm the connection id
+      aws_direct_connect_confirm_connection:
+        name: my_host_direct_connect
+
+    # confirm a Direct Connect by connection_id
+    - name: confirm the connection id
+      aws_direct_connect_confirm_connection:
+        connection_id: dxcon-xxxxxxxx
 
 
 
@@ -414,16 +289,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>notification_configuration</b>
+                    <b>connection_state</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
+                      <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>always</td>
                 <td>
-                            <div>list of currently applied notifications</div>
+                            <div>The state of the connection.</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">pending</div>
                 </td>
             </tr>
     </table>
@@ -437,6 +314,4 @@ Status
 Authors
 ~~~~~~~
 
-- XLAB d.o.o. (@xlab-si)
-- Aljaz Kosir (@aljazkosir)
-- Miha Plesko (@miha-plesko)
+- Matt Traynham (@mtraynham)
