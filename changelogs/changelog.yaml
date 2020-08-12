@@ -6,15 +6,11 @@ releases:
       - '**security issue** - Convert CLI provided passwords to text initially, to
         prevent unsafe context being lost when converting from bytes->text during
         post processing of PlayContext. This prevents CLI provided passwords from
-        being incorrectly templated (CVE-2019-14856)
-
-'
+        being incorrectly templated (CVE-2019-14856)'
       - '**security issue** - Update ``AnsibleUnsafeText`` and ``AnsibleUnsafeBytes``
         to maintain unsafe context by overriding ``.encode`` and ``.decode``. This
         prevents future issues with ``to_text``, ``to_bytes``, or ``to_native`` removing
-        the unsafe wrapper when converting between string types (CVE-2019-14856)
-
-'
+        the unsafe wrapper when converting between string types (CVE-2019-14856)'
       - azure_rm_dnsrecordset_info - no longer returns empty ``azure_dnsrecordset``
         facts when called as ``_info`` module.
       - azure_rm_resourcegroup_info - no longer returns ``azure_resourcegroups`` facts
@@ -32,7 +28,7 @@ releases:
       - cloudwatchlogs_log_group - Fix a KeyError when updating a log group that does
         not have a retention period (https://github.com/ansible/ansible/issues/47945)
       - cloudwatchlogs_log_group_info - remove limitation of max 50 results
-      - 'ec2_asg: Ensure "wait" is honored during replace operations'
+      - ec2_asg - Ensure "wait" is honored during replace operations
       - ec2_launch_template - Update output to include latest_version and default_version,
         matching the documentation
       - ec2_transit_gateway - Use AWSRetry before ClientError is handled when describing
@@ -50,72 +46,70 @@ releases:
         wildcards.
       deprecated_features:
       - cloudformation - The ``template_format`` option had no effect since Ansible
-        2.3 and will be removed in Ansible 2.14
-      - data_pipeline - The ``version`` option had no effect and will be removed in
-        Ansible 2.14
-      - ec2_eip - The ``wait_timeout`` option had no effect and will be removed in
-        Ansible 2.14
-      - ec2_key - The ``wait_timeout`` option had no effect and will be removed in
-        Ansible 2.14
-      - ec2_key - The ``wait`` option had no effect and will be removed in Ansible
-        2.14
+        2.3 and will be removed after 2022-06-01
+      - data_pipeline - The ``version`` option had no effect and will be removed after
+        2022-06-01
+      - ec2_eip - The ``wait_timeout`` option had no effect and will be removed after
+        2022-06-01
+      - ec2_key - The ``wait_timeout`` option had no effect and will be removed after
+        2022-06-01
+      - ec2_key - The ``wait`` option had no effect and will be removed after 2022-06-01
       - ec2_lc - The ``associate_public_ip_address`` option had no effect and will
-        be removed in Ansible 2.14
-      - 'elb_network_lb: The current default value of the `state` option has been
-        deprecated and will change from absent to present in Ansible 2.14'
+        be removed after 2022-06-01
+      - elb_network_lb - The current default value of the ``state`` option has been
+        deprecated and will change from absent to present after 2022-06-01
       - iam_managed_policy - The ``fail_on_delete`` option had no effect and will
-        be removed in Ansible 2.14
-      - iam_policy - The ``policy_document`` will be removed in Ansible 2.14.  To
+        be removed after 2022-06-01
+      - iam_policy - The ``policy_document`` will be removed after 2022-06-01.  To
         maintain the existing behavior use the ``policy_json`` option and read the
         file with the ``lookup`` plugin.
-      - iam_policy - The default value of ``skip_duplicates`` will change in Ansible
-        2.14 from ``true`` to ``false``.
-      - 'iam_role: The default value of the purge_policies has been deprecated and
-        will change from true to false in Ansible 2.14'
+      - iam_policy - The default value of ``skip_duplicates`` will change after 2022-06-01
+        from ``true`` to ``false``.
+      - iam_role - The default value of the purge_policies has been deprecated and
+        will change from true to false after 2022-06-01
       - s3_lifecycle - The ``requester_pays`` option had no effect and will be removed
-        in Ansible 2.14
-      - s3_sync - The ``retries`` option had no effect and will be removed in Ansible
-        2.14
+        after 2022-06-01
+      - s3_sync - The ``retries`` option had no effect and will be removed after 2022-06-01
       minor_changes:
       - Allow all params that boto support in aws_api_gateway module
-      - 'aws_acm: Add the module to group/aws for module_defaults.'
-      - 'aws_acm: Update automatic retries to stabilize the integration tests.'
+      - aws_acm - Add the module to group/aws for module_defaults.
+      - aws_acm - Update automatic retries to stabilize the integration tests.
       - aws_codecommit - Support updating the description
       - aws_kms - Adds the ``enable_key_rotation`` option to enable or disable automatically
         key rotation.
-      - 'aws_kms: code refactor, some error messages updated'
+      - aws_kms - code refactor, some error messages updated'
       - aws_kms_info - Adds the ``enable_key_rotation`` info to the return value.
       - ec2_asg - Add the ability to use mixed_instance_policy in launch template
         driven autoscaling groups
-      - 'ec2_asg: Add support for Max Instance Lifetime'
-      - 'ec2_asg: Migrated to AnsibleAWSModule'
-      - ec2_placement_group - make `name` a required field.
+      - ec2_asg - Add support for Max Instance Lifetime
+      - ec2_asg - Migrated to AnsibleAWSModule
+      - ec2_placement_group - make ``name`` a required field.
       - ecs_task_definition - Add network_mode=default to support Windows ECS tasks.
       - elb_network_lb - added support to UDP and TCP_UDP protocols
       - elb_target - add awsretry to prevent rate exceeded errors (https://github.com/ansible/ansible/issues/51108)
       - elb_target_group - allow UDP and TCP_UDP protocols; permit only HTTP/HTTPS
         health checks using response codes and paths
-      - iam - make `name` a required field.
-      - iam_cert - make `name` a required field.
+      - iam - make ``name`` a required field.
+      - iam_cert - make ``name`` a required field.
       - iam_policy - The iam_policy module has been migrated from boto to boto3.
-      - iam_policy - make `iam_name` a required field.
+      - iam_policy - make ``iam_name`` a required field.
       - iam_role - Add support for managing the maximum session duration
       - iam_role - Add support for removing the related instance profile when we delete
         the role
-      - 'iam_role, iam_user and iam_group: the managed_policy option has been renamed
-        to managed_policies (with an alias added)'
-      - 'iam_role, iam_user and iam_group: the purge_policy option has been renamed
-        to purge_policies (with an alias added)'
+      - iam_role, iam_user and iam_group - the managed_policy option has been renamed
+        to managed_policies (with an alias added)
+      - iam_role, iam_user and iam_group - the purge_policy option has been renamed
+        to purge_policies (with an alias added)
       - lambda - add a tracing_mode parameter to set the TracingConfig for AWS X-Ray.
         Also allow updating Lambda runtime.
       - purefa_volume - Change I(qos) parameter to I(bw_iops), but retain I(qos) as
         an alias for backwards compatability (https://github.com/ansible/ansible/pull/61577).
-      - 'redshift: Add AWSRetry calls for errors outside our control'
+      - redshift - Add AWSRetry calls for errors outside our control
       - route53 - the module now has diff support.
       - sns_topic - Add backoff when we get Topic ``NotFound`` exceptions while listing
         the subscriptions.
-      - 'sqs_queue: Add support for tagging, KMS and FIFO queues'
-      - 'sqs_queue: updated to use boto3 instead of boto'
+      - sqs_queue - Add support for tagging, KMS and FIFO queues
+      - sqs_queue - updated to use boto3 instead of boto
     fragments:
     - 480004-cloudwatchlogs_log_group-KeyError.yaml
     - 56468-deprecate-lnb-absent.yml
@@ -684,24 +678,24 @@ releases:
       - ec2_eip - the ``wait_timeout`` option has been deprecated and will be removed
         in a later release. It has had no effect since Ansible 2.3.
       - ec2_lc - the ``associate_public_ip_address`` option has been deprecated and
-        will be removed in a later release. It has always been ignored by the module.
+        will be removed after a later release. It has always been ignored by the module.
       - elb_network_lb - in a later release, the default behaviour for the ``state``
         option will change from ``absent`` to ``present``.  To maintain the existing
         behavior explicitly set state to ``absent``.
       - iam_managed_policy - the ``fail_on_delete`` option has been deprecated and
-        will be removed in a later release.  It has always been ignored by the module.
+        will be removed after a later release.  It has always been ignored by the module.
       - iam_policy - in a later release, the default value for the ``skip_duplicates``
         option will change from ``true`` to ``false``.  To maintain the existing behavior
         explicitly set it to ``true``.
       - iam_policy - the ``policy_document`` option has been deprecated and will be
-        removed in a later release. To maintain the existing behavior use the ``policy_json``
+        removed after a later release. To maintain the existing behavior use the ``policy_json``
         option and read the file with the ``lookup`` plugin.
       - iam_role - in a later release, the ``purge_policies`` option (also know as
         ``purge_policy``) default value will change from ``true`` to ``false``
       - s3_lifecycle - the ``requester_pays`` option has been deprecated and will
-        be removed in a later release. It has always been ignored by the module.
-      - s3_sync - the ``retries`` option has been deprecated and will be removed in
-        a later release. It has always been ignored by the module.
+        be removed after a later release. It has always been ignored by the module.
+      - s3_sync - the ``retries`` option has been deprecated and will be removed after
+        2022-06-01. It has always been ignored by the module.
       minor_changes:
       - Remaining community.aws AnsibleModule based modules migrated to AnsibleAWSModule.
       - sanity - add future imports in all missing places.
@@ -709,4 +703,4 @@ releases:
     - 173-ansibleawsmodule.yaml
     - porting-guide.yml
     - sanity_fix_future_boilerplate.yml
-    release_date: '2020-08-12'
+    release_date: '2020-08-13'

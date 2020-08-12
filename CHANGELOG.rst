@@ -35,52 +35,52 @@ Minor Changes
 -------------
 
 - Allow all params that boto support in aws_api_gateway module
-- aws_acm: Add the module to group/aws for module_defaults.
-- aws_acm: Update automatic retries to stabilize the integration tests.
+- aws_acm - Add the module to group/aws for module_defaults.
+- aws_acm - Update automatic retries to stabilize the integration tests.
 - aws_codecommit - Support updating the description
 - aws_kms - Adds the ``enable_key_rotation`` option to enable or disable automatically key rotation.
 - aws_kms: code refactor, some error messages updated
 - aws_kms_info - Adds the ``enable_key_rotation`` info to the return value.
 - ec2_asg - Add the ability to use mixed_instance_policy in launch template driven autoscaling groups
-- ec2_asg: Add support for Max Instance Lifetime
-- ec2_asg: Migrated to AnsibleAWSModule
-- ec2_placement_group - make `name` a required field.
+- ec2_asg - Add support for Max Instance Lifetime
+- ec2_asg - Migrated to AnsibleAWSModule
+- ec2_placement_group - make ``name`` a required field.
 - ecs_task_definition - Add network_mode=default to support Windows ECS tasks.
 - elb_network_lb - added support to UDP and TCP_UDP protocols
 - elb_target - add awsretry to prevent rate exceeded errors (https://github.com/ansible/ansible/issues/51108)
 - elb_target_group - allow UDP and TCP_UDP protocols; permit only HTTP/HTTPS health checks using response codes and paths
-- iam - make `name` a required field.
-- iam_cert - make `name` a required field.
+- iam - make ``name`` a required field.
+- iam_cert - make ``name`` a required field.
 - iam_policy - The iam_policy module has been migrated from boto to boto3.
-- iam_policy - make `iam_name` a required field.
+- iam_policy - make ``iam_name`` a required field.
 - iam_role - Add support for managing the maximum session duration
 - iam_role - Add support for removing the related instance profile when we delete the role
-- iam_role, iam_user and iam_group: the managed_policy option has been renamed to managed_policies (with an alias added)
-- iam_role, iam_user and iam_group: the purge_policy option has been renamed to purge_policies (with an alias added)
+- iam_role, iam_user and iam_group - the managed_policy option has been renamed to managed_policies (with an alias added)
+- iam_role, iam_user and iam_group - the purge_policy option has been renamed to purge_policies (with an alias added)
 - lambda - add a tracing_mode parameter to set the TracingConfig for AWS X-Ray. Also allow updating Lambda runtime.
 - purefa_volume - Change I(qos) parameter to I(bw_iops), but retain I(qos) as an alias for backwards compatability (https://github.com/ansible/ansible/pull/61577).
-- redshift: Add AWSRetry calls for errors outside our control
+- redshift - Add AWSRetry calls for errors outside our control
 - route53 - the module now has diff support.
 - sns_topic - Add backoff when we get Topic ``NotFound`` exceptions while listing the subscriptions.
-- sqs_queue: Add support for tagging, KMS and FIFO queues
-- sqs_queue: updated to use boto3 instead of boto
+- sqs_queue - Add support for tagging, KMS and FIFO queues
+- sqs_queue - updated to use boto3 instead of boto
 
 Deprecated Features
 -------------------
 
-- cloudformation - The ``template_format`` option had no effect since Ansible 2.3 and will be removed in Ansible 2.14
-- data_pipeline - The ``version`` option had no effect and will be removed in Ansible 2.14
-- ec2_eip - The ``wait_timeout`` option had no effect and will be removed in Ansible 2.14
-- ec2_key - The ``wait_timeout`` option had no effect and will be removed in Ansible 2.14
-- ec2_key - The ``wait`` option had no effect and will be removed in Ansible 2.14
-- ec2_lc - The ``associate_public_ip_address`` option had no effect and will be removed in Ansible 2.14
-- elb_network_lb: The current default value of the `state` option has been deprecated and will change from absent to present in Ansible 2.14
-- iam_managed_policy - The ``fail_on_delete`` option had no effect and will be removed in Ansible 2.14
-- iam_policy - The ``policy_document`` will be removed in Ansible 2.14.  To maintain the existing behavior use the ``policy_json`` option and read the file with the ``lookup`` plugin.
-- iam_policy - The default value of ``skip_duplicates`` will change in Ansible 2.14 from ``true`` to ``false``.
-- iam_role: The default value of the purge_policies has been deprecated and will change from true to false in Ansible 2.14
-- s3_lifecycle - The ``requester_pays`` option had no effect and will be removed in Ansible 2.14
-- s3_sync - The ``retries`` option had no effect and will be removed in Ansible 2.14
+- cloudformation - The ``template_format`` option had no effect since Ansible 2.3 and will be removed after 2022-06-01
+- data_pipeline - The ``version`` option had no effect and will be removed after 2022-06-01
+- ec2_eip - The ``wait_timeout`` option had no effect and will be removed after 2022-06-01
+- ec2_key - The ``wait_timeout`` option had no effect and will be removed after 2022-06-01
+- ec2_key - The ``wait`` option had no effect and will be removed after 2022-06-01
+- ec2_lc - The ``associate_public_ip_address`` option had no effect and will be removed after 2022-06-01
+- elb_network_lb: The current default value of the ``state`` option has been deprecated and will change from absent to present after 2022-06-01
+- iam_managed_policy - The ``fail_on_delete`` option had no effect and will be removed after 2022-06-01
+- iam_policy - The ``policy_document`` will be removed after 2022-06-01.  To maintain the existing behavior use the ``policy_json`` option and read the file with the ``lookup`` plugin.
+- iam_policy - The default value of ``skip_duplicates`` will change after 2022-06-01 from ``true`` to ``false``.
+- iam_role - The default value of the purge_policies has been deprecated and will change from true to false after 2022-06-01
+- s3_lifecycle - The ``requester_pays`` option had no effect and will be removed after 2022-06-01
+- s3_sync - The ``retries`` option had no effect and will be removed after 2022-06-01
 
 Bugfixes
 --------
