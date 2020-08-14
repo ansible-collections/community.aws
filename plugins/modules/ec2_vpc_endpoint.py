@@ -183,18 +183,15 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass  # will be picked up by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     ec2_argument_spec,
-                                                                     HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible.module_utils.six import string_types
+from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def date_handler(obj):
@@ -319,14 +316,11 @@ def setup_removal(client, module):
         result = client.delete_vpc_endpoints(**params)['Unsuccessful']
         if not module.check_mode and (result != []):
             module.fail_json(msg=result)
+    except is_boto3_error_code('DryRunOperation'):
+        changed = True
+        result = 'Would have deleted VPC Endpoint if not in check mode'
     except botocore.exceptions.ClientError as e:
-        message = to_native(e)
-        if "DryRunOperation" in message:
-            changed = True
-            result = 'Would have deleted VPC Endpoint if not in check mode'
-        else:
-            module.fail_json(msg=message, exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, "Failed to delete VPC endpoint")
     except Exception as e:
         module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
                          **camel_dict_to_snake_dict(e.response))
@@ -334,35 +328,29 @@ def setup_removal(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            vpc_id=dict(),
-            service=dict(),
-            policy=dict(type='json'),
-            policy_file=dict(type='path', aliases=['policy_path']),
-            state=dict(default='present', choices=['present', 'absent']),
-            wait=dict(type='bool', default=False),
-            wait_timeout=dict(type='int', default=320, required=False),
-            route_table_ids=dict(type='list', elements='str'),
-            vpc_endpoint_id=dict(),
-            client_token=dict(),
-        )
+    argument_spec = dict(
+        vpc_id=dict(),
+        service=dict(),
+        policy=dict(type='json'),
+        policy_file=dict(type='path', aliases=['policy_path']),
+        state=dict(default='present', choices=['present', 'absent']),
+        wait=dict(type='bool', default=False),
+        wait_timeout=dict(type='int', default=320, required=False),
+        route_table_ids=dict(type='list', elements='str'),
+        vpc_endpoint_id=dict(),
+        client_token=dict(),
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[['policy', 'policy_file']],
         required_if=[
             ['state', 'present', ['vpc_id', 'service']],
             ['state', 'absent', ['vpc_endpoint_id']],
-        ]
+        ],
     )
 
     # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore and boto3 are required for this module')
-
     state = module.params.get('state')
 
     try:

@@ -167,18 +167,16 @@ import traceback
 try:
     import boto3
     from botocore.exceptions import ClientError, NoCredentialsError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
 from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 def get_elb_listeners(connection, module, elb_arn):
@@ -186,7 +184,7 @@ def get_elb_listeners(connection, module, elb_arn):
     try:
         return connection.describe_listeners(LoadBalancerArn=elb_arn)['Listeners']
     except ClientError as e:
-        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, msg="Failed to describe elb listeners")
 
 
 def get_listener_rules(connection, module, listener_arn):
@@ -194,7 +192,7 @@ def get_listener_rules(connection, module, listener_arn):
     try:
         return connection.describe_rules(ListenerArn=listener_arn)['Rules']
     except ClientError as e:
-        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, msg="Failed to describe listener rules")
 
 
 def get_load_balancer_attributes(connection, module, load_balancer_arn):
@@ -202,7 +200,7 @@ def get_load_balancer_attributes(connection, module, load_balancer_arn):
     try:
         load_balancer_attributes = boto3_tag_list_to_ansible_dict(connection.describe_load_balancer_attributes(LoadBalancerArn=load_balancer_arn)['Attributes'])
     except ClientError as e:
-        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, msg="Failed to describe load balancer attributes")
 
     # Replace '.' with '_' in attribute key names to make it more Ansibley
     for k, v in list(load_balancer_attributes.items()):
@@ -217,7 +215,7 @@ def get_load_balancer_tags(connection, module, load_balancer_arn):
     try:
         return boto3_tag_list_to_ansible_dict(connection.describe_tags(ResourceArns=[load_balancer_arn])['TagDescriptions'][0]['Tags'])
     except ClientError as e:
-        module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, msg="Failed to describe load balancer tags")
 
 
 def list_load_balancers(connection, module):
@@ -233,11 +231,10 @@ def list_load_balancers(connection, module):
             load_balancers = load_balancer_paginator.paginate(LoadBalancerArns=load_balancer_arns).build_full_result()
         if names:
             load_balancers = load_balancer_paginator.paginate(Names=names).build_full_result()
+    except is_boto3_error_code('LoadBalancerNotFound'):
+        module.exit_json(load_balancers=[])
     except ClientError as e:
-        if e.response['Error']['Code'] == 'LoadBalancerNotFound':
-            module.exit_json(load_balancers=[])
-        else:
-            module.fail_json(msg=to_native(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, msg="Failed to list load balancers")
     except NoCredentialsError as e:
         module.fail_json(msg="AWS authentication problem. " + to_native(e), exception=traceback.format_exc())
 
@@ -264,24 +261,19 @@ def list_load_balancers(connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            load_balancer_arns=dict(type='list', elements='str'),
-            names=dict(type='list', elements='str')
-        )
+    argument_spec = dict(
+        load_balancer_arns=dict(type='list', elements='str'),
+        names=dict(type='list', elements='str')
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=[['load_balancer_arns', 'names']],
-                           supports_check_mode=True
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[['load_balancer_arns', 'names']],
+        supports_check_mode=True,
+    )
     if module._name == 'elb_application_lb_facts':
         module.deprecate("The 'elb_application_lb_facts' module has been renamed to 'elb_application_lb_info'",
                          date='2021-12-01', collection_name='community.aws')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
 
