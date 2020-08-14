@@ -193,7 +193,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_con
                                                                      HAS_BOTO3,
                                                                      camel_dict_to_snake_dict,
                                                                      )
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible.module_utils.six import string_types
 
 
