@@ -458,11 +458,8 @@ except ImportError:
 from ansible.module_utils._text import to_text
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_connect
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 
 
