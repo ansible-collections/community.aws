@@ -516,8 +516,7 @@ def create_launch_config(connection, module):
     name = module.params.get('name')
     vpc_id = module.params.get('vpc_id')
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        ec2_connection = boto3_conn(module, 'client', 'ec2', region, ec2_url, **aws_connect_kwargs)
+        ec2_connection = module.client('ec2')
         security_groups = get_ec2_security_group_ids_from_names(module.params.get('security_groups'), ec2_connection, vpc_id=vpc_id, boto3=True)
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg="Failed to get Security Group IDs", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
@@ -680,10 +679,7 @@ def main():
     )
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        connection = boto3_conn(module, conn_type='client', resource='autoscaling', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoRegionError:
-        module.fail_json(msg=("region must be specified as a parameter in AWS_DEFAULT_REGION environment variable or in boto configuration file"))
+        connection = module.client('autoscaling')
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg="unable to establish connection - " + str(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
 

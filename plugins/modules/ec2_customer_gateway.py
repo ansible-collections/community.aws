@@ -128,10 +128,7 @@ class Ec2CustomerGatewayManager:
         self.module = module
 
         try:
-            region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-            if not region:
-                module.fail_json(msg="Region must be specified as a parameter, in EC2_REGION or AWS_REGION environment variables or in boto configuration file")
-            self.ec2 = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+            self.ec2 = module.client('ec2')
         except ClientError as e:
             module.fail_json_aws(e, msg="Failed to get connection")
 

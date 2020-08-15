@@ -112,8 +112,7 @@ def main():
         module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'",
                          date='2021-12-01', collection_name='community.aws')
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    logs = boto3_conn(module, conn_type='client', resource='logs', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    logs = module.client('logs')
 
     desc_log_group = describe_log_group(client=logs,
                                         log_group_name=module.params['log_group_name'],

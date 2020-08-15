@@ -423,12 +423,7 @@ class ElastiCacheManager(object):
 
     def _get_elasticache_connection(self):
         """Get an elasticache connection"""
-        region, ec2_url, aws_connect_params = get_aws_connection_info(self.module, boto3=True)
-        if region:
-            return boto3_conn(self.module, conn_type='client', resource='elasticache',
-                              region=region, endpoint=ec2_url, **aws_connect_params)
-        else:
-            self.module.fail_json(msg="region must be specified")
+        return self.module.client('elasticache')
 
     def _get_port(self):
         """Get the port. Where this information is retrieved from is engine dependent."""

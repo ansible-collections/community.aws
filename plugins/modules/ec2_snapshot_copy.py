@@ -184,9 +184,7 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    client = boto3_conn(module, conn_type='client', resource='ec2',
-                        region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    client = module.client('ec2')
 
     copy_snapshot(module, client)
 

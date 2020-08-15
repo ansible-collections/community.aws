@@ -328,14 +328,8 @@ def main():
         required_if=[['state', 'present', ['description', 'engine']]],
     )
 
-    # Retrieve any AWS settings from the environment.
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-
-    if not region:
-        module.fail_json(msg="Region must be present")
-
     try:
-        conn = boto3_conn(module, conn_type='client', resource='rds', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        conn = module.client('rds')
     except botocore.exceptions.NoCredentialsError as e:
         module.fail_json(msg="Couldn't connect to AWS: %s" % str(e))
 

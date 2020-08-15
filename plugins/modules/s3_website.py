@@ -305,13 +305,9 @@ def main():
         ],
     )
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
 
-    if region:
-        client_connection = boto3_conn(module, conn_type='client', resource='s3', region=region, endpoint=ec2_url, **aws_connect_params)
-        resource_connection = boto3_conn(module, conn_type='resource', resource='s3', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    client_connection = module.client('s3')
+    resource_connection = module.resource('s3')
 
     state = module.params.get("state")
 

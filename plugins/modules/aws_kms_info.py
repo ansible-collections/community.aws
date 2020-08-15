@@ -416,12 +416,7 @@ def main():
     if module._name == 'aws_kms_facts':
         module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='kms', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    connection = module.client('kms')
 
     all_keys = get_kms_info(connection, module)
     module.exit_json(keys=[key for key in all_keys if key_matches_filters(key, module.params['filters'])])

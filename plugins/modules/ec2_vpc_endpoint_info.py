@@ -174,11 +174,7 @@ def main():
 
     # Validate Requirements
     try:
-        region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-        if region:
-            connection = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_params)
-        else:
-            module.fail_json(msg="region must be specified")
+        connection = module.client('ec2')
     except botocore.exceptions.NoCredentialsError as e:
         module.fail_json(msg=str(e))
 

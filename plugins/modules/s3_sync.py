@@ -528,10 +528,7 @@ def main():
     result = {}
     mode = module.params['mode']
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg="Region must be specified")
-    s3 = boto3_conn(module, conn_type='client', resource='s3', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    s3 = module.client('s3')
 
     if mode == 'push':
         try:

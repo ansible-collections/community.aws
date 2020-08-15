@@ -96,9 +96,7 @@ def main():
                          "and the renamed one no longer returns ansible_facts", date='2021-12-01', collection_name='community.aws')
 
     # Set up connection
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-    connection = boto3_conn(module, conn_type='client', resource='s3', region=region, endpoint=ec2_url,
-                            **aws_connect_params)
+    connection = module.client('s3')
 
     # Gather results
     result['buckets'] = get_bucket_list(module, connection)

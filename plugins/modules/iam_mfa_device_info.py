@@ -96,11 +96,7 @@ def main():
     if module._name == 'iam_mfa_device_facts':
         module.deprecate("The 'iam_mfa_device_facts' module has been renamed to 'iam_mfa_device_info'", date='2021-12-01', collection_name='community.aws')
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='iam', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    else:
-        module.fail_json(msg="region must be specified")
+    connection = module.client('iam')
 
     list_mfa_devices(connection, module)
 

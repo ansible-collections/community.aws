@@ -321,9 +321,7 @@ def main():
         policy = json.dumps(json.loads(module.params.get('policy')))
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        iam = boto3_conn(module, conn_type='client', resource='iam',
-                         region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        iam = module.client('iam')
     except (botocore.exceptions.NoCredentialsError, botocore.exceptions.ProfileNotFound) as e:
         module.fail_json(msg="Can't authorize connection. Check your credentials and profile.",
                          exceptions=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))

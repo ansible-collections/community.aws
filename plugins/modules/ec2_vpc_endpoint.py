@@ -355,21 +355,7 @@ def main():
     state = module.params.get('state')
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    except NameError as e:
-        # Getting around the get_aws_connection_info boto reliance for region
-        if "global name 'boto' is not defined" in to_native(e):
-            module.params['region'] = botocore.session.get_session().get_config_variable('region')
-            if not module.params['region']:
-                module.fail_json(msg="Error - no region provided")
-        else:
-            module.fail_json(msg="Can't retrieve connection information - " + str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
-
-    try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        ec2 = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        ec2 = module.client('ec2')
     except botocore.exceptions.NoCredentialsError as e:
         module.fail_json(msg="Failed to connect to AWS due to wrong or missing credentials: %s" % str(e),
                          exception=traceback.format_exc(),

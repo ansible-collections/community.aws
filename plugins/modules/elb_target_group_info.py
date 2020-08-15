@@ -310,12 +310,7 @@ def main():
     if module._name == 'elb_target_group_facts':
         module.deprecate("The 'elb_target_group_facts' module has been renamed to 'elb_target_group_info'", date='2021-12-01', collection_name='community.aws')
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='elbv2', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    connection = module.client('elbv2')
 
     list_target_groups(connection, module)
 

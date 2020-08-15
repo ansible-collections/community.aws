@@ -414,10 +414,9 @@ def main():
     peering_id = module.params.get('peering_id')
     vpc_id = module.params.get('vpc_id')
     peer_vpc_id = module.params.get('peer_vpc_id')
+
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        client = boto3_conn(module, conn_type='client', resource='ec2',
-                            region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        client = module.client('ec2')
     except botocore.exceptions.NoCredentialsError as e:
         module.fail_json(msg="Can't authorize connection - " + str(e))
 

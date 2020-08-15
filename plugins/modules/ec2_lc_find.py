@@ -202,9 +202,8 @@ def main():
         argument_spec=argument_spec,
     )
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, True)
+    client = module.client('autoscaling')
 
-    client = boto3_conn(module=module, conn_type='client', resource='autoscaling', region=region, **aws_connect_params)
     find_launch_configs(client, module)
 
 

@@ -136,11 +136,7 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='sts', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    else:
-        module.fail_json(msg="region must be specified")
+    connection = module.client('sts')
 
     get_session_token(connection, module)
 

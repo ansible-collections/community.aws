@@ -153,12 +153,7 @@ class AWSConnection:
             resources.append('iam')
 
             for resource in resources:
-                aws_connect_kwargs.update(dict(region=self.region,
-                                               endpoint=self.endpoint,
-                                               conn_type='client',
-                                               resource=resource
-                                               ))
-                self.resource_client[resource] = boto3_conn(ansible_obj, **aws_connect_kwargs)
+                self.resource_client[resource] = ansible_obj.client(resource)
 
             # if region is not provided, then get default profile/session region
             if not self.region:

@@ -550,12 +550,7 @@ def main():
     if module._name == 'ec2_instance_facts':
         module.deprecate("The 'ec2_instance_facts' module has been renamed to 'ec2_instance_info'", date='2021-12-01', collection_name='community.aws')
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    connection = module.client('ec2')
 
     list_ec2_instances(connection, module)
 

@@ -424,13 +424,7 @@ def main():
         required_if=[('state', 'present', ('location', 'bandwidth'))],
     )
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg="Either region or AWS_REGION or EC2_REGION environment variable or boto config aws_region or ec2_region must be set.")
-
-    connection = boto3_conn(module, conn_type='client',
-                            resource='directconnect', region=region,
-                            endpoint=ec2_url, **aws_connect_kwargs)
+    connection = module.client('directconnect')
 
     state = module.params.get('state')
     response = {}

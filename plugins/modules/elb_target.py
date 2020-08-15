@@ -334,8 +334,7 @@ def main():
         mutually_exclusive=[['target_group_arn', 'target_group_name']],
     )
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-    connection = boto3_conn(module, conn_type='client', resource='elbv2', region=region, endpoint=ec2_url, **aws_connect_params)
+    connection = module.client('elbv2')
 
     state = module.params.get("state")
 

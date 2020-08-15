@@ -250,8 +250,7 @@ def main():
     mutually_exclusive = [['retention', 'purge_retention_policy'], ['purge_retention_policy', 'overwrite']]
     module = AnsibleAWSModule(argument_spec=argument_spec, mutually_exclusive=mutually_exclusive)
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    logs = boto3_conn(module, conn_type='client', resource='logs', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    logs = module.client('logs')
 
     state = module.params.get('state')
     changed = False

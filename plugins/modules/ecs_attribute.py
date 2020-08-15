@@ -188,13 +188,7 @@ class Ec2EcsInstance(object):
         self.cluster = cluster
         self.ec2_id = ec2_id
 
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        if not region:
-            module.fail_json(msg=("Region must be specified as a parameter,"
-                                  " in EC2_REGION or AWS_REGION environment"
-                                  " variables or in boto configuration file"))
-        self.ecs = boto3_conn(module, conn_type='client', resource='ecs',
-                              region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        self.ecs = module.client('ecs')
 
         self.ecs_arn = self._get_ecs_arn()
 

@@ -1364,15 +1364,7 @@ def main():
 
     check_mode = module.check_mode
     try:
-        region, ec2_url, aws_connect_kwargs = (
-            get_aws_connection_info(module, boto3=True)
-        )
-        client = (
-            boto3_conn(
-                module, conn_type='client', resource='kinesis',
-                region=region, endpoint=ec2_url, **aws_connect_kwargs
-            )
-        )
+        client = module.client('kinesis')
     except botocore.exceptions.ClientError as e:
         err_msg = 'Boto3 Client Error - {0}'.format(to_native(e.msg))
         module.fail_json(

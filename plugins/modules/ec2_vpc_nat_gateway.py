@@ -969,15 +969,7 @@ def main():
     if_exist_do_not_create = module.params.get('if_exist_do_not_create')
 
     try:
-        region, ec2_url, aws_connect_kwargs = (
-            get_aws_connection_info(module, boto3=True)
-        )
-        client = (
-            boto3_conn(
-                module, conn_type='client', resource='ec2',
-                region=region, endpoint=ec2_url, **aws_connect_kwargs
-            )
-        )
+        client = module.client('ec2')
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg="Boto3 Client Error - " + str(e.msg))
 

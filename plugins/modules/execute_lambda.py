@@ -179,8 +179,7 @@ def main():
                          "profile.")
 
     try:
-        client = boto3_conn(module, conn_type='client', resource='lambda',
-                            region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        client = module.client('lambda')
     except (botocore.exceptions.ClientError, botocore.exceptions.ValidationError) as e:
         module.fail_json(msg="Failure connecting boto3 to AWS: %s" % to_native(e), exception=traceback.format_exc())
 

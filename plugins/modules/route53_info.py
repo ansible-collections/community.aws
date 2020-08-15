@@ -467,8 +467,7 @@ def main():
     if not (HAS_BOTO or HAS_BOTO3):
         module.fail_json(msg='json and boto/boto3 is required.')
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    route53 = boto3_conn(module, conn_type='client', resource='route53', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    route53 = module.client('route53')
 
     invocations = {
         'change': change_details,

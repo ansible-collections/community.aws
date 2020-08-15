@@ -120,11 +120,7 @@ class EcsClusterManager:
 
     def __init__(self, module):
         self.module = module
-
-        # self.ecs = boto3.client('ecs')
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        self.ecs = boto3_conn(module, conn_type='client', resource='ecs',
-                              region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        self.ecs = module.client('ecs')
 
     def find_in_array(self, array_of_clusters, cluster_name, field_name='clusterArn'):
         for c in array_of_clusters:
