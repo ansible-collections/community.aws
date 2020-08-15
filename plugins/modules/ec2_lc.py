@@ -517,9 +517,12 @@ def create_launch_config(connection, module):
     vpc_id = module.params.get('vpc_id')
     try:
         ec2_connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
+    try:
         security_groups = get_ec2_security_group_ids_from_names(module.params.get('security_groups'), ec2_connection, vpc_id=vpc_id, boto3=True)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to get Security Group IDs", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to get Security Group IDs')
     except ValueError as e:
         module.fail_json(msg="Failed to get Security Group IDs", exception=traceback.format_exc())
     user_data = module.params.get('user_data')

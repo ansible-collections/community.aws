@@ -353,7 +353,10 @@ def main():
 
     state = module.params.get('state')
 
-    client = module.client('directconnect')
+    try:
+        client = module.client('directconnect')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if state == 'present':
         (changed, results) = ensure_present(client, module)

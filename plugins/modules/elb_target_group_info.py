@@ -211,6 +211,7 @@ import traceback
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError, NoCredentialsError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -310,7 +311,10 @@ def main():
     if module._name == 'elb_target_group_facts':
         module.deprecate("The 'elb_target_group_facts' module has been renamed to 'elb_target_group_info'", date='2021-12-01', collection_name='community.aws')
 
-    connection = module.client('elbv2')
+    try:
+        connection = module.client('elbv2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     list_target_groups(connection, module)
 

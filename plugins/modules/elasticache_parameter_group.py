@@ -293,7 +293,10 @@ def main():
     state = module.params.get('state')
     values = module.params.get('values')
 
-    connection = module.client('elasticache')
+    try:
+        connection = module.client('elasticache')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     exists = get_info(connection, parameter_group_name)
 

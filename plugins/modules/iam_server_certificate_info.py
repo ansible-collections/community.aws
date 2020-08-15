@@ -81,6 +81,7 @@ upload_date:
 
 try:
     import boto3
+    import botocore
     import botocore.exceptions
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -152,8 +153,8 @@ def main():
 
     try:
         iam = module.client('iam')
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Boto3 Client Error - " + str(e.msg))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     cert_name = module.params.get('name')
     results = get_server_certs(iam, cert_name)

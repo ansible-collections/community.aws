@@ -113,6 +113,7 @@ import traceback
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError, WaiterError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -184,7 +185,10 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    client = module.client('ec2')
+    try:
+        client = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     copy_snapshot(module, client)
 

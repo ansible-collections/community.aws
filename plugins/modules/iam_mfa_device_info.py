@@ -62,6 +62,7 @@ EXAMPLES = r'''
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -96,7 +97,10 @@ def main():
     if module._name == 'iam_mfa_device_facts':
         module.deprecate("The 'iam_mfa_device_facts' module has been renamed to 'iam_mfa_device_info'", date='2021-12-01', collection_name='community.aws')
 
-    connection = module.client('iam')
+    try:
+        connection = module.client('iam')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     list_mfa_devices(connection, module)
 

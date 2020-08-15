@@ -134,8 +134,8 @@ def main():
 
     try:
         dbclient = module.client('dynamodb')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     result = {'changed': False}
     state = module.params['state']

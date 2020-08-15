@@ -112,7 +112,10 @@ def main():
         module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'",
                          date='2021-12-01', collection_name='community.aws')
 
-    logs = module.client('logs')
+    try:
+        logs = module.client('logs')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     desc_log_group = describe_log_group(client=logs,
                                         log_group_name=module.params['log_group_name'],

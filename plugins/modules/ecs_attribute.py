@@ -112,6 +112,7 @@ attributes:
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError, EndpointConnectionError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -188,7 +189,10 @@ class Ec2EcsInstance(object):
         self.cluster = cluster
         self.ec2_id = ec2_id
 
-        self.ecs = module.client('ecs')
+        try:
+            self.ecs = module.client('ecs')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
 
         self.ecs_arn = self._get_ecs_arn()
 

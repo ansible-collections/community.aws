@@ -113,6 +113,7 @@ from time import time, sleep
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -334,7 +335,10 @@ def main():
         mutually_exclusive=[['target_group_arn', 'target_group_name']],
     )
 
-    connection = module.client('elbv2')
+    try:
+        connection = module.client('elbv2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get("state")
 

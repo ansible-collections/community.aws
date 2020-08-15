@@ -163,6 +163,7 @@ import time
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError, ParamValidationError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -306,8 +307,11 @@ def main():
     )
 
 
-    client_connection = module.client('s3')
-    resource_connection = module.resource('s3')
+    try:
+        client_connection = module.client('s3')
+        resource_connection = module.resource('s3')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get("state")
 

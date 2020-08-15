@@ -970,8 +970,8 @@ def main():
 
     try:
         client = module.client('ec2')
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Boto3 Client Error - " + str(e.msg))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     changed = False
     err_msg = ''

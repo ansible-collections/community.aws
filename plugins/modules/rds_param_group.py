@@ -330,8 +330,8 @@ def main():
 
     try:
         conn = module.client('rds')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Couldn't connect to AWS: %s" % str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     if state == 'present':

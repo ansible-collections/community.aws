@@ -424,7 +424,10 @@ def main():
         required_if=[('state', 'present', ('location', 'bandwidth'))],
     )
 
-    connection = module.client('directconnect')
+    try:
+        connection = module.client('directconnect')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     response = {}

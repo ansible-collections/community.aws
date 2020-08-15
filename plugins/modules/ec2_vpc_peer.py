@@ -417,8 +417,8 @@ def main():
 
     try:
         client = module.client('ec2')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Can't authorize connection - " + str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if state == 'present':
         (changed, results) = create_peer_connection(client, module)

@@ -558,8 +558,8 @@ def main():
 
     try:
         client = module.client('ec2')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Can't authorize connection - %s" % to_native(e), exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if state == 'present':
         (changed, results) = ensure_vgw_present(client, module)

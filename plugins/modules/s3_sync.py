@@ -528,7 +528,10 @@ def main():
     result = {}
     mode = module.params['mode']
 
-    s3 = module.client('s3')
+    try:
+        s3 = module.client('s3')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if mode == 'push':
         try:

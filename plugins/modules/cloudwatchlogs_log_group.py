@@ -250,7 +250,10 @@ def main():
     mutually_exclusive = [['retention', 'purge_retention_policy'], ['purge_retention_policy', 'overwrite']]
     module = AnsibleAWSModule(argument_spec=argument_spec, mutually_exclusive=mutually_exclusive)
 
-    logs = module.client('logs')
+    try:
+        logs = module.client('logs')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     changed = False

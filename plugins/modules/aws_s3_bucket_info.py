@@ -96,7 +96,10 @@ def main():
                          "and the renamed one no longer returns ansible_facts", date='2021-12-01', collection_name='community.aws')
 
     # Set up connection
-    connection = module.client('s3')
+    try:
+        connection = module.client('s3')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     # Gather results
     result['buckets'] = get_bucket_list(module, connection)

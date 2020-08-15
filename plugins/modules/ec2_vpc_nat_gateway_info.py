@@ -134,8 +134,8 @@ def main():
 
     try:
         connection = module.client('ec2')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     results = get_nat_gateways(connection, module)
 

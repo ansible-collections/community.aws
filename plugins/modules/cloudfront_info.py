@@ -285,13 +285,8 @@ class CloudFrontServiceManager:
 
         try:
             self.client = module.client('cloudfront')
-        except botocore.exceptions.NoRegionError:
-            self.module.fail_json(msg="Region must be specified as a parameter, in AWS_DEFAULT_REGION "
-                                  "environment variable or in boto configuration file")
-        except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg="Can't establish connection - " + str(e),
-                                  exception=traceback.format_exc(),
-                                  **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     def get_distribution(self, distribution_id):
         try:

@@ -113,8 +113,8 @@ def main():
 
     try:
         ec2 = module.client('ec2')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     # Turn the boto3 result in to ansible friendly_snaked_names
     results = [camel_dict_to_snake_dict(peer) for peer in get_vpc_peers(ec2, module)]

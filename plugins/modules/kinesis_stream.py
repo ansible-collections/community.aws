@@ -1365,11 +1365,8 @@ def main():
     check_mode = module.check_mode
     try:
         client = module.client('kinesis')
-    except botocore.exceptions.ClientError as e:
-        err_msg = 'Boto3 Client Error - {0}'.format(to_native(e.msg))
-        module.fail_json(
-            success=False, changed=False, result={}, msg=err_msg
-        )
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if state == 'present':
         success, changed, err_msg, results = (

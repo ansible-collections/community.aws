@@ -180,8 +180,8 @@ def main():
 
     try:
         client = module.client('lambda')
-    except (botocore.exceptions.ClientError, botocore.exceptions.ValidationError) as e:
-        module.fail_json(msg="Failure connecting boto3 to AWS: %s" % to_native(e), exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invoke_params = {}
 

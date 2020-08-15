@@ -175,8 +175,8 @@ def main():
     # Validate Requirements
     try:
         connection = module.client('ec2')
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invocations = {
         'services': get_supported_services,

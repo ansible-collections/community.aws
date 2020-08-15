@@ -81,6 +81,7 @@ EXAMPLES = '''
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -136,7 +137,10 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    connection = module.client('sts')
+    try:
+        connection = module.client('sts')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     get_session_token(connection, module)
 

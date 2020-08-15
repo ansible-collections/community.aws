@@ -204,6 +204,7 @@ import traceback
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -619,8 +620,8 @@ def main():
 
     try:
         client = module.client('datapipeline')
-    except ClientError as e:
-        module.fail_json(msg="Can't authorize connection - " + str(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     if state == 'present':

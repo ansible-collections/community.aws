@@ -423,7 +423,10 @@ class ElastiCacheManager(object):
 
     def _get_elasticache_connection(self):
         """Get an elasticache connection"""
-        return self.module.client('elasticache')
+        try:
+            return self.module.client('elasticache')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     def _get_port(self):
         """Get the port. Where this information is retrieved from is engine dependent."""

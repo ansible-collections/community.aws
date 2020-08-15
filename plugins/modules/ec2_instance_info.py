@@ -495,6 +495,7 @@ import traceback
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -550,7 +551,10 @@ def main():
     if module._name == 'ec2_instance_facts':
         module.deprecate("The 'ec2_instance_facts' module has been renamed to 'ec2_instance_info'", date='2021-12-01', collection_name='community.aws')
 
-    connection = module.client('ec2')
+    try:
+        connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     list_ec2_instances(connection, module)
 

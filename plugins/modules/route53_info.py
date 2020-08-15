@@ -467,7 +467,10 @@ def main():
     if not (HAS_BOTO or HAS_BOTO3):
         module.fail_json(msg='json and boto/boto3 is required.')
 
-    route53 = module.client('route53')
+    try:
+        route53 = module.client('route53')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invocations = {
         'change': change_details,

@@ -107,6 +107,7 @@ import time
 
 try:
     import boto3
+    import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -120,7 +121,10 @@ class EcsClusterManager:
 
     def __init__(self, module):
         self.module = module
-        self.ecs = module.client('ecs')
+        try:
+            self.ecs = module.client('ecs')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     def find_in_array(self, array_of_clusters, cluster_name, field_name='clusterArn'):
         for c in array_of_clusters:

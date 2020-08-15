@@ -137,6 +137,11 @@ associate_public_address:
 '''
 import re
 
+try:
+    import botocore
+except ImportError:
+    pass  # Handled by AnsibleAWSModule
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
@@ -202,7 +207,10 @@ def main():
         argument_spec=argument_spec,
     )
 
-    client = module.client('autoscaling')
+    try:
+        client = module.client('autoscaling')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     find_launch_configs(client, module)
 

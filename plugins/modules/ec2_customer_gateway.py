@@ -112,6 +112,7 @@ gateway.customer_gateways:
 try:
     from botocore.exceptions import ClientError
     import boto3
+    import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -129,8 +130,8 @@ class Ec2CustomerGatewayManager:
 
         try:
             self.ec2 = module.client('ec2')
-        except ClientError as e:
-            module.fail_json_aws(e, msg="Failed to get connection")
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     @AWSRetry.jittered_backoff(delay=2, max_delay=30, retries=6, catch_extra_error_codes=['IncorrectState'])
     def ensure_cgw_absent(self, gw_id):

@@ -119,6 +119,7 @@ import sys
 
 try:
     import boto3
+    import botocore
     from botocore.exceptions import ClientError, ParamValidationError, MissingParametersError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
@@ -159,8 +160,8 @@ class AWSConnection:
             if not self.region:
                 self.region = self.resource_client['lambda'].meta.region_name
 
-        except (ClientError, ParamValidationError, MissingParametersError) as e:
-            ansible_obj.fail_json(msg="Unable to connect, authorize or access resource: {0}".format(e))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            ansible_obj.fail_json_aws(e, msg='Failed to connect to AWS')
 
         # set account ID
         try:

@@ -416,7 +416,10 @@ def main():
     if module._name == 'aws_kms_facts':
         module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
 
-    connection = module.client('kms')
+    try:
+        connection = module.client('kms')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     all_keys = get_kms_info(connection, module)
     module.exit_json(keys=[key for key in all_keys if key_matches_filters(key, module.params['filters'])])
