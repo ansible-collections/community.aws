@@ -145,7 +145,7 @@ class AWSConnection:
     def __init__(self, ansible_obj, resources, use_boto3=True):
 
         try:
-            self.region, self.endpoint, aws_connect_kwargs = get_aws_connection_info(ansible_obj, boto3=use_boto3)
+            self.region = ansible_obj.region
 
             self.resource_client = dict()
             if not resources:

@@ -306,7 +306,6 @@ def main():
         ],
     )
 
-
     try:
         client_connection = module.client('s3')
         resource_connection = module.resource('s3')

@@ -172,12 +172,6 @@ def main():
     if not (name or function_arn):
         module.fail_json(msg="Must provide either a function_arn or a name to invoke.")
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg="The AWS region must be specified as an "
-                         "environment variable or in the AWS credentials "
-                         "profile.")
-
     try:
         client = module.client('lambda')
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
