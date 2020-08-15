@@ -271,7 +271,7 @@ def list_target_groups(connection, module):
             target_groups = target_group_paginator.paginate(Names=names).build_full_result()
     except is_boto3_error_code('TargetGroupNotFound'):
         module.exit_json(target_groups=[])
-    except ClientError as e:
+    except ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to list target groups")
     except NoCredentialsError as e:
         module.fail_json(msg="AWS authentication problem. " + to_native(e), exception=traceback.format_exc())

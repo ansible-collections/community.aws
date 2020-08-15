@@ -707,7 +707,7 @@ def create(client, subnet_id, allocation_id, client_token=None,
         success = False
         changed = False
         result = None
-    except botocore.exceptions.ClientError as e:
+    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
         err_msg = to_native(e)
         success = False
         changed = False

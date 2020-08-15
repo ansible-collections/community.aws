@@ -294,9 +294,9 @@ def create_vpc_endpoint(client, module):
     except is_boto3_error_code('DryRunOperation'):
         changed = True
         result = 'Would have created VPC Endpoint if not in check mode'
-    except is_boto3_error_code('IdempotentParameterMismatch'):
+    except is_boto3_error_code('IdempotentParameterMismatch'):  # pylint: disable=duplicate-except
         module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
-    except is_boto3_error_code('RouteAlreadyExists'):
+    except is_boto3_error_code('RouteAlreadyExists'):  # pylint: disable=duplicate-except
         module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
     except Exception as e:
         module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
@@ -320,7 +320,7 @@ def setup_removal(client, module):
     except is_boto3_error_code('DryRunOperation'):
         changed = True
         result = 'Would have deleted VPC Endpoint if not in check mode'
-    except botocore.exceptions.ClientError as e:
+    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, "Failed to delete VPC endpoint")
     except Exception as e:
         module.fail_json(msg=to_native(e), exception=traceback.format_exc(),

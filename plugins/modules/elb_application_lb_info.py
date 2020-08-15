@@ -233,7 +233,7 @@ def list_load_balancers(connection, module):
             load_balancers = load_balancer_paginator.paginate(Names=names).build_full_result()
     except is_boto3_error_code('LoadBalancerNotFound'):
         module.exit_json(load_balancers=[])
-    except ClientError as e:
+    except ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to list load balancers")
     except NoCredentialsError as e:
         module.fail_json(msg="AWS authentication problem. " + to_native(e), exception=traceback.format_exc())

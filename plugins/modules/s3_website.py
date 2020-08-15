@@ -228,7 +228,7 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
         website_config = client_connection.get_bucket_website(Bucket=bucket_name)
     except is_boto3_error_code('NoSuchWebsiteConfiguration'):
         website_config = None
-    except ClientError as e:
+    except ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get website configuration")
 
     if website_config is None:
@@ -275,7 +275,7 @@ def disable_bucket_as_website(client_connection, module):
         client_connection.get_bucket_website(Bucket=bucket_name)
     except is_boto3_error_code('NoSuchWebsiteConfiguration'):
         module.exit_json(changed=changed)
-    except ClientError as e:
+    except ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get bucket website")
 
     try:
