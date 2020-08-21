@@ -238,8 +238,8 @@ except ImportError:
     pass  # caught by imported AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def create_scaling_policy(connection, module):
@@ -293,7 +293,8 @@ def create_scaling_policy(connection, module):
             params['EstimatedInstanceWarmup'] = module.params['estimated_instance_warmup']
 
     try:
-        policies = connection.describe_policies(AutoScalingGroupName=asg_name,
+        policies = connection.describe_policies(aws_retry=True,
+                                                AutoScalingGroupName=asg_name,
                                                 PolicyNames=[policy_name])['ScalingPolicies']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to obtain autoscaling policy %s" % policy_name)
@@ -311,11 +312,12 @@ def create_scaling_policy(connection, module):
 
     if changed:
         try:
-            connection.put_scaling_policy(**params)
+            connection.put_scaling_policy(aws_retry=True, **params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Failed to create autoscaling policy")
         try:
-            policies = connection.describe_policies(AutoScalingGroupName=asg_name,
+            policies = connection.describe_policies(aws_retry=True,
+                                                    AutoScalingGroupName=asg_name,
                                                     PolicyNames=[policy_name])['ScalingPolicies']
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(msg="Failed to obtain autoscaling policy %s" % policy_name)
@@ -336,13 +338,14 @@ def delete_scaling_policy(connection, module):
     policy_name = module.params.get('name')
 
     try:
-        policy = connection.describe_policies(PolicyNames=[policy_name])
+        policy = connection.describe_policies(aws_retry=True, PolicyNames=[policy_name])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to obtain autoscaling policy %s" % policy_name)
 
     if policy['ScalingPolicies']:
         try:
-            connection.delete_policy(AutoScalingGroupName=policy['ScalingPolicies'][0]['AutoScalingGroupName'],
+            connection.delete_policy(aws_retry=True,
+                                     AutoScalingGroupName=policy['ScalingPolicies'][0]['AutoScalingGroupName'],
                                      PolicyName=policy_name)
             module.exit_json(changed=True)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -374,7 +377,7 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               required_if=[['state', 'present', ['asg_name', 'adjustment_type']]])
 
-    connection = module.client('autoscaling')
+    connection = module.client('autoscaling', retry_decorator=AWSRetry.jittered_backoff())
 
     state = module.params.get('state')
     if state == 'present':
