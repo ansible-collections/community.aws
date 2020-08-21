@@ -88,6 +88,22 @@ options:
         This means that for an alarm threshold of 50, triggering at 75 requires a lower bound of 25.
         See U(http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_StepAdjustment.html).
     elements: dict
+    suboptions:
+      lower_bound:
+        type: int
+        description:
+          - The lower bound for the difference between the alarm threshold and
+            the CloudWatch metric.
+      upper_bound:
+        type: int
+        description:
+          - The upper bound for the difference between the alarm threshold and
+            the CloudWatch metric.
+      scaling_adjustment:
+        type: int
+        description:
+          - The amount by which to scale.
+        required: true
   estimated_instance_warmup:
     type: int
     description:
@@ -132,7 +148,7 @@ RETURN = '''
 adjustment_type:
   description: Scaling policy adjustment type
   returned: always
-  type: string
+  type: str
   sample: PercentChangeInCapacity
 alarms:
   description: Cloudwatch alarms related to the policy
@@ -142,52 +158,52 @@ alarms:
     alarm_name:
       description: name of the Cloudwatch alarm
       returned: always
-      type: string
+      type: str
       sample: cpu-very-high
     alarm_arn:
       description: ARN of the Cloudwatch alarm
       returned: always
-      type: string
+      type: str
       sample: arn:aws:cloudwatch:us-east-2:1234567890:alarm:cpu-very-high
 arn:
   description: ARN of the scaling policy. Provided for backward compatibility, value is the same as I(policy_arn)
   returned: always
-  type: string
+  type: str
   sample: arn:aws:autoscaling:us-east-2:123456789012:scalingPolicy:59e37526-bd27-42cf-adca-5cd3d90bc3b9:autoScalingGroupName/app-asg:policyName/app-policy
 as_name:
   description: Auto Scaling Group name. Provided for backward compatibility, value is the same as I(auto_scaling_group_name)
   returned: always
-  type: string
+  type: str
   sample: app-asg
 auto_scaling_group_name:
   description: Name of Auto Scaling Group
   returned: always
-  type: string
+  type: str
   sample: app-asg
 metric_aggregation_type:
   description: Method used to aggregate metrics
   returned: when I(policy_type) is C(StepScaling)
-  type: string
+  type: str
   sample: Maximum
 name:
   description: Name of the scaling policy. Provided for backward compatibility, value is the same as I(policy_name)
   returned: always
-  type: string
+  type: str
   sample: app-policy
 policy_arn:
   description: ARN of scaling policy.
   returned: always
-  type: string
+  type: str
   sample: arn:aws:autoscaling:us-east-2:123456789012:scalingPolicy:59e37526-bd27-42cf-adca-5cd3d90bc3b9:autoScalingGroupName/app-asg:policyName/app-policy
 policy_name:
   description: Name of scaling policy
   returned: always
-  type: string
+  type: str
   sample: app-policy
 policy_type:
   description: Type of auto scaling policy
   returned: always
-  type: string
+  type: str
   sample: StepScaling
 scaling_adjustment:
   description: Adjustment to make when alarm is triggered
@@ -351,7 +367,7 @@ def main():
         state=dict(default='present', choices=['present', 'absent']),
         metric_aggregation=dict(default='Average', choices=['Minimum', 'Maximum', 'Average']),
         policy_type=dict(default='SimpleScaling', choices=['SimpleScaling', 'StepScaling']),
-        step_adjustments=dict(type='list', options=step_adjustment_spec),
+        step_adjustments=dict(type='list', options=step_adjustment_spec, elements='dict'),
         estimated_instance_warmup=dict(type='int')
     )
 
