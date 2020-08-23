@@ -290,7 +290,12 @@ def get_key_policy_with_backoff(connection, key_id, policy_name):
 
 @AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def get_enable_key_rotation_with_backoff(connection, key_id):
-    current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+    try:
+        current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+    except botocore.exceptions.ClientError as e:
+        if e.response['Error']['Code'] == 'AccessDeniedException':
+            return True
+
     return current_rotation_status.get('KeyRotationEnabled')
 
 
