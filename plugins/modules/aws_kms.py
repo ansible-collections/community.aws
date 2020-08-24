@@ -117,6 +117,14 @@ options:
   tags:
     description: A dictionary of tags to apply to a key.
     type: dict
+  pending_window:
+    description:
+    - The number of days between requesting deletion of the CMK and when it will actually be deleted.
+    - Only used when I(state=absent) and the CMK has not yet been deleted.
+    - Valid values are between 7 and 30 (inclusive).
+    - 'See also: U(https://docs.aws.amazon.com/kms/latest/APIReference/API_ScheduleKeyDeletion.html#KMS-ScheduleKeyDeletion-request-PendingWindowInDays)'
+    type: int
+    aliases: ['deletion_delay']
   purge_tags:
     description: Whether the I(tags) argument should cause tags not in the list to
       be removed
@@ -625,8 +633,12 @@ def start_key_deletion(connection, module, key_metadata):
     if module.check_mode:
         return True
 
+    deletion_params = {'KeyId': key_metadata['Arn']}
+    if module.params.get('pending_window'):
+        deletion_params['PendingWindowInDays'] = module.params.get('pending_window')
+
     try:
-        connection.schedule_key_deletion(KeyId=key_metadata['Arn'])
+        connection.schedule_key_deletion(**deletion_params)
         return True
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to schedule key for deletion")
@@ -1031,6 +1043,7 @@ def main():
         policy_role_arn=dict(aliases=['role_arn']),
         policy_grant_types=dict(aliases=['grant_types'], type='list', elements='str'),
         policy_clean_invalid_entries=dict(aliases=['clean_invalid_entries'], type='bool', default=True),
+        pending_window=dict(aliases=['deletion_delay'], type='int'),
         key_id=dict(aliases=['key_arn']),
         description=dict(),
         enabled=dict(type='bool', default=True),

@@ -367,10 +367,14 @@
       register: delete_kms
 
     - name: assert that state is pending deletion
+      vars:
+        now_time: '{{ lookup("pipe", "date -u +%Y-%m-%d\ %H:%M:%S") }}'
+        deletion_time: '{{ delete_kms.deletion_date[:19] | to_datetime("%Y-%m-%dT%H:%M:%S") }}'
       assert:
         that:
           - delete_kms.key_state == "PendingDeletion"
           - delete_kms.changed
+          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days == 30
 
     - name: re-delete the key
       aws_kms:
@@ -408,6 +412,23 @@
         that:
           - delete_kms is not changed
 
+    - name: delete the key with a specific deletion window
+      aws_kms:
+        alias: "{{ resource_prefix }}-kms"
+        state: absent
+        pending_window: 7
+      register: delete_kms
+
+    - name: assert that state is pending deletion
+      vars:
+        now_time: '{{ lookup("pipe", "date -u +%Y-%m-%d\ %H:%M:%S") }}'
+        deletion_time: '{{ delete_kms.deletion_date[:19] | to_datetime("%Y-%m-%dT%H:%M:%S") }}'
+      assert:
+        that:
+          - delete_kms.key_state == "PendingDeletion"
+          - delete_kms.changed
+          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days == 7
+
   always:
     # ============================================================
     #   CLEAN-UP
@@ -415,6 +436,7 @@
       aws_kms:
         state: absent
         alias: "{{ resource_prefix }}-kms"
+        pending_window: 7
       register: destroy_result
 
     - name: remove the IAM role
