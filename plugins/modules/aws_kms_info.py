@@ -105,7 +105,7 @@ keys:
       returned: always
       sample: false
     enable_key_rotation:
-      description: Whether the automatically key rotation every year is enabled.
+      description: Whether the automatically key rotation every year is enabled. Returns None if key rotation status can't be determined.
       type: bool
       returned: always
       sample: false
@@ -223,6 +223,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
@@ -292,9 +293,8 @@ def get_key_policy_with_backoff(connection, key_id, policy_name):
 def get_enable_key_rotation_with_backoff(connection, key_id):
     try:
         current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'AccessDeniedException':
-            return True
+    except is_boto3_error_code('AccessDeniedException') as e:
+        return None
 
     return current_rotation_status.get('KeyRotationEnabled')
 
