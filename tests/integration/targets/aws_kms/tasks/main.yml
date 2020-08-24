@@ -358,7 +358,7 @@
     - name: assert that key rotation status is set to None
       assert:
         that:
-          - update_key.enable_key_rotation == None
+          - update_key.enable_key_rotation is undefined
 
     - name: delete the key
       aws_kms:
