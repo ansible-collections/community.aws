@@ -533,8 +533,11 @@ def get_key_details(connection, module, key_id):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to obtain aliases")
 
-    current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
-    result['enable_key_rotation'] = current_rotation_status.get('KeyRotationEnabled')
+    try:
+        current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+        result['enable_key_rotation'] = current_rotation_status.get('KeyRotationEnabled')
+    except is_boto3_error_code('AccessDeniedException') as e:
+        result['enable_key_rotation'] = None
     result['aliases'] = aliases.get(result['KeyId'], [])
 
     result = camel_dict_to_snake_dict(result)
@@ -767,9 +770,13 @@ def update_key_rotation(connection, module, key, enable_key_rotation):
     if enable_key_rotation is None:
         return False
     key_id = key['key_arn']
-    current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
-    if current_rotation_status.get('KeyRotationEnabled') == enable_key_rotation:
-        return False
+
+    try:
+        current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+        if current_rotation_status.get('KeyRotationEnabled') == enable_key_rotation:
+            return False
+    except is_boto3_error_code('AccessDeniedException'):
+        pass
 
     if enable_key_rotation:
         connection.enable_key_rotation(KeyId=key_id)
