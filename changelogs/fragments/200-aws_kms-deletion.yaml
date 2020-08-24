@@ -1,0 +1,4 @@
+bugfixes:
+- aws_kms - fixes issue where module execution fails without the kms:GetKeyRotationStatus permission.
+minor_changes:
+- aws_kms - add support for setting the deletion window using `pending_window` (PendingWindowInDays).
