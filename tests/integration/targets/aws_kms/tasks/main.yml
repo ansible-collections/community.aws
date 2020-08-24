@@ -438,9 +438,11 @@
         alias: "{{ resource_prefix }}-kms"
         pending_window: 7
       register: destroy_result
+      ignore_errors: True
 
     - name: remove the IAM role
       iam_role:
         name: "{{ resource_prefix }}-kms-role"
         state: absent
       register: iam_role_result
+      ignore_errors: True
