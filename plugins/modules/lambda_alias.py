@@ -152,8 +152,6 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 class AWSConnection:
@@ -164,8 +162,7 @@ class AWSConnection:
     def __init__(self, ansible_obj, resources, boto3_=True):
 
         try:
-            self.region, self.endpoint, aws_connect_kwargs = get_aws_connection_info(ansible_obj, boto3=boto3_)
-
+            self.region = ansible_obj.region
             self.resource_client = dict()
             if not resources:
                 resources = ['lambda']
@@ -173,19 +170,14 @@ class AWSConnection:
             resources.append('iam')
 
             for resource in resources:
-                aws_connect_kwargs.update(dict(region=self.region,
-                                               endpoint=self.endpoint,
-                                               conn_type='client',
-                                               resource=resource
-                                               ))
-                self.resource_client[resource] = boto3_conn(ansible_obj, **aws_connect_kwargs)
+                self.resource_client[resource] = ansible_obj.client(resource)
 
             # if region is not provided, then get default profile/session region
             if not self.region:
                 self.region = self.resource_client['lambda'].meta.region_name
 
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            ansible_obj.fail_json(msg="Unable to connect, authorize or access resource: {0}".format(e))
+            ansible_obj.fail_json_aws(e, msg='Failed to connect to AWS')
 
         try:
             self.account_id = self.resource_client['iam'].get_user()['User']['Arn'].split(':')[4]
