@@ -57,7 +57,7 @@ Minor Changes
 - aws_acm - Update automatic retries to stabilize the integration tests.
 - aws_codecommit - Support updating the description
 - aws_kms - Adds the ``enable_key_rotation`` option to enable or disable automatically key rotation.
-- aws_kms - code refactor, some error messages updated'
+- aws_kms - code refactor, some error messages updated
 - aws_kms_info - Adds the ``enable_key_rotation`` info to the return value.
 - ec2_asg - Add support for Max Instance Lifetime
 - ec2_asg - Add the ability to use mixed_instance_policy in launch template driven autoscaling groups
