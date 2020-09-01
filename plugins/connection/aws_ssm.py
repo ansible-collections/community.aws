@@ -24,14 +24,17 @@ options:
     description: The STS access key to use when connecting via session-manager.
     vars:
     - name: ansible_aws_ssm_access_key_id
+    version_added: 1.3.0
   secret_access_key:
     description: The STS secret key to use when connecting via session-manager.
     vars:
     - name: ansible_aws_ssm_secret_access_key
+    version_added: 1.3.0
   session_token:
     description: The STS session token to use when connecting via session-manager.
     vars:
     - name: ansible_aws_ssm_session_token
+    version_added: 1.3.0
   instance_id:
     description: The EC2 instance ID.
     vars:
