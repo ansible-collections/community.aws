@@ -38,13 +38,13 @@ options:
     description:
       - "A dictionary of one or more tags used when evaluating a metrics filter"
     required: false
-    aliases: ['filter_tag]
+    aliases: ['filter_tag']
     type: dict
   state:
     description:
       - "Create or delete metrics configuration"
     default: present
-    choices: [ 'present', 'absent' ]
+    choices: ['present', 'absent']
     type: str
 extends_documentation_fragment:
 - amazon.aws.aws
