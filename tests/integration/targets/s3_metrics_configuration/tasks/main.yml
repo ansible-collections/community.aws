@@ -4,17 +4,15 @@
 # Notes:
 # - The module only outputs 'changed' since its very simple
 #
-- block:
-
-  # ============================================================
-  - name: set connection information for all tasks
-    set_fact:
-      aws_connection_info: &aws_connection_info
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token }}"
-        region: "{{ aws_region }}"
-    no_log: true
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+  collections:
+    - amazon.aws
+  block:
 
   # ============================================================
   - name: Try to create metrics configuration for non-existing bucket
@@ -22,7 +20,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      <<: *aws_connection_info
     register: result
     ignore_errors: yes
 
@@ -35,7 +32,6 @@
     s3_bucket:
       name: '{{ test_bucket }}'
       state: present
-      <<: *aws_connection_info
     register: output
 
   - assert:
@@ -49,7 +45,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -66,7 +61,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -82,7 +76,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -96,7 +89,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      <<: *aws_connection_info
     register: result
 
   - assert:
@@ -110,7 +102,6 @@
       id: Assets
       filter_prefix: assets
       state: present
-      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -128,7 +119,6 @@
       filter_tag:
         kind: Asset
       state: present
-      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -148,7 +138,6 @@
       filter_tag:
         kind: Asset
       state: present
-      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -170,7 +159,6 @@
         priority: High
         class: Blue
       state: present
-      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -190,7 +178,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
-      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -207,7 +194,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
-      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -223,7 +209,6 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
-      <<: *aws_connection_info
     register: result
 
   - assert:
@@ -236,7 +221,6 @@
       bucket_name: '{{ test_bucket }}-non-existing'
       id: 'EntireBucket'
       state: absent
-      <<: *aws_connection_info
     register: result
     ignore_errors: yes
 
@@ -250,5 +234,4 @@
     s3_bucket:
       name: '{{ test_bucket }}'
       state: absent
-      <<: *aws_connection_info
     ignore_errors: yes
