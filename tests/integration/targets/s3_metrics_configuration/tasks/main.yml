@@ -84,7 +84,7 @@
       check_mode: yes
     register: result
 
-    - assert:
+  - assert:
       that:
       - result is not changed
 

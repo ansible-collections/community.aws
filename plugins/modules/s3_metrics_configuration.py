@@ -107,33 +107,34 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
-def _create_metrics_configuration(mc_id, filter_prefix, filter_tags):
-  payload = {
-    'Id': mc_id
-  }
-  if len(filter_tags) == 1 and filter_prefix is None:
-    payload['Filter'] = {
-      'Tag': ansible_dict_to_boto3_tag_list(filter_tags)[0]
-    }
-  elif len(filter_tags) == 0 and filter_prefix is not None:
-    payload['Filter'] = {
-      'Prefix': filter_prefix
-    }
-  elif len(filter_tags) > 0:
-    payload['Filter'] = {
-      'And': {
-        'Tags': ansible_dict_to_boto3_tag_list(filter_tags)
-      }
-    }
-    if filter_prefix is not None:
-      payload['Filter']['And']['Prefix'] = filter_prefix
 
-  return payload
+def _create_metrics_configuration(mc_id, filter_prefix, filter_tags):
+    payload = {
+        'Id': mc_id
+    }
+    if len(filter_tags) == 1 and filter_prefix is None:
+        payload['Filter'] = {
+            'Tag': ansible_dict_to_boto3_tag_list(filter_tags)[0]
+        }
+    elif len(filter_tags) == 0 and filter_prefix is not None:
+        payload['Filter'] = {
+            'Prefix': filter_prefix
+        }
+    elif len(filter_tags) > 0:
+        payload['Filter'] = {
+            'And': {
+                'Tags': ansible_dict_to_boto3_tag_list(filter_tags)
+            }
+        }
+    if filter_prefix is not None:
+        payload['Filter']['And']['Prefix'] = filter_prefix
+
+    return payload
+
 
 def _compare_metrics_configuration(metrics_configuration, mc_id, filter_prefix, filter_tags):
     payload = metrics_configuration['MetricsConfiguration']
-
-    parsed = { 'mc_id': payload.get('Id') }
+    parsed = {'mc_id': payload.get('Id')}
     if payload.get('Filter', {}).get('Prefix') is not None:
         parsed['filter_prefix'] = payload['Filter']['Prefix']
     if payload.get('Filter', {}).get('Tag') is not None:
@@ -150,6 +151,7 @@ def _compare_metrics_configuration(metrics_configuration, mc_id, filter_prefix, 
     if parsed.get('filter_tags', {}) != filter_tags:
         return False
     return True
+
 
 def create_or_update_metrics_configuration(client, module):
     changed = False
@@ -191,11 +193,12 @@ def create_or_update_metrics_configuration(client, module):
 
     module.exit_json(changed=changed)
 
+
 def delete_metrics_configuration(client, module):
     changed = False
     bucket_name = module.params.get('bucket_name')
     mc_id = module.params.get('id')
-    
+
     try:
         client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=mc_id)
     except is_boto3_error_code('NoSuchConfiguration'):

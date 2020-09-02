@@ -1,9 +1,9 @@
 ---
+# Utility tasks to list bucket metrics configuration
+#
 - name: "List s3 bucket metric configurations"
-    command: >
-    aws s3api list-bucket-metrics-configurations
-        --bucket "{{ test_bucket }}"
-    register: list_comand_result
+  command: aws s3api list-bucket-metrics-configurations --bucket "{{ test_bucket }}"
+  register: list_comand_result
 
 - set_fact:
     metrics_info: "{{ (list_comand_result.stdout | from_json)['MetricsConfigurationList'] | default([]) }}"
