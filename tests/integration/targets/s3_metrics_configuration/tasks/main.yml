@@ -48,7 +48,7 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      check_mode: yes
+    check_mode: yes
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -81,7 +81,7 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
-      check_mode: yes
+    check_mode: yes
     register: result
 
   - assert:
@@ -127,7 +127,7 @@
       filter_tag:
         kind: Asset
       state: present
-      check_mode: yes
+    check_mode: yes
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -189,7 +189,7 @@
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
-      check_mode: yes
+    check_mode: yes
     register: result
 
   - include_tasks: './s3_metrics_info.yml'

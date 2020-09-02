@@ -164,7 +164,7 @@ def create_or_update_metrics_configuration(client, module):
         metrics_configuration = client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=mc_id)
     except is_boto3_error_code('NoSuchConfiguration'):
         metrics_configuration = None
-    except ClientError as e:
+    except ClientError as e: # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get bucket metrics configuration")
 
     if metrics_configuration:
@@ -203,7 +203,7 @@ def delete_metrics_configuration(client, module):
         client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=mc_id)
     except is_boto3_error_code('NoSuchConfiguration'):
         module.exit_json(changed=changed)
-    except ClientError as e:
+    except ClientError as e: # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get bucket metrics configuration")
 
     try:
