@@ -142,7 +142,7 @@ def _compare_metrics_configuration(metrics_configuration, mc_id, filter_prefix, 
     if payload.get('Filter', {}).get('And') is not None:
         parsed['filter_tags'] = boto3_tag_list_to_ansible_dict(payload['Filter']['And'].get('Tags', []))
         if payload['Filter']['And'].get('Prefix') is not None:
-             parsed['filter_prefix'] = payload['Filter']['And']['Prefix']
+            parsed['filter_prefix'] = payload['Filter']['And']['Prefix']
 
     if parsed.get('mc_id') != mc_id:
         return False
@@ -240,6 +240,7 @@ def main():
         create_or_update_metrics_configuration(client, module)
     elif state == 'absent':
         delete_metrics_configuration(client, module)
+
 
 if __name__ == '__main__':
     main()
