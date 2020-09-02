@@ -2,26 +2,27 @@
 # Integration tests for s3_metrics_configuration
 #
 # Notes:
-# - s3_metrics_configuration does support check_mode
-#   The module only outputs 'changed' since its very simple
+# - The module only outputs 'changed' since its very simple
 #
-- module_defaults:
-    group/aws:
-      aws_access_key: '{{ aws_access_key | default(omit) }}'
-      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
-      security_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region | default(omit) }}'
-  collections:
-    - amazon.aws
-  block:
+- block:
 
   # ============================================================
+  - name: set connection information for all tasks
+    set_fact:
+      aws_connection_info: &aws_connection_info
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        security_token: "{{ security_token }}"
+        region: "{{ aws_region }}"
+    no_log: true
 
+  # ============================================================
   - name: Try to create metrics configuration for non-existing bucket
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
+      <<: *aws_connection_info
     register: result
     ignore_errors: yes
 
@@ -34,6 +35,7 @@
     s3_bucket:
       name: '{{ test_bucket }}'
       state: present
+      <<: *aws_connection_info
     register: output
 
   - assert:
@@ -41,13 +43,13 @@
       - output is changed
       - output.name == test_bucket
 
-# ============================================================
-
+  # ============================================================
   - name: Create a metrics configuration under check mode
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
+      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -58,13 +60,13 @@
       - result is changed
       - metrics_info | selectattr('Id', 'search', 'EntireBucket') | list | length == 0
 
-# ============================================================
-
+  # ============================================================
   - name: Create a metrics configuration that enables metrics for an entire bucket
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
+      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -74,13 +76,13 @@
       - result is changed
       - metrics_info | selectattr('Id', 'search', 'EntireBucket') | list | length == 1
 
-# ============================================================
-
+  # ============================================================
   - name: Create a metrics configuration idempotency under check mode
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
+      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -88,27 +90,27 @@
       that:
       - result is not changed
 
-# ============================================================
-
+  # ============================================================
   - name: Create a metrics configuration idempotency
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: present
+      <<: *aws_connection_info
     register: result
 
   - assert:
       that:
       - result is not changed
 
-# ============================================================
-
+  # ============================================================
   - name: Put a metrics configuration that enables metrics for objects starting with a prefix
     s3_metrics_configuration:
       bucket_name: "{{ bucket_name }}"
       id: Assets
       filter_prefix: assets
       state: present
+      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -118,8 +120,7 @@
       - result is changed
       - (metrics_info | selectattr('Id', 'search', 'Assets') | list | first).Filter.Prefix == 'assets'
 
-# ============================================================
-
+  # ============================================================
   - name: Update existing metrics configuration under check mode
     s3_metrics_configuration:
       bucket_name: "{{ bucket_name }}"
@@ -127,6 +128,7 @@
       filter_tag:
         kind: Asset
       state: present
+      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -138,8 +140,7 @@
       - (metrics_info | selectattr('Id', 'search', 'Assets') | list | first).Filter.Prefix == 'assets'
       - (metrics_info | selectattr('Id', 'search', 'Assets') | list | first).Filter.Tag is not defined
 
-# ============================================================
-
+  # ============================================================
   - name: Update existing metrics configuration and enable metrics for objects with specific tag
     s3_metrics_configuration:
       bucket_name: "{{ bucket_name }}"
@@ -147,6 +148,7 @@
       filter_tag:
         kind: Asset
       state: present
+      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -158,8 +160,7 @@
       - (metrics_info | selectattr('Id', 'search', 'Assets') | list | first).Filter.Tag.Key == 'kind'
       - (metrics_info | selectattr('Id', 'search', 'Assets') | list | first).Filter.Tag.Value == 'Asset'
 
-# ============================================================
-
+  # ============================================================
   - name: Put a metrics configuration that enables metrics for objects that start with a particular prefix and have specific tags applied
     s3_metrics_configuration:
       bucket_name: "{{ bucket_name }}"
@@ -169,6 +170,7 @@
         priority: High
         class: Blue
       state: present
+      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -182,13 +184,13 @@
       - (metrics_info | selectattr('Id', 'search', 'ImportantBlueDocuments') | list | first).Filter.And.Tags[1].Key == 'class'
       - (metrics_info | selectattr('Id', 'search', 'ImportantBlueDocuments') | list | first).Filter.And.Tags[1].Value == 'Blue'
 
-# ============================================================
-
+  # ============================================================
   - name: Delete metrics configuration in check mode
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
+      <<: *aws_connection_info
     check_mode: yes
     register: result
 
@@ -199,13 +201,13 @@
       - result is changed
       - metrics_info | selectattr('Id', 'search', 'EntireBucket') | list | length == 1 # still present
 
-# ============================================================
-
+  # ============================================================
   - name: Delete metrics configuration
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
+      <<: *aws_connection_info
     register: result
 
   - include_tasks: './s3_metrics_info.yml'
@@ -215,26 +217,26 @@
       - result is changed
       - metrics_info | selectattr('Id', 'search', 'EntireBucket') | list | length == 0
 
-# ============================================================
-
+  # ============================================================
   - name: Try to delete non-existing metrics configuration
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}'
       id: 'EntireBucket'
       state: absent
+      <<: *aws_connection_info
     register: result
 
   - assert:
       that:
       - result is not changed
 
-# ============================================================
-
+  # ============================================================
   - name: Try to delete metrics configuration for non-existing bucket
     s3_metrics_configuration:
       bucket_name: '{{ test_bucket }}-non-existing'
       id: 'EntireBucket'
       state: absent
+      <<: *aws_connection_info
     register: result
     ignore_errors: yes
 
@@ -242,10 +244,11 @@
       that:
       - result is failed
 
-# ============================================================
+  # ============================================================
   always:
   - name: Delete test bucket
     s3_bucket:
       name: '{{ test_bucket }}'
       state: absent
+      <<: *aws_connection_info
     ignore_errors: yes
