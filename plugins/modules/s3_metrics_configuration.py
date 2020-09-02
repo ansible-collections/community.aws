@@ -147,7 +147,7 @@ def _compare_metrics_configuration(metrics_configuration, mc_id, filter_prefix, 
         return False
     if parsed.get('filter_prefix') != filter_prefix:
         return False
-    if parsed.get('filter_tags') != filter_tags:
+    if parsed.get('filter_tags', {}) != filter_tags:
         return False
     return True
 
