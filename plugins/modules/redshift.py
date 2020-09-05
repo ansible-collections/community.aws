@@ -90,7 +90,6 @@ options:
       - Used only when I(command=delete).
     aliases: ['skip_final_snapshot']
     default: false
-    version_added: "2.4"
     type: bool
   final_cluster_snapshot_identifier:
     description:
@@ -98,7 +97,6 @@ options:
       - If this parameter is provided, I(skip_final_cluster_snapshot) must be C(false).
       - Used only when I(command=delete).
     aliases: ['final_snapshot_id']
-    version_added: "2.4"
     type: str
   preferred_maintenance_window:
     description:
@@ -174,17 +172,17 @@ options:
       - A dictionary of resource tags.
     type: dict
     aliases: ['resource_tags']
-    version_added: "2.10"
+    version_added: "1.3.0"
   purge_tags:
     description:
       - Purge existing tags that are not found in the cluster
     type: bool
     default: 'yes'
-    version_added: "2.10"
+    version_added: "1.3.0"
 requirements: [ 'boto3' ]
 extends_documentation_fragment:
-  - aws
-  - ec2
+  - amazon.aws.aws
+  - amazon.aws.ec2
 '''
 
 EXAMPLES = r'''
