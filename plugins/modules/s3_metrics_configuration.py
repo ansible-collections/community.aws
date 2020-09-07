@@ -126,8 +126,8 @@ def _create_metrics_configuration(mc_id, filter_prefix, filter_tags):
                 'Tags': ansible_dict_to_boto3_tag_list(filter_tags)
             }
         }
-    if filter_prefix is not None:
-        payload['Filter']['And']['Prefix'] = filter_prefix
+        if filter_prefix is not None:
+            payload['Filter']['And']['Prefix'] = filter_prefix
 
     return payload
 

@@ -1,6 +1,6 @@
 ---
 # Utility tasks to list bucket metrics configurations
-#
+# TODO: Update this when an s3_metrics_configuration_info module exists
 - name: List s3 bucket metrics configurations
   command: >
     aws s3api list-bucket-metrics-configurations
