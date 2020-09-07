@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: s3_metrics_configuration
-version_added: 1.0.0
+version_added: 1.3.0
 short_description: Manage s3 bucket metrics configuration in AWS
 description:
     - Manage s3 bucket metrics configuration in AWS which allows to get the CloudWatch request metrics for the objects in a bucket
