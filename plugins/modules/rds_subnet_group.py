@@ -2,8 +2,8 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 
@@ -91,6 +91,10 @@ subnet_group:
             returned: I(state=present)
             type: str
 '''
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 try:
     import botocore
 except ImportError:
