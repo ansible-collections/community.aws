@@ -1,4 +1,6 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -91,22 +93,9 @@ subnet_group:
             returned: I(state=present)
             type: list
         subnets:
-            description: Contains a list of Subnet elements.
+            description: Contains a list of Subnet elements (@see https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_db_subnet_groups)
             returned: I(state=present)
             type: list
-            sample: 
-            [
-                {
-                'SubnetIdentifier': 'string',
-                'SubnetAvailabilityZone': {
-                    'Name': 'string'
-                },
-                'SubnetOutpost': {
-                    'Arn': 'string'
-                },
-                'SubnetStatus': 'string'
-                }
-            ]
         status:
             description: The status of the DB subnet group (maintained for backward compatibility)
             returned: I(state=present)
@@ -121,8 +110,9 @@ subnet_group:
             type: str
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+
 
 try:
     import botocore
@@ -155,7 +145,7 @@ def create_subnet_list(subnets):
     '''
     Construct a list of subnet ids from a list of subnets dicts returned by boto.
     Parameters:
-        subnets (list): A list of subnets definitions. 
+        subnets (list): A list of subnets definitions.
         @see https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_db_subnet_groups
     Returns:
         (list): List of subnet ids (str)

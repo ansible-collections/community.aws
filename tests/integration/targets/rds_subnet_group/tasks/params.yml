@@ -13,7 +13,7 @@
     that:
       - create_missing_param is failed
       - "'description' in create_missing_param.msg"
-      - '"required for state=''present''" in create_missing_param.msg'
+      - "'state is present but all of the following are missing' in create_missing_param.msg"
 
 # Try creating without subnets
 - name: "Create a subnet group (no subnets)"
@@ -27,7 +27,7 @@
     that:
       - create_missing_param is failed
       - "'subnets' in create_missing_param.msg"
-      - '"required for state=''present''" in create_missing_param.msg'
+      - "'state is present but all of the following are missing' in create_missing_param.msg"
 
 # Try deleting without name.
 - name: "Delete a subnet group (without name)"
@@ -41,5 +41,5 @@
 - assert:
     that:
       - delete_missing_param is failed
-      - "'name' in delete_missing_param.msg"
-      - '"required for state=''present''" in delete_missing_param.msg'
+      - "'name' in create_missing_param.msg"
+      - "'missing required arguments' in delete_missing_param.msg"
