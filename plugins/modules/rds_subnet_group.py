@@ -174,7 +174,7 @@ def main():
     try:
         conn = module.client('rds')
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-        module.fail_json_aws(e, 'Failed to instanciate boto connection')
+        module.fail_json_aws(e, 'Failed to instantiate AWS connection')
     # Default.
     result = create_result(False)
 
