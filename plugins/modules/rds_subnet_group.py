@@ -93,7 +93,7 @@ subnet_group:
             returned: I(state=present)
             type: list
         subnets:
-            description: Contains a list of Subnet elements (@see https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_db_subnet_groups)
+            description: Contains a list of Subnet elements (@see https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_db_subnet_groups) # noqa
             returned: I(state=present)
             type: list
         status:
