@@ -121,8 +121,8 @@ subnet_group:
             type: str
 '''
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 try:
     import botocore
@@ -137,11 +137,13 @@ def create_result(changed, subnet_group=None):
         )
 
     result_subnet_group = dict(camel_dict_to_snake_dict(subnet_group))
-    result_subnet_group.name = result_subnet_group['db_subnet_group_name']
-    result_subnet_group.description = result_subnet_group[
-        'db_subnet_group_description']
-    result_subnet_group.status = result_subnet_group['status']
-    result_subnet_group.subnet_ids = create_subnet_list(
+    result_subnet_group['name'] = result_subnet_group.get(
+        'db_subnet_group_name')
+    result_subnet_group['description'] = result_subnet_group.get(
+        'db_subnet_group_description')
+    result_subnet_group['status'] = result_subnet_group.get(
+        'subnet_group_status')
+    result_subnet_group['subnet_ids'] = create_subnet_list(
         subnet_group.get('Subnets'))
     return dict(
         changed=changed,
