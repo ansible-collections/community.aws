@@ -125,7 +125,6 @@ def create_result(changed, subnet_group=None):
         return dict(
             changed=changed
         )
-
     result_subnet_group = dict(camel_dict_to_snake_dict(subnet_group))
     result_subnet_group['name'] = result_subnet_group.get(
         'db_subnet_group_name')
@@ -187,7 +186,7 @@ def main():
             try:
                 new_group = conn.create_db_subnet_group(
                     DBSubnetGroupName=group_name, DBSubnetGroupDescription=group_description, SubnetIds=group_subnets)
-                result = create_result(True, new_group)
+                result = create_result(True, new_group.get('DBSubnetGroup'))
             except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                 module.fail_json_aws(e, 'Failed to create a new subnet group')
         module.exit_json(**result)
@@ -216,7 +215,7 @@ def main():
     try:
         changed_group = conn.modify_db_subnet_group(
             DBSubnetGroupName=group_name, DBSubnetGroupDescription=group_description, SubnetIds=group_subnets)
-        result = create_result(True, changed_group)
+        result = create_result(True, changed_group.get('DBSubnetGroup'))
         module.exit_json(**result)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, 'Failed to update a subnet group')
