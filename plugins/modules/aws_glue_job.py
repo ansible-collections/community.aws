@@ -210,6 +210,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (compare_aws
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      ansible_dict_to_boto3_tag_list
                                                                      )
+from ansible_collections.amazon.aws.plugins.module_utils.iam import get_aws_account_id
 
 # Non-ansible imports
 import copy
@@ -282,15 +283,7 @@ def _compare_glue_job_params(user_params, current_params):
 
 
 def _get_glue_job_arn(module):
-    return "arn:aws:glue:{0}:{1}:job/{2}".format(module.region, _get_aws_account_id(module), module.params.get('name'))
-
-
-def _get_aws_account_id(module):
-    try:
-        client = module.client('sts')
-        return client.get_caller_identity()['Account']
-    except (ClientError, BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Unable to obtain AWS account id")
+    return "arn:aws:glue:{0}:{1}:job/{2}".format(module.region, get_aws_account_id(module), module.params.get('name'))
 
 
 def _update_glue_job_tags(connection, module):
