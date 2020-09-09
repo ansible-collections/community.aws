@@ -1,2 +1,2 @@
-glue_role_name: '{{ resource_prefix }}-role'
+glue_role_name: 'ansible-test-{{ resource_prefix }}'
 glue_job_name: '{{ resource_prefix }}-job'
