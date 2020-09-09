@@ -311,6 +311,7 @@ def _update_glue_job_tags(connection, module):
 
     return True
 
+
 def create_or_update_glue_job(connection, module, glue_job):
     """
     Create or update an AWS Glue job
