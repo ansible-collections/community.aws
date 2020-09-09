@@ -204,9 +204,9 @@ timeout:
     sample: 300
 '''
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (compare_aws_tags,
-                                                                     camel_dict_to_snake_dict,
                                                                      boto3_tag_list_to_ansible_dict,
                                                                      ansible_dict_to_boto3_tag_list
                                                                      )
