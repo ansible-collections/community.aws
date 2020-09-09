@@ -231,7 +231,7 @@ def _get_glue_job(connection, module, glue_job_name):
 
     try:
         glue_job = connection.get_job(JobName=glue_job_name)['Job']
-        glue_job_arn = _get_glue_job_arn(module, glue_job_name)
+        glue_job_arn = _get_glue_job_arn(module)
 
         glue_job['arn'] = glue_job_arn
         glue_job['tags'] = connection.get_tags(ResourceArn=glue_job_arn).get('Tags')
@@ -281,9 +281,8 @@ def _compare_glue_job_params(user_params, current_params):
     return False
 
 
-def _get_glue_job_arn(module, job_name):
-    (region, account_id) = (module.region, _get_aws_account_id(module))
-    return "arn:aws:glue:" + region + ":" + account_id + ":" + "job/" + job_name
+def _get_glue_job_arn(module):
+    return "arn:aws:glue:{0}:{1}:job/{2}".format(module.region, _get_aws_account_id(module), module.params.get('name'))
 
 
 def _get_aws_account_id(module):
@@ -293,6 +292,24 @@ def _get_aws_account_id(module):
     except (ClientError, BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to obtain AWS account id")
 
+
+def _update_glue_job_tags(connection, module):
+    if module.params.get('tags') is None:
+        return False
+
+    resource_arn = _get_glue_job_arn(module)
+    existing_tags = connection.get_tags(ResourceArn=resource_arn).get('Tags')
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
+
+    if not tags_to_add and not tags_to_remove:
+        return False
+
+    if tags_to_remove:
+        connection.untag_resource(ResourceArn=resource_arn, TagsToRemove=tags_to_remove)
+    if tags_to_add:
+        connection.tag_resource(ResourceArn=resource_arn, TagsToAdd=tags_to_add)
+
+    return True
 
 def create_or_update_glue_job(connection, module, glue_job):
     """
@@ -344,18 +361,7 @@ def create_or_update_glue_job(connection, module, glue_job):
             module.fail_json_aws(e)
 
     # handle resource tags
-    resource_arn = _get_glue_job_arn(module, params['Name'])
-
-    new_tags = module.params.get('tags')
-    existing_tags = connection.get_tags(ResourceArn=resource_arn).get('Tags')
-    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags if new_tags else {}, module.params.get('purge_tags'))
-
-    if tags_to_remove:
-        connection.untag_resource(ResourceArn=resource_arn, TagsToRemove=tags_to_remove)
-        changed = True
-    if tags_to_add:
-        connection.tag_resource(ResourceArn=resource_arn, TagsToAdd=tags_to_add)
-        changed = True
+    changed |= _update_glue_job_tags(connection, module)
 
     # If changed, get the Glue job again
     if changed:
