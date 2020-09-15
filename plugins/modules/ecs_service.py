@@ -127,6 +127,11 @@ options:
           field:
             description: The field to apply the placement strategy against.
             type: str
+    force_deletion:
+        description:
+          - Forcabily delete the service. Required when deleting a service with >0 scale, or no target group.
+        default: False
+        type: bool
     network_configuration:
         description:
           - Network configuration of the service. Only applicable for task definitions created with I(network_mode=awsvpc).
@@ -631,8 +636,8 @@ class EcsServiceManager:
                     e['createdAt'] = str(e['createdAt'])
         return service
 
-    def delete_service(self, service, cluster=None):
-        return self.ecs.delete_service(cluster=cluster, service=service)
+    def delete_service(self, service, cluster=None, force=False):
+        return self.ecs.delete_service(cluster=cluster, service=service, force=force)
 
     def health_check_setable(self, params):
         load_balancers = params.get('loadBalancers', [])
@@ -652,6 +657,7 @@ def main():
         delay=dict(required=False, type='int', default=10),
         repeat=dict(required=False, type='int', default=10),
         force_new_deployment=dict(required=False, default=False, type='bool'),
+        force_deletion=dict(required=False, default=False, type='bool'),
         deployment_configuration=dict(required=False, default={}, type='dict'),
         placement_constraints=dict(
             required=False,
@@ -810,7 +816,8 @@ def main():
                     try:
                         service_mgr.delete_service(
                             module.params['name'],
-                            module.params['cluster']
+                            module.params['cluster'],
+                            module.params['force_deletion'],
                         )
                     except botocore.exceptions.ClientError as e:
                         module.fail_json_aws(e, msg="Couldn't delete service")
