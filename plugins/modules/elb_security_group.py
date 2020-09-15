@@ -15,7 +15,7 @@ short_description: Attach a security group to an already existing elb
 description:
   - Attach a security group to an elb
 requirements: ['boto3 >= 1.11.15']
-version_added: "2.10"
+version_added: 1.2.0
 author:
   - "Michael Moyle (@mmoyle)"
 options:
