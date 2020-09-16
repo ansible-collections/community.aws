@@ -629,7 +629,7 @@
       until: status is finished
       retries: 200
       delay: 15
-    
+
     # we need a launch template, otherwise we cannot test the mixed instance policy
     - name: create launch template for autoscaling group to test its mixed instance policy
       ec2_launch_template:
@@ -648,7 +648,7 @@
     - name: update autoscaling group with mixed-instance policy
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
-        launch_template: 
+        launch_template:
           launch_template_name: "{{ resource_prefix }}-lt"
         desired_capacity: 1
         min_size: 1
@@ -659,14 +659,18 @@
           instance_types:
             - t3.micro
             - t3a.micro
+          instances_distribution:
+            on_demand_percentage_above_base_capacity: 0
+            spot_allocation_strategy: capacity-optimized
         wait_for_instances: yes
       register: output
 
     - assert:
         that:
-          - "output.mixed_instances_policy | length == 2"
-          - "output.mixed_instances_policy[0] == 't3.micro'"
-          - "output.mixed_instances_policy[1] == 't3a.micro'"
+          - "output.mixed_instances_policy['LaunchTemplate']['Overrides'][0]['InstanceType'] == 't3.micro'"
+          - "output.mixed_instances_policy['LaunchTemplate']['Overrides'][1]['InstanceType'] == 't3a.micro'"
+          - "output.mixed_instances_policy['InstancesDistribution']['OnDemandPercentageAboveBaseCapacity'] == 0"
+          - "output.mixed_instances_policy['InstancesDistribution']['SpotallocationStrategy'] == 'capacity-optimized'"
 
 # ============================================================
 
