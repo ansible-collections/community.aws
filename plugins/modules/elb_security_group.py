@@ -97,7 +97,7 @@ def main():
         result['changed'] = True
 
     except (ClientError, BotoCoreError) as e:
-        module.fail_json_aws(e)
+        module.fail_json_aws(e, msg="Failed to update Security Groups")
 
     result.update()
     module.exit_json(**result)
