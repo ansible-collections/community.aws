@@ -47,7 +47,7 @@ EXAMPLES = '''
 
 RETURN = '''
 response:
-    description: The number or security groups attached.
+    description: The number of security groups attached.
     returned: Always
     type: int
 '''
