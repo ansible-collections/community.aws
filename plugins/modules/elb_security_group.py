@@ -20,7 +20,7 @@ author:
   - "Michael Moyle (@mmoyle)"
 options:
     alb_arn:
-        description: ARN of an existing application load balancer
+        description: ARN of an existing Application Load Balancer (ALB).
         type: str
         required: true
     security_group_ids:
