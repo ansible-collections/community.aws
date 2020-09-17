@@ -24,7 +24,7 @@ options:
         type: str
         required: true
     security_group_ids:
-        description: List of security groups IDs to attach to alb
+        description: List of security groups IDs to attach to the ALB.
         type: list
         elements: str
         required: true
