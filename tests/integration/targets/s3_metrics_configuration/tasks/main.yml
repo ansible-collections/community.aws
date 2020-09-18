@@ -14,6 +14,12 @@
     - amazon.aws
   block:
 
+  # TODO: Until there's a module to get info s3 metrics configuration, awscli is needed
+  - name: Install awscli
+    pip:
+      state: present
+      name: awscli
+
   # ============================================================
   - name: Try to create metrics configuration for non-existing bucket
     s3_metrics_configuration:
