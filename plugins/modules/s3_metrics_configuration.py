@@ -101,119 +101,94 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, ansible_dict_to_boto3_tag_list
 
 
 def _create_metrics_configuration(mc_id, filter_prefix, filter_tags):
     payload = {
         'Id': mc_id
     }
-    if len(filter_tags) == 1 and filter_prefix is None:
-        payload['Filter'] = {
-            'Tag': ansible_dict_to_boto3_tag_list(filter_tags)[0]
-        }
-    elif len(filter_tags) == 0 and filter_prefix is not None:
+    # Just a filter_prefix or just a single tag filter is a special case
+    if filter_prefix and not filter_tags:
         payload['Filter'] = {
             'Prefix': filter_prefix
         }
-    elif len(filter_tags) > 0:
+    elif not filter_prefix and len(filter_tags) == 1:
+        payload['Filter'] = {
+            'Tag': ansible_dict_to_boto3_tag_list(filter_tags)[0]
+        }
+    # Otherwise we need to use 'And'
+    elif filter_tags:
         payload['Filter'] = {
             'And': {
                 'Tags': ansible_dict_to_boto3_tag_list(filter_tags)
             }
         }
-        if filter_prefix is not None:
+        if filter_prefix:
             payload['Filter']['And']['Prefix'] = filter_prefix
 
     return payload
 
 
-def _compare_metrics_configuration(metrics_configuration, mc_id, filter_prefix, filter_tags):
-    payload = metrics_configuration['MetricsConfiguration']
-    parsed = {'mc_id': payload.get('Id')}
-    if payload.get('Filter', {}).get('Prefix') is not None:
-        parsed['filter_prefix'] = payload['Filter']['Prefix']
-    if payload.get('Filter', {}).get('Tag') is not None:
-        parsed['filter_tags'] = boto3_tag_list_to_ansible_dict([payload['Filter']['Tag']])
-    if payload.get('Filter', {}).get('And') is not None:
-        parsed['filter_tags'] = boto3_tag_list_to_ansible_dict(payload['Filter']['And'].get('Tags', []))
-        if payload['Filter']['And'].get('Prefix') is not None:
-            parsed['filter_prefix'] = payload['Filter']['And']['Prefix']
-
-    if parsed.get('mc_id') != mc_id:
-        return False
-    if parsed.get('filter_prefix') != filter_prefix:
-        return False
-    if parsed.get('filter_tags', {}) != filter_tags:
-        return False
-    return True
-
-
 def create_or_update_metrics_configuration(client, module):
-    changed = False
     bucket_name = module.params.get('bucket_name')
     mc_id = module.params.get('id')
     filter_prefix = module.params.get('filter_prefix')
     filter_tags = module.params.get('filter_tags')
 
     try:
-        metrics_configuration = client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=mc_id)
+        response = client.get_bucket_metrics_configuration(aws_retry=True, Bucket=bucket_name, Id=mc_id)
+        metrics_configuration = response['MetricsConfiguration']
     except is_boto3_error_code('NoSuchConfiguration'):
         metrics_configuration = None
-    except ClientError as e:  # pylint: disable=duplicate-except
+    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get bucket metrics configuration")
 
-    if metrics_configuration:
-        if not _compare_metrics_configuration(metrics_configuration, mc_id, filter_prefix, filter_tags):
-            try:
-                if not module.check_mode:
-                    client.put_bucket_metrics_configuration(
-                        Bucket=bucket_name,
-                        Id=mc_id,
-                        MetricsConfiguration=_create_metrics_configuration(mc_id, filter_prefix, filter_tags)
-                    )
-                changed = True
-            except (BotoCoreError, ClientError) as e:
-                module.fail_json_aws(e, msg="Failed to udpate bucket metrics configuration '%s'" % mc_id)
-    else:
-        try:
-            if not module.check_mode:
-                client.put_bucket_metrics_configuration(
-                    Bucket=bucket_name,
-                    Id=mc_id,
-                    MetricsConfiguration=_create_metrics_configuration(mc_id, filter_prefix, filter_tags)
-                )
-            changed = True
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Failed to create bucket metrics configuration '%s'" % mc_id)
+    new_configuration = _create_metrics_configuration(mc_id, filter_prefix, filter_tags)
 
-    module.exit_json(changed=changed)
+    if metrics_configuration:
+        if metrics_configuration == new_configuration:
+            module.exit_json(changed=False)
+        
+        if module.check_mode:
+            module.exit_json(changed=True)
+
+    try:
+        client.put_bucket_metrics_configuration(
+            aws_retry=True,
+            Bucket=bucket_name,
+            Id=mc_id,
+            MetricsConfiguration=new_configuration
+        )
+    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to put bucket metrics configuration '%s'" % mc_id)
+
+    module.exit_json(changed=True)
 
 
 def delete_metrics_configuration(client, module):
-    changed = False
     bucket_name = module.params.get('bucket_name')
     mc_id = module.params.get('id')
 
     try:
-        client.get_bucket_metrics_configuration(Bucket=bucket_name, Id=mc_id)
+        client.get_bucket_metrics_configuration(aws_retry=True, Bucket=bucket_name, Id=mc_id)
     except is_boto3_error_code('NoSuchConfiguration'):
-        module.exit_json(changed=changed)
-    except ClientError as e:  # pylint: disable=duplicate-except
+        module.exit_json(changed=False)
+    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get bucket metrics configuration")
 
+    if module.check_mode:
+        module.exit_json(changed=True)
+
     try:
-        if not module.check_mode:
-            client.delete_bucket_metrics_configuration(Bucket=bucket_name, Id=mc_id)
-        changed = True
-    except (BotoCoreError, ClientError) as e:
+        client.delete_bucket_metrics_configuration(aws_retry=True, Bucket=bucket_name, Id=mc_id)
+    except is_boto3_error_code('NoSuchConfiguration'):
+        module.exit_json(changed=False)
+    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to delete bucket metrics configuration '%s'" % mc_id)
 
-    module.exit_json(changed=changed)
+    module.exit_json(changed=True)
 
 
 def main():
