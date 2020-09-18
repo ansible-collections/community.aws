@@ -11,7 +11,6 @@
     AWS_SESSION_TOKEN: "{{ security_token | default(omit) }}"
     AWS_DEFAULT_REGION: "{{ aws_region | default(omit) }}"
   register: list_comand_result
-  no_log: true
 
 - set_fact:
     metrics_info: "{{ (list_comand_result.stdout | from_json)['MetricsConfigurationList'] | default([]) }}"
