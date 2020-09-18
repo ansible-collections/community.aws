@@ -150,9 +150,9 @@ def create_or_update_metrics_configuration(client, module):
     if metrics_configuration:
         if metrics_configuration == new_configuration:
             module.exit_json(changed=False)
-        
-        if module.check_mode:
-            module.exit_json(changed=True)
+
+    if module.check_mode:
+        module.exit_json(changed=True)
 
     try:
         client.put_bucket_metrics_configuration(
