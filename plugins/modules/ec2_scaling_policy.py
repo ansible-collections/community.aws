@@ -279,14 +279,8 @@ def create_scaling_policy(connection, module):
         params['StepAdjustments'] = []
         for step_adjustment in module.params['step_adjustments']:
             step_adjust_params = dict(ScalingAdjustment=step_adjustment['scaling_adjustment'])
-            # Although empty bounds are allowed, not setting the 0 end of the bound seems
-            # to cause problems in the UI. We'll leave the +/- infinity end unset if not set
-            if not step_adjustment.get('lower_bound') and step_adjustment.get('upper_bound') > 0:
-                step_adjustment['lower_bound'] = 0
             if step_adjustment.get('lower_bound'):
                 step_adjust_params['MetricIntervalLowerBound'] = step_adjustment['lower_bound']
-            if not step_adjustment.get('upper_bound') and step_adjustment.get('lower_bound') < 0:
-                step_adjustment['upper_bound'] = 0
             if step_adjustment.get('upper_bound'):
                 step_adjust_params['MetricIntervalUpperBound'] = step_adjustment['upper_bound']
             params['StepAdjustments'].append(step_adjust_params)
