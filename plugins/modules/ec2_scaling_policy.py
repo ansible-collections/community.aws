@@ -46,7 +46,7 @@ options:
     type: int
     description:
       - The amount by which the autoscaling group is adjusted by the policy.
-      - A negative number scales the autoscaling group in.
+      - A negative number has the effect of scaling down the ASG.
       - Units are numbers of instances for C(ExactCapacity) or C(ChangeInCapacity) or percent
         of existing instances for C(PercentChangeInCapacity).
       - Required when I(policy_type) is C(SimpleScaling).
@@ -58,7 +58,7 @@ options:
   cooldown:
     type: int
     description:
-      - The minimum period of time between which autoscaling actions can take place.
+      - The minimum period of time (in seconds) between which autoscaling actions can take place.
       - Only used when I(policy_type) is C(SimpleScaling).
   policy_type:
     type: str
@@ -82,8 +82,11 @@ options:
     type: list
     description:
       - list of dicts containing I(lower_bound), I(upper_bound) and I(scaling_adjustment)
-      - One item can not have a lower bound, and one item can not have an upper bound.
-      - Intervals must not overlap
+      - Intervals must not overlap or have a gap between them.
+      - At most, one item can have an undefined I(lower_bound).
+        If any item has a negative lower_bound, then there must be a step adjustment with an undefined I(lower_bound).
+      - At most, one item can have an undefined I(upper_bound).
+        If any item has a positive upper_bound, then there must be a step adjustment with an undefined I(upper_bound).
       - The bounds are the amount over the alarm threshold at which the adjustment will trigger.
         This means that for an alarm threshold of 50, triggering at 75 requires a lower bound of 25.
         See U(http://docs.aws.amazon.com/AutoScaling/latest/APIReference/API_StepAdjustment.html).
