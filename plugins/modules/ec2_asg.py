@@ -505,12 +505,12 @@ min_size:
     type: int
     sample: 1
 mixed_instances_policy:
-    description: Returns the list of instance types if a mixed instance policy is set.
+    description: Returns the list of instance types if a mixed instances policy is set.
     returned: success
     type: list
     sample: ["t3.micro", "t3a.micro"]
 mixed_instances_policy_full:
-    description: Returns the full dictionary representation of the mixed instances policy.
+    description: Returns the full dictionary representation of the mixed instances policy if a mixed instances policy is set.
     returned: success
     type: dict
     sample: {
@@ -827,8 +827,8 @@ def get_properties(autoscaling_group):
     properties['target_group_arns'] = autoscaling_group.get('TargetGroupARNs')
     properties['vpc_zone_identifier'] = autoscaling_group.get('VPCZoneIdentifier')
     raw_mixed_instance_object = autoscaling_group.get('MixedInstancesPolicy')
-    properties['mixed_instances_policy_full'] = camel_dict_to_snake_dict(autoscaling_group.get('MixedInstancesPolicy'))
     if raw_mixed_instance_object:
+        properties['mixed_instances_policy_full'] = camel_dict_to_snake_dict(raw_mixed_instance_object)
         properties['mixed_instances_policy'] = [x['InstanceType'] for x in raw_mixed_instance_object.get('LaunchTemplate').get('Overrides')]
 
     metrics = autoscaling_group.get('EnabledMetrics')
