@@ -1,0 +1,6 @@
+---
+# VPCs are identified by the CIDR.  Don't hard code the CIDR.  shippable will
+# run multiple copies of the test concurrently (Python 2.x and Python 3.x)
+vpc_cidr: '10.{{ 256 | random(seed=resource_prefix) }}.0.0/16'
+subnet_cidr_a: '10.{{ 256 | random(seed=resource_prefix) }}.0.0/24'
+subnet_cidr_b: '10.{{ 256 | random(seed=resource_prefix) }}.1.0/24'

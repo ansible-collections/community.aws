@@ -9,10 +9,13 @@
     prefix_num: "{{ resource_prefix | regex_search('([0-9]+)$') }}"
     alb_name: "alb-sg-test-{{ prefix_num }}"
     vpc_name: "vpc-test-{{ prefix_num }}"
+  collections:
+    - amazon.aws
+
   block:
     - name: Provision VPC
       ec2_vpc_net:
-        cidr_block: 10.11.0.0/16
+        cidr_block: '{{ vpc_cidr }}'
         name: "{{ vpc_name }}"
         state: present
       register: test_vpc
@@ -23,8 +26,8 @@
         vpc_id: "{{ test_vpc.vpc.id }}"
         state: present
       loop:
-        - { az: 'a', cidr: '10.11.0.0/24'}
-        - { az: 'b', cidr: '10.11.1.0/24'}
+        - { az: 'a', cidr: "{{ subnet_cidr_a }}"}
+        - { az: 'b', cidr: "{{ subnet_cidr_b }}"}
       register: test_subnets_msg
     - name: provision igw
       ec2_vpc_igw:
@@ -56,6 +59,9 @@
       register: alb
     - name: Attach a security group
       elb_security_group:
+        aws_access_key: '{{ aws_access_key }}'
+        aws_secret_key: '{{ aws_secret_key }}'
+        region: "{{ aws_region }}"
         alb_arn: "{{ alb.load_balancer_arn }}"
         security_group_ids:
           - "{{ sec_groups['results'][1]['group_id'] }}"
