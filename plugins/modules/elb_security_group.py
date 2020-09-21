@@ -71,7 +71,7 @@ def elb_sg_attach(elbv2_client, alb_arn, sg_ids):
         SecurityGroups=sg_ids
     )
 
-    return len(response['SecurityGroupIds'])
+    return camel_dict_to_snake_dict(response)
 
 
 def main():
