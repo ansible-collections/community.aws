@@ -15,16 +15,16 @@ short_description: Attach a security group to an already existing elb
 description:
   - Attach a security group to an elb
 requirements: ['boto3 >= 1.11.15']
-version_added: 1.2.0
+version_added: 1.3.0
 author:
   - "Michael Moyle (@mmoyle)"
 options:
     alb_arn:
-        description: ARN of an existing application load balancer
+        description: ARN of an existing Application Load Balancer (ALB).
         type: str
         required: true
     security_group_ids:
-        description: List of security groups IDs to attach to alb
+        description: List of security groups IDs to attach to the ALB.
         type: list
         elements: str
         required: true
@@ -47,7 +47,7 @@ EXAMPLES = '''
 
 RETURN = '''
 response:
-    description: The number or security groups attached.
+    description: The number of security groups attached.
     returned: Always
     type: int
 '''
@@ -97,7 +97,7 @@ def main():
         result['changed'] = True
 
     except (ClientError, BotoCoreError) as e:
-        module.fail_json_aws(e)
+        module.fail_json_aws(e, msg="Failed to update Security Groups")
 
     result.update()
     module.exit_json(**result)
