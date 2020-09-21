@@ -504,29 +504,34 @@ min_size:
     returned: success
     type: int
     sample: 1
-mixed_instance_policy:
-    description: Returns the dictionary representation of the mixed instance policy.
+mixed_instances_policy:
+    description: Returns the list of instance types if a mixed instance policy is set.
+    returned: success
+    type: list
+    sample: ["t3.micro", "t3a.micro"]
+mixed_instances_policy_full:
+    description: Returns the full dictionary representation of the mixed instances policy.
     returned: success
     type: dict
     sample: {
-        "InstancesDistribution": {
-            "OnDemandAllocationStrategy": "prioritized",
-            "OnDemandBaseCapacity": 0,
-            "OnDemandPercentageAboveBaseCapacity": 0,
-            "SpotAllocationStrategy": "capacity-optimized"
+        "instances_distribution": {
+            "on_demand_allocation_strategy": "prioritized",
+            "on_demand_base_capacity": 0,
+            "on_demand_percentage_above_base_capacity": 0,
+            "spot_allocation_strategy": "capacity-optimized"
         },
-        "LaunchTemplate": {
-            "LaunchTemplateSpecification": {
-                "LaunchTemplateId": "lt-53c2425cffa544c23",
-                "LaunchTemplateName": "random-LaunchTemplate",
-                "Version": "2"
+        "launch_template": {
+            "launch_template_specification": {
+                "launch_template_id": "lt-53c2425cffa544c23",
+                "launch_template_name": "random-LaunchTemplate",
+                "version": "2"
             },
-            "Overrides": [
+            "overrides": [
                 {
-                    "InstanceType": "m5.xlarge"
+                    "instance_type": "m5.xlarge"
                 },
                 {
-                    "InstanceType": "m5a.xlarge"
+                    "instance_type": "m5a.xlarge"
                 },
             ]
         }
@@ -821,7 +826,10 @@ def get_properties(autoscaling_group):
     properties['termination_policies'] = autoscaling_group.get('TerminationPolicies')
     properties['target_group_arns'] = autoscaling_group.get('TargetGroupARNs')
     properties['vpc_zone_identifier'] = autoscaling_group.get('VPCZoneIdentifier')
-    properties['mixed_instances_policy'] = autoscaling_group.get('MixedInstancesPolicy')
+    raw_mixed_instance_object = autoscaling_group.get('MixedInstancesPolicy')
+    properties['mixed_instances_policy_full'] = camel_dict_to_snake_dict(autoscaling_group.get('MixedInstancesPolicy'))
+    if raw_mixed_instance_object:
+        properties['mixed_instances_policy'] = [x['InstanceType'] for x in raw_mixed_instance_object.get('LaunchTemplate').get('Overrides')]
 
     metrics = autoscaling_group.get('EnabledMetrics')
     if metrics:
@@ -884,12 +892,12 @@ def get_launch_object(connection, ec2_connection):
                     policy['LaunchTemplate']['Overrides'].append(instance_type_dict)
             if instances_distribution:
                 instances_distribution_params = dict(
-                    (key.capitalize(), value)  # To Pascal-case.
+                    (key, value)
                     for key, value
                     in instances_distribution.items()
                     if value is not None
                 )
-                policy['InstancesDistribution'] = snake_dict_to_camel_dict(instances_distribution_params)
+                policy['InstancesDistribution'] = snake_dict_to_camel_dict(instances_distribution_params, capitalize_first=True)
             launch_object['MixedInstancesPolicy'] = policy
         return launch_object
 
