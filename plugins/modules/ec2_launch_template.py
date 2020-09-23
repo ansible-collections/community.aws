@@ -569,12 +569,39 @@ def create_or_update(module, template_options):
             out['changed'] = False
             return out
         try:
-            resp = ec2.create_launch_template_version(
-                LaunchTemplateId=template['LaunchTemplateId'],
-                LaunchTemplateData=lt_data,
-                ClientToken=uuid4().hex,
-                aws_retry=True,
-            )
+            if module.params.get('source_version') in (None, ''):
+                resp = ec2.create_launch_template_version(
+                    LaunchTemplateId=template['LaunchTemplateId'],
+                    LaunchTemplateData=lt_data,
+                    ClientToken=uuid4().hex,
+                    aws_retry=True,
+                )
+            elif module.params.get('source_version') == 'latest':
+                resp = ec2.create_launch_template_version(
+                    LaunchTemplateId=template['LaunchTemplateId'],
+                    LaunchTemplateData=lt_data,
+                    ClientToken=uuid4().hex,
+                    SourceVersion=most_recent['VersionNumber'],
+                    aws_retry=True,
+                )
+            else:
+                try:
+                    int(module.params.get('source_version'))
+                except ValueError:
+                    module.fail_json(msg='source_version param was not a valid integer, got "{0}"'.format(module.params.get('source_version')))
+                    # get source template version
+                    source_version = next((v for v in template_versions if v['VersionNumber'] == int(module.params.get('source_version'))), None)
+                    if source_version is not None:
+                        resp = ec2.create_launch_template_version(
+                            LaunchTemplateId=template['LaunchTemplateId'],
+                            LaunchTemplateData=lt_data,
+                            ClientToken=uuid4().hex,
+                            SourceVersion=source_version['VersionNumber'],
+                            aws_retry=True,
+                        )
+                    else:
+                        module.fail_json(msg='source_version does not exist, got "{0}"'.format(module.params.get('source_version')))
+
             if module.params.get('default_version') in (None, ''):
                 # no need to do anything, leave the existing version as default
                 pass
@@ -748,6 +775,7 @@ def main():
         template_name=dict(aliases=['name']),
         template_id=dict(aliases=['id']),
         default_version=dict(default='latest'),
+        source_version=dict(default='latest')
     )
 
     arg_spec.update(template_options)
