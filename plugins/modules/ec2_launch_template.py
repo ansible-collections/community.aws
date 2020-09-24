@@ -313,6 +313,13 @@ options:
       For any VPC other than Default, you must use I(security_group_ids).
     type: list
     elements: str
+  source_version:
+    description: >
+      The version number of the launch template version on which to base the new version.
+      The new version inherits the same launch parameters as the source version, except for parameters that you explicity specify.
+      Snapshots applied to the block device mapping are ignored when creating a new version unless they are explicitly included.
+    type: str
+    default: latest
   tags:
     type: dict
     description:
