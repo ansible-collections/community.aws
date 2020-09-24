@@ -788,6 +788,8 @@ def main():
                 loadBalancers = []
                 for loadBalancer in module.params['load_balancers']:
                     if 'containerPort' in loadBalancer:
+                        if type(loadBalancer) is str:
+                            loadBalancer = eval(loadBalancer)
                         loadBalancer['containerPort'] = int(loadBalancer['containerPort'])
                     loadBalancers.append(loadBalancer)
 
