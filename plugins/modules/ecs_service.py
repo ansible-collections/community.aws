@@ -1,3 +1,4 @@
+
 #!/usr/bin/python
 # This file is part of Ansible
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
@@ -22,7 +23,6 @@ author:
     - "Darek Kaczynski (@kaczynskid)"
     - "Stephane Maarek (@simplesteph)"
     - "Zac Blazic (@zacblazic)"
-
 requirements: [ json, botocore, boto3 ]
 options:
     state:
@@ -186,15 +186,35 @@ options:
         required: false
         choices: ["DAEMON", "REPLICA"]
         type: str
+    propagate_tags:
+        description:
+          - A dictionary of tags to add or remove from the resource.
+        required: false
+        choices: ["TASK_DEFINITION", "SERVICE"]
+        type: str     
+    tags:
+        description:
+          - Propagate TAGS to ECS task taking from TASK_DEFINITION or SERVICE
+        type: list
+        elements: dict
+        required: false
+        suboptions:
+            key:
+                description:
+                  - The key of tag
+                type: str
+            value:
+                description:
+                  - The value of tag
+                type: str
+   
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
-
 '''
 
 EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-
 # Basic provisioning example
 - community.aws.ecs_service:
     state: present
@@ -202,7 +222,6 @@ EXAMPLES = r'''
     cluster: new_cluster
     task_definition: 'new_cluster-task:1'
     desired_count: 0
-
 - name: create ECS service on VPC network
   community.aws.ecs_service:
     state: present
@@ -216,13 +235,11 @@ EXAMPLES = r'''
       security_groups:
       - sg-aaaa1111
       - my_security_group
-
 # Simple example to delete
 - community.aws.ecs_service:
     name: default
     state: absent
     cluster: new_cluster
-
 # With custom deployment configuration (added in version 2.3), placement constraints and strategy (added in version 2.4)
 - community.aws.ecs_service:
     state: present
@@ -352,7 +369,6 @@ service:
                                  such as attribute:ecs.availability-zone. For the binpack placement strategy, valid values are CPU and MEMORY.
                     returned: always
                     type: str
-
 ansible_facts:
     description: Facts about deleted service.
     returned: when deleting a service
@@ -548,6 +564,12 @@ class EcsServiceManager:
         if (expected['load_balancers'] or []) != existing['loadBalancers']:
             return False
 
+        if expected['propagate_tags'] != existing['propagateTags']:
+            return False
+
+        if not [x for x in expected['tags'] if x not in existing['tags']]:
+            return False
+
         # expected is params. DAEMON scheduling strategy returns desired count equal to
         # number of instances running; don't check desired count if scheduling strat is daemon
         if (expected['scheduling_strategy'] != 'DAEMON'):
@@ -559,7 +581,8 @@ class EcsServiceManager:
     def create_service(self, service_name, cluster_name, task_definition, load_balancers,
                        desired_count, client_token, role, deployment_configuration,
                        placement_constraints, placement_strategy, health_check_grace_period_seconds,
-                       network_configuration, service_registries, launch_type, scheduling_strategy):
+                       network_configuration, service_registries, launch_type, scheduling_strategy,
+                       tags, propagate_tags):
 
         params = dict(
             cluster=cluster_name,
@@ -570,7 +593,8 @@ class EcsServiceManager:
             role=role,
             deploymentConfiguration=deployment_configuration,
             placementConstraints=placement_constraints,
-            placementStrategy=placement_strategy
+            placementStrategy=placement_strategy,
+            tags=tags
         )
         if network_configuration:
             params['networkConfiguration'] = network_configuration
@@ -580,6 +604,8 @@ class EcsServiceManager:
             params['healthCheckGracePeriodSeconds'] = health_check_grace_period_seconds
         if service_registries:
             params['serviceRegistries'] = service_registries
+        if propagate_tags:
+            params['propagateTags'] = propagate_tags
         # desired count is not required if scheduling strategy is daemon
         if desired_count is not None:
             params['desiredCount'] = desired_count
@@ -684,7 +710,18 @@ def main():
         )),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
         service_registries=dict(required=False, type='list', default=[], elements='dict'),
-        scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA'])
+        scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA']),
+        propagate_tags=dict(required=False, choices=['TASK_DEFINITION', 'SERVICE']),
+        tags=dict(
+            required=False,
+            default=[],
+            type='list',
+            elements='dict',
+            options=dict(
+                key=dict(type='str'),
+                value=dict(type='str'),
+            )
+        )
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
@@ -776,6 +813,12 @@ def main():
                     if (existing['loadBalancers'] or []) != loadBalancers:
                         module.fail_json(msg="It is not possible to update the load balancers of an existing service")
 
+                    if module.params['propagate_tags'] and module.params['propagate_tags'] != existing['propagateTags']:
+                        module.fail_json(msg="It is not possible to enable propagation tags of an existing service")
+
+                    if not [x for x in module.params['tags'] if x not in existing['tags']]:
+                        module.fail_json(msg="It is not possible to change tags of an existing service")
+
                     # update required
                     response = service_mgr.update_service(module.params['name'],
                                                           module.params['cluster'],
@@ -802,7 +845,9 @@ def main():
                                                               network_configuration,
                                                               serviceRegistries,
                                                               module.params['launch_type'],
-                                                              module.params['scheduling_strategy']
+                                                              module.params['scheduling_strategy'],
+                                                              module.params['tags'],
+                                                              module.params['propagate_tags']
                                                               )
                     except botocore.exceptions.ClientError as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
