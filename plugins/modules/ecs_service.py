@@ -815,7 +815,7 @@ def main():
                     if (existing['loadBalancers'] or []) != loadBalancers:
                         module.fail_json(msg="It is not possible to update the load balancers of an existing service")
 
-                    if module.params['propagate_tags'] and module.params['propagate_tags'] != existing['propagateTags']:
+                    if  module.params['propagate_tags'] != existing['propagateTags']:
                         module.fail_json(msg="It is not possible to enable propagation tags of an existing service")
 
                     if not [x for x in module.params['tags'] if x not in existing['tags']]:
