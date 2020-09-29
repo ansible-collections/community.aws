@@ -564,10 +564,10 @@ class EcsServiceManager:
         if (expected['load_balancers'] or []) != existing['loadBalancers']:
             return False
 
-        if expected['propagate_tags'] != existing['propagateTags']:
+        if module.params['propagate_tags'] and module.params['propagate_tags'] != existing['propagateTags']:
             return False
 
-        if not [x for x in expected['tags'] if x not in existing['tags']]:
+        if not [x for x in module.params['tags'] if x not in existing.get('tags', [])]:
             return False
 
         # expected is params. DAEMON scheduling strategy returns desired count equal to
@@ -818,7 +818,7 @@ def main():
                     if  module.params['propagate_tags'] != existing['propagateTags']:
                         module.fail_json(msg="It is not possible to enable propagation tags of an existing service")
 
-                    if not [x for x in module.params['tags'] if x not in existing['tags']]:
+                    if not [x for x in module.params['tags'] if x not in existing.get('tags', [])]:
                         module.fail_json(msg="It is not possible to change tags of an existing service")
 
                     # update required
