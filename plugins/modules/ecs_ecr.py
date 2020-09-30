@@ -503,8 +503,6 @@ def run(ecr, params):
                     raise
 
             original_scan_on_push = ecr.get_repository(registry_id, name)
-            import q
-            q(original_scan_on_push['imageScanningConfiguration']['scanOnPush'])
             if scan_on_push != original_scan_on_push['imageScanningConfiguration']['scanOnPush']:
                 result['changed'] = True
                 response = ecr.put_image_scanning_configuration(registry_id, name, scan_on_push)
