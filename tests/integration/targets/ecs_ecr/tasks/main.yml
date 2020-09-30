@@ -498,7 +498,6 @@
     - name: verify enable scan on push
       ecs_ecr:
         name: '{{ ecr_name }}'
-        <<: *aws_connection_info
         scan_on_push: yes
       register: result
 
