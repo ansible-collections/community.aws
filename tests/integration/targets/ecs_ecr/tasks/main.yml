@@ -1,7 +1,4 @@
 ---
-- set_fact:
-    ecr_name: '{{ resource_prefix }}-ecr'
-
 - module_defaults:
     group/aws:
         region: "{{ aws_region }}"
@@ -9,7 +6,10 @@
         aws_secret_key: "{{ aws_secret_key }}"
         security_token: "{{ security_token | default(omit) }}"
 
-- block:
+  block:
+    - set_fact:
+        ecr_name: '{{ resource_prefix }}-ecr'
+
     - name: When creating with check mode
       ecs_ecr:
         name: '{{ ecr_name }}'
