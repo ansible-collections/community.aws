@@ -534,6 +534,51 @@
         that:
           - result is not changed
 
+    - name: enable scan on push
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+        region: '{{ ec2_region }}'
+        ec2_access_key: '{{ec2_access_key}}'
+        ec2_secret_key: '{{ec2_secret_key}}'
+        security_token: '{{security_token}}'
+        scan_on_push: yes
+      register: result
+
+    - name: it should change
+      assert:
+        that:
+          - result is changed
+
+    - name: verify enable scan on push
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+        region: '{{ ec2_region }}'
+        ec2_access_key: '{{ec2_access_key}}'
+        ec2_secret_key: '{{ec2_secret_key}}'
+        security_token: '{{security_token}}'
+        scan_on_push: yes
+      register: result
+
+    - name: it should not change
+      assert:
+        that:
+          - result is not changed
+
+    - name: disable scan on push
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+        region: '{{ ec2_region }}'
+        ec2_access_key: '{{ec2_access_key}}'
+        ec2_secret_key: '{{ec2_secret_key}}'
+        security_token: '{{security_token}}'
+        scan_on_push: no
+      register: result
+
+    - name: it should change
+      assert:
+        that:
+          - result is changed
+
   always:
 
     - name: Delete lingering ECR repository
