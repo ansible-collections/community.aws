@@ -367,19 +367,15 @@ class EcsEcr:
         if not self.check_mode:
             if registry_id:
                 scan = self.ecr.put_image_scanning_configuration(
-                        registryId=registry_id,
-                        repositoryName=name,
-                        imageScanningConfiguration={
-                            'scanOnPush': scan_on_push
-                        }
-                    )
+                    registryId=registry_id,
+                    repositoryName=name,
+                    imageScanningConfiguration={'scanOnPush': scan_on_push}
+                )
             else:
                 scan = self.ecr.put_image_scanning_configuration(
-                        repositoryName=name,
-                        imageScanningConfiguration={
-                            'scanOnPush': scan_on_push
-                        }
-                    )
+                    repositoryName=name,
+                    imageScanningConfiguration={'scanOnPush': scan_on_push}
+                )
             self.changed = True
             return scan
         else:
