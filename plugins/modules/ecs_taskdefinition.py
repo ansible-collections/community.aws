@@ -44,10 +44,10 @@ options:
         type: bool
     containers:
         description:
-            - A list of containers definitions.
+            - A list of containers definitions.  You can find the full list of options in the boto3 docs.
         required: False
         type: list
-        elements: str
+        elements: dict
     network_mode:
         description:
             - The Docker networking mode to use for the containers in the task.
@@ -321,7 +321,7 @@ def main():
         family=dict(required=False, type='str'),
         revision=dict(required=False, type='int'),
         force_create=dict(required=False, default=False, type='bool'),
-        containers=dict(required=False, type='list', elements='str'),
+        containers=dict(required=False, type='list', elements='dict'),
         network_mode=dict(required=False, default='bridge', choices=['default', 'bridge', 'host', 'none', 'awsvpc'], type='str'),
         task_role_arn=dict(required=False, default='', type='str'),
         execution_role_arn=dict(required=False, default='', type='str'),
