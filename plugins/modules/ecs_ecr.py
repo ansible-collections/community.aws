@@ -194,6 +194,7 @@ except ImportError:
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception, compare_policies, sort_json_policy_dict
 from ansible.module_utils.six import string_types
+#import q
 
 
 def build_kwargs(registry_id):
@@ -504,6 +505,7 @@ def run(ecr, params):
 
             original_scan_on_push = ecr.get_repository(registry_id, name)
             if original_scan_on_push is not None:
+                #q(original_scan_on_push['imageScanningConfiguration'])
                 if scan_on_push != original_scan_on_push['imageScanningConfiguration']['scanOnPush']:
                     result['changed'] = True
                     result['repository']['imageScanningConfiguration']['scanOnPush'] = scan_on_push

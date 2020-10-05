@@ -7,6 +7,9 @@
         security_token: "{{ security_token | default(omit) }}"
 
   block:
+    - pip:
+        name: q
+
     - set_fact:
         ecr_name: '{{ resource_prefix }}-ecr'
 

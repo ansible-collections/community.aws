@@ -1,4 +1,4 @@
 cloud/aws
-shippable/aws/group2
+shippable/aws/group7
 execute_lambda
 lambda_info
