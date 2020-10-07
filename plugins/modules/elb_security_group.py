@@ -84,7 +84,14 @@ def main():
         original_message=''
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
+
+    if module.check_mode:
+        result['response'] = dict()
+        result['security_groups_ids'] = module.params.get('security_group_ids')
+        result['changed'] = True
+        module.exit_json(result)
+
     elbv2_client = module.client('elbv2')
 
     try:
@@ -94,6 +101,7 @@ def main():
             module.params.get('security_group_ids')
         )
 
+        result['security_group_ids'] = result['response']['security_group_ids']
         result['changed'] = True
 
     except (ClientError, BotoCoreError) as e:
