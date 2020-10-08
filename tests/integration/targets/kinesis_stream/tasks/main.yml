@@ -63,9 +63,9 @@
           - 'alias/{{ kms_cmk_alias_1 }}'
           - '{{ create_kms_1.key_arn }}'
           kms_cmk_2:
-          - '{{ create_kms_1.key_id }}'
-          - 'alias/{{ kms_cmk_alias_1 }}'
-          - '{{ create_kms_1.key_arn }}'
+          - '{{ create_kms_2.key_id }}'
+          - 'alias/{{ kms_cmk_alias_2 }}'
+          - '{{ create_kms_2.key_arn }}'
 
   # ============================================================
   # Basic creation
