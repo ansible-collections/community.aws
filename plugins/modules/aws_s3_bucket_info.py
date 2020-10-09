@@ -24,23 +24,20 @@ description:
 options:
   name:
     description:
-      - Get info only about specified bucket
+      - Get info about specified bucket
     type: str
     default: ""
   name_filter:
     description:
-      - Get info only about buckets name matching defined string
+      - Get info about buckets name matching defined string
     type: str
     default: ""
-    version_added: 1.3.0
   bucket_facts:
     description:
       - Retrieve requested S3 bucket detailed information
-      - Each bucket_X option executes one API call, hence many options=true will case slower module execution
-      - You can limit buckets by using I(name) or I(name_filter) option
     suboptions:
       bucket_accelerate_configuration:
-        description: Retrive S3 accelerate configuration
+        description: Retrive S3 bucket accelerate configuration
         type: bool
         default: False
       bucket_location:
@@ -61,6 +58,14 @@ options:
         default: False
       bucket_request_payment:
         description: Retrive S3 bucket request payment
+        type: bool
+        default: False
+      bucket_analytics_configuration:
+        description: Retrive S3 bucket analytics configuration
+        type: bool
+        default: False
+      bucket_metrics_configuration:
+        description: Retrive S3 bucket metrics configuration
         type: bool
         default: False
       bucket_tagging:
@@ -87,6 +92,10 @@ options:
         description: Retrive S3 bucket website
         type: bool
         default: False
+      bucket_inventory_configuration:
+        description: Retrive S3 bucket inventory configuration
+        type: bool
+        default: False
       bucket_policy:
         description: Retrive S3 bucket policy
         type: bool
@@ -99,20 +108,13 @@ options:
         description: Retrive S3 bucket lifecycle configuration
         type: bool
         default: False
-      public_access_block:
-        description: Retrive S3 bucket public access block
-        type: bool
-        default: False
     type: dict
-    version_added: 1.3.0
   transform_location:
     description:
       - S3 bucket location for default us-east-1 is normally reported as 'null'
       - setting this option to 'true' will return 'us-east-1' instead
-      - affects only queries with I(bucket_facts) > I(bucket_location) = true
     type: bool
     default: False
-    version_added: 1.3.0
 
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -195,7 +197,6 @@ def get_bucket_list(module, connection, name="", name_filter=""):
     buckets = []
     filtered_buckets = []
     final_buckets = []
-
     # Get all buckets
     try:
         buckets = camel_dict_to_snake_dict(connection.list_buckets())['buckets']
@@ -214,6 +215,24 @@ def get_bucket_list(module, connection, name="", name_filter=""):
 
     # Return proper list (filtered or all)
     if name or name_filter:
+        final_buckets = filtered_buckets
+    else:
+        final_buckets = buckets
+    return(final_buckets)
+
+
+    # Filter buckets if requested
+    if name_filter:
+        for bucket in buckets:
+            if name_filter in bucket['name']:
+                filtered_buckets.append(bucket)
+    elif name:
+        for bucket in buckets:
+            if name == bucket['name']:
+                filtered_buckets.append(bucket)
+
+    # Return proper list (filtered or all)
+    if filtered_buckets:
         final_buckets = filtered_buckets
     else:
         final_buckets = buckets
@@ -242,45 +261,29 @@ def get_bucket_details(connection, name, requested_facts, transform_location):
     for key in requested_facts:
         if requested_facts[key]:
             if key == 'bucket_location':
-                all_facts[key] = {}
-                try:
-                    all_facts[key] = get_bucket_location(name, connection, transform_location)
-                # we just pass on error - error means that resources is undefined
-                except botocore.exceptions.ClientError:
-                    pass
-            elif key == 'bucket_tagging':
-                all_facts[key] = {}
-                try:
-                    all_facts[key] = get_bucket_tagging(name, connection)
-                # we just pass on error - error means that resources is undefined
-                except botocore.exceptions.ClientError:
-                    pass
+                all_facts[key] = get_bucket_location(name, connection, transform_location)
             else:
-                all_facts[key] = {}
-                try:
-                    all_facts[key] = get_bucket_property(name, connection, key)
-                # we just pass on error - error means that resources is undefined
-                except botocore.exceptions.ClientError:
-                    pass
+                all_facts[key] = get_bucket_property(name, connection, key)
 
     return(all_facts)
 
 
-@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_location(name, connection, transform_location=False):
     """
     Get bucket location and optionally transform 'null' to 'us-east-1'
     """
-    data = connection.get_bucket_location(Bucket=name)
+    try:
+        data = connection.get_bucket_location(Bucket=name)
+    except botocore.exceptions.ClientError as err_msg:
+        data = {'error': err_msg}
 
-    # Replace 'null' with 'us-east-1'?
     if transform_location:
         try:
             if not data['LocationConstraint']:
                 data['LocationConstraint'] = 'us-east-1'
         except KeyError:
-            pass
-    # Strip response metadata (not needed)
+            data['transform_failed'] = True
+
     try:
         data.pop('ResponseMetadata')
         return(data)
@@ -288,35 +291,17 @@ def get_bucket_location(name, connection, transform_location=False):
         return(data)
 
 
-@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
-def get_bucket_tagging(name, connection):
-    """
-    Get bucket tags and transform them using `boto3_tag_list_to_ansible_dict` function
-    """
-    data = connection.get_bucket_tagging(Bucket=name)
-
-    try:
-        bucket_tags = boto3_tag_list_to_ansible_dict(data['TagSet'])
-        return(bucket_tags)
-    except KeyError:
-        # Strip response metadata (not needed)
-        try:
-            data.pop('ResponseMetadata')
-            return(data)
-        except KeyError:
-            return(data)
-
-
-@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_property(name, connection, get_api_name):
     """
     Get bucket property
     """
     api_call = "get_" + get_api_name
     api_function = getattr(connection, api_call)
-    data = api_function(Bucket=name)
+    try:
+        data = api_function(Bucket=name)
+    except botocore.exceptions.ClientError as err_msg:
+        data = {'error': err_msg}
 
-    # Strip response metadata (not needed)
     try:
         data.pop('ResponseMetadata')
         return(data)
@@ -353,6 +338,33 @@ def main():
         transform_location=dict(type='bool', default=False)
     )
 
+    argument_spec = dict(
+        name=dict(type=str, default=""),
+        name_filter=dict(type=str, default=""),
+        bucket_facts=dict(type='dict', options=dict(
+            bucket_accelerate_configuration=dict(type=bool, default=False),
+            bucket_acl=dict(type=bool, default=False),
+            bucket_analytics_configuration=dict(type=bool, default=False),
+            bucket_cors=dict(type=bool, default=False),
+            bucket_encryption=dict(type=bool, default=False),
+            bucket_inventory_configuration=dict(type=bool, default=False),
+            bucket_lifecycle_configuration=dict(type=bool, default=False),
+            bucket_location=dict(type=bool, default=False),
+            bucket_logging=dict(type=bool, default=False),
+            bucket_metrics_configuration=dict(type=bool, default=False),
+            bucket_notification_configuration=dict(type=bool, default=False),
+            bucket_ownership_controls=dict(type=bool, default=False),
+            bucket_policy=dict(type=bool, default=False),
+            bucket_policy_status=dict(type=bool, default=False),
+            bucket_replication=dict(type=bool, default=False),
+            bucket_request_payment=dict(type=bool, default=False),
+            bucket_tagging=dict(type=bool, default=False),
+            bucket_website=dict(type=bool, default=False),
+            )),
+        transform_location=dict(type='bool', default=False)
+    )
+
+
     # Ensure we have an empty dict
     result = {}
 
@@ -362,7 +374,7 @@ def main():
     ]
 
     # Including ec2 argument spec
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True, mutually_exclusive=mutually_exclusive)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     is_old_facts = module._name == 'aws_s3_bucket_facts'
     if is_old_facts:
         module.deprecate("The 'aws_s3_bucket_facts' module has been renamed to 'aws_s3_bucket_info', "
@@ -378,17 +390,11 @@ def main():
     connection = {}
     try:
         connection = module.client('s3')
-    except (connection.exceptions.ClientError, botocore.exceptions.BotoCoreError) as err_code:
-        module.fail_json_aws(err_code, msg='Failed to connect to AWS')
+    except (connection.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     # Get basic bucket list (name + creation date)
     bucket_list = get_bucket_list(module, connection, name, name_filter)
-
-    # Add information about name/name_filter to result
-    if name:
-        result['bucket_name'] = name
-    elif name_filter:
-        result['bucket_name_filter'] = name_filter
 
     # Gather detailed information about buckets if requested
     bucket_facts = module.params.get("bucket_facts")
