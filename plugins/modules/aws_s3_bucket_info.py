@@ -312,8 +312,8 @@ def main():
     :return:
     """
     argument_spec = dict(
-        name=dict(type=str, default=""),
-        name_filter=dict(type=str, default=""),
+        name=dict(type='str', default=""),
+        name_filter=dict(type='str', default=""),
         bucket_facts=dict(type='dict', options=dict(
             bucket_accelerate_configuration=dict(type='bool', default=False),
             bucket_acl=dict(type='bool', default=False),
