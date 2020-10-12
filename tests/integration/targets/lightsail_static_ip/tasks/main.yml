@@ -1,0 +1,62 @@
+---
+
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+
+  block:
+
+    # ==== Tests ===================================================
+
+    - name: Create a new static IP
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.changed == True
+          - "'static_ip' in result and result.static_ip.name == static_ip_name"
+          - "'static_ip' in result and result.static_ip.resource_type == 'StaticIp'"
+
+    - name: Make sure create is idempotent
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.changed == False
+
+    - name: Delete the static IP
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result.changed == True
+
+    - name: Make sure deletion is idempotent
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result.changed == False
+
+  # ==== Cleanup ====================================================
+
+  always:
+
+    - name: Cleanup - delete static IP
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+        state: absent
+      ignore_errors: yes
