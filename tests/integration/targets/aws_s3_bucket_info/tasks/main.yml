@@ -11,9 +11,6 @@
       s3_bucket:
         name: "{{ item }}"
         state: present
-        tags:
-          integration: "verified"
-          facts: "defined"
       register: output
       loop: "{{ testing_buckets }}"
 
@@ -50,7 +47,7 @@
         transform_location: true
       register: bucket_list
 
-    - name: Assert that buckets list contains requested bucket facts
+    - name: Assert that buckets list contains requested facts
       assert:
         that:
           - item.name is search(name_pattern)
@@ -71,22 +68,10 @@
           - item.bucket_website is defined
           - item.public_access_block is defined
       loop: "{{ bucket_list.buckets }}"
-      loop_control:
-        label: "{{ item.name }}"
-
-    - name: Assert that retrieved bucket facts contains valid data
-      assert:
-        that:
-          - item.bucket_acl.Owner is defined
-          - item.bucket_tagging.facts is defined
-          - item.bucket_tagging.integration is defined
-      loop: "{{ bucket_list.buckets }}"
-      loop_control:
-        label: "{{ item.name }}"
 
   always:
     - name: Delete simple s3_buckets
       s3_bucket:
         name: "{{ item }}"
-        state: absent
+        state: present
       loop: "{{ testing_buckets }}"
