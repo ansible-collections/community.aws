@@ -36,8 +36,12 @@ options:
     description:
       - Retrieve requested S3 bucket detailed information
       - Each bucket_X option executes one API call, hence many options=true will case slower module execution
-      - You can limit buckets by using I(name) or I(name_filter) option 
+      - You can limit buckets by using I(name) or I(name_filter) option
     suboptions:
+      bucket_accelerate_configuration:
+        description: Retrive S3 accelerate configuration
+        type: bool
+        default: False
       bucket_location:
         description: Retrive S3 bucket location
         type: bool
@@ -56,10 +60,6 @@ options:
         default: False
       bucket_request_payment:
         description: Retrive S3 bucket request payment
-        type: bool
-        default: False
-      bucket_analytics_configuration:
-        description: Retrive S3 bucket analytics configuration
         type: bool
         default: False
       bucket_tagging:
@@ -168,16 +168,19 @@ buckets:
       bucket_location: dictionary data
       bucket_cors: dictionary data
       # ...etc
+  type: list
 
 # if name options was specified
-bucket_name: 
+bucket_name:
   description: "Name of the bucket requested"
   sample: "my_bucket"
+  type: str
 
 # if name_filter was specified
-bucket_name_filter: 
+bucket_name_filter:
   description: "String to match bucket name"
   sample: "buckets_prefix"
+  type: str
 '''
 
 try:
@@ -281,6 +284,7 @@ def get_bucket_details(connection, name, requested_facts, transform_location):
 
     return(all_facts)
 
+
 @AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_location(name, connection, transform_location=False):
     """
@@ -301,6 +305,7 @@ def get_bucket_location(name, connection, transform_location=False):
         return(data)
     except KeyError:
         return(data)
+
 
 @AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_property(name, connection, get_api_name):
@@ -328,23 +333,23 @@ def main():
         name=dict(type=str, default=""),
         name_filter=dict(type=str, default=""),
         bucket_facts=dict(type='dict', options=dict(
-            bucket_accelerate_configuration=dict(type=bool, default=False),
-            bucket_acl=dict(type=bool, default=False),
-            bucket_cors=dict(type=bool, default=False),
-            bucket_encryption=dict(type=bool, default=False),
-            bucket_lifecycle_configuration=dict(type=bool, default=False),
-            bucket_notification_configuration=dict(type=bool, default=False),
-            bucket_location=dict(type=bool, default=False),
-            bucket_logging=dict(type=bool, default=False),
-            bucket_ownership_controls=dict(type=bool, default=False),
-            bucket_policy=dict(type=bool, default=False),
-            bucket_policy_status=dict(type=bool, default=False),
-            bucket_replication=dict(type=bool, default=False),
-            bucket_request_payment=dict(type=bool, default=False),
-            bucket_tagging=dict(type=bool, default=False),
-            bucket_website=dict(type=bool, default=False),
-            public_access_block=dict(type=bool, default=False),
-            )),
+            bucket_accelerate_configuration=dict(type='bool', default=False),
+            bucket_acl=dict(type='bool', default=False),
+            bucket_cors=dict(type='bool', default=False),
+            bucket_encryption=dict(type='bool', default=False),
+            bucket_lifecycle_configuration=dict(type='bool', default=False),
+            bucket_location=dict(type='bool', default=False),
+            bucket_logging=dict(type='bool', default=False),
+            bucket_notification_configuration=dict(type='bool', default=False),
+            bucket_ownership_controls=dict(type='bool', default=False),
+            bucket_policy=dict(type='bool', default=False),
+            bucket_policy_status=dict(type='bool', default=False),
+            bucket_replication=dict(type='bool', default=False),
+            bucket_request_payment=dict(type='bool', default=False),
+            bucket_tagging=dict(type='bool', default=False),
+            bucket_website=dict(type='bool', default=False),
+            public_access_block=dict(type='bool', default=False),
+        )),
         transform_location=dict(type='bool', default=False)
     )
 
@@ -398,6 +403,7 @@ def main():
     else:
         module.exit_json(msg="Retrieved s3 info.", **result)
 
-## MAIN ##
+
+# MAIN
 if __name__ == '__main__':
     main()
