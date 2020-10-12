@@ -169,18 +169,6 @@ buckets:
       bucket_cors: dictionary data
       # ...etc
   type: list
-
-# if name options was specified
-bucket_name:
-  description: "Name of the bucket requested"
-  sample: "my_bucket"
-  type: str
-
-# if name_filter was specified
-bucket_name_filter:
-  description: "String to match bucket name"
-  sample: "buckets_prefix"
-  type: str
 '''
 
 try:
