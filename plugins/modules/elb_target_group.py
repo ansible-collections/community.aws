@@ -380,7 +380,6 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from distutils.version import LooseVersion
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
@@ -437,7 +436,7 @@ def wait_for_status(connection, module, target_group_arn, targets, status):
 
 
 def fail_if_ip_target_type_not_supported(module):
-    if LooseVersion(botocore.__version__) < LooseVersion('1.7.2'):
+    if not module.botocore_at_least('1.7.2'):
         module.fail_json(msg="target_type ip requires botocore version 1.7.2 or later. Version %s is installed" %
                          botocore.__version__)
 
