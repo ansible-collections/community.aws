@@ -380,6 +380,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
@@ -406,15 +407,18 @@ def get_target_group_tags(connection, module, target_group_arn):
         module.fail_json_aws(e, msg="Couldn't get target group tags")
 
 
-def get_target_group(connection, module):
+def get_target_group(connection, module, retry_missing=False):
+    extra_codes = ['TargetGroupNotFound'] if retry_missing else []
     try:
-        target_group_paginator = connection.get_paginator('describe_target_groups')
-        return (target_group_paginator.paginate(Names=[module.params.get("name")]).build_full_result())['TargetGroups'][0]
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        if e.response['Error']['Code'] == 'TargetGroupNotFound':
-            return None
-        else:
-            module.fail_json_aws(e, msg="Couldn't get target group")
+        target_group_paginator = connection.get_paginator('describe_target_groups').paginate(Names=[module.params.get("name")])
+        jittered_retry = AWSRetry.jittered_backoff(retries=10, catch_extra_error_codes=extra_codes)
+        result = jittered_retry(target_group_paginator.build_full_result)()
+    except is_boto3_error_code('TargetGroupNotFound'):
+        return None
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Couldn't get target group")
+
+    return result['TargetGroups'][0]
 
 
 def wait_for_status(connection, module, target_group_arn, targets, status):
@@ -698,7 +702,7 @@ def create_or_update_target_group(connection, module):
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't create target group")
 
-        tg = get_target_group(connection, module)
+        tg = get_target_group(connection, module, retry_missing=True)
 
         if module.params.get("targets"):
             if target_type != "lambda":
