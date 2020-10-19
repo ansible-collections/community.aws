@@ -183,6 +183,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
@@ -386,11 +387,8 @@ def get_group(connection, module, name):
     try:
         paginator = connection.get_paginator('get_group')
         return paginator.paginate(GroupName=name).build_full_result()
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchEntity':
-            return None
-        else:
-            raise
+    except is_boto3_error_code('NoSuchEntity'):
+        return None
 
 
 @AWSRetry.exponential_backoff()
@@ -399,11 +397,8 @@ def get_attached_policy_list(connection, module, name):
     try:
         paginator = connection.get_paginator('list_attached_group_policies')
         return paginator.paginate(GroupName=name).build_full_result()['AttachedPolicies']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchEntity':
-            return None
-        else:
-            raise
+    except is_boto3_error_code('NoSuchEntity'):
+        return None
 
 
 def main():

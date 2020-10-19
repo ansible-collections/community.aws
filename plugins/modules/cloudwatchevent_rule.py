@@ -155,6 +155,7 @@ except ImportError:
     pass  # handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -174,12 +175,9 @@ class CloudWatchEventRule(object):
         """Returns the existing details of the rule in AWS"""
         try:
             rule_info = self.client.describe_rule(Name=self.name)
-        except botocore.exceptions.ClientError as e:
-            error_code = e.response.get('Error', {}).get('Code')
-            if error_code == 'ResourceNotFoundException':
-                return {}
-            self.module.fail_json_aws(e, msg="Could not describe rule %s" % self.name)
-        except botocore.exceptions.BotoCoreError as e:
+        except is_boto3_error_code('ResourceNotFoundException'):
+            return {}
+        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
             self.module.fail_json_aws(e, msg="Could not describe rule %s" % self.name)
         return self._snakify(rule_info)
 
@@ -237,12 +235,9 @@ class CloudWatchEventRule(object):
         """Lists the existing targets for the rule in AWS"""
         try:
             targets = self.client.list_targets_by_rule(Rule=self.name)
-        except botocore.exceptions.ClientError as e:
-            error_code = e.response.get('Error', {}).get('Code')
-            if error_code == 'ResourceNotFoundException':
-                return []
-            self.module.fail_json_aws(e, msg="Could not find target for rule %s" % self.name)
-        except botocore.exceptions.BotoCoreError as e:
+        except is_boto3_error_code('ResourceNotFoundException'):
+            return []
+        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
             self.module.fail_json_aws(e, msg="Could not find target for rule %s" % self.name)
         return self._snakify(targets)['targets']
 

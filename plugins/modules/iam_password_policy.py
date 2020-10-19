@@ -104,6 +104,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -169,11 +170,10 @@ class IAMConnection(object):
     def delete_password_policy(self, policy):
         try:
             results = policy.delete()
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            if e.response['Error']['Code'] == 'NoSuchEntity':
-                self.module.exit_json(changed=False, task_status={'IAM': "Couldn't find IAM Password Policy"})
-            else:
-                self.module.fail_json_aws(e, msg="Couldn't delete IAM Password Policy")
+        except is_boto3_error_code('NoSuchEntity'):
+            self.module.exit_json(changed=False, task_status={'IAM': "Couldn't find IAM Password Policy"})
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+            self.module.fail_json_aws(e, msg="Couldn't delete IAM Password Policy")
         return camel_dict_to_snake_dict(results)
 
 

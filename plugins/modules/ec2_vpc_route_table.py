@@ -233,6 +233,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
@@ -373,11 +374,8 @@ def ensure_tags(connection=None, module=None, resource_id=None, tags=None, purge
 def describe_route_tables_with_backoff(connection, **params):
     try:
         return connection.describe_route_tables(**params)['RouteTables']
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'InvalidRouteTableID.NotFound':
-            return None
-        else:
-            raise
+    except is_boto3_error_code('InvalidRouteTableID.NotFound'):
+        return None
 
 
 def get_route_table_by_id(connection, module, route_table_id):

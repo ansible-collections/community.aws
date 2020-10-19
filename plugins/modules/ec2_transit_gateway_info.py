@@ -170,6 +170,7 @@ except ImportError:
     pass  # handled by imported AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
@@ -206,11 +207,9 @@ class AnsibleEc2TgwInfo(object):
         try:
             response = self._connection.describe_transit_gateways(
                 TransitGatewayIds=transit_gateway_ids, Filters=filters)
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidTransitGatewayID.NotFound':
-                self._results['transit_gateways'] = []
-                return
-            raise
+        except is_boto3_error_code('InvalidTransitGatewayID.NotFound'):
+            self._results['transit_gateways'] = []
+            return
 
         for transit_gateway in response['TransitGateways']:
             transit_gateway_info.append(camel_dict_to_snake_dict(transit_gateway, ignore_list=['Tags']))

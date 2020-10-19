@@ -224,6 +224,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -373,12 +374,9 @@ def find_asgs(conn, module, name=None, tags=None):
                         tg_paginator = elbv2.get_paginator('describe_target_groups')
                         tg_result = tg_paginator.paginate(TargetGroupArns=asg['target_group_arns']).build_full_result()
                         asg['target_group_names'] = [tg['TargetGroupName'] for tg in tg_result['TargetGroups']]
-                    except ClientError as e:
-                        if e.response['Error']['Code'] == 'TargetGroupNotFound':
-                            asg['target_group_names'] = []
-                        else:
-                            module.fail_json_aws(e, msg="Failed to describe Target Groups")
-                    except BotoCoreError as e:
+                    except is_boto3_error_code('TargetGroupNotFound'):
+                        asg['target_group_names'] = []
+                    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
                         module.fail_json_aws(e, msg="Failed to describe Target Groups")
             else:
                 asg['target_group_names'] = []

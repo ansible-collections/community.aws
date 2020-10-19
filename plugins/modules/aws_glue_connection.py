@@ -131,6 +131,7 @@ physical_connection_requirements:
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 
@@ -161,11 +162,8 @@ def _get_glue_connection(connection, module):
 
     try:
         return connection.get_connection(**params)['Connection']
-    except (BotoCoreError, ClientError) as e:
-        if e.response['Error']['Code'] == 'EntityNotFoundException':
-            return None
-        else:
-            raise e
+    except is_boto3_error_code('EntityNotFoundException'):
+        return None
 
 
 def _compare_glue_connection_params(user_params, current_params):

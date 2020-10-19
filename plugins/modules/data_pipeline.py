@@ -211,6 +211,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 DP_ACTIVE_STATES = ['ACTIVE', 'SCHEDULED']
@@ -361,9 +362,8 @@ def activate_pipeline(client, module):
     else:
         try:
             client.activate_pipeline(pipelineId=dp_id)
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "InvalidRequestException":
-                module.fail_json(msg="You need to populate your pipeline before activation.")
+        except is_boto3_error_code('InvalidRequestException'):
+            module.fail_json(msg="You need to populate your pipeline before activation.")
         try:
             pipeline_status_timeout(client, dp_id, status=DP_ACTIVE_STATES,
                                     timeout=timeout)

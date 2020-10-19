@@ -93,6 +93,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
@@ -129,13 +130,13 @@ def create_placement_group(connection, module):
     try:
         connection.create_placement_group(
             GroupName=name, Strategy=strategy, DryRun=module.check_mode)
-    except (BotoCoreError, ClientError) as e:
-        if e.response['Error']['Code'] == "DryRunOperation":
-            module.exit_json(changed=True, placement_group={
-                "name": name,
-                "state": 'DryRun',
-                "strategy": strategy,
-            })
+    except is_boto3_error_code('DryRunOperation'):
+        module.exit_json(changed=True, placement_group={
+            "name": name,
+            "state": 'DryRun',
+            "strategy": strategy,
+        })
+    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
             msg="Couldn't create placement group [%s]" % name)

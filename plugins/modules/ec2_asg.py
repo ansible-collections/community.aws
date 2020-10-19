@@ -535,6 +535,7 @@ except ImportError:
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 ASG_ATTRIBUTES = ('AvailabilityZones', 'DefaultCooldown', 'DesiredCapacity',
@@ -851,12 +852,9 @@ def elb_healthy(asg_connection, elb_connection, group_name):
         # but has not yet show up in the ELB
         try:
             lb_instances = describe_instance_health(elb_connection, lb, instances)
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidInstance':
-                return None
-
-            module.fail_json_aws(e, msg="Failed to get load balancer.")
-        except botocore.exceptions.BotoCoreError as e:
+        except is_boto3_error_code('InvalidInstance'):
+            return None
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Failed to get load balancer.")
 
         for i in lb_instances.get('InstanceStates'):
@@ -883,12 +881,9 @@ def tg_healthy(asg_connection, elbv2_connection, group_name):
         # but has not yet show up in the ELB
         try:
             tg_instances = describe_target_health(elbv2_connection, tg, instances)
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidInstance':
-                return None
-
-            module.fail_json_aws(e, msg="Failed to get target group.")
-        except botocore.exceptions.BotoCoreError as e:
+        except is_boto3_error_code('InvalidInstance'):
+            return None
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Failed to get target group.")
 
         for i in tg_instances.get('TargetHealthDescriptions'):

@@ -201,6 +201,7 @@ except ImportError:
     pass  # handled by AnsibleAwsModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def create_lifecycle_rule(client, module):
@@ -226,12 +227,9 @@ def create_lifecycle_rule(client, module):
     try:
         current_lifecycle = client.get_bucket_lifecycle_configuration(Bucket=name)
         current_lifecycle_rules = current_lifecycle['Rules']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchLifecycleConfiguration':
-            current_lifecycle_rules = []
-        else:
-            module.fail_json_aws(e)
-    except BotoCoreError as e:
+    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
+        current_lifecycle_rules = []
+    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
     rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
@@ -390,12 +388,9 @@ def destroy_lifecycle_rule(client, module):
     # Get the bucket's current lifecycle rules
     try:
         current_lifecycle_rules = client.get_bucket_lifecycle_configuration(Bucket=name)['Rules']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchLifecycleConfiguration':
-            current_lifecycle_rules = []
-        else:
-            module.fail_json_aws(e)
-    except BotoCoreError as e:
+    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
+        current_lifecycle_rules = []
+    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
     # Create lifecycle

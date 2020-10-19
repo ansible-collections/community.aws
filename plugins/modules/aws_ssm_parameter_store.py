@@ -133,6 +133,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def update_parameter(client, module, args):
@@ -213,9 +214,9 @@ def delete_parameter(client, module):
         response = client.delete_parameter(
             Name=module.params.get('name')
         )
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'ParameterNotFound':
-            return False, {}
+    except is_boto3_error_code('ParameterNotFound'):
+        return False, {}
+    except ClientError as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="deleting parameter")
 
     return True, response

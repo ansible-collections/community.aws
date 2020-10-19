@@ -200,6 +200,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
@@ -470,14 +471,11 @@ def create_instance_profiles(connection, module, params, role):
     # Make sure an instance profile is created
     try:
         connection.create_instance_profile(InstanceProfileName=params['RoleName'], Path=params['Path'], aws_retry=True)
-    except ClientError as e:
+    except is_boto3_error_code('EntityAlreadyExists'):
         # If the profile already exists, no problem, move on.
         # Implies someone's changing things at the same time...
-        if e.response['Error']['Code'] == 'EntityAlreadyExists':
-            return False
-        else:
-            module.fail_json_aws(e, msg="Unable to create instance profile for role {0}".format(params['RoleName']))
-    except BotoCoreError as e:
+        return False
+    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to create instance profile for role {0}".format(params['RoleName']))
 
     # And attach the role to the profile
@@ -553,12 +551,9 @@ def get_role_with_backoff(connection, module, name):
 def get_role(connection, module, name):
     try:
         return connection.get_role(RoleName=name, aws_retry=True)['Role']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchEntity':
-            return None
-        else:
-            module.fail_json_aws(e, msg="Unable to get role {0}".format(name))
-    except BotoCoreError as e:
+    except is_boto3_error_code('NoSuchEntity'):
+        return None
+    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to get role {0}".format(name))
 
 

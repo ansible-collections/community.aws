@@ -235,6 +235,7 @@ except ImportError as e:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
@@ -623,8 +624,8 @@ def iterate_all(attr, map_method, **kwargs):
                 args['Marker'] = data['Nextmarker']
                 continue
             break
-        except ClientError as e:
-            if e.response['Error']['Code'] == "ThrottlingException" and wait < 600:
+        except is_boto3_error_code('ThrottlingException'):
+            if wait < 600:
                 sleep(wait)
                 wait = wait * 2
                 continue

@@ -227,6 +227,7 @@ except ImportError:
     pass  # handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
@@ -246,10 +247,8 @@ def get_queue_name(module, is_fifo=False):
 def get_queue_url(client, name):
     try:
         return client.get_queue_url(QueueName=name)['QueueUrl']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'AWS.SimpleQueueService.NonExistentQueue':
-            return None
-        raise
+    except is_boto3_error_code('AWS.SimpleQueueService.NonExistentQueue'):
+        return None
 
 
 def describe_queue(client, queue_url):
