@@ -220,18 +220,18 @@ EXAMPLES = '''
 '''
 
 import json
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
-                                                                     camel_dict_to_snake_dict,
-                                                                     compare_aws_tags,
-                                                                     snake_dict_to_camel_dict,
-                                                                     compare_policies,
-                                                                     )
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError, ParamValidationError
 except ImportError:
     pass  # handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 
 
 def get_queue_name(module, is_fifo=False):

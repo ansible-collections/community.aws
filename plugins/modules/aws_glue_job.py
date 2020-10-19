@@ -185,15 +185,15 @@ timeout:
     sample: 300
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-
 # Non-ansible imports
 import copy
 try:
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
-    pass
+    pass  # Handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def _get_glue_job(connection, module, glue_job_name):

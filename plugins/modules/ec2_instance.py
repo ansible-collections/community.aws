@@ -813,6 +813,7 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 from ansible.module_utils.six import string_types
 from ansible.module_utils.six.moves.urllib import parse as urlparse
 
+import ansible_collections.amazon.aws.plugins.module_utils.ec2 as ec2_utils
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
