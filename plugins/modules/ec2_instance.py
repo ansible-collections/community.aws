@@ -815,6 +815,7 @@ from ansible.module_utils.six.moves.urllib import parse as urlparse
 
 import ansible_collections.amazon.aws.plugins.module_utils.ec2 as ec2_utils
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
@@ -1698,15 +1699,12 @@ def ensure_present(existing_matches, changed, ec2, state):
 
 def run_instances(ec2, **instance_spec):
     try:
-        return ec2.run_instances(aws_retry=True, **instance_spec)
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'InvalidParameterValue' and "Invalid IAM Instance Profile ARN" in e.response['Error']['Message']:
-            # If the instance profile has just been created, it takes some time to be visible by ec2
-            # So we wait 10 second and retry the run_instances
-            time.sleep(10)
-            return ec2.run_instances(**instance_spec)
-        else:
-            raise e
+        return ec2.run_instances(**instance_spec)
+    except is_boto3_error_message('Invalid IAM Instance Profile ARN'):
+        # If the instance profile has just been created, it takes some time to be visible by ec2
+        # So we wait 10 second and retry the run_instances
+        time.sleep(10)
+        return ec2.run_instances(**instance_spec)
 
 
 def main():

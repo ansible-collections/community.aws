@@ -758,6 +758,7 @@ from ansible.module_utils.six import string_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.core import get_boto3_client_method_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
@@ -1036,11 +1037,8 @@ def promote_replication_instance(client, module, instance, read_replica):
         try:
             call_method(client, module, method_name='promote_read_replica', parameters={'DBInstanceIdentifier': instance['DBInstanceIdentifier']})
             changed = True
-        except is_boto3_error_code('InvalidDBInstanceState') as e:
-            if 'DB Instance is not a read replica' in e.response['Error']['Message']:
-                pass
-            else:
-                raise e
+        except is_boto3_error_message('DB Instance is not a read replica'):
+            pass
     return changed
 
 

@@ -90,6 +90,7 @@ except ImportError:
     pass  # handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
 
 
 def describe_app(ebs, app_name, module):
@@ -208,13 +209,10 @@ def main():
                 else:
                     ebs.delete_application(ApplicationName=app_name)
                 changed = True
-            except BotoCoreError as e:
+            except is_boto3_error_message('It is currently pending deletion'):
+                changed = False
+            except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
                 module.fail_json_aws(e, msg="Cannot terminate app")
-            except ClientError as e:
-                if 'It is currently pending deletion.' not in e.response['Error']['Message']:
-                    module.fail_json_aws(e, msg="Cannot terminate app")
-                else:
-                    changed = False
 
             result = dict(changed=changed, app=app)
 

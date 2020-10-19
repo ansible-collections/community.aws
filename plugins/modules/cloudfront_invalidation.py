@@ -144,6 +144,7 @@ except ImportError:
     pass  # caught by imported AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
@@ -167,16 +168,13 @@ class CloudFrontInvalidationServiceManager(object):
                 return response, False
             else:
                 return response, True
-        except BotoCoreError as e:
+        except is_boto3_error_message('Your request contains a caller reference that was used for a previous invalidation '
+                                      'batch for the same distribution.'):
+            self.module.warn("InvalidationBatch target paths are not modifiable. "
+                             "To make a new invalidation please update caller_reference.")
+            return current_invalidation_response, False
+        except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
             self.module.fail_json_aws(e, msg="Error creating CloudFront invalidations.")
-        except ClientError as e:
-            if ('Your request contains a caller reference that was used for a previous invalidation batch '
-                    'for the same distribution.' in e.response['Error']['Message']):
-                self.module.warn("InvalidationBatch target paths are not modifiable. "
-                                 "To make a new invalidation please update caller_reference.")
-                return current_invalidation_response, False
-            else:
-                self.module.fail_json_aws(e, msg="Error creating CloudFront invalidations.")
 
     def get_invalidation(self, distribution_id, caller_reference):
         current_invalidation = {}
