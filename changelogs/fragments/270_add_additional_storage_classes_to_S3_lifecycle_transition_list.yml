@@ -1,0 +1,2 @@
+minor_changes:
+  - s3_lifecycle module - Add support to s3 lifecycle policies intelligent tiering and deep archive (https://github.com/ansible-collections/community.aws/issues/270)
