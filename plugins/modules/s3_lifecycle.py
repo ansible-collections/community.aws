@@ -17,8 +17,6 @@ author: "Rob White (@wimnat)"
 notes:
   - If specifying expiration time as days then transition time must also be specified in days
   - If specifying expiration time as a date then transition time must also be specified as a date
-requirements:
-  - python-dateutil
 options:
   name:
     description:
