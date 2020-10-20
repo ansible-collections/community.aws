@@ -203,7 +203,6 @@ import time
 
 try:
     import botocore
-    from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -255,7 +254,7 @@ def pipeline_description(client, dp_id):
     """
     try:
         return client.describe_pipelines(pipelineIds=[dp_id])
-    except ClientError:
+    except is_boto3_error_code('PipelineNotFoundException', 'PipelineDeletedException'):
         raise DataPipelineNotFound
 
 

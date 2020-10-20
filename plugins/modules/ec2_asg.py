@@ -595,13 +595,13 @@ def describe_launch_templates(connection, launch_template):
         try:
             lt = connection.describe_launch_templates(LaunchTemplateIds=[launch_template['launch_template_id']])
             return lt
-        except (botocore.exceptions.ClientError) as e:
+        except is_boto3_error_code('InvalidLaunchTemplateName.NotFoundException'):
             module.fail_json(msg="No launch template found matching: %s" % launch_template)
     else:
         try:
             lt = connection.describe_launch_templates(LaunchTemplateNames=[launch_template['launch_template_name']])
             return lt
-        except (botocore.exceptions.ClientError) as e:
+        except is_boto3_error_code('InvalidLaunchTemplateName.NotFoundException'):
             module.fail_json(msg="No launch template found matching: %s" % launch_template)
 
 
