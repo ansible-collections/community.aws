@@ -478,13 +478,13 @@ def main():
     if expiration_date is not None:
         try:
             datetime.datetime.strptime(expiration_date, "%Y-%m-%dT%H:%M:%S.000Z")
-        except ValueError as e:
+        except ValueError:
             module.fail_json(msg="expiration_date is not a valid ISO-8601 format. The time must be midnight and a timezone of GMT must be included")
 
     if transition_date is not None:
         try:
             datetime.datetime.strptime(transition_date, "%Y-%m-%dT%H:%M:%S.000Z")
-        except ValueError as e:
+        except ValueError:
             module.fail_json(msg="expiration_date is not a valid ISO-8601 format. The time must be midnight and a timezone of GMT must be included")
 
     if state == 'present':

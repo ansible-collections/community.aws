@@ -255,7 +255,7 @@ def pipeline_description(client, dp_id):
     """
     try:
         return client.describe_pipelines(pipelineIds=[dp_id])
-    except ClientError as e:
+    except ClientError:
         raise DataPipelineNotFound
 
 
