@@ -136,6 +136,8 @@ options:
     description:
       - The algorithm type determines how the load balancer selects targets when routing requests.
         The possible values are C(round_robin) or C(least_outstanding_requests).
+      - The algorithm type is only supported when the target is an instance or an IP address and the load balancer is
+        an application load balancer.
       - The default is C(round_robin).
     required: false
     choices: ['round_robin', 'least_outstanding_requests']
@@ -751,8 +753,9 @@ def create_or_update_target_group(connection, module):
     # Get current attributes
     current_tg_attributes = get_tg_attributes(connection, module, tg['TargetGroupArn'])
 
-    if algorithm_type != current_tg_attributes['load_balancing.algorithm.type']:
-        update_attributes.append({'Key': 'load_balancing.algorithm.type', 'Value': algorithm_type})
+    if target_type in ['instance', 'ip']:
+        if algorithm_type != current_tg_attributes['load_balancing.algorithm.type']:
+            update_attributes.append({'Key': 'load_balancing.algorithm.type', 'Value': algorithm_type})
     if deregistration_delay_timeout is not None:
         if str(deregistration_delay_timeout) != current_tg_attributes['deregistration_delay_timeout_seconds']:
             update_attributes.append({'Key': 'deregistration_delay.timeout_seconds', 'Value': str(deregistration_delay_timeout)})
