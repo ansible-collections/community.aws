@@ -754,7 +754,7 @@ def create_or_update_target_group(connection, module):
     current_tg_attributes = get_tg_attributes(connection, module, tg['TargetGroupArn'])
 
     if target_type in ['instance', 'ip']:
-        if algorithm_type != current_tg_attributes['load_balancing.algorithm.type']:
+        if algorithm_type != current_tg_attributes['load_balancing_algorithm_type']:
             update_attributes.append({'Key': 'load_balancing.algorithm.type', 'Value': algorithm_type})
     if deregistration_delay_timeout is not None:
         if str(deregistration_delay_timeout) != current_tg_attributes['deregistration_delay_timeout_seconds']:
