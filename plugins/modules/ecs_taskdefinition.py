@@ -459,6 +459,20 @@ def main():
 
             # No revision explicitly specified. Attempt to find an active, matching revision that has all the properties requested
             for td in existing_definitions_in_family:
+                # sanitize parameters based on type and default value
+                for container in module.params['containers']:
+                    for param in ('memory', 'cpu', 'memoryReservation'):
+                        if param in container:
+                            container[param] = int(container[param])
+                    if 'portMappings' in container:
+                        for port_mapping in container['portMappings']:
+                            for port in ('hostPort', 'containerPort'):
+                                if port in port_mapping:
+                                    port_mapping[port] = int(port_mapping[port])
+                            if 'protocol' not in port_mapping:
+                                port_mapping['protocol'] = 'tcp'
+                    if 'essential' not in container:
+                        container['essential'] = True
                 requested_volumes = module.params['volumes'] or []
                 requested_containers = module.params['containers'] or []
                 requested_task_role_arn = module.params['task_role_arn']
