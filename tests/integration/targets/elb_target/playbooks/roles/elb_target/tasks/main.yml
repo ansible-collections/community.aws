@@ -240,6 +240,36 @@
           - result.target_health_descriptions.target.id == ec2.instance_ids[0]
           - result.target_health_descriptions.target_health == healthy_state
 
+    - name: verify algorithm type is round robin
+      elb_target:
+        target_group_name: "{{ tg_name }}-used"
+        target_id: "{{ ec2.instance_ids[0] }}"
+        state: present
+        target_status: healthy
+        target_status_timeout: 400
+        algorithm_type: round_robin
+      register: result
+
+    - name: algorithm type is round robin
+      assert:
+        that:
+          - not result.changed
+
+    - name: change algorithm type to least_outstanding_requests
+      elb_target:
+        target_group_name: "{{ tg_name }}-used"
+        target_id: "{{ ec2.instance_ids[0] }}"
+        state: present
+        target_status: healthy
+        target_status_timeout: 400
+        algorithm_type: least_outstanding_requests
+      register: result
+
+    - name: algorithm type is least_outstanding_requests
+      assert:
+        that:
+          - result.changed
+
     # ============================================================
 
     - name: remove a target from used target group

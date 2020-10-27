@@ -132,6 +132,15 @@ options:
     required: false
     choices: ['instance', 'ip', 'lambda']
     type: str
+  algorithm_type:
+    description:
+      - The algorithm type determines how the load balancer selects targets when routing requests.
+        The possible values are C(round_robin) or C(least_outstanding_requests).
+      - The default is C(round_robin).
+    required: false
+    choices: ['round_robin', 'least_outstanding_requests']
+    type: str
+    default: rount_robin
   targets:
     description:
       - A list of targets to assign to the target group. This parameter defaults to an empty list. Unless you set the 'modify_targets' parameter then
@@ -227,6 +236,7 @@ EXAMPLES = r'''
     health_check_path: /
     successful_response_codes: "200,250-260"
     target_type: ip
+    algorithm_type: least_outstanding_requests
     targets:
       - Id: 10.0.0.10
         Port: 80
@@ -453,6 +463,7 @@ def create_or_update_target_group(connection, module):
     new_target_group = False
     params = dict()
     target_type = module.params.get("target_type")
+    algorithm_type = module.params.get("algorithm_type")
     params['Name'] = module.params.get("name")
     params['TargetType'] = target_type
     if target_type != "lambda":
@@ -740,6 +751,8 @@ def create_or_update_target_group(connection, module):
     # Get current attributes
     current_tg_attributes = get_tg_attributes(connection, module, tg['TargetGroupArn'])
 
+    if algorithm_type != current_tg_attributes['load_balancing.algorithm.type']:
+        update_attributes.append({'Key': 'load_balancing.algorithm.type', 'Value': algorithm_type})
     if deregistration_delay_timeout is not None:
         if str(deregistration_delay_timeout) != current_tg_attributes['deregistration_delay_timeout_seconds']:
             update_attributes.append({'Key': 'deregistration_delay.timeout_seconds', 'Value': str(deregistration_delay_timeout)})
@@ -836,6 +849,7 @@ def main():
         successful_response_codes=dict(),
         tags=dict(default={}, type='dict'),
         target_type=dict(choices=['instance', 'ip', 'lambda']),
+        algorithm_type=dict(choices=['round_robin', 'least_outstanding_requests'], default='round_robin'),
         targets=dict(type='list', elements='dict'),
         unhealthy_threshold_count=dict(type='int'),
         vpc_id=dict(),
