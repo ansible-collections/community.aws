@@ -140,7 +140,7 @@ options:
     required: false
     choices: ['round_robin', 'least_outstanding_requests']
     type: str
-    default: rount_robin
+    default: round_robin
   targets:
     description:
       - A list of targets to assign to the target group. This parameter defaults to an empty list. Unless you set the 'modify_targets' parameter then
