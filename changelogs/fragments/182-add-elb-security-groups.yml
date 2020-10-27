@@ -1,0 +1,2 @@
+minor_change:
+- 'elb_security_group: new module to update security groups on an existing elb.'
