@@ -1,0 +1,2 @@
+bugfixes:
+  - s3_sync tag calculation (https://github.com/ansible-collections/community.aws/issues/272)
