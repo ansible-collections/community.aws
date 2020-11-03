@@ -1,23 +1,20 @@
 ---
-- name: set connection information for all tasks
-  set_fact:
-    aws_connection_info: &aws_connection_info
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token }}"
-      region: "{{ aws_region }}"
-  no_log: true
 - name: S3 bucket creation
   collections:
     - amazon.aws
     - community.general
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
   block:
     # ============================================================
     - name: Create simple s3_bucket
       s3_bucket:
         name: "{{ resource_prefix }}-testbucket-ansible"
         state: present
-        <<: *aws_connection_info
       register: output
 
     - assert:
@@ -44,7 +41,7 @@
 
     - name: Prepare file with size bigger than chunk size
       shell: |
-        dd if=/dev/zero of=test4.txt bs=1M count=6
+        dd if=/dev/zero of=test4.txt bs=1M count=10
       args:
         chdir: "{{ output_dir }}/s3_sync"
 
@@ -52,7 +49,6 @@
       s3_sync:
         bucket: "{{ resource_prefix }}-testbucket-ansible"
         file_root: "{{ output_dir }}/s3_sync"
-        <<: *aws_connection_info
       register: output
     - assert:
         that:
@@ -63,7 +59,6 @@
       s3_sync:
         bucket: "{{ resource_prefix }}-testbucket-ansible"
         file_root: "{{ output_dir }}/s3_sync"
-        <<: *aws_connection_info
       register: output
     - assert:
         that:
@@ -75,7 +70,6 @@
         bucket: "{{ resource_prefix }}-testbucket-ansible"
         file_root: "{{ output_dir }}/s3_sync"
         file_change_strategy: checksum
-        <<: *aws_connection_info
       register: output
     - assert:
         that:
@@ -85,7 +79,7 @@
     # DOCUMENTATION EXAMPLES
     # ============================================================
     - name: all the options
-      community.aws.s3_sync:
+      s3_sync:
         bucket: "{{ resource_prefix }}-testbucket-ansible"
         file_root: "{{ output_dir }}/s3_sync"
         mime_map:
@@ -97,7 +91,6 @@
         cache_control: "public, max-age=31536000"
         include: "*"
         exclude: "*.txt,.*"
-        <<: *aws_connection_info
       register: output
 
     - assert:
@@ -110,7 +103,6 @@
         name: "{{item}}"
         state: absent
         force: true
-        <<: *aws_connection_info
       ignore_errors: yes
       with_items:
         - "{{ resource_prefix }}-testbucket-ansible"
