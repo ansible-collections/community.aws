@@ -346,7 +346,7 @@ class CloudFrontServiceManager:
             func = partial(self.client.list_distributions)
             distribution_list = self.paginated_response(func, 'DistributionList')
             if distribution_list['Quantity'] == 0:
-                return {}
+                return []
             else:
                 distribution_list = distribution_list['Items']
             if not keyed:
@@ -360,7 +360,7 @@ class CloudFrontServiceManager:
             func = partial(self.client.list_distributions_by_web_acl_id, WebAclId=web_acl_id)
             distribution_list = self.paginated_response(func, 'DistributionList')
             if distribution_list['Quantity'] == 0:
-                return {}
+                return []
             else:
                 distribution_list = distribution_list['Items']
             return self.keyed_list_helper(distribution_list)
