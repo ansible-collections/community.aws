@@ -1,4 +1,5 @@
 ---
+## Task file for setup/teardown AWS resources for aws_ssm integration testing
 - name: 'aws_ssm connection plugin integration test resource creation'
   collections:
     - amazon.aws
@@ -9,7 +10,6 @@
       security_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
   block:
-
     - name: AMI Lookup
       ec2_ami_info:
         owners: 'amazon'
