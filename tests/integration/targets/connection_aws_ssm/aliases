@@ -1,6 +1,4 @@
-# reason: unstable
-# reason: slow
-disabled
+unstable
 
 cloud/aws
 shippable/aws/group4
