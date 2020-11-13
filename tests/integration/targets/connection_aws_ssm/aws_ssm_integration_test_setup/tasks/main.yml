@@ -60,7 +60,7 @@
         state: present
         create_instance_profile: yes
         managed_policy:
-        - AmazonEC2RoleforSSM
+        - AmazonSSMManagedInstanceCore
       register: role_output
 
     - name: Create S3 bucket
