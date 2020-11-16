@@ -1367,7 +1367,7 @@ from ansible.module_utils._text import to_text, to_native
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 from ansible.module_utils.common.dict_transformations import recursive_diff
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags, ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, compare_aws_tags, ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 import datetime
 
@@ -1444,7 +1444,7 @@ def delete_distribution(client, module, distribution):
 
 def update_distribution(client, module, config, distribution_id, e_tag):
     try:
-        return client.update_distribution(DistributionConfig=config, Id=distribution_id, IfMatch=e_tag, aws_retry=True)['Distribution']
+        return client.update_distribution(aws_retry=True, DistributionConfig=config, Id=distribution_id, IfMatch=e_tag)['Distribution']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error updating distribution to %s" % to_native(config))
 
@@ -2131,7 +2131,7 @@ def main():
         ]
     )
 
-    client = module.client('cloudfront', retry_decorator=AWSRetry.jittered_backoff(retries=10))
+    client = module.client('cloudfront', retry_decorator=AWSRetry.exponential_backoff(retries=3, delay=3))
 
     validation_mgr = CloudFrontValidationManager(module)
 
