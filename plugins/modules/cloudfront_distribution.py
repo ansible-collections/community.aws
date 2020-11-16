@@ -1444,7 +1444,7 @@ def delete_distribution(client, module, distribution):
 
 def update_distribution(client, module, config, distribution_id, e_tag):
     try:
-        return client.update_distribution(DistributionConfig=config, Id=distribution_id, IfMatch=e_tag)['Distribution']
+        return client.update_distribution(DistributionConfig=config, Id=distribution_id, IfMatch=e_tag, aws_retry=True)['Distribution']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error updating distribution to %s" % to_native(config))
 
@@ -2131,7 +2131,7 @@ def main():
         ]
     )
 
-    client = module.client('cloudfront')
+    client = module.client('cloudfront', retry_decorator=AWSRetry.jittered_backoff(retries=10))
 
     validation_mgr = CloudFrontValidationManager(module)
 
