@@ -1422,7 +1422,7 @@ def ansible_list_to_cloudfront_list(list_items=None, include_quantity=True):
 def create_distribution(client, module, config, tags):
     try:
         if not tags:
-            return client.create_distribution(DistributionConfig=config)['Distribution']
+            return client.create_distribution(aws_retry=True, DistributionConfig=config)['Distribution']
         else:
             distribution_config_with_tags = {
                 'DistributionConfig': config,
@@ -1430,14 +1430,14 @@ def create_distribution(client, module, config, tags):
                     'Items': tags
                 }
             }
-            return client.create_distribution_with_tags(DistributionConfigWithTags=distribution_config_with_tags)['Distribution']
+            return client.create_distribution_with_tags(aws_retry=True, DistributionConfigWithTags=distribution_config_with_tags)['Distribution']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error creating distribution")
 
 
 def delete_distribution(client, module, distribution):
     try:
-        return client.delete_distribution(Id=distribution['Distribution']['Id'], IfMatch=distribution['ETag'])
+        return client.delete_distribution(aws_retry=True, Id=distribution['Distribution']['Id'], IfMatch=distribution['ETag'])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error deleting distribution %s" % to_native(distribution['Distribution']))
 
@@ -1451,21 +1451,21 @@ def update_distribution(client, module, config, distribution_id, e_tag):
 
 def tag_resource(client, module, arn, tags):
     try:
-        return client.tag_resource(Resource=arn, Tags=dict(Items=tags))
+        return client.tag_resource(aws_retry=True, Resource=arn, Tags=dict(Items=tags))
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error tagging resource")
 
 
 def untag_resource(client, module, arn, tag_keys):
     try:
-        return client.untag_resource(Resource=arn, TagKeys=dict(Items=tag_keys))
+        return client.untag_resource(aws_retry=True, Resource=arn, TagKeys=dict(Items=tag_keys))
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error untagging resource")
 
 
 def list_tags_for_resource(client, module, arn):
     try:
-        response = client.list_tags_for_resource(Resource=arn)
+        response = client.list_tags_for_resource(aws_retry=True, Resource=arn)
         return boto3_tag_list_to_ansible_dict(response.get('Tags').get('Items'))
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Error listing tags for resource")
@@ -2131,7 +2131,7 @@ def main():
         ]
     )
 
-    client = module.client('cloudfront', retry_decorator=AWSRetry.exponential_backoff(retries=3, delay=3))
+    client = module.client('cloudfront', retry_decorator=AWSRetry.jittered_backoff())
 
     validation_mgr = CloudFrontValidationManager(module)
 
