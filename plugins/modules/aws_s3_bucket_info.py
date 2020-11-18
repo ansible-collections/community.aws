@@ -32,6 +32,7 @@ options:
       - Get info only about buckets name matching defined string
     type: str
     default: ""
+    version_added: 1.3.0
   bucket_facts:
     description:
       - Retrieve requested S3 bucket detailed information
@@ -103,6 +104,7 @@ options:
         type: bool
         default: False
     type: dict
+    version_added: 1.3.0
   transform_location:
     description:
       - S3 bucket location for default us-east-1 is normally reported as 'null'
@@ -110,6 +112,7 @@ options:
       - affects only queries with I(bucket_facts) > I(bucket_location) = true
     type: bool
     default: False
+    version_added: 1.3.0
 
 extends_documentation_fragment:
 - amazon.aws.aws
