@@ -804,3 +804,5 @@ releases:
       name: s3_metrics_configuration
       namespace: ''
     release_date: '2020-12-10'
+      minor_changes:
+      - aws_s3_bucket_info - new module options ``name:``, ``name_filter``, ``bucket_facts`` and ``transform_location`` (https://github.com/ansible-collections/community.aws/pull/260).
