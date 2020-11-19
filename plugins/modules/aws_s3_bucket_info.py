@@ -195,6 +195,7 @@ def get_bucket_list(module, connection, name="", name_filter=""):
     buckets = []
     filtered_buckets = []
     final_buckets = []
+
     # Get all buckets
     try:
         buckets = camel_dict_to_snake_dict(connection.list_buckets())['buckets']
@@ -247,6 +248,13 @@ def get_bucket_details(connection, name, requested_facts, transform_location):
                 # we just pass on error - error means that resources is undefined
                 except botocore.exceptions.ClientError:
                     pass
+            elif key == 'bucket_tagging':
+                all_facts[key] = {}
+                try:
+                    all_facts[key] = get_bucket_tagging(name, connection)
+                # we just pass on error - error means that resources is undefined
+                except botocore.exceptions.ClientError:
+                    pass
             else:
                 all_facts[key] = {}
                 try:
@@ -278,6 +286,25 @@ def get_bucket_location(name, connection, transform_location=False):
         return(data)
     except KeyError:
         return(data)
+
+
+@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
+def get_bucket_tagging(name, connection):
+    """
+    Get bucket tags and transform them using `boto3_tag_list_to_ansible_dict` function
+    """
+    data = connection.get_bucket_tagging(Bucket=name)
+
+    try:
+        bucket_tags = boto3_tag_list_to_ansible_dict(data['TagSet'])
+        return(bucket_tags)
+    except KeyError:
+        # Strip response metadata (not needed)
+        try:
+            data.pop('ResponseMetadata')
+            return(data)
+        except KeyError:
+            return(data)
 
 
 @AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
@@ -351,8 +378,8 @@ def main():
     connection = {}
     try:
         connection = module.client('s3')
-    except (connection.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg='Failed to connect to AWS')
+    except (connection.exceptions.ClientError, botocore.exceptions.BotoCoreError) as err_code:
+        module.fail_json_aws(err_code, msg='Failed to connect to AWS')
 
     # Get basic bucket list (name + creation date)
     bucket_list = get_bucket_list(module, connection, name, name_filter)
