@@ -89,5 +89,5 @@
     - name: Delete simple s3_buckets
       s3_bucket:
         name: "{{ item }}"
-        state: present
+        state: absent
       loop: "{{ testing_buckets }}"
