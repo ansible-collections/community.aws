@@ -95,6 +95,7 @@ rules:
     ]
 '''
 
+import ast
 try:
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
@@ -115,7 +116,8 @@ def create_or_update_bucket_cors(connection, module):
     except ClientError:
         current_camel_rules = []
 
-    new_camel_rules = snake_dict_to_camel_dict(rules, capitalize_first=True)
+    new_camel_rules = snake_dict_to_camel_dict(fix_list_dict(rules), capitalize_first=True)
+
     # compare_policies() takes two dicts and makes them hashable for comparison
     if compare_policies(new_camel_rules, current_camel_rules):
         changed = True
@@ -142,6 +144,12 @@ def destroy_bucket_cors(connection, module):
 
     module.exit_json(changed=changed)
 
+def fix_list_dict(camel_rules):
+    fixed_rules = []
+    for camel_rule in camel_rules:
+        fixed_rules.append(ast.literal_eval(camel_rule))
+
+    return fixed_rules
 
 def main():
 
