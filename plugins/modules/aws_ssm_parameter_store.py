@@ -65,7 +65,15 @@ options:
     choices: ['never', 'changed', 'always']
     default: changed
     type: str
+  tier:
+    description:
+      - Allows to create parameter with different tiers
+    required: false
+    choices: ['Standard', 'Advanced', 'Intelligent-Tiering']
+    default: Standard
+    type: str
 author:
+  - Davinder Pal ( @116davinder )
   - Nathan Webster (@nathanwebsterdotme)
   - Bill Wang (@ozbillwang) <ozbillwang@gmail.com>
   - Michael De La Rue (@mikedlr)
@@ -110,6 +118,13 @@ EXAMPLES = '''
     string_type: "String"
     value: "Test1234"
     overwrite_value: "always"
+
+- name: Create or update key/value pair in aws parameter store with tier
+  community.aws.aws_ssm_parameter_store:
+    name: "Hello"
+    description: "This is your first key"
+    value: "World"
+    tier: "Advanced"
 
 - name: recommend to use with aws_ssm lookup plugin
   ansible.builtin.debug:
@@ -156,7 +171,8 @@ def create_update_parameter(client, module):
     args = dict(
         Name=module.params.get('name'),
         Value=module.params.get('value'),
-        Type=module.params.get('string_type')
+        Type=module.params.get('string_type'),
+        Tier=module.params.get('tier')
     )
 
     if (module.params.get('overwrite_value') in ("always", "changed")):
@@ -236,6 +252,7 @@ def setup_module_object():
         decryption=dict(default=True, type='bool'),
         key_id=dict(default="alias/aws/ssm"),
         overwrite_value=dict(default='changed', choices=['never', 'changed', 'always']),
+        tier=dict(default='Standard', choices=['Standard', 'Advanced', 'Intelligent-Tiering']),
     )
 
     return AnsibleAWSModule(
