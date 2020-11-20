@@ -67,16 +67,12 @@ options:
     type: str
   tier:
     description:
-      - Allows to create parameter with different tiers
+      - Paramter Store Tier Type
     required: false
     choices: ['Standard', 'Advanced', 'Intelligent-Tiering']
     default: Standard
     type: str
-author:
-  - Davinder Pal ( @116davinder )
-  - Nathan Webster (@nathanwebsterdotme)
-  - Bill Wang (@ozbillwang) <ozbillwang@gmail.com>
-  - Michael De La Rue (@mikedlr)
+author: "Davinder Pal (@116davinder) <dpsangwal@gmail.com>"
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
