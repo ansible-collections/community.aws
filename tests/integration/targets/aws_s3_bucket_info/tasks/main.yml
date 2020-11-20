@@ -78,9 +78,9 @@
       assert:
         that:
           - item.bucket_acl.Owner is defined
-          - item.bucket_location.LocationConstraint is search(aws_region)
-          - item.bucket_tagging.facts is search("defined")
-          - item.bucket_tagging.integration is search("verified")
+          - item.bucket_location.LocationConstraint is defined
+          - item.bucket_tagging.facts is defined
+          - item.bucket_tagging.integration is defined
       loop: "{{ bucket_list.buckets }}"
       loop_control:
         label: "{{ item.name }}"
