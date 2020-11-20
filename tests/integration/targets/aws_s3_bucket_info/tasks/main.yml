@@ -78,7 +78,6 @@
       assert:
         that:
           - item.bucket_acl.Owner is defined
-          - item.bucket_location.LocationConstraint is defined
           - item.bucket_tagging.facts is defined
           - item.bucket_tagging.integration is defined
       loop: "{{ bucket_list.buckets }}"
