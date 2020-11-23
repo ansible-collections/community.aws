@@ -144,12 +144,14 @@ def destroy_bucket_cors(connection, module):
 
     module.exit_json(changed=changed)
 
+
 def fix_list_dict(camel_rules):
     fixed_rules = []
     for camel_rule in camel_rules:
         fixed_rules.append(ast.literal_eval(camel_rule))
 
     return fixed_rules
+
 
 def main():
 
