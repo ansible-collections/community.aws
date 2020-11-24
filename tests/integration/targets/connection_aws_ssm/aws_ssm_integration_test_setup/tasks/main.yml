@@ -105,15 +105,10 @@
         name: "{{resource_prefix}}-aws-ssm-s3"
       register: s3_output
 
-    - name: Create Inventory file for Linux host
+    - name: Create Inventory file
       template:
-        dest: "{{playbook_dir}}/inventory-linux.aws_ssm"
-        src: inventory-linux.aws_ssm.j2
-
-    - name: Create Inventory file for Windows host
-      template:
-        dest: "{{playbook_dir}}/inventory-windows.aws_ssm"
-        src: inventory-windows.aws_ssm.j2
+        dest: "{{playbook_dir}}/ssm_inventory"
+        src: inventory-combined.aws_ssm.j2
 
     - name: Create AWS Keys Environement
       template:

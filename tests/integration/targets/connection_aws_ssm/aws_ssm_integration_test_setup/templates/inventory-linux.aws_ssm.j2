@@ -1,11 +1,16 @@
-[aws_ssm]
+[aws_ssm_linux]
 {{ linux_output.instances[0].instance_id }} ansible_aws_ssm_instance_id={{ linux_output.instances[0].instance_id }} ansible_aws_ssm_region={{ aws_region }}
 
-[aws_ssm:vars]
+[aws_ssm_linux:vars]
 ansible_connection=community.aws.aws_ssm
 ansible_aws_ssm_bucket_name={{s3_output.name}}
 ansible_aws_ssm_plugin=/usr/local/sessionmanagerplugin/bin/session-manager-plugin
 ansible_python_interpreter=/usr/bin/env python
+remote_tmp=/tmp/ansible-remote
+action_prefix=
+
+[aws_ssm:children]
+aws_ssm_linux
 
 # support tests that target testhost
 [testhost:children]

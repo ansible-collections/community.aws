@@ -1,6 +1,6 @@
 - hosts: "{{ target_hosts }}"
   gather_facts: no
-  serial: 1
+  strategy: free
   tasks:
 
   ### test wait_for_connection plugin
