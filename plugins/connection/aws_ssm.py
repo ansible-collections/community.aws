@@ -286,6 +286,11 @@ class Connection(ConnectionBase):
             self.start_session()
         return self
 
+    def reset(self):
+        ''' start a fresh ssm session '''
+        display.vvvv('reset called on ssm connection')
+        return self.start_session()
+
     def start_session(self):
         ''' start ssm session '''
 
