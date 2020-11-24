@@ -63,11 +63,6 @@
         - AmazonSSMManagedInstanceCore
       register: role_output
 
-    - name: Create S3 bucket
-      s3_bucket:
-        name: "{{resource_prefix}}-aws-ssm-s3"
-      register: s3_output
-
     - name: Wait for IAM Role getting created
       pause:
         seconds: 10
@@ -104,6 +99,11 @@
     - name: Wait for EC2 to be available
       wait_for_connection:
         delay: 300
+
+    - name: Create S3 bucket
+      s3_bucket:
+        name: "{{resource_prefix}}-aws-ssm-s3"
+      register: s3_output
 
     - name: Create Inventory file for Linux host
       template:
