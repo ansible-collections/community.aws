@@ -67,19 +67,6 @@
       pause:
         seconds: 10
 
-    - name: Create Linux EC2 instance
-      ec2_instance:
-        instance_type: "{{instance_type}}"
-        image_id: "{{linux_ami_id}}"
-        wait: "yes"
-        instance_role: "{{role_output.iam_role.role_name}}"
-        name: "{{resource_prefix}}-integration-test-aws-ssm-linux"
-        user_data: |
-                    #!/bin/sh
-                    sudo systemctl start amazon-ssm-agent
-        state: present
-      register: linux_output
-
     - name: Create Windows EC2 instance
       ec2_instance:
         instance_type: "{{instance_type}}"
@@ -95,6 +82,19 @@
                     </powershell>
         state: present
       register: windows_output
+
+    - name: Create Linux EC2 instance
+      ec2_instance:
+        instance_type: "{{instance_type}}"
+        image_id: "{{linux_ami_id}}"
+        wait: "yes"
+        instance_role: "{{role_output.iam_role.role_name}}"
+        name: "{{resource_prefix}}-integration-test-aws-ssm-linux"
+        user_data: |
+                    #!/bin/sh
+                    sudo systemctl start amazon-ssm-agent
+        state: present
+      register: linux_output
 
     - name: Wait for EC2 to be available
       wait_for_connection:
