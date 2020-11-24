@@ -3,6 +3,9 @@
   serial: 1
   tasks:
 
+  ### test wait_for_connection plugin
+  - wait_for_connection:
+
   ### raw with unicode arg and output
 
   - name: raw with unicode arg and output
