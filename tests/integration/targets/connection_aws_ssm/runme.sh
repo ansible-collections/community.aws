@@ -28,5 +28,4 @@ cd ../connection
 # Execute Integration tests
 INVENTORY=../connection_aws_ssm/ssm_inventory ./test.sh \
     -e target_hosts=aws_ssm \
-    -e local_tmp=/tmp/ansible-local \
     "$@"
