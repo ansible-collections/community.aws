@@ -21,7 +21,7 @@
     # to ensure it exists when we need it for updating the policies
     - name: create an IAM role that can do nothing
       iam_role:
-        name: "{{ resource_prefix }}-kms-role"
+        name: '{{ kms_role_name }}'
         state: present
         assume_role_policy_document: '{"Version": "2012-10-17", "Statement": {"Action": "sts:AssumeRole", "Principal": {"Service": "ec2.amazonaws.com"}, "Effect": "Deny"} }'
       register: iam_role_result
@@ -137,7 +137,7 @@
       aws_kms:
         mode: grant
         alias: "alias/{{ resource_prefix }}-kms"
-        role_name: "{{ resource_prefix }}-kms-role"
+        role_name: '{{ kms_role_name }}'
         grant_types: "role,role grant"
 
     - name: find facts about the key
@@ -442,7 +442,7 @@
 
     - name: remove the IAM role
       iam_role:
-        name: "{{ resource_prefix }}-kms-role"
+        name: '{{ kms_role_name }}'
         state: absent
       register: iam_role_result
       ignore_errors: True
