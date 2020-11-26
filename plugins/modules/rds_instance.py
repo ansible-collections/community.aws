@@ -294,7 +294,7 @@ options:
     preferred_maintenance_window:
         description:
           - The weekly time range (in UTC) of at least 30 minutes, during which system maintenance can occur. The option must
-            be in the format "ddd:hh24:mi-ddd:hh24:mi" where ddd is one of Mon, Tue, Wed, Thu, Fri, Sat, Sun.
+            be in the format "ddd:hh24:mi-ddd:hh24:mi" where ddd is one of mon, tue, wed, thu, fri, sat, sun.
         aliases:
           - maintenance_window
         type: str
