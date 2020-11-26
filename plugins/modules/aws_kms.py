@@ -794,11 +794,16 @@ def update_key_rotation(connection, module, key, enable_key_rotation):
             return False
     except is_boto3_error_code('AccessDeniedException'):
         pass
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to get current key rotation status")
 
-    if enable_key_rotation:
-        connection.enable_key_rotation(KeyId=key_id)
-    else:
-        connection.disable_key_rotation(KeyId=key_id)
+    try:
+      if enable_key_rotation:
+          connection.enable_key_rotation(KeyId=key_id)
+      else:
+          connection.disable_key_rotation(KeyId=key_id)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to enable/disable key rotation")
     return True
 
 
