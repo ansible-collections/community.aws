@@ -414,6 +414,7 @@ statement_label = {
 }
 
 import json
+import re
 
 try:
     import botocore
@@ -910,8 +911,10 @@ def _clean_statement_principals(statement, clean_invalid_entries):
     if not isinstance(statement['Principal'].get('AWS'), list):
         statement['Principal']['AWS'] = list()
 
-    invalid_entries = [item for item in statement['Principal']['AWS'] if not item.startswith('arn:aws:iam::')]
-    valid_entries = [item for item in statement['Principal']['AWS'] if item.startswith('arn:aws:iam::')]
+    valid_princ = re.compile('^arn:aws:(iam|sts)::')
+
+    invalid_entries = [item for item in statement['Principal']['AWS'] if not valid_princ.match(item)]
+    valid_entries = [item for item in statement['Principal']['AWS'] if valid_princ.match(item)]
 
     if bool(invalid_entries) and clean_invalid_entries:
         statement['Principal']['AWS'] = valid_entries
