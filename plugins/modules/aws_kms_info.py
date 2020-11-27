@@ -387,7 +387,7 @@ def get_key_details(connection, module, key_id, tokens=None):
         key_id = result['Arn']
     except is_boto3_error_code('NotFoundException'):
         return None
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to obtain key metadata")
     result['KeyArn'] = result.pop('Arn')
 
@@ -448,7 +448,7 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
-                              mutually_exclusive=[['name', 'filters', 'key_id']],
+                              mutually_exclusive=[['alias', 'filters', 'key_id']],
                               supports_check_mode=True)
     if module._name == 'aws_kms_facts':
         module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
