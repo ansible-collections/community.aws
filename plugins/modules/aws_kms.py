@@ -125,6 +125,7 @@ options:
     - 'See also: U(https://docs.aws.amazon.com/kms/latest/APIReference/API_ScheduleKeyDeletion.html#KMS-ScheduleKeyDeletion-request-PendingWindowInDays)'
     type: int
     aliases: ['deletion_delay']
+    version_added: 1.3.0
   purge_tags:
     description: Whether the I(tags) argument should cause tags not in the list to
       be removed

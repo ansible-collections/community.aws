@@ -16,12 +16,31 @@ description:
     - This module was called C(aws_kms_facts) before Ansible 2.9. The usage did not change.
 author: "Will Thames (@willthames)"
 options:
+  alias:
+    description:
+      - Alias for key.
+      - Mutually exclusive with I(key_id) and I(filters).
+    required: false
+    aliases:
+      - key_alias
+    type: str
+    version_added: 1.3.0
+  key_id:
+    description:
+      - Key ID or ARN of the key.
+      - Mutually exclusive with I(alias) and I(filters).
+    required: false
+    aliases:
+      - key_arn
+    type: str
+    version_added: 1.3.0
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
         The filters aren't natively supported by boto3, but are supported to provide similar
         functionality to other modules. Standard tag filters (C(tag-key), C(tag-value) and
         C(tag:tagName)) are available, as are C(key-id) and C(alias)
+      - Mutually exclusive with I(alias) and I(key_id).
     type: dict
   pending_deletion:
     description: Whether to get full details (tags, grants etc.) of keys pending deletion
@@ -422,8 +441,8 @@ def get_kms_info(connection, module):
 
 def main():
     argument_spec = dict(
-        alias=dict(),
-        key_id=dict(),
+        alias=dict(aliases=['key_alias']),
+        key_id=dict(aliases=['key_arn']),
         filters=dict(type='dict'),
         pending_deletion=dict(type='bool', default=False),
     )
