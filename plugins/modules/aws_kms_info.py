@@ -346,7 +346,10 @@ def key_matches_filter(key, filtr):
     if filtr[0] == 'alias':
         return filtr[1] in key['aliases']
     if filtr[0].startswith('tag:'):
-        return key['tags'][filtr[0][4:]] == filtr[1]
+        tag_key = filtr[0][4:]
+        if tag_key not in key['tags']:
+            return False
+        return key['tags'].get(tag_key) == filtr[1]
 
 
 def key_matches_filters(key, filters):
