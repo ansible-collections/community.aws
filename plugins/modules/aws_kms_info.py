@@ -296,6 +296,14 @@ def get_enable_key_rotation_with_backoff(connection, key_id):
     return current_rotation_status.get('KeyRotationEnabled')
 
 
+def canonicalize_alias_name(alias):
+    if alias is None:
+        return None
+    if alias.startswith('alias/'):
+        return alias
+    return 'alias/' + alias
+
+
 def get_kms_tags(connection, module, key_id):
     # Handle pagination here as list_resource_tags does not have
     # a paginator
@@ -353,6 +361,10 @@ def get_key_details(connection, module, key_id, tokens=None):
         tokens = []
     try:
         result = get_kms_metadata_with_backoff(connection, key_id)['KeyMetadata']
+        # Make sure we have the canonical ARN, we might have been passed an alias
+        key_id = result['Arn']
+    except is_boto3_error_code('NotFoundException'):
+        return None
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to obtain key metadata")
     result['KeyArn'] = result.pop('Arn')
@@ -361,6 +373,7 @@ def get_key_details(connection, module, key_id, tokens=None):
         aliases = get_kms_aliases_lookup(connection)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to obtain aliases")
+    # We can only get aliases for our own account, so we don't need the full ARN
     result['aliases'] = aliases.get(result['KeyId'], [])
 
     if result['Origin'] == 'AWS_KMS':
@@ -384,21 +397,36 @@ def get_key_details(connection, module, key_id, tokens=None):
 
 
 def get_kms_info(connection, module):
-    try:
-        keys = get_kms_keys_with_backoff(connection)['Keys']
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to obtain keys")
-
-    return [get_key_details(connection, module, key['KeyId']) for key in keys]
+    if module.params.get('key_id'):
+        key_id = module.params.get('key_id')
+        details = get_key_details(connection, module, key_id)
+        if details:
+            return [details]
+        return []
+    elif module.params.get('alias'):
+        alias = canonicalize_alias_name(module.params.get('alias'))
+        details = get_key_details(connection, module, alias)
+        if details:
+            return [details]
+        return []
+    else:
+        try:
+            keys = get_kms_keys_with_backoff(connection)['Keys']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to obtain keys")
+        return [get_key_details(connection, module, key['KeyId']) for key in keys]
 
 
 def main():
     argument_spec = dict(
+        alias=dict(),
+        key_id=dict(),
         filters=dict(type='dict'),
         pending_deletion=dict(type='bool', default=False),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
+                              mutually_exclusive=[['name', 'filters', 'key_id']],
                               supports_check_mode=True)
     if module._name == 'aws_kms_facts':
         module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
