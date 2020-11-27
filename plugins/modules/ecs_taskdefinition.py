@@ -45,6 +45,8 @@ options:
     containers:
         description:
             - A list of containers definitions.
+            - 'A full list of options can be found in the boto3 docs in the containerDefinitions argument to register_task_definition:
+              U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html#ECS.Client.register_task_definition)'
         required: False
         type: list
         elements: dict
