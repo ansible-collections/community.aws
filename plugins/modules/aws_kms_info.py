@@ -309,7 +309,7 @@ def get_key_policy_with_backoff(connection, key_id, policy_name):
 def get_enable_key_rotation_with_backoff(connection, key_id):
     try:
         current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
-    except is_boto3_error_code('AccessDeniedException'):
+    except is_boto3_error_code(['AccessDeniedException', 'UnsupportedOperationException']) as e:
         return None
 
     return current_rotation_status.get('KeyRotationEnabled')
@@ -397,11 +397,7 @@ def get_key_details(connection, module, key_id, tokens=None):
         module.fail_json_aws(e, msg="Failed to obtain aliases")
     # We can only get aliases for our own account, so we don't need the full ARN
     result['aliases'] = aliases.get(result['KeyId'], [])
-
-    if result['Origin'] == 'AWS_KMS':
-        result['enable_key_rotation'] = get_enable_key_rotation_with_backoff(connection, key_id)
-    else:
-        result['enable_key_rotation'] = None
+    result['enable_key_rotation'] = get_enable_key_rotation_with_backoff(connection, key_id)
 
     if module.params.get('pending_deletion'):
         return camel_dict_to_snake_dict(result)
