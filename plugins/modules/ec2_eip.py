@@ -94,6 +94,8 @@ notes:
    - This module returns multiple changed statuses on disassociation or release.
      It returns an overall status based on any changes occurring. It also returns
      individual changed statuses for disassociation and release.
+   - Please note that this module doesn't currently support tagging. You must use the
+     amazon.aws.ec2_tag module to add any tags you require to this object.
 '''
 
 EXAMPLES = '''
