@@ -492,6 +492,8 @@ instances:
 '''
 
 import traceback
+import datetime
+
 
 try:
     import boto3
@@ -509,7 +511,14 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 def list_ec2_instances(connection, module):
 
     instance_ids = module.params.get("instance_ids")
+    uptime = module.params.get('uptime')
     filters = ansible_dict_to_boto3_filter_list(module.params.get("filters"))
+
+    # Determine oldest launch_time
+    if uptime is None:
+        oldest_launch_time = datetime.datetime.utcnow() + datetime.timedelta(days=30 * 365)
+    else:
+        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(hours=int(uptime))
 
     try:
         reservations_paginator = connection.get_paginator('describe_instances')
@@ -520,7 +529,11 @@ def list_ec2_instances(connection, module):
     # Get instances from reservations
     instances = []
     for reservation in reservations['Reservations']:
-        instances = instances + reservation['Instances']
+      for ec2_instance in reservation:
+          print(ec2_instance)
+          ec2_instance['launch_time'] = ec2_instance['launch_time'].replace(tzinfo=oldest_launch_time.tzinfo)
+          # if reservation['launch_time'] < oldest_launch_time:
+          instances = instances + reservation['Instances']
 
     # Turn the boto3 result in to ansible_friendly_snaked_names
     snaked_instances = [camel_dict_to_snake_dict(instance) for instance in instances]
@@ -535,6 +548,7 @@ def list_ec2_instances(connection, module):
 def main():
 
     argument_spec = dict(
+        uptime=dict(required=False, type='int', default=None),
         instance_ids=dict(default=[], type='list', elements='str'),
         filters=dict(default={}, type='dict')
     )
