@@ -6,26 +6,22 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 DOCUMENTATION = '''
 ---
 module: aws_api_gateway_domain
 short_description: Manage AWS API Gateway custom domains
 description:
-     - Allows for the management of API Gateway custom domains. To have nice domain names for your API GW Rest APIs.
-     - AWS API Gateway custom domain setups use CloudFront behind the scenenes.
+     - Manages API Gateway custom domains for API GW Rest APIs.
+     - AWS API Gateway custom domain setups use CloudFront behind the scenes.
        So you will get a CloudFront distribution as a result, configured to be aliased with your domain.
-version_added: '2.9'
+version_added: '1.2.2'
 requirements: [ boto3 ]
 author:
     - 'Stefan Horning (@stefanhorning)'
 options:
   domain_name:
     description:
-      - Domain name you want to use for your API GW deployment
+      - Domain name you want to use for your API GW deployment.
     required: true
     type: str
   certificate_arn:
@@ -35,19 +31,19 @@ options:
   security_policy:
     description:
       - Set allowed TLS versions through AWS defined policies. Currently only TLS_1_0 and TLS_1_2 are available.
-      - Can only be set with botocore 1.12.175 or newer. On older boto versions this flag will automatically be ignored
+      - Can only be set with botocore 1.12.175 or newer. On older boto versions this flag will automatically be ignored.
     default: TLS_1_2
     choices: ['TLS_1_0', 'TLS_1_2']
     type: str
   endpoint_type:
     description:
-      - API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use REGIONAL or PRIVATE
+      - API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use REGIONAL or PRIVATE.
     default: EDGE
     choices: ['EDGE', 'REGIONAL', 'PRIVATE']
     type: str
   domain_mappings:
     description:
-      - Map your domain base paths to your API GW REST APIs, you previously created. Use provide ID of the API setup and the release stage.
+      - Map your domain base paths to your API GW REST APIs, that you previously created. Use provided ID of the API setup and the release stage.
       - "domain_mappings should be a list of dictionaries containing three keys: base_path, rest_api_id and stage."
       - "Example: I([{ base_path: v1, rest_api_id: abc123, stage: production }])"
       - if you want base path to be just I(/) omit the param completely or set it to empty string.
@@ -55,7 +51,7 @@ options:
     type: list
   state:
     description:
-      - Create or delete custom domain setup
+      - Create or delete custom domain setup.
     default: present
     choices: [ 'present', 'absent' ]
     type: str
@@ -93,7 +89,7 @@ EXAMPLES = '''
 
 RETURN = '''
 response:
-  description: The data returned by create_domain_name (or update and delete) nad create_base_path_mapping methods in boto3
+  description: The data returned by create_domain_name (or update and delete) and create_base_path_mapping methods by boto3.
   returned: success
   type: dict
   sample:
