@@ -71,7 +71,7 @@ EXAMPLES = r'''
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
 
-- name: grab info
+- name: Gather information about any instance with Name beginning with RHEL and been running at least 60 minutes
   community.aws.ec2_instance_info:
     region: "{{ ec2_region }}"
     uptime: 60
