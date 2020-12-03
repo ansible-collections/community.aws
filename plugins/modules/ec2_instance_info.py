@@ -33,6 +33,11 @@ options:
     required: false
     default: {}
     type: dict
+  uptime:
+    description:
+      - minimum running uptime in minutes of instances.  For example if uptime is 60, it would return all instances that have run more than 60 minutes.
+    required: false
+    type: int
 
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -65,6 +70,14 @@ EXAMPLES = r'''
   community.aws.ec2_instance_info:
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
+
+- name: grab info
+  community.aws.ec2_instance_info:
+    region: "{{ ec2_region }}"
+    uptime: 60
+    filters:
+      "tag:Name": "RHEL-*"
+  register: ec2_node_info
 
 '''
 
@@ -494,7 +507,6 @@ instances:
 import traceback
 import datetime
 
-
 try:
     import boto3
     import botocore
@@ -514,26 +526,18 @@ def list_ec2_instances(connection, module):
     uptime = module.params.get('uptime')
     filters = ansible_dict_to_boto3_filter_list(module.params.get("filters"))
 
-    # Determine oldest launch_time
-    if uptime is None:
-        oldest_launch_time = datetime.datetime.utcnow() + datetime.timedelta(days=30 * 365)
-    else:
-        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(hours=int(uptime))
-
     try:
         reservations_paginator = connection.get_paginator('describe_instances')
         reservations = reservations_paginator.paginate(InstanceIds=instance_ids, Filters=filters).build_full_result()
     except ClientError as e:
         module.fail_json_aws(e, msg="Failed to list ec2 instances")
 
+    timedelta = int(uptime) if uptime else 0
+    oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(hours=timedelta)
     # Get instances from reservations
     instances = []
     for reservation in reservations['Reservations']:
-      for ec2_instance in reservation:
-          print(ec2_instance)
-          ec2_instance['launch_time'] = ec2_instance['launch_time'].replace(tzinfo=oldest_launch_time.tzinfo)
-          # if reservation['launch_time'] < oldest_launch_time:
-          instances = instances + reservation['Instances']
+        instances += [instance for instance in reservation['Instances'] if instance['LaunchTime'].replace(tzinfo=None) < oldest_launch_time]
 
     # Turn the boto3 result in to ansible_friendly_snaked_names
     snaked_instances = [camel_dict_to_snake_dict(instance) for instance in instances]
