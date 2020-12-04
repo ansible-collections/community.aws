@@ -35,7 +35,7 @@ options:
     type: dict
   uptime:
     description:
-      - minimum running uptime in minutes of instances.  For example if uptime is 60, it would return all instances that have run more than 60 minutes.
+      - minimum running uptime in hours of instances.  For example if uptime is 60, it would return all instances that have run more than 60 hours.
     required: false
     type: int
 
@@ -71,7 +71,7 @@ EXAMPLES = r'''
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
 
-- name: Gather information about any instance with Name beginning with RHEL and been running at least 60 minutes
+- name: Gather information about any instance with Name beginning with RHEL and been running at least 60 hours
   community.aws.ec2_instance_info:
     region: "{{ ec2_region }}"
     uptime: 60
