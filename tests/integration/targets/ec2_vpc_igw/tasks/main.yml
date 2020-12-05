@@ -26,7 +26,6 @@
     ec2_vpc_igw:
       state: present
       vpc_id: "{{ vpc_result.vpc.id }}"
-      <<: *aws_connection_info
     register: vpc_igw_create
 
   - name: assert creation happened (expected changed=true)
