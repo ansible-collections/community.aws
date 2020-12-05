@@ -22,9 +22,16 @@ options:
     type: str
   tags:
     description:
-      - "A dict of tags to apply to the internet gateway. Any tags currently applied to the internet gateway and not present here will be removed."
+      - A dict of tags to apply to the internet gateway.
+      - To remove all tags set I(tags={}) and I(purge_tags=true).
     aliases: [ 'resource_tags' ]
     type: dict
+  purge_tags:
+    description:
+      - Remove tags not listed in I(tags).
+    type: bool
+    default: true
+    version_added: 1.3.0
   state:
     description:
       - Create or terminate the IGW
@@ -109,9 +116,10 @@ class AnsibleEc2Igw(object):
         vpc_id = self._module.params.get('vpc_id')
         state = self._module.params.get('state', 'present')
         tags = self._module.params.get('tags')
+        purge_tags = self._module.params.get('purge_tags')
 
         if state == 'present':
-            self.ensure_igw_present(vpc_id, tags)
+            self.ensure_igw_present(vpc_id, tags, purge_tags)
         elif state == 'absent':
             self.ensure_igw_absent(vpc_id)
 
@@ -134,11 +142,13 @@ class AnsibleEc2Igw(object):
         return igw
 
     def check_input_tags(self, tags):
+        if tags is None:
+            return
         nonstring_tags = [k for k, v in tags.items() if not isinstance(v, string_types)]
         if nonstring_tags:
             self._module.fail_json(msg='One or more tags contain non-string values: {0}'.format(nonstring_tags))
 
-    def ensure_tags(self, igw_id, tags, add_only):
+    def ensure_tags(self, igw_id, tags, purge_tags):
         final_tags = []
 
         filters = ansible_dict_to_boto3_filter_list({'resource-id': igw_id, 'resource-type': 'internet-gateway'})
@@ -148,7 +158,9 @@ class AnsibleEc2Igw(object):
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self._module.fail_json_aws(e, msg="Couldn't describe tags")
 
-        purge_tags = bool(not add_only)
+        if tags is None:
+            return boto3_tag_list_to_ansible_dict(cur_tags.get('Tags'))
+
         to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(cur_tags.get('Tags')), tags, purge_tags)
         final_tags = boto3_tag_list_to_ansible_dict(cur_tags.get('Tags'))
 
@@ -220,7 +232,7 @@ class AnsibleEc2Igw(object):
 
         return self._results
 
-    def ensure_igw_present(self, vpc_id, tags):
+    def ensure_igw_present(self, vpc_id, tags, purge_tags):
         self.check_input_tags(tags)
 
         igw = self.get_matching_igw(vpc_id)
@@ -246,7 +258,7 @@ class AnsibleEc2Igw(object):
 
         igw['vpc_id'] = vpc_id
 
-        igw['tags'] = self.ensure_tags(igw_id=igw['internet_gateway_id'], tags=tags, add_only=False)
+        igw['tags'] = self.ensure_tags(igw_id=igw['internet_gateway_id'], tags=tags, purge_tags=purge_tags)
 
         igw_info = self.get_igw_info(igw)
         self._results.update(igw_info)
@@ -258,7 +270,8 @@ def main():
     argument_spec = dict(
         vpc_id=dict(required=True),
         state=dict(default='present', choices=['present', 'absent']),
-        tags=dict(default=dict(), required=False, type='dict', aliases=['resource_tags'])
+        tags=dict(required=False, type='dict', aliases=['resource_tags']),
+        purge_tags=dict(default=True, type='bool'),
     )
 
     module = AnsibleAWSModule(
