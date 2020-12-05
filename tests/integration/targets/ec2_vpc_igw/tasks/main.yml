@@ -165,6 +165,18 @@
       that:
         - igw_info is failed
 
+  # ============================================================
+  - name: test state=absent when already deleted (expected changed=false)
+    ec2_vpc_igw:
+      state: absent
+      vpc_id: "{{ vpc_result.vpc.id }}"
+    register: vpc_igw_delete
+
+  - name: assert state=absent (expected changed=false)
+    assert:
+      that:
+          - vpc_igw_delete is not changed
+
   always:
     # ============================================================
     - name: tidy up IGW
