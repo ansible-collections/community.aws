@@ -3,23 +3,19 @@
   collections:
     - amazon.aws
 
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
   block:
-  - name: set up aws connection info
-    set_fact:
-      aws_connection_info: &aws_connection_info
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token }}"
-        region: "{{ aws_region }}"
-    no_log: yes
-
   # ============================================================
   - name: create a VPC
     ec2_vpc_net:
       name: "{{ resource_prefix }}-vpc"
       state: present
       cidr_block: "10.232.232.128/26"
-      <<: *aws_connection_info
       tags:
         Name: "{{ resource_prefix }}-vpc"
         Description: "Created by ansible-test"
@@ -47,7 +43,6 @@
     ec2_vpc_igw:
       state: present
       vpc_id: "{{ vpc_result.vpc.id }}"
-      <<: *aws_connection_info
     register: vpc_igw_recreate
 
   - name: assert recreation did nothing (expected changed=false)
@@ -62,7 +57,6 @@
     ec2_vpc_igw:
       state: absent
       vpc_id: "{{ vpc_result.vpc.id }}"
-      <<: *aws_connection_info
     register: vpc_igw_delete
 
   - name: assert state=absent (expected changed=true)
@@ -76,7 +70,6 @@
       ec2_vpc_igw:
         state: absent
         vpc_id: "{{ vpc_result.vpc.id }}"
-        <<: *aws_connection_info
       ignore_errors: true
 
     - name: tidy up VPC
@@ -84,5 +77,4 @@
         name: "{{ resource_prefix }}-vpc"
         state: absent
         cidr_block: "10.232.232.128/26"
-        <<: *aws_connection_info
       ignore_errors: true
