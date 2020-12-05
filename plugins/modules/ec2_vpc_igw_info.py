@@ -94,6 +94,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
@@ -105,7 +106,7 @@ def get_internet_gateway_info(internet_gateway):
     return internet_gateway_info
 
 
-def list_internet_gateways(client, module):
+def list_internet_gateways(connection, module):
     params = dict()
 
     params['Filters'] = ansible_dict_to_boto3_filter_list(module.params.get('filters'))
@@ -114,7 +115,7 @@ def list_internet_gateways(client, module):
         params['InternetGatewayIds'] = module.params.get("internet_gateway_ids")
 
     try:
-        all_internet_gateways = client.describe_internet_gateways(**params)
+        all_internet_gateways = connection.describe_internet_gateways(aws_retry=True, **params)
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
@@ -134,7 +135,7 @@ def main():
 
     # Validate Requirements
     try:
-        connection = module.client('ec2')
+        connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
