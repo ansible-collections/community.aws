@@ -11,6 +11,18 @@
       region: "{{ aws_region }}"
   block:
   # ============================================================
+  - name: Fetch IGWs in check_mode
+    ec2_vpc_igw_info:
+    register: igw_info
+    check_mode: True
+
+  - name: Assert success
+    assert:
+      that:
+          - igw_info is successful
+          - '"internet_gateways" in igw_info'
+
+  # ============================================================
   - name: create a VPC
     ec2_vpc_net:
       name: "{{ resource_prefix }}-vpc"
@@ -38,6 +50,83 @@
           - '"gateway_id" in vpc_igw_create'
 
   # ============================================================
+  - name: Save IDs for later
+    set_fact:
+      igw_id: '{{ vpc_igw_create.gateway_id }}'
+      vpc_id: '{{ vpc_result.vpc.id }}'
+
+  # ============================================================
+  - name: Search for internet gateway by VPC
+    ec2_vpc_igw_info:
+      filters:
+        attachment.vpc-id: '{{ vpc_id }}'
+    register:  igw_info
+
+  - name: 'Check standard IGW details'
+    assert:
+      that:
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 1
+          - '"attachments" in current_igw'
+          - current_igw.attachments | length == 1
+          - '"state" in current_igw.attachments[0]'
+          - current_igw.attachments[0].state == "available"
+          - '"vpc_id" in current_igw.attachments[0]'
+          - current_igw.attachments[0].vpc_id == vpc_id
+          - '"internet_gateway_id" in current_igw'
+          - current_igw.internet_gateway_id == igw_id
+          - '"tags" in current_igw'
+    vars:
+      current_igw: '{{ igw_info.internet_gateways[0] }}'
+
+  # ============================================================
+  - name: Fetch IGW by ID
+    ec2_vpc_igw_info:
+      internet_gateway_ids: '{{ igw_id }}'
+    register:  igw_info
+
+  - name: 'Check standard IGW details'
+    assert:
+      that:
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 1
+          - '"attachments" in current_igw'
+          - current_igw.attachments | length == 1
+          - '"state" in current_igw.attachments[0]'
+          - current_igw.attachments[0].state == "available"
+          - '"vpc_id" in current_igw.attachments[0]'
+          - current_igw.attachments[0].vpc_id == vpc_id
+          - '"internet_gateway_id" in current_igw'
+          - current_igw.internet_gateway_id == igw_id
+          - '"tags" in current_igw'
+    vars:
+      current_igw: '{{ igw_info.internet_gateways[0] }}'
+
+  # ============================================================
+  - name: Fetch IGW by ID (list)
+    ec2_vpc_igw_info:
+      internet_gateway_ids:
+      - '{{ igw_id }}'
+    register:  igw_info
+
+  - name: 'Check standard IGW details'
+    assert:
+      that:
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 1
+          - '"attachments" in current_igw'
+          - current_igw.attachments | length == 1
+          - '"state" in current_igw.attachments[0]'
+          - current_igw.attachments[0].state == "available"
+          - '"vpc_id" in current_igw.attachments[0]'
+          - current_igw.attachments[0].vpc_id == vpc_id
+          - '"internet_gateway_id" in current_igw'
+          - current_igw.internet_gateway_id == igw_id
+          - '"tags" in current_igw'
+    vars:
+      current_igw: '{{ igw_info.internet_gateways[0] }}'
+
+  # ============================================================
   - name: attempt to recreate internet gateway on VPC (expected changed=false)
     ec2_vpc_igw:
       state: present
@@ -47,9 +136,9 @@
   - name: assert recreation did nothing (expected changed=false)
     assert:
       that:
-          - 'vpc_igw_recreate.changed == False'
-          - 'vpc_igw_recreate.gateway_id == vpc_igw_create.gateway_id'
-          - 'vpc_igw_recreate.vpc_id == vpc_igw_create.vpc_id'
+          - vpc_igw_recreate is not changed
+          - vpc_igw_recreate.gateway_id == igw_id
+          - vpc_igw_recreate.vpc_id == vpc_id
 
   # ============================================================
   - name: test state=absent (expected changed=true)
@@ -62,6 +151,19 @@
     assert:
       that:
           - 'vpc_igw_delete.changed'
+
+  # ============================================================
+  - name: Fetch IGW by ID (list)
+    ec2_vpc_igw_info:
+      internet_gateway_ids:
+      - '{{ igw_id }}'
+    register:  igw_info
+    ignore_errors: True
+
+  - name: 'Check IGW does not exist'
+    assert:
+      that:
+        - igw_info is failed
 
   always:
     # ============================================================
