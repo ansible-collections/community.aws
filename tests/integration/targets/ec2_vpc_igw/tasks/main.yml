@@ -38,6 +38,9 @@
     ec2_vpc_igw:
       state: present
       vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        tag_one: '{{ resource_prefix }} One'
+        "Tag Two": 'two {{ resource_prefix }}'
     register: vpc_igw_create
 
   - name: assert creation happened (expected changed=true)
@@ -47,6 +50,9 @@
           - 'vpc_igw_create.gateway_id.startswith("igw-")'
           - 'vpc_igw_create.vpc_id == vpc_result.vpc.id'
           - '"tags" in vpc_igw_create'
+          - vpc_igw_create.tags | length == 2
+          - vpc_igw_create.tags["tag_one"] == '{{ resource_prefix }} One'
+          - vpc_igw_create.tags["Tag Two"] == 'two {{ resource_prefix }}'
           - '"gateway_id" in vpc_igw_create'
 
   # ============================================================
@@ -76,6 +82,17 @@
           - '"internet_gateway_id" in current_igw'
           - current_igw.internet_gateway_id == igw_id
           - '"tags" in current_igw'
+          - current_igw.tags | length == 2
+          - '"key" in current_igw.tags[0]'
+          - '"value" in current_igw.tags[0]'
+          - '"key" in current_igw.tags[1]'
+          - '"value" in current_igw.tags[1]'
+          # Order isn't guaranteed in boto3 style, so just check the keys and
+          # values we expect are in there.
+          - current_igw.tags[0].key in ["tag_one", "Tag Two"]
+          - current_igw.tags[1].key in ["tag_one", "Tag Two"]
+          - current_igw.tags[0].value in [resource_prefix + " One", "two " + resource_prefix]
+          - current_igw.tags[1].value in [resource_prefix + " One", "two " + resource_prefix]
     vars:
       current_igw: '{{ igw_info.internet_gateways[0] }}'
 
@@ -83,6 +100,7 @@
   - name: Fetch IGW by ID
     ec2_vpc_igw_info:
       internet_gateway_ids: '{{ igw_id }}'
+      convert_tags: yes
     register:  igw_info
 
   - name: 'Check standard IGW details'
@@ -99,6 +117,11 @@
           - '"internet_gateway_id" in current_igw'
           - current_igw.internet_gateway_id == igw_id
           - '"tags" in current_igw'
+          - current_igw.tags | length == 2
+          - '"tag_one" in current_igw.tags'
+          - '"Tag Two" in current_igw.tags'
+          - current_igw.tags["tag_one"] == '{{ resource_prefix }} One'
+          - current_igw.tags["Tag Two"] == 'two {{ resource_prefix }}'
     vars:
       current_igw: '{{ igw_info.internet_gateways[0] }}'
 
@@ -139,6 +162,91 @@
           - vpc_igw_recreate is not changed
           - vpc_igw_recreate.gateway_id == igw_id
           - vpc_igw_recreate.vpc_id == vpc_id
+          - '"tags" in vpc_igw_create'
+          - vpc_igw_create.tags | length == 2
+          - vpc_igw_create.tags["tag_one"] == '{{ resource_prefix }} One'
+          - vpc_igw_create.tags["Tag Two"] == 'two {{ resource_prefix }}'
+
+  # ============================================================
+  - name: Update the tags (no change)
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        tag_one: '{{ resource_prefix }} One'
+        "Tag Two": 'two {{ resource_prefix }}'
+    register: vpc_igw_recreate
+
+  - name: assert recreation did nothing (expected changed=false)
+    assert:
+      that:
+          - vpc_igw_recreate is not changed
+          - vpc_igw_recreate.gateway_id == igw_id
+          - vpc_igw_recreate.vpc_id == vpc_id
+          - '"tags" in vpc_igw_recreate'
+          - vpc_igw_recreate.tags | length == 2
+          - vpc_igw_recreate.tags["tag_one"] == '{{ resource_prefix }} One'
+          - vpc_igw_recreate.tags["Tag Two"] == 'two {{ resource_prefix }}'
+
+  # ============================================================
+  - name: Update the tags - remove and add
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        tag_three: '{{ resource_prefix }} Three'
+        "Tag Two": 'two {{ resource_prefix }}'
+    register: vpc_igw_update
+
+  - name: assert recreation did nothing (expected changed=false)
+    assert:
+      that:
+          - vpc_igw_update is changed
+          - vpc_igw_update.gateway_id == igw_id
+          - vpc_igw_update.vpc_id == vpc_id
+          - '"tags" in vpc_igw_update'
+          - vpc_igw_update.tags | length == 2
+          - vpc_igw_update.tags["tag_three"] == '{{ resource_prefix }} Three'
+          - vpc_igw_update.tags["Tag Two"] == 'two {{ resource_prefix }}'
+
+  # ============================================================
+  - name: Update the tags add without purge
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      purge_tags: no
+      tags:
+        tag_one: '{{ resource_prefix }} One'
+    register: vpc_igw_update
+
+  - name: assert tags added
+    assert:
+      that:
+          - vpc_igw_update is changed
+          - vpc_igw_update.gateway_id == igw_id
+          - vpc_igw_update.vpc_id == vpc_id
+          - '"tags" in vpc_igw_update'
+          - vpc_igw_update.tags | length == 3
+          - vpc_igw_update.tags["tag_one"] == '{{ resource_prefix }} One'
+          - vpc_igw_update.tags["tag_three"] == '{{ resource_prefix }} Three'
+          - vpc_igw_update.tags["Tag Two"] == 'two {{ resource_prefix }}'
+
+  # ============================================================
+  - name: Remove all tags
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags: {}
+    register: vpc_igw_update
+
+  - name: assert tags added
+    assert:
+      that:
+          - vpc_igw_update is changed
+          - vpc_igw_update.gateway_id == igw_id
+          - vpc_igw_update.vpc_id == vpc_id
+          - '"tags" in vpc_igw_update'
+          - vpc_igw_update.tags | length == 0
 
   # ============================================================
   - name: test state=absent (expected changed=true)
