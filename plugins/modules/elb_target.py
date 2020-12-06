@@ -19,6 +19,7 @@ options:
     description:
       - The default behaviour for targets that are unused is to leave them registered. If instead you would like to remove them
         set I(deregister_unused) to yes.
+    default: false
     type: bool
   target_az:
     description:

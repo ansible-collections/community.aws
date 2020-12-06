@@ -127,6 +127,7 @@ options:
     description:
       - Whether or not to delete VPN connections routes that are not specified in the task.
     type: bool
+    default: false
   wait_timeout:
     description:
       - How long before wait gives up, in seconds.

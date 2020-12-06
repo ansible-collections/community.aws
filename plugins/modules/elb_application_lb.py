@@ -50,12 +50,12 @@ options:
   deletion_protection:
     description:
       - Indicates whether deletion protection for the ELB is enabled.
-    default: no
+      - Defaults to C(false).
     type: bool
   http2:
     description:
       - Indicates whether to enable HTTP2 routing.
-    default: no
+      - Defaults to C(false).
     type: bool
   idle_timeout:
     description:

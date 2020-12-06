@@ -42,6 +42,7 @@ options:
             - Always create new task definition.
         required: False
         type: bool
+        default: false
     containers:
         description:
             - A list of containers definitions.

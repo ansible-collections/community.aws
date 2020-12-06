@@ -53,8 +53,8 @@ options:
   alias:
     description:
       - Indicates if this is an alias record.
+      - Defaults to C(false).
     type: bool
-    default: false
   alias_hosted_zone_id:
     description:
       - The hosted zone identifier.

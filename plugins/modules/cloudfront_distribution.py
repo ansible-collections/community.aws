@@ -492,7 +492,7 @@ options:
     enabled:
       description:
         - A boolean value that specifies whether the distribution is enabled or disabled.
-      default: false
+        - Defaults to C(false).
       type: bool
 
     viewer_certificate:
@@ -564,8 +564,8 @@ options:
     ipv6_enabled:
       description:
         - Determines whether IPv6 support is enabled or not.
+        - Defaults to C(false).
       type: bool
-      default: false
 
     wait:
       description:

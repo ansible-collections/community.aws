@@ -67,6 +67,7 @@ options:
       - To modify bandwidth or location the connection will need to be deleted and recreated.
         By default this will not happen - this option must be set to True.
     type: bool
+    default: false
 '''
 
 EXAMPLES = """

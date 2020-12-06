@@ -72,7 +72,7 @@ options:
     description:
       - By default the module will not upload a certificate that is already uploaded into AWS.
       - If I(dup_ok=True), it will upload the certificate as long as the name is unique.
-    default: False
+      - Defaults to C(false).
     type: bool
 
 requirements: [ "boto" ]

@@ -88,6 +88,7 @@ options:
           - Force deployment of service even if there are no changes.
         required: false
         type: bool
+        default: false
     deployment_configuration:
         description:
           - Optional parameters that control the deployment_configuration.

@@ -89,8 +89,8 @@ options:
   hard_modify:
     description:
       - Whether to destroy and recreate an existing cache cluster if necessary in order to modify its state.
+      - Defaults to C(false).
     type: bool
-    default: false
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2

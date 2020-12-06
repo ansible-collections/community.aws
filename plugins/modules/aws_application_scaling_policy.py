@@ -97,9 +97,10 @@ options:
         required: no
         type: int
     override_task_capacity:
-        description: Whether or not to override values of minimum and/or maximum tasks if it's already set.
+        description:
+        - Whether or not to override values of minimum and/or maximum tasks if it's already set.
+        - Defaults to C(false).
         required: no
-        default: no
         type: bool
 extends_documentation_fragment:
 - amazon.aws.aws

@@ -93,6 +93,7 @@ options:
     description:
       - Specifies whether active tracing with X-ray is enabled for the API GW stage.
     type: bool
+    default: false
   endpoint_type:
     description:
       - Type of endpoint configuration, use C(EDGE) for an edge optimized API endpoint,

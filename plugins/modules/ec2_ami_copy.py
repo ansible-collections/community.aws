@@ -38,6 +38,7 @@ options:
     description:
       - Whether or not the destination snapshots of the copied AMI should be encrypted.
     type: bool
+    default: false
   kms_key_id:
     description:
       - KMS key id used to encrypt the image. If not specified, uses default EBS Customer Master Key (CMK) for your account.
