@@ -64,17 +64,17 @@ options:
     type: str
   cache_subnet_group:
     description:
-      - The subnet group name to associate with. Only use if inside a vpc.
-      - Required if inside a vpc
+      - The subnet group name to associate with. Only use if inside a VPC.
+      - Required if inside a VPC.
     type: str
   security_group_ids:
     description:
-      - A list of vpc security group IDs to associate with this cache cluster. Only use if inside a vpc.
+      - A list of VPC security group IDs to associate with this cache cluster. Only use if inside a VPC.
     type: list
     elements: str
   cache_security_groups:
     description:
-      - A list of cache security group names to associate with this cache cluster. Must be an empty list if inside a vpc.
+      - A list of cache security group names to associate with this cache cluster. Must be an empty list if inside a VPC.
     type: list
     elements: str
   zone:

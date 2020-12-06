@@ -63,7 +63,7 @@ options:
         type: json
     purge_lifecycle_policy:
         description:
-            - if yes, remove the lifecycle policy from the repository.
+            - if C(true), remove the lifecycle policy from the repository.
             - Defaults to C(false).
         required: false
         type: bool
@@ -76,7 +76,7 @@ options:
         type: str
     scan_on_push:
         description:
-            - if yes, images are scanned for known vulnerabilities after being pushed to the repository.
+            - if C(true), images are scanned for known vulnerabilities after being pushed to the repository.
             - I(scan_on_push) requires botocore >= 1.13.3
         required: false
         default: false

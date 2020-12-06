@@ -96,7 +96,7 @@ options:
     memory:
         description:
             - The amount (in MiB) of memory used by the task. If using the EC2 launch type, this field is optional and any value can be used.
-            - If using the Fargate launch type, this field is required and is limited by the cpu.
+            - If using the Fargate launch type, this field is required and is limited by the CPU.
         required: false
         type: str
 extends_documentation_fragment:
