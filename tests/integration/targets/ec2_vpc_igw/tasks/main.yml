@@ -33,7 +33,40 @@
         Description: "Created by ansible-test"
     register: vpc_result
 
+  - name: Assert success
+    assert:
+      that:
+          - vpc_result is successful
+
   # ============================================================
+  - name: Search for internet gateway by VPC - no matches
+    ec2_vpc_igw_info:
+      filters:
+        attachment.vpc-id: '{{ vpc_result.vpc.id }}'
+    register:  igw_info
+
+  - name: Assert success
+    assert:
+      that:
+          - igw_info is successful
+          - '"internet_gateways" in igw_info'
+
+  # ============================================================
+  - name: create internet gateway (expected changed=true) - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        tag_one: '{{ resource_prefix }} One'
+        "Tag Two": 'two {{ resource_prefix }}'
+    register: vpc_igw_create
+    check_mode: yes
+
+  - name: assert creation would happen (expected changed=true) - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_create is changed
+
   - name: create internet gateway (expected changed=true)
     ec2_vpc_igw:
       state: present
@@ -46,7 +79,7 @@
   - name: assert creation happened (expected changed=true)
     assert:
       that:
-          - 'vpc_igw_create'
+          - vpc_igw_create is changed
           - 'vpc_igw_create.gateway_id.startswith("igw-")'
           - 'vpc_igw_create.vpc_id == vpc_result.vpc.id'
           - '"tags" in vpc_igw_create'
@@ -150,6 +183,18 @@
       current_igw: '{{ igw_info.internet_gateways[0] }}'
 
   # ============================================================
+  - name: attempt to recreate internet gateway on VPC (expected changed=false) - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+    register: vpc_igw_recreate
+    check_mode: yes
+
+  - name: assert recreation would do nothing (expected changed=false) - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_recreate is not changed
+
   - name: attempt to recreate internet gateway on VPC (expected changed=false)
     ec2_vpc_igw:
       state: present
@@ -168,6 +213,21 @@
           - vpc_igw_create.tags["Tag Two"] == 'two {{ resource_prefix }}'
 
   # ============================================================
+  - name: Update the tags (no change) - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        tag_one: '{{ resource_prefix }} One'
+        "Tag Two": 'two {{ resource_prefix }}'
+    register: vpc_igw_recreate
+    check_mode: yes
+
+  - name: assert tag update would do nothing (expected changed=false) - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_recreate is not changed
+
   - name: Update the tags (no change)
     ec2_vpc_igw:
       state: present
@@ -177,7 +237,7 @@
         "Tag Two": 'two {{ resource_prefix }}'
     register: vpc_igw_recreate
 
-  - name: assert recreation did nothing (expected changed=false)
+  - name: assert tag update did nothing (expected changed=false)
     assert:
       that:
           - vpc_igw_recreate is not changed
@@ -189,6 +249,21 @@
           - vpc_igw_recreate.tags["Tag Two"] == 'two {{ resource_prefix }}'
 
   # ============================================================
+  - name: Update the tags - remove and add - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        tag_three: '{{ resource_prefix }} Three'
+        "Tag Two": 'two {{ resource_prefix }}'
+    register: vpc_igw_update
+    check_mode: yes
+
+  - name: assert tag update would happen (expected changed=true) - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_update is changed
+
   - name: Update the tags - remove and add
     ec2_vpc_igw:
       state: present
@@ -198,7 +273,7 @@
         "Tag Two": 'two {{ resource_prefix }}'
     register: vpc_igw_update
 
-  - name: assert recreation did nothing (expected changed=false)
+  - name: assert tags are updated (expected changed=true)
     assert:
       that:
           - vpc_igw_update is changed
@@ -210,6 +285,21 @@
           - vpc_igw_update.tags["Tag Two"] == 'two {{ resource_prefix }}'
 
   # ============================================================
+  - name: Update the tags add without purge - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      purge_tags: no
+      tags:
+        tag_one: '{{ resource_prefix }} One'
+    register: vpc_igw_update
+    check_mode: yes
+
+  - name: assert tags would be added - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_update is changed
+
   - name: Update the tags add without purge
     ec2_vpc_igw:
       state: present
@@ -232,6 +322,19 @@
           - vpc_igw_update.tags["Tag Two"] == 'two {{ resource_prefix }}'
 
   # ============================================================
+  - name: Remove all tags - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags: {}
+    register: vpc_igw_update
+    check_mode: yes
+
+  - name: assert tags would be removed - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_update is changed
+
   - name: Remove all tags
     ec2_vpc_igw:
       state: present
@@ -239,7 +342,7 @@
       tags: {}
     register: vpc_igw_update
 
-  - name: assert tags added
+  - name: assert tags removed
     assert:
       that:
           - vpc_igw_update is changed
@@ -249,6 +352,18 @@
           - vpc_igw_update.tags | length == 0
 
   # ============================================================
+  - name: test state=absent (expected changed=true) - CHECK_MODE
+    ec2_vpc_igw:
+      state: absent
+      vpc_id: "{{ vpc_result.vpc.id }}"
+    register: vpc_igw_delete
+    check_mode: yes
+
+  - name: assert state=absent (expected changed=true) - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_delete is changed
+
   - name: test state=absent (expected changed=true)
     ec2_vpc_igw:
       state: absent
@@ -258,7 +373,7 @@
   - name: assert state=absent (expected changed=true)
     assert:
       that:
-          - 'vpc_igw_delete.changed'
+          - vpc_igw_delete is changed
 
   # ============================================================
   - name: Fetch IGW by ID (list)
@@ -271,9 +386,22 @@
   - name: 'Check IGW does not exist'
     assert:
       that:
+        # Deliberate choice not to change bevahiour when searching by ID
         - igw_info is failed
 
   # ============================================================
+  - name: test state=absent when already deleted (expected changed=false) - CHECK_MODE
+    ec2_vpc_igw:
+      state: absent
+      vpc_id: "{{ vpc_result.vpc.id }}"
+    register: vpc_igw_delete
+    check_mode: yes
+
+  - name: assert state=absent (expected changed=false) - CHECK_MODE
+    assert:
+      that:
+          - vpc_igw_delete is not changed
+
   - name: test state=absent when already deleted (expected changed=false)
     ec2_vpc_igw:
       state: absent
