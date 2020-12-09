@@ -72,7 +72,13 @@ options:
     choices: ['Standard', 'Advanced', 'Intelligent-Tiering']
     default: Standard
     type: str
-author: "Davinder Pal (@116davinder) <dpsangwal@gmail.com>"
+
+author:
+  - "Davinder Pal (@116davinder) <dpsangwal@gmail.com>"
+  - "Nathan Webster (@nathanwebsterdotme)"
+  - "Bill Wang (@ozbillwang) <ozbillwang@gmail.com>"
+  - "Michael De La Rue (@mikedlr)"
+
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
