@@ -140,7 +140,6 @@ class Policy:
         self.state = state
         self.check_mode = check_mode
         self.changed = False
-        self.backoff_params = dict(retries=10, delay=3, backoff=1.5)
 
     @staticmethod
     def _iam_type():
@@ -236,19 +235,19 @@ class UserPolicy(Policy):
     def _iam_type():
         return 'user'
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _list(self, name):
         return self.client.list_user_policies(UserName=name)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _get(self, name, policy_name):
         return self.client.get_user_policy(UserName=name, PolicyName=policy_name)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _put(self, name, policy_name, policy_doc):
         return self.client.put_user_policy(UserName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _delete(self, name, policy_name):
         return self.client.delete_user_policy(UserName=name, PolicyName=policy_name)
 
@@ -259,19 +258,19 @@ class RolePolicy(Policy):
     def _iam_type():
         return 'role'
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _list(self, name):
         return self.client.list_role_policies(RoleName=name)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _get(self, name, policy_name):
         return self.client.get_role_policy(RoleName=name, PolicyName=policy_name)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _put(self, name, policy_name, policy_doc):
         return self.client.put_role_policy(RoleName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _delete(self, name, policy_name):
         return self.client.delete_role_policy(RoleName=name, PolicyName=policy_name)
 
@@ -282,19 +281,19 @@ class GroupPolicy(Policy):
     def _iam_type():
         return 'group'
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _list(self, name):
         return self.client.list_group_policies(GroupName=name)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _get(self, name, policy_name):
         return self.client.get_group_policy(GroupName=name, PolicyName=policy_name)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _put(self, name, policy_name, policy_doc):
         return self.client.put_group_policy(GroupName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
-    @AWSRetry.exponential_backoff(**self.backoff_params)
+    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _delete(self, name, policy_name):
         return self.client.delete_group_policy(GroupName=name, PolicyName=policy_name)
 
