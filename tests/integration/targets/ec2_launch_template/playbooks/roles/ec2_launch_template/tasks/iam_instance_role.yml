@@ -6,7 +6,7 @@
         state: present
         create_instance_profile: yes
         managed_policy:
-        - AmazonS3ReadOnlyAccess
+        - AWSDenyAll
       register: iam_role
 
     - name: Create second IAM role for test
@@ -16,7 +16,7 @@
         state: present
         create_instance_profile: yes
         managed_policy:
-        - AmazonS3ReadOnlyAccess
+        - AWSDenyAll
       register: iam_role_2
 
     - name: Make instance with an instance_role
