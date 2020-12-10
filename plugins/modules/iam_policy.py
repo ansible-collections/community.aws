@@ -235,21 +235,17 @@ class UserPolicy(Policy):
     def _iam_type():
         return 'user'
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _list(self, name):
-        return self.client.list_user_policies(UserName=name)
+        return self.client.list_user_policies(aws_retry=True, UserName=name)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _get(self, name, policy_name):
-        return self.client.get_user_policy(UserName=name, PolicyName=policy_name)
+        return self.client.get_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _put(self, name, policy_name, policy_doc):
-        return self.client.put_user_policy(UserName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
+        return self.client.put_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _delete(self, name, policy_name):
-        return self.client.delete_user_policy(UserName=name, PolicyName=policy_name)
+        return self.client.delete_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name)
 
 
 class RolePolicy(Policy):
@@ -258,21 +254,17 @@ class RolePolicy(Policy):
     def _iam_type():
         return 'role'
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _list(self, name):
-        return self.client.list_role_policies(RoleName=name)
+        return self.client.list_role_policies(aws_retry=True, RoleName=name)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _get(self, name, policy_name):
-        return self.client.get_role_policy(RoleName=name, PolicyName=policy_name)
+        return self.client.get_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _put(self, name, policy_name, policy_doc):
-        return self.client.put_role_policy(RoleName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
+        return self.client.put_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _delete(self, name, policy_name):
-        return self.client.delete_role_policy(RoleName=name, PolicyName=policy_name)
+        return self.client.delete_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name)
 
 
 class GroupPolicy(Policy):
@@ -281,21 +273,17 @@ class GroupPolicy(Policy):
     def _iam_type():
         return 'group'
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _list(self, name):
-        return self.client.list_group_policies(GroupName=name)
+        return self.client.list_group_policies(aws_retry=True, GroupName=name)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _get(self, name, policy_name):
-        return self.client.get_group_policy(GroupName=name, PolicyName=policy_name)
+        return self.client.get_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _put(self, name, policy_name, policy_doc):
-        return self.client.put_group_policy(GroupName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
+        return self.client.put_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
-    @AWSRetry.exponential_backoff(retries=10, delay=3, backoff=1.5)
     def _delete(self, name, policy_name):
-        return self.client.delete_group_policy(GroupName=name, PolicyName=policy_name)
+        return self.client.delete_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name)
 
 
 def main():
@@ -326,7 +314,7 @@ def main():
                          date='2022-06-01', collection_name='community.aws')
 
     args = dict(
-        client=module.client('iam'),
+        client=module.client('iam', retry_decorator=AWSRetry.jittered_backoff()),
         name=module.params.get('iam_name'),
         policy_name=module.params.get('policy_name'),
         policy_document=module.params.get('policy_document'),
