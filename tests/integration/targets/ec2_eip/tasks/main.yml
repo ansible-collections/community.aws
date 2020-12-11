@@ -63,6 +63,7 @@
       name: '{{ resource_prefix }}-instance'
       image_id: '{{ ec2_amis.images[0].image_id }}'
       security_group: '{{ security_group.group_id }}'
+      vpc_subnet_id: '{{ vpc_subnet_create.subnet.id }}'
       wait: no  ## Don't delay the tests, we'll check again before we need it
     register: ec2_instance_result
   # =====================================================
