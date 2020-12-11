@@ -87,7 +87,7 @@
         name: "{{ resource_prefix }}-test-policy"
         assume_role_policy_document: "{{ lookup('file','assume-role-policy.json') }}"
         state: absent
-        create_instance_profile: yes
+        delete_instance_profile: yes
       register: iam_removed
       until: iam_removed is not failed
       ignore_errors: yes
@@ -97,7 +97,7 @@
         name: "{{ resource_prefix }}-test-policy-2"
         assume_role_policy_document: "{{ lookup('file','assume-role-policy.json') }}"
         state: absent
-        create_instance_profile: yes
+        delete_instance_profile: yes
       register: iam_2_removed
       until: iam_2_removed is not failed
       ignore_errors: yes
