@@ -571,11 +571,6 @@
         - eip_info.addresses[0].allocation_id is defined
         - eip_info.addresses[0].instance_id == '{{ instance_info.instances[0].instance_id }}'
   # =====================================================
-  - name: Cleanup IGW
-    ec2_vpc_igw:
-      state: absent
-      vpc_id: '{{ vpc_result.vpc.id }}'
-    register: vpc_igw
   - name: Cleanup instance
     ec2_instance:
       name: '{{ resource_prefix }}-instance'
@@ -584,6 +579,11 @@
     ec2_eip:
       state: absent
       public_ip: '{{ instance_eip.public_ip }}'
+  - name: Cleanup IGW
+    ec2_vpc_igw:
+      state: absent
+      vpc_id: '{{ vpc_result.vpc.id }}'
+    register: vpc_igw
   - name: Cleanup security group
     ec2_group:
       state: absent
