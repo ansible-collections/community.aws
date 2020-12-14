@@ -426,13 +426,11 @@ def existing_templates(module):
 
 def params_to_launch_data(module, template_params):
     if template_params.get('tags'):
+        tag_list = ansible_dict_to_boto3_tag_list(template_params.get('tags'))
         template_params['tag_specifications'] = [
             {
                 'resource_type': r_type,
-                'tags': [
-                    {'Key': k, 'Value': v} for k, v
-                    in template_params['tags'].items()
-                ]
+                'tags': tag_list
             }
             for r_type in ('instance', 'volume')
         ]
