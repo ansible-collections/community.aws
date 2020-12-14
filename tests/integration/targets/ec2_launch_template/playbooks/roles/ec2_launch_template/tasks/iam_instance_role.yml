@@ -1,7 +1,7 @@
 - block:
     - name: Create IAM role for test
       iam_role:
-        name: "{{ resource_prefix }}-test-policy"
+        name: "{{ test_role_name }}-1"
         assume_role_policy_document: "{{ lookup('file','assume-role-policy.json') }}"
         state: present
         create_instance_profile: yes
@@ -11,7 +11,7 @@
 
     - name: Create second IAM role for test
       iam_role:
-        name: "{{ resource_prefix }}-test-policy-2"
+        name: "{{ test_role_name }}-2"
         assume_role_policy_document: "{{ lookup('file','assume-role-policy.json') }}"
         state: present
         create_instance_profile: yes
@@ -24,7 +24,7 @@
         name: "{{ resource_prefix }}-test-instance-role"
         image_id: "{{ ec2_ami_image[aws_region] }}"
         instance_type: t2.micro
-        iam_instance_profile: "{{ resource_prefix }}-test-policy"
+        iam_instance_profile: "{{ test_role_name }}-1"
       register: template_with_role
 
     - assert:
@@ -36,7 +36,7 @@
         name: "{{ resource_prefix }}-test-instance-role"
         image_id: "{{ ec2_ami_image[aws_region] }}"
         instance_type: t2.micro
-        iam_instance_profile: "{{ resource_prefix }}-test-policy"
+        iam_instance_profile: "{{ test_role_name }}-1"
       register: template_with_role
 
     - assert:
@@ -49,7 +49,7 @@
         name: "{{ resource_prefix }}-test-instance-role"
         image_id: "{{ ec2_ami_image[aws_region] }}"
         instance_type: t2.micro
-        iam_instance_profile: "{{ resource_prefix }}-test-policy-2"
+        iam_instance_profile: "{{ test_role_name }}-2"
       register: template_with_updated_role
 
     - assert:
@@ -65,7 +65,7 @@
         name: "{{ resource_prefix }}-test-instance-role"
         image_id: "{{ ec2_ami_image[aws_region] }}"
         instance_type: t2.micro
-        iam_instance_profile: "{{ resource_prefix }}-test-policy-2"
+        iam_instance_profile: "{{ test_role_name }}-2"
       register: template_with_updated_role
 
     - assert:
@@ -84,7 +84,7 @@
       retries: 10
     - name: Delete IAM role for test
       iam_role:
-        name: "{{ resource_prefix }}-test-policy"
+        name: "{{ test_role_name }}-1"
         assume_role_policy_document: "{{ lookup('file','assume-role-policy.json') }}"
         state: absent
         delete_instance_profile: yes
@@ -94,7 +94,7 @@
       retries: 10
     - name: Delete IAM role for test
       iam_role:
-        name: "{{ resource_prefix }}-test-policy-2"
+        name: "{{ test_role_name }}-2"
         assume_role_policy_document: "{{ lookup('file','assume-role-policy.json') }}"
         state: absent
         delete_instance_profile: yes

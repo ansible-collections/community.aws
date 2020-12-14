@@ -1,5 +1,4 @@
 ---
-resource_prefix: ansible-test-default-group
 ec2_ami_image:
   # https://wiki.centos.org/Cloud/AWS collected 2018-01-10
   ap-northeast-1: ami-571e3c30
@@ -16,3 +15,4 @@ ec2_ami_image:
   us-east-2: ami-9cbf9bf9
   us-west-1: ami-7c280d1c
   us-west-2: ami-0c2aba6c
+test_role_name: ansible-test-{{ resource_prefix }}
