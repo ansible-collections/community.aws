@@ -532,12 +532,19 @@ def list_ec2_instances(connection, module):
     except ClientError as e:
         module.fail_json_aws(e, msg="Failed to list ec2 instances")
 
-    timedelta = int(uptime) if uptime else 0
-    oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(hours=timedelta)
-    # Get instances from reservations
     instances = []
-    for reservation in reservations['Reservations']:
-        instances += [instance for instance in reservation['Instances'] if instance['LaunchTime'].replace(tzinfo=None) < oldest_launch_time]
+
+
+
+    if uptime:
+        timedelta = int(uptime) if uptime else 0
+        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(hours=timedelta)
+        # Get instances from reservations
+        for reservation in reservations['Reservations']:
+            instances += [instance for instance in reservation['Instances'] if instance['LaunchTime'].replace(tzinfo=None) < oldest_launch_time]
+    else:
+        for reservation in reservations['Reservations']:
+            instances = instances + reservation['Instances']
 
     # Turn the boto3 result in to ansible_friendly_snaked_names
     snaked_instances = [camel_dict_to_snake_dict(instance) for instance in instances]
