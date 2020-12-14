@@ -400,9 +400,9 @@ def existing_templates(module):
     matches = None
     try:
         if module.params.get('template_id'):
-            matches = ec2.describe_launch_templates(LaunchTemplateIds=[module.params.get('template_id')])
+            matches = ec2.describe_launch_templates(LaunchTemplateIds=[module.params.get('template_id')], aws_retry=True)
         elif module.params.get('template_name'):
-            matches = ec2.describe_launch_templates(LaunchTemplateNames=[module.params.get('template_name')])
+            matches = ec2.describe_launch_templates(LaunchTemplateNames=[module.params.get('template_name')], aws_retry=True)
     except is_boto3_error_code('InvalidLaunchTemplateName.NotFoundException') as e:
         # no named template was found, return nothing/empty versions
         return None, []
@@ -419,7 +419,7 @@ def existing_templates(module):
         template = matches['LaunchTemplates'][0]
         template_id, template_version, template_default = template['LaunchTemplateId'], template['LatestVersionNumber'], template['DefaultVersionNumber']
         try:
-            return template, ec2.describe_launch_template_versions(LaunchTemplateId=template_id)['LaunchTemplateVersions']
+            return template, ec2.describe_launch_template_versions(LaunchTemplateId=template_id, aws_retry=True)['LaunchTemplateVersions']
         except (ClientError, BotoCoreError, WaiterError) as e:
             module.fail_json_aws(e, msg='Could not find launch template versions for {0} (ID: {1}).'.format(template['LaunchTemplateName'], template_id))
 
@@ -455,6 +455,7 @@ def delete_template(module):
                 v_resp = ec2.delete_launch_template_versions(
                     LaunchTemplateId=template['LaunchTemplateId'],
                     Versions=non_default_versions,
+                    aws_retry=True,
                 )
                 if v_resp['UnsuccessfullyDeletedLaunchTemplateVersions']:
                     module.warn('Failed to delete template versions {0} on launch template {1}'.format(
@@ -467,6 +468,7 @@ def delete_template(module):
         try:
             resp = ec2.delete_launch_template(
                 LaunchTemplateId=template['LaunchTemplateId'],
+                aws_retry=True,
             )
         except (ClientError, BotoCoreError) as e:
             module.fail_json_aws(e, msg="Could not delete launch template {0}".format(template['LaunchTemplateId']))
