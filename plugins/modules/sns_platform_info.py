@@ -21,7 +21,8 @@ options:
     required: false
     type: str
     choices: ['true', 'false']
-author: "Davinder Pal <dpsangwal@gmail.com>"
+author:
+  - "Davinder Pal (@116davinder) <dpsangwal@gmail.com>"
 extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.aws
