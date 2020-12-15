@@ -24,7 +24,7 @@ options:
 author:
   - "Davinder Pal <dpsangwal@gmail.com>"
 extends_documentation_fragment:
-  - amazon.aws.sns
+  - amazon.aws.ec2
   - amazon.aws.aws
 requirements:
   - boto3
@@ -62,13 +62,10 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
-# uncomment below for ansible 2.8 or lower
-# from ansible.module_utils.aws.core import AnsibleAWSModule
-
 def main():
 
     argument_spec = dict(
-    enabled=dict(required=False,choices=['true', 'false']),
+        enabled=dict(required=False, choices=['true', 'false']),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
@@ -77,22 +74,23 @@ def main():
     __default_return = []
 
     try:
-      paginator = sns.get_paginator('list_platform_applications')
-      platform_iterator = paginator.paginate()
-      for response in platform_iterator:
-        __default_return += response['PlatformApplications']
+        paginator = sns.get_paginator('list_platform_applications')
+        platform_iterator = paginator.paginate()
+        for response in platform_iterator:
+            __default_return += response['PlatformApplications']
     except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg='Failed to fetch sns platform applications')
+          module.fail_json_aws(e, msg='Failed to fetch sns platform applications')
 
     if module.params['enabled'] is not None:
-      __override_default_return = []
-      for application in __default_return:
-        if application['Attributes']['Enabled'] == module.params['enabled']:
-          __override_default_return.append(application)
+        __override_default_return = []
+        for application in __default_return:
+            if application['Attributes']['Enabled'] == module.params['enabled']:
+              __override_default_return.append(application)
 
-      module.exit_json(platforms=__override_default_return)   
+        module.exit_json(platforms=__override_default_return)
 
     module.exit_json(platforms=__default_return)
+
 
 if __name__ == '__main__':
     main()

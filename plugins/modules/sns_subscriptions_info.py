@@ -24,7 +24,7 @@ options:
 author:
   - "Davinder Pal <dpsangwal@gmail.com>"
 extends_documentation_fragment:
-  - amazon.aws.sns
+  - amazon.aws.ec2
   - amazon.aws.aws
 requirements:
   - boto3
@@ -61,13 +61,10 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
-# uncomment below for ansible 2.8 or lower
-# from ansible.module_utils.aws.core import AnsibleAWSModules
-
 def main():
 
     argument_spec = dict(
-    topic_arn=dict(required=False, aliases=['arn']),
+        topic_arn=dict(required=False, aliases=['arn']),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec)
@@ -76,19 +73,20 @@ def main():
     __default_return = []
 
     try:
-      if module.params['topic_arn'] is not None:
-        paginator = sns.get_paginator('list_subscriptions_by_topic')
-        iterator = paginator.paginate(TopicArn=module.params['arn'])
-      else:
-        paginator = sns.get_paginator('list_subscriptions')
-        iterator = paginator.paginate()
+        if module.params['topic_arn'] is not None:
+            paginator = sns.get_paginator('list_subscriptions_by_topic')
+            iterator = paginator.paginate(TopicArn=module.params['arn'])
+        else:
+            paginator = sns.get_paginator('list_subscriptions')
+            iterator = paginator.paginate()
 
-      for response in iterator:
-        __default_return += response['Subscriptions']
+        for response in iterator:
+            __default_return += response['Subscriptions']
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to fetch sns subscriptions')
 
     module.exit_json(subscriptions=__default_return)
+
 
 if __name__ == '__main__':
     main()
