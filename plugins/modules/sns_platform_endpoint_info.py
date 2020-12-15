@@ -9,7 +9,7 @@ __metaclass__ = type
 
 
 DOCUMENTATION = """
-module: community.aws.sns_platform_endpoint_info
+module: sns_platform_endpoint_info
 short_description: Get Infomation about AWS SNS Platforms.
 description:
   - Get Information about AWS SNS Platform Endpoint.
@@ -54,7 +54,7 @@ endpoints:
   returned: when success
   type: list
   sample: [{
-    "Attributes": {"Enabled": "true", "Token": "coaO_xxx6z-DK-"},
+    "Attributes": {"Enabled": "true", "Token": "coaO_xxxxxxxxxxx"},
     "EndpointArn": "arn:aws:sns:us-east-1:xxxxx:endpoint/GCM/xxxxx-platform-app/xxxxx-971fa6329ac4"
   }]
 """
@@ -66,9 +66,8 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
+
 def main():
-
-
     argument_spec = dict(
         endpoint_arn=dict(required=True, aliases=['arn']),
         enabled=dict(required=False, choices=['true', 'false']),
@@ -85,7 +84,7 @@ def main():
         for response in iterator:
           __default_return += response['Endpoints']
     except (BotoCoreError, ClientError) as e:
-          module.fail_json_aws(e, msg='Failed to fetch sns platform endpoints')
+        module.fail_json_aws(e, msg='Failed to fetch sns platform endpoints')
 
     if module.params['enabled'] is not None:
         __override_default_return = []

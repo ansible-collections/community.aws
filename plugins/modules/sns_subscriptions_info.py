@@ -9,7 +9,7 @@ __metaclass__ = type
 
 
 DOCUMENTATION = """
-module: community.aws.sns_subscriptions_info
+module: sns_subscriptions_info
 short_description: Get Infomation about AWS SNS Subscriptions.
 description:
   - Get Information about AWS SNS Subscriptions.
@@ -61,8 +61,8 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
-def main():
 
+def main():
     argument_spec = dict(
         topic_arn=dict(required=False, aliases=['arn']),
     )
