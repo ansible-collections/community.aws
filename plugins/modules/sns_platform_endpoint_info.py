@@ -54,8 +54,8 @@ endpoints:
   returned: when success
   type: list
   sample: [{
-    "Attributes": {"Enabled": "true", "Token": "coaO_xxxxxxxxxxx"},
-    "EndpointArn": "arn:aws:sns:us-east-1:xxxxx:endpoint/GCM/xxxxx-platform-app/xxxxx-971fa6329ac4"
+    "attributes": {"enabled": "true", "token": "coaO_xxxxxxxxxxx"},
+    "endpoint_arn": "arn:aws:sns:us-east-1:xxxxx:endpoint/GCM/xxxxx-platform-app/xxxxx-971fa6329ac4"
   }]
 """
 
@@ -65,6 +65,7 @@ except ImportError:
     pass    # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def main():
@@ -82,14 +83,15 @@ def main():
         paginator = sns.get_paginator('list_endpoints_by_platform_application')
         iterator = paginator.paginate(PlatformApplicationArn=module.params['arn'])
         for response in iterator:
-            __default_return += response['Endpoints']
+            for endpoint in response['Endpoints']:
+                __default_return.append(camel_dict_to_snake_dict(endpoint))
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to fetch sns platform endpoints')
 
     if module.params['enabled'] is not None:
         __override_default_return = []
         for endpoint in __default_return:
-            if endpoint['Attributes']['Enabled'] == module.params['enabled']:
+            if endpoint['attributes']['enabled'] == module.params['enabled']:
                 __override_default_return.append(endpoint)
 
         module.exit_json(endpoints=__override_default_return)

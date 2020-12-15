@@ -46,12 +46,12 @@ platforms:
   returned: when success
   type: list
   sample: [{
-    "Attributes": {
-      "AppleCertificateExpirationDate": "2021-10-10T16:56:51Z",
-      "Enabled": "true",
-      "SuccessFeedbackSampleRate": "100"
+    "attributes": {
+      "apple_certificate_expiration_date": "2021-10-10T16:56:51Z",
+      "enabled": "true",
+      "success_feedback_sample_rate": "100"
     },
-    "PlatformApplicationArn": "arn:aws:sns:us-east-1:xxxxx:app/APNS/xxxxx-platform-app"
+    "platform_application_arn": "arn:aws:sns:us-east-1:xxxxx:app/APNS/xxxxx-platform-app"
   }]
 """
 
@@ -61,6 +61,7 @@ except ImportError:
     pass    # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def main():
@@ -77,14 +78,15 @@ def main():
         paginator = sns.get_paginator('list_platform_applications')
         platform_iterator = paginator.paginate()
         for response in platform_iterator:
-            __default_return += response['PlatformApplications']
+            for application in response['PlatformApplications']:
+                __default_return.append(camel_dict_to_snake_dict(application))
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to fetch sns platform applications')
 
     if module.params['enabled'] is not None:
         __override_default_return = []
         for application in __default_return:
-            if application['Attributes']['Enabled'] == module.params['enabled']:
+            if application['attributes']['enabled'] == module.params['enabled']:
                 __override_default_return.append(application)
 
         module.exit_json(platforms=__override_default_return)

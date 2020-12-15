@@ -46,11 +46,11 @@ subscriptions:
   returned: when success
   type: list
   sample: [{
-    "Endpoint": "arn:aws:sqs:us-east-1:xxxxx:test-endpoint",
-    "Owner": "xxxxx",
-    "Protocol": "sqs",
-    "SubscriptionArn": "arn:aws:sns:us-east-1:xxxxx:test-sub-arn:xxxxxxxxxxxx-524760c63010",
-    "TopicArn": "arn:aws:sns:us-east-1:xxxxx:test-topic-arn"
+    "endpoint": "arn:aws:sqs:us-east-1:xxxxx:test-endpoint",
+    "owner": "xxxxx",
+    "protocol": "sqs",
+    "subscription_arn": "arn:aws:sns:us-east-1:xxxxx:test-sub-arn:xxxxxxxxxxxx-524760c63010",
+    "topic_arn": "arn:aws:sns:us-east-1:xxxxx:test-topic-arn"
   }]
 """
 
@@ -60,6 +60,7 @@ except ImportError:
     pass    # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def main():
@@ -81,7 +82,8 @@ def main():
             iterator = paginator.paginate()
 
         for response in iterator:
-            __default_return += response['Subscriptions']
+            for sub in response['Subscriptions']:
+                __default_return.append(camel_dict_to_snake_dict(sub))
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to fetch sns subscriptions')
 
