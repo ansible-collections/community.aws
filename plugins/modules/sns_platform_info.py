@@ -21,8 +21,7 @@ options:
     required: false
     type: str
     choices: ['true', 'false']
-author:
-  - "Davinder Pal <dpsangwal@gmail.com>"
+author: "Davinder Pal <dpsangwal@gmail.com>"
 extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.aws
@@ -50,7 +49,7 @@ platforms:
       "AppleCertificateExpirationDate": "2021-10-10T16:56:51Z",
       "Enabled": "true",
       "SuccessFeedbackSampleRate": "100"
-    }, 
+    },
     "PlatformApplicationArn": "arn:aws:sns:us-east-1:xxxxx:app/APNS/xxxxx-platform-app"
   }]
 """

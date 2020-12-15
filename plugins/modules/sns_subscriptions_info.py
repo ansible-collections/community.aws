@@ -17,12 +17,11 @@ version_added: 1.4.0
 options:
   topic_arn:
     description:
-      - topic arn related Subscriptions only?
+      - topic_arn subscriptions will be returned?
     required: false
     type: str
     aliases: [ "arn" ]
-author:
-  - "Davinder Pal <dpsangwal@gmail.com>"
+author: "Davinder Pal <dpsangwal@gmail.com>"
 extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.aws

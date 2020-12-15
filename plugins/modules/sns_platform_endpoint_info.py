@@ -27,8 +27,7 @@ options:
     required: false
     type: str
     choices: ['true', 'false']
-author:
-  - "Davinder Pal <dpsangwal@gmail.com>"
+author: "Davinder Pal <dpsangwal@gmail.com>"
 extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.aws
@@ -82,7 +81,7 @@ def main():
         paginator = sns.get_paginator('list_endpoints_by_platform_application')
         iterator = paginator.paginate(PlatformApplicationArn=module.params['arn'])
         for response in iterator:
-          __default_return += response['Endpoints']
+            __default_return += response['Endpoints']
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to fetch sns platform endpoints')
 
