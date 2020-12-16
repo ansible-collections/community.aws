@@ -10,7 +10,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: sns_subscriptions_info
-short_description: Get Infomation about AWS SNS Subscriptions.
+short_description: Get Information about AWS SNS Subscriptions.
 description:
   - Get Information about AWS SNS Subscriptions.
 version_added: 1.4.0
@@ -61,6 +61,21 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+
+
+@AWSRetry.exponential_backoff(retries=5, delay=5)
+def _sub_it(sns, module):
+    try:
+        if module.params['topic_arn'] is not None:
+            paginator = sns.get_paginator('list_subscriptions_by_topic')
+            iterator = paginator.paginate(TopicArn=module.params['arn'])
+        else:
+            paginator = sns.get_paginator('list_subscriptions')
+            iterator = paginator.paginate()
+        return iterator
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg='Failed to fetch sns subscriptions')
 
 
 def main():
@@ -73,19 +88,11 @@ def main():
 
     __default_return = []
 
-    try:
-        if module.params['topic_arn'] is not None:
-            paginator = sns.get_paginator('list_subscriptions_by_topic')
-            iterator = paginator.paginate(TopicArn=module.params['arn'])
-        else:
-            paginator = sns.get_paginator('list_subscriptions')
-            iterator = paginator.paginate()
-
-        for response in iterator:
+    _it = _sub_it(sns, module)
+    if _it is not None:
+        for response in _it:
             for sub in response['Subscriptions']:
                 __default_return.append(camel_dict_to_snake_dict(sub))
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg='Failed to fetch sns subscriptions')
 
     module.exit_json(subscriptions=__default_return)
 

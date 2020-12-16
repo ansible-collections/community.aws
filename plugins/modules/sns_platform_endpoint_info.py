@@ -10,7 +10,7 @@ __metaclass__ = type
 
 DOCUMENTATION = """
 module: sns_platform_endpoint_info
-short_description: Get Infomation about AWS SNS Platforms.
+short_description: Get Information about AWS SNS Platforms.
 description:
   - Get Information about AWS SNS Platform Endpoint.
 version_added: 1.4.0
@@ -66,6 +66,17 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+
+
+@AWSRetry.exponential_backoff(retries=5, delay=5)
+def _platform_endpoint_it(sns, module):
+    try:
+        paginator = sns.get_paginator('list_endpoints_by_platform_application')
+        iterator = paginator.paginate(PlatformApplicationArn=module.params['arn'])
+        return iterator
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg='Failed to fetch sns platform endpoints')
 
 
 def main():
@@ -79,14 +90,11 @@ def main():
 
     __default_return = []
 
-    try:
-        paginator = sns.get_paginator('list_endpoints_by_platform_application')
-        iterator = paginator.paginate(PlatformApplicationArn=module.params['arn'])
-        for response in iterator:
-            for endpoint in response['Endpoints']:
-                __default_return.append(camel_dict_to_snake_dict(endpoint))
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg='Failed to fetch sns platform endpoints')
+    _it = _platform_endpoint_it(sns, module)
+    if _it is not None:
+        for response in _it:
+            for application in response['Endpoints']:
+                __default_return.append(camel_dict_to_snake_dict(application))
 
     if module.params['enabled'] is not None:
         __override_default_return = []
