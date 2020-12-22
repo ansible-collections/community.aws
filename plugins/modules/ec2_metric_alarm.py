@@ -203,12 +203,12 @@ EXAMPLES = r'''
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-
 try:
     from botocore.exceptions import ClientError
 except ImportError:
     pass  # protected by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def create_metric_alarm(connection, module):
