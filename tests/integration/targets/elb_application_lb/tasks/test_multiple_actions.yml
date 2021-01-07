@@ -160,6 +160,22 @@
               FixedResponseConfig: "{{ FixedResponseActionConfig }}"
           Rules:
             - Conditions:
+                - Field: http-header
+                  HttpHeaderConfig:
+                    Field: 'User-Agent'
+                    Values: ['*Trident/7:0*rv:*']
+                - Field: http-header
+                  HttpHeaderConfig:
+                    Field: 'X-Something'
+                    Values: ['foobar']
+              Priority: '1'
+              Actions:
+                - Type: fixed-response
+                  FixedResponseConfig:
+                    StatusCode: "200"
+                    ContentType: "text/html"
+                    MessageBody: "<b>Hello World!</b>"
+            - Conditions:
                 - Field: path-pattern
                   Values:
                     - "/forward-path/*"
@@ -210,6 +226,22 @@
             - Type: fixed-response
               FixedResponseConfig: "{{ FixedResponseActionConfig }}"
           Rules:
+            - Conditions:
+                - Field: http-header
+                  HttpHeaderConfig:
+                    HttpHeaderName: 'User-Agent'
+                    Values: ['*Trident/7:0*rv:*']
+                - Field: http-header
+                  HttpHeaderConfig:
+                    HttpHeaderName: 'X-Something'
+                    Values: ['foobar']
+              Priority: '1'
+              Actions:
+                - Type: fixed-response
+                  FixedResponseConfig:
+                    StatusCode: "200"
+                    ContentType: "text/html"
+                    MessageBody: "<b>Hello World!</b>"
             - Conditions:
                 - Field: path-pattern
                   Values:
