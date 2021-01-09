@@ -162,7 +162,6 @@ EXAMPLES = r'''
 import os
 import getpass
 import json
-import os
 import pty
 import random
 import re
