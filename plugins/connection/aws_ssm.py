@@ -521,6 +521,7 @@ class Connection(ConnectionBase):
             aws_session_token=aws_session_token,
             region_name=region_name,
             config=Config(signature_version="s3v4")
+        )
         return client
 
     @_ssm_retry
