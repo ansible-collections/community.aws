@@ -5,7 +5,6 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-
 DOCUMENTATION = r'''
 ---
 module: ecs_service
@@ -156,6 +155,12 @@ options:
         required: false
         choices: ["EC2", "FARGATE"]
         type: str
+    platform_version:
+        type: str
+        description:
+          - Numeric part of platform version or LATEST
+          - See U(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html) for more details.
+        required: false
     health_check_grace_period_seconds:
         description:
           - Seconds to wait before health checking the freshly added/updated services.
@@ -486,7 +491,6 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-
 class EcsServiceManager:
     """Handles ECS Services"""
 
@@ -561,7 +565,8 @@ class EcsServiceManager:
     def create_service(self, service_name, cluster_name, task_definition, load_balancers,
                        desired_count, client_token, role, deployment_configuration,
                        placement_constraints, placement_strategy, health_check_grace_period_seconds,
-                       network_configuration, service_registries, launch_type, scheduling_strategy):
+                       network_configuration, service_registries, launch_type, platform_version,
+                       scheduling_strategy):
 
         params = dict(
             cluster=cluster_name,
@@ -578,6 +583,8 @@ class EcsServiceManager:
             params['networkConfiguration'] = network_configuration
         if launch_type:
             params['launchType'] = launch_type
+        if platform_version:
+            params['platformVersion'] = platform_version
         if self.health_check_setable(params) and health_check_grace_period_seconds is not None:
             params['healthCheckGracePeriodSeconds'] = health_check_grace_period_seconds
         if service_registries:
@@ -642,7 +649,6 @@ class EcsServiceManager:
         load_balancers = params.get('loadBalancers', [])
         # check if botocore (and thus boto3) is new enough for using the healthCheckGracePeriodSeconds parameter
         return len(load_balancers) > 0 and self.module.botocore_at_least('1.8.20')
-
 
 def main():
     argument_spec = dict(
@@ -804,6 +810,7 @@ def main():
                                                               network_configuration,
                                                               serviceRegistries,
                                                               module.params['launch_type'],
+                                                              module.params['platform_version'],
                                                               module.params['scheduling_strategy']
                                                               )
                     except botocore.exceptions.ClientError as e:
@@ -856,7 +863,6 @@ def main():
             return
 
     module.exit_json(**results)
-
 
 if __name__ == '__main__':
     main()
