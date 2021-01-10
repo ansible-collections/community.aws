@@ -11,7 +11,7 @@
     - name: create cloudwarch event rule for integration test
       register: result
       cloudwatchevent_rule:
-        name: run_foo
+        name: '{{ resource_prefix }}'
         description: 'Run Foo'
         state: enabled
         schedule_expression: "rate(60 minutes)"
