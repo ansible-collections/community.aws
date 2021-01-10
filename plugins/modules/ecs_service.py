@@ -5,6 +5,7 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+
 DOCUMENTATION = r'''
 ---
 module: ecs_service
@@ -491,6 +492,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+
 class EcsServiceManager:
     """Handles ECS Services"""
 
@@ -649,6 +651,7 @@ class EcsServiceManager:
         load_balancers = params.get('loadBalancers', [])
         # check if botocore (and thus boto3) is new enough for using the healthCheckGracePeriodSeconds parameter
         return len(load_balancers) > 0 and self.module.botocore_at_least('1.8.20')
+
 
 def main():
     argument_spec = dict(
@@ -863,6 +866,7 @@ def main():
             return
 
     module.exit_json(**results)
+
 
 if __name__ == '__main__':
     main()
