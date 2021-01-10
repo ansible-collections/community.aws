@@ -111,8 +111,9 @@ options:
             required: false
           platform_version:
             type: str
-            choices: ['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', 'LATEST']
-            description: Numeric part of platform version or LATEST
+            description:
+              - Numeric part of platform version or LATEST
+              - See U(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html) for more details.
             required: false
           group:
             type: str
@@ -516,7 +517,7 @@ def main():
                 launch_type=dict(type='str', choices=['EC2', 'FARGATE']),
                 task_definition_arn=dict(type='str'),
                 task_count=dict(type='int'),
-                platform_version=dict(type='str', choices=['1.0.0', '1.1.0', '1.2.0', '1.3.0', '1.4.0', 'LATEST']),
+                platform_version=dict(required=False, type='str'),
                 group=dict(type='str'),
                 network_configuration=dict(
                     type='dict',
