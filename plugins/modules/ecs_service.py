@@ -694,7 +694,7 @@ def main():
             assign_public_ip=dict(type='bool')
         )),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
-        platform_version=dict(required=False, type='str')
+        platform_version=dict(required=False, type='str'),
         service_registries=dict(required=False, type='list', default=[], elements='dict'),
         scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA'])
     )
