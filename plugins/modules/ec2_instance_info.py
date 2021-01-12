@@ -35,7 +35,7 @@ options:
     type: dict
   uptime:
     description:
-      - minimum running uptime in hours of instances.  For example if uptime is 60, it would return all instances that have run more than 60 hours.
+      - minimum running uptime in minutes of instances.  For example if uptime is 60, it would return all instances that have run more than 60 minutes.
     required: false
     type: int
 
@@ -71,12 +71,13 @@ EXAMPLES = r'''
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
 
-- name: Gather information about any instance with Name beginning with RHEL and been running at least 60 hours
+- name: Gather information about any instance with Name beginning with RHEL and been running at least 60 minutes
   community.aws.ec2_instance_info:
     region: "{{ ec2_region }}"
     uptime: 60
     filters:
       "tag:Name": "RHEL-*"
+      instance-state-name: [ "running" ]
   register: ec2_node_info
 
 '''
@@ -538,7 +539,7 @@ def list_ec2_instances(connection, module):
 
     if uptime:
         timedelta = int(uptime) if uptime else 0
-        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(hours=timedelta)
+        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=timedelta)
         # Get instances from reservations
         for reservation in reservations['Reservations']:
             instances += [instance for instance in reservation['Instances'] if instance['LaunchTime'].replace(tzinfo=None) < oldest_launch_time]
