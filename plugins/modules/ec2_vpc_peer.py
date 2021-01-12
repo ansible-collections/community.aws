@@ -216,8 +216,13 @@ EXAMPLES = '''
 
 '''
 RETURN = '''
-task:
-  description: The result of the create, accept, reject or delete action.
+peering_id:
+  description: The id of the VPC peering connection created/deleted.
+  returned: always
+  type: str
+  sample: pcx-034223d7c0aec3cde
+vpc_peering_connection:
+  description: The details of the VPC peering connection as returned by Boto3 (snake cased).
   returned: success
   type: dict
 '''
@@ -231,6 +236,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def wait_for_state(client, module, state, pcx_id):
@@ -283,6 +289,7 @@ def describe_peering_connections(params, client):
             aws_retry=True,
             Filters=ansible_dict_to_boto3_filter_list(peer_filter),
         )
+
     return result
 
 
@@ -311,9 +318,9 @@ def create_peer_connection(client, module):
         if tags_changed(pcx_id, client, module):
             changed = True
         if is_active(peering_conn):
-            return (changed, peering_conn['VpcPeeringConnectionId'])
+            return (changed, peering_conn)
         if is_pending(peering_conn):
-            return (changed, peering_conn['VpcPeeringConnectionId'])
+            return (changed, peering_conn)
     try:
         peering_conn = client.create_vpc_peering_connection(aws_retry=True, **params)
         pcx_id = peering_conn['VpcPeeringConnection']['VpcPeeringConnectionId']
@@ -322,7 +329,7 @@ def create_peer_connection(client, module):
         if module.params.get('tags'):
             create_tags(pcx_id, client, module)
         changed = True
-        return (changed, peering_conn['VpcPeeringConnection']['VpcPeeringConnectionId'])
+        return (changed, peering_conn)
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
@@ -356,7 +363,7 @@ def remove_peer_connection(client, module):
         client.delete_vpc_peering_connection(aws_retry=True, **params)
         if module.params.get('wait'):
             wait_for_state(client, module, 'deleted', pcx_id)
-        module.exit_json(changed=True)
+        module.exit_json(changed=True, peering_id=pcx_id)
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
@@ -388,15 +395,16 @@ def accept_reject(state, client, module):
                 client.reject_vpc_peering_connection(aws_retry=True, **params)
                 target_state = 'rejected'
             if module.params.get('tags'):
-                create_tags(params['VpcPeeringConnectionId'], client, module)
+                create_tags(peering_id, client, module)
             changed = True
             if module.params.get('wait'):
                 wait_for_state(client, module, target_state, pcx_id)
         except botocore.exceptions.ClientError as e:
             module.fail_json(msg=str(e))
-    if tags_changed(params['VpcPeeringConnectionId'], client, module):
+    if tags_changed(peering_id, client, module):
         changed = True
-    return changed, params['VpcPeeringConnectionId']
+
+    return (changed, vpc_peering_connection)
 
 
 def load_tags(module):
@@ -460,7 +468,6 @@ def main():
 
     if state == 'present':
         (changed, results) = create_peer_connection(client, module)
-        module.exit_json(changed=changed, peering_id=results)
     elif state == 'absent':
         if not peering_id and (not vpc_id or not peer_vpc_id):
             module.fail_json(msg='state is absent but one of the following is missing: peering_id or [vpc_id, peer_vpc_id]')
@@ -468,8 +475,9 @@ def main():
         remove_peer_connection(client, module)
     else:
         (changed, results) = accept_reject(state, client, module)
-        module.exit_json(changed=changed, peering_id=results)
 
+    formatted_results = camel_dict_to_snake_dict(results)
+    module.exit_json(changed=changed, vpc_peering_connection=formatted_results, peering_id=results['VpcPeeringConnectionId'])
 
 if __name__ == '__main__':
     main()
