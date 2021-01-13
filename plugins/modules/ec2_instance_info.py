@@ -33,11 +33,13 @@ options:
     required: false
     default: {}
     type: dict
-  uptime:
+  minimum_uptime:
     description:
-      - minimum running uptime in minutes of instances.  For example if uptime is 60, it would return all instances that have run more than 60 minutes.
+      - Minimum running uptime in minutes of instances.  For example if I(uptime) is C(60) return all instances that have run more than 60 minutes.
     required: false
+    aliases: ['uptime']
     type: int
+
 
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -71,7 +73,7 @@ EXAMPLES = r'''
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
 
-- name: Gather information about any instance with Name beginning with RHEL and been running at least 60 minutes
+- name: Gather information about any instance with Name beginning with RHEL and an uptime of at least 60 minutes
   community.aws.ec2_instance_info:
     region: "{{ ec2_region }}"
     uptime: 60
@@ -525,14 +527,8 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 def list_ec2_instances(connection, module):
 
     instance_ids = module.params.get("instance_ids")
-    uptime = module.params.get('uptime')
+    uptime = module.params.get('minimum_uptime')
     filters = ansible_dict_to_boto3_filter_list(module.params.get("filters"))
-
-    # Determine oldest launch_time
-    if uptime is None:
-        oldest_launch_time = datetime.datetime.utcnow() + datetime.timedelta(days=30 * 365)
-    else:
-        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=int(uptime))
 
     try:
         reservations_paginator = connection.get_paginator('describe_instances')
@@ -541,8 +537,6 @@ def list_ec2_instances(connection, module):
         module.fail_json_aws(e, msg="Failed to list ec2 instances")
 
     instances = []
-
-
 
     if uptime:
         timedelta = int(uptime) if uptime else 0
@@ -567,7 +561,7 @@ def list_ec2_instances(connection, module):
 def main():
 
     argument_spec = dict(
-        uptime=dict(required=False, type='int', default=None),
+        minimum_uptime=dict(required=False, type='int', default=None, aliases=['uptime']),
         instance_ids=dict(default=[], type='list', elements='str'),
         filters=dict(default={}, type='dict')
     )
