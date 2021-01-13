@@ -88,6 +88,42 @@
           - result.targets[0].ecs_parameters.launch_type == "FARGATE"
           - result.targets[0].ecs_parameters.network_configuration.awsvpc_configuration.assign_public_ip == "ENABLED"
 
+    - name: disable cloudwatch event rule for integration test
+      register: result
+      cloudwatchevent_rule:
+        name: '{{ resource_prefix }}'
+        description: 'Run Foo'
+        state: enabled
+        schedule_expression: "rate(60 minutes)"
+        targets:
+        - id: run-job-foo
+          arn: "{{ ecs_cluster.arn }}"
+          role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+          ecs_parameters:
+            launch_type: FARGATE
+            network_configuration:
+              awsvpc_configuration:
+                assign_public_ip: ENABLED
+                security_groups:
+                - "{{ setup_sg.group_id }}"
+                subnets:
+                - "{{ setup_subnet.id }}"
+            task_definition_arn: "{{ ecs_task_definition.taskdefinition.taskDefinitionArn }}:{{ ecs_task_definition.taskdefinition.revision }}"
+            task_count: 1
+
+    - name: check disabled event rule
+      asserts:
+        that:
+          - result is changed
+          - result.rule.description == "Run Foo"
+          - result.rule.name == "{{ resource_prefix }}"
+          - result.schedule_expression == "rate(60 minutes)"
+          - result.state == "DISABLED"
+          - result.targets[0].arn == "{{ ecs_cluster.arn }}"
+          - result.targets[0].id == "run-job-foo"
+          - result.targets[0].ecs_parameters.launch_type == "FARGATE"
+          - result.targets[0].ecs_parameters.network_configuration.awsvpc_configuration.assign_public_ip == "ENABLED"
+
     - name: update cloudwarch event rule with invalid launch type
       register: result
       cloudwatchevent_rule:
@@ -147,6 +183,63 @@
           - result is not changed
           - result.error.code == "ValidationException"
           - "result.error.message == \"1 validation error detected: Value 'INVALID_OPTION' at 'targets.1.member.ecsParameters.networkConfiguration.awsvpcConfiguration.assignPublicIp' failed to satisfy constraint: Member must satisfy enum value set: [ENABLED, DISABLED]\""
+
+    - name: update cloudwarch event rule with valid launch type
+      register: result
+      cloudwatchevent_rule:
+        name: '{{ resource_prefix }}'
+        description: 'Run Foo'
+        state: enabled
+        schedule_expression: "rate(60 minutes)"
+        targets:
+        - id: run-job-foo
+          arn: "{{ ecs_cluster.arn }}"
+          role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+          ecs_parameters:
+            launch_type: EC2
+            network_configuration:
+              awsvpc_configuration:
+                assign_public_ip: ENABLED
+                security_groups:
+                - "{{ setup_sg.group_id }}"
+                subnets:
+                - "{{ setup_subnet.id }}"
+            task_definition_arn: "{{ ecs_task_definition.taskdefinition.taskDefinitionArn }}:{{ ecs_task_definition.taskdefinition.revision }}"
+            task_count: 1
+
+    - name: check event rule update with valid launch type
+      asserts:
+        that:
+          - result is changed
+          - result.targets[0].ecs_parameters.launch_type == "EC2"
+
+    - name: update cloudwarch event rule without changed
+      register: result
+      cloudwatchevent_rule:
+        name: '{{ resource_prefix }}'
+        description: 'Run Foo'
+        state: enabled
+        schedule_expression: "rate(60 minutes)"
+        targets:
+        - id: run-job-foo
+          arn: "{{ ecs_cluster.arn }}"
+          role_arn: arn:aws:iam::123456789123:role/ecsEventsRole
+          ecs_parameters:
+            launch_type: EC2
+            network_configuration:
+              awsvpc_configuration:
+                assign_public_ip: ENABLED
+                security_groups:
+                - "{{ setup_sg.group_id }}"
+                subnets:
+                - "{{ setup_subnet.id }}"
+            task_definition_arn: "{{ ecs_task_definition.taskdefinition.taskDefinitionArn }}:{{ ecs_task_definition.taskdefinition.revision }}"
+            task_count: 1
+
+    - name: check event rule update with valid launch type
+      asserts:
+        that:
+          - result is not changed
 
   always:
     - name: Announce teardown start
