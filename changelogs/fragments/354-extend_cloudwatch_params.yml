@@ -1,0 +1,2 @@
+minor_changes:
+- cloudwatchevent_rule - add new params ``launch_type``, ``platform_version``, ``group`` and ``network_configuration`` and it's suboptions (https://github.com/ansible-collections/community.aws/pull/354).
