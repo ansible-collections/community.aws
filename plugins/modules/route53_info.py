@@ -208,13 +208,11 @@ EXAMPLES = r'''
 try:
     import botocore
 except ImportError:
-    pass  # Handled by HAS_BOTO and HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 def get_hosted_zone(client, module):
@@ -459,10 +457,6 @@ def main():
     )
     if module._name == 'route53_facts':
         module.deprecate("The 'route53_facts' module has been renamed to 'route53_info'", date='2021-12-01', collection_name='community.aws')
-
-    # Validate Requirements
-    if not (HAS_BOTO or HAS_BOTO3):
-        module.fail_json(msg='json and boto/boto3 is required.')
 
     try:
         route53 = module.client('route53')
