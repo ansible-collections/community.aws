@@ -34,7 +34,7 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = r'''
-# Simple example of listing all support AWS services for VPC endpoints
+# Simple example of listing all supported AWS services for VPC endpoints
 - name: List supported AWS endpoint services
   community.aws.ec2_vpc_endpoint_service_info:
     region: ap-southeast-2

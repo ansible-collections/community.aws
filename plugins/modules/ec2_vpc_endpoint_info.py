@@ -183,7 +183,10 @@ def main():
     query = module.params.get('query')
     if query == 'endpoints':
         module.deprecate('The query option has been deprecated and'
-                         ' will be removed after 2022-12-01',
+                         ' will be removed after 2022-12-01.  Searching for'
+                         ' `endpoints` is now the default and after'
+                         ' 2022-12-01 this module will only support fetching'
+                         ' endpoints.',
                          date='2022-12-01', collection_name='community.aws')
     elif query == 'services':
         module.deprecate('Support for fetching service information with this '
