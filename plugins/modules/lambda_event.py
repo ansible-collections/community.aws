@@ -115,10 +115,8 @@ lambda_stream_events:
 '''
 
 import re
-import sys
 
 try:
-    import boto3
     from botocore.exceptions import ClientError, ParamValidationError, MissingParametersError
 except ImportError:
     pass  # Handled by AnsibleAWSModule

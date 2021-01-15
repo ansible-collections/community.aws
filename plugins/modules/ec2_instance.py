@@ -803,12 +803,10 @@ import time
 import uuid
 
 try:
-    import boto3
     import botocore.exceptions
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible.module_utils._text import to_bytes
 from ansible.module_utils._text import to_native
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict

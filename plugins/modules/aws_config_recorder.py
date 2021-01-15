@@ -82,7 +82,6 @@ RETURN = '''#'''
 
 try:
     import botocore
-    from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
     pass  # handled by AnsibleAWSModule
 

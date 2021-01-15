@@ -121,14 +121,9 @@ location:
 '''
 
 import datetime
-from functools import partial
-import json
-import traceback
 
 try:
-    import botocore
     from botocore.exceptions import ClientError, BotoCoreError
-    from botocore.signers import CloudFrontSigner
 except ImportError:
     pass  # caught by imported AnsibleAWSModule
 

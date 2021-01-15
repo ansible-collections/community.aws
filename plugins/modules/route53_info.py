@@ -206,9 +206,7 @@ EXAMPLES = r'''
 '''
 
 try:
-    import boto
     import botocore
-    import boto3
 except ImportError:
     pass  # Handled by HAS_BOTO and HAS_BOTO3
 

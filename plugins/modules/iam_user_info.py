@@ -102,7 +102,6 @@ iam_users:
 '''
 
 try:
-    import botocore
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
     pass  # caught by AnsibleAWSModule

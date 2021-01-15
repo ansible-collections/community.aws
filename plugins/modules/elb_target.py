@@ -115,7 +115,6 @@ from time import time, sleep
 import traceback
 
 try:
-    import boto3
     import botocore
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:

@@ -110,8 +110,6 @@ gateway.customer_gateways:
 '''
 
 try:
-    from botocore.exceptions import ClientError
-    import boto3
     import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule

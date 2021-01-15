@@ -165,7 +165,6 @@ load_balancers:
 import traceback
 
 try:
-    import boto3
     import botocore
     from botocore.exceptions import ClientError, NoCredentialsError
 except ImportError:

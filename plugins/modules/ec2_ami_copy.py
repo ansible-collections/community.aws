@@ -136,7 +136,7 @@ image_id:
 '''
 
 try:
-    from botocore.exceptions import ClientError, NoCredentialsError, WaiterError, BotoCoreError
+    from botocore.exceptions import ClientError, WaiterError, BotoCoreError
 except ImportError:
     pass  # caught by AnsibleAWSModule
 

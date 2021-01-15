@@ -302,8 +302,6 @@ import time
 import uuid
 
 try:
-    import boto3
-    import botocore.exceptions
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     # handled by AnsibleAWSModule
