@@ -795,12 +795,12 @@ instances:
             sample: vpc-0011223344
 '''
 
+from collections import namedtuple
 import re
-import uuid
 import string
 import textwrap
 import time
-from collections import namedtuple
+import uuid
 
 try:
     import boto3
@@ -808,18 +808,18 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible.module_utils.six import string_types
-from ansible.module_utils.six.moves.urllib import parse as urlparse
 from ansible.module_utils._text import to_bytes
 from ansible.module_utils._text import to_native
+from ansible.module_utils.six import string_types
+from ansible.module_utils.six.moves.urllib import parse as urlparse
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 
 module = None

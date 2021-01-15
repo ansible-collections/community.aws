@@ -120,9 +120,6 @@ location:
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 import datetime
 from functools import partial
 import json
@@ -130,10 +127,14 @@ import traceback
 
 try:
     import botocore
-    from botocore.signers import CloudFrontSigner
     from botocore.exceptions import ClientError, BotoCoreError
+    from botocore.signers import CloudFrontSigner
 except ImportError:
     pass  # caught by imported AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 class CloudFrontOriginAccessIdentityServiceManager(object):

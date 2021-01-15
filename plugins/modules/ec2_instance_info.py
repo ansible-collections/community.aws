@@ -507,9 +507,8 @@ instances:
             sample: vpc-0011223344
 '''
 
-import traceback
 import datetime
-
+import traceback
 
 try:
     import boto3
