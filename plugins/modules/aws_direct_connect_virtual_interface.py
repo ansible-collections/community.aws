@@ -248,15 +248,18 @@ EXAMPLES = r'''
 '''
 
 import traceback
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError, delete_virtual_interface
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     # handled by AnsibleAWSModule
     pass
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import delete_virtual_interface
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def try_except_ClientError(failure_msg):
