@@ -114,7 +114,6 @@ changed:
 import traceback
 
 try:
-    import boto3
     import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
