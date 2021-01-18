@@ -89,7 +89,6 @@ changed:
     type: bool
     sample: "false"
 '''
-import traceback
 
 try:
     import botocore
@@ -122,8 +121,8 @@ def list_virtual_gateways(client, module):
 
     try:
         all_virtual_gateways = client.describe_vpn_gateways(**params)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg=str(e), exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to list gateways")
 
     return [camel_dict_to_snake_dict(get_virtual_gateway_info(vgw))
             for vgw in all_virtual_gateways['VpnGateways']]

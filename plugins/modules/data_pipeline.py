@@ -200,10 +200,8 @@ result:
 import hashlib
 import json
 import time
-import traceback
 
 try:
-    import boto3
     import botocore
     from botocore.exceptions import ClientError
 except ImportError:
@@ -546,10 +544,10 @@ def define_pipeline(client, module, objects, dp_id):
                                            parameterValues=values)
             msg = 'Data Pipeline {0} has been updated.'.format(dp_name)
             changed = True
-        except ClientError as e:
-            module.fail_json(msg="Failed to put the definition for pipeline {0}. Check that string/reference fields"
-                             "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
-                             "objects".format(dp_name), exception=traceback.format_exc())
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to put the definition for pipeline {0}. Check that string/reference fields"
+                                 "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
+                                 "objects".format(dp_name))
     else:
         changed = False
         msg = ""
@@ -585,11 +583,11 @@ def create_pipeline(client, module):
                                         tags=tags)
             dp_id = dp['pipelineId']
             pipeline_exists_timeout(client, dp_id, timeout)
-        except ClientError as e:
-            module.fail_json(msg="Failed to create the data pipeline {0}.".format(dp_name), exception=traceback.format_exc())
         except TimeOutException:
             module.fail_json(msg=('Data Pipeline {0} failed to create'
                                   'within timeout {1} seconds').format(dp_name, timeout))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to create the data pipeline {0}.".format(dp_name))
         # Put pipeline definition
         changed, msg = define_pipeline(client, module, objects, dp_id)
 
