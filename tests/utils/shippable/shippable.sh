@@ -47,7 +47,7 @@ function retry
         echo "@* -> ${result}"
     done
     echo "Command '@*' failed 3 times!"
-    exit -1
+    exit 1
 }
 
 command -v pip
@@ -69,6 +69,8 @@ if [ "${SHIPPABLE_BUILD_ID:-}" ]; then
 else
     export ANSIBLE_COLLECTIONS_PATHS="${PWD}/../../../"
 fi
+
+retry ansible-galaxy -vvv collection install amazon.aws
 
 if [ "${script}" != "sanity" ] || [ "${test}" == "sanity/extra" ]; then
     # Nothing further should be added to this list.
