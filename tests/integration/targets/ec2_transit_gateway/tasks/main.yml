@@ -16,8 +16,10 @@
 
     - name: test create transit gateway without permissions
       ec2_transit_gateway:
+        aws_access_key: '{{ omit }}'
+        aws_secret_key: '{{ omit }}'
+        security_token: '{{ omit }}'
         description: "{{ tgw_description }}"
-        region: "{{ aws_region }}"
       register: result
       ignore_errors: yes
 
@@ -30,6 +32,7 @@
     - name: test create transit gateway without region
       ec2_transit_gateway:
         description: "{{ tgw_description }}"
+        region: '{{ omit }}'
       register: result
       ignore_errors: yes
 
