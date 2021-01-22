@@ -83,7 +83,7 @@ dkim_attributes:
             sample: 'Pending'
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, AWSRetry
 
 try:
