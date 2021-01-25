@@ -14,7 +14,9 @@ short_description: Manage an AWS Glue job
 description:
     - Manage an AWS Glue job. See U(https://aws.amazon.com/glue/) for details.
 requirements: [ boto3 ]
-author: "Rob White (@wimnat)"
+author: 
+  - "Rob White (@wimnat)"
+  - "Vijayanand Sharma (@vijayanandsharma)"
 options:
   allocated_capacity:
     description:
@@ -75,6 +77,14 @@ options:
     description:
       - The job timeout in minutes.
     type: int
+  glue_version:
+    description:
+      - Glue version determines the versions of Apache Spark and Python that AWS Glue supports
+    type: str
+  worker_type:
+    description:
+      - The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, or G.2X.
+    type: str
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -282,6 +292,10 @@ def create_or_update_glue_job(connection, module, glue_job):
         params['MaxRetries'] = module.params.get("max_retries")
     if module.params.get("timeout") is not None:
         params['Timeout'] = module.params.get("timeout")
+    if module.params.get("glue_version") is not None:
+        params['GlueVersion'] = module.params.get("glue_version")
+    if module.params.get("worker_type") is not None:
+        params['WorkerType'] = module.params.get("worker_type")
 
     # If glue_job is not None then check if it needs to be modified, else create it
     if glue_job:
@@ -345,7 +359,9 @@ def main():
             name=dict(required=True, type='str'),
             role=dict(type='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
-            timeout=dict(type='int')
+            timeout=dict(type='int'),
+            glue_version=dict(type='str'),
+            worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str')
         )
     )
 
