@@ -93,7 +93,7 @@
       cloudwatchevent_rule:
         name: '{{ resource_prefix }}'
         description: 'Run Foo'
-        state: enabled
+        state: disabled
         schedule_expression: "rate(60 minutes)"
         targets:
         - id: run-job-foo
