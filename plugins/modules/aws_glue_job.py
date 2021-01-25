@@ -85,6 +85,10 @@ options:
     description:
       - The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, or G.2X.
     type: str
+  number_of_workers:
+    description:
+      - The number of workers of a defined workerType that are allocated when a job runs.
+    type: int
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -258,6 +262,12 @@ def _compare_glue_job_params(user_params, current_params):
         return True
     if 'Timeout' in user_params and user_params['Timeout'] != current_params['Timeout']:
         return True
+    if 'GlueVersion' in user_params and user_params['GlueVersion'] != current_params['GlueVersion']:
+        return True
+    if 'WorkerType' in user_params and user_params['WorkerType'] != current_params['WorkerType']:
+        return True
+    if 'NumberOfWorkers' in user_params and user_params['Timeout'] != current_params['NumberOfWorkers']:
+        return True
 
     return False
 
@@ -296,6 +306,8 @@ def create_or_update_glue_job(connection, module, glue_job):
         params['GlueVersion'] = module.params.get("glue_version")
     if module.params.get("worker_type") is not None:
         params['WorkerType'] = module.params.get("worker_type")
+    if module.params.get("number_of_workers") is not None:
+        params['NumberOfWorkers'] = module.params.get("number_of_workers")
 
     # If glue_job is not None then check if it needs to be modified, else create it
     if glue_job:
@@ -361,7 +373,8 @@ def main():
             state=dict(required=True, choices=['present', 'absent'], type='str'),
             timeout=dict(type='int'),
             glue_version=dict(type='str'),
-            worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str')
+            worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str'),
+            number_of_workers=dict(type='int')
         )
     )
 
