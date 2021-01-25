@@ -267,7 +267,7 @@ def _compare_glue_job_params(user_params, current_params):
         return True
     if 'WorkerType' in user_params and user_params['WorkerType'] != current_params['WorkerType']:
         return True
-    if 'NumberOfWorkers' in user_params and user_params['Timeout'] != current_params['NumberOfWorkers']:
+    if 'NumberOfWorkers' in user_params and user_params['NumberOfWorkers'] != current_params['NumberOfWorkers']:
         return True
 
     return False
