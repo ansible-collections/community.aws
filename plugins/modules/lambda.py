@@ -46,7 +46,7 @@ options:
   zip_file:
     description:
       - A .zip file containing your deployment package
-      - If I(state=present) then either I(zip_file) or I(s3_bucket) must be present.
+      - If I(state=present) then either I(zip_file), I(s3_bucket) or I(image_uri) must be present.
     aliases: [ 'src' ]
     type: str
   s3_bucket:
@@ -63,6 +63,10 @@ options:
   s3_object_version:
     description:
       - The Amazon S3 object (the deployment package) version you want to upload.
+    type: str
+  image_uri :
+    description:
+      - URI of a container image in the Amazon ECR registry.
     type: str
   description:
     description:
@@ -107,6 +111,10 @@ options:
   tags:
     description:
       - tag dict to apply to the function (requires botocore 1.5.40 or above).
+    type: dict
+  image_config:
+    description:
+      - A dict of configuration values that override the container image Dockerfile, see U(https://docs.aws.amazon.com/lambda/latest/dg/configuration-images.html)
     type: dict
 author:
     - 'Steyn Huizinga (@steynovich)'
@@ -331,6 +339,7 @@ def main():
         s3_bucket=dict(),
         s3_key=dict(),
         s3_object_version=dict(),
+        image_uri=dict(),
         description=dict(default=''),
         timeout=dict(type='int', default=3),
         memory_size=dict(type='int', default=128),
@@ -340,16 +349,21 @@ def main():
         dead_letter_arn=dict(),
         tracing_mode=dict(choices=['Active', 'PassThrough']),
         tags=dict(type='dict'),
+        image_config=dict(type='dict'),
     )
 
     mutually_exclusive = [['zip_file', 's3_key'],
                           ['zip_file', 's3_bucket'],
-                          ['zip_file', 's3_object_version']]
+                          ['zip_file', 's3_object_version'],
+                          ['zip_file', 'image_uri'],
+                          ['image_uri', 's3_key'],
+                          ['image_uri', 's3_bucket'],
+                          ['image_uri', 's3_object_version']]
 
     required_together = [['s3_key', 's3_bucket'],
                          ['vpc_subnet_ids', 'vpc_security_group_ids']]
 
-    required_if = [['state', 'present', ['runtime', 'handler', 'role']]]
+    required_if = [['state', 'present', [['runtime', 'handler', 'role'],['image_uri','role']],True]]
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True,
@@ -366,6 +380,7 @@ def main():
     s3_key = module.params.get('s3_key')
     s3_object_version = module.params.get('s3_object_version')
     zip_file = module.params.get('zip_file')
+    image_uri = module.params.get('image_uri')
     description = module.params.get('description')
     timeout = module.params.get('timeout')
     memory_size = module.params.get('memory_size')
@@ -375,6 +390,7 @@ def main():
     dead_letter_arn = module.params.get('dead_letter_arn')
     tracing_mode = module.params.get('tracing_mode')
     tags = module.params.get('tags')
+    image_config = module.params.get('image_config')
 
     check_mode = module.check_mode
     changed = False
@@ -454,6 +470,15 @@ def main():
             # No VPC configuration is desired, assure VPC config is empty when present in current config
             if 'VpcConfig' in current_config and current_config['VpcConfig'].get('VpcId'):
                 func_kwargs.update({'VpcConfig': {'SubnetIds': [], 'SecurityGroupIds': []}})
+        # Update image configuration
+        if image_config:
+            if 'ImageConfigResponse' in current_config:
+                if image_config != current_config['ImageConfigResponse']['ImageConfig'] :
+                    func_kwargs.update({'ImageConfig': image_config})
+            else:
+              func_kwargs.update({'ImageConfig': image_config})
+        elif 'ImageConfigResponse' in current_config:
+            func_kwargs.update({'ImageConfig': {}})
 
         # Upload new configuration if configuration has changed
         if len(func_kwargs) > 1:
@@ -490,6 +515,9 @@ def main():
                     code_kwargs.update({'ZipFile': encoded_zip})
                 except IOError as e:
                     module.fail_json(msg=str(e), exception=traceback.format_exc())
+        # Update Container Image Uri
+        elif image_uri:
+           code_kwargs.update({'ImageUri': image_uri})
 
         # Tag Function
         if tags is not None:
@@ -531,18 +559,22 @@ def main():
                 code = {'ZipFile': zip_content}
             except IOError as e:
                 module.fail_json(msg=str(e), exception=traceback.format_exc())
+        elif image_uri:
+            code = {'ImageUri': image_uri }
 
         else:
-            module.fail_json(msg='Either S3 object or path to zipfile required')
+            module.fail_json(msg='Either S3 object, path to zipfile or Image Uri required')
 
         func_kwargs = {'FunctionName': name,
                        'Publish': True,
-                       'Runtime': runtime,
                        'Role': role_arn,
                        'Code': code,
                        'Timeout': timeout,
-                       'MemorySize': memory_size,
+                       'MemorySize': memory_size
                        }
+
+        if runtime is not None:
+            func_kwargs.update({'Runtime': runtime})
 
         if description is not None:
             func_kwargs.update({'Description': description})
@@ -552,6 +584,11 @@ def main():
 
         if environment_variables:
             func_kwargs.update({'Environment': {'Variables': environment_variables}})
+
+        if image_uri is not None:
+            func_kwargs.update({'PackageType': 'Image'})
+            if image_config is not None:
+                func_kwargs.update({'ImageConfig': image_config})
 
         if dead_letter_arn:
             func_kwargs.update({'DeadLetterConfig': {'TargetArn': dead_letter_arn}})
