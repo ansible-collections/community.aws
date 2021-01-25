@@ -71,7 +71,7 @@ options:
     description:
       - Create or delete the AWS Glue job.
     required: true
-    choices: [ 'Standard', 'G.1X', 'G.2X' ]
+    choices: [ 'present', 'absent' ]
     type: str
   timeout:
     description:
@@ -84,7 +84,7 @@ options:
   worker_type:
     description:
       - The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, or G.2X.
-    choices: [ 'present', 'absent' ]
+    choices: [ 'Standard', 'G.1X', 'G.2X' ]
     type: str
   number_of_workers:
     description:
