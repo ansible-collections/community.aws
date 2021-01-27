@@ -27,12 +27,13 @@ options:
       - Name of bucket to query.
     type: str
     default: ""
+    version_added: 1.4.0
   name_filter:
     description:
       - Get information only about buckets name containing a string.
     type: str
     default: ""
-    version_added: 1.3.0
+    version_added: 1.4.0
   bucket_facts:
     description:
       - Retrieve requested S3 bucket detailed information
@@ -104,7 +105,7 @@ options:
         type: bool
         default: False
     type: dict
-    version_added: 1.3.0
+    version_added: 1.4.0
   transform_location:
     description:
       - S3 bucket location for default us-east-1 is normally reported as 'null'
@@ -179,9 +180,10 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def get_bucket_list(module, connection, name="", name_filter=""):
@@ -199,8 +201,8 @@ def get_bucket_list(module, connection, name="", name_filter=""):
     # Get all buckets
     try:
         buckets = camel_dict_to_snake_dict(connection.list_buckets())['buckets']
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to list buckets")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as err_code:
+        module.fail_json_aws(err_code, msg="Failed to list buckets")
 
     # Filter buckets if requested
     if name_filter:
@@ -266,7 +268,7 @@ def get_bucket_details(connection, name, requested_facts, transform_location):
     return(all_facts)
 
 
-@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
+@AWSRetry.jittered_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_location(name, connection, transform_location=False):
     """
     Get bucket location and optionally transform 'null' to 'us-east-1'
@@ -288,7 +290,7 @@ def get_bucket_location(name, connection, transform_location=False):
         return(data)
 
 
-@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
+@AWSRetry.jittered_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_tagging(name, connection):
     """
     Get bucket tags and transform them using `boto3_tag_list_to_ansible_dict` function
@@ -307,7 +309,7 @@ def get_bucket_tagging(name, connection):
             return(data)
 
 
-@AWSRetry.exponential_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
+@AWSRetry.jittered_backoff(max_delay=120, catch_extra_error_codes=['NoSuchBucket', 'OperationAborted'])
 def get_bucket_property(name, connection, get_api_name):
     """
     Get bucket property
