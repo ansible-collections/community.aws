@@ -222,7 +222,7 @@ EXAMPLES = '''
 import json
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError, ParamValidationError
+    import botocore
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
@@ -417,7 +417,7 @@ def update_tags(client, queue_url, module):
 
     try:
         existing_tags = client.list_queue_tags(QueueUrl=queue_url, aws_retry=True)['Tags']
-    except (ClientError, KeyError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError, KeyError) as e:
         existing_tags = {}
 
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags, purge_tags=purge_tags)
@@ -464,7 +464,7 @@ def main():
             result = create_or_update_sqs_queue(client, module)
         elif state == 'absent':
             result = delete_sqs_queue(client, module)
-    except (BotoCoreError, ClientError, ParamValidationError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to control sqs queue')
     else:
         module.exit_json(**result)

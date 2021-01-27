@@ -194,7 +194,7 @@ from copy import deepcopy
 import datetime
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # handled by AnsibleAwsModule
 
@@ -227,7 +227,7 @@ def create_lifecycle_rule(client, module):
         current_lifecycle_rules = current_lifecycle['Rules']
     except is_boto3_error_code('NoSuchLifecycleConfiguration'):
         current_lifecycle_rules = []
-    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
     rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
@@ -303,7 +303,7 @@ def create_lifecycle_rule(client, module):
     # Write lifecycle to bucket
     try:
         client.put_bucket_lifecycle_configuration(Bucket=name, LifecycleConfiguration=lifecycle_configuration)
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
     module.exit_json(changed=changed)
@@ -388,7 +388,7 @@ def destroy_lifecycle_rule(client, module):
         current_lifecycle_rules = client.get_bucket_lifecycle_configuration(Bucket=name)['Rules']
     except is_boto3_error_code('NoSuchLifecycleConfiguration'):
         current_lifecycle_rules = []
-    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
     # Create lifecycle
@@ -418,7 +418,7 @@ def destroy_lifecycle_rule(client, module):
         elif current_lifecycle_rules:
             changed = True
             client.delete_bucket_lifecycle(Bucket=name)
-    except (ClientError, BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
     module.exit_json(changed=changed)
 

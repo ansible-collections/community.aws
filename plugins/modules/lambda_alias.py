@@ -144,7 +144,7 @@ name:
 import re
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -183,12 +183,12 @@ class AWSConnection:
             if not self.region:
                 self.region = self.resource_client['lambda'].meta.region_name
 
-        except (ClientError, BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             ansible_obj.fail_json(msg="Unable to connect, authorize or access resource: {0}".format(e))
 
         try:
             self.account_id = self.resource_client['iam'].get_user()['User']['Arn'].split(':')[4]
-        except (ClientError, ValueError, KeyError, IndexError):
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError, ValueError, KeyError, IndexError):
             self.account_id = ''
 
     def client(self, resource='lambda'):
@@ -272,7 +272,7 @@ def get_lambda_alias(module, aws):
         results = client.get_alias(**api_params)
     except is_boto3_error_code('ResourceNotFoundException'):
         results = None
-    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg='Error retrieving function alias')
 
     return results
@@ -313,7 +313,7 @@ def lambda_alias(module, aws):
                 if not module.check_mode:
                     try:
                         results = client.update_alias(**api_params)
-                    except (ClientError, BotoCoreError) as e:
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                         module.fail_json(msg='Error updating function alias: {0}'.format(e))
 
         else:
@@ -324,7 +324,7 @@ def lambda_alias(module, aws):
                 if not module.check_mode:
                     results = client.create_alias(**api_params)
                 changed = True
-            except (ClientError, BotoCoreError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json(msg='Error creating function alias: {0}'.format(e))
 
     else:  # state = 'absent'
@@ -336,7 +336,7 @@ def lambda_alias(module, aws):
                 if not module.check_mode:
                     results = client.delete_alias(**api_params)
                 changed = True
-            except (ClientError, BotoCoreError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json(msg='Error deleting function alias: {0}'.format(e))
 
     return dict(changed=changed, **dict(results or facts))

@@ -188,7 +188,7 @@ import json
 import traceback
 
 try:
-    from botocore.exceptions import ClientError
+    import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -513,7 +513,7 @@ def run(ecr, params):
 
     except Exception as err:
         msg = str(err)
-        if isinstance(err, ClientError):
+        if isinstance(err, botocore.exceptions.ClientError):
             msg = boto_exception(err)
         result['msg'] = msg
         result['exception'] = traceback.format_exc()

@@ -85,7 +85,7 @@ output:
 '''
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
@@ -105,7 +105,7 @@ def list_apps(ebs, app_name, module):
             apps = ebs.describe_applications(ApplicationNames=[app_name])
         else:
             apps = ebs.describe_applications()
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Could not describe application")
 
     return apps.get("Applications", [])
@@ -176,7 +176,7 @@ def main():
             try:
                 create_app = ebs.create_application(**filter_empty(ApplicationName=app_name,
                                                     Description=description))
-            except (BotoCoreError, ClientError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg="Could not create application")
 
             app = describe_app(ebs, app_name, module)
@@ -189,7 +189,7 @@ def main():
                         ebs.update_application(ApplicationName=app_name)
                     else:
                         ebs.update_application(ApplicationName=app_name, Description=description)
-                except (BotoCoreError, ClientError) as e:
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     module.fail_json_aws(e, msg="Could not update application")
 
                 app = describe_app(ebs, app_name, module)
@@ -211,7 +211,7 @@ def main():
                 changed = True
             except is_boto3_error_message('It is currently pending deletion'):
                 changed = False
-            except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
                 module.fail_json_aws(e, msg="Cannot terminate app")
 
             result = dict(changed=changed, app=app)

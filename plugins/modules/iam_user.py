@@ -300,7 +300,7 @@ def get_user(connection, module, name):
         return connection.get_user(**params)
     except is_boto3_error_code('NoSuchEntity'):
         return None
-    except ClientError as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to get user {0}".format(name))
 
 
@@ -310,7 +310,7 @@ def get_attached_policy_list(connection, module, name):
         return connection.list_attached_user_policies(UserName=name)['AttachedPolicies']
     except is_boto3_error_code('NoSuchEntity'):
         return None
-    except ClientError as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to get policies for user {0}".format(name))
 
 
@@ -320,7 +320,7 @@ def delete_user_login_profile(connection, module, user_name):
         return connection.delete_login_profile(UserName=user_name)
     except is_boto3_error_code('NoSuchEntity'):
         return None
-    except ClientError as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to delete login profile for user {0}".format(user_name))
 
 

@@ -78,7 +78,7 @@ all_policy_names:
 '''
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass
 
@@ -205,7 +205,7 @@ def main():
         module.exit_json(**(policy.run()))
     except is_boto3_error_code('NoSuchEntity') as e:
         module.exit_json(changed=False, msg=e.response['Error']['Message'])
-    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
     except PolicyError as e:
         module.fail_json(msg=str(e))

@@ -136,7 +136,7 @@ import json
 import re
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
@@ -289,7 +289,7 @@ def get_policy_statement(module, client):
         policy_results = client.get_policy(**api_params)
     except is_boto3_error_code('ResourceNotFoundException'):
         return {}
-    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="retrieving function policy")
 
     # get_policy returns a JSON string so must convert to dict before reassigning to its key
@@ -325,7 +325,7 @@ def add_policy_permission(module, client):
     if not module.check_mode:
         try:
             client.add_permission(**api_params)
-        except (ClientError, BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="adding permission to policy")
         changed = True
 
@@ -353,7 +353,7 @@ def remove_policy_permission(module, client):
         if not module.check_mode:
             client.remove_permission(**api_params)
             changed = True
-    except (ClientError, BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="removing permission from policy")
 
     return changed

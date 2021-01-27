@@ -165,7 +165,7 @@ transit_gateways:
 '''
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # handled by imported AnsibleAWSModule
 
@@ -250,7 +250,7 @@ def main():
     tgwf_manager = AnsibleEc2TgwInfo(module=module, results=results)
     try:
         tgwf_manager.describe_transit_gateways()
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
     module.exit_json(**results)

@@ -105,7 +105,7 @@ nacls:
 '''
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
@@ -134,7 +134,7 @@ def list_ec2_vpc_nacls(connection, module):
         nacls = connection.describe_network_acls(aws_retry=True, NetworkAclIds=nacl_ids, Filters=filters)
     except is_boto3_error_code('InvalidNetworkAclID.NotFound'):
         module.fail_json(msg='Unable to describe ACL.  NetworkAcl does not exist')
-    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to describe network ACLs {0}".format(nacl_ids))
 
     # Turn the boto3 result in to ansible_friendly_snaked_names

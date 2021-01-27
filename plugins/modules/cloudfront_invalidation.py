@@ -139,7 +139,7 @@ location:
 import datetime
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    import botocore
 except ImportError:
     pass  # caught by imported AnsibleAWSModule
 
@@ -173,7 +173,7 @@ class CloudFrontInvalidationServiceManager(object):
             self.module.warn("InvalidationBatch target paths are not modifiable. "
                              "To make a new invalidation please update caller_reference.")
             return current_invalidation_response, False
-        except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             self.module.fail_json_aws(e, msg="Error creating CloudFront invalidations.")
 
     def get_invalidation(self, distribution_id, caller_reference):
@@ -183,7 +183,7 @@ class CloudFrontInvalidationServiceManager(object):
             paginator = self.client.get_paginator('list_invalidations')
             invalidations = paginator.paginate(DistributionId=distribution_id).build_full_result().get('InvalidationList', {}).get('Items', [])
             invalidation_ids = [inv['Id'] for inv in invalidations]
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing CloudFront invalidations.")
 
         # check if there is an invalidation with the same caller reference
@@ -191,7 +191,7 @@ class CloudFrontInvalidationServiceManager(object):
             try:
                 invalidation = self.client.get_invalidation(DistributionId=distribution_id, Id=inv_id)['Invalidation']
                 caller_ref = invalidation.get('InvalidationBatch', {}).get('CallerReference')
-            except (BotoCoreError, ClientError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Error getting CloudFront invalidation {0}".format(inv_id))
             if caller_ref == caller_reference:
                 current_invalidation = invalidation
@@ -217,7 +217,7 @@ class CloudFrontInvalidationValidationManager(object):
             if distribution_id is None:
                 distribution_id = self.__cloudfront_facts_mgr.get_distribution_id_from_domain_name(alias)
             return distribution_id
-        except (ClientError, BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error validating parameters.")
 
     def create_aws_list(self, invalidation_batch):
@@ -237,7 +237,7 @@ class CloudFrontInvalidationValidationManager(object):
                 'caller_reference': valid_caller_reference
             }
             return valid_invalidation_batch
-        except (ClientError, BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error validating invalidation batch.")
 
 

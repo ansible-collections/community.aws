@@ -139,7 +139,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_secu
 import copy
 import time
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass
 
@@ -250,13 +250,13 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
                 update_params['Name'] = update_params['ConnectionInput']['Name']
                 connection.update_connection(**update_params)
                 changed = True
-            except (BotoCoreError, ClientError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e)
     else:
         try:
             connection.create_connection(**params)
             changed = True
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
 
     # If changed, get the Glue connection again
@@ -291,7 +291,7 @@ def delete_glue_connection(connection, module, glue_connection):
         try:
             connection.delete_connection(**params)
             changed = True
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
 
     module.exit_json(changed=changed)

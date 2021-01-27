@@ -88,7 +88,7 @@ placement_group:
 '''
 
 try:
-    from botocore.exceptions import (BotoCoreError, ClientError)
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
@@ -106,7 +106,7 @@ def get_placement_group_details(connection, module):
                 "Name": "group-name",
                 "Values": [name]
             }])
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(
             e,
             msg="Couldn't find placement group named [%s]" % name)
@@ -136,7 +136,7 @@ def create_placement_group(connection, module):
             "state": 'DryRun',
             "strategy": strategy,
         })
-    except (ClientError, BotoCoreError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
             msg="Couldn't create placement group [%s]" % name)
@@ -154,7 +154,7 @@ def delete_placement_group(connection, module):
     try:
         connection.delete_placement_group(
             GroupName=name, DryRun=module.check_mode)
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(
             e,
             msg="Couldn't delete placement group [%s]" % name)
