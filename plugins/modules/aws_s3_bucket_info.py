@@ -112,7 +112,7 @@ options:
       - affects only queries with I(bucket_facts) > I(bucket_location) = true
     type: bool
     default: False
-    version_added: 1.3.0
+    version_added: 1.4.0
 
 extends_documentation_fragment:
 - amazon.aws.aws
