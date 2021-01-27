@@ -12,8 +12,10 @@
         name: "{{ item }}"
         state: present
         tags:
-          integration: "verified"
-          facts: "defined"
+          "lowercase spaced": "hello cruel world"
+          "Title Case": "Hello Cruel World"
+          CamelCase: "SimpleCamelCase"
+          snake_case: "simple_snake_case"
       register: output
       loop: "{{ testing_buckets }}"
 
@@ -78,8 +80,14 @@
       assert:
         that:
           - item.bucket_acl.Owner is defined
-          - item.bucket_tagging.facts is defined
-          - item.bucket_tagging.integration is defined
+          - item.bucket_tagging.snake_case is defined
+          - item.bucket_tagging.CamelCase is defined
+          - item.bucket_tagging["lowercase spaced"] is defined
+          - item.bucket_tagging["Title Case"] is defined
+          - item.bucket_tagging.snake_case == 'simple_snake_case'
+          - item.bucket_tagging.CamelCase == 'SimpleCamelCase'
+          - item.bucket_tagging["lowercase spaced"] == 'hello cruel world'
+          - item.bucket_tagging["Title Case"] == 'Hello Cruel World'
       loop: "{{ bucket_list.buckets }}"
       loop_control:
         label: "{{ item.name }}"
