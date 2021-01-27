@@ -6,13 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 DOCUMENTATION = '''
 module: elasticache_info
 short_description: Retrieve information for AWS ElastiCache clusters
+version_added: 1.0.0
 description:
   - Retrieve information from AWS ElastiCache clusters
   - This module was called C(elasticache_facts) before Ansible 2.9. The usage did not change.
@@ -32,10 +29,10 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: obtain all ElastiCache information
-  elasticache_info:
+  community.aws.elasticache_info:
 
 - name: obtain all information for a single ElastiCache cluster
-  elasticache_info:
+  community.aws.elasticache_info:
     name: test_elasticache
 '''
 
@@ -226,12 +223,10 @@ elasticache_clusters:
         Environment: test
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
-                                                                     camel_dict_to_snake_dict,
-                                                                     AWSRetry,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 try:
@@ -275,7 +270,7 @@ def get_aws_account_id(module):
 
 
 def get_elasticache_clusters(client, module):
-    region = get_aws_connection_info(module, boto3=True)[0]
+    region = module.region
     try:
         clusters = describe_cache_clusters_with_backoff(client, cluster_id=module.params.get('name'))
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -303,7 +298,7 @@ def main():
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'elasticache_facts':
-        module.deprecate("The 'elasticache_facts' module has been renamed to 'elasticache_info'", version='2.13')
+        module.deprecate("The 'elasticache_facts' module has been renamed to 'elasticache_info'", date='2021-12-01', collection_name='community.aws')
 
     client = module.client('elasticache')
 

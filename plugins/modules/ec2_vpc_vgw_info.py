@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_vpc_vgw_info
+version_added: 1.0.0
 short_description: Gather information about virtual gateways in AWS
 description:
     - Gather information about virtual gateways in AWS.
@@ -37,17 +33,17 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all virtual gateways for an account or profile
-  ec2_vpc_vgw_info:
+  community.aws.ec2_vpc_vgw_info:
     region: ap-southeast-2
     profile: production
   register: vgw_info
 
 - name: Gather information about a filtered list of Virtual Gateways
-  ec2_vpc_vgw_info:
+  community.aws.ec2_vpc_vgw_info:
     region: ap-southeast-2
     profile: production
     filters:
@@ -55,14 +51,14 @@ EXAMPLES = '''
   register: vgw_info
 
 - name: Gather information about a specific virtual gateway by VpnGatewayIds
-  ec2_vpc_vgw_info:
+  community.aws.ec2_vpc_vgw_info:
     region: ap-southeast-2
     profile: production
     vpn_gateway_ids: vgw-c432f6a7
   register: vgw_info
 '''
 
-RETURN = '''
+RETURN = r'''
 virtual_gateways:
     description: The virtual gateways for the account.
     returned: always
@@ -93,21 +89,16 @@ changed:
     type: bool
     sample: "false"
 '''
-import traceback
 
 try:
     import botocore
 except ImportError:
-    pass  # will be captured by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ansible_dict_to_boto3_filter_list,
-                                                                     HAS_BOTO3,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
 
 def get_virtual_gateway_info(virtual_gateway):
@@ -130,35 +121,27 @@ def list_virtual_gateways(client, module):
 
     try:
         all_virtual_gateways = client.describe_vpn_gateways(**params)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg=str(e), exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to list gateways")
 
     return [camel_dict_to_snake_dict(get_virtual_gateway_info(vgw))
             for vgw in all_virtual_gateways['VpnGateways']]
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(type='dict', default=dict()),
-            vpn_gateway_ids=dict(type='list', default=None)
-        )
+    argument_spec = dict(
+        filters=dict(type='dict', default=dict()),
+        vpn_gateway_ids=dict(type='list', default=None, elements='str')
     )
 
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'ec2_vpc_vgw_facts':
-        module.deprecate("The 'ec2_vpc_vgw_facts' module has been renamed to 'ec2_vpc_vgw_info'", version='2.13')
-
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='json and boto3 is required.')
+        module.deprecate("The 'ec2_vpc_vgw_facts' module has been renamed to 'ec2_vpc_vgw_info'", date='2021-12-01', collection_name='community.aws')
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        connection = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Can't authorize connection - " + str(e))
+        connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     # call your function here
     results = list_virtual_gateways(connection, module)

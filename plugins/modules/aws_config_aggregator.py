@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_config_aggregator
+version_added: 1.0.0
 short_description: Manage AWS Config aggregations across multiple accounts
 description:
     - Module manages AWS Config resources
@@ -79,9 +75,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Create cross-account aggregator
-  aws_config_aggregator:
+  community.aws.aws_config_aggregator:
     name: test_config_rule
     state: present
     account_sources:
@@ -92,7 +88,7 @@ EXAMPLES = '''
       all_aws_regions: yes
 '''
 
-RETURN = '''#'''
+RETURN = r'''#'''
 
 
 try:
@@ -100,7 +96,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict
 
 
@@ -169,7 +165,7 @@ def main():
         argument_spec={
             'name': dict(type='str', required=True),
             'state': dict(type='str', choices=['present', 'absent'], default='present'),
-            'account_sources': dict(type='list', required=True),
+            'account_sources': dict(type='list', required=True, elements='dict'),
             'organization_source': dict(type='dict', required=True)
         },
         supports_check_mode=False,

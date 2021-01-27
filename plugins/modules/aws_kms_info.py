@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: aws_kms_info
+version_added: 1.0.0
 short_description: Gather information about AWS KMS keys
 description:
     - Gather information about AWS KMS keys including tags and grants
@@ -40,15 +37,15 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Gather information about all KMS keys
-- aws_kms_info:
+- community.aws.aws_kms_info:
 
 # Gather information about all keys with a Name tag
-- aws_kms_info:
+- community.aws.aws_kms_info:
     filters:
       tag-key: Name
 
 # Gather information about all keys with a specific name
-- aws_kms_info:
+- community.aws.aws_kms_info:
     filters:
       "tag:Name": Example
 '''
@@ -108,7 +105,7 @@ keys:
       returned: always
       sample: false
     enable_key_rotation:
-      description: Whether the automatically key rotation every year is enabled.
+      description: Whether the automatically key rotation every year is enabled. Returns None if key rotation status can't be determined.
       type: bool
       returned: always
       sample: false
@@ -218,17 +215,17 @@ keys:
 '''
 
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict, HAS_BOTO3
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-
-import traceback
-
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 # Caching lookup for aliases
 _aliases = dict()
@@ -291,7 +288,11 @@ def get_key_policy_with_backoff(connection, key_id, policy_name):
 
 @AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def get_enable_key_rotation_with_backoff(connection, key_id):
-    current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+    try:
+        current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+    except is_boto3_error_code('AccessDeniedException') as e:
+        return None
+
     return current_rotation_status.get('KeyRotationEnabled')
 
 
@@ -307,9 +308,7 @@ def get_kms_tags(connection, module, key_id):
             tags.extend(tag_response['Tags'])
         except botocore.exceptions.ClientError as e:
             if e.response['Error']['Code'] != 'AccessDeniedException':
-                module.fail_json(msg="Failed to obtain key tags",
-                                 exception=traceback.format_exc(),
-                                 **camel_dict_to_snake_dict(e.response))
+                module.fail_json_aws(e, msg="Failed to obtain key tags")
             else:
                 tag_response = {}
         if tag_response.get('NextMarker'):
@@ -326,9 +325,7 @@ def get_kms_policies(connection, module, key_id):
                 policy in policies]
     except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] != 'AccessDeniedException':
-            module.fail_json(msg="Failed to obtain key policies",
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+            module.fail_json_aws(e, msg="Failed to obtain key policies")
         else:
             return []
 
@@ -358,30 +355,28 @@ def get_key_details(connection, module, key_id, tokens=None):
         tokens = []
     try:
         result = get_kms_metadata_with_backoff(connection, key_id)['KeyMetadata']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain key metadata",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to obtain key metadata")
     result['KeyArn'] = result.pop('Arn')
 
     try:
         aliases = get_kms_aliases_lookup(connection)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain aliases",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to obtain aliases")
     result['aliases'] = aliases.get(result['KeyId'], [])
-    result['enable_key_rotation'] = get_enable_key_rotation_with_backoff(connection, key_id)
+
+    if result['Origin'] == 'AWS_KMS':
+        result['enable_key_rotation'] = get_enable_key_rotation_with_backoff(connection, key_id)
+    else:
+        result['enable_key_rotation'] = None
 
     if module.params.get('pending_deletion'):
         return camel_dict_to_snake_dict(result)
 
     try:
         result['grants'] = get_kms_grants_with_backoff(connection, key_id, tokens=tokens)['Grants']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain key grants",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to obtain key grants")
     tags = get_kms_tags(connection, module, key_id)
 
     result = camel_dict_to_snake_dict(result)
@@ -393,37 +388,27 @@ def get_key_details(connection, module, key_id, tokens=None):
 def get_kms_info(connection, module):
     try:
         keys = get_kms_keys_with_backoff(connection)['Keys']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain keys",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to obtain keys")
 
     return [get_key_details(connection, module, key['KeyId']) for key in keys]
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(type='dict'),
-            pending_deletion=dict(type='bool', default=False)
-        )
+    argument_spec = dict(
+        filters=dict(type='dict'),
+        pending_deletion=dict(type='bool', default=False),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              supports_check_mode=True)
     if module._name == 'aws_kms_facts':
-        module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", version='2.13')
+        module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 and botocore are required for this module')
-
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='kms', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        connection = module.client('kms')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     all_keys = get_kms_info(connection, module)
     module.exit_json(keys=[key for key in all_keys if key_matches_filters(key, module.params['filters'])])

@@ -6,13 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 
+version_added: 1.0.0
 module: cloudfront_distribution
 
 short_description: Create, update and delete AWS CloudFront distributions.
@@ -69,7 +66,7 @@ options:
     tags:
       description:
         - Should be input as a dict of key-value pairs.
-        - Note that numeric keys or values must be wrapped in quotes. e.g. "Priority:" '1'
+        - "Note that numeric keys or values must be wrapped in quotes. e.g. C(Priority: '1')"
       type: dict
 
     purge_tags:
@@ -90,7 +87,7 @@ options:
 
     aliases:
       description:
-        - A list) of domain name aliases (CNAMEs) as strings to be used for the distribution.
+        - A list of domain name aliases (CNAMEs) as strings to be used for the distribution.
         - Each alias must be unique across all distribution for the AWS account.
       type: list
       elements: str
@@ -144,7 +141,7 @@ options:
           description:
             - Custom headers you wish to add to the request before passing it to the origin.
             - For more information see the CloudFront documentation
-              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/forward-custom-headers.html)
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/forward-custom-headers.html).
           type: list
           elements: dict
           suboptions:
@@ -194,7 +191,7 @@ options:
       description:
         - A dict specifying the default cache behavior of the distribution.
         - If not specified, the I(target_origin_id) is defined as the I(target_origin_id) of the first valid
-          I(cache_behavior) in I(cache_behaviors) with defaults.
+          cache_behavior in I(cache_behaviors) with defaults.
       suboptions:
         target_origin_id:
           description:
@@ -223,7 +220,7 @@ options:
                 whitelisted_names:
                   type: list
                   elements: str
-                  description: A list of coockies to forward to the origin for this cache behavior.
+                  description: A list of cookies to forward to the origin for this cache behavior.
             headers:
               description:
               - A list of headers to forward to the origin for this cache behavior.
@@ -340,7 +337,7 @@ options:
                 whitelisted_names:
                   type: list
                   elements: str
-                  description: A list of coockies to forward to the origin for this cache behavior.
+                  description: A list of cookies to forward to the origin for this cache behavior.
             headers:
               description:
               - A list of headers to forward to the origin for this cache behavior.
@@ -495,7 +492,7 @@ options:
     enabled:
       description:
         - A boolean value that specifies whether the distribution is enabled or disabled.
-      default: false
+        - Defaults to C(false).
       type: bool
 
     viewer_certificate:
@@ -507,18 +504,18 @@ options:
           type: bool
           description:
             - If you're using the CloudFront domain name for your distribution, such as C(123456789abcde.cloudfront.net)
-              you should set I(cloudfront_default_certificate=true)
+              you should set I(cloudfront_default_certificate=true).
             - If I(cloudfront_default_certificate=true) do not set I(ssl_support_method).
         iam_certificate_id:
           type: str
           description:
             - The ID of a certificate stored in IAM to use for HTTPS connections.
-            - If I(iam_certificate_id) is set then you must also specify I(ssl_support_method)
+            - If I(iam_certificate_id) is set then you must also specify I(ssl_support_method).
         acm_certificate_arn:
           type: str
           description:
             - The ID of a certificate stored in ACM to use for HTTPS connections.
-            - If I(acm_certificate_id) is set then you must also specify I(ssl_support_method)
+            - If I(acm_certificate_id) is set then you must also specify I(ssl_support_method).
         ssl_support_method:
           type: str
           description:
@@ -537,19 +534,19 @@ options:
         - A config element that is a complex object that describes how a distribution should restrict it's content.
       suboptions:
         geo_restriction:
-          description: Apply a restriciton based on the location of the requester.
+          description: Apply a restriction based on the location of the requester.
           type: dict
           suboptions:
             restriction_type:
               type: str
               description:
               - The method that you want to use to restrict distribution of your content by country.
-              - Valid values are C(none), C(whitelist), C(blacklist)
+              - Valid values are C(none), C(whitelist), C(blacklist).
             items:
               description:
               - A list of ISO 3166-1 two letter (Alpha 2) country codes that the
                 restriction should apply to.
-              - 'See the ISO website for a full list of codes U(https://www.iso.org/obp/ui/#search/code/)'
+              - 'See the ISO website for a full list of codes U(https://www.iso.org/obp/ui/#search/code/).'
               type: list
 
     web_acl_id:
@@ -561,14 +558,14 @@ options:
       description:
         - The version of the http protocol to use for the distribution.
         - AWS defaults this to C(http2).
-        - Valid values are C(http1.1) and C(http2)
+        - Valid values are C(http1.1) and C(http2).
       type: str
 
     ipv6_enabled:
       description:
         - Determines whether IPv6 support is enabled or not.
+        - Defaults to C(false).
       type: bool
-      default: false
 
     wait:
       description:
@@ -584,11 +581,9 @@ options:
 
 '''
 
-EXAMPLES = '''
-
-# create a basic distribution with defaults and tags
-
-- cloudfront_distribution:
+EXAMPLES = r'''
+- name: create a basic distribution with defaults and tags
+  community.aws.cloudfront_distribution:
     state: present
     default_origin_domain_name: www.my-cloudfront-origin.com
     tags:
@@ -596,31 +591,27 @@ EXAMPLES = '''
       Project: example project
       Priority: '1'
 
-# update a distribution comment by distribution_id
-
-- cloudfront_distribution:
+- name: update a distribution comment by distribution_id
+  community.aws.cloudfront_distribution:
     state: present
     distribution_id: E1RP5A2MJ8073O
     comment: modified by ansible cloudfront.py
 
-# update a distribution comment by caller_reference
-
-- cloudfront_distribution:
+- name: update a distribution comment by caller_reference
+  community.aws.cloudfront_distribution:
     state: present
     caller_reference: my cloudfront distribution 001
     comment: modified by ansible cloudfront.py
 
-# update a distribution's aliases and comment using the distribution_id as a reference
-
-- cloudfront_distribution:
+- name: update a distribution's aliases and comment using the distribution_id as a reference
+  community.aws.cloudfront_distribution:
     state: present
     distribution_id: E1RP5A2MJ8073O
     comment: modified by cloudfront.py again
     aliases: [ 'www.my-distribution-source.com', 'zzz.aaa.io' ]
 
-# update a distribution's aliases and comment using an alias as a reference
-
-- cloudfront_distribution:
+- name: update a distribution's aliases and comment using an alias as a reference
+  community.aws.cloudfront_distribution:
     state: present
     caller_reference: my test distribution
     comment: modified by cloudfront.py again
@@ -628,9 +619,8 @@ EXAMPLES = '''
       - www.my-distribution-source.com
       - zzz.aaa.io
 
-# update a distribution's comment and aliases and tags and remove existing tags
-
-- cloudfront_distribution:
+- name: update a distribution's comment and aliases and tags and remove existing tags
+  community.aws.cloudfront_distribution:
     state: present
     distribution_id: E15BU8SDCGSG57
     comment: modified by cloudfront.py again
@@ -640,9 +630,8 @@ EXAMPLES = '''
       Project: distribution 1.2
     purge_tags: yes
 
-# create a distribution with an origin, logging and default cache behavior
-
-- cloudfront_distribution:
+- name: create a distribution with an origin, logging and default cache behavior
+  community.aws.cloudfront_distribution:
     state: present
     caller_reference: unique test distribution ID
     origins:
@@ -678,14 +667,13 @@ EXAMPLES = '''
     enabled: false
     comment: this is a CloudFront distribution with logging
 
-# delete a distribution
-
-- cloudfront_distribution:
+- name: delete a distribution
+  community.aws.cloudfront_distribution:
     state: absent
     caller_reference: replaceable distribution
 '''
 
-RETURN = '''
+RETURN = r'''
 active_trusted_signers:
   description: Key pair IDs that CloudFront is aware of for each trusted signer.
   returned: always
@@ -1376,8 +1364,8 @@ web_acl_id:
 '''
 
 from ansible.module_utils._text import to_text, to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.cloudfront_facts import CloudFrontFactsServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 from ansible.module_utils.common.dict_transformations import recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags, ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, snake_dict_to_camel_dict
@@ -1591,7 +1579,8 @@ class CloudFrontValidationManager(object):
             'TLSv1',
             'TLSv1_2016',
             'TLSv1.1_2016',
-            'TLSv1.2_2018'
+            'TLSv1.2_2018',
+            'TLSv1.2_2019'
         ])
         self.__valid_viewer_certificate_certificate_sources = set([
             'cloudfront',
@@ -1685,10 +1674,15 @@ class CloudFrontValidationManager(object):
             self.module.fail_json_aws(e, msg="Error validating distribution origins")
 
     def validate_s3_origin_configuration(self, client, existing_config, origin):
-        if origin['s3_origin_access_identity_enabled'] and existing_config.get('s3_origin_config', {}).get('origin_access_identity'):
-            return existing_config['s3_origin_config']['origin_access_identity']
         if not origin['s3_origin_access_identity_enabled']:
             return None
+
+        if origin.get('s3_origin_config', {}).get('origin_access_identity'):
+            return origin['s3_origin_config']['origin_access_identity']
+
+        if existing_config.get('s3_origin_config', {}).get('origin_access_identity'):
+            return existing_config['s3_origin_config']['origin_access_identity']
+
         try:
             comment = "access-identity-by-ansible-%s-%s" % (origin.get('domain_name'), self.__default_datetime_string)
             caller_reference = "%s-%s" % (origin.get('domain_name'), self.__default_datetime_string)
@@ -2105,15 +2099,15 @@ def main():
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=False),
         alias=dict(),
-        aliases=dict(type='list', default=[]),
+        aliases=dict(type='list', default=[], elements='str'),
         purge_aliases=dict(type='bool', default=False),
         default_root_object=dict(),
-        origins=dict(type='list'),
+        origins=dict(type='list', elements='dict'),
         purge_origins=dict(type='bool', default=False),
         default_cache_behavior=dict(type='dict'),
-        cache_behaviors=dict(type='list'),
+        cache_behaviors=dict(type='list', elements='dict'),
         purge_cache_behaviors=dict(type='bool', default=False),
-        custom_error_responses=dict(type='list'),
+        custom_error_responses=dict(type='list', elements='dict'),
         purge_custom_error_responses=dict(type='bool', default=False),
         logging=dict(type='dict'),
         price_class=dict(),

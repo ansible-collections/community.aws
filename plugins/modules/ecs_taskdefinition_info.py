@@ -5,14 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: ecs_taskdefinition_info
+version_added: 1.0.0
 short_description: Describe a task definition in ECS
 notes:
     - For details of the parameters and returns see
@@ -40,7 +37,7 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- ecs_taskdefinition_info:
+- community.aws.ecs_taskdefinition_info:
     task_definition: test-td
 '''
 
@@ -302,7 +299,7 @@ placement_constraints:
             type: str
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:
@@ -318,7 +315,8 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'ecs_taskdefinition_facts':
-        module.deprecate("The 'ecs_taskdefinition_facts' module has been renamed to 'ecs_taskdefinition_info'", version='2.13')
+        module.deprecate("The 'ecs_taskdefinition_facts' module has been renamed to 'ecs_taskdefinition_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     ecs = module.client('ecs')
 

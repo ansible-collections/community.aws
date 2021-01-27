@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ec2_vpc_route_table_info
+version_added: 1.0.0
 short_description: Gather information about ec2 VPC route tables in AWS
 description:
     - Gather information about ec2 VPC route tables in AWS
@@ -34,21 +30,21 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather information about all VPC route tables
-- ec2_vpc_route_table_info:
+- name: Gather information about all VPC route tables
+  community.aws.ec2_vpc_route_table_info:
 
-# Gather information about a particular VPC route table using route table ID
-- ec2_vpc_route_table_info:
+- name: Gather information about a particular VPC route table using route table ID
+  community.aws.ec2_vpc_route_table_info:
     filters:
       route-table-id: rtb-00112233
 
-# Gather information about any VPC route table with a tag key Name and value Example
-- ec2_vpc_route_table_info:
+- name: Gather information about any VPC route table with a tag key Name and value Example
+  community.aws.ec2_vpc_route_table_info:
     filters:
       "tag:Name": Example
 
-# Gather information about any VPC route table within VPC with ID vpc-abcdef00
-- ec2_vpc_route_table_info:
+- name: Gather information about any VPC route table within VPC with ID vpc-abcdef00
+  community.aws.ec2_vpc_route_table_info:
     filters:
       vpc-id: vpc-abcdef00
 
@@ -57,12 +53,14 @@ EXAMPLES = '''
 try:
     import boto.vpc
     from boto.exception import BotoServerError
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, connect_to_aws, ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 
 
 def get_route_table_info(route_table):
@@ -93,7 +91,7 @@ def list_ec2_vpc_route_tables(connection, module):
     try:
         all_route_tables = connection.get_all_route_tables(filters=filters)
     except BotoServerError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json_aws(e, msg="Failed to get route tables")
 
     for route_table in all_route_tables:
         route_table_dict_array.append(get_route_table_info(route_table))
@@ -102,17 +100,15 @@ def list_ec2_vpc_route_tables(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(default=None, type='dict')
-        )
+    argument_spec = dict(
+        filters=dict(default=None, type='dict'),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              supports_check_mode=True)
     if module._name == 'ec2_vpc_route_table_facts':
-        module.deprecate("The 'ec2_vpc_route_table_facts' module has been renamed to 'ec2_vpc_route_table_info'", version='2.13')
+        module.deprecate("The 'ec2_vpc_route_table_facts' module has been renamed to 'ec2_vpc_route_table_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO:
         module.fail_json(msg='boto required for this module')

@@ -6,20 +6,18 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'metadata_version': '1.1'}
 
 DOCUMENTATION = '''
 ---
 module: lambda_policy
+version_added: 1.0.0
 short_description: Creates, updates or deletes AWS Lambda policy statements.
 description:
     - This module allows the management of AWS Lambda policy statements.
     - It is idempotent and supports "Check" mode.
-    - Use module M(lambda) to manage the lambda function itself, M(lambda_alias) to manage function aliases,
-      M(lambda_event) to manage event source mappings such as Kinesis streams, M(execute_lambda) to execute a
-      lambda function and M(lambda_info) to gather information relating to one or more lambda functions.
+    - Use module M(community.aws.lambda) to manage the lambda function itself, M(community.aws.lambda_alias) to manage function aliases,
+      M(community.aws.lambda_event) to manage event source mappings such as Kinesis streams, M(community.aws.execute_lambda) to execute a
+      lambda function and M(community.aws.lambda_info) to gather information relating to one or more lambda functions.
 
 
 author:
@@ -108,28 +106,22 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
----
-- hosts: localhost
-  gather_facts: no
-  vars:
+
+- name: Lambda S3 event notification
+  community.aws.lambda_policy:
     state: present
-  tasks:
-  - name: Lambda S3 event notification
-    lambda_policy:
-      state: "{{ state | default('present') }}"
-      function_name: functionName
-      alias: Dev
-      statement_id: lambda-s3-myBucket-create-data-log
-      action: lambda:InvokeFunction
-      principal: s3.amazonaws.com
-      source_arn: arn:aws:s3:eu-central-1:123456789012:bucketName
-      source_account: 123456789012
-    register: lambda_policy_action
+    function_name: functionName
+    alias: Dev
+    statement_id: lambda-s3-myBucket-create-data-log
+    action: lambda:InvokeFunction
+    principal: s3.amazonaws.com
+    source_arn: arn:aws:s3:eu-central-1:123456789012:bucketName
+    source_account: 123456789012
+  register: lambda_policy_action
 
-  - name: show results
-    debug:
-      var: lambda_policy_action
-
+- name: show results
+  ansible.builtin.debug:
+    var: lambda_policy_action
 '''
 
 RETURN = '''
@@ -143,11 +135,11 @@ lambda_policy_action:
 import json
 import re
 from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 try:
     from botocore.exceptions import ClientError
-except Exception:
+except ImportError:
     pass  # caught by AnsibleAWSModule
 
 

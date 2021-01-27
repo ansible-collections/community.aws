@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: ec2_vpc_nat_gateway
+version_added: 1.0.0
 short_description: Manage AWS VPC NAT Gateways.
 description:
   - Ensure the state of AWS VPC NAT Gateways based on their id, allocation and subnet ids.
@@ -89,7 +85,7 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create new nat gateway with client token.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: present
     subnet_id: subnet-12345678
     eip_address: 52.1.1.1
@@ -98,7 +94,7 @@ EXAMPLES = '''
   register: new_nat_gateway
 
 - name: Create new nat gateway using an allocation-id.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: present
     subnet_id: subnet-12345678
     allocation_id: eipalloc-12345678
@@ -106,7 +102,7 @@ EXAMPLES = '''
   register: new_nat_gateway
 
 - name: Create new nat gateway, using an EIP address  and wait for available status.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: present
     subnet_id: subnet-12345678
     eip_address: 52.1.1.1
@@ -115,7 +111,7 @@ EXAMPLES = '''
   register: new_nat_gateway
 
 - name: Create new nat gateway and allocate new EIP.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: present
     subnet_id: subnet-12345678
     wait: true
@@ -123,7 +119,7 @@ EXAMPLES = '''
   register: new_nat_gateway
 
 - name: Create new nat gateway and allocate new EIP if a nat gateway does not yet exist in the subnet.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: present
     subnet_id: subnet-12345678
     wait: true
@@ -132,7 +128,7 @@ EXAMPLES = '''
   register: new_nat_gateway
 
 - name: Delete nat gateway using discovered nat gateways from facts module.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: absent
     region: ap-southeast-2
     wait: true
@@ -142,7 +138,7 @@ EXAMPLES = '''
   loop: "{{ gateways_to_remove.result }}"
 
 - name: Delete nat gateway and wait for deleted status.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: absent
     nat_gateway_id: nat-12345678
     wait: true
@@ -150,7 +146,7 @@ EXAMPLES = '''
     region: ap-southeast-2
 
 - name: Delete nat gateway and release EIP.
-  ec2_vpc_nat_gateway:
+  community.aws.ec2_vpc_nat_gateway:
     state: absent
     nat_gateway_id: nat-12345678
     release_eip: true
@@ -206,15 +202,12 @@ import time
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     HAS_BOTO3,
-                                                                     )
+from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 DRY_RUN_GATEWAYS = [
@@ -705,13 +698,15 @@ def create(client, subnet_id, allocation_id, client_token=None,
                     'NAT gateway {0} created'.format(result['nat_gateway_id'])
                 )
 
-    except botocore.exceptions.ClientError as e:
-        if "IdempotentParameterMismatch" in e.message:
-            err_msg = (
-                'NAT Gateway does not support update and token has already been provided: ' + str(e)
-            )
-        else:
-            err_msg = str(e)
+    except is_boto3_error_code('IdempotentParameterMismatch'):
+        err_msg = (
+            'NAT Gateway does not support update and token has already been provided: ' + err_msg
+        )
+        success = False
+        changed = False
+        result = None
+    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+        err_msg = to_native(e)
         success = False
         changed = False
         result = None
@@ -937,34 +932,27 @@ def remove(client, nat_gateway_id, wait=False, wait_timeout=0,
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            subnet_id=dict(type='str'),
-            eip_address=dict(type='str'),
-            allocation_id=dict(type='str'),
-            if_exist_do_not_create=dict(type='bool', default=False),
-            state=dict(default='present', choices=['present', 'absent']),
-            wait=dict(type='bool', default=False),
-            wait_timeout=dict(type='int', default=320, required=False),
-            release_eip=dict(type='bool', default=False),
-            nat_gateway_id=dict(type='str'),
-            client_token=dict(type='str'),
-        )
+    argument_spec = dict(
+        subnet_id=dict(type='str'),
+        eip_address=dict(type='str'),
+        allocation_id=dict(type='str'),
+        if_exist_do_not_create=dict(type='bool', default=False),
+        state=dict(default='present', choices=['present', 'absent']),
+        wait=dict(type='bool', default=False),
+        wait_timeout=dict(type='int', default=320, required=False),
+        release_eip=dict(type='bool', default=False),
+        nat_gateway_id=dict(type='str'),
+        client_token=dict(type='str'),
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
             ['allocation_id', 'eip_address']
         ],
         required_if=[['state', 'absent', ['nat_gateway_id']],
-                     ['state', 'present', ['subnet_id']]]
+                     ['state', 'present', ['subnet_id']]],
     )
-
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore/boto3 is required.')
 
     state = module.params.get('state').lower()
     check_mode = module.check_mode
@@ -979,17 +967,9 @@ def main():
     if_exist_do_not_create = module.params.get('if_exist_do_not_create')
 
     try:
-        region, ec2_url, aws_connect_kwargs = (
-            get_aws_connection_info(module, boto3=True)
-        )
-        client = (
-            boto3_conn(
-                module, conn_type='client', resource='ec2',
-                region=region, endpoint=ec2_url, **aws_connect_kwargs
-            )
-        )
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Boto3 Client Error - " + str(e.msg))
+        client = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     changed = False
     err_msg = ''

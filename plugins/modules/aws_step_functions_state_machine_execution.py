@@ -6,15 +6,11 @@ from __future__ import (absolute_import, division, print_function)
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
 DOCUMENTATION = '''
 ---
 module: aws_step_functions_state_machine_execution
+version_added: 1.0.0
 
 short_description: Start or stop execution of an AWS Step Functions state machine.
 
@@ -61,13 +57,13 @@ author:
 
 EXAMPLES = '''
 - name: Start an execution of a state machine
-  aws_step_functions_state_machine_execution:
+  community.aws.aws_step_functions_state_machine_execution:
     name: an_execution_name
     execution_input: '{ "IsHelloWorldExample": true }'
     state_machine_arn: "arn:aws:states:us-west-2:682285639423:stateMachine:HelloWorldStateMachine"
 
 - name: Stop an execution of a state machine
-  aws_step_functions_state_machine_execution:
+  community.aws.aws_step_functions_state_machine_execution:
     action: stop
     execution_arn: "arn:aws:states:us-west-2:682285639423:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8"
     cause: "cause of task failure"
@@ -93,7 +89,7 @@ stop_date:
 '''
 
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:

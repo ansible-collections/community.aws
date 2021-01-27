@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: rds_param_group
+version_added: 1.0.0
 short_description: manage RDS parameter groups
 description:
      - Creates, modifies, and deletes RDS parameter groups.
@@ -59,7 +55,7 @@ options:
     type: dict
   purge_tags:
     description:
-      - Whether or not to remove tags that do not appear in the M(tags) list.
+      - Whether or not to remove tags that do not appear in the C(tags) list.
     type: bool
     default: False
 author:
@@ -72,8 +68,8 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Add or change a parameter group, in this case setting auto_increment_increment to 42 * 1024
-- rds_param_group:
+- name: Add or change a parameter group, in this case setting auto_increment_increment to 42 * 1024
+  community.aws.rds_param_group:
       state: present
       name: norwegian-blue
       description: 'My Fancy Ex Parrot Group'
@@ -84,8 +80,8 @@ EXAMPLES = '''
           Environment: production
           Application: parrot
 
-# Remove a parameter group
-- rds_param_group:
+- name: Remove a parameter group
+  community.aws.rds_param_group:
       state: absent
       name: norwegian-blue
 '''
@@ -117,20 +113,20 @@ tags:
     returned: when state is present
 '''
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, get_aws_connection_info, boto3_conn
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, HAS_BOTO3, compare_aws_tags
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
-from ansible.module_utils.parsing.convert_bool import BOOLEANS_TRUE
-from ansible.module_utils.six import string_types
-from ansible.module_utils._text import to_native
-
-import traceback
-
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.parsing.convert_bool import BOOLEANS_TRUE
+from ansible.module_utils.six import string_types
+from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 INT_MODIFIERS = {
     'K': 1024,
@@ -199,10 +195,8 @@ def update_parameters(module, connection):
             non_empty_slice = [item for item in modify_slice if item]
             try:
                 connection.modify_db_parameter_group(DBParameterGroupName=groupname, Parameters=non_empty_slice)
-            except botocore.exceptions.ClientError as e:
-                module.fail_json(msg="Couldn't update parameters: %s" % str(e),
-                                 exception=traceback.format_exc(),
-                                 **camel_dict_to_snake_dict(e.response))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Couldn't update parameters")
         return True, errors
     return False, errors
 
@@ -217,24 +211,15 @@ def update_tags(module, connection, group, tags):
             connection.add_tags_to_resource(ResourceName=group['DBParameterGroupArn'],
                                             Tags=ansible_dict_to_boto3_tag_list(to_update))
             changed = True
-        except botocore.exceptions.ClientError as e:
-            module.fail_json(msg="Couldn't add tags to parameter group: %s" % str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
-        except botocore.exceptions.ParamValidationError as e:
-            # Usually a tag value has been passed as an int or bool, needs to be a string
-            # The AWS exception message is reasonably ok for this purpose
-            module.fail_json(msg="Couldn't add tags to parameter group: %s." % str(e),
-                             exception=traceback.format_exc())
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't add tags to parameter group")
     if to_delete:
         try:
             connection.remove_tags_from_resource(ResourceName=group['DBParameterGroupArn'],
                                                  TagKeys=to_delete)
             changed = True
-        except botocore.exceptions.ClientError as e:
-            module.fail_json(msg="Couldn't remove tags from parameter group: %s" % str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't remove tags from parameter group")
     return changed
 
 
@@ -249,9 +234,7 @@ def ensure_present(module, connection):
         if e.response['Error']['Code'] == 'DBParameterGroupNotFound':
             response = None
         else:
-            module.fail_json(msg="Couldn't access parameter group information: %s" % str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+            module.fail_json_aws(e, msg="Couldn't access parameter group information")
     if not response:
         params = dict(DBParameterGroupName=groupname,
                       DBParameterGroupFamily=module.params['engine'],
@@ -261,10 +244,8 @@ def ensure_present(module, connection):
         try:
             response = connection.create_db_parameter_group(**params)
             changed = True
-        except botocore.exceptions.ClientError as e:
-            module.fail_json(msg="Couldn't create parameter group: %s" % str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't create parameter group")
     else:
         group = response['DBParameterGroups'][0]
         if tags:
@@ -277,16 +258,12 @@ def ensure_present(module, connection):
     try:
         response = connection.describe_db_parameter_groups(DBParameterGroupName=groupname)
         group = camel_dict_to_snake_dict(response['DBParameterGroups'][0])
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Couldn't obtain parameter group information: %s" % str(e),
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Couldn't obtain parameter group information")
     try:
         tags = connection.list_tags_for_resource(ResourceName=group['db_parameter_group_arn'])['TagList']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Couldn't obtain parameter group tags: %s" % str(e),
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Couldn't obtain parameter group tags")
     group['tags'] = boto3_tag_list_to_ansible_dict(tags)
 
     module.exit_json(changed=changed, errors=errors, **group)
@@ -300,48 +277,34 @@ def ensure_absent(module, connection):
         if e.response['Error']['Code'] == 'DBParameterGroupNotFound':
             module.exit_json(changed=False)
         else:
-            module.fail_json(msg="Couldn't access parameter group information: %s" % str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+            module.fail_json_aws(e, msg="Couldn't access parameter group information")
     try:
         response = connection.delete_db_parameter_group(DBParameterGroupName=group)
         module.exit_json(changed=True)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Couldn't delete parameter group: %s" % str(e),
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Couldn't delete parameter group")
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            state=dict(required=True, choices=['present', 'absent']),
-            name=dict(required=True),
-            engine=dict(),
-            description=dict(),
-            params=dict(aliases=['parameters'], type='dict'),
-            immediate=dict(type='bool', aliases=['apply_immediately']),
-            tags=dict(type='dict', default={}),
-            purge_tags=dict(type='bool', default=False)
-        )
+    argument_spec = dict(
+        state=dict(required=True, choices=['present', 'absent']),
+        name=dict(required=True),
+        engine=dict(),
+        description=dict(),
+        params=dict(aliases=['parameters'], type='dict'),
+        immediate=dict(type='bool', aliases=['apply_immediately']),
+        tags=dict(type='dict', default={}),
+        purge_tags=dict(type='bool', default=False),
     )
-    module = AnsibleModule(argument_spec=argument_spec,
-                           required_if=[['state', 'present', ['description', 'engine']]])
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 and botocore are required for this module')
-
-    # Retrieve any AWS settings from the environment.
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-
-    if not region:
-        module.fail_json(msg="Region must be present")
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=[['state', 'present', ['description', 'engine']]],
+    )
 
     try:
-        conn = boto3_conn(module, conn_type='client', resource='rds', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Couldn't connect to AWS: %s" % str(e))
+        conn = module.client('rds')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     if state == 'present':

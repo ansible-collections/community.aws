@@ -6,13 +6,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: cloudwatchlogs_log_group_info
+version_added: 1.0.0
 short_description: Get information about log_group in CloudWatchLogs
 description:
     - Lists the specified log groups. You can list all your log groups or filter the results by prefix.
@@ -33,7 +31,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-- cloudwatchlogs_log_group_info:
+- community.aws.cloudwatchlogs_log_group_info:
     log_group_name: test-log-group
 '''
 
@@ -73,20 +71,14 @@ log_groups:
             type: str
 '''
 
-import traceback
-from ansible.module_utils._text import to_native
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     boto3_conn,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
-
 try:
     import botocore
 except ImportError:
-    pass  # will be detected by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def describe_log_group(client, log_group_name, module):
@@ -97,29 +89,24 @@ def describe_log_group(client, log_group_name, module):
         paginator = client.get_paginator('describe_log_groups')
         desc_log_group = paginator.paginate(**params).build_full_result()
         return desc_log_group
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to describe log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to describe log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to describe log group {0}".format(log_group_name))
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         log_group_name=dict(),
-    ))
+    )
 
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'cloudwatchlogs_log_group_facts':
-        module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'", version='2.13')
+        module.deprecate("The 'cloudwatchlogs_log_group_facts' module has been renamed to 'cloudwatchlogs_log_group_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    logs = boto3_conn(module, conn_type='client', resource='logs', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        logs = module.client('logs')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     desc_log_group = describe_log_group(client=logs,
                                         log_group_name=module.params['log_group_name'],

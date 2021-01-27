@@ -5,18 +5,16 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: iam_policy
+version_added: 1.0.0
 short_description: Manage inline IAM policies for users, groups, and roles
 description:
     - Allows uploading or removing inline IAM policies for IAM users, groups or roles.
-    - To administer managed policies please see M(iam_user), M(iam_role),
-      M(iam_group) and M(iam_managed_policy)
+    - To administer managed policies please see M(community.aws.iam_user), M(community.aws.iam_role),
+      M(community.aws.iam_group) and M(community.aws.iam_managed_policy)
 options:
   iam_type:
     description:
@@ -73,7 +71,7 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Create a policy with the name of 'Admin' to the group 'administrators'
 - name: Assign a policy called Admin to the administrators group
-  iam_policy:
+  community.aws.iam_policy:
     iam_type: group
     iam_name: administrators
     policy_name: Admin
@@ -83,7 +81,7 @@ EXAMPLES = '''
 # Advanced example, create two new groups and add a READ-ONLY policy to both
 # groups.
 - name: Create Two Groups, Mario and Luigi
-  iam:
+  community.aws.iam:
     iam_type: group
     name: "{{ item }}"
     state: present
@@ -93,7 +91,7 @@ EXAMPLES = '''
   register: new_groups
 
 - name: Apply READ-ONLY policy to new groups that have been recently created
-  iam_policy:
+  community.aws.iam_policy:
     iam_type: group
     iam_name: "{{ item.created_group.group_name }}"
     policy_name: "READ-ONLY"
@@ -103,7 +101,7 @@ EXAMPLES = '''
 
 # Create a new S3 policy with prefix per user
 - name: Create S3 policy from template
-  iam_policy:
+  community.aws.iam_policy:
     iam_type: user
     iam_name: "{{ item.user }}"
     policy_name: "s3_limited_access_{{ item.prefix }}"
@@ -121,8 +119,8 @@ try:
 except ImportError:
     pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies, AWSRetry
 from ansible.module_utils.six import string_types
 
 
@@ -238,16 +236,16 @@ class UserPolicy(Policy):
         return 'user'
 
     def _list(self, name):
-        return self.client.list_user_policies(UserName=name)
+        return self.client.list_user_policies(aws_retry=True, UserName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_user_policy(UserName=name, PolicyName=policy_name)
+        return self.client.get_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name)
 
     def _put(self, name, policy_name, policy_doc):
-        return self.client.put_user_policy(UserName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
+        return self.client.put_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
     def _delete(self, name, policy_name):
-        return self.client.delete_user_policy(UserName=name, PolicyName=policy_name)
+        return self.client.delete_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name)
 
 
 class RolePolicy(Policy):
@@ -257,16 +255,16 @@ class RolePolicy(Policy):
         return 'role'
 
     def _list(self, name):
-        return self.client.list_role_policies(RoleName=name)
+        return self.client.list_role_policies(aws_retry=True, RoleName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_role_policy(RoleName=name, PolicyName=policy_name)
+        return self.client.get_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name)
 
     def _put(self, name, policy_name, policy_doc):
-        return self.client.put_role_policy(RoleName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
+        return self.client.put_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
     def _delete(self, name, policy_name):
-        return self.client.delete_role_policy(RoleName=name, PolicyName=policy_name)
+        return self.client.delete_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name)
 
 
 class GroupPolicy(Policy):
@@ -276,16 +274,16 @@ class GroupPolicy(Policy):
         return 'group'
 
     def _list(self, name):
-        return self.client.list_group_policies(GroupName=name)
+        return self.client.list_group_policies(aws_retry=True, GroupName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_group_policy(GroupName=name, PolicyName=policy_name)
+        return self.client.get_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name)
 
     def _put(self, name, policy_name, policy_doc):
-        return self.client.put_group_policy(GroupName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
+        return self.client.put_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name, PolicyDocument=policy_doc)
 
     def _delete(self, name, policy_name):
-        return self.client.delete_group_policy(GroupName=name, PolicyName=policy_name)
+        return self.client.delete_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name)
 
 
 def main():
@@ -307,16 +305,16 @@ def main():
     if (skip_duplicates is None):
         module.deprecate('The skip_duplicates behaviour has caused confusion and'
                          ' will be disabled by default in Ansible 2.14',
-                         version='2.14')
+                         date='2022-06-01', collection_name='community.aws')
         skip_duplicates = True
 
     if module.params.get('policy_document'):
         module.deprecate('The policy_document option has been deprecated and'
                          ' will be removed in Ansible 2.14',
-                         version='2.14')
+                         date='2022-06-01', collection_name='community.aws')
 
     args = dict(
-        client=module.client('iam'),
+        client=module.client('iam', retry_decorator=AWSRetry.jittered_backoff()),
         name=module.params.get('iam_name'),
         policy_name=module.params.get('policy_name'),
         policy_document=module.params.get('policy_document'),

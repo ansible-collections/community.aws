@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_nat_gateway_info
 short_description: Retrieves AWS VPC Managed Nat Gateway details using AWS methods.
+version_added: 1.0.0
 description:
   - Gets various details related to AWS VPC Managed Nat Gateways
   - This module was called C(ec2_vpc_nat_gateway_facts) before Ansible 2.9. The usage did not change.
@@ -37,19 +33,19 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of listing all nat gateways
 - name: List all managed nat gateways in ap-southeast-2
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     region: ap-southeast-2
   register: all_ngws
 
 - name: Debugging the result
-  debug:
+  ansible.builtin.debug:
     msg: "{{ all_ngws.result }}"
 
 - name: Get details on specific nat gateways
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     nat_gateway_ids:
       - nat-1234567891234567
       - nat-7654321987654321
@@ -57,14 +53,14 @@ EXAMPLES = '''
   register: specific_ngws
 
 - name: Get all nat gateways with specific filters
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     region: ap-southeast-2
     filters:
       state: ['pending']
   register: pending_ngws
 
 - name: Get nat gateways with specific filter
-  ec2_vpc_nat_gateway_info:
+  community.aws.ec2_vpc_nat_gateway_info:
     region: ap-southeast-2
     filters:
       subnet-id: subnet-12345678
@@ -72,7 +68,7 @@ EXAMPLES = '''
   register: existing_nat_gateways
 '''
 
-RETURN = '''
+RETURN = r'''
 result:
   description: The result of the describe, converted to ansible snake case style.
     See http://boto3.readthedocs.io/en/latest/reference/services/ec2.html#EC2.Client.describe_nat_gateways for the response.
@@ -85,17 +81,13 @@ import json
 try:
     import botocore
 except ImportError:
-    pass  # will be detected by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ansible_dict_to_boto3_filter_list,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     HAS_BOTO3,
-                                                                     )
+from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 def date_handler(obj):
@@ -112,7 +104,7 @@ def get_nat_gateways(client, module, nat_gateway_id=None):
     try:
         result = json.loads(json.dumps(client.describe_nat_gateways(**params), default=date_handler))
     except Exception as e:
-        module.fail_json(msg=str(e.message))
+        module.fail_json(msg=to_native(e))
 
     for gateway in result['NatGateways']:
         # Turn the boto3 result into ansible_friendly_snaked_names
@@ -127,31 +119,21 @@ def get_nat_gateways(client, module, nat_gateway_id=None):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(default={}, type='dict'),
-            nat_gateway_ids=dict(default=[], type='list'),
-        )
+    argument_spec = dict(
+        filters=dict(default={}, type='dict'),
+        nat_gateway_ids=dict(default=[], type='list', elements='str'),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              supports_check_mode=True,)
     if module._name == 'ec2_vpc_nat_gateway_facts':
-        module.deprecate("The 'ec2_vpc_nat_gateway_facts' module has been renamed to 'ec2_vpc_nat_gateway_info'", version='2.13')
-
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore/boto3 is required.')
+        module.deprecate("The 'ec2_vpc_nat_gateway_facts' module has been renamed to 'ec2_vpc_nat_gateway_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     try:
-        region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-        if region:
-            connection = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_params)
-        else:
-            module.fail_json(msg="region must be specified")
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+        connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     results = get_nat_gateways(connection, module)
 

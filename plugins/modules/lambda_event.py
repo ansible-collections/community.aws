@@ -6,21 +6,17 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: lambda_event
+version_added: 1.0.0
 short_description: Creates, updates or deletes AWS Lambda function event mappings
 description:
     - This module allows the management of AWS Lambda function event source mappings such as DynamoDB and Kinesis stream
       events via the Ansible framework. These event source mappings are relevant only in the AWS Lambda pull model, where
       AWS Lambda invokes the function.
-      It is idempotent and supports "Check" mode.  Use module M(lambda) to manage the lambda
-      function itself and M(lambda_alias) to manage function aliases.
+      It is idempotent and supports "Check" mode.  Use module M(community.aws.lambda) to manage the lambda
+      function itself and M(community.aws.lambda_alias) to manage function aliases.
 
 
 author: Pierre Jodouin (@pjodouin), Ryan Brown (@ryansb)
@@ -91,28 +87,23 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
----
 # Example that creates a lambda event notification for a DynamoDB stream
-- hosts: localhost
-  gather_facts: no
-  vars:
+- name: DynamoDB stream event mapping
+  community.aws.lambda_event:
     state: present
-  tasks:
-  - name: DynamoDB stream event mapping
-    lambda_event:
-      state: "{{ state | default('present') }}"
-      event_source: stream
-      function_name: "{{ function_name }}"
-      alias: Dev
-      source_params:
-        source_arn: arn:aws:dynamodb:us-east-1:123456789012:table/tableName/stream/2016-03-19T19:51:37.457
-        enabled: True
-        batch_size: 100
-        starting_position: TRIM_HORIZON
+    event_source: stream
+    function_name: "{{ function_name }}"
+    alias: Dev
+    source_params:
+    source_arn: arn:aws:dynamodb:us-east-1:123456789012:table/tableName/stream/2016-03-19T19:51:37.457
+    enabled: True
+    batch_size: 100
+    starting_position: TRIM_HORIZON
+  register: event
 
-  - name: Show source event
-    debug:
-      var: lambda_stream_events
+- name: Show source event
+  ansible.builtin.debug:
+    var: event.lambda_stream_events
 '''
 
 RETURN = '''
@@ -124,22 +115,17 @@ lambda_stream_events:
 '''
 
 import re
-import sys
 
 try:
-    import boto3
     from botocore.exceptions import ClientError, ParamValidationError, MissingParametersError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 # ---------------------------------------------------------------------------------------------------
@@ -413,28 +399,21 @@ def main():
     """Produce a list of function suffixes which handle lambda events."""
     source_choices = ["stream", "sqs"]
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            state=dict(required=False, default='present', choices=['present', 'absent']),
-            lambda_function_arn=dict(required=True, aliases=['function_name', 'function_arn']),
-            event_source=dict(required=False, default="stream", choices=source_choices),
-            source_params=dict(type='dict', required=True),
-            alias=dict(required=False, default=None),
-            version=dict(type='int', required=False, default=0),
-        )
+    argument_spec = dict(
+        state=dict(required=False, default='present', choices=['present', 'absent']),
+        lambda_function_arn=dict(required=True, aliases=['function_name', 'function_arn']),
+        event_source=dict(required=False, default="stream", choices=source_choices),
+        source_params=dict(type='dict', required=True),
+        alias=dict(required=False, default=None),
+        version=dict(type='int', required=False, default=0),
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[['alias', 'version']],
-        required_together=[]
+        required_together=[],
     )
-
-    # validate dependencies
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required for this module.')
 
     aws = AWSConnection(module, ['lambda'])
 

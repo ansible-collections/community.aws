@@ -1,18 +1,19 @@
 namespace: community
 name: aws
-version: 0.1.0
+version: 1.3.0
 readme: README.md
-authors: null
+authors:
+  - Ansible (https://github.com/ansible)
 description: null
-license: GPL-3.0-or-later
 license_file: COPYING
-tags: null
+tags: [community, aws, cloud, amazon]
 dependencies:
-  amazon.aws: '>=0.1.0'
-repository: https://github.com/ansible-collections/community.aws.git
-documentation: https://github.com/ansible-collections/community.aws/tree/master/docs
+  amazon.aws: '>=1.3.0'
+repository: https://github.com/ansible-collections/community.aws
+documentation: https://github.com/ansible-collections/community.aws/tree/main/docs
 homepage: https://github.com/ansible-collections/community.aws
 issues: https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
 build_ignore:
   - '*cloud-config-aws.ini'
   - '*cloud-config-aws.yml'
+  - 'changelogs/.plugin-cache.yaml'

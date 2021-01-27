@@ -6,15 +6,11 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: sqs_queue
-short_description: Creates or deletes AWS SQS queues.
+version_added: 1.0.0
+short_description: Creates or deletes AWS SQS queues
 description:
   - Create or delete AWS SQS queues.
   - Update attributes on existing queues.
@@ -87,8 +83,9 @@ options:
     type: int
   content_based_deduplication:
     type: bool
-    description: Enables content-based deduplication. Used for FIFOs only.
-    default: false
+    description:
+      - Enables content-based deduplication. Used for FIFOs only.
+      - Defaults to C(false).
   tags:
     description:
       - Tag dict to apply to the queue (requires botocore 1.5.40 or above).
@@ -174,8 +171,8 @@ tags:
 '''
 
 EXAMPLES = '''
-# Create SQS queue with redrive policy
-- sqs_queue:
+- name: Create SQS queue with redrive policy
+  community.aws.sqs_queue:
     name: my-queue
     region: ap-southeast-2
     default_visibility_timeout: 120
@@ -188,42 +185,42 @@ EXAMPLES = '''
       maxReceiveCount: 5
       deadLetterTargetArn: arn:aws:sqs:eu-west-1:123456789012:my-dead-queue
 
-# Drop redrive policy
-- sqs_queue:
+- name: Drop redrive policy
+  community.aws.sqs_queue:
     name: my-queue
     region: ap-southeast-2
     redrive_policy: {}
 
-# Create FIFO queue
-- sqs_queue:
+- name: Create FIFO queue
+  community.aws.sqs_queue:
     name: fifo-queue
     region: ap-southeast-2
     queue_type: fifo
     content_based_deduplication: yes
 
-# Tag queue
-- sqs_queue:
+- name: Tag queue
+  community.aws.sqs_queue:
     name: fifo-queue
     region: ap-southeast-2
     tags:
       example: SomeValue
 
-# Configure Encryption, automatically uses a new data key every hour
-- sqs_queue:
+- name: Configure Encryption, automatically uses a new data key every hour
+  community.aws.sqs_queue:
     name: fifo-queue
     region: ap-southeast-2
     kms_master_key_id: alias/MyQueueKey
     kms_data_key_reuse_period_seconds: 3600
 
-# Delete SQS queue
-- sqs_queue:
+- name: Delete SQS queue
+  community.aws.sqs_queue:
     name: my-queue
     region: ap-southeast-2
     state: absent
 '''
 
 import json
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
                                                                      camel_dict_to_snake_dict,
                                                                      compare_aws_tags,

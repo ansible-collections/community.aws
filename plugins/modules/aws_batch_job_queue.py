@@ -5,20 +5,17 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_batch_job_queue
+version_added: 1.0.0
 short_description: Manage AWS Batch Job Queues
 description:
     - This module allows the management of AWS Batch Job Queues.
-      It is idempotent and supports "Check" mode.  Use module M(aws_batch_compute_environment) to manage the compute
-      environment, M(aws_batch_job_queue) to manage job queues, M(aws_batch_job_definition) to manage job definitions.
-
-
+    - It is idempotent and supports "Check" mode.
+    - Use module M(community.aws.aws_batch_compute_environment) to manage the compute
+      environment, M(community.aws.aws_batch_job_queue) to manage job queues, M(community.aws.aws_batch_job_definition) to manage job definitions.
 author: Jon Meran (@jonmer85)
 options:
   job_queue_name:
@@ -34,7 +31,7 @@ options:
     type: str
   job_queue_state:
     description:
-      - The state of the job queue. If the job queue state is ENABLED , it is able to accept jobs.
+      - The state of the job queue. If the job queue state is ENABLED, it is able to accept jobs.
     default: "ENABLED"
     choices: ["ENABLED", "DISABLED"]
     type: str
@@ -71,32 +68,26 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
----
-- hosts: localhost
-  gather_facts: no
-  vars:
+- name: My Batch Job Queue
+  community.aws.aws_batch_job_queue:
+    job_queue_name: jobQueueName
     state: present
-  tasks:
-  - name: My Batch Job Queue
-    aws_batch_job_queue:
-      job_queue_name: jobQueueName
-      state: present
-      region: us-east-1
-      job_queue_state: ENABLED
-      priority: 1
-      compute_environment_order:
-        - order: 1
-          compute_environment: my_compute_env1
-        - order: 2
-          compute_environment: my_compute_env2
-    register: batch_job_queue_action
+    region: us-east-1
+    job_queue_state: ENABLED
+    priority: 1
+    compute_environment_order:
+    - order: 1
+      compute_environment: my_compute_env1
+    - order: 2
+      compute_environment: my_compute_env2
+  register: batch_job_queue_action
 
-  - name: show results
-    debug:
-      var: batch_job_queue_action
+- name: show results
+  ansible.builtin.debug:
+    var: batch_job_queue_action
 '''
 
-RETURN = '''
+RETURN = r'''
 ---
 output:
   description: "returns what action was taken, whether something was changed, invocation and response"
@@ -114,8 +105,8 @@ output:
   type: dict
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.batch import set_api_params
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.batch import set_api_params
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:
@@ -295,7 +286,7 @@ def main():
         job_queue_name=dict(required=True),
         job_queue_state=dict(required=False, default='ENABLED', choices=['ENABLED', 'DISABLED']),
         priority=dict(type='int', required=True),
-        compute_environment_order=dict(type='list', required=True),
+        compute_environment_order=dict(type='list', required=True, elements='dict'),
     )
 
     module = AnsibleAWSModule(

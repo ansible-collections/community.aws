@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_vpc_egress_igw
+version_added: 1.0.0
 short_description: Manage an AWS VPC Egress Only Internet gateway
 description:
     - Manage an AWS VPC Egress Only Internet gateway
@@ -40,10 +37,10 @@ EXAMPLES = '''
 
 # Ensure that the VPC has an Internet Gateway.
 # The Internet Gateway ID is can be accessed via {{eigw.gateway_id}} for use in setting up NATs etc.
-ec2_vpc_egress_igw:
-  vpc_id: vpc-abcdefgh
-  state: present
-register: eigw
+- community.aws.ec2_vpc_egress_igw:
+    vpc_id: vpc-abcdefgh
+    state: present
+  register: eigw
 
 '''
 
@@ -61,7 +58,7 @@ vpc_id:
 '''
 
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:
@@ -74,7 +71,7 @@ def delete_eigw(module, conn, eigw_id):
     """
     Delete EIGW.
 
-    module     : AnsibleModule object
+    module     : AnsibleAWSModule object
     conn       : boto3 client connection object
     eigw_id    : ID of the EIGW to delete
     """
@@ -102,7 +99,7 @@ def create_eigw(module, conn, vpc_id):
     """
     Create EIGW.
 
-    module       : AnsibleModule object
+    module       : AnsibleAWSModule object
     conn         : boto3 client connection object
     vpc_id       : ID of the VPC we are operating on
     """
@@ -142,7 +139,7 @@ def describe_eigws(module, conn, vpc_id):
     """
     Describe EIGWs.
 
-    module     : AnsibleModule object
+    module     : AnsibleAWSModule object
     conn       : boto3 client connection object
     vpc_id     : ID of the VPC we are operating on
     """

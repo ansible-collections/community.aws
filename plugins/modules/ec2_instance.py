@@ -6,19 +6,16 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_instance
+version_added: 1.0.0
 short_description: Create & manage EC2 instances
 description:
   - Create and manage AWS EC2 instances.
   - >
     Note: This module does not support creating
-    L(EC2 Spot instances,https://aws.amazon.com/ec2/spot/). The M(ec2) module
+    L(EC2 Spot instances,https://aws.amazon.com/ec2/spot/). The M(amazon.aws.ec2) module
     can create and manage spot instances.
 author:
   - Ryan Scott Brown (@ryansb)
@@ -28,6 +25,7 @@ options:
     description:
       - If you specify one or more instance IDs, only instances that have the specified IDs are returned.
     type: list
+    elements: str
   state:
     description:
       - Goal state for the instances.
@@ -86,7 +84,7 @@ options:
     type: bool
   image:
     description:
-      - An image to use for the instance. The M(ec2_ami_info) module may be used to retrieve images.
+      - An image to use for the instance. The M(amazon.aws.ec2_ami_info) module may be used to retrieve images.
         One of I(image) or I(image_id) are required when instance is not already present.
     type: dict
     suboptions:
@@ -110,6 +108,7 @@ options:
     description:
       - A list of security group IDs or names (strings). Mutually exclusive with I(security_group).
     type: list
+    elements: str
   security_group:
     description:
       - A security group ID or name. Mutually exclusive with I(security_groups).
@@ -121,14 +120,14 @@ options:
   vpc_subnet_id:
     description:
       - The subnet ID in which to launch the instance (VPC)
-        If none is provided, ec2_instance will chose the default zone of the default VPC.
+        If none is provided, M(community.aws.ec2_instance) will chose the default zone of the default VPC.
     aliases: ['subnet_id']
     type: str
   network:
     description:
       - Either a dictionary containing the key 'interfaces' corresponding to a list of network interface IDs or
         containing specifications for a single network interface.
-      - Use the ec2_eni module to create ENIs with special settings.
+      - Use the M(amazon.aws.ec2_eni) module to create ENIs with special settings.
     type: dict
     suboptions:
       interfaces:
@@ -183,6 +182,7 @@ options:
       ebs.iops, and ebs.delete_on_termination.
     - For more information about each parameter, see U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_BlockDeviceMapping.html).
     type: list
+    elements: dict
   launch_template:
     description:
       - The EC2 launch template to base instance configuration on.
@@ -286,20 +286,20 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Terminate every running instance in a region. Use with EXTREME caution.
-- ec2_instance:
+- name: Terminate every running instance in a region. Use with EXTREME caution.
+  community.aws.ec2_instance:
     state: absent
     filters:
       instance-state-name: running
 
-# restart a particular instance by its ID
-- ec2_instance:
+- name: restart a particular instance by its ID
+  community.aws.ec2_instance:
     state: restarted
     instance_ids:
       - i-12345678
 
-# start an instance with a public IP address
-- ec2_instance:
+- name: start an instance with a public IP address
+  community.aws.ec2_instance:
     name: "public-compute-instance"
     key_name: "prod-ssh-key"
     vpc_subnet_id: subnet-5ca1ab1e
@@ -311,8 +311,8 @@ EXAMPLES = '''
     tags:
       Environment: Testing
 
-# start an instance and Add EBS
-- ec2_instance:
+- name: start an instance and Add EBS
+  community.aws.ec2_instance:
     name: "public-withebs-instance"
     vpc_subnet_id: subnet-5ca1ab1e
     instance_type: t2.micro
@@ -324,8 +324,8 @@ EXAMPLES = '''
           volume_size: 16
           delete_on_termination: true
 
-# start an instance with a cpu_options
-- ec2_instance:
+- name: start an instance with a cpu_options
+  community.aws.ec2_instance:
     name: "public-cpuoption-instance"
     vpc_subnet_id: subnet-5ca1ab1e
     tags:
@@ -339,8 +339,8 @@ EXAMPLES = '''
         core_count: 1
         threads_per_core: 1
 
-# start an instance and have it begin a Tower callback on boot
-- ec2_instance:
+- name: start an instance and have it begin a Tower callback on boot
+  community.aws.ec2_instance:
     name: "tower-callback-test"
     key_name: "prod-ssh-key"
     vpc_subnet_id: subnet-5ca1ab1e
@@ -357,8 +357,8 @@ EXAMPLES = '''
     tags:
       SomeThing: "A value"
 
-# start an instance with ENI (An existing ENI ID is required)
-- ec2_instance:
+- name: start an instance with ENI (An existing ENI ID is required)
+  community.aws.ec2_instance:
     name: "public-eni-instance"
     key_name: "prod-ssh-key"
     vpc_subnet_id: subnet-5ca1ab1e
@@ -374,8 +374,8 @@ EXAMPLES = '''
     instance_type: t2.micro
     image_id: ami-123456
 
-# add second ENI interface
-- ec2_instance:
+- name: add second ENI interface
+  community.aws.ec2_instance:
     name: "public-eni-instance"
     network:
       interfaces:
@@ -795,32 +795,30 @@ instances:
             sample: vpc-0011223344
 '''
 
+from collections import namedtuple
 import re
-import uuid
 import string
 import textwrap
 import time
-from collections import namedtuple
+import uuid
 
 try:
-    import boto3
     import botocore.exceptions
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible.module_utils.six import text_type, string_types
+from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+from ansible.module_utils.six import string_types
 from ansible.module_utils.six.moves.urllib import parse as urlparse
-from ansible.module_utils._text import to_bytes, to_native
-import ansible_collections.amazon.aws.plugins.module_utils.ec2 as ec2_utils
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
-                                                                     ansible_dict_to_boto3_filter_list,
-                                                                     compare_aws_tags,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     ansible_dict_to_boto3_tag_list,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 module = None
 
@@ -894,6 +892,8 @@ def manage_tags(match, new_tags, purge_tags, ec2):
         old_tags, new_tags,
         purge_tags=purge_tags,
     )
+    if module.check_mode:
+        return bool(tags_to_delete or tags_to_set)
     if tags_to_set:
         ec2.create_tags(
             Resources=[match['InstanceId']],
@@ -915,7 +915,7 @@ def build_volume_spec(params):
             for int_value in ['volume_size', 'iops']:
                 if int_value in volume['ebs']:
                     volume['ebs'][int_value] = int(volume['ebs'][int_value])
-    return [ec2_utils.snake_dict_to_camel_dict(v, capitalize_first=True) for v in volumes]
+    return [snake_dict_to_camel_dict(v, capitalize_first=True) for v in volumes]
 
 
 def add_or_update_instance_profile(instance, desired_profile_name):
@@ -1337,15 +1337,47 @@ def diff_instance_and_params(instance, params, ec2=None, skip=None):
     ]
 
     for mapping in param_mappings:
-        if params.get(mapping.param_key) is not None and mapping.instance_key not in skip:
-            value = AWSRetry.jittered_backoff()(ec2.describe_instance_attribute)(Attribute=mapping.attribute_name, InstanceId=id_)
-            if params.get(mapping.param_key) is not None and value[mapping.instance_key]['Value'] != params.get(mapping.param_key):
-                arguments = dict(
-                    InstanceId=instance['InstanceId'],
-                    # Attribute=mapping.attribute_name,
-                )
-                arguments[mapping.instance_key] = mapping.add_value(params.get(mapping.param_key))
-                changes_to_apply.append(arguments)
+        if params.get(mapping.param_key) is None:
+            continue
+        if mapping.instance_key in skip:
+            continue
+
+        value = AWSRetry.jittered_backoff()(ec2.describe_instance_attribute)(Attribute=mapping.attribute_name, InstanceId=id_)
+        if value[mapping.instance_key]['Value'] != params.get(mapping.param_key):
+            arguments = dict(
+                InstanceId=instance['InstanceId'],
+                # Attribute=mapping.attribute_name,
+            )
+            arguments[mapping.instance_key] = mapping.add_value(params.get(mapping.param_key))
+            changes_to_apply.append(arguments)
+
+    if params.get('security_group') or params.get('security_groups'):
+        value = AWSRetry.jittered_backoff()(ec2.describe_instance_attribute)(Attribute="groupSet", InstanceId=id_)
+        # managing security groups
+        if params.get('vpc_subnet_id'):
+            subnet_id = params.get('vpc_subnet_id')
+        else:
+            default_vpc = get_default_vpc(ec2)
+            if default_vpc is None:
+                module.fail_json(
+                    msg="No default subnet could be found - you must include a VPC subnet ID (vpc_subnet_id parameter) to modify security groups.")
+            else:
+                sub = get_default_subnet(ec2, default_vpc)
+                subnet_id = sub['SubnetId']
+
+        groups = discover_security_groups(
+            group=params.get('security_group'),
+            groups=params.get('security_groups'),
+            subnet_id=subnet_id,
+            ec2=ec2
+        )
+        expected_groups = [g['GroupId'] for g in groups]
+        instance_groups = [g['GroupId'] for g in value['Groups']]
+        if set(instance_groups) != set(expected_groups):
+            changes_to_apply.append(dict(
+                Groups=expected_groups,
+                InstanceId=instance['InstanceId']
+            ))
 
     if (params.get('network') or {}).get('source_dest_check') is not None:
         # network.source_dest_check is nested, so needs to be treated separately
@@ -1556,7 +1588,9 @@ def change_instance_state(filters, desired_state, ec2=None):
         await_instances(ids=list(changed) + list(unchanged), state=desired_state)
 
     change_failed = list(to_change - changed)
-    instances = find_instances(ec2, ids=list(i['InstanceId'] for i in instances))
+
+    if instances:
+        instances = find_instances(ec2, ids=list(i['InstanceId'] for i in instances))
     return changed, change_failed, instances, failure_reason
 
 
@@ -1684,7 +1718,7 @@ def main():
         ebs_optimized=dict(type='bool'),
         vpc_subnet_id=dict(type='str', aliases=['subnet_id']),
         availability_zone=dict(type='str'),
-        security_groups=dict(default=[], type='list'),
+        security_groups=dict(default=[], type='list', elements='str'),
         security_group=dict(type='str'),
         instance_role=dict(type='str'),
         name=dict(type='str'),
@@ -1703,9 +1737,9 @@ def main():
         instance_initiated_shutdown_behavior=dict(type='str', choices=['stop', 'terminate']),
         termination_protection=dict(type='bool'),
         detailed_monitoring=dict(type='bool'),
-        instance_ids=dict(default=[], type='list'),
+        instance_ids=dict(default=[], type='list', elements='str'),
         network=dict(default=None, type='dict'),
-        volumes=dict(default=None, type='list'),
+        volumes=dict(default=None, type='list', elements='dict'),
     )
     # running/present are synonyms
     # as are terminated/absent

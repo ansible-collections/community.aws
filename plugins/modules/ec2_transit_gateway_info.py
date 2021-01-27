@@ -6,15 +6,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'supported_by': 'community',
-    'status': ['preview']
-}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_transit_gateway_info
 short_description: Gather information about ec2 transit gateways in AWS
+version_added: 1.0.0
 description:
     - Gather information about ec2 transit gateways in AWS
 author: "Bob Boldin (@BobBoldin)"
@@ -27,6 +23,7 @@ options:
       - A list of transit gateway IDs to gather information for.
     aliases: [transit_gateway_id]
     type: list
+    elements: str
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
@@ -38,31 +35,31 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather info about all transit gateways
-- ec2_transit_gateway_info:
+- name: Gather info about all transit gateways
+  community.aws.ec2_transit_gateway_info:
 
-# Gather info about a particular transit gateway using filter transit gateway ID
-- ec2_transit_gateway_info:
+- name: Gather info about a particular transit gateway using filter transit gateway ID
+  community.aws.ec2_transit_gateway_info:
     filters:
       transit-gateway-id: tgw-02c42332e6b7da829
 
-# Gather info about a particular transit gateway using multiple option filters
-- ec2_transit_gateway_info:
+- name: Gather info about a particular transit gateway using multiple option filters
+  community.aws.ec2_transit_gateway_info:
     filters:
       options.dns-support: enable
       options.vpn-ecmp-support: enable
 
-# Gather info about multiple transit gateways using module param
-- ec2_transit_gateway_info:
+- name: Gather info about multiple transit gateways using module param
+  community.aws.ec2_transit_gateway_info:
     transit_gateway_ids:
       - tgw-02c42332e6b7da829
       - tgw-03c53443d5a8cb716
 '''
 
-RETURN = '''
+RETURN = r'''
 transit_gateways:
     description: >
         Transit gateways that match the provided filters. Each element consists of a dict with all the information
@@ -169,11 +166,10 @@ transit_gateways:
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError
-except Exception:
-    pass
-    # handled by imported AnsibleAWSModule
+except ImportError:
+    pass  # handled by imported AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     AWSRetry,
     boto3_tag_list_to_ansible_dict,

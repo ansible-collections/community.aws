@@ -5,19 +5,16 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: cloudformation_stack_set
+version_added: 1.0.0
 short_description: Manage groups of CloudFormation stacks
 description:
      - Launches/updates/deletes AWS CloudFormation Stack Sets.
 notes:
-     - To make an individual stack, you want the M(cloudformation) module.
+     - To make an individual stack, you want the M(amazon.aws.cloudformation) module.
 options:
   name:
     description:
@@ -179,9 +176,9 @@ extends_documentation_fragment:
 requirements: [ boto3>=1.6, botocore>=1.10.26 ]
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Create a stack set with instances in two accounts
-  cloudformation_stack_set:
+  community.aws.cloudformation_stack_set:
     name: my-stack
     description: Test stack in two accounts
     state: present
@@ -191,7 +188,7 @@ EXAMPLES = '''
     - us-east-1
 
 - name: on subsequent calls, templates are optional but parameters and tags can be altered
-  cloudformation_stack_set:
+  community.aws.cloudformation_stack_set:
     name: my-stack
     state: present
     parameters:
@@ -204,7 +201,7 @@ EXAMPLES = '''
     - us-east-1
 
 - name: The same type of update, but wait for the update to complete in all stacks
-  cloudformation_stack_set:
+  community.aws.cloudformation_stack_set:
     name: my-stack
     state: present
     wait: true
@@ -218,7 +215,7 @@ EXAMPLES = '''
     - us-east-1
 '''
 
-RETURN = '''
+RETURN = r'''
 operations_log:
   type: list
   description: Most recent events in CloudFormation's event log. This may be from a previous run in some cases.
@@ -299,26 +296,25 @@ stack_set:
 
 '''  # NOQA
 
-import time
 import datetime
-import uuid
 import itertools
+import time
+import uuid
 
 try:
-    import boto3
-    import botocore.exceptions
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     # handled by AnsibleAWSModule
     pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     ansible_dict_to_boto3_tag_list,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
 from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 def create_stack_set(module, stack_params, cfn):
@@ -508,9 +504,9 @@ def main():
         template=dict(type='path'),
         template_url=dict(),
         template_body=dict(),
-        capabilities=dict(type='list', choices=['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM']),
-        regions=dict(type='list'),
-        accounts=dict(type='list'),
+        capabilities=dict(type='list', elements='str', choices=['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM']),
+        regions=dict(type='list', elements='str'),
+        accounts=dict(type='list', elements='str'),
         failure_tolerance=dict(
             type='dict',
             default={},

@@ -6,13 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
 DOCUMENTATION = '''
 ---
 module: iam_policy_info
+version_added: 1.0.0
 short_description: Retrieve inline IAM policies for users, groups, and roles
 description:
      - Supports fetching of inline IAM policies for IAM users, groups and roles.
@@ -44,13 +41,13 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Describe all inline IAM policies on an IAM User
-- iam_policy_info:
+- name: Describe all inline IAM policies on an IAM User
+  community.aws.iam_policy_info:
     iam_type: user
     iam_name: example_user
 
-# Describe a specific inline policy on an IAM Role
-- iam_policy_info:
+- name: Describe a specific inline policy on an IAM Role
+  community.aws.iam_policy_info:
     iam_type: role
     iam_name: example_role
     policy_name: example_policy
@@ -80,15 +77,13 @@ all_policy_names:
     type: list
 '''
 
-import json
-
 try:
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
     pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible.module_utils.six import string_types
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 class PolicyError(Exception):
@@ -150,10 +145,10 @@ class UserPolicy(Policy):
         return 'user'
 
     def _list(self, name):
-        return self.client.list_user_policies(UserName=name)
+        return self.client.list_user_policies(aws_retry=True, UserName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_user_policy(UserName=name, PolicyName=policy_name)
+        return self.client.get_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name)
 
 
 class RolePolicy(Policy):
@@ -163,10 +158,10 @@ class RolePolicy(Policy):
         return 'role'
 
     def _list(self, name):
-        return self.client.list_role_policies(RoleName=name)
+        return self.client.list_role_policies(aws_retry=True, RoleName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_role_policy(RoleName=name, PolicyName=policy_name)
+        return self.client.get_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name)
 
 
 class GroupPolicy(Policy):
@@ -176,10 +171,10 @@ class GroupPolicy(Policy):
         return 'group'
 
     def _list(self, name):
-        return self.client.list_group_policies(GroupName=name)
+        return self.client.list_group_policies(aws_retry=True, GroupName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_group_policy(GroupName=name, PolicyName=policy_name)
+        return self.client.get_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name)
 
 
 def main():
@@ -192,7 +187,7 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
     args = dict(
-        client=module.client('iam'),
+        client=module.client('iam', retry_decorator=AWSRetry.jittered_backoff()),
         name=module.params.get('iam_name'),
         policy_name=module.params.get('policy_name'),
     )

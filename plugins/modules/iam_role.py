@@ -4,14 +4,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: iam_role
+version_added: 1.0.0
 short_description: Manage AWS IAM roles
 description:
   - Manage AWS IAM roles.
@@ -49,9 +46,10 @@ options:
     description:
       - A list of managed policy ARNs or, since Ansible 2.4, a list of either managed policy ARNs or friendly names.
       - To remove all policies set I(purge_polices=true) and I(managed_policies=[None]).
-      - To embed an inline policy, use M(iam_policy).
+      - To embed an inline policy, use M(community.aws.iam_policy).
     aliases: ['managed_policy']
     type: list
+    elements: str
   max_session_duration:
     description:
       - The maximum duration (in seconds) of a session when assuming the role.
@@ -98,11 +96,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create a role with description and tags
-  iam_role:
+  community.aws.iam_role:
     name: mynewrole
     assume_role_policy_document: "{{ lookup('file','policy.json') }}"
     description: This is My New Role
@@ -110,26 +108,26 @@ EXAMPLES = '''
       env: dev
 
 - name: "Create a role and attach a managed policy called 'PowerUserAccess'"
-  iam_role:
+  community.aws.iam_role:
     name: mynewrole
     assume_role_policy_document: "{{ lookup('file','policy.json') }}"
     managed_policies:
       - arn:aws:iam::aws:policy/PowerUserAccess
 
 - name: Keep the role created above but remove all managed policies
-  iam_role:
+  community.aws.iam_role:
     name: mynewrole
     assume_role_policy_document: "{{ lookup('file','policy.json') }}"
     managed_policies: []
 
 - name: Delete the role
-  iam_role:
+  community.aws.iam_role:
     name: mynewrole
     assume_role_policy_document: "{{ lookup('file', 'policy.json') }}"
     state: absent
 
 '''
-RETURN = '''
+RETURN = r'''
 iam_role:
     description: dictionary containing the IAM Role data
     returned: success
@@ -196,7 +194,7 @@ iam_role:
 
 import json
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, compare_policies
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry,
                                                                      ansible_dict_to_boto3_tag_list,
@@ -616,7 +614,7 @@ def main():
         name=dict(type='str', required=True),
         path=dict(type='str', default="/"),
         assume_role_policy_document=dict(type='json'),
-        managed_policies=dict(type='list', aliases=['managed_policy']),
+        managed_policies=dict(type='list', aliases=['managed_policy'], elements='str'),
         max_session_duration=dict(type='int'),
         state=dict(type='str', choices=['present', 'absent'], default='present'),
         description=dict(type='str'),
@@ -633,7 +631,7 @@ def main():
 
     if module.params.get('purge_policies') is None:
         module.deprecate('In Ansible 2.14 the default value of purge_policies will change from true to false.'
-                         '  To maintain the existing behaviour explicity set purge_policies=true', version='2.14')
+                         '  To maintain the existing behaviour explicitly set purge_policies=true', date='2022-06-01', collection_name='community.aws')
 
     if module.params.get('boundary'):
         if module.params.get('create_instance_profile'):

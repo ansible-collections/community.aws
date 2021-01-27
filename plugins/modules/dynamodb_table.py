@@ -6,14 +6,10 @@ import traceback
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = """
+DOCUMENTATION = r'''
 ---
 module: dynamodb_table
+version_added: 1.0.0
 short_description: Create, update or delete AWS Dynamo DB tables
 version_added: "2.0"
 description:
@@ -172,11 +168,11 @@ options:
 extends_documentation_fragment:
     - aws
     - ec2
-"""
+'''
 
-EXAMPLES = """
-# Create dynamo table with hash and range primary key
-- dynamodb_table:
+EXAMPLES = r'''
+- name: Create dynamo table with hash and range primary key
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     hash_key_name: id
@@ -188,23 +184,15 @@ EXAMPLES = """
     tags:
       tag_name: tag_value
 
-# Update capacity on existing dynamo table
-- dynamodb_table:
+- name: Update capacity on existing dynamo table
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     read_capacity: 10
     write_capacity: 10
 
-# Switch to On-demand capacity and enable point in time recovery on existing dynamo table
-- dynamodb_table:
-    name: my-table
-    region: us-east-1
-    billing_mode: PAY_PER_REQUEST
-    point_in_time_recovery: True
-
-
-# set index on existing dynamo table
-- dynamodb_table:
+- name: set index on existing dynamo table
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     indexes:
@@ -218,20 +206,20 @@ EXAMPLES = """
         read_capacity: 10
         write_capacity: 10
 
-# Delete dynamo table
-- dynamodb_table:
+- name: Delete dynamo table
+  community.aws.dynamodb_table:
     name: my-table
     region: us-east-1
     state: absent
-"""
+'''
 
-RETURN = """
+RETURN = r'''
 table_status:
     description: The current status of the table.
     returned: success
     type: str
     sample: ACTIVE
-"""
+'''
 
 
 try:
@@ -1117,6 +1105,7 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
+        check_boto3=False,
         required_if=[
             ['state', 'present', ['name', 'hash_key_name']],
             ['sse_type', 'KMS', ['sse_type']],

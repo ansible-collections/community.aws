@@ -5,20 +5,17 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_batch_job_definition
+version_added: 1.0.0
 short_description: Manage AWS Batch Job Definitions
 description:
     - This module allows the management of AWS Batch Job Definitions.
-      It is idempotent and supports "Check" mode.  Use module M(aws_batch_compute_environment) to manage the compute
-      environment, M(aws_batch_job_queue) to manage job queues, M(aws_batch_job_definition) to manage job definitions.
-
-
+    - It is idempotent and supports "Check" mode.
+    - Use module M(community.aws.aws_batch_compute_environment) to manage the compute
+      environment, M(community.aws.aws_batch_job_queue) to manage job queues, M(community.aws.aws_batch_job_definition) to manage job definitions.
 author: Jon Meran (@jonmer85)
 options:
   job_definition_arn:
@@ -180,7 +177,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 ---
 - hosts: localhost
   gather_facts: no
@@ -188,7 +185,7 @@ EXAMPLES = '''
     state: present
   tasks:
 - name: My Batch Job Definition
-  aws_batch_job_definition:
+  community.aws.aws_batch_job_definition:
     job_definition_name: My Batch Job Definition
     state: present
     type: container
@@ -207,10 +204,10 @@ EXAMPLES = '''
   register: job_definition_create_result
 
 - name: show results
-  debug: var=job_definition_create_result
+  ansible.builtin.debug: var=job_definition_create_result
 '''
 
-RETURN = '''
+RETURN = r'''
 ---
 output:
   description: "returns what action was taken, whether something was changed, invocation and response"
@@ -226,8 +223,8 @@ output:
   type: dict
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.batch import cc, set_api_params
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.batch import cc, set_api_params
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:
@@ -429,14 +426,14 @@ def main():
         image=dict(required=True),
         vcpus=dict(type='int', required=True),
         memory=dict(type='int', required=True),
-        command=dict(type='list', default=[]),
+        command=dict(type='list', default=[], elements='str'),
         job_role_arn=dict(),
-        volumes=dict(type='list', default=[]),
-        environment=dict(type='list', default=[]),
-        mount_points=dict(type='list', default=[]),
+        volumes=dict(type='list', default=[], elements='dict'),
+        environment=dict(type='list', default=[], elements='dict'),
+        mount_points=dict(type='list', default=[], elements='dict'),
         readonly_root_filesystem=dict(),
         privileged=dict(),
-        ulimits=dict(type='list', default=[]),
+        ulimits=dict(type='list', default=[], elements='dict'),
         user=dict(),
         attempts=dict(type='int')
     )

@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_lc_info
+version_added: 1.0.0
 short_description: Gather information about AWS Autoscaling Launch Configurations.
 description:
     - Gather information about AWS Autoscaling Launch Configurations.
@@ -56,23 +52,23 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather information about all launch configurations
-- ec2_lc_info:
+- name: Gather information about all launch configurations
+  community.aws.ec2_lc_info:
 
-# Gather information about launch configuration with name "example"
-- ec2_lc_info:
+- name: Gather information about launch configuration with name "example"
+  community.aws.ec2_lc_info:
     name: example
 
-# Gather information sorted by created_time from most recent to least recent
-- ec2_lc_info:
+- name: Gather information sorted by created_time from most recent to least recent
+  community.aws.ec2_lc_info:
     sort: created_time
     sort_order: descending
 '''
 
-RETURN = '''
+RETURN = r'''
 block_device_mapping:
     description: Block device mapping for the instances of launch configuration
     type: list
@@ -156,19 +152,14 @@ user_data:
 '''
 
 try:
-    import boto3
+    import botocore
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def list_launch_configs(connection, module):
@@ -183,7 +174,7 @@ def list_launch_configs(connection, module):
         pg = connection.get_paginator('describe_launch_configurations')
         launch_configs = pg.paginate(LaunchConfigurationNames=launch_config_name).build_full_result()
     except ClientError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json_aws(e, msg="Failed to list launch configs")
 
     snaked_launch_configs = []
     for launch_config in launch_configs['LaunchConfigurations']:
@@ -207,32 +198,24 @@ def list_launch_configs(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=False, default=[], type='list'),
-            sort=dict(required=False, default=None,
-                      choices=['launch_configuration_name', 'image_id', 'created_time', 'instance_type', 'kernel_id', 'ramdisk_id', 'key_name']),
-            sort_order=dict(required=False, default='ascending',
-                            choices=['ascending', 'descending']),
-            sort_start=dict(required=False, type='int'),
-            sort_end=dict(required=False, type='int'),
-        )
+    argument_spec = dict(
+        name=dict(required=False, default=[], type='list', elements='str'),
+        sort=dict(required=False, default=None,
+                  choices=['launch_configuration_name', 'image_id', 'created_time', 'instance_type', 'kernel_id', 'ramdisk_id', 'key_name']),
+        sort_order=dict(required=False, default='ascending',
+                        choices=['ascending', 'descending']),
+        sort_start=dict(required=False, type='int'),
+        sort_end=dict(required=False, type='int'),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
     if module._name == 'ec2_lc_facts':
-        module.deprecate("The 'ec2_lc_facts' module has been renamed to 'ec2_lc_info'", version='2.13')
+        module.deprecate("The 'ec2_lc_facts' module has been renamed to 'ec2_lc_info'", date='2021-12-01', collection_name='community.aws')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='autoscaling', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        connection = module.client('autoscaling')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     list_launch_configs(connection, module)
 

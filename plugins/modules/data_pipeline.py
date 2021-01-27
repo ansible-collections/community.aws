@@ -7,13 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: data_pipeline
+version_added: 1.0.0
 author:
   - Raghu Udiyar (@raags) <raghusiddarth@gmail.com>
   - Sloane Hertel (@s-hertel) <shertel@redhat.com>
@@ -127,16 +124,15 @@ options:
     type: dict
   version:
     description:
-      - The version option has never had any effect and will be removed in
-        Ansible 2.14
+      - The version option has never had any effect and will be removed after 2022-06-01.
     type: str
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     objects: "{{pipelineObjects}}"
@@ -148,7 +144,7 @@ EXAMPLES = '''
     state: present
 
 # Example populating and activating a pipeline that demonstrates two ways of providing pipeline objects
-- data_pipeline:
+- community.aws.data_pipeline:
   name: test-dp
   objects:
     - "id": "DefaultSchedule"
@@ -171,20 +167,20 @@ EXAMPLES = '''
   state: active
 
 # Activate pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     state: active
 
 # Delete pipeline
-- data_pipeline:
+- community.aws.data_pipeline:
     name: test-dp
     region: us-west-2
     state: absent
 
 '''
 
-RETURN = '''
+RETURN = r'''
 changed:
   description: whether the data pipeline has been modified
   type: bool
@@ -204,18 +200,17 @@ result:
 import hashlib
 import json
 import time
-import traceback
 
 try:
-    import boto3
+    import botocore
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, get_aws_connection_info, boto3_conn, camel_dict_to_snake_dict
 from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 DP_ACTIVE_STATES = ['ACTIVE', 'SCHEDULED']
@@ -282,7 +277,7 @@ def pipeline_field(client, dp_id, field):
 
 
 def run_with_timeout(timeout, func, *func_args, **func_kwargs):
-    """Run func with the provided args and kwargs, and wait utill
+    """Run func with the provided args and kwargs, and wait until
     timeout for truthy return value
 
     :param int timeout: time to wait for status
@@ -549,10 +544,10 @@ def define_pipeline(client, module, objects, dp_id):
                                            parameterValues=values)
             msg = 'Data Pipeline {0} has been updated.'.format(dp_name)
             changed = True
-        except ClientError as e:
-            module.fail_json(msg="Failed to put the definition for pipeline {0}. Check that string/reference fields"
-                             "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
-                             "objects".format(dp_name), exception=traceback.format_exc())
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to put the definition for pipeline {0}. Check that string/reference fields"
+                                 "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
+                                 "objects".format(dp_name))
     else:
         changed = False
         msg = ""
@@ -588,11 +583,11 @@ def create_pipeline(client, module):
                                         tags=tags)
             dp_id = dp['pipelineId']
             pipeline_exists_timeout(client, dp_id, timeout)
-        except ClientError as e:
-            module.fail_json(msg="Failed to create the data pipeline {0}.".format(dp_name), exception=traceback.format_exc())
         except TimeOutException:
             module.fail_json(msg=('Data Pipeline {0} failed to create'
                                   'within timeout {1} seconds').format(dp_name, timeout))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to create the data pipeline {0}.".format(dp_name))
         # Put pipeline definition
         changed, msg = define_pipeline(client, module, objects, dp_id)
 
@@ -605,35 +600,24 @@ def create_pipeline(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            version=dict(removed_in_version='2.14'),
-            description=dict(required=False, default=''),
-            objects=dict(required=False, type='list', default=[]),
-            parameters=dict(required=False, type='list', default=[]),
-            timeout=dict(required=False, type='int', default=300),
-            state=dict(default='present', choices=['present', 'absent',
-                                                   'active', 'inactive']),
-            tags=dict(required=False, type='dict', default={}),
-            values=dict(required=False, type='list', default=[])
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        version=dict(removed_at_date='2022-06-01', removed_from_collection='community.aws'),
+        description=dict(required=False, default=''),
+        objects=dict(required=False, type='list', default=[], elements='dict'),
+        parameters=dict(required=False, type='list', default=[], elements='dict'),
+        timeout=dict(required=False, type='int', default=300),
+        state=dict(default='present', choices=['present', 'absent',
+                                               'active', 'inactive']),
+        tags=dict(required=False, type='dict', default={}),
+        values=dict(required=False, type='list', default=[], elements='dict'),
     )
-    module = AnsibleModule(argument_spec, supports_check_mode=False)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required for the datapipeline module!')
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False)
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        if not region:
-            module.fail_json(msg="Region must be specified as a parameter, in EC2_REGION or AWS_REGION environment variables or in boto configuration file")
-        client = boto3_conn(module, conn_type='client',
-                            resource='datapipeline', region=region,
-                            endpoint=ec2_url, **aws_connect_kwargs)
-    except ClientError as e:
-        module.fail_json(msg="Can't authorize connection - " + str(e))
+        client = module.client('datapipeline')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     if state == 'present':

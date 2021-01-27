@@ -5,13 +5,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_endpoint_info
 short_description: Retrieves AWS VPC endpoints details using AWS methods.
+version_added: 1.0.0
 description:
   - Gets various details related to AWS VPC Endpoints.
   - This module was called C(ec2_vpc_endpoint_facts) before Ansible 2.9. The usage did not change.
@@ -44,22 +41,22 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of listing all support AWS services for VPC endpoints
 - name: List supported AWS endpoint services
-  ec2_vpc_endpoint_info:
+  community.aws.ec2_vpc_endpoint_info:
     query: services
     region: ap-southeast-2
   register: supported_endpoint_services
 
 - name: Get all endpoints in ap-southeast-2 region
-  ec2_vpc_endpoint_info:
+  community.aws.ec2_vpc_endpoint_info:
     query: endpoints
     region: ap-southeast-2
   register: existing_endpoints
 
 - name: Get all endpoints with specific filters
-  ec2_vpc_endpoint_info:
+  community.aws.ec2_vpc_endpoint_info:
     query: endpoints
     region: ap-southeast-2
     filters:
@@ -72,7 +69,7 @@ EXAMPLES = '''
   register: existing_endpoints
 
 - name: Get details on specific endpoint
-  ec2_vpc_endpoint_info:
+  community.aws.ec2_vpc_endpoint_info:
     query: endpoints
     region: ap-southeast-2
     vpc_endpoint_ids:
@@ -80,7 +77,7 @@ EXAMPLES = '''
   register: endpoint_details
 '''
 
-RETURN = '''
+RETURN = r'''
 service_names:
   description: AWS VPC endpoint service names
   returned: I(query) is C(services)
@@ -114,17 +111,13 @@ import json
 try:
     import botocore
 except ImportError:
-    pass  # will be picked up from imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
-                                                                     boto3_conn,
-                                                                     get_aws_connection_info,
-                                                                     ansible_dict_to_boto3_filter_list,
-                                                                     HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     AWSRetry,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
 
 def date_handler(obj):
@@ -162,36 +155,26 @@ def get_endpoints(client, module):
     try:
         results = json.loads(json.dumps(results, default=date_handler))
     except Exception as e:
-        module.fail_json(msg=str(e.message))
+        module.fail_json_aws(e, msg="Failed to get endpoints")
     return dict(vpc_endpoints=[camel_dict_to_snake_dict(result) for result in results])
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            query=dict(choices=['services', 'endpoints'], required=True),
-            filters=dict(default={}, type='dict'),
-            vpc_endpoint_ids=dict(type='list'),
-        )
+    argument_spec = dict(
+        query=dict(choices=['services', 'endpoints'], required=True),
+        filters=dict(default={}, type='dict'),
+        vpc_endpoint_ids=dict(type='list', elements='str'),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     if module._name == 'ec2_vpc_endpoint_facts':
-        module.deprecate("The 'ec2_vpc_endpoint_facts' module has been renamed to 'ec2_vpc_endpoint_info'", version='2.13')
+        module.deprecate("The 'ec2_vpc_endpoint_facts' module has been renamed to 'ec2_vpc_endpoint_info'", date='2021-12-01', collection_name='community.aws')
 
     # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore and boto3 are required.')
-
     try:
-        region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-        if region:
-            connection = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_params)
-        else:
-            module.fail_json(msg="region must be specified")
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+        connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invocations = {
         'services': get_supported_services,

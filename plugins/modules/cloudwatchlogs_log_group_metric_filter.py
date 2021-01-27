@@ -4,19 +4,17 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: cloudwatchlogs_log_group_metric_filter
+version_added: 1.0.0
 author:
   - "Markus Bergholz (@markuman)"
 short_description: Manage CloudWatch log group metric filter
 description:
   - Create, modify and delete CloudWatch log group metric filter.
-  - CloudWatch log group metric filter can be use with M(ec2_metric_alarm).
+  - CloudWatch log group metric filter can be use with M(community.aws.ec2_metric_alarm).
 requirements:
   - boto3
   - botocore
@@ -70,7 +68,7 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: set metric filter on log group /fluentd/testcase
-  cloudwatchlogs_log_group_metric_filter:
+  community.aws.cloudwatchlogs_log_group_metric_filter:
     log_group_name: /fluentd/testcase
     filter_name: BoxFreeStorage
     filter_pattern: '{($.value = *) && ($.hostname = "box")}'
@@ -81,7 +79,7 @@ EXAMPLES = '''
         metric_value: "$.value"
 
 - name: delete metric filter on log group /fluentd/testcase
-  cloudwatchlogs_log_group_metric_filter:
+  community.aws.cloudwatchlogs_log_group_metric_filter:
     log_group_name: /fluentd/testcase
     filter_name: BoxFreeStorage
     state: absent
@@ -92,20 +90,20 @@ metric_filters:
     description: Return the origin response value
     returned: success
     type: list
-    contains:
-        creation_time:
-        filter_name:
-        filter_pattern:
-        log_group_name:
-        metric_filter_count:
-"""
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+    sample: [
+        {
+            "default_value": 3.1415,
+            "metric_name": "box_free_space",
+            "metric_namespace": "made_with_ansible",
+            "metric_value": "$.value"
+        }
+    ]
 
-try:
-    from botocore.exceptions import ClientError, BotoCoreError, WaiterError
-except ImportError:
-    pass  # caught by AnsibleAWSModule
+"""
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def metricTransformationHandler(metricTransformations, originMetricTransformations=None):

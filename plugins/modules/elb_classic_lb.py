@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_classic_lb
+version_added: 1.0.0
 description:
   - Returns information about the load balancer.
   - Will be marked changed when called only if state is changed.
@@ -23,107 +19,114 @@ author:
 options:
   state:
     description:
-      - Create or destroy the ELB
+      - Create or destroy the ELB.
     choices: ["present", "absent"]
     required: true
     type: str
   name:
     description:
-      - The name of the ELB
+      - The name of the ELB.
     required: true
     type: str
   listeners:
     description:
-      - List of ports/protocols for this ELB to listen on (see example)
+      - List of ports/protocols for this ELB to listen on (see example).
     type: list
+    elements: dict
   purge_listeners:
     description:
-      - Purge existing listeners on ELB that are not found in listeners
+      - Purge existing listeners on ELB that are not found in listeners.
     type: bool
-    default: 'yes'
+    default: true
   instance_ids:
     description:
-      - List of instance ids to attach to this ELB
+      - List of instance ids to attach to this ELB.
     type: list
+    elements: str
   purge_instance_ids:
     description:
-      - Purge existing instance ids on ELB that are not found in instance_ids
+      - Purge existing instance ids on ELB that are not found in I(instance_ids).
     type: bool
-    default: 'no'
+    default: false
   zones:
     description:
-      - List of availability zones to enable on this ELB
+      - List of availability zones to enable on this ELB.
     type: list
+    elements: str
   purge_zones:
     description:
-      - Purge existing availability zones on ELB that are not found in zones
+      - Purge existing availability zones on ELB that are not found in zones.
     type: bool
-    default: 'no'
+    default: false
   security_group_ids:
     description:
-      - A list of security groups to apply to the elb
+      - A list of security groups to apply to the ELB.
     type: list
+    elements: str
   security_group_names:
     description:
-      - A list of security group names to apply to the elb
+      - A list of security group names to apply to the ELB.
     type: list
+    elements: str
   health_check:
     description:
-      - An associative array of health check configuration settings (see example)
+      - An associative array of health check configuration settings (see example).
     type: dict
   access_logs:
     description:
-      - An associative array of access logs configuration settings (see example)
+      - An associative array of access logs configuration settings (see example).
     type: dict
   subnets:
     description:
       - A list of VPC subnets to use when creating ELB. Zones should be empty if using this.
     type: list
+    elements: str
   purge_subnets:
     description:
-      - Purge existing subnet on ELB that are not found in subnets
+      - Purge existing subnets on ELB that are not found in subnets.
     type: bool
-    default: 'no'
+    default: false
   scheme:
     description:
-      - The scheme to use when creating the ELB. For a private VPC-visible ELB use 'internal'.
-        If you choose to update your scheme with a different value the ELB will be destroyed and
-        recreated. To update scheme you must use the option wait.
+      - The scheme to use when creating the ELB.
+      - For a private VPC-visible ELB use C(internal).
+      - If you choose to update your scheme with a different value the ELB will be destroyed and
+        recreated. To update scheme you must set I(wait=true).
     choices: ["internal", "internet-facing"]
     default: 'internet-facing'
     type: str
   validate_certs:
     description:
-      - When set to C(no), SSL certificates will not be validated for boto versions >= 2.6.0.
+      - When set to C(false), SSL certificates will not be validated for boto versions >= 2.6.0.
     type: bool
-    default: 'yes'
+    default: true
   connection_draining_timeout:
     description:
-      - Wait a specified timeout allowing connections to drain before terminating an instance
+      - Wait a specified timeout allowing connections to drain before terminating an instance.
     type: int
   idle_timeout:
     description:
-      - ELB connections from clients and to servers are timed out after this amount of time
+      - ELB connections from clients and to servers are timed out after this amount of time.
     type: int
   cross_az_load_balancing:
     description:
-      - Distribute load across all configured Availability Zones
+      - Distribute load across all configured Availability Zones.
+      - Defaults to C(false).
     type: bool
-    default: 'no'
   stickiness:
     description:
-      - An associative array of stickiness policy settings. Policy will be applied to all listeners ( see example )
+      - An associative array of stickiness policy settings. Policy will be applied to all listeners (see example).
     type: dict
   wait:
     description:
       - When specified, Ansible will check the status of the load balancer to ensure it has been successfully
         removed from AWS.
     type: bool
-    default: 'no'
+    default: false
   wait_timeout:
     description:
-      - Used in conjunction with wait. Number of seconds to wait for the elb to be terminated.
-        A maximum of 600 seconds (10 minutes) is allowed.
+      - Used in conjunction with wait. Number of seconds to wait for the ELB to be terminated.
+        A maximum of C(600) seconds (10 minutes) is allowed.
     default: 60
     type: int
   tags:
@@ -137,13 +140,13 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
 # Basic provisioning example (non-VPC)
 
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -164,7 +167,7 @@ EXAMPLES = """
 
 # Internal ELB example
 
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-vpc"
     scheme: internal
     state: present
@@ -181,7 +184,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Configure a health check and the access logs
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -205,20 +208,20 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Ensure ELB is gone
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: absent
   delegate_to: localhost
 
 # Ensure ELB is gone and wait for check (for default timeout)
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: absent
     wait: yes
   delegate_to: localhost
 
 # Ensure ELB is gone and wait for check with timeout value
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: absent
     wait: yes
@@ -228,7 +231,7 @@ EXAMPLES = """
 # Normally, this module will purge any listeners that exist on the ELB
 # but aren't specified in the listeners parameter. If purge_listeners is
 # false it leaves them alone
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -244,7 +247,7 @@ EXAMPLES = """
 # Normally, this module will leave availability zones that are enabled
 # on the ELB alone. If purge_zones is true, then any extraneous zones
 # will be removed
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "test-please-delete"
     state: present
     zones:
@@ -258,7 +261,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Creates a ELB and assigns a list of subnets to it.
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     state: present
     name: 'New ELB'
     security_group_ids: 'sg-123456, sg-67890'
@@ -273,7 +276,7 @@ EXAMPLES = """
 
 # Create an ELB with connection draining, increased idle timeout and cross availability
 # zone load balancing
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     connection_draining_timeout: 60
@@ -290,7 +293,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Create an ELB with load balancer stickiness enabled
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -308,7 +311,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Create an ELB with application stickiness enabled
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -326,7 +329,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Create an ELB and add tags
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -344,7 +347,7 @@ EXAMPLES = """
   delegate_to: localhost
 
 # Delete all tags from an ELB
-- elb_classic_lb:
+- community.aws.elb_classic_lb:
     name: "New ELB"
     state: present
     region: us-east-1
@@ -370,14 +373,17 @@ try:
     import boto.vpc
     from boto.ec2.elb.healthcheck import HealthCheck
     from boto.ec2.tag import Tag
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, connect_to_aws, AnsibleAWSError, get_aws_connection_info
 from ansible.module_utils.six import string_types
 from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 
 
 def _throttleable_operation(max_retries):
@@ -454,7 +460,7 @@ class ElbManager(object):
         try:
             self.elb = self._get_elb()
         except boto.exception.BotoServerError as e:
-            module.fail_json(msg='unable to get all load balancers: %s' % e.message, exception=traceback.format_exc())
+            module.fail_json(msg='unable to get all load balancers: %s' % to_native(e), exception=traceback.format_exc())
 
         self.ec2_conn = self._get_ec2_connection()
 
@@ -815,7 +821,7 @@ class ElbManager(object):
         try:
             self.elb.enable_zones(zones)
         except boto.exception.BotoServerError as e:
-            self.module.fail_json(msg='unable to enable zones: %s' % e.message, exception=traceback.format_exc())
+            self.module.fail_json(msg='unable to enable zones: %s' % to_native(e), exception=traceback.format_exc())
 
         self.changed = True
 
@@ -823,7 +829,7 @@ class ElbManager(object):
         try:
             self.elb.disable_zones(zones)
         except boto.exception.BotoServerError as e:
-            self.module.fail_json(msg='unable to disable zones: %s' % e.message, exception=traceback.format_exc())
+            self.module.fail_json(msg='unable to disable zones: %s' % to_native(e), exception=traceback.format_exc())
         self.changed = True
 
     def _attach_subnets(self, subnets):
@@ -1221,20 +1227,19 @@ class ElbManager(object):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state={'required': True, 'choices': ['present', 'absent']},
         name={'required': True},
-        listeners={'default': None, 'required': False, 'type': 'list'},
+        listeners={'default': None, 'required': False, 'type': 'list', 'elements': 'dict'},
         purge_listeners={'default': True, 'required': False, 'type': 'bool'},
-        instance_ids={'default': None, 'required': False, 'type': 'list'},
+        instance_ids={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         purge_instance_ids={'default': False, 'required': False, 'type': 'bool'},
-        zones={'default': None, 'required': False, 'type': 'list'},
+        zones={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         purge_zones={'default': False, 'required': False, 'type': 'bool'},
-        security_group_ids={'default': None, 'required': False, 'type': 'list'},
-        security_group_names={'default': None, 'required': False, 'type': 'list'},
+        security_group_ids={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
+        security_group_names={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         health_check={'default': None, 'required': False, 'type': 'dict'},
-        subnets={'default': None, 'required': False, 'type': 'list'},
+        subnets={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         purge_subnets={'default': False, 'required': False, 'type': 'bool'},
         scheme={'default': 'internet-facing', 'required': False, 'choices': ['internal', 'internet-facing']},
         connection_draining_timeout={'default': None, 'required': False, 'type': 'int'},
@@ -1244,13 +1249,13 @@ def main():
         access_logs={'default': None, 'required': False, 'type': 'dict'},
         wait={'default': False, 'type': 'bool', 'required': False},
         wait_timeout={'default': 60, 'type': 'int', 'required': False},
-        tags={'default': None, 'required': False, 'type': 'dict'}
-    )
+        tags={'default': None, 'required': False, 'type': 'dict'},
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        mutually_exclusive=[['security_group_ids', 'security_group_names']]
+        mutually_exclusive=[['security_group_ids', 'security_group_names']],
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

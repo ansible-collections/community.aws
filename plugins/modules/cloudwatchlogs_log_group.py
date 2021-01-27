@@ -6,14 +6,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: cloudwatchlogs_log_group
+version_added: 1.0.0
 short_description: create or delete log_group in CloudWatchLogs
 notes:
     - For details of the parameters and returns see U(http://boto3.readthedocs.io/en/latest/reference/services/logs.html).
@@ -75,21 +72,21 @@ extends_documentation_fragment:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     log_group_name: test-log-group
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     state: present
     log_group_name: test-log-group
     tags: { "Name": "test-log-group", "Env" : "QA" }
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     state: present
     log_group_name: test-log-group
     tags: { "Name": "test-log-group", "Env" : "QA" }
     kms_key_id: arn:aws:kms:region:account-id:key/key-id
 
-- cloudwatchlogs_log_group:
+- community.aws.cloudwatchlogs_log_group:
     state: absent
     log_group_name: test-log-group
 
@@ -131,20 +128,14 @@ log_groups:
             type: str
 '''
 
-import traceback
-from ansible.module_utils._text import to_native
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     boto3_conn,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
-
 try:
     import botocore
 except ImportError:
-    pass  # will be detected by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def create_log_group(client, log_group_name, kms_key_id, tags, retention, module):
@@ -156,12 +147,8 @@ def create_log_group(client, log_group_name, kms_key_id, tags, retention, module
 
     try:
         client.create_log_group(**request)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to create log group: {0}".format(to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to create log group: {0}".format(to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to create log group")
 
     if retention:
         input_retention_policy(client=client,
@@ -189,23 +176,15 @@ def input_retention_policy(client, log_group_name, retention, module):
         else:
             delete_log_group(client=client, log_group_name=log_group_name, module=module)
             module.fail_json(msg="Invalid retention value. Valid values are: [1, 3, 5, 7, 14, 30, 60, 90, 120, 150, 180, 365, 400, 545, 731, 1827, 3653]")
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to put retention policy for log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to put retention policy for log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to put retention policy for log group {0}".format(log_group_name))
 
 
 def delete_retention_policy(client, log_group_name, module):
     try:
         client.delete_retention_policy(logGroupName=log_group_name)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to delete retention policy for log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to delete retention policy for log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to delete retention policy for log group {0}".format(log_group_name))
 
 
 def delete_log_group(client, log_group_name, module):
@@ -219,29 +198,20 @@ def delete_log_group(client, log_group_name, module):
                 if log_group_name == i['logGroupName']:
                     client.delete_log_group(logGroupName=log_group_name)
 
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to delete log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to delete log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to delete log group {0}".format(log_group_name))
 
 
 def describe_log_group(client, log_group_name, module):
     try:
         desc_log_group = client.describe_log_groups(logGroupNamePrefix=log_group_name)
         return desc_log_group
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to describe log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to describe log group {0}: {1}".format(log_group_name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to describe log group {0}".format(log_group_name))
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         log_group_name=dict(required=True, type='str'),
         state=dict(choices=['present', 'absent'],
                    default='present'),
@@ -249,17 +219,16 @@ def main():
         tags=dict(required=False, type='dict'),
         retention=dict(required=False, type='int'),
         purge_retention_policy=dict(required=False, type='bool', default=False),
-        overwrite=dict(required=False, type='bool', default=False)
-    ))
+        overwrite=dict(required=False, type='bool', default=False),
+    )
 
     mutually_exclusive = [['retention', 'purge_retention_policy'], ['purge_retention_policy', 'overwrite']]
-    module = AnsibleModule(argument_spec=argument_spec, mutually_exclusive=mutually_exclusive)
+    module = AnsibleAWSModule(argument_spec=argument_spec, mutually_exclusive=mutually_exclusive)
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    logs = boto3_conn(module, conn_type='client', resource='logs', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        logs = module.client('logs')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     changed = False

@@ -6,14 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ecs_taskdefinition
+version_added: 1.0.0
 short_description: register a task definition in ecs
 description:
     - Registers or deregisters task definitions in the Amazon Web Services (AWS) EC2 Container Service (ECS).
@@ -46,12 +42,13 @@ options:
             - Always create new task definition.
         required: False
         type: bool
+        default: false
     containers:
         description:
             - A list of containers definitions.
         required: False
         type: list
-        elements: str
+        elements: dict
     network_mode:
         description:
             - The Docker networking mode to use for the containers in the task.
@@ -99,7 +96,7 @@ options:
     memory:
         description:
             - The amount (in MiB) of memory used by the task. If using the EC2 launch type, this field is optional and any value can be used.
-            - If using the Fargate launch type, this field is required and is limited by the cpu.
+            - If using the Fargate launch type, this field is required and is limited by the CPU.
         required: false
         type: str
 extends_documentation_fragment:
@@ -108,9 +105,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Create task definition
-  ecs_taskdefinition:
+  community.aws.ecs_taskdefinition:
     containers:
     - name: simple-app
       cpu: 10
@@ -151,7 +148,7 @@ EXAMPLES = '''
   register: task_output
 
 - name: Create task definition
-  ecs_taskdefinition:
+  community.aws.ecs_taskdefinition:
     family: nginx
     containers:
     - name: nginx
@@ -165,7 +162,7 @@ EXAMPLES = '''
     state: present
 
 - name: Create task definition
-  ecs_taskdefinition:
+  community.aws.ecs_taskdefinition:
     family: nginx
     containers:
     - name: nginx
@@ -182,7 +179,7 @@ EXAMPLES = '''
 
 # Create Task Definition with Environment Variables and Secrets
 - name: Create task definition
-  ecs_taskdefinition:
+  community.aws.ecs_taskdefinition:
     family: nginx
     containers:
     - name: nginx
@@ -204,7 +201,7 @@ EXAMPLES = '''
     state: present
     network_mode: awsvpc
 '''
-RETURN = '''
+RETURN = r'''
 taskdefinition:
     description: a reflection of the input parameters
     type: dict
@@ -216,9 +213,9 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible.module_utils._text import to_text
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 class EcsTaskManager:
@@ -277,7 +274,7 @@ class EcsTaskManager:
         try:
             response = self.ecs.register_task_definition(**params)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            self.module.fail_json_aws(e, msg="Failed to register task")
 
         return response['taskDefinition']
 
@@ -325,11 +322,11 @@ def main():
         family=dict(required=False, type='str'),
         revision=dict(required=False, type='int'),
         force_create=dict(required=False, default=False, type='bool'),
-        containers=dict(required=False, type='list'),
+        containers=dict(required=False, type='list', elements='dict'),
         network_mode=dict(required=False, default='bridge', choices=['default', 'bridge', 'host', 'none', 'awsvpc'], type='str'),
         task_role_arn=dict(required=False, default='', type='str'),
         execution_role_arn=dict(required=False, default='', type='str'),
-        volumes=dict(required=False, type='list'),
+        volumes=dict(required=False, type='list', elements='dict'),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
         cpu=dict(),
         memory=dict(required=False, type='str')

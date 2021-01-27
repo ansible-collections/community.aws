@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: efs
+version_added: 1.0.0
 short_description: create and maintain EFS file systems
 description:
     - Module allows create, search and destroy Amazon EFS file systems.
@@ -110,9 +106,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# EFS provisioning
-- efs:
+EXAMPLES = r'''
+- name: EFS provisioning
+  community.aws.efs:
     state: present
     name: myTestEFS
     tags:
@@ -122,8 +118,8 @@ EXAMPLES = '''
         - subnet_id: subnet-748c5d03
           security_groups: [ "sg-1a2b3c4d" ]
 
-# Modifying EFS data
-- efs:
+- name: Modifying EFS data
+  community.aws.efs:
     state: present
     name: myTestEFS
     tags:
@@ -132,13 +128,13 @@ EXAMPLES = '''
         - subnet_id: subnet-7654fdca
           security_groups: [ "sg-4c5d6f7a" ]
 
-# Deleting EFS
-- efs:
+- name: Deleting EFS
+  community.aws.efs:
     state: absent
     name: myTestEFS
 '''
 
-RETURN = '''
+RETURN = r'''
 creation_time:
     description: timestamp of creation date
     returned: always
@@ -238,7 +234,7 @@ try:
 except ImportError as e:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (compare_aws_tags,
                                                                      camel_dict_to_snake_dict,
                                                                      ansible_dict_to_boto3_tag_list,
@@ -696,7 +692,7 @@ def main():
         id=dict(required=False, type='str', default=None),
         name=dict(required=False, type='str', default=None),
         tags=dict(required=False, type="dict", default={}),
-        targets=dict(required=False, type="list", default=[]),
+        targets=dict(required=False, type="list", default=[], elements='dict'),
         performance_mode=dict(required=False, type='str', choices=["general_purpose", "max_io"], default="general_purpose"),
         throughput_mode=dict(required=False, type='str', choices=["bursting", "provisioned"], default=None),
         provisioned_throughput_in_mibps=dict(required=False, type='float'),

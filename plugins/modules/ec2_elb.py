@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_elb
+version_added: 1.0.0
 short_description: De-registers or registers instances from EC2 ELBs
 description:
   - This module de-registers or registers an AWS EC2 instance from the ELBs
@@ -36,8 +32,10 @@ options:
     type: str
   ec2_elbs:
     description:
-      - List of ELB names, required for registration. The ec2_elbs fact should be used if there was a previous de-register.
+      - List of ELB names, required for registration.
+      - The ec2_elbs fact should be used if there was a previous de-register.
     type: list
+    elements: str
   enable_availability_zone:
     description:
       - Whether to enable the availability zone of the instance on the target ELB if the availability zone has not already
@@ -61,22 +59,18 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # basic pre_task and post_task example
 pre_tasks:
-  - name: Gathering ec2 facts
-    action: ec2_facts
   - name: Instance De-register
-    local_action:
-      module: ec2_elb
+    community.aws.ec2_elb:
       instance_id: "{{ ansible_ec2_instance_id }}"
       state: absent
 roles:
   - myrole
 post_tasks:
   - name: Instance Register
-    local_action:
-      module: ec2_elb
+    community.aws.ec2_elb:
       instance_id: "{{ ansible_ec2_instance_id }}"
       ec2_elbs: "{{ item }}"
       state: present
@@ -90,18 +84,14 @@ try:
     import boto.ec2
     import boto.ec2.autoscale
     import boto.ec2.elb
-    from boto.regioninfo import RegionInfo
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AnsibleAWSError,
-                                                                     HAS_BOTO,
-                                                                     connect_to_aws,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 class ElbManager:
@@ -320,20 +310,19 @@ class ElbManager:
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state={'required': True, 'choices': ['present', 'absent']},
         instance_id={'required': True},
-        ec2_elbs={'default': None, 'required': False, 'type': 'list'},
+        ec2_elbs={'default': None, 'required': False, 'type': 'list', 'elements': 'str'},
         enable_availability_zone={'default': True, 'required': False, 'type': 'bool'},
         wait={'required': False, 'default': True, 'type': 'bool'},
-        wait_timeout={'required': False, 'default': 0, 'type': 'int'}
-    )
+        wait_timeout={'required': False, 'default': 0, 'type': 'int'},
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

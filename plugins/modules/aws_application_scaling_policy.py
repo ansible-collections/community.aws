@@ -5,27 +5,24 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: aws_application_scaling_policy
+version_added: 1.0.0
 short_description: Manage Application Auto Scaling Scaling Policies
 notes:
     - for details of the parameters and returns see
       U(http://boto3.readthedocs.io/en/latest/reference/services/application-autoscaling.html#ApplicationAutoScaling.Client.put_scaling_policy)
 description:
-    - Creates, updates or removes a Scaling Policy
+    - Creates, updates or removes a Scaling Policy.
 author:
     - Gustavo Maia (@gurumaia)
     - Chen Leibovich (@chenl87)
 requirements: [ json, botocore, boto3 ]
 options:
     state:
-        description: Whether a policy should be present or absent
+        description: Whether a policy should be C(present) or C(absent).
         required: yes
         choices: ['absent', 'present']
         type: str
@@ -60,12 +57,12 @@ options:
         choices: ['StepScaling', 'TargetTrackingScaling']
         type: str
     step_scaling_policy_configuration:
-        description: A step scaling policy. This parameter is required if you are creating a policy and the policy type is StepScaling.
+        description: A step scaling policy. This parameter is required if you are creating a policy and I(policy_type=StepScaling).
         required: no
         type: dict
     target_tracking_scaling_policy_configuration:
         description:
-            - A target tracking policy. This parameter is required if you are creating a new policy and the policy type is TargetTrackingScaling.
+            - A target tracking policy. This parameter is required if you are creating a new policy and I(policy_type=TargetTrackingScaling).
             - 'Full documentation of the suboptions can be found in the API documentation:'
             - 'U(https://docs.aws.amazon.com/autoscaling/application/APIReference/API_TargetTrackingScalingPolicyConfiguration.html)'
         required: no
@@ -87,7 +84,7 @@ options:
                 description: The time (in seconds) to wait after scaling-out before another scaling action can occur.
                 type: int
             TargetValue:
-                description: The target value for the metric
+                description: The target value for the metric.
                 type: float
     minimum_tasks:
         description: The minimum value to scale to in response to a scale in event.
@@ -100,9 +97,10 @@ options:
         required: no
         type: int
     override_task_capacity:
-        description: Whether or not to override values of minimum and/or maximum tasks if it's already set.
+        description:
+        - Whether or not to override values of minimum and/or maximum tasks if it's already set.
+        - Defaults to C(false).
         required: no
-        default: no
         type: bool
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -115,7 +113,7 @@ EXAMPLES = '''
 
 # Create step scaling policy for ECS Service
 - name: scaling_policy
-  aws_application_scaling_policy:
+  community.aws.aws_application_scaling_policy:
     state: present
     policy_name: test_policy
     service_namespace: ecs
@@ -136,7 +134,7 @@ EXAMPLES = '''
 
 # Create target tracking scaling policy for ECS Service
 - name: scaling_policy
-  aws_application_scaling_policy:
+  community.aws.aws_application_scaling_policy:
     state: present
     policy_name: test_policy
     service_namespace: ecs
@@ -154,7 +152,7 @@ EXAMPLES = '''
 
 # Remove scalable target for ECS Service
 - name: scaling_policy
-  aws_application_scaling_policy:
+  community.aws.aws_application_scaling_policy:
     state: absent
     policy_name: test_policy
     policy_type: StepScaling
@@ -286,7 +284,7 @@ creation_time:
     sample: '2017-09-28T08:22:51.881000-03:00'
 '''  # NOQA
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import _camel_to_snake, camel_dict_to_snake_dict
 
 try:

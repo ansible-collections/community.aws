@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: sts_session_token
+version_added: 1.0.0
 short_description: Obtain a session token from the AWS Security Token Service
 description:
     - Obtain a session token from the AWS Security Token Service.
@@ -65,32 +61,31 @@ changed:
 EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Get a session token (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html)
-sts_session_token:
-  duration_seconds: 3600
-register: session_credentials
+# (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html)
+- name: Get a session token
+  community.aws.sts_session_token:
+    duration_seconds: 3600
+  register: session_credentials
 
-# Use the session token obtained above to tag an instance in account 123456789012
-ec2_tag:
-  aws_access_key: "{{ session_credentials.sts_creds.access_key }}"
-  aws_secret_key: "{{ session_credentials.sts_creds.secret_key }}"
-  security_token: "{{ session_credentials.sts_creds.session_token }}"
-  resource: i-xyzxyz01
-  state: present
-  tags:
-    MyNewTag: value
+- name: Use the session token obtained above to tag an instance in account 123456789012
+  amazon.aws.ec2_tag:
+    aws_access_key: "{{ session_credentials.sts_creds.access_key }}"
+    aws_secret_key: "{{ session_credentials.sts_creds.secret_key }}"
+    security_token: "{{ session_credentials.sts_creds.session_token }}"
+    resource: i-xyzxyz01
+    state: present
+    tags:
+        MyNewTag: value
 
 '''
 
 try:
-    import boto3
+    import botocore
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def normalize_credentials(credentials):
@@ -131,25 +126,18 @@ def get_session_token(connection, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            duration_seconds=dict(required=False, default=None, type='int'),
-            mfa_serial_number=dict(required=False, default=None),
-            mfa_token=dict(required=False, default=None)
-        )
+    argument_spec = dict(
+        duration_seconds=dict(required=False, default=None, type='int'),
+        mfa_serial_number=dict(required=False, default=None),
+        mfa_token=dict(required=False, default=None),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 and botocore are required.')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='sts', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        connection = module.client('sts')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     get_session_token(connection, module)
 

@@ -17,14 +17,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: iam_cert
+version_added: 1.0.0
 short_description: Manage server certificates for use on ELBs and CloudFront
 description:
      - Allows for the management of server certificates.
@@ -36,17 +33,17 @@ options:
     type: str
   new_name:
     description:
-      - When state is present, this will update the name of the cert.
-      - The cert, key and cert_chain parameters will be ignored if this is defined.
+      - When I(state=present), this will update the name of the cert.
+      - The I(cert), I(key) and I(cert_chain) parameters will be ignored if this is defined.
     type: str
   new_path:
     description:
-      - When state is present, this will update the path of the cert.
+      - When I(state=present), this will update the path of the cert.
       - The I(cert), I(key) and I(cert_chain) parameters will be ignored if this is defined.
     type: str
   state:
     description:
-      - Whether to create(or update) or delete the certificate.
+      - Whether to create (or update) or delete the certificate.
       - If I(new_path) or I(new_name) is defined, specifying present will attempt to make an update these.
     required: true
     choices: [ "present", "absent" ]
@@ -75,7 +72,7 @@ options:
     description:
       - By default the module will not upload a certificate that is already uploaded into AWS.
       - If I(dup_ok=True), it will upload the certificate as long as the name is unique.
-    default: False
+      - Defaults to C(false).
     type: bool
 
 requirements: [ "boto" ]
@@ -87,24 +84,24 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Basic server certificate upload from local file
-- iam_cert:
+- name: Basic server certificate upload from local file
+  community.aws.iam_cert:
     name: very_ssl
     state: present
     cert: "{{ lookup('file', 'path/to/cert') }}"
     key: "{{ lookup('file', 'path/to/key') }}"
     cert_chain: "{{ lookup('file', 'path/to/certchain') }}"
 
-# Basic server certificate upload
-- iam_cert:
+- name: Basic server certificate upload
+  community.aws.iam_cert:
     name: very_ssl
     state: present
     cert: path/to/cert
     key: path/to/key
     cert_chain: path/to/certchain
 
-# Server certificate upload using key string
-- iam_cert:
+- name: Server certificate upload using key string
+  community.aws.iam_cert:
     name: very_ssl
     state: present
     path: "/a/cert/path/"
@@ -112,24 +109,26 @@ EXAMPLES = '''
     key: vault_body_of_privcertkey
     cert_chain: body_of_myverytrustedchain
 
-# Basic rename of existing certificate
-- iam_cert:
+- name: Basic rename of existing certificate
+  community.aws.iam_cert:
     name: very_ssl
     new_name: new_very_ssl
     state: present
 
 '''
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, get_aws_connection_info, connect_to_aws
 import os
 
 try:
     import boto
     import boto.iam
     import boto.ec2
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 
 
 def cert_meta(iam, name):
@@ -242,8 +241,7 @@ def load_data(cert, key, cert_chain):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(required=True),
         cert=dict(),
@@ -252,11 +250,10 @@ def main():
         new_name=dict(),
         path=dict(default='/'),
         new_path=dict(),
-        dup_ok=dict(type='bool')
-    )
+        dup_ok=dict(type='bool'),
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['new_path', 'key'],
@@ -266,6 +263,7 @@ def main():
             ['new_name', 'cert'],
             ['new_name', 'cert_chain'],
         ],
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

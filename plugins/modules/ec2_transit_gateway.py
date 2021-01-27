@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 module: ec2_transit_gateway
 short_description: Create and delete AWS Transit Gateways
+version_added: 1.0.0
 description:
   - Creates AWS Transit Gateways.
   - Deletes AWS Transit Gateways.
@@ -94,14 +90,14 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Create a new transit gateway using defaults
-  ec2_transit_gateway:
+  community.aws.ec2_transit_gateway:
     state: present
     region: us-east-1
     description: personal-testing
   register: created_tgw
 
 - name: Create a new transit gateway with options
-  ec2_transit_gateway:
+  community.aws.ec2_transit_gateway:
     asn: 64514
     auto_associate: no
     auto_propagate: no
@@ -115,13 +111,13 @@ EXAMPLES = '''
       status: testing
 
 - name: Remove a transit gateway by description
-  ec2_transit_gateway:
+  community.aws.ec2_transit_gateway:
     state: absent
     region: us-east-1
     description: personal-testing
 
 - name: Remove a transit gateway by id
-  ec2_transit_gateway:
+  community.aws.ec2_transit_gateway:
     state: absent
     region: ap-southeast-2
     transit_gateway_id: tgw-3a9aa123
@@ -226,11 +222,10 @@ transit_gateway:
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError
-except Exception:
-    pass
-    # handled by imported AnsibleAWSModule
+except ImportError:
+    pass  # handled by imported AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from time import sleep, time
 from ansible.module_utils._text import to_text
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (

@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elasticache_subnet_group
+version_added: 1.0.0
 short_description: manage ElastiCache subnet groups
 description:
      - Creates, modifies, and deletes ElastiCache subnet groups. This module has a dependency on python-boto >= 2.5.
@@ -45,9 +41,9 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
-# Add or change a subnet group
-- elasticache_subnet_group:
+EXAMPLES = r'''
+- name: Add or change a subnet group
+  community.aws.elasticache_subnet_group:
     state: present
     name: norwegian-blue
     description: My Fancy Ex Parrot Subnet Group
@@ -55,8 +51,8 @@ EXAMPLES = '''
       - subnet-aaaaaaaa
       - subnet-bbbbbbbb
 
-# Remove a subnet group
-- elasticache_subnet_group:
+- name: Remove a subnet group
+  community.aws.elasticache_subnet_group:
     state: absent
     name: norwegian-blue
 '''
@@ -65,24 +61,23 @@ try:
     import boto
     from boto.elasticache import connect_to_region
     from boto.exception import BotoServerError
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO, ec2_argument_spec, get_aws_connection_info
+from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(required=True),
         description=dict(required=False),
-        subnets=dict(required=False, type='list'),
+        subnets=dict(required=False, type='list', elements='str'),
     )
-    )
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, check_boto3=False)
 
     if not HAS_BOTO:
         module.fail_json(msg='boto required for this module')
@@ -111,7 +106,7 @@ def main():
     try:
         conn = connect_to_region(region_name=region, **aws_connect_kwargs)
     except boto.exception.NoAuthHandlerFound as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     try:
         changed = False

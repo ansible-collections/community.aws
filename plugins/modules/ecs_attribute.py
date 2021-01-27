@@ -6,13 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ecs_attribute
+version_added: 1.0.0
 short_description: manage ecs attributes
 description:
     - Create, update or delete ECS container instance attributes.
@@ -63,11 +60,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Set attributes
-- ecs_attribute:
+- name: Set attributes
+  community.aws.ecs_attribute:
     state: present
     cluster: test-cluster
     ec2_instance_id: "{{ ec2_id }}"
@@ -76,8 +73,8 @@ EXAMPLES = '''
       - migrated
   delegate_to: localhost
 
-# Delete attributes
-- ecs_attribute:
+- name: Delete attributes
+  community.aws.ecs_attribute:
     state: absent
     cluster: test-cluster
     ec2_instance_id: "{{ ec2_id }}"
@@ -87,7 +84,7 @@ EXAMPLES = '''
   delegate_to: localhost
 '''
 
-RETURN = '''
+RETURN = r'''
 attributes:
     description: attributes
     type: complex
@@ -114,14 +111,12 @@ attributes:
 '''
 
 try:
-    import boto3
+    import botocore
     from botocore.exceptions import ClientError, EndpointConnectionError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 class EcsAttributes(object):
@@ -191,13 +186,10 @@ class Ec2EcsInstance(object):
         self.cluster = cluster
         self.ec2_id = ec2_id
 
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        if not region:
-            module.fail_json(msg=("Region must be specified as a parameter,"
-                                  " in EC2_REGION or AWS_REGION environment"
-                                  " variables or in boto configuration file"))
-        self.ecs = boto3_conn(module, conn_type='client', resource='ecs',
-                              region=region, endpoint=ec2_url, **aws_connect_kwargs)
+        try:
+            self.ecs = module.client('ecs')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
 
         self.ecs_arn = self._get_ecs_arn()
 
@@ -257,21 +249,20 @@ class Ec2EcsInstance(object):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=False, default='present', choices=['present', 'absent']),
         cluster=dict(required=True, type='str'),
         ec2_instance_id=dict(required=True, type='str'),
-        attributes=dict(required=True, type='list'),
-    ))
+        attributes=dict(required=True, type='list', elements='dict'),
+    )
 
     required_together = [['cluster', 'ec2_instance_id', 'attributes']]
 
-    module = AnsibleModule(argument_spec=argument_spec, supports_check_mode=True,
-                           required_together=required_together)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        required_together=required_together,
+    )
 
     cluster = module.params['cluster']
     ec2_instance_id = module.params['ec2_instance_id']

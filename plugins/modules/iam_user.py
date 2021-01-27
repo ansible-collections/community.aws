@@ -5,13 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: iam_user
+version_added: 1.0.0
 short_description: Manage AWS IAM users
 description:
   - Manage AWS IAM users.
@@ -25,9 +23,10 @@ options:
   managed_policies:
     description:
       - A list of managed policy ARNs or friendly names to attach to the user.
-      - To embed an inline policy, use M(iam_policy).
+      - To embed an inline policy, use M(community.aws.iam_policy).
     required: false
     type: list
+    elements: str
     aliases: ['managed_policy']
   state:
     description:
@@ -49,37 +48,37 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # Note: This module does not allow management of groups that users belong to.
 #       Groups should manage their membership directly using `iam_group`,
 #       as users belong to them.
 
-# Create a user
-- iam_user:
+- name: Create a user
+  community.aws.iam_user:
     name: testuser1
     state: present
 
-# Create a user and attach a managed policy using its ARN
-- iam_user:
+- name: Create a user and attach a managed policy using its ARN
+  community.aws.iam_user:
     name: testuser1
     managed_policies:
       - arn:aws:iam::aws:policy/AmazonSNSFullAccess
     state: present
 
-# Remove all managed policies from an existing user with an empty list
-- iam_user:
+- name: Remove all managed policies from an existing user with an empty list
+  community.aws.iam_user:
     name: testuser1
     state: present
     purge_policies: true
 
-# Delete the user
-- iam_user:
+- name: Delete the user
+  community.aws.iam_user:
     name: testuser1
     state: absent
 
 '''
-RETURN = '''
+RETURN = r'''
 user:
     description: dictionary containing all the user information
     returned: success
@@ -107,16 +106,15 @@ user:
             sample: /
 '''
 
-from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-
-import traceback
-
 try:
-    from botocore.exceptions import ClientError, ParamValidationError, BotoCoreError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def compare_attached_policies(current_attached_policies, new_attached_policies):
@@ -177,11 +175,8 @@ def create_or_update_user(connection, module):
         try:
             connection.create_user(**params)
             changed = True
-        except ClientError as e:
-            module.fail_json(msg="Unable to create user: {0}".format(to_native(e)), exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
-        except ParamValidationError as e:
-            module.fail_json(msg="Unable to create user: {0}".format(to_native(e)), exception=traceback.format_exc())
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Unable to create user")
 
     # Manage managed policies
     current_attached_policies = get_attached_policy_list(connection, module, params['UserName'])
@@ -198,14 +193,9 @@ def create_or_update_user(connection, module):
                 if not module.check_mode:
                     try:
                         connection.detach_user_policy(UserName=params['UserName'], PolicyArn=policy_arn)
-                    except ClientError as e:
-                        module.fail_json(msg="Unable to detach policy {0} from user {1}: {2}".format(
-                                         policy_arn, params['UserName'], to_native(e)),
-                                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-                    except ParamValidationError as e:
-                        module.fail_json(msg="Unable to detach policy {0} from user {1}: {2}".format(
-                                         policy_arn, params['UserName'], to_native(e)),
-                                         exception=traceback.format_exc())
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                        module.fail_json_aws(e, msg="Unable to detach policy {0} from user {1}".format(
+                                             policy_arn, params['UserName']))
 
         # If there are policies to adjust that aren't in the current list, then things have changed
         # Otherwise the only changes were in purging above
@@ -216,14 +206,9 @@ def create_or_update_user(connection, module):
                 for policy_arn in managed_policies:
                     try:
                         connection.attach_user_policy(UserName=params['UserName'], PolicyArn=policy_arn)
-                    except ClientError as e:
-                        module.fail_json(msg="Unable to attach policy {0} to user {1}: {2}".format(
-                                         policy_arn, params['UserName'], to_native(e)),
-                                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-                    except ParamValidationError as e:
-                        module.fail_json(msg="Unable to attach policy {0} to user {1}: {2}".format(
-                                         policy_arn, params['UserName'], to_native(e)),
-                                         exception=traceback.format_exc())
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                        module.fail_json_aws(e, msg="Unable to attach policy {0} to user {1}".format(
+                                             policy_arn, params['UserName']))
     if module.check_mode:
         module.exit_json(changed=changed)
 
@@ -250,7 +235,7 @@ def destroy_user(connection, module):
     try:
         for policy in get_attached_policy_list(connection, module, user_name):
             connection.detach_user_policy(UserName=user_name, PolicyArn=policy['PolicyArn'])
-    except (ClientError, BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to delete user {0}".format(user_name))
 
     try:
@@ -299,7 +284,7 @@ def destroy_user(connection, module):
             connection.remove_user_from_group(UserName=user_name, GroupName=group["GroupName"])
 
         connection.delete_user(UserName=user_name)
-    except (ClientError, BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to delete user {0}".format(user_name))
 
     module.exit_json(changed=True)
@@ -312,7 +297,7 @@ def get_user(connection, module, name):
 
     try:
         return connection.get_user(**params)
-    except ClientError as e:
+    except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == 'NoSuchEntity':
             return None
         else:
@@ -324,7 +309,7 @@ def get_attached_policy_list(connection, module, name):
 
     try:
         return connection.list_attached_user_policies(UserName=name)['AttachedPolicies']
-    except ClientError as e:
+    except botocore.exceptions.ClientError as e:
         if e.response['Error']['Code'] == 'NoSuchEntity':
             return None
         else:
@@ -335,7 +320,7 @@ def delete_user_login_profile(connection, module, user_name):
 
     try:
         return connection.delete_login_profile(UserName=user_name)
-    except ClientError as e:
+    except botocore.exceptions.ClientError as e:
         if e.response["Error"]["Code"] == "NoSuchEntity":
             return None
         else:
@@ -346,7 +331,7 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        managed_policies=dict(default=[], type='list', aliases=['managed_policy']),
+        managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies'])
     )

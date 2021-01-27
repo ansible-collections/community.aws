@@ -8,22 +8,18 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: route53
-short_description: add or delete entries in Amazons Route53 DNS service
+version_added: 1.0.0
+short_description: add or delete entries in Amazons Route 53 DNS service
 description:
-     - Creates and deletes DNS records in Amazons Route53 service
+     - Creates and deletes DNS records in Amazons Route 53 service.
 options:
   state:
     description:
       - Specifies the state of the resource record. As of Ansible 2.4, the I(command) option has been changed
-        to I(state) as default and the choices 'present' and 'absent' have been added, but I(command) still works as well.
+        to I(state) as default and the choices C(present) and C(absent) have been added, but I(command) still works as well.
     required: true
     aliases: [ 'command' ]
     choices: [ 'present', 'absent', 'get', 'create', 'delete' ]
@@ -57,8 +53,8 @@ options:
   alias:
     description:
       - Indicates if this is an alias record.
+      - Defaults to C(false).
     type: bool
-    default: false
   alias_hosted_zone_id:
     description:
       - The hosted zone identifier.
@@ -71,22 +67,23 @@ options:
   value:
     description:
       - The new value when creating a DNS record.  YAML lists or multiple comma-spaced values are allowed for non-alias records.
-      - When deleting a record all values for the record must be specified or Route53 will not delete it.
+      - When deleting a record all values for the record must be specified or Route 53 will not delete it.
     type: list
+    elements: str
   overwrite:
     description:
       - Whether an existing record should be overwritten on create if values do not match.
     type: bool
   retry_interval:
     description:
-      - In the case that route53 is still servicing a prior request, this module will wait and try again after this many seconds.
-        If you have many domain names, the default of 500 seconds may be too long.
+      - In the case that Route 53 is still servicing a prior request, this module will wait and try again after this many seconds.
+        If you have many domain names, the default of C(500) seconds may be too long.
     default: 500
     type: int
   private_zone:
     description:
-      - If set to C(yes), the private zone matching the requested name within the domain will be used if there are both public and private zones.
-        The default is to use the public zone.
+      - If set to C(true), the private zone matching the requested name within the domain will be used if there are both public and private zones.
+      - The default is to use the public zone.
     type: bool
     default: false
   identifier:
@@ -141,7 +138,7 @@ extends_documentation_fragment:
 
 '''
 
-RETURN = '''
+RETURN = r'''
 nameservers:
   description: Nameservers associated with the zone.
   returned: when state is 'get'
@@ -217,108 +214,110 @@ set:
       sample: foo.bar.com.
 '''
 
-EXAMPLES = '''
-# Add new.foo.com as an A record with 3 IPs and wait until the changes have been replicated
-- route53:
-      state: present
-      zone: foo.com
-      record: new.foo.com
-      type: A
-      ttl: 7200
-      value: 1.1.1.1,2.2.2.2,3.3.3.3
-      wait: yes
+EXAMPLES = r'''
+- name: Add new.foo.com as an A record with 3 IPs and wait until the changes have been replicated
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    record: new.foo.com
+    type: A
+    ttl: 7200
+    value: 1.1.1.1,2.2.2.2,3.3.3.3
+    wait: yes
 
-# Update new.foo.com as an A record with a list of 3 IPs and wait until the changes have been replicated
-- route53:
-      state: present
-      zone: foo.com
-      record: new.foo.com
-      type: A
-      ttl: 7200
-      value:
-        - 1.1.1.1
-        - 2.2.2.2
-        - 3.3.3.3
-      wait: yes
+- name: Update new.foo.com as an A record with a list of 3 IPs and wait until the changes have been replicated
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    record: new.foo.com
+    type: A
+    ttl: 7200
+    value:
+      - 1.1.1.1
+      - 2.2.2.2
+      - 3.3.3.3
+    wait: yes
 
-# Retrieve the details for new.foo.com
-- route53:
-      state: get
-      zone: foo.com
-      record: new.foo.com
-      type: A
+- name: Retrieve the details for new.foo.com
+  community.aws.route53:
+    state: get
+    zone: foo.com
+    record: new.foo.com
+    type: A
   register: rec
 
-# Delete new.foo.com A record using the results from the get command
-- route53:
-      state: absent
-      zone: foo.com
-      record: "{{ rec.set.record }}"
-      ttl: "{{ rec.set.ttl }}"
-      type: "{{ rec.set.type }}"
-      value: "{{ rec.set.value }}"
+- name: Delete new.foo.com A record using the results from the get command
+  community.aws.route53:
+    state: absent
+    zone: foo.com
+    record: "{{ rec.set.record }}"
+    ttl: "{{ rec.set.ttl }}"
+    type: "{{ rec.set.type }}"
+    value: "{{ rec.set.value }}"
 
 # Add an AAAA record.  Note that because there are colons in the value
 # that the IPv6 address must be quoted. Also shows using the old form command=create.
-- route53:
-      command: create
-      zone: foo.com
-      record: localhost.foo.com
-      type: AAAA
-      ttl: 7200
-      value: "::1"
+- name: Add an AAAA record
+  community.aws.route53:
+    command: create
+    zone: foo.com
+    record: localhost.foo.com
+    type: AAAA
+    ttl: 7200
+    value: "::1"
 
-# Add a SRV record with multiple fields for a service on port 22222
 # For more information on SRV records see:
 # https://en.wikipedia.org/wiki/SRV_record
-- route53:
-      state: present
-      zone: foo.com
-      record: "_example-service._tcp.foo.com"
-      type: SRV
-      value: "0 0 22222 host1.foo.com,0 0 22222 host2.foo.com"
+- name: Add a SRV record with multiple fields for a service on port 22222
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    record: "_example-service._tcp.foo.com"
+    type: SRV
+    value: "0 0 22222 host1.foo.com,0 0 22222 host2.foo.com"
 
-# Add a TXT record. Note that TXT and SPF records must be surrounded
+# Note that TXT and SPF records must be surrounded
 # by quotes when sent to Route 53:
-- route53:
-      state: present
-      zone: foo.com
-      record: localhost.foo.com
-      type: TXT
-      ttl: 7200
-      value: '"bar"'
+- name: Add a TXT record.
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    record: localhost.foo.com
+    type: TXT
+    ttl: 7200
+    value: '"bar"'
 
-# Add an alias record that points to an Amazon ELB:
-- route53:
-      state: present
-      zone: foo.com
-      record: elb.foo.com
-      type: A
-      value: "{{ elb_dns_name }}"
-      alias: True
-      alias_hosted_zone_id: "{{ elb_zone_id }}"
+- name: Add an alias record that points to an Amazon ELB
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    record: elb.foo.com
+    type: A
+    value: "{{ elb_dns_name }}"
+    alias: True
+    alias_hosted_zone_id: "{{ elb_zone_id }}"
 
-# Retrieve the details for elb.foo.com
-- route53:
-      state: get
-      zone: foo.com
-      record: elb.foo.com
-      type: A
+- name: Retrieve the details for elb.foo.com
+  community.aws.route53:
+    state: get
+    zone: foo.com
+    record: elb.foo.com
+    type: A
   register: rec
 
-# Delete an alias record using the results from the get command
-- route53:
-      state: absent
-      zone: foo.com
-      record: "{{ rec.set.record }}"
-      ttl: "{{ rec.set.ttl }}"
-      type: "{{ rec.set.type }}"
-      value: "{{ rec.set.value }}"
-      alias: True
-      alias_hosted_zone_id: "{{ rec.set.alias_hosted_zone_id }}"
+- name: Delete an alias record using the results from the get command
+  community.aws.route53:
+    state: absent
+    zone: foo.com
+    record: "{{ rec.set.record }}"
+    ttl: "{{ rec.set.ttl }}"
+    type: "{{ rec.set.type }}"
+    value: "{{ rec.set.value }}"
+    alias: True
+    alias_hosted_zone_id: "{{ rec.set.alias_hosted_zone_id }}"
 
-# Add an alias record that points to an Amazon ELB and evaluates it health:
-- route53:
+- name: Add an alias record that points to an Amazon ELB and evaluates it health
+  community.aws.route53:
     state: present
     zone: foo.com
     record: elb.foo.com
@@ -328,39 +327,39 @@ EXAMPLES = '''
     alias_hosted_zone_id: "{{ elb_zone_id }}"
     alias_evaluate_target_health: True
 
-# Add an AAAA record with Hosted Zone ID.
-- route53:
-      state: present
-      zone: foo.com
-      hosted_zone_id: Z2AABBCCDDEEFF
-      record: localhost.foo.com
-      type: AAAA
-      ttl: 7200
-      value: "::1"
+- name: Add an AAAA record with Hosted Zone ID
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    hosted_zone_id: Z2AABBCCDDEEFF
+    record: localhost.foo.com
+    type: AAAA
+    ttl: 7200
+    value: "::1"
 
-# Use a routing policy to distribute traffic:
-- route53:
-      state: present
-      zone: foo.com
-      record: www.foo.com
-      type: CNAME
-      value: host1.foo.com
-      ttl: 30
-      # Routing policy
-      identifier: "host1@www"
-      weight: 100
-      health_check: "d994b780-3150-49fd-9205-356abdd42e75"
+- name: Use a routing policy to distribute traffic
+  community.aws.route53:
+    state: present
+    zone: foo.com
+    record: www.foo.com
+    type: CNAME
+    value: host1.foo.com
+    ttl: 30
+    # Routing policy
+    identifier: "host1@www"
+    weight: 100
+    health_check: "d994b780-3150-49fd-9205-356abdd42e75"
 
-# Add a CAA record (RFC 6844):
-- route53:
-      state: present
-      zone: example.com
-      record: example.com
-      type: CAA
-      value:
-        - 0 issue "ca.example.net"
-        - 0 issuewild ";"
-        - 0 iodef "mailto:security@example.com"
+- name: Add a CAA record (RFC 6844)
+  community.aws.route53:
+    state: present
+    zone: example.com
+    record: example.com
+    type: CAA
+    value:
+      - 0 issue "ca.example.net"
+      - 0 issuewild ";"
+      - 0 iodef "mailto:security@example.com"
 
 '''
 
@@ -373,12 +372,12 @@ try:
     from boto.route53 import Route53Connection
     from boto.route53.record import Record, ResourceRecordSets
     from boto.route53.status import Status
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 
 
 MINIMUM_BOTO_VERSION = '2.28.0'
@@ -492,8 +491,7 @@ def to_dict(rset, zone_in, zone_id):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(type='str', required=True, choices=['absent', 'create', 'delete', 'get', 'present'], aliases=['command']),
         zone=dict(type='str'),
         hosted_zone_id=dict(type='str'),
@@ -503,7 +501,7 @@ def main():
         alias=dict(type='bool'),
         alias_hosted_zone_id=dict(type='str'),
         alias_evaluate_target_health=dict(type='bool', default=False),
-        value=dict(type='list'),
+        value=dict(type='list', elements='str'),
         overwrite=dict(type='bool'),
         retry_interval=dict(type='int', default=500),
         private_zone=dict(type='bool', default=False),
@@ -515,9 +513,9 @@ def main():
         vpc_id=dict(type='str'),
         wait=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=300),
-    ))
+    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         required_one_of=[['zone', 'hosted_zone_id']],
@@ -538,6 +536,7 @@ def main():
             region=('identifier',),
             weight=('identifier',),
         ),
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

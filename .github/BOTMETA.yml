@@ -1,10 +1,15 @@
 automerge: false
 files:
-  $connections/aws_ssm.py:
+  docs/:
+    labels: docs
+  $connection/:
+    labels: connection 
+  $connection/aws_ssm.py:
   $modules/:
     authors: wimnat
     maintainers: $team_aws
-    ignore: erydo nadirollo seiffert tedder
+    ignore: erydo joshsouza nadirollo seiffert tedder
+    label: modules
   $modules/_aws_region_facts.py:
     authors: Sodki
   $modules/_aws_s3_bucket_facts.py:
@@ -91,7 +96,7 @@ files:
   $modules/aws_eks_cluster.py:
     authors: willthames
   $modules/aws_elasticbeanstalk_app.py:
-    authors: hsingh viper233
+    authors: viper233
   $modules/aws_inspector_target.py:
     authors: dennisconrad
   $modules/aws_kms.py:
@@ -340,7 +345,16 @@ files:
     authors: bekelchik piontas
   $modules/sts_session_token.py:
     authors: pwnall
+  scripts/inventory/:
+    labels: inventory
+  tests/:
+    labels: tests
+  tests/integration/:
+    labels: integrations
+  tests/units/:
+    labels: units
+    
 macros:
-  connections: plugins/connection
+  connection: plugins/connection
   modules: plugins/modules
   team_aws: jillr s-hertel tremble

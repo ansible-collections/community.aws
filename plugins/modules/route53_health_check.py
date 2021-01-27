@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: route53_health_check
+version_added: 1.0.0
 short_description: Add or delete health-checks in Amazons Route53 DNS service
 description:
   - Creates and deletes DNS Health checks in Amazons Route53 service.
@@ -89,8 +85,8 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Create a health-check for host1.example.com and use it in record
-- route53_health_check:
+- name: Create a health-check for host1.example.com and use it in record
+  community.aws.route53_health_check:
     state: present
     fqdn: host1.example.com
     type: HTTP_STR_MATCH
@@ -100,7 +96,7 @@ EXAMPLES = '''
     failure_threshold: 2
   register: my_health_check
 
-- route53:
+- community.aws.route53:
     action: create
     zone: "example.com"
     type: CNAME
@@ -112,8 +108,8 @@ EXAMPLES = '''
     weight: 100
     health_check: "{{ my_health_check.health_check.id }}"
 
-# Delete health-check
-- route53_health_check:
+- name: Delete health-check
+  community.aws.route53_health_check:
     state: absent
     fqdn: host1.example.com
 
@@ -122,18 +118,15 @@ EXAMPLES = '''
 import uuid
 
 try:
-    import boto
     import boto.ec2
-    from boto import route53
     from boto.route53 import Route53Connection, exception
     from boto.route53.healthcheck import HealthCheck
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-# import module snippets
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 # Things that can't get changed:
@@ -284,8 +277,7 @@ def update_health_check(conn, health_check_id, health_check_version, health_chec
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(choices=['present', 'absent'], default='present'),
         ip_address=dict(),
         port=dict(type='int'),
@@ -296,8 +288,7 @@ def main():
         request_interval=dict(type='int', choices=[10, 30], default=30),
         failure_threshold=dict(type='int', choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10], default=3),
     )
-    )
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, check_boto3=False)
 
     if not HAS_BOTO:
         module.fail_json(msg='boto 2.27.0+ required for this module')

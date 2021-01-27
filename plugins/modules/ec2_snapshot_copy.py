@@ -6,16 +6,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_snapshot_copy
+version_added: 1.0.0
 short_description: Copies an EC2 snapshot and returns the new Snapshot ID.
 description:
     - Copies an EC2 Snapshot from a source region to a destination region.
@@ -67,14 +62,14 @@ requirements:
 '''
 
 EXAMPLES = '''
-# Basic Snapshot Copy
-- ec2_snapshot_copy:
+- name: Basic Snapshot Copy
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
 
-# Copy Snapshot and wait until available
-- ec2_snapshot_copy:
+- name: Copy Snapshot and wait until available
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
@@ -82,23 +77,23 @@ EXAMPLES = '''
     wait_timeout: 1200   # Default timeout is 600
   register: snapshot_id
 
-# Tagged Snapshot copy
-- ec2_snapshot_copy:
+- name: Tagged Snapshot copy
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
     tags:
         Name: Snapshot-Name
 
-# Encrypted Snapshot copy
-- ec2_snapshot_copy:
+- name: Encrypted Snapshot copy
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
     encrypted: yes
 
-# Encrypted Snapshot copy with specified key
-- ec2_snapshot_copy:
+- name: Encrypted Snapshot copy with specified key
+  community.aws.ec2_snapshot_copy:
     source_region: eu-central-1
     region: eu-west-1
     source_snapshot_id: snap-xxxxxxx
@@ -114,24 +109,19 @@ snapshot_id:
     sample: "snap-e9095e8c"
 '''
 
-import traceback
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn, ec2_argument_spec, get_aws_connection_info, camel_dict_to_snake_dict)
-from ansible.module_utils._text import to_native
-
 try:
-    import boto3
-    from botocore.exceptions import ClientError, WaiterError
-    HAS_BOTO3 = True
+    import botocore
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def copy_snapshot(module, ec2):
     """
     Copies an EC2 Snapshot to another region
 
-    module : AnsibleModule object
+    module : AnsibleAWSModule object
     ec2: ec2 connection object
     """
 
@@ -164,17 +154,14 @@ def copy_snapshot(module, ec2):
                 Tags=[{'Key': k, 'Value': v} for k, v in module.params.get('tags').items()]
             )
 
-    except WaiterError as we:
-        module.fail_json(msg='An error occurred waiting for the snapshot to become available. (%s)' % str(we), exception=traceback.format_exc())
-    except ClientError as ce:
-        module.fail_json(msg=str(ce), exception=traceback.format_exc(), **camel_dict_to_snake_dict(ce.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='An error occurred waiting for the snapshot to become available.')
 
     module.exit_json(changed=True, snapshot_id=snapshot_id)
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         source_region=dict(required=True),
         source_snapshot_id=dict(required=True),
         description=dict(default=''),
@@ -182,16 +169,15 @@ def main():
         kms_key_id=dict(type='str', required=False),
         wait=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=600),
-        tags=dict(type='dict')))
+        tags=dict(type='dict'),
+    )
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore and boto3 are required.')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    client = boto3_conn(module, conn_type='client', resource='ec2',
-                        region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        client = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     copy_snapshot(module, client)
 

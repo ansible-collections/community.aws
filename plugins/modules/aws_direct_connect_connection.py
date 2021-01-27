@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: aws_direct_connect_connection
+version_added: 1.0.0
 short_description: Creates, deletes, modifies a DirectConnect connection
 description:
   - Create, update, or delete a Direct Connect connection between a network and a specific AWS Direct Connect location.
@@ -67,15 +64,16 @@ options:
     type: str
   forced_update:
     description:
-      - To modify bandwidth or location the connection will need to be deleted and recreated.
-        By default this will not happen - this option must be set to True.
+      - To modify I(bandwidth) or I(location) the connection needs to be deleted and recreated.
+      - By default this will not happen.  This option must be explicitly set to C(true) to change I(bandwith) or I(location).
     type: bool
+    default: false
 '''
 
 EXAMPLES = """
 
 # create a Direct Connect connection
-- aws_direct_connect_connection:
+- community.aws.aws_direct_connect_connection:
     name: ansible-test-connection
     state: present
     location: EqDC2
@@ -84,22 +82,22 @@ EXAMPLES = """
   register: dc
 
 # disassociate the LAG from the connection
-- aws_direct_connect_connection:
+- community.aws.aws_direct_connect_connection:
     state: present
     connection_id: dc.connection.connection_id
     location: EqDC2
     bandwidth: 1Gbps
 
 # replace the connection with one with more bandwidth
-- aws_direct_connect_connection:
+- community.aws.aws_direct_connect_connection:
     state: present
     name: ansible-test-connection
     location: EqDC2
     bandwidth: 10Gbps
-    forced_update: True
+    forced_update: true
 
 # delete the connection
-- aws_direct_connect_connection:
+- community.aws.aws_direct_connect_connection:
     state: absent
     name: ansible-test-connection
 """
@@ -158,19 +156,20 @@ connection:
 """
 
 import traceback
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict, AWSRetry)
-from ansible_collections.amazon.aws.plugins.module_utils.aws.direct_connect import (DirectConnectError,
-                                                                                    delete_connection,
-                                                                                    associate_connection_and_lag,
-                                                                                    disassociate_connection_and_lag,
-                                                                                    )
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError
-except Exception:
-    pass
-    # handled by imported AnsibleAWSModule
+except ImportError:
+    pass  # handled by imported AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import associate_connection_and_lag
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import delete_connection
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import disassociate_connection_and_lag
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 retry_params = {"tries": 10, "delay": 5, "backoff": 1.2, "catch_extra_error_codes": ["DirectConnectClientException"]}
 

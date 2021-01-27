@@ -8,13 +8,11 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
 DOCUMENTATION = '''
 ---
 module: ecs_ecr
+version_added: 1.0.0
 short_description: Manage Elastic Container Registry repositories
 description:
     - Manage Elastic Container Registry repositories.
@@ -46,9 +44,9 @@ options:
     purge_policy:
         description:
             - If yes, remove the policy from the repository.
-            - Alias C(delete_policy) has been deprecated and will be removed in Ansible 2.14
+            - Alias C(delete_policy) has been deprecated and will be removed after 2022-06-01.
+            - Defaults to C(false).
         required: false
-        default: false
         type: bool
         aliases: [ delete_policy ]
     image_tag_mutability:
@@ -60,14 +58,14 @@ options:
         type: str
     lifecycle_policy:
         description:
-            - JSON or dict that represents the new lifecycle policy
+            - JSON or dict that represents the new lifecycle policy.
         required: false
         type: json
     purge_lifecycle_policy:
         description:
-            - if yes, remove the lifecycle policy from the repository
+            - if C(true), remove the lifecycle policy from the repository.
+            - Defaults to C(false).
         required: false
-        default: false
         type: bool
     state:
         description:
@@ -76,6 +74,14 @@ options:
         choices: [present, absent]
         default: 'present'
         type: str
+    scan_on_push:
+        description:
+            - if C(true), images are scanned for known vulnerabilities after being pushed to the repository.
+            - I(scan_on_push) requires botocore >= 1.13.3
+        required: false
+        default: false
+        type: bool
+        version_added: 1.3.0
 author:
  - David M. Lee (@leedm777)
 extends_documentation_fragment:
@@ -88,16 +94,21 @@ EXAMPLES = '''
 # If the repository does not exist, it is created. If it does exist, would not
 # affect any policies already on it.
 - name: ecr-repo
-  ecs_ecr: name=super/cool
+  community.aws.ecs_ecr:
+    name: super/cool
 
 - name: destroy-ecr-repo
-  ecs_ecr: name=old/busted state=absent
+  community.aws.ecs_ecr:
+    name: old/busted
+    state: absent
 
 - name: Cross account ecr-repo
-  ecs_ecr: registry_id=999999999999 name=cross/account
+  community.aws.ecs_ecr:
+    registry_id: 999999999999
+    name: cross/account
 
 - name: set-policy as object
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-policy-object
     policy:
       Version: '2008-10-17'
@@ -112,23 +123,24 @@ EXAMPLES = '''
             - ecr:BatchCheckLayerAvailability
 
 - name: set-policy as string
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-policy-string
     policy: "{{ lookup('template', 'policy.json.j2') }}"
 
 - name: delete-policy
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-no-policy
     purge_policy: yes
 
 - name: create immutable ecr-repo
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: super/cool
     image_tag_mutability: immutable
 
 - name: set-lifecycle-policy
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-lifecycle-policy
+    scan_on_push: yes
     lifecycle_policy:
       rules:
         - rulePriority: 1
@@ -142,7 +154,7 @@ EXAMPLES = '''
             type: expire
 
 - name: purge-lifecycle-policy
-  ecs_ecr:
+  community.aws.ecs_ecr:
     name: needs-no-lifecycle-policy
     purge_lifecycle_policy: true
 '''
@@ -180,9 +192,12 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception, compare_policies, sort_json_policy_dict
 from ansible.module_utils.six import string_types
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import sort_json_policy_dict
 
 
 def build_kwargs(registry_id):
@@ -352,6 +367,25 @@ class EcsEcr:
                 return policy
             return None
 
+    def put_image_scanning_configuration(self, registry_id, name, scan_on_push):
+        if not self.check_mode:
+            if registry_id:
+                scan = self.ecr.put_image_scanning_configuration(
+                    registryId=registry_id,
+                    repositoryName=name,
+                    imageScanningConfiguration={'scanOnPush': scan_on_push}
+                )
+            else:
+                scan = self.ecr.put_image_scanning_configuration(
+                    repositoryName=name,
+                    imageScanningConfiguration={'scanOnPush': scan_on_push}
+                )
+            self.changed = True
+            return scan
+        else:
+            self.skipped = True
+            return None
+
 
 def sort_lists_of_strings(policy):
     for statement_index in range(0, len(policy.get('Statement', []))):
@@ -375,6 +409,7 @@ def run(ecr, params):
         image_tag_mutability = params['image_tag_mutability'].upper()
         lifecycle_policy_text = params['lifecycle_policy']
         purge_lifecycle_policy = params['purge_lifecycle_policy']
+        scan_on_push = params['scan_on_push']
 
         # Parse policies, if they are given
         try:
@@ -471,6 +506,13 @@ def run(ecr, params):
                     result['policy'] = policy_text
                     raise
 
+            original_scan_on_push = ecr.get_repository(registry_id, name)
+            if original_scan_on_push is not None:
+                if scan_on_push != original_scan_on_push['imageScanningConfiguration']['scanOnPush']:
+                    result['changed'] = True
+                    result['repository']['imageScanningConfiguration']['scanOnPush'] = scan_on_push
+                    response = ecr.put_image_scanning_configuration(registry_id, name, scan_on_push)
+
         elif state == 'absent':
             result['name'] = name
             if repo:
@@ -505,9 +547,10 @@ def main():
         image_tag_mutability=dict(required=False, choices=['mutable', 'immutable'],
                                   default='mutable'),
         purge_policy=dict(required=False, type='bool', aliases=['delete_policy'],
-                          deprecated_aliases=[dict(name='delete_policy', version='2.14')]),
+                          deprecated_aliases=[dict(name='delete_policy', date='2022-06-01', collection_name='community.aws')]),
         lifecycle_policy=dict(required=False, type='json'),
-        purge_lifecycle_policy=dict(required=False, type='bool')
+        purge_lifecycle_policy=dict(required=False, type='bool'),
+        scan_on_push=(dict(required=False, type='bool', default=False))
     )
     mutually_exclusive = [
         ['policy', 'purge_policy'],

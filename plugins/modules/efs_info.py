@@ -6,19 +6,15 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: efs_info
+version_added: 1.0.0
 short_description: Get information about Amazon EFS file systems
 description:
     - This module can be used to search Amazon EFS file systems.
     - This module was called C(efs_facts) before Ansible 2.9, returning C(ansible_facts).
-      Note that the M(efs_info) module no longer returns C(ansible_facts)!
+      Note that the M(community.aws.efs_info) module no longer returns C(ansible_facts)!
 requirements: [ boto3 ]
 author:
     - "Ryan Sydnor (@ryansydnor)"
@@ -48,18 +44,18 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Find all existing efs
-  efs_info:
+  community.aws.efs_info:
   register: result
 
 - name: Find efs using id
-  efs_info:
+  community.aws.efs_info:
     id: fs-1234abcd
   register: result
 
 - name: Searching all EFS instances with tag Name = 'myTestNameTag', in subnet 'subnet-1a2b3c4d' and with security group 'sg-4d3c2b1a'
-  efs_info:
+  community.aws.efs_info:
     tags:
         Name: myTestNameTag
     targets:
@@ -67,11 +63,11 @@ EXAMPLES = '''
         - sg-4d3c2b1a
   register: result
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ result['efs'] }}"
 '''
 
-RETURN = '''
+RETURN = r'''
 creation_time:
     description: timestamp of creation date
     returned: always
@@ -181,10 +177,11 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info, AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, boto3_tag_list_to_ansible_dict
 from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 class EFSConnection(object):
@@ -200,7 +197,7 @@ class EFSConnection(object):
         except Exception as e:
             module.fail_json(msg="Failed to connect to AWS: %s" % to_native(e))
 
-        self.region = get_aws_connection_info(module, boto3=True)[0]
+        self.region = module.region
 
     @AWSRetry.exponential_backoff(catch_extra_error_codes=['ThrottlingException'])
     def list_file_systems(self, **kwargs):
@@ -362,7 +359,7 @@ def main():
         id=dict(),
         name=dict(aliases=['creation_token']),
         tags=dict(type="dict", default={}),
-        targets=dict(type="list", default=[])
+        targets=dict(type="list", default=[], elements='str')
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
@@ -370,7 +367,7 @@ def main():
     is_old_facts = module._name == 'efs_facts'
     if is_old_facts:
         module.deprecate("The 'efs_facts' module has been renamed to 'efs_info', "
-                         "and the renamed one no longer returns ansible_facts", version='2.13')
+                         "and the renamed one no longer returns ansible_facts", date='2021-12-01', collection_name='community.aws')
 
     connection = EFSConnection(module)
 

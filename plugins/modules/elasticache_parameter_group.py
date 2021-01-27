@@ -6,14 +6,10 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: elasticache_parameter_group
+version_added: 1.0.0
 short_description: Manage cache parameter groups in Amazon ElastiCache.
 description:
   - Manage cache security groups in Amazon ElastiCache.
@@ -60,24 +56,24 @@ EXAMPLES = """
   connection: local
   tasks:
     - name: 'Create a test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         group_family: 'redis3.2'
         description: 'This is a cache parameter group'
         state: 'present'
     - name: 'Modify a test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         values:
           activerehashing: yes
           client-output-buffer-limit-normal-hard-limit: 4
         state: 'present'
     - name: 'Reset all modifiable parameters for the test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         state: reset
     - name: 'Delete a test parameter group'
-      elasticache_parameter_group:
+      community.aws.elasticache_parameter_group:
         name: 'test-param-group'
         state: 'absent'
 """
@@ -109,19 +105,16 @@ changed:
     changed: true
 """
 
-# import module snippets
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, get_aws_connection_info, ec2_argument_spec, camel_dict_to_snake_dict
-from ansible.module_utils._text import to_text
-from ansible.module_utils.six import string_types
-import traceback
-
 try:
-    import boto3
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.six import string_types
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def create(module, conn, name, group_family, description):
@@ -129,8 +122,8 @@ def create(module, conn, name, group_family, description):
     try:
         response = conn.create_cache_parameter_group(CacheParameterGroupName=name, CacheParameterGroupFamily=group_family, Description=description)
         changed = True
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to create cache parameter group.", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to create cache parameter group.")
     return response, changed
 
 
@@ -140,8 +133,8 @@ def delete(module, conn, name):
         conn.delete_cache_parameter_group(CacheParameterGroupName=name)
         response = {}
         changed = True
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to delete cache parameter group.", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to delete cache parameter group.")
     return response, changed
 
 
@@ -235,8 +228,8 @@ def modify(module, conn, name, values):
         format_parameters.append({'ParameterName': key, 'ParameterValue': value})
     try:
         response = conn.modify_cache_parameter_group(CacheParameterGroupName=name, ParameterNameValues=format_parameters)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to modify cache parameter group.", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to modify cache parameter group.")
     return response
 
 
@@ -259,8 +252,8 @@ def reset(module, conn, name, values):
 
     try:
         response = conn.reset_cache_parameter_group(CacheParameterGroupName=name, ParameterNameValues=format_parameters, ResetAllParameters=all_parameters)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to reset cache parameter group.", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to reset cache parameter group.")
 
     # determine changed
     new_parameters_dict = make_current_modifiable_param_dict(module, conn, name)
@@ -279,20 +272,14 @@ def get_info(conn, name):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            group_family=dict(type='str', choices=['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0']),
-            name=dict(required=True, type='str'),
-            description=dict(default='', type='str'),
-            state=dict(required=True, choices=['present', 'absent', 'reset']),
-            values=dict(type='dict'),
-        )
+    argument_spec = dict(
+        group_family=dict(type='str', choices=['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0']),
+        name=dict(required=True, type='str'),
+        description=dict(default='', type='str'),
+        state=dict(required=True, choices=['present', 'absent', 'reset']),
+        values=dict(type='dict'),
     )
-    module = AnsibleModule(argument_spec=argument_spec)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto required for this module')
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
     parameter_group_family = module.params.get('group_family')
     parameter_group_name = module.params.get('name')
@@ -300,14 +287,10 @@ def main():
     state = module.params.get('state')
     values = module.params.get('values')
 
-    # Retrieve any AWS settings from the environment.
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg="Either region or AWS_REGION or EC2_REGION environment variable or boto config aws_region or ec2_region must be set.")
-
-    connection = boto3_conn(module, conn_type='client',
-                            resource='elasticache', region=region,
-                            endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        connection = module.client('elasticache')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     exists = get_info(connection, parameter_group_name)
 

@@ -6,13 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_target_group_info
+version_added: 1.0.0
 short_description: Gather information about ELB target groups in AWS
 description:
     - Gather information about ELB target groups in AWS
@@ -30,11 +27,13 @@ options:
       - The Amazon Resource Names (ARN) of the target groups.
     required: false
     type: list
+    elements: str
   names:
     description:
       - The names of the target groups.
     required: false
     type: list
+    elements: str
   collect_targets_health:
     description:
       - When set to "yes", output contains targets health description
@@ -48,25 +47,25 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-# Gather information about all target groups
-- elb_target_group_info:
+- name: Gather information about all target groups
+  community.aws.elb_target_group_info:
 
-# Gather information about the target group attached to a particular ELB
-- elb_target_group_info:
+- name: Gather information about the target group attached to a particular ELB
+  community.aws.elb_target_group_info:
     load_balancer_arn: "arn:aws:elasticloadbalancing:ap-southeast-2:001122334455:loadbalancer/app/my-elb/aabbccddeeff"
 
-# Gather information about a target groups named 'tg1' and 'tg2'
-- elb_target_group_info:
+- name: Gather information about a target groups named 'tg1' and 'tg2'
+  community.aws.elb_target_group_info:
     names:
       - tg1
       - tg2
 
 '''
 
-RETURN = '''
+RETURN = r'''
 target_groups:
     description: a list of target groups
     returned: always
@@ -208,30 +207,24 @@ target_groups:
             sample: vpc-0123456
 '''
 
-import traceback
-
 try:
-    import boto3
-    from botocore.exceptions import ClientError, NoCredentialsError
-    HAS_BOTO3 = True
+    import botocore
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 def get_target_group_attributes(connection, module, target_group_arn):
 
     try:
         target_group_attributes = boto3_tag_list_to_ansible_dict(connection.describe_target_group_attributes(TargetGroupArn=target_group_arn)['Attributes'])
-    except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to describe target group attributes")
 
     # Replace '.' with '_' in attribute key names to make it more Ansibley
     return dict((k.replace('.', '_'), v)
@@ -242,16 +235,16 @@ def get_target_group_tags(connection, module, target_group_arn):
 
     try:
         return boto3_tag_list_to_ansible_dict(connection.describe_tags(ResourceArns=[target_group_arn])['TagDescriptions'][0]['Tags'])
-    except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to describe group tags")
 
 
 def get_target_group_targets_health(connection, module, target_group_arn):
 
     try:
         return connection.describe_target_health(TargetGroupArn=target_group_arn)['TargetHealthDescriptions']
-    except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to get target health")
 
 
 def list_target_groups(connection, module):
@@ -271,13 +264,10 @@ def list_target_groups(connection, module):
             target_groups = target_group_paginator.paginate(TargetGroupArns=target_group_arns).build_full_result()
         if names:
             target_groups = target_group_paginator.paginate(Names=names).build_full_result()
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'TargetGroupNotFound':
-            module.exit_json(target_groups=[])
-        else:
-            module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except NoCredentialsError as e:
-        module.fail_json(msg="AWS authentication problem. " + e.message, exception=traceback.format_exc())
+    except is_boto3_error_code('TargetGroupNotFound'):
+        module.exit_json(target_groups=[])
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to list target groups")
 
     # Get the attributes and tags for each target group
     for target_group in target_groups['TargetGroups']:
@@ -298,32 +288,25 @@ def list_target_groups(connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            load_balancer_arn=dict(type='str'),
-            target_group_arns=dict(type='list'),
-            names=dict(type='list'),
-            collect_targets_health=dict(default=False, type='bool', required=False)
-        )
+    argument_spec = dict(
+        load_balancer_arn=dict(type='str'),
+        target_group_arns=dict(type='list', elements='str'),
+        names=dict(type='list', elements='str'),
+        collect_targets_health=dict(default=False, type='bool', required=False),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=[['load_balancer_arn', 'target_group_arns', 'names']],
-                           supports_check_mode=True
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[['load_balancer_arn', 'target_group_arns', 'names']],
+        supports_check_mode=True,
+    )
     if module._name == 'elb_target_group_facts':
-        module.deprecate("The 'elb_target_group_facts' module has been renamed to 'elb_target_group_info'", version='2.13')
+        module.deprecate("The 'elb_target_group_facts' module has been renamed to 'elb_target_group_info'", date='2021-12-01', collection_name='community.aws')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='elbv2', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        connection = module.client('elbv2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     list_target_groups(connection, module)
 

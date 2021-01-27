@@ -5,15 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_eks_cluster
+version_added: 1.0.0
 short_description: Manage Elastic Kubernetes Service Clusters
 description:
     - Manage Elastic Kubernetes Service Clusters
@@ -66,11 +62,11 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create an EKS cluster
-  aws_eks_cluster:
+  community.aws.aws_eks_cluster:
     name: my_cluster
     version: 1.14
     role_arn: my_eks_role
@@ -82,13 +78,13 @@ EXAMPLES = '''
   register: caller_facts
 
 - name: Remove an EKS cluster
-  aws_eks_cluster:
+  community.aws.aws_eks_cluster:
     name: my_cluster
     wait: yes
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 arn:
   description: ARN of the EKS cluster
   returned: when state is present
@@ -163,9 +159,9 @@ version:
 '''
 
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, get_ec2_security_group_ids_from_names
-from ansible_collections.amazon.aws.plugins.module_utils.aws.waiters import get_waiter
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 
 try:
     import botocore.exceptions
@@ -274,8 +270,8 @@ def main():
         name=dict(required=True),
         version=dict(),
         role_arn=dict(),
-        subnets=dict(type='list'),
-        security_groups=dict(type='list'),
+        subnets=dict(type='list', elements='str'),
+        security_groups=dict(type='list', elements='str'),
         state=dict(choices=['absent', 'present'], default='present'),
         wait=dict(default=False, type='bool'),
         wait_timeout=dict(default=1200, type='int')

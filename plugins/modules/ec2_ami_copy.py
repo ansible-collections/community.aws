@@ -6,14 +6,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_ami_copy
+version_added: 1.0.0
 short_description: copies AMI between AWS regions, return new image id
 description:
     - Copies AMI from a source region to a destination region. B(Since version 2.3 this module depends on boto3.)
@@ -30,7 +27,7 @@ options:
     type: str
   name:
     description:
-      - The name of the new AMI to copy. (As of 2.3 the default is 'default', in prior versions it was 'null'.)
+      - The name of the new AMI to copy. (As of 2.3 the default is C(default), in prior versions it was C(null).)
     default: "default"
     type: str
   description:
@@ -41,20 +38,22 @@ options:
     description:
       - Whether or not the destination snapshots of the copied AMI should be encrypted.
     type: bool
+    default: false
   kms_key_id:
     description:
       - KMS key id used to encrypt the image. If not specified, uses default EBS Customer Master Key (CMK) for your account.
     type: str
   wait:
     description:
-      - Wait for the copied AMI to be in state 'available' before returning.
+      - Wait for the copied AMI to be in state C(available) before returning.
     type: bool
     default: 'no'
   wait_timeout:
     description:
-      - How long before wait gives up, in seconds. Prior to 2.3 the default was 1200.
+      - How long before wait gives up, in seconds.
+      - Prior to 2.3 the default was C(1200).
       - From 2.3-2.5 this option was deprecated in favor of boto3 waiter defaults.
-        This was reenabled in 2.6 to allow timeouts greater than 10 minutes.
+      - This was reenabled in 2.6 to allow timeouts greater than 10 minutes.
     default: 600
     type: int
   tags:
@@ -79,14 +78,14 @@ requirements:
 '''
 
 EXAMPLES = '''
-# Basic AMI Copy
-- ec2_ami_copy:
+- name: Basic AMI Copy
+  community.aws.ec2_ami_copy:
     source_region: us-east-1
     region: eu-west-1
     source_image_id: ami-xxxxxxx
 
-# AMI copy wait until available
-- ec2_ami_copy:
+- name: AMI copy wait until available
+  community.aws.ec2_ami_copy:
     source_region: us-east-1
     region: eu-west-1
     source_image_id: ami-xxxxxxx
@@ -94,16 +93,16 @@ EXAMPLES = '''
     wait_timeout: 1200  # Default timeout is 600
   register: image_id
 
-# Named AMI copy
-- ec2_ami_copy:
+- name: Named AMI copy
+  community.aws.ec2_ami_copy:
     source_region: us-east-1
     region: eu-west-1
     source_image_id: ami-xxxxxxx
     name: My-Awesome-AMI
     description: latest patch
 
-# Tagged AMI copy (will not copy the same AMI twice)
-- ec2_ami_copy:
+- name: Tagged AMI copy (will not copy the same AMI twice)
+  community.aws.ec2_ami_copy:
     source_region: us-east-1
     region: eu-west-1
     source_image_id: ami-xxxxxxx
@@ -112,15 +111,15 @@ EXAMPLES = '''
         Patch: 1.2.3
     tag_equality: yes
 
-# Encrypted AMI copy
-- ec2_ami_copy:
+- name: Encrypted AMI copy
+  community.aws.ec2_ami_copy:
     source_region: us-east-1
     region: eu-west-1
     source_image_id: ami-xxxxxxx
     encrypted: yes
 
-# Encrypted AMI copy with specified key
-- ec2_ami_copy:
+- name: Encrypted AMI copy with specified key
+  community.aws.ec2_ami_copy:
     source_region: us-east-1
     region: eu-west-1
     source_image_id: ami-xxxxxxx
@@ -136,21 +135,23 @@ image_id:
   sample: ami-e689729e
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, ansible_dict_to_boto3_tag_list
-from ansible.module_utils._text import to_native
-
 try:
-    from botocore.exceptions import ClientError, NoCredentialsError, WaiterError, BotoCoreError
+    from botocore.exceptions import ClientError, WaiterError, BotoCoreError
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 
 
 def copy_image(module, ec2):
     """
     Copies an AMI
 
-    module : AnsibleModule object
+    module : AnsibleAWSModule object
     ec2: ec2 connection object
     """
 

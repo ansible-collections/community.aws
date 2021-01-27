@@ -5,13 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: aws_acm_info
 short_description: Retrieve certificate information from AWS Certificate Manager service
+version_added: 1.0.0
 description:
   - Retrieve information for ACM certificates
   - This module was called C(aws_acm_facts) before Ansible 2.9. The usage did not change.
@@ -51,21 +49,21 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: obtain all ACM certificates
-  aws_acm_info:
+  community.aws.aws_acm_info:
 
 - name: obtain all information for a single ACM certificate
-  aws_acm_info:
+  community.aws.aws_acm_info:
     domain_name: "*.example_com"
 
 - name: obtain all certificates pending validation
-  aws_acm_info:
+  community.aws.aws_acm_info:
     statuses:
     - PENDING_VALIDATION
 
 - name: obtain all certificates with tag Name=foo and myTag=bar
-  aws_acm_info:
+  community.aws.aws_acm_info:
     tags:
       Name: foo
       myTag: bar
@@ -73,12 +71,12 @@ EXAMPLES = '''
 
 # The output is still a list of certificates, just one item long.
 - name: obtain information about a certificate with a particular ARN
-  aws_acm_info:
+  community.aws.aws_acm_info:
     certificate_arn:  "arn:aws:acm:ap-southeast-2:123456789876:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12"
 
 '''
 
-RETURN = '''
+RETURN = r'''
 certificates:
   description: A list of certificates
   returned: always
@@ -262,22 +260,26 @@ certificates:
       type: str
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.acm import ACMServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.acm import ACMServiceManager
 
 
 def main():
     argument_spec = dict(
         certificate_arn=dict(aliases=['arn']),
         domain_name=dict(aliases=['name']),
-        statuses=dict(type='list', choices=['PENDING_VALIDATION', 'ISSUED', 'INACTIVE', 'EXPIRED', 'VALIDATION_TIMED_OUT', 'REVOKED', 'FAILED']),
+        statuses=dict(
+            type='list',
+            elements='str',
+            choices=['PENDING_VALIDATION', 'ISSUED', 'INACTIVE', 'EXPIRED', 'VALIDATION_TIMED_OUT', 'REVOKED', 'FAILED']
+        ),
         tags=dict(type='dict'),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
     acm_info = ACMServiceManager(module)
 
     if module._name == 'aws_acm_facts':
-        module.deprecate("The 'aws_acm_facts' module has been renamed to 'aws_acm_info'", version='2.13')
+        module.deprecate("The 'aws_acm_facts' module has been renamed to 'aws_acm_info'", date='2021-12-01', collection_name='community.aws')
 
     client = module.client('acm')
 

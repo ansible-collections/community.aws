@@ -5,13 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 
+version_added: 1.0.0
 module: cloudfront_invalidation
 
 short_description: create invalidations for AWS CloudFront distributions
@@ -60,10 +58,10 @@ notes:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 
 - name: create a batch of invalidations using a distribution_id for a reference
-  cloudfront_invalidation:
+  community.aws.cloudfront_invalidation:
     distribution_id: E15BU8SDCGSG57
     caller_reference: testing 123
     target_paths:
@@ -72,7 +70,7 @@ EXAMPLES = '''
       - /testpaththree/test3.ss
 
 - name: create a batch of invalidations using an alias as a reference and one path using a wildcard match
-  cloudfront_invalidation:
+  community.aws.cloudfront_invalidation:
     alias: alias.test.com
     caller_reference: testing 123
     target_paths:
@@ -82,7 +80,7 @@ EXAMPLES = '''
 
 '''
 
-RETURN = '''
+RETURN = r'''
 invalidation:
   description: The invalidation's information.
   returned: always
@@ -140,8 +138,8 @@ location:
 
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.cloudfront_facts import CloudFrontFactsServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 import datetime
 
 try:
@@ -249,7 +247,7 @@ def main():
         caller_reference=dict(),
         distribution_id=dict(),
         alias=dict(),
-        target_paths=dict(required=True, type='list')
+        target_paths=dict(required=True, type='list', elements='str')
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False, mutually_exclusive=[['distribution_id', 'alias']])

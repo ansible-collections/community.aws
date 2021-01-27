@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_direct_connect_virtual_interface
+version_added: 1.0.0
 short_description: Manage Direct Connect virtual interfaces
 description:
   - Create, delete, or modify a Direct Connect public or private virtual interface.
@@ -75,6 +72,14 @@ options:
   virtual_gateway_id:
     description:
       - The virtual gateway ID required for creating a private virtual interface.
+      - To create a private virtual interface I(virtual_gateway_id) or I(direct_connect_gateway_id) is required.
+        These options are mutually exclusive.
+    type: str
+  direct_connect_gateway_id:
+    description:
+      - The direct connect gateway ID for creating a private virtual interface.
+      - To create a private virtual interface I(virtual_gateway_id) or I(direct_connect_gateway_id) is required.
+        These options are mutually exclusive.
     type: str
   virtual_interface_id:
     description:
@@ -86,7 +91,7 @@ extends_documentation_fragment:
 
 '''
 
-RETURN = '''
+RETURN = r'''
 address_family:
   description: The address family for the BGP peer.
   returned: always
@@ -193,6 +198,11 @@ virtual_gateway_id:
   returned: when I(public=False)
   type: str
   sample: vgw-f3ce259a
+direct_connect_gateway_id:
+  description: The ID of the Direct Connect gateway. This only applies to private virtual interfaces.
+  returned: when I(public=False)
+  type: str
+  sample: f7593767-eded-44e8-926d-a2234175835d
 virtual_interface_id:
   description: The ID of the virtual interface.
   returned: always
@@ -220,17 +230,17 @@ vlan:
   sample: 100
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 ---
 - name: create an association between a LAG and connection
-  aws_direct_connect_virtual_interface:
+  community.aws.aws_direct_connect_virtual_interface:
     state: present
     name: "{{ name }}"
     link_aggregation_group_id: LAG-XXXXXXXX
     connection_id: dxcon-XXXXXXXX
 
 - name: remove an association between a connection and virtual interface
-  aws_direct_connect_virtual_interface:
+  community.aws.aws_direct_connect_virtual_interface:
     state: absent
     connection_id: dxcon-XXXXXXXX
     virtual_interface_id: dxv-XXXXXXXX
@@ -238,15 +248,19 @@ EXAMPLES = '''
 '''
 
 import traceback
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.aws.direct_connect import DirectConnectError, delete_virtual_interface
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     # handled by AnsibleAWSModule
     pass
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import delete_virtual_interface
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def try_except_ClientError(failure_msg):
@@ -367,6 +381,7 @@ def assemble_params_for_creating_vi(params):
     family_addr = params['address_type']
     cidr = params['cidr']
     virtual_gateway_id = params['virtual_gateway_id']
+    direct_connect_gateway_id = params['direct_connect_gateway_id']
 
     parameters = dict(virtualInterfaceName=name, vlan=vlan, asn=bgp_asn)
     opt_params = dict(authKey=auth_key, amazonAddress=amazon_addr, customerAddress=customer_addr, addressFamily=family_addr)
@@ -379,7 +394,10 @@ def assemble_params_for_creating_vi(params):
     if public and cidr:
         parameters['routeFilterPrefixes'] = [{'cidr': c} for c in cidr]
     if not public:
-        parameters['virtualGatewayId'] = virtual_gateway_id
+        if virtual_gateway_id:
+            parameters['virtualGatewayId'] = virtual_gateway_id
+        elif direct_connect_gateway_id:
+            parameters['directConnectGatewayId'] = direct_connect_gateway_id
 
     return parameters
 
@@ -470,18 +488,19 @@ def main():
         amazon_address=dict(),
         customer_address=dict(),
         address_type=dict(),
-        cidr=dict(type='list'),
+        cidr=dict(type='list', elements='str'),
         virtual_gateway_id=dict(),
+        direct_connect_gateway_id=dict(),
         virtual_interface_id=dict()
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               required_one_of=[['virtual_interface_id', 'name']],
                               required_if=[['state', 'present', ['public']],
-                                           ['public', False, ['virtual_gateway_id']],
                                            ['public', True, ['amazon_address']],
                                            ['public', True, ['customer_address']],
-                                           ['public', True, ['cidr']]])
+                                           ['public', True, ['cidr']]],
+                              mutually_exclusive=[['virtual_gateway_id', 'direct_connect_gateway_id']])
 
     connection = module.client('directconnect')
 

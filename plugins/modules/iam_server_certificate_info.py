@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: iam_server_certificate_info
+version_added: 1.0.0
 short_description: Retrieve the information of a server certificate
 description:
   - Retrieve the attributes of a server certificate.
@@ -32,13 +28,13 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Retrieve server certificate
-- iam_server_certificate_info:
+- name: Retrieve server certificate
+  community.aws.iam_server_certificate_info:
     name: production-cert
   register: server_cert
 
-# Fail if the server certificate name was not found
-- iam_server_certificate_info:
+- name: Fail if the server certificate name was not found
+  community.aws.iam_server_certificate_info:
     name: production-cert
   register: server_cert
   failed_when: "{{ server_cert.results | length == 0 }}"
@@ -84,14 +80,12 @@ upload_date:
 
 
 try:
-    import boto3
+    import botocore
     import botocore.exceptions
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def get_server_certs(iam, name=None):
@@ -145,23 +139,19 @@ def get_server_certs(iam, name=None):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         name=dict(type='str'),
-    ))
+    )
 
-    module = AnsibleModule(argument_spec=argument_spec,)
+    module = AnsibleAWSModule(argument_spec=argument_spec,)
     if module._name == 'iam_server_certificate_facts':
-        module.deprecate("The 'iam_server_certificate_facts' module has been renamed to 'iam_server_certificate_info'", version='2.13')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
+        module.deprecate("The 'iam_server_certificate_facts' module has been renamed to 'iam_server_certificate_info'",
+                         date='2021-12-01', collection_name='community.aws')
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        iam = boto3_conn(module, conn_type='client', resource='iam', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Boto3 Client Error - " + str(e.msg))
+        iam = module.client('iam')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     cert_name = module.params.get('name')
     results = get_server_certs(iam, cert_name)

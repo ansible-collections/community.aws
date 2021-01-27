@@ -8,13 +8,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'status': ['preview'],
-                    'supported_by': 'community',
-                    'metadata_version': '1.1'}
-
 DOCUMENTATION = '''
 ---
 module: rds_snapshot
+version_added: 1.0.0
 short_description: manage Amazon RDS snapshots.
 description:
      - Creates or deletes RDS snapshots.
@@ -71,13 +68,13 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Create snapshot
-- rds_snapshot:
+- name: Create snapshot
+  community.aws.rds_snapshot:
     db_instance_identifier: new-database
     db_snapshot_identifier: new-database-snapshot
 
-# Delete snapshot
-- rds_snapshot:
+- name: Delete snapshot
+  community.aws.rds_snapshot:
     db_snapshot_identifier: new-database-snapshot
     state: absent
 '''
@@ -206,7 +203,7 @@ except ImportError:
     pass  # protected by AnsibleAWSModule
 
 # import module snippets
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, AWSRetry, compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, ansible_dict_to_boto3_tag_list
 

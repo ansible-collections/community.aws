@@ -5,14 +5,11 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
 
 DOCUMENTATION = '''
 ---
 module: ec2_customer_gateway
+version_added: 1.0.0
 short_description: Manage an AWS customer gateway
 description:
     - Manage an AWS customer gateway.
@@ -58,17 +55,16 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-
-# Create Customer Gateway
-- ec2_customer_gateway:
+- name: Create Customer Gateway
+  community.aws.ec2_customer_gateway:
     bgp_asn: 12345
     ip_address: 1.2.3.4
     name: IndianapolisOffice
     region: us-east-1
   register: cgw
 
-# Delete Customer Gateway
-- ec2_customer_gateway:
+- name: Delete Customer Gateway
+  community.aws.ec2_customer_gateway:
     ip_address: 1.2.3.4
     name: IndianapolisOffice
     state: absent
@@ -114,24 +110,14 @@ gateway.customer_gateways:
 '''
 
 try:
-    from botocore.exceptions import ClientError
-    HAS_BOTOCORE = True
+    import botocore
 except ImportError:
-    HAS_BOTOCORE = False
+    pass  # Handled by AnsibleAWSModule
 
-try:
-    import boto3
-    HAS_BOTO3 = True
-except ImportError:
-    HAS_BOTO3 = False
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_conn,
-                                                                     AWSRetry,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 class Ec2CustomerGatewayManager:
@@ -140,12 +126,9 @@ class Ec2CustomerGatewayManager:
         self.module = module
 
         try:
-            region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-            if not region:
-                module.fail_json(msg="Region must be specified as a parameter, in EC2_REGION or AWS_REGION environment variables or in boto configuration file")
-            self.ec2 = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-        except ClientError as e:
-            module.fail_json(msg=e.message)
+            self.ec2 = module.client('ec2')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     @AWSRetry.jittered_backoff(delay=2, max_delay=30, retries=6, catch_extra_error_codes=['IncorrectState'])
     def ensure_cgw_absent(self, gw_id):
@@ -203,29 +186,21 @@ class Ec2CustomerGatewayManager:
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            bgp_asn=dict(required=False, type='int'),
-            ip_address=dict(required=True),
-            name=dict(required=True),
-            routing=dict(default='dynamic', choices=['dynamic', 'static']),
-            state=dict(default='present', choices=['present', 'absent']),
-        )
+    argument_spec = dict(
+        bgp_asn=dict(required=False, type='int'),
+        ip_address=dict(required=True),
+        name=dict(required=True),
+        routing=dict(default='dynamic', choices=['dynamic', 'static']),
+        state=dict(default='present', choices=['present', 'absent']),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True,
-                           required_if=[
-                               ('routing', 'dynamic', ['bgp_asn'])
-                           ]
-                           )
-
-    if not HAS_BOTOCORE:
-        module.fail_json(msg='botocore is required.')
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        required_if=[
+            ('routing', 'dynamic', ['bgp_asn'])
+        ]
+    )
 
     gw_mgr = Ec2CustomerGatewayManager(module)
 

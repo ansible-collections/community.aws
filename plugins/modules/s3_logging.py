@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: s3_logging
+version_added: 1.0.0
 short_description: Manage logging facility of an s3 bucket in AWS
 description:
     - Manage logging facility of an s3 bucket in AWS
@@ -49,14 +45,14 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Enable logging of s3 bucket mywebsite.com to s3 bucket mylogs
-  s3_logging:
+  community.aws.s3_logging:
     name: mywebsite.com
     target_bucket: mylogs
     target_prefix: logs/mywebsite.com
     state: present
 
 - name: Remove logging on an s3 bucket
-  s3_logging:
+  community.aws.s3_logging:
     name: mywebsite.com
     state: absent
 
@@ -66,12 +62,14 @@ try:
     import boto.ec2
     from boto.s3.connection import OrdinaryCallingFormat, Location
     from boto.exception import S3ResponseError
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by HAS_BOTO
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, ec2_argument_spec, get_aws_connection_info
+from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 
 
 def compare_bucket_logging(bucket, target_bucket, target_prefix):
@@ -93,7 +91,7 @@ def enable_bucket_logging(connection, module):
     try:
         bucket = connection.get_bucket(bucket_name)
     except S3ResponseError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     try:
         if not compare_bucket_logging(bucket, target_bucket, target_prefix):
@@ -104,14 +102,14 @@ def enable_bucket_logging(connection, module):
                 if e.status == 301:
                     module.fail_json(msg="the logging target bucket must be in the same region as the bucket being logged")
                 else:
-                    module.fail_json(msg=e.message)
+                    module.fail_json(msg=to_native(e))
             target_bucket_obj.set_as_logging_target()
 
             bucket.enable_logging(target_bucket, target_prefix)
             changed = True
 
     except S3ResponseError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     module.exit_json(changed=changed)
 
@@ -127,24 +125,21 @@ def disable_bucket_logging(connection, module):
             bucket.disable_logging()
             changed = True
     except S3ResponseError as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     module.exit_json(changed=changed)
 
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            target_bucket=dict(required=False, default=None),
-            target_prefix=dict(required=False, default=""),
-            state=dict(required=False, default='present', choices=['present', 'absent'])
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        target_bucket=dict(required=False, default=None),
+        target_prefix=dict(required=False, default=""),
+        state=dict(required=False, default='present', choices=['present', 'absent']),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
     if not HAS_BOTO:
         module.fail_json(msg='boto required for this module')

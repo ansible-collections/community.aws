@@ -16,14 +16,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_elb_info
+version_added: 1.0.0
 short_description: Gather information about EC2 Elastic Load Balancers in AWS
 description:
     - Gather information about EC2 Elastic Load Balancers in AWS
@@ -36,46 +33,40 @@ options:
     description:
       - List of ELB names to gather information about. Pass this option to gather information about a set of ELBs, otherwise, all ELBs are returned.
     type: list
+    elements: str
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-# Output format tries to match ec2_elb_lb module input parameters
+# Output format tries to match amazon.aws.ec2_elb_lb module input parameters
 
-# Gather information about all ELBs
-- action:
-    module: ec2_elb_info
+- name: Gather information about all ELBs
+  community.aws.ec2_elb_info:
   register: elb_info
-
-- action:
-    module: debug
+- ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
-# Gather information about a particular ELB
-- action:
-    module: ec2_elb_info
+- name: Gather information about a particular ELB
+  community.aws.ec2_elb_info:
     names: frontend-prod-elb
   register: elb_info
 
-- action:
-    module: debug
+- ansible.builtin.debug:
     msg: "{{ elb_info.elbs.0.dns_name }}"
 
-# Gather information about a set of ELBs
-- action:
-    module: ec2_elb_info
+- name: Gather information about a set of ELBs
+  community.aws.ec2_elb_info:
     names:
     - frontend-prod-elb
     - backend-prod-elb
   register: elb_info
 
-- action:
-    module: debug
+- ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
@@ -83,31 +74,24 @@ EXAMPLES = '''
 
 import traceback
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
-    AWSRetry,
-    connect_to_aws,
-    ec2_argument_spec,
-    get_aws_connection_info,
-)
-
 try:
     import boto.ec2.elb
     from boto.ec2.tag import Tag
     from boto.exception import BotoServerError
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by ec2.HAS_BOTO
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
 
 
 class ElbInformation(object):
     """Handles ELB information."""
 
-    def __init__(self,
-                 module,
-                 names,
-                 region,
-                 **aws_connect_params):
+    def __init__(self, module, names, region, **aws_connect_params):
 
         self.module = module
         self.names = names
@@ -235,15 +219,13 @@ class ElbInformation(object):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
-        names={'default': [], 'type': 'list'}
+    argument_spec = dict(
+        names={'default': [], 'type': 'list', 'elements': 'str'}
     )
-    )
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              supports_check_mode=True)
     if module._name == 'ec2_elb_facts':
-        module.deprecate("The 'ec2_elb_facts' module has been renamed to 'ec2_elb_info'", version='2.13')
+        module.deprecate("The 'ec2_elb_facts' module has been renamed to 'ec2_elb_info'", date='2021-12-01', collection_name='community.aws')
 
     if not HAS_BOTO:
         module.fail_json(msg='boto required for this module')

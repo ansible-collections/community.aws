@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: route53_info
 short_description: Retrieves route53 details using AWS methods
+version_added: 1.0.0
 description:
     - Gets various details related to Route53 zone, record set or health check details.
     - This module was called C(route53_facts) before Ansible 2.9. The usage did not change.
@@ -138,22 +134,22 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of listing all hosted zones
 - name: List all hosted zones
-  route53_info:
+  community.aws.route53_info:
     query: hosted_zone
   register: hosted_zones
 
 # Getting a count of hosted zones
 - name: Return a count of all hosted zones
-  route53_info:
+  community.aws.route53_info:
     query: hosted_zone
     hosted_zone_method: count
   register: hosted_zone_count
 
 - name: List the first 20 resource record sets in a given hosted zone
-  route53_info:
+  community.aws.route53_info:
     profile: account_name
     query: record_sets
     hosted_zone_id: ZZZ1111112222
@@ -161,33 +157,33 @@ EXAMPLES = '''
   register: record_sets
 
 - name: List first 20 health checks
-  route53_info:
+  community.aws.route53_info:
     query: health_check
     health_check_method: list
     max_items: 20
   register: health_checks
 
 - name: Get health check last failure_reason
-  route53_info:
+  community.aws.route53_info:
     query: health_check
     health_check_method: failure_reason
     health_check_id: 00000000-1111-2222-3333-12345678abcd
   register: health_check_failure_reason
 
 - name: Retrieve reusable delegation set details
-  route53_info:
+  community.aws.route53_info:
     query: reusable_delegation_set
     delegation_set_id: delegation id
   register: delegation_sets
 
 - name: setup of example for using next_marker
-  route53_info:
+  community.aws.route53_info:
     query: hosted_zone
     max_items: 1
   register: first_info
 
 - name: example for using next_marker
-  route53_info:
+  community.aws.route53_info:
     query: hosted_zone
     next_marker: "{{ first_info.NextMarker }}"
     max_items: 1
@@ -196,34 +192,27 @@ EXAMPLES = '''
 - name: retrieve host entries starting with host1.workshop.test.io
   block:
     - name: grab zone id
-      route53_zone:
+      community.aws.route53_zone:
         zone: "test.io"
       register: AWSINFO
 
     - name: grab Route53 record information
-      route53_info:
+      community.aws.route53_info:
         type: A
         query: record_sets
         hosted_zone_id: "{{ AWSINFO.zone_id }}"
         start_record_name: "host1.workshop.test.io"
       register: RECORDS
 '''
+
 try:
-    import boto
     import botocore
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by AnsibleAWSModule
 
-try:
-    import boto3
-    HAS_BOTO3 = True
-except ImportError:
-    HAS_BOTO3 = False
-
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
 from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def get_hosted_zone(client, module):
@@ -420,8 +409,7 @@ def hosted_zone_details(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         query=dict(choices=[
             'change',
             'checker_ip_range',
@@ -440,7 +428,7 @@ def main():
             'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS'
         ]),
         dns_name=dict(),
-        resource_id=dict(type='list', aliases=['resource_ids']),
+        resource_id=dict(type='list', aliases=['resource_ids'], elements='str'),
         health_check_id=dict(),
         hosted_zone_method=dict(choices=[
             'details',
@@ -458,24 +446,22 @@ def main():
             'tags',
         ], default='list'),
     )
-    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
             ['hosted_zone_method', 'health_check_method'],
         ],
+        check_boto3=False,
     )
     if module._name == 'route53_facts':
-        module.deprecate("The 'route53_facts' module has been renamed to 'route53_info'", version='2.13')
+        module.deprecate("The 'route53_facts' module has been renamed to 'route53_info'", date='2021-12-01', collection_name='community.aws')
 
-    # Validate Requirements
-    if not (HAS_BOTO or HAS_BOTO3):
-        module.fail_json(msg='json and boto/boto3 is required.')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    route53 = boto3_conn(module, conn_type='client', resource='route53', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        route53 = module.client('route53')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invocations = {
         'change': change_details,

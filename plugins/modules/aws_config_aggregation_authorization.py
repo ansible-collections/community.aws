@@ -7,14 +7,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = '''
 ---
 module: aws_config_aggregation_authorization
+version_added: 1.0.0
 short_description: Manage cross-account AWS Config authorizations
 description:
     - Module manages AWS Config resources.
@@ -46,12 +42,12 @@ extends_documentation_fragment:
 
 EXAMPLES = '''
 - name: Get current account ID
-  aws_caller_info:
+  community.aws.aws_caller_info:
   register: whoami
-- aws_config_aggregation_authorization:
+- community.aws.aws_config_aggregation_authorization:
     state: present
     authorized_account_id: '{{ whoami.account }}'
-    authorzed_aws_region: us-east-1
+    authorized_aws_region: us-east-1
 '''
 
 RETURN = '''#'''
@@ -59,11 +55,10 @@ RETURN = '''#'''
 
 try:
     import botocore
-    from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 

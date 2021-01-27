@@ -6,14 +6,10 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
-
-
 DOCUMENTATION = r'''
 ---
 module: cloudwatchevent_rule
+version_added: 1.0.0
 short_description: Manage CloudWatch Event rules and targets
 description:
   - This module creates and manages CloudWatch event rules and targets.
@@ -111,8 +107,8 @@ options:
     required: false
 '''
 
-EXAMPLES = '''
-- cloudwatchevent_rule:
+EXAMPLES = r'''
+- community.aws.cloudwatchevent_rule:
     name: MyCronTask
     schedule_expression: "cron(0 20 * * ? *)"
     description: Run my scheduled task
@@ -120,7 +116,7 @@ EXAMPLES = '''
       - id: MyTargetId
         arn: arn:aws:lambda:us-east-1:123456789012:function:MyFunction
 
-- cloudwatchevent_rule:
+- community.aws.cloudwatchevent_rule:
     name: MyDisabledCronTask
     schedule_expression: "rate(5 minutes)"
     description: Run my disabled scheduled task
@@ -130,12 +126,12 @@ EXAMPLES = '''
         arn: arn:aws:lambda:us-east-1:123456789012:function:MyFunction
         input: '{"foo": "bar"}'
 
-- cloudwatchevent_rule:
+- community.aws.cloudwatchevent_rule:
     name: MyCronTask
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 rule:
     description: CloudWatch Event rule data.
     returned: success
@@ -158,7 +154,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
@@ -434,7 +430,7 @@ def main():
                    default='present'),
         description=dict(),
         role_arn=dict(),
-        targets=dict(type='list', default=[]),
+        targets=dict(type='list', default=[], elements='dict'),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec)
 

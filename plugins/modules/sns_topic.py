@@ -7,16 +7,12 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['stableinterface'],
-                    'supported_by': 'community'}
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: sns_topic
 short_description: Manages AWS SNS topics and subscriptions
+version_added: 1.0.0
 description:
-    - The M(sns_topic) module allows you to create, delete, and manage subscriptions for AWS SNS topics.
+    - The M(community.aws.sns_topic) module allows you to create, delete, and manage subscriptions for AWS SNS topics.
     - As of 2.6, this module can be use to subscribe and unsubscribe to topics outside of your AWS account.
 author:
   - "Joel Thompson (@joelthompson)"
@@ -77,10 +73,10 @@ extends_documentation_fragment:
 requirements: [ "boto" ]
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 
 - name: Create alarm SNS topic
-  sns_topic:
+  community.aws.sns_topic:
     name: "alarms"
     state: present
     display_name: "alarm SNS topic"
@@ -103,13 +99,13 @@ EXAMPLES = """
 
 """
 
-RETURN = '''
+RETURN = r'''
 sns_arn:
     description: The ARN of the topic you are modifying
     type: str
     returned: always
     sample: "arn:aws:sns:us-east-2:111111111111:my_topic_name"
-sns_topic:
+community.aws.sns_topic:
   description: Dict of sns topic details
   type: complex
   returned: always
@@ -224,7 +220,7 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies, AWSRetry, camel_dict_to_snake_dict
 
 
@@ -486,7 +482,7 @@ def main():
         display_name=dict(),
         policy=dict(type='dict'),
         delivery_policy=dict(type='dict'),
-        subscriptions=dict(default=[], type='list'),
+        subscriptions=dict(default=[], type='list', elements='dict'),
         purge_subscriptions=dict(type='bool', default=True),
     )
 

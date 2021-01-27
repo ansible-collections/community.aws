@@ -5,14 +5,11 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
 
-
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_vpc_vpn
+version_added: 1.0.0
 short_description: Create, modify, and delete EC2 VPN connections.
 description:
   - This module creates, modifies, and deletes VPN connections. Idempotence is achieved by using the filters
@@ -38,7 +35,7 @@ options:
   connection_type:
     description:
       - The type of VPN connection.
-      - At this time only 'ipsec.1' is supported.
+      - At this time only C(ipsec.1) is supported.
     default: ipsec.1
     type: str
   vpn_gateway_id:
@@ -66,8 +63,8 @@ options:
     required: no
   tunnel_options:
     description:
-      - An optional list object containing no more than two dict members, each of which may contain 'TunnelInsideCidr'
-        and/or 'PreSharedKey' keys with appropriate string values.  AWS defaults will apply in absence of either of
+      - An optional list object containing no more than two dict members, each of which may contain I(TunnelInsideCidr)
+        and/or I(PreSharedKey) keys with appropriate string values.  AWS defaults will apply in absence of either of
         the aforementioned keys.
     required: no
     type: list
@@ -81,11 +78,11 @@ options:
             description: The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway.
   filters:
     description:
-      - An alternative to using vpn_connection_id. If multiple matches are found, vpn_connection_id is required.
+      - An alternative to using I(vpn_connection_id). If multiple matches are found, vpn_connection_id is required.
         If one of the following suboptions is a list of items to filter by, only one item needs to match to find the VPN
-        that correlates. e.g. if the filter 'cidr' is ['194.168.2.0/24', '192.168.2.0/24'] and the VPN route only has the
-        destination cidr block of '192.168.2.0/24' it will be found with this filter (assuming there are not multiple
-        VPNs that are matched). Another example, if the filter 'vpn' is equal to ['vpn-ccf7e7ad', 'vpn-cb0ae2a2'] and one
+        that correlates. e.g. if the filter I(cidr) is C(['194.168.2.0/24', '192.168.2.0/24']) and the VPN route only has the
+        destination cidr block of C(192.168.2.0/24) it will be found with this filter (assuming there are not multiple
+        VPNs that are matched). Another example, if the filter I(vpn) is equal to C(['vpn-ccf7e7ad', 'vpn-cb0ae2a2']) and one
         of of the VPNs has the state deleted (exists but is unmodifiable) and the other exists and is not deleted,
         it will be found via this filter. See examples.
     suboptions:
@@ -94,7 +91,7 @@ options:
           - The customer gateway configuration of the VPN as a string (in the format of the return value) or a list of those strings.
       static-routes-only:
         description:
-          - The type of routing; true or false.
+          - The type of routing; C(true) or C(false).
       cidr:
         description:
           - The destination cidr of the VPN's route as a string or a list of those strings.
@@ -130,32 +127,33 @@ options:
     description:
       - Whether or not to delete VPN connections routes that are not specified in the task.
     type: bool
+    default: false
   wait_timeout:
     description:
-      - How long before wait gives up, in seconds.
+      - How long, in seconds, before wait gives up.
     default: 600
     type: int
     required: false
   delay:
     description:
-      - The time to wait before checking operation again. in seconds.
+      - The time, in seconds, to wait before checking operation again.
     required: false
     type: int
     default: 15
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
 - name: create a VPN connection
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     vpn_gateway_id: vgw-XXXXXXXX
     customer_gateway_id: cgw-XXXXXXXX
 
 - name: modify VPN connection tags
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     vpn_connection_id: vpn-XXXXXXXX
     tags:
@@ -163,12 +161,12 @@ EXAMPLES = """
       Other: ansible-tag-2
 
 - name: delete a connection
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     vpn_connection_id: vpn-XXXXXXXX
     state: absent
 
 - name: modify VPN tags (identifying VPN by filters)
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     filters:
       cidr: 194.168.1.0/24
@@ -181,7 +179,7 @@ EXAMPLES = """
     static_only: true
 
 - name: set up VPN with tunnel options utilizing 'TunnelInsideCidr' only
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     filters:
       vpn: vpn-XXXXXXXX
@@ -193,7 +191,7 @@ EXAMPLES = """
         TunnelInsideCidr: '169.254.100.5/30'
 
 - name: add routes and remove any preexisting ones
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     filters:
       vpn: vpn-XXXXXXXX
@@ -203,21 +201,21 @@ EXAMPLES = """
     purge_routes: true
 
 - name: remove all routes
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: present
     vpn_connection_id: vpn-XXXXXXXX
     routes: []
     purge_routes: true
 
 - name: delete a VPN identified by filters
-  ec2_vpc_vpn:
+  community.aws.ec2_vpc_vpn:
     state: absent
     filters:
       tags:
         Ansible: Tag
 """
 
-RETURN = """
+RETURN = r"""
 changed:
   description: If the VPN connection has changed.
   type: bool
@@ -300,7 +298,7 @@ vpn_connection_id:
     vpn_connection_id: vpn-781e0e19
 """
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible.module_utils._text import to_text
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     camel_dict_to_snake_dict,
@@ -745,12 +743,12 @@ def main():
         vpn_gateway_id=dict(type='str'),
         tags=dict(default={}, type='dict'),
         connection_type=dict(default='ipsec.1', type='str'),
-        tunnel_options=dict(no_log=True, type='list', default=[]),
+        tunnel_options=dict(no_log=True, type='list', default=[], elements='dict'),
         static_only=dict(default=False, type='bool'),
         customer_gateway_id=dict(type='str'),
         vpn_connection_id=dict(type='str'),
         purge_tags=dict(type='bool', default=False),
-        routes=dict(type='list', default=[]),
+        routes=dict(type='list', default=[], elements='str'),
         purge_routes=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=600),
         delay=dict(type='int', default=15),
