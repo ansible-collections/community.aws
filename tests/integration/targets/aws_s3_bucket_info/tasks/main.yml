@@ -88,6 +88,7 @@
           - item.bucket_tagging.CamelCase == 'SimpleCamelCase'
           - item.bucket_tagging["lowercase spaced"] == 'hello cruel world'
           - item.bucket_tagging["Title Case"] == 'Hello Cruel World'
+          - item.bucket_location.LocationConstraint == aws_region
       loop: "{{ bucket_list.buckets }}"
       loop_control:
         label: "{{ item.name }}"
