@@ -87,10 +87,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_er
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
-class PolicyError(Exception):
-    pass
-
-
 class Policy:
 
     def __init__(self, client, name, policy_name):
@@ -207,8 +203,6 @@ def main():
         module.exit_json(changed=False, msg=e.response['Error']['Message'])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
-    except PolicyError as e:
-        module.fail_json(msg=str(e))
 
 
 if __name__ == '__main__':
