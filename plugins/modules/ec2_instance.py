@@ -1179,13 +1179,9 @@ def discover_security_groups(group, groups, parent_vpc_id=None, subnet_id=None, 
 
 @AWSRetry.jittered_backoff()
 def describe_security_groups(ec2, **params):
-    return list(ec2.get_paginator(
-            'describe_security_groups'
-        ).paginate(
-            **params
-        ).search(
-            'SecurityGroups[]'
-        ))
+    paginator = ec2.get_paginator('describe_security_groups')
+    results = paginator.paginate(**params)
+    return list(results.search('SecurityGroups[]'))
 
 
 def build_top_level_options(params):
