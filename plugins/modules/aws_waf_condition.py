@@ -402,10 +402,11 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
 from ansible_collections.amazon.aws.plugins.module_utils.waf import MATCH_LOOKUP
 from ansible_collections.amazon.aws.plugins.module_utils.waf import run_func_with_change_token_backoff
