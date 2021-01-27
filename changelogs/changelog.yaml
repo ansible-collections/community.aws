@@ -775,7 +775,7 @@ releases:
         behavior (https://github.com/ansible-collections/community.aws/pull/318).
       minor_changes:
       - ec2_vpc_igw - Add AWSRetry decorators to improve reliability (https://github.com/ansible-collections/community.aws/pull/318).
-      - ec2_vpc_igw - Add ``purge_tags`` parameter so that tags can be added without
+      - ec2_vpc_igw - Add ``purge_tagsminor_changes:`` parameter so that tags can be added without
         purging existing tags to match the collection standard tagging behaviour (https://github.com/ansible-collections/community.aws/pull/318).
       - ec2_vpc_igw_info - Add AWSRetry decorators to improve reliability (https://github.com/ansible-collections/community.aws/pull/318).
       - ec2_vpc_igw_info - Add ``convert_tags`` parameter so that tags can be returned
@@ -785,8 +785,6 @@ releases:
       - redshift - add support for setting tags.
       - s3_lifecycle - Add support for intelligent tiering and deep archive storage
         classes (https://github.com/ansible-collections/community.aws/issues/270)
-      - aws_s3_bucket_info - new module options ``name:``, ``name_filter``, ``bucket_facts`` and ``transform_location`` 
-        (https://github.com/ansible-collections/community.aws/pull/260).
     fragments:
     - 244-rds_instance-no_log.yml
     - 264-fix-elemt-type-for-containers-in-ecs_taskdefinition.yml
