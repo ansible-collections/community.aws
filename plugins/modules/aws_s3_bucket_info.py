@@ -24,7 +24,7 @@ description:
 options:
   name:
     description:
-      - Get info only about specified bucket
+      - Name of bucket to query.
     type: str
     default: ""
   name_filter:
