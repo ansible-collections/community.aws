@@ -1168,12 +1168,19 @@ def discover_security_groups(group, groups, parent_vpc_id=None, subnet_id=None, 
     found_groups = []
     for f_set in (id_filters, name_filters):
         if len(f_set) > 1:
-            found_groups.extend(ec2.get_paginator(
-                'describe_security_groups'
-            ).paginate(
-                Filters=f_set
-            ).search('SecurityGroups[]'))
+            found_groups.extend(describe_security_groups(ec2, Filters=f_set))
     return list(dict((g['GroupId'], g) for g in found_groups).values())
+
+
+@AWSRetry.jittered_backoff()
+def describe_security_groups(ec2, **params):
+    return list(ec2.get_paginator(
+            'describe_security_groups'
+        ).paginate(
+            **params
+        ).search(
+            'SecurityGroups[]'
+        ))
 
 
 def build_top_level_options(params):
@@ -1412,22 +1419,21 @@ def change_network_attachments(instance, params, ec2):
     return False
 
 
+@AWSRetry.jittered_backoff()
 def find_instances(ec2, ids=None, filters=None):
     paginator = ec2.get_paginator('describe_instances')
     if ids:
-        return list(paginator.paginate(
-            InstanceIds=ids,
-        ).search('Reservations[].Instances[]'))
+        params = dict(InstanceIds=ids)
     elif filters is None:
         module.fail_json(msg="No filters provided when they were required")
-    elif filters is not None:
+    else:
         for key in list(filters.keys()):
             if not key.startswith("tag:"):
                 filters[key.replace("_", "-")] = filters.pop(key)
-        return list(paginator.paginate(
-            Filters=ansible_dict_to_boto3_filter_list(filters)
-        ).search('Reservations[].Instances[]'))
-    return []
+        params = dict(Filters=ansible_dict_to_boto3_filter_list(filters))
+
+    results = paginator.paginate(**params).search('Reservations[].Instances[]')
+    return list(results)
 
 
 @AWSRetry.jittered_backoff()
@@ -1675,9 +1681,7 @@ def ensure_present(existing_matches, changed, ec2, state):
                 spec=instance_spec,
             )
         await_instances(instance_ids)
-        instances = ec2.get_paginator('describe_instances').paginate(
-            InstanceIds=instance_ids
-        ).search('Reservations[].Instances[]')
+        instances = find_instances(ec2, ids=instance_ids)
 
         module.exit_json(
             changed=True,
