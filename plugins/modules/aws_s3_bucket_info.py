@@ -29,7 +29,7 @@ options:
     default: ""
   name_filter:
     description:
-      - Get info only about buckets name matching defined string
+      - Get information only about buckets name containing a string.
     type: str
     default: ""
     version_added: 1.3.0
