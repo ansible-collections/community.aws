@@ -363,7 +363,7 @@ def main():
     required_together = [['s3_key', 's3_bucket'],
                          ['vpc_subnet_ids', 'vpc_security_group_ids']]
 
-    required_if = [['state', 'present', [['runtime', 'handler', 'role'],['image_uri','role']],True]]
+    required_if = [['state', 'present', [['runtime', 'handler', 'role'],['image_uri','role']]]]
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True,
@@ -473,10 +473,8 @@ def main():
         # Update image configuration
         if image_config:
             if 'ImageConfigResponse' in current_config:
-                if image_config != current_config['ImageConfigResponse']['ImageConfig'] :
+                if image_config != current_config['ImageConfigResponse']['ImageConfig']:
                     func_kwargs.update({'ImageConfig': image_config})
-            else:
-              func_kwargs.update({'ImageConfig': image_config})
         elif 'ImageConfigResponse' in current_config:
             func_kwargs.update({'ImageConfig': {}})
 
@@ -492,7 +490,7 @@ def main():
 
         # Update code configuration
         code_kwargs = {'FunctionName': name, 'Publish': True}
-
+        #module.fail_json(msg=current_function)
         # Update S3 location
         if s3_bucket and s3_key:
             # If function is stored on S3 always update
@@ -516,7 +514,7 @@ def main():
                 except IOError as e:
                     module.fail_json(msg=str(e), exception=traceback.format_exc())
         # Update Container Image Uri
-        elif image_uri:
+        elif image_uri and image_uri != current_function['Code']['ImageUri']:
            code_kwargs.update({'ImageUri': image_uri})
 
         # Tag Function
@@ -543,6 +541,7 @@ def main():
         module.exit_json(changed=changed, **camel_dict_to_snake_dict(response))
 
     # Function doesn't exists, create new Lambda function
+
     elif state == 'present':
         if s3_bucket and s3_key:
             # If function is stored on S3
@@ -572,7 +571,6 @@ def main():
                        'Timeout': timeout,
                        'MemorySize': memory_size
                        }
-
         if runtime is not None:
             func_kwargs.update({'Runtime': runtime})
 
