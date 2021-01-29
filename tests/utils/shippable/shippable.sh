@@ -70,8 +70,11 @@ else
     export ANSIBLE_COLLECTIONS_PATHS="${PWD}/../../../"
 fi
 
-retry ansible-galaxy -vvv collection install amazon.aws
+# Install amazon.aws directly from GitHub (rather than Galaxy) so we always run against the latest version
+mkdir -p "${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/amazon"
+git clone https://github.com/ansible-collections/amazon.aws "${ANSIBLE_COLLECTIONS_PATHS}/ansible_collections/amazon/aws"
 
+# To avoid accidently adding new dependencies, only install what's needed when it's needed
 if [ "${script}" != "sanity" ] || [ "${test}" == "sanity/extra" ]; then
     # Nothing further should be added to this list.
     # This is to prevent modules or plugins in this collection having a runtime dependency on other collections.
