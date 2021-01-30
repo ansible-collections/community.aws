@@ -132,7 +132,7 @@ class LookupModule(LookupBase):
 
         except (botocore.exceptions.ClientError,
                 botocore.exceptions.BotoCoreError) as e:
-            if 'Stack with id {} does not exist'.format(stack_name) in str(e):
+            if 'Stack with id {0} does not exist'.format(stack_name) in str(e):
                 raise AnsibleError("Given stack doesn't exist: {0}".format(stack_name))
             else:
                 raise AnsibleError("Failed to retrieve cloudformation stack: %s" % to_native(e))

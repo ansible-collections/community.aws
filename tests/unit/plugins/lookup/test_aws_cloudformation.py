@@ -53,7 +53,7 @@ simple_stack_with_outputs_response = {
         [
             {
                 'StackId': 'arn:aws:cloudformation:eu-west-1:111111111111:stack'
-                        '/stack_with_outputs/11111111-aaaa-xxxx-1111-222222222222',
+                           '/stack_with_outputs/11111111-aaaa-xxxx-1111-222222222222',
                 'StackName': 'stack_with_outputs',
                 'Parameters': [
                     {'ParameterKey': 'TestParameter', 'ParameterValue': 'True'},
@@ -63,34 +63,33 @@ simple_stack_with_outputs_response = {
                 'DisableRollback': True,
                 'NotificationARNs': [],
                 'Capabilities': ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
+                'EnableTerminationProtection': True,
                 'Outputs':
                     [
                         {
-                           'OutputKey': 'test_output',
-                           'OutputValue': 'test_output_value',
-                           'Description': 'Test output',
-                           'ExportName': 'test_output'
-                         }
+                            'OutputKey': 'test_output',
+                            'OutputValue': 'test_output_value',
+                            'Description': 'Test output',
+                            'ExportName': 'test_output'
+                        }
                     ],
-                'EnableTerminationProtection': True,
                 'DriftInformation': {'StackDriftStatus': 'NOT_CHECKED'}
             }
         ],
-        'ResponseMetadata':
-            {
-                'RequestId': '1111xxxd-2222-4444-aaaa-42555555',
-                'HTTPStatusCode': 200,
-                'HTTPHeaders':
-                    {
-                        'x-amzn-requestid': 'xxxxxx-aaaa-xxxx-xxxx-xxxxxxx',
-                        'content-type': 'text/xml',
-                        'vary': 'accept-encoding',
-                        'date': 'Sat, 31 Jan 2021 08:03:39 GMT'
-                    },
-                'RetryAttempts': 0
-            }
+    'ResponseMetadata':
+        {
+            'RequestId': '1111xxxd-2222-4444-aaaa-42555555',
+            'HTTPStatusCode': 200,
+            'HTTPHeaders':
+                {
+                    'x-amzn-requestid': 'xxxxxx-aaaa-xxxx-xxxx-xxxxxxx',
+                    'content-type': 'text/xml',
+                    'vary': 'accept-encoding',
+                    'date': 'Sat, 31 Jan 2021 08:03:39 GMT'
+                },
+            'RetryAttempts': 0
+        }
 }
-
 
 simple_stack_without_outputs_response = {
     'Stacks':
@@ -144,7 +143,7 @@ def test_lookup_stack_with_output(mocker, dummy_credentials):
         simple_stack_with_outputs_response)
     mocker.patch.object(boto3, 'session', boto3_double)
     retval = lookup.run(["stack_without_outputs"], output_key='test_output', **dummy_credentials)
-    assert(retval == 'test_output_value')
+    assert (retval == 'test_output_value')
 
 
 def test_lookup_stack_with_not_existing_output(mocker, dummy_credentials):
@@ -164,7 +163,7 @@ def test_lookup_not_existing_stack_output(mocker, dummy_credentials):
     error_response_denied = {'Error': {'Code': 'ValidationError',
                                        'Message': 'Stack with id not_existing_stack does not exist'}}
     operation_name = 'DescribeStacks'
-    boto3_double.Session.return_value.client.return_value.describe_stacks.side_effect =\
+    boto3_double.Session.return_value.client.return_value.describe_stacks.side_effect = \
         ClientError(error_response_denied, operation_name)
 
     mocker.patch.object(boto3, 'session', boto3_double)
