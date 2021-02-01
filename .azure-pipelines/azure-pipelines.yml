@@ -128,8 +128,8 @@ stages:
             - test: 3.7
           groups:
 #            - 1
-#            - 2
-            - 3
+            - 2
+#            - 3
 #            - 4
 #  - stage: AWS_2_10
 #    displayName: AWS 2.10
