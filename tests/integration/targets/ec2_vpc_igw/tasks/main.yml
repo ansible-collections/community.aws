@@ -321,6 +321,109 @@
           - vpc_igw_update.tags["tag_three"] == '{{ resource_prefix }} Three'
           - vpc_igw_update.tags["Tag Two"] == 'two {{ resource_prefix }}'
 
+
+  # ============================================================
+  - name: Update with CamelCase tags - CHECK_MODE
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        "lowercase spaced": 'hello cruel world ❤️'
+        "Title Case": 'Hello Cruel World ❤️'
+        CamelCase: 'SimpleCamelCase ❤️'
+        snake_case: 'simple_snake_case ❤️'
+    register: vpc_igw_update
+    check_mode: yes
+
+  - name: assert tag update would happen (expected changed=true) - CHECK_MODE
+    assert:
+      that:
+         - vpc_igw_update is changed
+         - vpc_igw_update.tags["lowercase spaced"] == 'hello cruel world ❤️'
+         - vpc_igw_update.tags["Title Case"] == 'Hello Cruel World ❤️'
+         - vpc_igw_update.tags["CamelCase"] == 'SimpleCamelCase ❤️'
+         - vpc_igw_update.tags["snake_case"] == 'simple_snake_case ❤️'
+
+  - name: Update the tags - remove and add
+    ec2_vpc_igw:
+      state: present
+      vpc_id: "{{ vpc_result.vpc.id }}"
+      tags:
+        "lowercase spaced": 'hello cruel world ❤️'
+        "Title Case": 'Hello Cruel World ❤️'
+        CamelCase: 'SimpleCamelCase ❤️'
+        snake_case: 'simple_snake_case ❤️'
+    register: vpc_igw_update
+
+  - name: assert tags are updated (expected changed=true)
+    assert:
+      that:
+          - vpc_igw_update is changed
+          - vpc_igw_update.gateway_id == igw_id
+          - vpc_igw_update.vpc_id == vpc_id
+          - '"tags" in vpc_igw_update'
+          - vpc_igw_update.tags | length == 4
+          - vpc_igw_update.tags["lowercase spaced"] == 'hello cruel world ❤️'
+          - vpc_igw_update.tags["Title Case"] == 'Hello Cruel World ❤️'
+          - vpc_igw_update.tags["CamelCase"] == 'SimpleCamelCase ❤️'
+          - vpc_igw_update.tags["snake_case"] == 'simple_snake_case ❤️'
+  
+
+  # ============================================================
+  - name: Gather information about a filtered list of Internet Gateways using tags
+    ec2_vpc_igw_info:
+      filters:
+        "tag:Title Case": 'Hello Cruel World ❤️'
+    register: igw_info
+
+  - name: Assert success
+    assert:
+      that:
+          - igw_info is successful
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 1
+
+  - name: Gather information about a filtered list of Internet Gateways using tags - CHECK_MODE
+    ec2_vpc_igw_info:
+      filters:
+        "tag:Title Case": 'Hello Cruel World ❤️'
+    register: igw_info
+
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+          - igw_info is successful
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 1
+
+
+  # ============================================================
+  - name: Gather information about a filtered list of Internet Gateways using tags (no match)
+    ec2_vpc_igw_info:
+      filters:
+        "tag:Tag1": 'tag1'
+    register: igw_info
+
+  - name: Assert success
+    assert:
+      that:
+          - igw_info is successful
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 0
+
+  - name: Gather information about a filtered list of Internet Gateways using tags (no match) - CHECK_MODE
+    ec2_vpc_igw_info:
+      filters:
+        "tag:Tag1": 'tag1'
+    register: igw_info
+
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+          - igw_info is successful
+          - '"internet_gateways" in igw_info'
+          - igw_info.internet_gateways | length == 0
+
   # ============================================================
   - name: Remove all tags - CHECK_MODE
     ec2_vpc_igw:
@@ -350,7 +453,7 @@
           - vpc_igw_update.vpc_id == vpc_id
           - '"tags" in vpc_igw_update'
           - vpc_igw_update.tags | length == 0
-
+  
   # ============================================================
   - name: test state=absent (expected changed=true) - CHECK_MODE
     ec2_vpc_igw:

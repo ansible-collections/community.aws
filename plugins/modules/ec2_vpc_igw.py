@@ -141,13 +141,6 @@ class AnsibleEc2Igw(object):
 
         return igw
 
-    def check_input_tags(self, tags):
-        if tags is None:
-            return
-        nonstring_tags = [k for k, v in tags.items() if not isinstance(v, string_types)]
-        if nonstring_tags:
-            self._module.fail_json(msg='One or more tags contain non-string values: {0}'.format(nonstring_tags))
-
     def ensure_tags(self, igw_id, tags, purge_tags):
         final_tags = []
 
@@ -233,8 +226,6 @@ class AnsibleEc2Igw(object):
         return self._results
 
     def ensure_igw_present(self, vpc_id, tags, purge_tags):
-        self.check_input_tags(tags)
-
         igw = self.get_matching_igw(vpc_id)
 
         if igw is None:
