@@ -140,6 +140,35 @@
  #     that:
  #       - create_ngw.changed
 
+
+  # ============================================================
+  - name: Get NAT gateway with specific filters (state and subnet)
+    ec2_vpc_nat_gateway_info:
+      filters:
+        subnet-id: "{{ subnet_id }}"
+        state: ['available']
+    register: avalaible_ngws
+
+  - name: Assert success
+    assert:
+      that:
+          - avalaible_ngws is successful
+          - avalaible_ngws.result | length == 1
+  
+  #- name: Get all NAT gateways with specific filters (state and subnet) - CHECK_MODE
+  #  ec2_vpc_nat_gateway_info:
+  #    filters:
+  #      state: ['available']
+  #       subnet-id: "{{ subnet_id }}"
+  #  register: avalaible_ngws
+
+  #- name: Assert success - CHECK_MODE
+  #  assert:
+  #    that:
+  #        - avalaible_ngws is successful
+  #        - avalaible_ngws.result | length == 1
+
+
   # ============================================================
   - name: Trying this again for idempotency - create new NAT gateway with eip allocation-id
     ec2_vpc_nat_gateway:
@@ -251,6 +280,17 @@
   #     that:
   #       - not create_ngw.changed
 
+  - name: Fetch NAT gateway by ID (list)
+    ec2_vpc_nat_gateway_info:
+      nat_gateway_ids:
+        - "{{ nat_gateway_id }}"
+    register: ngw_info
+    ignore_errors: True
+
+  - name: Check NAT gateway exists
+    assert:
+      that:
+        - ngw_info is successful
 
   # ============================================================
   - name: Delete NAT gateway
@@ -279,6 +319,7 @@
   #   assert:
   #     that:
   #       - delete_nat_gateway.changed
+
 
   # ============================================================
   - name: Create new NAT gateway with eip allocation-id and tags
@@ -345,6 +386,33 @@
   #     that:
   #       - not update_tags_ngw.changed
 
+  
+  # ============================================================
+  - name: Gather information about a filtered list of NAT Gateways using tags
+    ec2_vpc_nat_gateway_info:
+      filters:
+        "tag:Tag Two": 'two {{ resource_prefix }}'
+    register: ngw_info
+
+  - name: Assert success
+    assert:
+      that:
+          - ngw_info is successful
+          - ngw_info.result | length == 1
+          #- ngw_info.result | selectattr("nat_gateway_id",'equalto',"{{ }}")
+
+  #- name: Gather information about a filtered list of NAT Gateways using tags - CHECK_MODE
+  #  ec2_vpc_nat_gateway_info:
+  #    filters:
+  #      "tag:Tag Two": 'two {{ resource_prefix }}'
+  #  register: ngw_info
+
+  #- name: Assert success - CHECK_MODE
+  #  assert:
+  #    that:
+  #        - ngw_info is successful
+  #        - ngw_info.result | length == 1
+
 
   # ============================================================
   - name: Update the tags - remove and add
@@ -377,6 +445,32 @@
   #   assert:
   #     that:
   #         - update_tags_ngw.changed
+
+  # ============================================================
+  - name: Gather information about a filtered list of NAT Gateways using tags (no match)
+    ec2_vpc_nat_gateway_info:
+      filters:
+        "tag:tag_one": '{{ resource_prefix }} One'
+    register: ngw_info
+
+  - name: Assert success
+    assert:
+      that:
+          - ngw_info is successful
+          - ngw_info.result | length == 0
+
+  #- name: Gather information about a filtered list of NAT Gateways using tags (no match) - CHECK_MODE
+  #  ec2_vpc_nat_gateway_info:
+  #    filters:
+  #      "tag:tag_one": '{{ resource_prefix }} One'
+  #  register: ngw_info
+
+  #- name: Assert success - CHECK_MODE
+  #  assert:
+  #    that:
+  #        - ngw_info is successful
+  #        - ngw_info.result | length == 0
+
 
 
   # ============================================================
