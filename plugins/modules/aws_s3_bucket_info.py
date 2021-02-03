@@ -112,7 +112,11 @@ options:
       - Setting this option to C(true) will return C(us-east-1) instead.
       - Affects only queries with I(bucket_facts=true) and I(bucket_location=true).
     type: bool
-    default: FalseBucket public access block configuration
+    default: False
+version_added: 1.4.0
+extends_documentation_fragment:
+- amazon.aws.aws
+- amazon.aws.ec2
 '''
 
 EXAMPLES = '''
