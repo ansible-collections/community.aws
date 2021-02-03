@@ -64,15 +64,14 @@ simple_stack_with_outputs_response = {
                 'NotificationARNs': [],
                 'Capabilities': ['CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM'],
                 'EnableTerminationProtection': True,
-                'Outputs':
-                    [
-                        {
-                            'OutputKey': 'test_output',
-                            'OutputValue': 'test_output_value',
-                            'Description': 'Test output',
-                            'ExportName': 'test_output'
-                        }
-                    ],
+                'Outputs': [
+                    {
+                        'OutputKey': 'test_output',
+                        'OutputValue': 'test_output_value',
+                        'Description': 'Test output',
+                        'ExportName': 'test_output'
+                    }
+                ],
                 'DriftInformation': {'StackDriftStatus': 'NOT_CHECKED'}
             }
         ],
