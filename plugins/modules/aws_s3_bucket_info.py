@@ -113,7 +113,7 @@ options:
       - Affects only queries with I(bucket_facts=true) and I(bucket_location=true).
     type: bool
     default: False
-version_added: 1.4.0
+    version_added: 1.4.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
