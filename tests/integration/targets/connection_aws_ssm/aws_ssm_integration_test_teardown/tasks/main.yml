@@ -47,7 +47,7 @@
       when: iam_role_vars_file.stat.exists == true
 
     - name: Terminate Windows EC2 instances that were previously launched
-      ec2:
+      ec2_instance:
         instance_ids:
           - "{{windows_instance_id}}"
         state: absent
@@ -55,7 +55,7 @@
       when: ec2_windows_vars_file.stat.exists == true
 
     - name: Terminate Linux EC2 instances that were previously launched
-      ec2:
+      ec2_instance:
         instance_ids:
           - "{{linux_instance_id}}"
         state: absent
