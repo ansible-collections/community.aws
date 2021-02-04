@@ -51,6 +51,7 @@
         instance_ids:
           - "{{windows_instance_id}}"
         state: absent
+        wait: True
       ignore_errors: yes
       when: ec2_windows_vars_file.stat.exists == true
 
@@ -59,6 +60,7 @@
         instance_ids:
           - "{{linux_instance_id}}"
         state: absent
+        wait: True
       ignore_errors: yes
       when: ec2_linux_vars_file.stat.exists == true
 

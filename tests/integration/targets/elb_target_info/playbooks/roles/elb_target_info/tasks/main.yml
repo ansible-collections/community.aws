@@ -364,6 +364,7 @@
       ec2_instance:
         name: "{{ resource_prefix }}-inst"
         state: absent
+        wait: True
       ignore_errors: true
 
     - name: remove application load balancer
@@ -492,5 +493,6 @@
       register: removed
       retries: 10
       until: removed is not failed
+      ignore_errors: True
 
     # ============================================================
