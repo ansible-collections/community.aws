@@ -53,7 +53,7 @@ base_module_args = {
     "region": "us-west-1",
     "name": "lambda_name",
     "state": "present",
-    "zip_file": "tests/unit/modules/fixtures/thezip.zip",
+    "zip_file": "tests/unit/plugins/modules/fixtures/thezip.zip",
     "runtime": 'python2.7',
     "role": 'arn:aws:iam::987654321012:role/lambda_basic_execution',
     "memory_size": 128,
