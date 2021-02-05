@@ -27,7 +27,7 @@ from ansible_collections.community.aws.tests.unit.plugins.modules.utils import s
 from ansible_collections.community.aws.plugins.modules.ec2_win_password import setup_module_object
 from ansible_collections.community.aws.plugins.modules.ec2_win_password import ec2_win_password
 
-fixture_prefix = 'tests/unit/modules/fixtures/certs'
+fixture_prefix = 'tests/unit/plugins/modules/fixtures/certs'
 
 
 class TestEc2WinPasswordModule(ModuleTestCase):
