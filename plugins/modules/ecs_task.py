@@ -268,13 +268,13 @@ class EcsExecManager:
                     self.module.fail_json_aws(e, msg="Couldn't look up security groups")
             result['securityGroups'] = groups
         if 'assign_public_ip' in network_config:
-           if self.module.botocore_at_least('1.8.4'):
-               if network_config['assign_public_ip'] is True:
+            if self.module.botocore_at_least('1.8.4'):
+                if network_config['assign_public_ip'] is True:
                     result['assignPublicIp'] = "ENABLED"
-               else:
+                else:
                     result['assignPublicIp'] = "DISABLED"
-           else:
-               self.module.fail_json(msg='botocore needs to be version 1.8.4 or higher to use assign_public_ip in network_configuration')
+            else:
+                self.module.fail_json(msg='botocore needs to be version 1.8.4 or higher to use assign_public_ip in network_configuration')
 
         return dict(awsvpcConfiguration=result)
 
