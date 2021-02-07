@@ -139,6 +139,11 @@ name:
     returned: success
     type: str
     sample: dev
+revision_id:
+    description: A unique identifier that changes when you update the alias.
+    returned: success
+    type: str
+    sample: 12345678-1234-1234-1234-123456789abc
 '''
 
 import re
