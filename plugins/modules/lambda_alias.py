@@ -216,7 +216,7 @@ def get_lambda_alias(module, client):
 
     # check if alias exists and get facts
     try:
-        results = client.get_alias(**api_params)
+        results = client.get_alias(aws_retry=True, **api_params)
     except is_boto3_error_code('ResourceNotFoundException'):
         results = None
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -259,7 +259,7 @@ def lambda_alias(module, client):
 
                 if not module.check_mode:
                     try:
-                        results = client.update_alias(**api_params)
+                        results = client.update_alias(aws_retry=True, **api_params)
                     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                         module.fail_json_aws(e, msg='Error updating function alias')
 
@@ -269,7 +269,7 @@ def lambda_alias(module, client):
 
             try:
                 if not module.check_mode:
-                    results = client.create_alias(**api_params)
+                    results = client.create_alias(aws_retry=True, **api_params)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Error creating function alias')
@@ -281,7 +281,7 @@ def lambda_alias(module, client):
 
             try:
                 if not module.check_mode:
-                    results = client.delete_alias(**api_params)
+                    results = client.delete_alias(aws_retry=True, **api_params)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Error deleting function alias')
