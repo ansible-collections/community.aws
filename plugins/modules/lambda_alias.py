@@ -249,6 +249,8 @@ def lambda_alias(module, client):
             # check if alias has changed -- only version and description can change
             alias_params = ('function_version', 'description')
             for param in alias_params:
+                if module.params.get(param) is None:
+                    continue
                 if module.params.get(param) != snake_facts.get(param):
                     changed = True
                     break
