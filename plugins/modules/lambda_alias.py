@@ -149,6 +149,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
@@ -188,20 +189,9 @@ class AWSConnection:
         return self.resource_client[resource]
 
 
-def pc(key):
-    """
-    Changes python key into Pascale case equivalent. For example, 'this_function_name' becomes 'ThisFunctionName'.
-
-    :param key:
-    :return:
-    """
-
-    return "".join([token.capitalize() for token in key.split('_')])
-
-
 def set_api_params(module, module_params):
     """
-    Sets module parameters to those expected by the boto3 API.
+    Sets non-None module parameters to those expected by the boto3 API.
 
     :param module:
     :param module_params:
@@ -213,9 +203,9 @@ def set_api_params(module, module_params):
     for param in module_params:
         module_param = module.params.get(param, None)
         if module_param:
-            api_params[pc(param)] = module_param
+            api_params[param] = module_param
 
-    return api_params
+    return snake_dict_to_camel_dict(api_params, capitalize_first=True)
 
 
 def validate_params(module, aws):
@@ -291,11 +281,12 @@ def lambda_alias(module, aws):
 
     if state == 'present':
         if current_state == 'present':
+            snake_facts = camel_dict_to_snake_dict(facts)
 
             # check if alias has changed -- only version and description can change
             alias_params = ('function_version', 'description')
             for param in alias_params:
-                if module.params.get(param) != facts.get(pc(param)):
+                if module.params.get(param) != snake_facts.get(param):
                     changed = True
                     break
 
