@@ -153,40 +153,7 @@ from ansible.module_utils.common.dict_transformations import snake_dict_to_camel
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-
-
-class AWSConnection:
-    """
-    Create the connection object and client objects as required.
-    """
-
-    def __init__(self, ansible_obj, resources, boto3_=True):
-
-        try:
-            self.region = ansible_obj.region
-            self.resource_client = dict()
-            if not resources:
-                resources = ['lambda']
-
-            resources.append('iam')
-
-            for resource in resources:
-                self.resource_client[resource] = ansible_obj.client(resource)
-
-            # if region is not provided, then get default profile/session region
-            if not self.region:
-                self.region = self.resource_client['lambda'].meta.region_name
-
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            ansible_obj.fail_json_aws(e, msg='Failed to connect to AWS')
-
-        try:
-            self.account_id = self.resource_client['iam'].get_user()['User']['Arn'].split(':')[4]
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError, ValueError, KeyError, IndexError):
-            self.account_id = ''
-
-    def client(self, resource='lambda'):
-        return self.resource_client[resource]
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def set_api_params(module, module_params):
@@ -208,12 +175,11 @@ def set_api_params(module, module_params):
     return snake_dict_to_camel_dict(api_params, capitalize_first=True)
 
 
-def validate_params(module, aws):
+def validate_params(module):
     """
     Performs basic parameter validation.
 
-    :param module: Ansible module reference
-    :param aws: AWS client connection
+    :param module: AnsibleAWSModule reference
     :return:
     """
 
@@ -236,16 +202,14 @@ def validate_params(module, aws):
     return
 
 
-def get_lambda_alias(module, aws):
+def get_lambda_alias(module, client):
     """
     Returns the lambda function alias if it exists.
 
-    :param module: Ansible module reference
-    :param aws: AWS client connection
+    :param module: AnsibleAWSModule
+    :param client: (wrapped) boto3 lambda client
     :return:
     """
-
-    client = aws.client('lambda')
 
     # set API parameters
     api_params = set_api_params(module, ('function_name', 'name'))
@@ -261,21 +225,20 @@ def get_lambda_alias(module, aws):
     return results
 
 
-def lambda_alias(module, aws):
+def lambda_alias(module, client):
     """
     Adds, updates or deletes lambda function aliases.
 
-    :param module: Ansible module reference
-    :param aws: AWS client connection
+    :param module: AnsibleAWSModule
+    :param client: (wrapped) boto3 lambda client
     :return dict:
     """
-    client = aws.client('lambda')
     results = dict()
     changed = False
     current_state = 'absent'
     state = module.params['state']
 
-    facts = get_lambda_alias(module, aws)
+    facts = get_lambda_alias(module, client)
     if facts:
         current_state = 'present'
 
@@ -347,11 +310,10 @@ def main():
         required_together=[],
     )
 
-    aws = AWSConnection(module, ['lambda'])
+    client = module.client('lambda', retry_decorator=AWSRetry.jittered_backoff())
 
-    validate_params(module, aws)
-
-    results = lambda_alias(module, aws)
+    validate_params(module)
+    results = lambda_alias(module, client)
 
     module.exit_json(**camel_dict_to_snake_dict(results))
 
