@@ -177,7 +177,7 @@ class AWSConnection:
                 self.region = self.resource_client['lambda'].meta.region_name
 
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            ansible_obj.fail_json(msg="Unable to connect, authorize or access resource: {0}".format(e))
+            ansible_obj.fail_json_aws(e, msg='Failed to connect to AWS')
 
         try:
             self.account_id = self.resource_client['iam'].get_user()['User']['Arn'].split(':')[4]
@@ -307,7 +307,7 @@ def lambda_alias(module, aws):
                     try:
                         results = client.update_alias(**api_params)
                     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                        module.fail_json(msg='Error updating function alias: {0}'.format(e))
+                        module.fail_json_aws(e, msg='Error updating function alias')
 
         else:
             # create new function alias
@@ -318,7 +318,7 @@ def lambda_alias(module, aws):
                     results = client.create_alias(**api_params)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                module.fail_json(msg='Error creating function alias: {0}'.format(e))
+                module.fail_json_aws(e, msg='Error creating function alias')
 
     else:  # state = 'absent'
         if current_state == 'present':
@@ -330,7 +330,7 @@ def lambda_alias(module, aws):
                     results = client.delete_alias(**api_params)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                module.fail_json(msg='Error deleting function alias: {0}'.format(e))
+                module.fail_json_aws(e, msg='Error deleting function alias')
 
     return dict(changed=changed, **dict(results or facts))
 
