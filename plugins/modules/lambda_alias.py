@@ -288,7 +288,7 @@ def lambda_alias(module, client):
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Error deleting function alias')
 
-    return dict(changed=changed, **dict(results or facts))
+    return dict(changed=changed, **dict(results or facts or {}))
 
 
 def main():
