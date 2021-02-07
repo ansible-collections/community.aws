@@ -433,7 +433,9 @@
         that:
           - delete_kms.key_state == "PendingDeletion"
           - delete_kms.changed
-          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days == 30
+          # Times won't be perfect, allow a 24 hour window
+          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days <= 30
+          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days >= 29
 
     - name: re-delete the key
       aws_kms:
@@ -486,7 +488,9 @@
         that:
           - delete_kms.key_state == "PendingDeletion"
           - delete_kms.changed
-          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days == 7
+          # Times won't be perfect, allow a 24 hour window
+          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days <= 7
+          - (( deletion_time | to_datetime ) - ( now_time | to_datetime )).days >= 6
 
   always:
     # ============================================================
