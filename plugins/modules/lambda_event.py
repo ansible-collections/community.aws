@@ -118,7 +118,6 @@ import re
 
 try:
     import botocore
-    from botocore.exceptions import ClientError, ParamValidationError, MissingParametersError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -163,7 +162,9 @@ class AWSConnection:
         # set account ID
         try:
             self.account_id = self.resource_client['iam'].get_user()['User']['Arn'].split(':')[4]
-        except (ClientError, ValueError, KeyError, IndexError):
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.account_id = ''
+        except (ValueError, KeyError, IndexError):
             self.account_id = ''
 
     def client(self, resource='lambda'):
@@ -317,8 +318,8 @@ def lambda_event_stream(module, aws):
         facts = client.list_event_source_mappings(**api_params)['EventSourceMappings']
         if facts:
             current_state = 'present'
-    except ClientError as e:
-        module.fail_json(msg='Error retrieving stream event notification configuration: {0}'.format(e))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Error retrieving stream event notification configuration')
 
     if state == 'present':
         if current_state == 'absent':
@@ -341,8 +342,8 @@ def lambda_event_stream(module, aws):
                 if not module.check_mode:
                     facts = client.create_event_source_mapping(**api_params)
                 changed = True
-            except (ClientError, ParamValidationError, MissingParametersError) as e:
-                module.fail_json(msg='Error creating stream source event mapping: {0}'.format(e))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg='Error creating stream source event mapping')
 
         else:
             # current_state is 'present'
@@ -371,8 +372,8 @@ def lambda_event_stream(module, aws):
                     if not module.check_mode:
                         facts = client.update_event_source_mapping(**api_params)
                     changed = True
-                except (ClientError, ParamValidationError, MissingParametersError) as e:
-                    module.fail_json(msg='Error updating stream source event mapping: {0}'.format(e))
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    module.fail_json_aws(e, msg='Error updating stream source event mapping')
 
     else:
         if current_state == 'present':
@@ -383,8 +384,8 @@ def lambda_event_stream(module, aws):
                 if not module.check_mode:
                     facts = client.delete_event_source_mapping(**api_params)
                 changed = True
-            except (ClientError, ParamValidationError, MissingParametersError) as e:
-                module.fail_json(msg='Error removing stream source event mapping: {0}'.format(e))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg='Error removing stream source event mapping')
 
     return camel_dict_to_snake_dict(dict(changed=changed, events=facts))
 
