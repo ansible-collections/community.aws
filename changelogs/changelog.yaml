@@ -775,7 +775,7 @@ releases:
         behavior (https://github.com/ansible-collections/community.aws/pull/318).
       minor_changes:
       - ec2_vpc_igw - Add AWSRetry decorators to improve reliability (https://github.com/ansible-collections/community.aws/pull/318).
-      - ec2_vpc_igw - Add ``purge_tags:`` parameter so that tags can be added without
+      - ec2_vpc_igw - Add ``purge_tags`` parameter so that tags can be added without
         purging existing tags to match the collection standard tagging behaviour (https://github.com/ansible-collections/community.aws/pull/318).
       - ec2_vpc_igw_info - Add AWSRetry decorators to improve reliability (https://github.com/ansible-collections/community.aws/pull/318).
       - ec2_vpc_igw_info - Add ``convert_tags`` parameter so that tags can be returned
