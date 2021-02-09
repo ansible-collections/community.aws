@@ -29,7 +29,7 @@ options:
         type: str
     task_definition:
         description:
-            - The task definition to start or run.
+            - The task definition to start, run or stop.
         required: False
         type: str
     overrides:
@@ -44,7 +44,7 @@ options:
         type: int
     task:
         description:
-            - The task to stop.
+            - The ARN of the task to stop.
         required: False
         type: str
     container_instances:
@@ -349,23 +349,23 @@ def main():
 
     # Validate Inputs
     if module.params['operation'] == 'run':
-        if 'task_definition' not in module.params and module.params['task_definition'] is None:
+        if module.params['task_definition'] is None:
             module.fail_json(msg="To run a task, a task_definition must be specified")
         task_to_list = module.params['task_definition']
         status_type = "RUNNING"
 
     if module.params['operation'] == 'start':
-        if 'task_definition' not in module.params and module.params['task_definition'] is None:
+        if module.params['task_definition'] is None:
             module.fail_json(msg="To start a task, a task_definition must be specified")
-        if 'container_instances' not in module.params and module.params['container_instances'] is None:
+        if module.params['container_instances'] is None:
             module.fail_json(msg="To start a task, container instances must be specified")
         task_to_list = module.params['task']
         status_type = "RUNNING"
 
     if module.params['operation'] == 'stop':
-        if 'task' not in module.params and module.params['task'] is None:
+        if module.params['task'] is None:
             module.fail_json(msg="To stop a task, a task must be specified")
-        if 'task_definition' not in module.params and module.params['task_definition'] is None:
+        if module.params['task_definition'] is None:
             module.fail_json(msg="To stop a task, a task definition must be specified")
         task_to_list = module.params['task_definition']
         status_type = "STOPPED"
