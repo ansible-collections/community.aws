@@ -221,11 +221,13 @@ bucket_list:
           contains:
             DisplayName:
               description: Bucket owner user display name.
-              returned: str
+              returned: always
+              type: str
               sample: username
             ID:
               description: Bucket owner user ID.
-              returned: str
+              returned: always
+              type: str
               sample: 123894e509349etc
     bucket_cors:
       description: Bucket CORS configuration.
