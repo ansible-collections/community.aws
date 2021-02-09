@@ -1,0 +1,9 @@
+---
+- project:
+    templates:
+      - ansible-collections-community-aws
+    check:
+      jobs:
+        - ansible-test-sanity-docker
+        - ansible-test-sanity-docker-stable-2.9
+        - ansible-test-sanity-docker-stable-2.10
