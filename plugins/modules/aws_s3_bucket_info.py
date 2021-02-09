@@ -252,151 +252,151 @@ bucket_list:
               returned: when encryption is enabled on the bucket
               type: list
               sample: { "ApplyServerSideEncryptionByDefault": { "SSEAlgorithm": "AES256" }, "BucketKeyEnabled": False }
-      bucket_lifecycle_configuration:
-        description: Bucket lifecycle configuration settings.
-        returned: when I(bucket_facts=true) and I(bucket_lifecycle_configuration=true)
-        type: complex
-        contains:
-          Rules:
-            description: List of lifecycle management rules.
-            returned: when lifecycle configuration is present
-            type: list
-            sample: [{ "Status": "Enabled", "ID": "example-rule" }]
-      bucket_location:
-        description: Bucket location.
-        returned: when I(bucket_facts=true) and I(bucket_location=true)
-        type: complex
-        contains:
-          LocationConstraint:
-            description: AWS region.
-            returned: always
-            type: str
-            sample: us-east-2
-      bucket_logging:
-        description: Server access logging configuration.
-        returned: when I(bucket_facts=true) and I(bucket_logging=true)
-        type: complex
-        contains:
-          LoggingEnabled:
-            description: Server access logging configuration.
-            returned: when server access logging is defined for the bucket
-            type: complex
-            contains:
-              TargetBucket:
-                description: Target bucket name.
-                returned: always
-                type: str
-                sample: logging-bucket-name
-              TargetPrefix:
-                description: Prefix in target bucket.
-                returned: always
-                type: str
-                sample: ""
-      bucket_notification_configuration:
-        description: Bucket notification settings.
-        returned: when I(bucket_facts=true) and I(bucket_notification_configuration=true)
-        type: complex
-        contains:
-          TopicConfigurations:
-            description: List of notification events configurations.
-            returned: when at least one notification is configured
-            type: list
-            sample: []
-      bucket_ownership_controls:
-        description: Preffered object ownership settings.
-        returned: when I(bucket_facts=true) and I(bucket_ownership_controls=true)
-        type: complex
-        contains:
-          OwnershipControls:
-            description: Object ownership settings.
-            returned: when ownership controls are defined for the bucket
-            type: complex
-            contains:
-              Rules:
-                description: List of ownership rules.
-                returned: when ownership rule is defined
-                type: list
-                sample: [{ "ObjectOwnership:": "ObjectWriter" }]
-      bucket_policy:
-        description: Bucket policy contents.
-        returned: when I(bucket_facts=true) and I(bucket_policy=true)
-        type: str
-        sample: '{"Version":"2012-10-17","Statement":[{"Sid":"AddCannedAcl","Effect":"Allow",..}}]}'
-      bucket_policy_status:
-        description: Status of bucket policy.
-        returned: when I(bucket_facts=true) and I(bucket_policy_status=true)
-        type: complex
-        contains:
-          PolicyStatus:
-            description: Status of bucket policy.
-            returned: when bucket policy is present
-            type: complex
-            contains:
-              IsPublic:
-                description: Report bucket policy public status.
-                returned: when bucket policy is present
-                type: bool
-                sample: True
-      bucket_replication:
-        description: Replication configuration settings.
-        returned: when I(bucket_facts=true) and I(bucket_replication=true)
-        type: complex
-        contains:
-          Role:
-            description: IAM role used for replication.
-            returned: when replication rule is defined
-            type: str
-            sample: "arn:aws:iam::123:role/example-role"
-          Rules:
-            description: List of replication rules.
-            returned: when replication rule is defined
-            type: list
-            sample: [{ "ID": "rule-1", "Filter": "{}" }]
-      bucket_request_payment:
-        description: Requester pays setting.
-        returned: when I(bucket_facts=true) and I(bucket_request_payment=true)
-        type: complex
-        contains:
-          Payer:
-            description: Current payer.
-            returned: always
-            type: str
-            sample: BucketOwner
-      bucket_tagging:
-        description: Bucket tags.
-        returned: when I(bucket_facts=true) and I(bucket_tagging=true)
-        type: dict
-        sample: { "Tag1": "Value1", "Tag2": "Value2" }
-      bucket_website:
-        description: Static website hosting.
-        returned: when I(bucket_facts=true) and I(bucket_website=true)
-        type: complex
-        contains:
-          ErrorDocument:
-            description: Object serving as HTTP error page.
-            returned: when static website hosting is enabled
-            type: dict
-            sample: { "Key": "error.html" }
-          IndexDocument:
-            description: Object serving as HTTP index page.
-            returned: when static website hosting is enabled
-            type: dict
-            sample: { "Suffix": "error.html" }
-          RedirectAllRequestsTo:
-            description: Website redict settings.
-            returned: when redirect requests is configured
-            type: complex
-            contains:
-              HostName:
-                description: Hostname to redirect.
-                returned: always
-                type: str
-                sample: www.example.com
-              Protocol:
-                description: Protocol used for redirect.
-                returned: always
-                type: str
-                sample: https
+    bucket_lifecycle_configuration:
+      description: Bucket lifecycle configuration settings.
+      returned: when I(bucket_facts=true) and I(bucket_lifecycle_configuration=true)
+      type: complex
+      contains:
+        Rules:
+          description: List of lifecycle management rules.
+          returned: when lifecycle configuration is present
+          type: list
+          sample: [{ "Status": "Enabled", "ID": "example-rule" }]
+    bucket_location:
+      description: Bucket location.
+      returned: when I(bucket_facts=true) and I(bucket_location=true)
+      type: complex
+      contains:
+        LocationConstraint:
+          description: AWS region.
+          returned: always
+          type: str
+          sample: us-east-2
+    bucket_logging:
+      description: Server access logging configuration.
+      returned: when I(bucket_facts=true) and I(bucket_logging=true)
+      type: complex
+      contains:
+        LoggingEnabled:
+          description: Server access logging configuration.
+          returned: when server access logging is defined for the bucket
+          type: complex
+          contains:
+            TargetBucket:
+              description: Target bucket name.
+              returned: always
+              type: str
+              sample: logging-bucket-name
+            TargetPrefix:
+              description: Prefix in target bucket.
+              returned: always
+              type: str
+              sample: ""
+    bucket_notification_configuration:
+      description: Bucket notification settings.
+      returned: when I(bucket_facts=true) and I(bucket_notification_configuration=true)
+      type: complex
+      contains:
+        TopicConfigurations:
+          description: List of notification events configurations.
+          returned: when at least one notification is configured
+          type: list
+          sample: []
+    bucket_ownership_controls:
+      description: Preffered object ownership settings.
+      returned: when I(bucket_facts=true) and I(bucket_ownership_controls=true)
+      type: complex
+      contains:
+        OwnershipControls:
+          description: Object ownership settings.
+          returned: when ownership controls are defined for the bucket
+          type: complex
+          contains:
+            Rules:
+              description: List of ownership rules.
+              returned: when ownership rule is defined
+              type: list
+              sample: [{ "ObjectOwnership:": "ObjectWriter" }]
+    bucket_policy:
+      description: Bucket policy contents.
+      returned: when I(bucket_facts=true) and I(bucket_policy=true)
+      type: str
+      sample: '{"Version":"2012-10-17","Statement":[{"Sid":"AddCannedAcl","Effect":"Allow",..}}]}'
+    bucket_policy_status:
+      description: Status of bucket policy.
+      returned: when I(bucket_facts=true) and I(bucket_policy_status=true)
+      type: complex
+      contains:
+        PolicyStatus:
+          description: Status of bucket policy.
+          returned: when bucket policy is present
+          type: complex
+          contains:
+            IsPublic:
+              description: Report bucket policy public status.
+              returned: when bucket policy is present
+              type: bool
+              sample: True
+    bucket_replication:
+      description: Replication configuration settings.
+      returned: when I(bucket_facts=true) and I(bucket_replication=true)
+      type: complex
+      contains:
+        Role:
+          description: IAM role used for replication.
+          returned: when replication rule is defined
+          type: str
+          sample: "arn:aws:iam::123:role/example-role"
+        Rules:
+          description: List of replication rules.
+          returned: when replication rule is defined
+          type: list
+          sample: [{ "ID": "rule-1", "Filter": "{}" }]
+    bucket_request_payment:
+      description: Requester pays setting.
+      returned: when I(bucket_facts=true) and I(bucket_request_payment=true)
+      type: complex
+      contains:
+        Payer:
+          description: Current payer.
+          returned: always
+          type: str
+          sample: BucketOwner
+    bucket_tagging:
+      description: Bucket tags.
+      returned: when I(bucket_facts=true) and I(bucket_tagging=true)
+      type: dict
+      sample: { "Tag1": "Value1", "Tag2": "Value2" }
+    bucket_website:
+      description: Static website hosting.
+      returned: when I(bucket_facts=true) and I(bucket_website=true)
+      type: complex
+      contains:
+        ErrorDocument:
+          description: Object serving as HTTP error page.
+          returned: when static website hosting is enabled
+          type: dict
+          sample: { "Key": "error.html" }
+        IndexDocument:
+          description: Object serving as HTTP index page.
+          returned: when static website hosting is enabled
+          type: dict
+          sample: { "Suffix": "error.html" }
+        RedirectAllRequestsTo:
+          description: Website redict settings.
+          returned: when redirect requests is configured
+          type: complex
+          contains:
+            HostName:
+              description: Hostname to redirect.
+              returned: always
+              type: str
+              sample: www.example.com
+            Protocol:
+              description: Protocol used for redirect.
+              returned: always
+              type: str
+              sample: https
 '''
 
 try:
