@@ -24,7 +24,7 @@ options:
     aliases:
       - key_alias
     type: str
-    version_added: 1.3.0
+    version_added: 1.4.0
   key_id:
     description:
       - Key ID or ARN of the key.
@@ -33,7 +33,7 @@ options:
     aliases:
       - key_arn
     type: str
-    version_added: 1.3.0
+    version_added: 1.4.0
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
