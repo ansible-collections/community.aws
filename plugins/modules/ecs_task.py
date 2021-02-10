@@ -19,6 +19,9 @@ options:
     operation:
         description:
             - Which task operation to execute.
+            - When I(operation=run) I(task_definition) must be set.
+            - When I(operation=start) both I(task_definition) and I(container_instances) must be set.
+            - When I(operation=stop) both I(task_definition) and I(task) must be set.
         required: True
         choices: ['run', 'start', 'stop']
         type: str
@@ -345,28 +348,24 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True,
-                              required_if=[('launch_type', 'FARGATE', ['network_configuration'])])
+                              required_if=[
+                                  ('launch_type', 'FARGATE', ['network_configuration']),
+                                  ('operation', 'run', ['task_definition']),
+                                  ('operation', 'start', ['task_definition', 'container_instances']),
+                                  ('operation', 'stop', ['task_definition', 'task']),
+                              ]
+                             )
 
     # Validate Inputs
     if module.params['operation'] == 'run':
-        if module.params['task_definition'] is None:
-            module.fail_json(msg="To run a task, a task_definition must be specified")
         task_to_list = module.params['task_definition']
         status_type = "RUNNING"
 
     if module.params['operation'] == 'start':
-        if module.params['task_definition'] is None:
-            module.fail_json(msg="To start a task, a task_definition must be specified")
-        if module.params['container_instances'] is None:
-            module.fail_json(msg="To start a task, container instances must be specified")
         task_to_list = module.params['task']
         status_type = "RUNNING"
 
     if module.params['operation'] == 'stop':
-        if module.params['task'] is None:
-            module.fail_json(msg="To stop a task, a task must be specified")
-        if module.params['task_definition'] is None:
-            module.fail_json(msg="To stop a task, a task definition must be specified")
         task_to_list = module.params['task_definition']
         status_type = "STOPPED"
 
