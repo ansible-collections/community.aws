@@ -25,7 +25,7 @@ options:
     cluster:
         description:
             - The name of the cluster to run the task on.
-        required: False
+        required: True
         type: str
     task_definition:
         description:
@@ -332,7 +332,7 @@ class EcsExecManager:
 def main():
     argument_spec = dict(
         operation=dict(required=True, choices=['run', 'start', 'stop']),
-        cluster=dict(required=False, type='str'),  # R S P
+        cluster=dict(required=True, type='str'),  # R S P
         task_definition=dict(required=False, type='str'),  # R* S*
         overrides=dict(required=False, type='dict'),  # R S
         count=dict(required=False, type='int'),  # R
