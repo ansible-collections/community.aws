@@ -351,10 +351,12 @@ def main():
                               required_if=[
                                   ('launch_type', 'FARGATE', ['network_configuration']),
                                   ('operation', 'run', ['task_definition']),
-                                  ('operation', 'start', ['task_definition', 'container_instances']),
+                                  ('operation', 'start', [
+                                      'task_definition',
+                                      'container_instances'
+                                  ]),
                                   ('operation', 'stop', ['task_definition', 'task']),
-                              ]
-                             )
+                              ])
 
     # Validate Inputs
     if module.params['operation'] == 'run':
