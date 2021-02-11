@@ -141,7 +141,7 @@ class VGWRetry(AWSRetry):
             response_codes = (response_codes,)
 
         for code in response_codes:
-            if super.found(response_codes, catch_extra_error_codes):
+            if super().found(response_codes, catch_extra_error_codes):
                 return True
 
         return False
