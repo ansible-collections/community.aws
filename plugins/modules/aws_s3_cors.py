@@ -147,7 +147,7 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        rules=dict(type='list', elements='str'),
+        rules=dict(type='list', elements='dict'),
         state=dict(type='str', choices=['present', 'absent'], required=True)
     )
 
