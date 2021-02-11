@@ -229,7 +229,7 @@ try:
         boto3_tag_list_to_ansible_dict,
         compare_aws_tags,
     )
-    from ansible_collections.amazon.aws.plugins.module_utils.aws.core import (
+    from ansible_collections.amazon.aws.plugins.module_utils.core import (
         AnsibleAWSModule,
         is_boto3_error_code,
     )
