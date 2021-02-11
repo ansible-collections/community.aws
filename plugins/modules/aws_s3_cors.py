@@ -25,7 +25,7 @@ options:
     description:
       - Cors rules to put on the s3 bucket
     type: list
-    elements: str
+    elements: dict
   state:
     description:
       - Create or remove cors on the s3 bucket
