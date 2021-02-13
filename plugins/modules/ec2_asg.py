@@ -620,6 +620,7 @@ from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
@@ -891,12 +892,7 @@ def get_launch_object(connection, ec2_connection):
                     instance_type_dict = {'InstanceType': instance_type}
                     policy['LaunchTemplate']['Overrides'].append(instance_type_dict)
             if instances_distribution:
-                instances_distribution_params = dict(
-                    (key, value)
-                    for key, value
-                    in instances_distribution.items()
-                    if value is not None
-                )
+                instances_distribution_params = scrub_none_parameters(instances_distribution)
                 policy['InstancesDistribution'] = snake_dict_to_camel_dict(instances_distribution_params, capitalize_first=True)
             launch_object['MixedInstancesPolicy'] = policy
         return launch_object
