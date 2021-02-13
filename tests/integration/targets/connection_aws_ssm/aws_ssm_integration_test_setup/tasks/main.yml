@@ -70,6 +70,7 @@
     - name: Create Windows EC2 instance
       ec2_instance:
         instance_type: "{{instance_type}}"
+        ebs_optimized: True
         image_id: "{{windows_ami_id}}"
         wait: no
         instance_role: "{{role_output.iam_role.role_name}}"
@@ -88,6 +89,7 @@
     - name: Create Linux EC2 instance
       ec2_instance:
         instance_type: "{{instance_type}}"
+        ebs_optimized: True
         image_id: "{{linux_ami_id}}"
         wait: "yes"
         instance_role: "{{role_output.iam_role.role_name}}"
