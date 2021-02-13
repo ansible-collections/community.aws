@@ -2,22 +2,22 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-ANSIBLE_METADATA = {'metadata_version': '1.1',
-                    'status': ['preview'],
-                    'supported_by': 'community'}
+from __future__ import (absolute_import, division, print_function)
+__metaclass__ = type
 
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: ec2_transit_gateway_vpn
+version_added: 1.0.0
 short_description: Create, modify, and delete EC2 VPN connections.
 description:
   - This module creates, modifies, and deletes VPN connections associated to a transit gateway (TGW).
     Idempotence is achieved by using the filters option or specifying the VPN connection identifier.
-version_added: "2.10"
 extends_documentation_fragment:
- - ec2
- - aws
+- amazon.aws.ec2
+- amazon.aws.aws
+
 requirements: ['boto3', 'botocore']
 author: "Sloane Hertel (@s-hertel), Andras Dosztal (@adosztal)"
 options:
@@ -27,23 +27,29 @@ options:
     choices: ['present', 'absent']
     default: present
     required: no
+    type: str
   customer_gateway_id:
     description:
       - The ID of the customer gateway.
+    type: str
   connection_type:
     description:
       - The type of VPN connection.
-    choices: ['ipsec.1']
+      - At this time only C(ipsec.1) is supported.
     default: ipsec.1
+    type: str
   transit_gateway_id:
     description:
       - The ID of the transit gateway.
+    type: str
   vpn_connection_id:
     description:
       - The ID of the VPN connection. Required to modify or delete a connection if the filters option does not provide a unique match.
+    type: str
   tags:
     description:
       - Tags to attach to the VPN connection.
+    type: dict
   purge_tags:
     description:
       - Whether or not to delete VPN connections tags that are associated with the connection but not specified in the task.
@@ -57,18 +63,26 @@ options:
     required: no
   tunnel_options:
     description:
-      - An optional list object containing no more than two dict members, each of which may contain 'TunnelInsideCidr'
-        and/or 'PreSharedKey' keys with appropriate string values.  AWS defaults will apply in absence of either of
+      - An optional list object containing no more than two dict members, each of which may contain I(TunnelInsideCidr)
+        and/or I(PreSharedKey) keys with appropriate string values.  AWS defaults will apply in absence of either of
         the aforementioned keys.
     required: no
-    version_added: "2.10"
+    type: list
+    elements: dict
+    suboptions:
+        TunnelInsideCidr:
+            type: str
+            description: The range of inside IP addresses for the tunnel.
+        PreSharedKey:
+            type: str
+            description: The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway.
   filters:
     description:
-      - An alternative to using vpn_connection_id. If multiple matches are found, vpn_connection_id is required.
+      - An alternative to using I(vpn_connection_id). If multiple matches are found, vpn_connection_id is required.
         If one of the following suboptions is a list of items to filter by, only one item needs to match to find the VPN
-        that correlates. e.g. if the filter 'cidr' is ['194.168.2.0/24', '192.168.2.0/24'] and the VPN route only has the
-        destination cidr block of '192.168.2.0/24' it will be found with this filter (assuming there are not multiple
-        VPNs that are matched). Another example, if the filter 'vpn' is equal to ['vpn-ccf7e7ad', 'vpn-cb0ae2a2'] and one
+        that correlates. e.g. if the filter I(cidr) is C(['194.168.2.0/24', '192.168.2.0/24']) and the VPN route only has the
+        destination cidr block of C(192.168.2.0/24) it will be found with this filter (assuming there are not multiple
+        VPNs that are matched). Another example, if the filter I(vpn) is equal to C(['vpn-ccf7e7ad', 'vpn-cb0ae2a2']) and one
         of of the VPNs has the state deleted (exists but is unmodifiable) and the other exists and is not deleted,
         it will be found via this filter. See examples.
     suboptions:
@@ -77,7 +91,7 @@ options:
           - The customer gateway configuration of the VPN as a string (in the format of the return value) or a list of those strings.
       static-routes-only:
         description:
-          - The type of routing; true or false.
+          - The type of routing; C(true) or C(false).
       cidr:
         description:
           - The destination cidr of the VPN's route as a string or a list of those strings.
@@ -103,30 +117,32 @@ options:
       cgw:
         description:
           - The customer gateway id as a string or a list of those strings.
+    type: dict
   routes:
     description:
       - Routes to add to the connection.
+    type: list
+    elements: str
   purge_routes:
     description:
       - Whether or not to delete VPN connections routes that are not specified in the task.
     type: bool
-  wait_timeout:
+    default: false
+ wait_timeout:
     description:
       - How long before wait gives up, in seconds.
     default: 600
     type: int
     required: false
-    version_added: "2.8"
   delay:
     description:
       - The time to wait before checking operation again. in seconds.
     required: false
     type: int
     default: 15
-    version_added: "2.8"
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
@@ -270,7 +286,7 @@ vgw_telemetry:
     vgw_telemetry: [{
                      'outside_ip_address': 'string',
                      'status': 'up',
-                     'last_status_change': datetime(2015, 1, 1),
+                     'last_status_change': 'datetime(2015, 1, 1)',
                      'status_message': 'string',
                      'accepted_route_count': 123
                     }]
@@ -282,9 +298,9 @@ vpn_connection_id:
     vpn_connection_id: vpn-781e0e19
 """
 
-from ansible.module_utils.aws.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible.module_utils._text import to_text
-from ansible.module_utils.ec2 import (
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     camel_dict_to_snake_dict,
     boto3_tag_list_to_ansible_dict,
     compare_aws_tags,
@@ -690,7 +706,7 @@ def ensure_present(connection, module_params, check_mode=False):
                                            max_attempts=max_attempts,
                                            delay=delay)
         changes = check_for_update(connection, module_params, vpn_connection['VpnConnectionId'])
-        _ = make_changes(connection, vpn_connection['VpnConnectionId'], changes)
+        make_changes(connection, vpn_connection['VpnConnectionId'], changes)
 
     # get latest version if a change has been made and make tags output nice before returning it
     if vpn_connection:
@@ -727,12 +743,12 @@ def main():
         transit_gateway_id=dict(type='str'),
         tags=dict(default={}, type='dict'),
         connection_type=dict(default='ipsec.1', type='str'),
-        tunnel_options=dict(no_log=True, type='list', default=[]),
+        tunnel_options=dict(no_log=True, type='list', default=[], elements='dict'),
         static_only=dict(default=False, type='bool'),
         customer_gateway_id=dict(type='str'),
         vpn_connection_id=dict(type='str'),
         purge_tags=dict(type='bool', default=False),
-        routes=dict(type='list', default=[]),
+        routes=dict(type='list', default=[], elements='str'),
         purge_routes=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=600),
         delay=dict(type='int', default=15),
