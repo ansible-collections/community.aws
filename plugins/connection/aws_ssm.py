@@ -528,7 +528,7 @@ class Connection(ConnectionBase):
     def _file_transport_command(self, in_path, out_path, ssm_action):
         ''' transfer a file from using an intermediate S3 bucket '''
 
-        path_unescaped = "{0}/{1}".format(self.instance_id, out_path)
+        path_unescaped = u"{0}/{1}".format(self.instance_id, out_path)
         s3_path = path_unescaped.replace('\\', '/')
         bucket_url = 's3://%s/%s' % (self.get_option('bucket_name'), s3_path)
 
