@@ -172,11 +172,11 @@ import time
 
 try:
     import boto3
+    from botocore.client import Config
     HAS_BOTO_3 = True
 except ImportError as e:
     HAS_BOTO_3_ERROR = str(e)
     HAS_BOTO_3 = False
-from botocore.client import Config
 
 from functools import wraps
 from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
