@@ -71,7 +71,7 @@
       ec2_instance:
         instance_type: "{{instance_type}}"
         image_id: "{{windows_ami_id}}"
-        wait: "yes"
+        wait: no
         instance_role: "{{role_output.iam_role.role_name}}"
         name: "{{resource_prefix}}-integration-test-aws-ssm-windows"
         user_data: |
@@ -81,6 +81,8 @@
                     Restart-Service AmazonSSMAgent
                     </powershell>
         state: present
+        tags:
+          TestPrefix: '{{ resource_prefix }}'
       register: windows_output
 
     - name: Create Linux EC2 instance
@@ -94,11 +96,24 @@
                     #!/bin/sh
                     sudo systemctl start amazon-ssm-agent
         state: present
+        tags:
+          TestPrefix: '{{ resource_prefix }}'
       register: linux_output
 
+    # This is just a delay, current host is localhost
     - name: Wait for EC2 to be available
       wait_for_connection:
         delay: 360
+
+    - name: Fetch info about instances
+      ec2_instance_info:
+        filters:
+          "tag:TestPrefix": '{{ resource_prefix }}'
+      register: instances_info
+
+    - name: Display instance info
+      debug:
+        var: instances_info
 
     - name: Create S3 bucket
       s3_bucket:
