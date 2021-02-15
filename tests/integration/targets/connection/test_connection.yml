@@ -46,6 +46,3 @@
     local_action: file path={{ local_file }} state=absent
   - name: remove remote temp file
     action: "{{ action_prefix }}file path={{ remote_file }} state=absent"
-
-  ### test wait_for_connection plugin
-  - wait_for_connection:
