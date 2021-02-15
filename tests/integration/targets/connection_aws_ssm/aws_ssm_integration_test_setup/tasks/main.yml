@@ -45,14 +45,6 @@
         - install_plugin_debian is skipped
         - install_plugin_redhat is skipped
 
-    - name: Install Boto3
-      pip:
-        name: boto3
-
-    - name: Install Boto
-      pip:
-        name: boto
-
     - name: Ensure IAM instance role exists
       iam_role:
         name: "ansible-test-{{resource_prefix}}-aws-ssm-role"
