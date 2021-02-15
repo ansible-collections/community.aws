@@ -99,16 +99,6 @@
       wait_for_connection:
         delay: 360
 
-    - name: Fetch info about instances
-      ec2_instance_info:
-        filters:
-          "tag:TestPrefix": '{{ resource_prefix }}'
-      register: instances_info
-
-    - name: Display instance info
-      debug:
-        var: instances_info
-
     - name: Create S3 bucket
       s3_bucket:
         name: "{{resource_prefix}}-aws-ssm-s3"
