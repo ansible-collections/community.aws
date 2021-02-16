@@ -814,6 +814,8 @@ releases:
         from S3 bucket by ```_get_url()``` due to due to non-assignment of aws region
         in the URL and not using V4 signature as specified for AWS S3 signature URL
         by ```_get_boto_client()``` in (https://github.com/ansible-collections/community.aws/pull/352).
+      - aws_ssm - fixed ``UnicodeEncodeError`` error when using unicode file names
+        (https://github.com/ansible-collections/community.aws/pull/295).
       - ec2_eip - fix eip association by instance id & private ip address due to case-sensitivity
         of the ``PrivateIpAddress`` parameter (https://github.com/ansible-collections/community.aws/pull/328).
       - ec2_vpc_endpoint - ensure ``changed`` is correctly set when deleting an endpoint
@@ -861,6 +863,7 @@ releases:
     - 214-get_ec2_security_group_ids_from_names.yml
     - 268-is_boto3_error.yml
     - 280-cleanup-botocore_at_least.yml
+    - 295-connection-aws_ssm.yml
     - 326-launch_template_retry.yml
     - 328-fix-ec2_eip-instance-id-private-ip-address.yml
     - 349-ec2_eip-deprecate-instance_id.yml
@@ -875,4 +878,4 @@ releases:
     - 402-ecs_task-mandatory_params.yml
     - 404-fix-dict-element-for-rule-param-in-aws-s3-cors.yml
     - 405-route53-boto3.yml
-    release_date: '2021-02-15'
+    release_date: '2021-02-16'
