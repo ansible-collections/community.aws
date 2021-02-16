@@ -93,6 +93,14 @@ options:
           - A list of instance_types.
         type: list
         elements: str
+      ondemand_base:
+        description:
+          - the minimum amount of capacity that must be fulfilled by On-Demand instances
+        type: int
+      ondemand_percentage_above_base:
+        description:
+          - percentages of on-demand instances beyond OnDemandBaseCapacity
+        type: int
     type: dict
   placement_group:
     description:
@@ -743,6 +751,10 @@ def get_properties(autoscaling_group):
     raw_mixed_instance_object = autoscaling_group.get('MixedInstancesPolicy')
     if raw_mixed_instance_object:
         properties['mixed_instances_policy'] = [x['InstanceType'] for x in raw_mixed_instance_object.get('LaunchTemplate').get('Overrides')]
+        if 'OnDemandPercentageAboveBaseCapacity' in raw_mixed_instance_object.get('InstancesDistribution', []):
+            properties['ondemand_percentage_above_base'] = raw_mixed_instance_object.get('InstancesDistribution').get('OnDemandPercentageAboveBaseCapacity')
+        if 'OnDemandBaseCapacity' in raw_mixed_instance_object.get('InstancesDistribution', []):
+            properties['ondemand_base'] = raw_mixed_instance_object.get('InstancesDistribution').get('OnDemandBaseCapacity')
 
     metrics = autoscaling_group.get('EnabledMetrics')
     if metrics:
@@ -802,6 +814,10 @@ def get_launch_object(connection, ec2_connection):
                 for instance_type in instance_types:
                     instance_type_dict = {'InstanceType': instance_type}
                     policy['LaunchTemplate']['Overrides'].append(instance_type_dict)
+            policy['InstancesDistribution'] = {
+                'OnDemandPercentageAboveBaseCapacity': mixed_instances_policy.get('ondemand_percentage_above_base'),
+                'OnDemandBaseCapacity': mixed_instances_policy.get('ondemand_base')
+            }
             launch_object['MixedInstancesPolicy'] = policy
         return launch_object
 
@@ -1661,6 +1677,8 @@ def main():
                     type='list',
                     elements='str'
                 ),
+                ondemand_percentage_above_base=dict(type='int'),
+                ondemand_base=dict(type='int')
             )
         ),
         placement_group=dict(type='str'),
