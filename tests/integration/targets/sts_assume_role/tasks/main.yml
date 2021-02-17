@@ -326,6 +326,7 @@
       iam_role:
         name: "ansible-test-sts-{{ resource_prefix }}"
         assume_role_policy_document:  "{{ lookup('template','policy.json.j2') }}"
+        delete_instance_profile: True
         managed_policy:
           - arn:aws:iam::aws:policy/IAMReadOnlyAccess
         state: absent
