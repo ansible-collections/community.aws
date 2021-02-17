@@ -165,7 +165,8 @@
       assert:
         that:
           - result is failed
-          - 'result.msg is search("argument \w+ is of type <.*> and we were unable to convert to int: <.*> cannot be converted to an int")'
+          - "'duration_seconds' in result.msg"
+          - "'cannot be converted to an int' in result.msg"
 
     # ============================================================
     - name: test assume role with invalid external id
