@@ -66,6 +66,7 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def delete_eigw(module, connection, eigw_id):
@@ -79,7 +80,10 @@ def delete_eigw(module, connection, eigw_id):
     changed = False
 
     try:
-        response = connection.delete_egress_only_internet_gateway(DryRun=module.check_mode, EgressOnlyInternetGatewayId=eigw_id)
+        response = connection.delete_egress_only_internet_gateway(
+            aws_retry=True,
+            DryRun=module.check_mode,
+            EgressOnlyInternetGatewayId=eigw_id)
     except is_boto3_error_code('DryRunOperation'):
         changed = True
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -103,7 +107,10 @@ def create_eigw(module, connection, vpc_id):
     changed = False
 
     try:
-        response = connection.create_egress_only_internet_gateway(DryRun=module.check_mode, VpcId=vpc_id)
+        response = connection.create_egress_only_internet_gateway(
+            aws_retry=True,
+            DryRun=module.check_mode,
+            VpcId=vpc_id)
     except is_boto3_error_code('DryRunOperation'):
         # When boto3 method is run with DryRun=True it returns an error on success
         # We need to catch the error and return something valid
@@ -139,7 +146,8 @@ def describe_eigws(module, connection, vpc_id):
     gateway_id = None
 
     try:
-        response = connection.describe_egress_only_internet_gateways()
+        response = connection.describe_egress_only_internet_gateways(
+            aws_retry=True)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Could not get list of existing Egress-Only Internet Gateways")
 
@@ -159,7 +167,8 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
-    connection = module.client('ec2')
+    retry_decorator = AWSRetry.jittered_backoff(retries=10)
+    connection = module.client('ec2', retry_decorator=retry_decorator)
 
     vpc_id = module.params.get('vpc_id')
     state = module.params.get('state')
