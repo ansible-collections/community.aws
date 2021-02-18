@@ -1,0 +1,37 @@
+- name: Run ec2_asg integration tests.
+
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+
+  collections:
+    - amazon.aws
+
+  block:
+
+    - name: test getting info for an ASG name
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+      ignore_errors: yes
+      register: output
+      ignore_errors: no
+    - debug: var=output  
+
+    - name: Find AMI to use
+      ec2_ami_info:
+        owners: 'amazon'
+        filters:
+          name: '{{ ec2_ami_name }}'
+      register: ec2_amis
+    - set_fact:
+        ec2_ami_image: '{{ ec2_amis.images[0].image_id }}'
+
+    - name: load balancer name has to be less than 32 characters
+      # the 8 digit identifier at the end of resource_prefix helps determine during which test something
+      # was created
+      set_fact:
+        load_balancer_name: "{{ item }}-lb"
+      loop: "{{ resource_prefix | regex_findall('.{8}$') }}"
