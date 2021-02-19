@@ -8,7 +8,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: ec2_vpc_endpoint_service_info
 short_description: retrieves AWS VPC endpoint service details
-version_added: 1.4.0
+version_added: 1.5.0
 description:
   - Gets details related to AWS VPC Endpoint Services.
 requirements: [ boto3 ]
