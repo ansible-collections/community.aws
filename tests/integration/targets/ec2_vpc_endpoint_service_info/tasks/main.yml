@@ -75,14 +75,22 @@
   - name: 'Verify services'
     vars:
       first_service: '{{ services_info.service_details[0] }}'
+      # The same service sometimes pop up twice. s3 for example has
+      # s3.us-east-1.amazonaws.com and s3.us-east-1.vpce.amazonaws.com which are
+      # part of com.amazonaws.us-east-1.s3 so we need to run the results through
+      # the unique filter to know if we've got what we think we have
+      unique_names: '{{ services_info.service_names | unique | list }}'
+      unique_detail_names: '{{ services_info.service_details | map(attribute="service_name") | unique | list }}'
     assert:
       that:
       - services_info is successful
       - services_info is not changed
       - '"service_names" in services_info'
-      - (services_info.service_names | length) == (search_service_names | length)
+      - (unique_names | length) == (search_service_names | length)
+      - (unique_detail_names | length ) == (search_service_names | length)
+      - (unique_names | difference(search_service_names) | length) == 0
+      - (unique_detail_names | difference(search_service_names) | length) == 0
       - '"service_details" in services_info'
-      - (services_info.service_details | length) == (search_service_names | length)
       - '"acceptance_required" in first_service'
       - '"availability_zones" in first_service'
       - '"base_endpoint_dns_names" in first_service'
