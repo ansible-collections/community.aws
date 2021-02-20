@@ -1102,8 +1102,9 @@ def main():
         )
 
     if not success:
+        results = results or {}
         module.fail_json(
-            msg=err_msg, success=success, changed=changed
+            msg=err_msg, success=success, changed=changed, **results
         )
     else:
         module.exit_json(
