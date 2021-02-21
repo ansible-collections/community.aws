@@ -98,9 +98,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
-@AWSRetry.jittered_backoff(
-    retries=10, delay=3, catch_extra_error_codes=['InstanceRefreshInProgress']
-)
 def start_or_cancel_instance_refresh(conn, module):
     """
     Args:
@@ -136,7 +133,7 @@ def start_or_cancel_instance_refresh(conn, module):
         'started': conn.start_instance_refresh,
     }
     try:
-        result = cmd_invocations[asg_state](**args)
+        result = cmd_invocations[asg_state](aws_retry=True, **args)
         result = dict(
             instance_refresh_id=result['InstanceRefreshId']
         )
@@ -177,6 +174,10 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec)
     autoscaling = module.client(
         'autoscaling',
+        retry_decorator=AWSRetry.jittered_backoff(
+            retries=10,
+            catch_extra_error_codes=['InstanceRefreshInProgress']
+        )
     )
     results = start_or_cancel_instance_refresh(
         autoscaling,

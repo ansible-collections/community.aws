@@ -121,7 +121,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
-@AWSRetry.jittered_backoff(retries=10, delay=3)
 def find_asg_instance_refreshes(conn, module):
     """
     Args:
@@ -170,7 +169,7 @@ def find_asg_instance_refreshes(conn, module):
         args['MaxRecords'] = asg_max_records
 
     try:
-        asgs = conn.describe_instance_refreshes(**args)
+        asgs = conn.describe_instance_refreshes(aws_retry=True, **args)
         asgs = camel_dict_to_snake_dict(asgs)
         result = dict(
             instance_refreshes=asgs['instance_refreshes'],
@@ -194,7 +193,10 @@ def main():
         argument_spec=argument_spec,
     )
 
-    autoscaling = module.client('autoscaling')
+    autoscaling = module.client(
+        'autoscaling',
+        retry_decorator=AWSRetry.jittered_backoff(retries=10)
+    )
 
     results = find_asg_instance_refreshes(
         autoscaling,
