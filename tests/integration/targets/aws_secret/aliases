@@ -1,4 +1,6 @@
 # reason: missing-policy
+# reason: broken
+# The tests for configuring secret rotation seem to be missing a permission
 unsupported
 
 cloud/aws

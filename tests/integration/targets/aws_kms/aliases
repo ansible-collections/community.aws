@@ -1,5 +1,7 @@
-cloud/aws
-aws_kms_info
-shippable/aws/group2
 # Various race conditions - likely needs waiters
 unstable
+
+cloud/aws
+shippable/aws/group2
+
+aws_kms_info

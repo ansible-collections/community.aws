@@ -1,5 +1,7 @@
 # reason: unstable
+# reason: boto2
 # When running tests a failure rate of around 20% was observed
+# This will in part be because it's boto v2 based so handles API rate limiting poorly
 unsupported
 
 cloud/aws
