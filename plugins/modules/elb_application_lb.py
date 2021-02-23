@@ -514,7 +514,7 @@ def create_or_update_elb(elb_obj):
 
     listeners_to_add, listeners_to_modify, listeners_to_delete = listeners_obj.compare_listeners()
 
-    # Delete listeners
+    # Delete the listeners
     for listener_to_delete in listeners_to_delete:
         listener_obj = ELBListener(elb_obj.connection, elb_obj.module, listener_to_delete, elb_obj.elb['LoadBalancerArn'])
         listener_obj.delete()
