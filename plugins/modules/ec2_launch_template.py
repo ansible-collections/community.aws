@@ -481,11 +481,22 @@ def delete_template(module):
         return {'changed': False}
 
 
+def remove_none(obj):
+  if isinstance(obj, (list, tuple, set)):
+    return type(obj)(remove_none(x) for x in obj if x is not None)
+  elif isinstance(obj, dict):
+    return type(obj)((remove_none(k), remove_none(v))
+      for k, v in obj.items() if k is not None and v is not None)
+  else:
+    return obj
+
+
 def create_or_update(module, template_options):
     ec2 = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff(catch_extra_error_codes=['InvalidLaunchTemplateId.NotFound']))
     template, template_versions = existing_templates(module)
     out = {}
     lt_data = params_to_launch_data(module, dict((k, v) for k, v in module.params.items() if k in template_options))
+    lt_data = remove_none(lt_data)
     if not (template or template_versions):
         # create a full new one
         try:
