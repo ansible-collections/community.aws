@@ -1,0 +1,3 @@
+---
+bugfixes:
+  - Remove None types from dict in ec2_launch_template before passing them wrongly to boto create method.
