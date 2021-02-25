@@ -109,8 +109,6 @@ instances_to_update:
     sample: 5
 '''
 
-import re
-
 try:
     from botocore.exceptions import BotoCoreError, ClientError
 except ImportError:
