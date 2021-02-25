@@ -10,7 +10,7 @@ DOCUMENTATION = '''
 ---
 module: ec2_asg_instance_refresh
 version_added: 1.0.0
-short_description: Start or cancel an  ec2 Auto Scaling Group Instance Refresh in AWS
+short_description: Start or cancel an ec2 Auto Scaling Group (ASG) Instance Refresh in AWS
 description:
   - Start or cancel an ec2 Auto Scaling Group Instance Refresh in AWS
   - Can be used with ec2_asg_instance_refreshes_info to track the subsequent progress
@@ -19,7 +19,7 @@ author: "Dan Khersonsky (@danquixote)"
 options:
   state:
     description:
-      - Desired state
+      - Desired state of the ASG
     type: str
     required: true
     choices: [ 'started', 'canceled' ]
@@ -31,11 +31,16 @@ options:
   strategy:
     description:
       - The strategy to use for the instance refresh. The only valid value is Rolling.
+      - A rolling update is an update that is applied to all instances in an Auto Scaling group until all instances have been updated.
+      - A rolling update can fail due to failed health checks or if instances are on standby or are protected from scale in.
+      - If the rolling update process fails, any instances that were already replaced are not rolled back to their previous configuration.
     type: str
     default: 'Rolling'
   preferences:
     description:
-      - preferences
+      - Set of preferences associated with the instance refresh request.
+      - If not provided, the default values are used. For MinHealthyPercentage, the default value is 90.
+      - For InstanceWarmup, the default is to use the value specified for the health check grace period for the Auto Scaling group.
     required: false
     suboptions:
       min_healthy_percentage:
@@ -46,7 +51,9 @@ options:
         type: int
       instance_warmup:
         description:
-          - instance_warmup
+          - The number of seconds until a newly launched instance is configured and ready to use.
+          - During this time, Amazon EC2 Auto Scaling does not immediately move on to the next replacement.
+          - The default is to use the value for the health check grace period defined for the group.
         type: int
     type: dict
 extends_documentation_fragment:
@@ -92,9 +99,12 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 
 def start_or_cancel_instance_refresh(conn, module):
@@ -122,11 +132,8 @@ def start_or_cancel_instance_refresh(conn, module):
     if preferences:
         if asg_state == 'canceled':
             module.fail_json(msg='can not pass preferences dict when canceling a refresh')
-        args['Preferences'] = {}
-        if preferences.get('min_healthy_percentage'):
-            args['Preferences']['MinHealthyPercentage'] = preferences['min_healthy_percentage']
-        if preferences.get('instance_warmup'):
-            args['Preferences']['InstanceWarmup'] = preferences['instance_warmup']
+        _prefs = scrub_none_parameters(preferences)
+        args['Preferences'] = snake_dict_to_camel_dict(_prefs, capitalize_first=True)
     cmd_invocations = {
         'canceled': conn.cancel_instance_refresh,
         'started': conn.start_instance_refresh,
