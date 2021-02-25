@@ -45,7 +45,9 @@ options:
     suboptions:
       min_healthy_percentage:
         description:
-          - The amount of capacity in the Auto Scaling group that must remain healthy during an instance refresh to allow the operation to continue, as a percentage of the desired capacity of the Auto Scaling group (rounded up to the nearest integer). The default is 90.
+          - The amount of capacity in the Auto Scaling group that must remain healthy during an instance refresh to allow the operation to continue,
+          - as a percentage of the desired capacity of the Auto Scaling group (rounded up to the nearest integer).
+          - The default is 90.
         type: int
       instance_warmup:
         description:
