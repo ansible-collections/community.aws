@@ -30,7 +30,7 @@ options:
     required: true
   strategy:
     description:
-      - list of InstanceRefreshIds
+      - The strategy to use for the instance refresh. The only valid value is Rolling.
     type: str
     default: 'Rolling'
   preferences:
