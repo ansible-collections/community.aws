@@ -119,7 +119,7 @@ def start_or_cancel_instance_refresh(conn, module):
         args['Strategy'] = 'Rolling'
     if preferences:
         if asg_state == 'canceled':
-            module.fail_json_aws(Exception, msg='can not pass preferences dict when canceling a refresh')
+            module.fail_json(msg='can not pass preferences dict when canceling a refresh')
         args['Preferences'] = {}
         if preferences.get('min_healthy_percentage'):
             args['Preferences']['MinHealthyPercentage'] = preferences['min_healthy_percentage']
