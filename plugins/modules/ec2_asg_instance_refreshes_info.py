@@ -12,30 +12,37 @@ DOCUMENTATION = '''
 ---
 module: ec2_asg_instance_refreshes_info
 version_added: 1.0.0
-short_description: Gather information about ec2 Auto Scaling Group Instance Refreshes in AWS
+short_description: Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 description:
-  - Gather information about ec2 Auto Scaling Group Instance Refreshes in AWS
+    - Describes one or more instance refreshes.
+    - You can determine the status of a request by looking at the Status parameter. The following are the possible statuses:
+    -    Pending: The request was created, but the operation has not started.
+    -    InProgress: The operation is in progress.
+    -    Successful: The operation completed successfully.
+    -    Failed: The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.
+    -    Cancelling: An ongoing operation is being cancelled. Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.
+    -    Cancelled: The operation is cancelled.
 requirements: [ boto3 ]
 author: "Dan Khersonsky (@danquixote)"
 options:
   name:
     description:
-      - The name of the auto scaling group you are searching for.
+      - The name of the Auto Scaling group.
     type: str
     required: true
   ids:
     description:
-      - list of InstanceRefreshIds
+      - One or more instance refresh IDs.
     type: list
     elements: str
     default: []
   next_token:
     description:
-      - next token if results are paginated
+      - The token for the next set of items to return. (You received this token from a previous call.)
     type: str
   max_records:
     description:
-      - max # of records to return?
+      - The maximum number of items to return with this call. The default value is 50 and the maximum value is 100.
     type: int
     required: false
 extends_documentation_fragment:
