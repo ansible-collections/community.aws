@@ -106,6 +106,9 @@ def verify_acls(connection, module, target_bucket):
         if grant == required_grant:
             return False
 
+    if module.check_mode:
+        return True
+
     updated_acl = dict(current_acl)
     updated_grants = list(current_grants)
     updated_grants.append(required_grant)
@@ -140,6 +143,9 @@ def enable_bucket_logging(connection, module):
             bucket_logging = camel_dict_to_snake_dict(bucket_logging)
             module.exit_json(changed=changed, **bucket_logging)
 
+        if module.check_mode:
+            module.exit_json(changed=True)
+
         result = connection.put_bucket_logging(
             Bucket=bucket_name,
             BucketLoggingStatus={
@@ -169,6 +175,9 @@ def disable_bucket_logging(connection, module):
     if not compare_bucket_logging(bucket_logging, None, None):
         module.exit_json(changed=False)
 
+    if module.check_mode:
+        module.exit_json(changed=True)
+
     try:
         response = connection.put_bucket_logging(aws_retry=True, Bucket=bucket_name, BucketLoggingStatus={})
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
@@ -186,7 +195,7 @@ def main():
         state=dict(required=False, default='present', choices=['present', 'absent']),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
     connection = module.client('s3', retry_decorator=AWSRetry.jittered_backoff())
     state = module.params.get("state")
