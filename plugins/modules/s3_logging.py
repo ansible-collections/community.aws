@@ -179,7 +179,11 @@ def disable_bucket_logging(connection, module):
         module.exit_json(changed=True)
 
     try:
-        response = connection.put_bucket_logging(aws_retry=True, Bucket=bucket_name, BucketLoggingStatus={})
+        response = AWSRetry.jittered_backoff(
+            catch_extra_error_codes=['InvalidTargetBucketForLogging']
+        )(connection.put_bucket_logging)(
+            Bucket=bucket_name, BucketLoggingStatus={}
+        )
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to disable bucket logging")
 
