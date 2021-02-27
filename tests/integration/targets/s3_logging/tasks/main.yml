@@ -11,17 +11,17 @@
 #
 - module_defaults:
     group/aws:
-      aws_access_key: '{{ aws_access_key | default(omit) }}'
-      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
       security_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region | default(omit) }}'
+      region: '{{ aws_region }}'
   collections:
     - amazon.aws
   block:
 
   # ============================================================
 
-  - name: Try to enable logging without providing target_bucket
+  - name: Try to enable logging before creating target_bucket
     s3_logging:
       state: present
       name: '{{ test_bucket }}'
