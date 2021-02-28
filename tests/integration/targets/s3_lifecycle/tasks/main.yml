@@ -326,6 +326,7 @@
     - assert:
         that:
           - output is not changed
+
   # ============================================================
   # test all the examples
   # Configure a lifecycle rule on a bucket to expire (delete) items with a prefix of /logs/ after 30 days
@@ -336,6 +337,22 @@
         prefix: /logs/
         status: enabled
         state: present
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 1 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        expiration_days: 30
+        prefix: /logs/
+        status: enabled
+        state: present
+      register: output
+    - assert:
+        that:
+          - output is not changed
 
     # Configure a lifecycle rule to transition all items with a prefix of /logs/ to glacier after 7 days and then delete after 90 days
     - name: example 2
@@ -346,10 +363,23 @@
         prefix: /logs/
         status: enabled
         state: present
+      register: output
+    - assert:
+        that:
+          - output is changed
 
     - name: example 2 (idempotency)
       s3_lifecycle:
         name: '{{ bucket_name }}'
+        transition_days: 7
+        expiration_days: 90
+        prefix: /logs/
+        status: enabled
+        state: present
+      register: output
+    - assert:
+        that:
+          - output is not changed
 
     # Configure a lifecycle rule to transition all items with a prefix of /logs/ to glacier on 31 Dec 2020 and then delete on 31 Dec 2030.
     # Note that midnight GMT must be specified.
@@ -362,6 +392,23 @@
         prefix: /logs/
         status: enabled
         state: present
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 3 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        transition_date: "2020-12-30T00:00:00.000Z"
+        expiration_date: "2030-12-30T00:00:00.000Z"
+        prefix: /logs/
+        status: enabled
+        state: present
+      register: output
+    - assert:
+        that:
+          - output is not changed
 
     # Disable the rule created above
     - name: example 4
@@ -370,6 +417,21 @@
         prefix: /logs/
         status: disabled
         state: present
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 4 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        prefix: /logs/
+        status: disabled
+        state: present
+      register: output
+    - assert:
+        that:
+          - output is not changed
 
     # Delete the lifecycle rule created above
     - name: example 5
@@ -377,6 +439,20 @@
         name: '{{ bucket_name }}'
         prefix: /logs/
         state: absent
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 5 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        prefix: /logs/
+        state: absent
+      register: output
+    - assert:
+        that:
+          - output is not changed
 
     # Configure a lifecycle rule to transition all backup files older than 31 days in /backups/ to standard infrequent access class.
     - name: example 6
@@ -387,6 +463,23 @@
         transition_days: 31
         state: present
         status: enabled
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 6 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        prefix: /backups/
+        storage_class: standard_ia
+        transition_days: 31
+        state: present
+        status: enabled
+      register: output
+    - assert:
+        that:
+          - output is not changed
 
     # Configure a lifecycle rule to transition files to infrequent access after 30 days and glacier after 90
     - name: example 7
@@ -400,6 +493,27 @@
             storage_class: standard_ia
           - transition_days: 90
             storage_class: glacier
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 7 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        prefix: /other_logs/
+        state: present
+        status: enabled
+        transitions:
+          - transition_days: 30
+            storage_class: standard_ia
+          - transition_days: 90
+            storage_class: glacier
+      register: output
+    - assert:
+        that:
+          - output is not changed
+
  # ============================================================
   always:
     - name: Ensure all buckets are deleted
