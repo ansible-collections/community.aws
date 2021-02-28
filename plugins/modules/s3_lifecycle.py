@@ -123,6 +123,12 @@ options:
     description:
       - The I(requester_pays) option does nothing and will be removed after 2022-06-01
     type: bool
+  wait:
+    description:
+      - Wait for the configuration to complete before returning.
+    version_added: 1.5.0
+    type: bool
+    default: no
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -212,6 +218,7 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import normalize_boto3_result
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
@@ -226,10 +233,23 @@ def parse_date(date):
             return datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.000Z")
     except ValueError:
         return None
-def create_lifecycle_rule(client, module):
 
+
+def fetch_rules(client, module, name):
+    # Get the bucket's current lifecycle rules
+    try:
+        current_lifecycle = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)
+        current_lifecycle_rules = normalize_boto3_result(current_lifecycle['Rules'])
+    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
+        current_lifecycle_rules = []
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e)
+    return current_lifecycle_rules
+
+
+def build_rule(client, module):
     name = module.params.get("name")
-    expiration_date = module.params.get("expiration_date")
+    expiration_date = parse_date(module.params.get("expiration_date"))
     expiration_days = module.params.get("expiration_days")
     noncurrent_version_expiration_days = module.params.get("noncurrent_version_expiration_days")
     noncurrent_version_transition_days = module.params.get("noncurrent_version_transition_days")
@@ -239,20 +259,10 @@ def create_lifecycle_rule(client, module):
     rule_id = module.params.get("rule_id")
     status = module.params.get("status")
     storage_class = module.params.get("storage_class")
-    transition_date = module.params.get("transition_date")
+    transition_date = parse_date(module.params.get("transition_date"))
     transition_days = module.params.get("transition_days")
     transitions = module.params.get("transitions")
     purge_transitions = module.params.get("purge_transitions")
-    changed = False
-
-    # Get the bucket's current lifecycle rules
-    try:
-        current_lifecycle = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)
-        current_lifecycle_rules = current_lifecycle['Rules']
-    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
-        current_lifecycle_rules = []
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e)
 
     rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
     if rule_id is not None:
@@ -261,7 +271,7 @@ def create_lifecycle_rule(client, module):
     if expiration_days is not None:
         rule['Expiration'] = dict(Days=expiration_days)
     elif expiration_date is not None:
-        rule['Expiration'] = dict(Date=expiration_date)
+        rule['Expiration'] = dict(Date=expiration_date.isoformat())
 
     if noncurrent_version_expiration_days is not None:
         rule['NoncurrentVersionExpiration'] = dict(NoncurrentDays=noncurrent_version_expiration_days)
@@ -270,7 +280,7 @@ def create_lifecycle_rule(client, module):
         rule['Transitions'] = [dict(Days=transition_days, StorageClass=storage_class.upper()), ]
 
     elif transition_date is not None:
-        rule['Transitions'] = [dict(Date=transition_date, StorageClass=storage_class.upper()), ]
+        rule['Transitions'] = [dict(Date=transition_date.isoformat(), StorageClass=storage_class.upper()), ]
 
     if transitions is not None:
         if not rule.get('Transitions'):
@@ -299,8 +309,17 @@ def create_lifecycle_rule(client, module):
                 t_out['StorageClass'] = noncurrent_version_transition['storage_class'].upper()
                 rule['NoncurrentVersionTransitions'].append(t_out)
 
+    return rule
+
+
+def compare_and_update_configuration(client, module, current_lifecycle_rules, rule):
+    purge_transitions = module.params.get("purge_transitions")
+    rule_id = module.params.get("rule_id")
+
     lifecycle_configuration = dict(Rules=[])
+    changed = False
     appended = False
+
     # If current_lifecycle_obj is not None then we have rules to compare, otherwise just add the rule
     if current_lifecycle_rules:
         # If rule ID exists, use that for comparison otherwise compare based on prefix
@@ -324,16 +343,7 @@ def create_lifecycle_rule(client, module):
         lifecycle_configuration['Rules'].append(rule)
         changed = True
 
-    # Write lifecycle to bucket
-    try:
-        client.put_bucket_lifecycle_configuration(
-            aws_retry=True,
-            Bucket=name,
-            LifecycleConfiguration=lifecycle_configuration)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
-
-    module.exit_json(changed=changed)
+    return changed, lifecycle_configuration
 
 
 def update_or_append_rule(new_rule, existing_rule, purge_transitions, lifecycle_obj):
@@ -361,6 +371,30 @@ def update_or_append_rule(new_rule, existing_rule, purge_transitions, lifecycle_
     return changed, appended
 
 
+def compare_and_remove_rule(current_lifecycle_rules, rule_id=None, prefix=None):
+    changed = False
+    lifecycle_configuration = dict(Rules=[])
+
+    # Check if rule exists
+    # If an ID exists, use that otherwise compare based on prefix
+    if rule_id is not None:
+        for existing_rule in current_lifecycle_rules:
+            if rule_id == existing_rule['ID']:
+                # We're not keeping the rule (i.e. deleting) so mark as changed
+                changed = True
+            else:
+                lifecycle_configuration['Rules'].append(existing_rule)
+    else:
+        for existing_rule in current_lifecycle_rules:
+            if prefix == existing_rule['Filter']['Prefix']:
+                # We're not keeping the rule (i.e. deleting) so mark as changed
+                changed = True
+            else:
+                lifecycle_configuration['Rules'].append(existing_rule)
+
+    return changed, lifecycle_configuration
+
+
 def compare_rule(rule_a, rule_b, purge_transitions):
 
     # Copy objects
@@ -386,7 +420,7 @@ def compare_rule(rule_a, rule_b, purge_transitions):
 
 
 def merge_transitions(updated_rule, updating_rule):
-    # because of the legal s3 transitions, we know only one can exist for each storage class.
+    # because of the legal S3 transitions, we know only one can exist for each storage class.
     # So, our strategy is build some dicts, keyed on storage class and add the storage class transitions that are only
     # in updating_rule to updated_rule
     updated_transitions = {}
@@ -400,43 +434,59 @@ def merge_transitions(updated_rule, updating_rule):
             updated_rule['Transitions'].append(transition)
 
 
+def create_lifecycle_rule(client, module):
+
+    name = module.params.get("name")
+    wait = module.params.get("wait")
+    changed = False
+
+    old_lifecycle_rules = fetch_rules(client, module, name)
+    new_rule = build_rule(client, module)
+    (changed, lifecycle_configuration) = compare_and_update_configuration(client, module,
+                                                                          old_lifecycle_rules,
+                                                                          new_rule)
+
+    # Write lifecycle to bucket
+    try:
+        client.put_bucket_lifecycle_configuration(
+            aws_retry=True,
+            Bucket=name,
+            LifecycleConfiguration=lifecycle_configuration)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e)
+
+    _changed = changed
+    _retries = 10
+    while wait and _changed and _retries:
+        # We've seen examples where get_bucket_lifecycle_configuration returns
+        # the updated rules, then the old rules, then the updated rules again,
+        time.sleep(5)
+        _retries -= 1
+        new_rules = fetch_rules(client, module, name)
+        (_changed, lifecycle_configuration) = compare_and_update_configuration(client, module,
+                                                                               new_rules,
+                                                                               new_rule)
+
+    new_rules = fetch_rules(client, module, name)
+
+    module.exit_json(changed=changed, new_rule=new_rule, rules=new_rules,
+                     old_rules=old_lifecycle_rules, _retries=_retries,
+                     _config=lifecycle_configuration)
+
+
 def destroy_lifecycle_rule(client, module):
 
     name = module.params.get("name")
     prefix = module.params.get("prefix")
     rule_id = module.params.get("rule_id")
+    wait = module.params.get("wait")
     changed = False
 
     if prefix is None:
         prefix = ""
 
-    # Get the bucket's current lifecycle rules
-    try:
-        current_lifecycle_rules = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)['Rules']
-    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
-        current_lifecycle_rules = []
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e)
-
-    # Create lifecycle
-    lifecycle_obj = dict(Rules=[])
-
-    # Check if rule exists
-    # If an ID exists, use that otherwise compare based on prefix
-    if rule_id is not None:
-        for existing_rule in current_lifecycle_rules:
-            if rule_id == existing_rule['ID']:
-                # We're not keeping the rule (i.e. deleting) so mark as changed
-                changed = True
-            else:
-                lifecycle_obj['Rules'].append(existing_rule)
-    else:
-        for existing_rule in current_lifecycle_rules:
-            if prefix == existing_rule['Filter']['Prefix']:
-                # We're not keeping the rule (i.e. deleting) so mark as changed
-                changed = True
-            else:
-                lifecycle_obj['Rules'].append(existing_rule)
+    current_lifecycle_rules = fetch_rules(client, module, name)
+    changed, lifecycle_obj = compare_and_remove_rule(current_lifecycle_rules, rule_id, prefix)
 
     # Write lifecycle to bucket or, if there no rules left, delete lifecycle configuration
     try:
@@ -450,7 +500,21 @@ def destroy_lifecycle_rule(client, module):
             client.delete_bucket_lifecycle(aws_retry=True, Bucket=name)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
-    module.exit_json(changed=changed)
+
+    _changed = changed
+    _retries = 10
+    while wait and _changed and _retries:
+        # We've seen examples where get_bucket_lifecycle_configuration returns
+        # the updated rules, then the old rules, then the updated rules again,
+        time.sleep(5)
+        _retries -= 1
+        new_rules = fetch_rules(client, module, name)
+        (_changed, lifecycle_configuration) = compare_and_remove_rule(new_rules, rule_id, prefix)
+
+    new_rules = fetch_rules(client, module, name)
+
+    module.exit_json(changed=changed, rules=new_rules, old_rules=current_lifecycle_rules,
+                     _retries=_retries)
 
 
 def main():
@@ -472,7 +536,8 @@ def main():
         transition_days=dict(type='int'),
         transition_date=dict(),
         transitions=dict(type='list', elements='dict'),
-        purge_transitions=dict(default='yes', type='bool')
+        purge_transitions=dict(default='yes', type='bool'),
+        wait=dict(type='bool', default=False)
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
