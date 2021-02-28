@@ -13,19 +13,19 @@
     # ============================================================
     - name: Create simple s3_bucket
       s3_bucket:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         state: present
       register: output
 
     - assert:
         that:
           - output.changed
-          - output.name == '{{ resource_prefix }}-testbucket-ansible'
+          - output.name == bucket_name
           - not output.requester_pays
   # ============================================================
     - name: Create a lifecycle policy
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         expiration_days: 300
         prefix: ''
       register: output
@@ -36,7 +36,7 @@
   # ============================================================
     - name: Create a lifecycle policy (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         expiration_days: 300
       register: output
 
@@ -46,7 +46,7 @@
   # ============================================================
     - name: Create a second lifecycle policy
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 30
         prefix: /something
       register: output
@@ -57,7 +57,7 @@
   # ============================================================
     - name: Create a second lifecycle policy (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 30
         prefix: /something
       register: output
@@ -68,7 +68,7 @@
   # ============================================================
     - name: Disable the second lifecycle policy
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         status: disabled
         transition_days: 30
         prefix: /something
@@ -80,7 +80,7 @@
   # ============================================================
     - name: Disable the second lifecycle policy (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         status: disabled
         transition_days: 30
         prefix: /something
@@ -92,7 +92,7 @@
   # ============================================================
     - name: Re-enable the second lifecycle policy
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         status: enabled
         transition_days: 300
         prefix: /something
@@ -104,7 +104,7 @@
   # ============================================================
     - name: Re-enable the second lifecycle policy (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         status: enabled
         transition_days: 300
         prefix: /something
@@ -116,7 +116,7 @@
   # ============================================================
     - name: Delete the second lifecycle policy
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         state: absent
         prefix: /something
       register: output
@@ -127,7 +127,7 @@
   # ============================================================
     - name: Delete the second lifecycle policy (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         state: absent
         prefix: /something
       register: output
@@ -138,7 +138,7 @@
   # ============================================================
     - name: Create a second lifecycle policy, with infrequent access
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 30
         storage_class: standard_ia
         prefix: /something
@@ -150,7 +150,7 @@
   # ============================================================
     - name: Create a second lifecycle policy, with infrequent access (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         storage_class: standard_ia
         transition_days: 30
         prefix: /something
@@ -162,7 +162,7 @@
   # ============================================================
     - name: Create a second lifecycle policy, with glacier
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
       register: output
@@ -173,7 +173,7 @@
   # ============================================================
     - name: Create a second lifecycle policy, with glacier (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
       register: output
@@ -184,7 +184,7 @@
   # ============================================================
     - name: Create a lifecycle policy with infrequent access
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 30
         storage_class: standard_ia
         prefix: /something
@@ -192,7 +192,7 @@
 
     - name: Create a second lifecycle policy, with glacier
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
         purge_transitions: false
@@ -200,7 +200,7 @@
 
     - name: Create a lifecycle policy with infrequent access (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         storage_class: standard_ia
         transition_days: 30
         prefix: /something
@@ -213,7 +213,7 @@
 
     - name: Create a second lifecycle policy, with glacier (idempotency)
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         transition_days: 300
         prefix: /something
         purge_transitions: false
@@ -225,7 +225,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent expiration
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 300
         prefix: /something
       register: output
@@ -236,7 +236,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent expiration
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_expiration_days: 300
         prefix: /something
       register: output
@@ -247,7 +247,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transition
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_transition_days: 300
         prefix: /something
       register: output
@@ -258,7 +258,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions and expirations
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_transition_days: 300
         prefix: /something
       register: output
@@ -269,7 +269,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transition
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_transition_days: 300
         noncurrent_version_storage_class: standard_ia
         prefix: /something
@@ -281,7 +281,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions and expirations
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_storage_class: standard_ia
         noncurrent_version_transition_days: 300
         prefix: /something
@@ -293,7 +293,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_transitions:
           - transition_days: 30
             storage_class: standard_ia
@@ -310,7 +310,7 @@
   # ============================================================
     - name: Create a lifecycle policy, with noncurrent transitions
       s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+        name: '{{ bucket_name }}'
         noncurrent_version_transitions:
           - transition_days: 30
             storage_class: standard_ia
@@ -327,27 +327,34 @@
   # ============================================================
   # test all the examples
   # Configure a lifecycle rule on a bucket to expire (delete) items with a prefix of /logs/ after 30 days
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 1
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         expiration_days: 30
         prefix: /logs/
         status: enabled
         state: present
 
     # Configure a lifecycle rule to transition all items with a prefix of /logs/ to glacier after 7 days and then delete after 90 days
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 2
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         transition_days: 7
         expiration_days: 90
         prefix: /logs/
         status: enabled
         state: present
 
+    - name: example 2 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+
     # Configure a lifecycle rule to transition all items with a prefix of /logs/ to glacier on 31 Dec 2020 and then delete on 31 Dec 2030.
     # Note that midnight GMT must be specified.
     # Be sure to quote your date strings
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 3
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         transition_date: "2020-12-30T00:00:00.000Z"
         expiration_date: "2030-12-30T00:00:00.000Z"
         prefix: /logs/
@@ -355,21 +362,24 @@
         state: present
 
     # Disable the rule created above
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 4
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         prefix: /logs/
         status: disabled
         state: present
 
     # Delete the lifecycle rule created above
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 5
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         prefix: /logs/
         state: absent
 
     # Configure a lifecycle rule to transition all backup files older than 31 days in /backups/ to standard infrequent access class.
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 6
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         prefix: /backups/
         storage_class: standard_ia
         transition_days: 31
@@ -377,8 +387,9 @@
         status: enabled
 
     # Configure a lifecycle rule to transition files to infrequent access after 30 days and glacier after 90
-    - s3_lifecycle:
-        name: "{{ resource_prefix }}-testbucket-ansible"
+    - name: example 7
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
         prefix: /other_logs/
         state: present
         status: enabled
@@ -395,4 +406,4 @@
         state: absent
       ignore_errors: yes
       with_items:
-        - "{{ resource_prefix }}-testbucket-ansible"
+        - '{{ bucket_name }}'
