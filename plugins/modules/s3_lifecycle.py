@@ -197,6 +197,13 @@ EXAMPLES = r'''
 
 from copy import deepcopy
 import datetime
+import time
+
+try:
+    from dateutil import parser as date_parser
+    HAS_DATEUTIL = True
+except ImportError:
+    HAS_DATEUTIL = False
 
 try:
     import botocore
@@ -208,6 +215,17 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_er
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
+def parse_date(date):
+    if date is None:
+        return None
+    try:
+        if HAS_DATEUTIL:
+            return date_parser.parse(date)
+        else:
+            # Very simplistic
+            return datetime.datetime.strptime(date, "%Y-%m-%dT%H:%M:%S.000Z")
+    except ValueError:
+        return None
 def create_lifecycle_rule(client, module):
 
     name = module.params.get("name")
@@ -486,18 +504,18 @@ def main():
         else:
             msg = "one of the following is required when 'state' is 'present': %s" % ', '.join(required_when_present)
             module.fail_json(msg=msg)
-    # If expiration_date set, check string is valid
-    if expiration_date is not None:
-        try:
-            datetime.datetime.strptime(expiration_date, "%Y-%m-%dT%H:%M:%S.000Z")
-        except ValueError:
-            module.fail_json(msg="expiration_date is not a valid ISO-8601 format. The time must be midnight and a timezone of GMT must be included")
 
-    if transition_date is not None:
-        try:
-            datetime.datetime.strptime(transition_date, "%Y-%m-%dT%H:%M:%S.000Z")
-        except ValueError:
-            module.fail_json(msg="expiration_date is not a valid ISO-8601 format. The time must be midnight and a timezone of GMT must be included")
+    # If dates have been set, make sure they're in a valid format
+    if expiration_date:
+        expiration_date = parse_date(expiration_date)
+        if expiration_date is None:
+            module.fail_json(msg="expiration_date is not a valid ISO-8601 format."
+                             "  The time must be midnight and a timezone of GMT must be included")
+    if transition_date:
+        transition_date = parse_date(transition_date)
+        if transition_date is None:
+            module.fail_json(msg="transition_date is not a valid ISO-8601 format."
+                             "  The time must be midnight and a timezone of GMT must be included")
 
     if state == 'present':
         create_lifecycle_rule(client, module)
