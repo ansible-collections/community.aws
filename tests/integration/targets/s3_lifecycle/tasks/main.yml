@@ -8,6 +8,8 @@
       aws_secret_key: '{{ aws_secret_key }}'
       security_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
+    s3_lifecycle:
+      wait: yes
   block:
 
     # ============================================================
