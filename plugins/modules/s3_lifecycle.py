@@ -200,6 +200,7 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def create_lifecycle_rule(client, module):
@@ -223,7 +224,7 @@ def create_lifecycle_rule(client, module):
 
     # Get the bucket's current lifecycle rules
     try:
-        current_lifecycle = client.get_bucket_lifecycle_configuration(Bucket=name)
+        current_lifecycle = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)
         current_lifecycle_rules = current_lifecycle['Rules']
     except is_boto3_error_code('NoSuchLifecycleConfiguration'):
         current_lifecycle_rules = []
@@ -302,7 +303,10 @@ def create_lifecycle_rule(client, module):
 
     # Write lifecycle to bucket
     try:
-        client.put_bucket_lifecycle_configuration(Bucket=name, LifecycleConfiguration=lifecycle_configuration)
+        client.put_bucket_lifecycle_configuration(
+            aws_retry=True,
+            Bucket=name,
+            LifecycleConfiguration=lifecycle_configuration)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
@@ -385,7 +389,7 @@ def destroy_lifecycle_rule(client, module):
 
     # Get the bucket's current lifecycle rules
     try:
-        current_lifecycle_rules = client.get_bucket_lifecycle_configuration(Bucket=name)['Rules']
+        current_lifecycle_rules = client.get_bucket_lifecycle_configuration(aws_retry=True, Bucket=name)['Rules']
     except is_boto3_error_code('NoSuchLifecycleConfiguration'):
         current_lifecycle_rules = []
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -414,10 +418,13 @@ def destroy_lifecycle_rule(client, module):
     # Write lifecycle to bucket or, if there no rules left, delete lifecycle configuration
     try:
         if lifecycle_obj['Rules']:
-            client.put_bucket_lifecycle_configuration(Bucket=name, LifecycleConfiguration=lifecycle_obj)
+            client.put_bucket_lifecycle_configuration(
+                aws_retry=True,
+                Bucket=name,
+                LifecycleConfiguration=lifecycle_obj)
         elif current_lifecycle_rules:
             changed = True
-            client.delete_bucket_lifecycle(Bucket=name)
+            client.delete_bucket_lifecycle(aws_retry=True, Bucket=name)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
     module.exit_json(changed=changed)
@@ -456,7 +463,7 @@ def main():
                                   ['noncurrent_version_transition_days', 'noncurrent_version_transitions'],
                               ],)
 
-    client = module.client('s3')
+    client = module.client('s3', retry_decorator=AWSRetry.jittered_backoff())
 
     expiration_date = module.params.get("expiration_date")
     transition_date = module.params.get("transition_date")
