@@ -84,14 +84,14 @@ except ImportError:
 def list_ip_sets(wafv2, scope, Nextmarker=None):
     # there is currently no paginator for wafv2
     req_obj = {
-      'Scope': self.scope,
-      'Limit': 100
+        'Scope': scope,
+        'Limit': 100
     }
     if Nextmarker:
         req_obj['NextMarker'] = Nextmarker
-    response = self.wafv2.list_ip_sets(**req_obj)
+    response = wafv2.list_ip_sets(**req_obj)
     if response.get('NextMarker'):
-        response['IPSets'] += self.list(Nextmarker=response.get('NextMarker')).get('IPSets')
+        response['IPSets'] += list_ip_sets(wafv2, scope, Nextmarker=response.get('NextMarker')).get('IPSets')
     return response
 
 
