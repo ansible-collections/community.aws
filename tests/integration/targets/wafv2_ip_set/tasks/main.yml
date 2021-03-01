@@ -209,4 +209,3 @@
         state: absent
         scope: REGIONAL
         ip_address_version: IPV4
-  ignore_errors: true
