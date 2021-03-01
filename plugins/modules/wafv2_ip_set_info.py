@@ -8,7 +8,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: wafv2_ip_set_info
-version_added: 1.4.0
+version_added: 1.5.0
 author:
   - "Markus Bergholz (@markuman)"
 short_description: Get information about wafv2 ip sets
@@ -81,21 +81,17 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 
-def list_ip_sets(self, Nextmarker=None):
+def list_ip_sets(wafv2, scope, Nextmarker=None):
     # there is currently no paginator for wafv2
     req_obj = {
-        'Scope': self.scope,
-        'Limit': 100
+      'Scope': self.scope,
+      'Limit': 100
     }
-
     if Nextmarker:
         req_obj['NextMarker'] = Nextmarker
-
     response = self.wafv2.list_ip_sets(**req_obj)
-
     if response.get('NextMarker'):
         response['IPSets'] += self.list(Nextmarker=response.get('NextMarker')).get('IPSets')
-
     return response
 
 

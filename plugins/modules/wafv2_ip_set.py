@@ -208,18 +208,14 @@ class IpSet:
     def list(self, Nextmarker=None):
         # there is currently no paginator for wafv2
         req_obj = {
-            'Scope': self.scope,
-            'Limit': 100
+          'Scope': self.scope,
+          'Limit': 100
         }
-
         if Nextmarker:
             req_obj['NextMarker'] = Nextmarker
-
         response = self.wafv2.list_ip_sets(**req_obj)
-
         if response.get('NextMarker'):
             response['IPSets'] += self.list(Nextmarker=response.get('NextMarker')).get('IPSets')
-
         return response
 
 
@@ -278,6 +274,7 @@ def main():
     addresses = module.params.get("addresses")
     tags = module.params.get("tags")
     purge_addresses = module.params.get("purge_addresses")
+    check_mode = module.check_mode
 
     wafv2 = module.client('wafv2')
 
@@ -289,7 +286,7 @@ def main():
     if state == 'present':
         if ip_set.get():
             change, addresses = compare(ip_set.get(), addresses, purge_addresses, state)
-            if change or ip_set.description() != description:
+            if (change or ip_set.description() != description) and not check_mode:
                 retval = ip_set.update(
                     description=description,
                     addresses=addresses
@@ -297,12 +294,13 @@ def main():
             else:
                 retval = ip_set.get()
         else:
-            retval = ip_set.create(
-                description=description,
-                ip_address_version=ip_address_version,
-                addresses=addresses,
-                tags=tags
-            )
+            if not check_mode:
+                retval = ip_set.create(
+                    description=description,
+                    ip_address_version=ip_address_version,
+                    addresses=addresses,
+                    tags=tags
+                )
             change = True
 
     if state == 'absent':
@@ -310,13 +308,14 @@ def main():
             if addresses:
                 if len(addresses) > 0:
                     change, addresses = compare(ip_set.get(), addresses, purge_addresses, state)
-                    if change:
+                    if change and not check_mode:
                         retval = ip_set.update(
                             description=description,
                             addresses=addresses
                         )
             else:
-                retval = ip_set.remove()
+                if not check_mode:
+                    retval = ip_set.remove()
                 change = True
 
     module.exit_json(changed=change, **retval)

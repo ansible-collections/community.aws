@@ -1,9 +1,5 @@
 ---
-- name: ec2_vpc_endpoint tests
-  collections:
-    - amazon.aws
-
-  module_defaults:
+- module_defaults:
     group/aws:
       aws_access_key: "{{ aws_access_key }}"
       aws_secret_key: "{{ aws_secret_key }}"
@@ -12,7 +8,7 @@
 
   block:
     - name: check_mode create ip set
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -33,7 +29,7 @@
           - out is changed
 
     - name: create ip set
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -53,7 +49,7 @@
           - out is changed
 
     - name: change ip set
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -74,7 +70,7 @@
           - out is changed
 
     - name: test ip set immutable
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -96,7 +92,7 @@
           - out.addresses | count == 3
 
     - name: add one ip
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -116,7 +112,7 @@
 
 
     - name: remove one ip
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: absent
         description: hallo eins
@@ -135,7 +131,7 @@
           - "'127.0.0.1/32' not in out.addresses"
 
     - name: get ip set info
-      community.aws.wafv2_ip_set_info:
+      wafv2_ip_set_info:
         name: "{{ ip_set_name }}"
         scope: REGIONAL
       register: out
@@ -147,7 +143,7 @@
 
 
     - name: purge all but one
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -165,7 +161,7 @@
           - out.addresses | count == 1
 
     - name: get ip set info
-      community.aws.wafv2_ip_set_info:
+      wafv2_ip_set_info:
         name: "{{ ip_set_name }}"
         scope: REGIONAL
       register: out
@@ -176,7 +172,7 @@
           - out.addresses | count == 1
 
     - name: delete ip set
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: absent
         scope: REGIONAL
@@ -189,7 +185,7 @@
           - out is changed
 
     - name: delete ip set immutable
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: absent
         scope: REGIONAL
@@ -204,7 +200,7 @@
 
   always:
     - name: always delete ip set
-      community.aws.wafv2_ip_set:
+      wafv2_ip_set:
         name: "{{ ip_set_name }}"
         state: absent
         scope: REGIONAL
