@@ -208,8 +208,8 @@ class IpSet:
     def list(self, Nextmarker=None):
         # there is currently no paginator for wafv2
         req_obj = {
-          'Scope': self.scope,
-          'Limit': 100
+            'Scope': self.scope,
+            'Limit': 100
         }
         if Nextmarker:
             req_obj['NextMarker'] = Nextmarker
