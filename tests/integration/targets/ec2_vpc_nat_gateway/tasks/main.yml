@@ -10,6 +10,7 @@
     - amazon.aws
 
   block:
+    
   # ============================================================
   - name: Create a VPC
     ec2_vpc_net:
@@ -22,6 +23,14 @@
     assert:
       that:
           - vpc_result is successful
+          - '"vpc" in vpc_result'
+          - '"cidr_block" in vpc_result.vpc'
+          - vpc_result.vpc.cidr_block == vpc_cidr
+          - '"id" in vpc_result.vpc'
+          - vpc_result.vpc.id.startswith("vpc-")
+          - '"state" in vpc_result.vpc'
+          - vpc_result.vpc.state == 'available'
+          - '"tags" in vpc_result.vpc'
 
   - name: "set fact: VPC ID"
     set_fact:
@@ -40,7 +49,9 @@
     assert:
       that:
         - eip_result is successful
+        - '"allocation_id" in eip_result'
         - 'eip_result.allocation_id.startswith("eipalloc-")'
+        - '"public_ip" in eip_result'
 
   - name: "set fact: EIP allocation ID and EIP public IP"
     set_fact:
@@ -60,9 +71,14 @@
     assert:
       that:
         - subnet_result is successful
-        - subnet_result.subnet.id.startswith("subnet-")
+        - '"subnet" in subnet_result'
+        - '"cidr_block" in subnet_result.subnet'
         - subnet_result.subnet.cidr_block == subnet_cidr
+        - '"id" in subnet_result.subnet'
+        - subnet_result.subnet.id.startswith("subnet-")
+        - '"state" in subnet_result.subnet'
         - subnet_result.subnet.state == 'available'
+        - '"tags" in subnet_result.subnet'
         - subnet_result.subnet.vpc_id == vpc_id
 
   - name: "set fact: VPC subnet ID"
@@ -185,7 +201,6 @@
     vars:
       first_ngw: '{{ avalaible_ngws.result[0] }}'
 
-
   # ============================================================
   - name: Trying this again for idempotency - create new NAT gateway with eip allocation-id - CHECK_MODE
     ec2_vpc_nat_gateway:
@@ -236,126 +251,17 @@
         - '"tags" in create_ngw'
         - '"vpc_id" in create_ngw'
         - create_ngw.vpc_id == vpc_id
-    
-
+  
+  
   # ============================================================
-  - name: Allocate a new EIP
-    ec2_eip:
-      in_vpc: true
-      reuse_existing_ip_allowed: true
-      tag_name: FREE
-    register: eip_result
-  
-  - name: Assert success
-    assert:
-      that:
-        - eip_result is successful
-        - 'eip_result.allocation_id.startswith("eipalloc-")'
-  
-  - name: "set fact: EIP allocation ID and EIP public IP"
-    set_fact:
-      second_eip_address: "{{ eip_result.public_ip }}"
-      second_allocation_id: "{{ eip_result.allocation_id }}"
-
-  
-  - name: Create new nat gateway with eip address - CHECK_MODE
-    ec2_vpc_nat_gateway:
-      subnet_id: "{{ subnet_id }}"
-      eip_address: "{{ second_eip_address }}"
-      wait: yes
-    register: create_ngw
-    check_mode: yes
-
-  - name: Assert creation happened (expected changed=true) - CHECK_MODE
-    assert:
-      that:
-         - create_ngw.changed
-         
-  - name: Create new NAT gateway with eip address
-    ec2_vpc_nat_gateway:
-       subnet_id: "{{ subnet_id }}"
-       eip_address: "{{ second_eip_address }}"
-       wait: yes
-    register: create_ngw
-  
-  - name: Assert creation happened (expected changed=true)
-    assert:
-      that:
-         - create_ngw.changed
-         - '"create_time" in create_ngw'
-         - '"nat_gateway_addresses" in create_ngw'
-         - '"nat_gateway_id" in create_ngw'
-         - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
-         - create_ngw.nat_gateway_id.startswith("nat-")
-         - '"state" in create_ngw'
-         - create_ngw.state == 'available'
-         - '"subnet_id" in create_ngw'
-         - create_ngw.subnet_id == subnet_id
-         - '"tags" in create_ngw'
-         - '"vpc_id" in create_ngw'
-         - create_ngw.vpc_id == vpc_id
-
-
-  # ============================================================
-  - name: Trying this again for idempotency - create new nat gateway with eip address - CHECK_MODE
-    ec2_vpc_nat_gateway:
-      subnet_id: "{{ subnet_id }}"
-      eip_address: "{{ second_eip_address }}"
-      wait: yes
-    register: create_ngw
-    check_mode: yes
-
-  - name: Assert recreation would do nothing (expected changed=false) - CHECK_MODE
-    assert:
-      that:
-         - not create_ngw.changed
-         - '"create_time" in create_ngw'
-         - '"nat_gateway_addresses" in create_ngw'
-         - '"nat_gateway_id" in create_ngw'
-         - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
-         - create_ngw.nat_gateway_id.startswith("nat-")
-         - '"state" in create_ngw'
-         - create_ngw.state == 'available'
-         - '"subnet_id" in create_ngw'
-         - create_ngw.subnet_id == subnet_id
-         - '"tags" in create_ngw'
-         - '"vpc_id" in create_ngw'
-         - create_ngw.vpc_id == vpc_id
-
-  - name: Trying this again for idempotency -  create new nat gateway with eip address
-    ec2_vpc_nat_gateway:
-      subnet_id: "{{ subnet_id }}"
-      eip_address: "{{ second_eip_address }}"
-      wait: yes
-    register: create_ngw
-
-  - name: Assert recreation would do nothing (expected changed=false)
-    assert:
-      that:
-         - not create_ngw.changed
-         - '"create_time" in create_ngw'
-         - '"nat_gateway_addresses" in create_ngw'
-         - '"nat_gateway_id" in create_ngw'
-         - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
-         - create_ngw.nat_gateway_id.startswith("nat-")
-         - '"state" in create_ngw'
-         - create_ngw.state == 'available'
-         - '"subnet_id" in create_ngw'
-         - create_ngw.subnet_id == subnet_id
-         - '"tags" in create_ngw'
-         - '"vpc_id" in create_ngw'
-         - create_ngw.vpc_id == vpc_id
-
-
-  # ============================================================
-  - name: Create new nat gateway only if one does not exist already - CHECK_MODE
+  - name: Create new NAT gateway only if one does not exist already - CHECK_MODE
     ec2_vpc_nat_gateway:
       if_exist_do_not_create: yes
       subnet_id: "{{ subnet_id }}"
       wait: yes
     register: create_ngw
     check_mode: yes
-
+  
   - name: Assert recreation would do nothing (expected changed=false) - CHECK_MODE
     assert:
       that:
@@ -363,7 +269,7 @@
         - '"create_time" in create_ngw'
         - '"nat_gateway_addresses" in create_ngw'
         - '"nat_gateway_id" in create_ngw'
-        - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
+        - create_ngw.nat_gateway_addresses[0].allocation_id == allocation_id
         - create_ngw.nat_gateway_id.startswith("nat-")
         - '"state" in create_ngw'
         - create_ngw.state == 'available'
@@ -387,7 +293,7 @@
         - '"create_time" in create_ngw'
         - '"nat_gateway_addresses" in create_ngw'
         - '"nat_gateway_id" in create_ngw'
-        - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
+        - create_ngw.nat_gateway_addresses[0].allocation_id == allocation_id
         - create_ngw.nat_gateway_id.startswith("nat-")
         - '"state" in create_ngw'
         - create_ngw.state == 'available'
@@ -396,7 +302,119 @@
         - '"tags" in create_ngw'
         - '"vpc_id" in create_ngw'
         - create_ngw.vpc_id == vpc_id
+    
 
+  # ============================================================
+  - name: Allocate a new EIP
+    ec2_eip:
+      in_vpc: true
+      reuse_existing_ip_allowed: true
+      tag_name: FREE
+    register: eip_result
+  
+  - name: Assert success
+    assert:
+      that:
+        - eip_result is successful
+        - '"allocation_id" in eip_result'
+        - 'eip_result.allocation_id.startswith("eipalloc-")'
+        - '"public_ip" in eip_result'
+  
+  - name: "set fact: EIP allocation ID and EIP public IP"
+    set_fact:
+      second_eip_address: "{{ eip_result.public_ip }}"
+      second_allocation_id: "{{ eip_result.allocation_id }}"
+
+  - name: Create new nat gateway with eip address - CHECK_MODE
+    ec2_vpc_nat_gateway:
+      subnet_id: "{{ subnet_id }}"
+      eip_address: "{{ second_eip_address }}"
+      wait: yes
+    register: create_ngw
+    check_mode: yes
+
+  - name: Assert creation happened (expected changed=true) - CHECK_MODE
+    assert:
+      that:
+         - create_ngw.changed
+         
+  - name: Create new NAT gateway with eip address
+    ec2_vpc_nat_gateway:
+       subnet_id: "{{ subnet_id }}"
+       eip_address: "{{ second_eip_address }}"
+       wait: yes
+    register: create_ngw
+
+  - name: Assert creation happened (expected changed=true)
+    assert:
+      that:
+         - create_ngw.changed
+         - '"create_time" in create_ngw'
+         - '"nat_gateway_addresses" in create_ngw'
+         - '"nat_gateway_id" in create_ngw'
+         - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
+         - create_ngw.nat_gateway_id.startswith("nat-")
+         - '"state" in create_ngw'
+         - create_ngw.state == 'available'
+         - '"subnet_id" in create_ngw'
+         - create_ngw.subnet_id == subnet_id
+         - '"tags" in create_ngw'
+         - '"vpc_id" in create_ngw'
+         - create_ngw.vpc_id == vpc_id
+
+
+  # ============================================================
+  - name: Trying this again for idempotency - create new NAT gateway with eip address - CHECK_MODE
+    ec2_vpc_nat_gateway:
+      subnet_id: "{{ subnet_id }}"
+      eip_address: "{{ second_eip_address }}"
+      wait: yes
+    register: create_ngw
+    check_mode: yes
+
+  - name: Assert recreation would do nothing (expected changed=false) - CHECK_MODE
+    assert:
+      that:
+         - not create_ngw.changed
+         - '"create_time" in create_ngw'
+         - '"nat_gateway_addresses" in create_ngw'
+         - '"nat_gateway_id" in create_ngw'
+         - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
+         - create_ngw.nat_gateway_id.startswith("nat-")
+         - '"state" in create_ngw'
+         - create_ngw.state == 'available'
+         - '"subnet_id" in create_ngw'
+         - create_ngw.subnet_id == subnet_id
+         - '"tags" in create_ngw'
+         - '"vpc_id" in create_ngw'
+         - create_ngw.vpc_id == vpc_id
+
+  - name: Trying this again for idempotency -  create new NAT gateway with eip address
+    ec2_vpc_nat_gateway:
+      subnet_id: "{{ subnet_id }}"
+      eip_address: "{{ second_eip_address }}"
+      wait: yes
+    register: create_ngw
+
+  - name: Assert recreation would do nothing (expected changed=false)
+    assert:
+      that:
+         - not create_ngw.changed
+         - '"create_time" in create_ngw'
+         - '"nat_gateway_addresses" in create_ngw'
+         - '"nat_gateway_id" in create_ngw'
+         - create_ngw.nat_gateway_addresses[0].allocation_id == second_allocation_id
+         - create_ngw.nat_gateway_id.startswith("nat-")
+         - '"state" in create_ngw'
+         - create_ngw.state == 'available'
+         - '"subnet_id" in create_ngw'
+         - create_ngw.subnet_id == subnet_id
+         - '"tags" in create_ngw'
+         - '"vpc_id" in create_ngw'
+         - create_ngw.vpc_id == vpc_id
+
+
+  # ============================================================
   - name: Fetch NAT gateway by ID (list)
     ec2_vpc_nat_gateway_info:
       nat_gateway_ids:
@@ -566,10 +584,11 @@
 
   
   # ============================================================
-  - name: Gather information about a filtered list of NAT Gateways using tags - CHECK_MODE
+  - name: Gather information about a filtered list of NAT Gateways using tags and state - CHECK_MODE
     ec2_vpc_nat_gateway_info:
       filters:
         "tag:Tag Two": 'two {{ resource_prefix }}'
+        state: ['available']
     register: ngw_info
     check_mode: yes
 
@@ -597,10 +616,11 @@
     vars:
       second_ngw: '{{ ngw_info.result[0] }}'
 
-  - name: Gather information about a filtered list of NAT Gateways using tags
+  - name: Gather information about a filtered list of NAT Gateways using tags and state 
     ec2_vpc_nat_gateway_info:
       filters:
         "tag:Tag Two": 'two {{ resource_prefix }}'
+        state: ['available']
     register: ngw_info
 
   - name: Assert success
@@ -682,10 +702,11 @@
 
 
   # ============================================================
-  - name: Gather information about a filtered list of NAT Gateways using tags (no match) - CHECK_MODE
+  - name: Gather information about a filtered list of NAT Gateways using tags and state (no match) - CHECK_MODE
     ec2_vpc_nat_gateway_info:
       filters:
         "tag:tag_one": '{{ resource_prefix }} One'
+        state: ['available']
     register: ngw_info
     check_mode: yes
 
@@ -695,10 +716,11 @@
           - ngw_info is successful
           - ngw_info.result | length == 0
 
-  - name: Gather information about a filtered list of NAT Gateways using tags (no match)
+  - name: Gather information about a filtered list of NAT Gateways using tags and state (no match)
     ec2_vpc_nat_gateway_info:
       filters:
         "tag:tag_one": '{{ resource_prefix }} One'
+        state: ['available']
     register: ngw_info
 
   - name: Assert success

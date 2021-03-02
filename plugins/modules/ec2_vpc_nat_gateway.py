@@ -498,7 +498,7 @@ def get_eip_allocation_id_by_address(client, eip_address, check_mode=False):
     err_msg = ""
 
     try:
-        allocations = client.describe_addresses(**params)['Addresses']
+        allocations = client.describe_addresses(aws_retry=True, **params)['Addresses']
         if len(allocations) == 1:
             allocation = allocations[0]
         else:
@@ -553,7 +553,7 @@ def allocate_eip_address(client, check_mode=False):
         return ip_allocated, err_msg, new_eip
 
     try:
-        new_eip = client.allocate_address(**params)['AllocationId']
+        new_eip = client.allocate_address(aws_retry=True, **params)['AllocationId']
         ip_allocated = True
         err_msg = 'eipalloc id {0} created'.format(new_eip)
 
@@ -768,7 +768,7 @@ def pre_create(client, module, subnet_id, tags, purge_tags, allocation_id=None, 
     success = False
     changed = False
     err_msg = ""
-    results = list()
+    results = {}
 
     if not allocation_id and not eip_address:
         existing_gateways, allocation_id_exists = (gateway_in_subnet_exists(client, subnet_id, check_mode=check_mode))
@@ -951,7 +951,7 @@ def ensure_tags(client, module, nat_gw_id, tags, purge_tags, check_mode):
     changed = False
 
     if check_mode and nat_gw_id is None:
-        # We can't describe tags without an option id, we might get here when creating a new option set in check_mode
+        # We can't describe tags without an EIP id, we might get here when creating a new EIP in check_mode
         return final_tags, changed
 
     filters = ansible_dict_to_boto3_filter_list({'resource-id': nat_gw_id, 'resource-type': 'natgateway'})
