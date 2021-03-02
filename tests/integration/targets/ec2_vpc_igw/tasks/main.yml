@@ -426,6 +426,7 @@
       filters:
         "tag:Title Case": 'Hello Cruel World ❤️'
     register: igw_info
+    check_mode: yes
 
   - name: Assert success - CHECK_MODE
     assert:
@@ -453,6 +454,7 @@
       filters:
         "tag:tag_one": '{{ resource_prefix }} One'
     register: igw_info
+    check_mode: yes
 
   - name: Assert success - CHECK_MODE
     assert:

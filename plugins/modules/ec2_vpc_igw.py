@@ -92,8 +92,6 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible.module_utils.six import string_types
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
@@ -160,7 +158,6 @@ class AnsibleEc2Igw(object):
         if to_update:
             try:
                 if self._check_mode:
-                    # update tags
                     final_tags.update(to_update)
                 else:
                     self._connection.create_tags(
@@ -176,7 +173,6 @@ class AnsibleEc2Igw(object):
         if to_delete:
             try:
                 if self._check_mode:
-                    # update tags
                     for key in to_delete:
                         del final_tags[key]
                 else:
@@ -244,6 +240,8 @@ class AnsibleEc2Igw(object):
                 igw = camel_dict_to_snake_dict(response['InternetGateway'])
                 self._connection.attach_internet_gateway(aws_retry=True, InternetGatewayId=igw['internet_gateway_id'], VpcId=vpc_id)
                 self._results['changed'] = True
+            except botocore.exceptions.WaiterError as e:
+                self._module.fail_json_aws(e, msg="No Internet Gateway exists.")
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 self._module.fail_json_aws(e, msg='Unable to create Internet Gateway')
 
