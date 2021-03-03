@@ -350,7 +350,7 @@ class SnsTopicManager(object):
 
     def _canonicalize_endpoint(self, protocol, endpoint):
         if protocol == 'sms':
-            return re.sub('[^0-9]*', '', endpoint)
+            return re.sub('[^0-9+]*', '', endpoint)
         return endpoint
 
     def _set_topic_subs(self):
