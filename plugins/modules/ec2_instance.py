@@ -29,6 +29,14 @@ options:
   state:
     description:
       - Goal state for the instances.
+      - I(state=present) ensures instances exist, but does not guarantee any state (e.g. running). Newly-launched instances will be run by EC2.
+      - I(state=running): I(state=present) + ensures the instances are running
+      - I(state=started): I(state=running) + waits for EC2 status checks to report OK if I(wait=true)
+      - I(state=stopped) ensures an existing instance is stopped.
+      - I(state=rebooted): convenience alias for I(state=stopped) immediately followed by I(state=running)
+      - I(state=restarted): convenience alias for I(state=stopped) immediately followed by I(state=started)
+      - I(state=terminated) ensures an existing instance is terminated.
+      - I(state=absent): alias for I(state=terminated)
     choices: [present, terminated, running, started, stopped, restarted, rebooted, absent]
     default: present
     type: str
@@ -1241,7 +1249,7 @@ def build_run_instance_spec(params, ec2=None):
     return spec
 
 
-def await_instances(ids, state='OK'):
+def await_instances(ids, state='present'):
     if not module.params.get('wait', True):
         # the user asked not to wait for anything
         return
@@ -1250,16 +1258,20 @@ def await_instances(ids, state='OK'):
         # In check mode, there is no change even if you wait.
         return
 
-    state_opts = {
-        'OK': 'instance_status_ok',
-        'STOPPED': 'instance_stopped',
-        'TERMINATED': 'instance_terminated',
-        'EXISTS': 'instance_exists',
-        'RUNNING': 'instance_running',
+    # Map ansible state to boto3 waiter type
+    state_to_boto3_waiter = {
+        'present': 'instance_exists',
+        'started': 'instance_status_ok',
+        'running': 'instance_running',
+        'stopped': 'instance_stopped',
+        'restarted': 'instance_status_ok',
+        'rebooted': 'instance_running',
+        'terminated': 'instance_terminated',
+        'absent': 'instance_terminated',
     }
-    if state not in state_opts:
+    if state not in state_to_boto3_waiter:
         module.fail_json(msg="Cannot wait for state {0}, invalid state".format(state))
-    waiter = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff()).get_waiter(state_opts[state])
+    waiter = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff()).get_waiter(state_to_boto3_waiter[state])
     try:
         waiter.wait(
             InstanceIds=ids,
@@ -1270,10 +1282,10 @@ def await_instances(ids, state='OK'):
         )
     except botocore.exceptions.WaiterConfigError as e:
         module.fail_json(msg="{0}. Error waiting for instances {1} to reach state {2}".format(
-            to_native(e), ', '.join(ids), state))
+            to_native(e), ', '.join(ids), state_to_boto3_waiter[state]))
     except botocore.exceptions.WaiterError as e:
         module.warn("Instances {0} took too long to reach state {1}. {2}".format(
-            ', '.join(ids), state, to_native(e)))
+            ', '.join(ids), state_to_boto3_waiter[state], to_native(e)))
 
 
 def diff_instance_and_params(instance, params, ec2=None, skip=None):
@@ -1428,7 +1440,7 @@ def ensure_instance_state(state, ec2=None):
     if ec2 is None:
         module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
     if state in ('running', 'started'):
-        changed, failed, instances, failure_reason = change_instance_state(filters=module.params.get('filters'), desired_state='RUNNING')
+        changed, failed, instances, failure_reason = change_instance_state(filters=module.params.get('filters'), desired_state=state)
 
         if failed:
             module.fail_json(
@@ -1446,10 +1458,10 @@ def ensure_instance_state(state, ec2=None):
     elif state in ('restarted', 'rebooted'):
         changed, failed, instances, failure_reason = change_instance_state(
             filters=module.params.get('filters'),
-            desired_state='STOPPED')
+            desired_state='stopped')
         changed, failed, instances, failure_reason = change_instance_state(
             filters=module.params.get('filters'),
-            desired_state='RUNNING')
+            desired_state=state)
 
         if failed:
             module.fail_json(
@@ -1467,7 +1479,7 @@ def ensure_instance_state(state, ec2=None):
     elif state in ('stopped',):
         changed, failed, instances, failure_reason = change_instance_state(
             filters=module.params.get('filters'),
-            desired_state='STOPPED')
+            desired_state=state)
 
         if failed:
             module.fail_json(
@@ -1485,7 +1497,7 @@ def ensure_instance_state(state, ec2=None):
     elif state in ('absent', 'terminated'):
         terminated, terminate_failed, instances, failure_reason = change_instance_state(
             filters=module.params.get('filters'),
-            desired_state='TERMINATED')
+            desired_state=state)
 
         if terminate_failed:
             module.fail_json(
@@ -1502,19 +1514,29 @@ def ensure_instance_state(state, ec2=None):
 
 
 def change_instance_state(filters, desired_state, ec2=None):
-    """Takes STOPPED/RUNNING/TERMINATED"""
     if ec2 is None:
         ec2 = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
 
+    # Map ansible state to ec2 state
+    ec2_instance_states = {
+        'present': 'running',
+        'started': 'running',
+        'running': 'running',
+        'stopped': 'stopped',
+        'restarted': 'running',
+        'rebooted': 'running',
+        'terminated': 'terminated',
+        'absent': 'terminated',
+    }
     changed = set()
     instances = find_instances(ec2, filters=filters)
-    to_change = set(i['InstanceId'] for i in instances if i['State']['Name'].upper() != desired_state)
+    to_change = set(i['InstanceId'] for i in instances if i['State']['Name'] != ec2_instance_states[desired_state])
     unchanged = set()
     failure_reason = ""
 
     for inst in instances:
         try:
-            if desired_state == 'TERMINATED':
+            if desired_state == 'terminated':
                 if module.check_mode:
                     changed.add(inst['InstanceId'])
                     continue
@@ -1523,7 +1545,7 @@ def change_instance_state(filters, desired_state, ec2=None):
                 # https://docs.aws.amazon.com/AWSEC2/latest/APIReference/Run_Instance_Idempotency.html
                 resp = ec2.terminate_instances(aws_retry=True, InstanceIds=[inst['InstanceId']])
                 [changed.add(i['InstanceId']) for i in resp['TerminatingInstances']]
-            if desired_state == 'STOPPED':
+            if desired_state == 'stopped':
                 if inst['State']['Name'] in ('stopping', 'stopped'):
                     unchanged.add(inst['InstanceId'])
                     continue
@@ -1534,7 +1556,7 @@ def change_instance_state(filters, desired_state, ec2=None):
 
                 resp = ec2.stop_instances(aws_retry=True, InstanceIds=[inst['InstanceId']])
                 [changed.add(i['InstanceId']) for i in resp['StoppingInstances']]
-            if desired_state == 'RUNNING':
+            if desired_state == 'running':
                 if module.check_mode:
                     changed.add(inst['InstanceId'])
                     continue
@@ -1578,7 +1600,7 @@ def determine_iam_role(name_or_arn):
 
 def handle_existing(existing_matches, changed, ec2, state):
     if state in ('running', 'started') and [i for i in existing_matches if i['State']['Name'] != 'running']:
-        ins_changed, failed, instances, failure_reason = change_instance_state(filters=module.params.get('filters'), desired_state='RUNNING')
+        ins_changed, failed, instances, failure_reason = change_instance_state(filters=module.params.get('filters'), desired_state=state)
         if failed:
             module.fail_json(msg="Couldn't start instances: {0}. Failure reason: {1}".format(instances, failure_reason))
         module.exit_json(
@@ -1637,7 +1659,7 @@ def ensure_present(existing_matches, changed, ec2, state):
                 instance_ids=instance_ids,
                 spec=instance_spec,
             )
-        await_instances(instance_ids)
+        await_instances(instance_ids, state=state)
         instances = find_instances(ec2, ids=instance_ids)
 
         module.exit_json(
