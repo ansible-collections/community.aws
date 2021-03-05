@@ -21,6 +21,12 @@ options:
       - Required when creating a VPC endpoint.
     required: false
     type: str
+  vpc_endpoint_type:
+    description:
+      - The type of endpoint.
+    required: false
+    default: Gateway
+    type: str
   service:
     description:
       - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
@@ -251,6 +257,7 @@ def create_vpc_endpoint(client, module):
     changed = False
     token_provided = False
     params['VpcId'] = module.params.get('vpc_id')
+    params['VpcEndpointType'] = module.params.get('vpc_endpoint_type')
     params['ServiceName'] = module.params.get('service')
     params['DryRun'] = module.check_mode
 
@@ -334,6 +341,7 @@ def setup_removal(client, module):
 def main():
     argument_spec = dict(
         vpc_id=dict(),
+        vpc_endpoint_type=dict(default='Gateway', choices=['Interface', 'Gateway', 'GatewayLoadBalancer']),
         service=dict(),
         policy=dict(type='json'),
         policy_file=dict(type='path', aliases=['policy_path']),
