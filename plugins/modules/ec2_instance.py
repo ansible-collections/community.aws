@@ -29,14 +29,14 @@ options:
   state:
     description:
       - Goal state for the instances.
-      - I(state=present) ensures instances exist, but does not guarantee any state (e.g. running). Newly-launched instances will be run by EC2.
-      - I(state=running): I(state=present) + ensures the instances are running
-      - I(state=started): I(state=running) + waits for EC2 status checks to report OK if I(wait=true)
-      - I(state=stopped) ensures an existing instance is stopped.
-      - I(state=rebooted): convenience alias for I(state=stopped) immediately followed by I(state=running)
-      - I(state=restarted): convenience alias for I(state=stopped) immediately followed by I(state=started)
-      - I(state=terminated) ensures an existing instance is terminated.
-      - I(state=absent): alias for I(state=terminated)
+      - "I(state=present): ensures instances exist, but does not guarantee any state (e.g. running). Newly-launched instances will be run by EC2."
+      - "I(state=running): I(state=present) + ensures the instances are running"
+      - "I(state=started): I(state=running) + waits for EC2 status checks to report OK if I(wait=true)"
+      - "I(state=stopped): ensures an existing instance is stopped."
+      - "I(state=rebooted): convenience alias for I(state=stopped) immediately followed by I(state=running)"
+      - "I(state=restarted): convenience alias for I(state=stopped) immediately followed by I(state=started)"
+      - "I(state=terminated): ensures an existing instance is terminated."
+      - "I(state=absent): alias for I(state=terminated)"
     choices: [present, terminated, running, started, stopped, restarted, rebooted, absent]
     default: present
     type: str
