@@ -26,6 +26,7 @@ options:
       - The type of endpoint.
     required: false
     default: Gateway
+    choices: [ "Interface", "Gateway", "GatewayLoadBalancer" ]
     type: str
   service:
     description:
@@ -62,7 +63,7 @@ options:
         - absent to remove resource
     required: false
     default: present
-    choices: [ "present", "absent"]
+    choices: [ "present", "absent" ]
     type: str
   wait:
     description:
