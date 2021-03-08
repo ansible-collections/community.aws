@@ -1249,8 +1249,8 @@ def build_run_instance_spec(params, ec2=None):
     return spec
 
 
-def await_instances(ids, desired_module_state='present'):
-    if not module.params.get('wait', True):
+def await_instances(ids, desired_module_state='present', force_wait=False):
+    if not module.params.get('wait', True) and not force_wait:
         # the user asked not to wait for anything
         return
 
@@ -1646,6 +1646,10 @@ def ensure_present(existing_matches, changed, ec2, desired_module_state):
         instance_response = run_instances(ec2, **instance_spec)
         instances = instance_response['Instances']
         instance_ids = [i['InstanceId'] for i in instances]
+
+        # Wait for instances to exist in the EC2 API before
+        # attempting to modify them
+        await_instances(instance_ids, desired_module_state='present', force_wait=True)
 
         for ins in instances:
             changes = diff_instance_and_params(ins, module.params, skip=['UserData', 'EbsOptimized'])
