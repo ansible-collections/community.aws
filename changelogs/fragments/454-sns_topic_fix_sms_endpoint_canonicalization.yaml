@@ -1,2 +1,2 @@
 bugfixes:
-  - sns_topic - Add `+` to allowable characters in SMS endpoints. `AWS SNS expects phone numbers in and canonicalizes to E.164 format <https://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html>`_. (https://github.com/ansible-collections/community.aws/pull/454)
+  - sns_topic - Add ``+`` to allowable characters in SMS endpoints (https://github.com/ansible-collections/community.aws/pull/454).
