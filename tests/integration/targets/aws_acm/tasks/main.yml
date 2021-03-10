@@ -6,6 +6,12 @@
       aws_secret_key: '{{ aws_secret_key }}'
       security_token: '{{ security_token | default(omit) }}'
   block:
+  # The CI runs many of these tests in parallel
+  # Use this random ID to differentiate which resources
+  # are from which test
+  - set_fact:
+      aws_acm_test_uuid: "{{ (10**9) | random }}"
+
   - name: list certs
     aws_acm_info: null
     register: list_all
