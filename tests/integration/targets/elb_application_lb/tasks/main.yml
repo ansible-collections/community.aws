@@ -30,25 +30,15 @@
         virtualenv_command: "{{ virtualenv_command }}"
         virtualenv_site_packages: no
 
+    # Run tests for graceful failure with an old version of botocore
     - include_tasks: multiple_actions_fail.yml
       vars:
         ansible_python_interpreter: "{{ virtualenv_interpreter }}"
 
-
-    - pip:
-        name:
-          - 'botocore>=1.10.30'
-          - boto3
-          - boto
-          - coverage<5
-          - cryptography
-        virtualenv: "{{ virtualenv }}"
-        virtualenv_command: "{{ virtualenv_command }}"
-        virtualenv_site_packages: no
-
+    # Run main test suite using standard environment
     - include_tasks: full_test.yml
-      vars:
-        ansible_python_interpreter: "{{ virtualenv_interpreter }}"
+
+  always:
 
     - file:
         path: "{{ virtualenv }}"
