@@ -99,6 +99,7 @@
       wait: true
       wait_timeout: 600
     ignore_errors: true
+
   - name: destroy target group if it was created
     elb_target_group:
       name: '{{ tg_name }}'
