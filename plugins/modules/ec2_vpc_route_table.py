@@ -700,6 +700,8 @@ def ensure_route_table_present(connection, module):
                 ).wait(
                     RouteTableIds=[route_table['RouteTableId']],
                 )
+            except botocore.exceptions.WaiterError as e:
+                module.fail_json_aws(e, msg='Timeout waiting for route table creation')
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg="Error creating route table")
         else:
