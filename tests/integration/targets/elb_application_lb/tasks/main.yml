@@ -9,6 +9,7 @@
       region: '{{ aws_region }}'
   block:
 
+    # Prepare a virtual environment for multiple_actions_fail.yml
     - set_fact:
         virtualenv: "{{ remote_tmp_dir }}/virtualenv"
         virtualenv_command: "{{ ansible_python_interpreter }} -m virtualenv"
@@ -30,12 +31,6 @@
         virtualenv_command: "{{ virtualenv_command }}"
         virtualenv_site_packages: no
 
-    # Run tests for graceful failure with an old version of botocore
-    - include_tasks: multiple_actions_fail.yml
-      vars:
-        ansible_python_interpreter: "{{ virtualenv_interpreter }}"
-
-    # Run main test suite using standard environment
     - include_tasks: full_test.yml
 
   always:
