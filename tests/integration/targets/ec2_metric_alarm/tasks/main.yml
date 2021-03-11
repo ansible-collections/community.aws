@@ -278,20 +278,20 @@
     - name: "verify that properties were not changed in check mode"
       assert:
         that:
-          - 'ec2_instance_metric_alarm_update.changed'
-          - 'ec2_instance_metric_alarm_update.period == 60'  # Period reported by Ansible should be 60, not matching old value
+          - 'ec2_instance_metric_alarm_update_check.changed'
+          - 'ec2_instance_metric_alarm_update_check.period == 60'  # Period reported by Ansible should be 60, not matching old value
           - 'alarm_info["MetricAlarms"][0].Period == 300'  # Period of actual alarm should not change
-          - 'ec2_instance_metric_alarm_update.alarm_arn == ec2_instance_metric_alarm.alarm_arn'
-          - 'ec2_instance_metric_alarm_update.statistic == alarm_info["MetricAlarms"][0].Statistic'
-          - 'ec2_instance_metric_alarm_update.name  == alarm_info["MetricAlarms"][0].AlarmName'
-          - 'ec2_instance_metric_alarm_update.metric == alarm_info["MetricAlarms"][0].MetricName'
-          - 'ec2_instance_metric_alarm_update.namespace == alarm_info["MetricAlarms"][0].Namespace'
-          - 'ec2_instance_metric_alarm_update.statistic == alarm_info["MetricAlarms"][0].Statistic'
-          - 'ec2_instance_metric_alarm_update.comparison == alarm_info["MetricAlarms"][0].ComparisonOperator'
-          - 'ec2_instance_metric_alarm_update.threshold == alarm_info["MetricAlarms"][0].Threshold'
-          - 'ec2_instance_metric_alarm_update.unit == alarm_info["MetricAlarms"][0].Unit'
-          - 'ec2_instance_metric_alarm_update.evaluation_periods == alarm_info["MetricAlarms"][0].EvaluationPeriods'
-          - 'ec2_instance_metric_alarm_update.treat_missing_data == alarm_info["MetricAlarms"][0].TreatMissingData'
+          - 'ec2_instance_metric_alarm_update_check.alarm_arn == ec2_instance_metric_alarm.alarm_arn'
+          - 'ec2_instance_metric_alarm_update_check.statistic == alarm_info["MetricAlarms"][0].Statistic'
+          - 'ec2_instance_metric_alarm_update_check.name  == alarm_info["MetricAlarms"][0].AlarmName'
+          - 'ec2_instance_metric_alarm_update_check.metric == alarm_info["MetricAlarms"][0].MetricName'
+          - 'ec2_instance_metric_alarm_update_check.namespace == alarm_info["MetricAlarms"][0].Namespace'
+          - 'ec2_instance_metric_alarm_update_check.statistic == alarm_info["MetricAlarms"][0].Statistic'
+          - 'ec2_instance_metric_alarm_update_check.comparison == alarm_info["MetricAlarms"][0].ComparisonOperator'
+          - 'ec2_instance_metric_alarm_update_check.threshold == alarm_info["MetricAlarms"][0].Threshold'
+          - 'ec2_instance_metric_alarm_update_check.unit == alarm_info["MetricAlarms"][0].Unit'
+          - 'ec2_instance_metric_alarm_update_check.evaluation_periods == alarm_info["MetricAlarms"][0].EvaluationPeriods'
+          - 'ec2_instance_metric_alarm_update_check.treat_missing_data == alarm_info["MetricAlarms"][0].TreatMissingData'
 
     - name: update alarm
       ec2_metric_alarm:
