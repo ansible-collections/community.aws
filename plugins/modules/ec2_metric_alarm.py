@@ -298,7 +298,8 @@ def delete_metric_alarm(connection, module, params):
 
     if alarms['MetricAlarms']:
         try:
-            connection.delete_alarms(AlarmNames=[params['AlarmName']])
+            if not module.check_mode:
+                connection.delete_alarms(AlarmNames=[params['AlarmName']])
             module.exit_json(changed=True)
         except (ClientError) as e:
             module.fail_json_aws(e)
