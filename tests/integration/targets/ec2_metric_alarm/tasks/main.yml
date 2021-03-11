@@ -88,7 +88,7 @@
         that:
           - 'ec2_instance_metric_alarm_check.changed'
           - 'not ec2_instance_metric_alarm_check.alarm_arn'
-          - 'alarm_info_check["MetricAlarms"] | length == 0'
+          - 'alarm_info_query_check["MetricAlarms"] | length == 0'
 
     - name: create ec2 metric alarm on ec2 instance
       ec2_metric_alarm:
