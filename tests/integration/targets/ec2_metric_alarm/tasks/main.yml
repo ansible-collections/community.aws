@@ -432,7 +432,7 @@
           - 'ec2_instance_metric_alarm_no_unit.comparison == alarm_info_no_unit["MetricAlarms"][0].ComparisonOperator'
           - 'ec2_instance_metric_alarm_no_unit.threshold == alarm_info_no_unit["MetricAlarms"][0].Threshold'
           - 'ec2_instance_metric_alarm_no_unit.period == alarm_info_no_unit["MetricAlarms"][0].Period'
-          - 'not alarm_info_no_unit["MetricAlarms"][0].Unit'
+          - 'alarm_info_no_unit["MetricAlarms"][0].Unit is not defined'
           - 'ec2_instance_metric_alarm_no_unit.evaluation_periods == alarm_info_no_unit["MetricAlarms"][0].EvaluationPeriods'
           - 'ec2_instance_metric_alarm_no_unit.description == alarm_info_no_unit["MetricAlarms"][0].AlarmDescription'
           - 'ec2_instance_metric_alarm_no_unit.treat_missing_data == alarm_info_no_unit["MetricAlarms"][0].TreatMissingData'
