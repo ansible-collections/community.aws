@@ -335,6 +335,7 @@
       ec2_metric_alarm:
         state: absent
         name: "{{ alarm_full_name }}"
+      check_mode: true
       register: ec2_instance_metric_alarm_deletion_check
 
     - name: Verify that the alarm reports deleted/changed
