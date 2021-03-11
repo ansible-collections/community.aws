@@ -51,6 +51,11 @@
         wait: true
       register: ec2_instance_results
 
+    - name: ensure alarm doesn't exist for a clean test
+      ec2_metric_alarm:
+        state: absent
+        name: "{{ alarm_full_name }}"
+
     - name: create ec2 metric alarm on ec2 instance (check mode)
       ec2_metric_alarm:
         dimensions:
@@ -130,7 +135,6 @@
           - 'ec2_instance_metric_alarm.name  == alarm_info["MetricAlarms"][0].AlarmName'
           - 'ec2_instance_metric_alarm.metric == alarm_info["MetricAlarms"][0].MetricName'
           - 'ec2_instance_metric_alarm.namespace == alarm_info["MetricAlarms"][0].Namespace'
-          - 'ec2_instance_metric_alarm.comparison == alarm_info["MetricAlarms"][0].ComparisonOperator'
           - 'ec2_instance_metric_alarm.comparison == alarm_info["MetricAlarms"][0].ComparisonOperator'
           - 'ec2_instance_metric_alarm.threshold == alarm_info["MetricAlarms"][0].Threshold'
           - 'ec2_instance_metric_alarm.period == alarm_info["MetricAlarms"][0].Period'
@@ -426,7 +430,6 @@
           - 'ec2_instance_metric_alarm_no_unit.metric == alarm_info_no_unit["MetricAlarms"][0].MetricName'
           - 'ec2_instance_metric_alarm_no_unit.namespace == alarm_info_no_unit["MetricAlarms"][0].Namespace'
           - 'ec2_instance_metric_alarm_no_unit.comparison == alarm_info_no_unit["MetricAlarms"][0].ComparisonOperator'
-          - 'ec2_instance_metric_alarm_no_unit.comparison == alarm_info_no_unit["MetricAlarms"][0].ComparisonOperator'
           - 'ec2_instance_metric_alarm_no_unit.threshold == alarm_info_no_unit["MetricAlarms"][0].Threshold'
           - 'ec2_instance_metric_alarm_no_unit.period == alarm_info_no_unit["MetricAlarms"][0].Period'
           - 'not alarm_info_no_unit["MetricAlarms"][0].Unit'
@@ -464,6 +467,12 @@
           - 'alarm_info_no_unit["MetricAlarms"] | length == 0'
 
   always:
+    - name: try to delete the alarm
+      ec2_metric_alarm:
+        state: absent
+        name: "{{ alarm_full_name }}"
+      ignore_errors: true
+
     - name: try to stop the ec2 instance
       ec2_instance:
         instance_ids: "{{ ec2_instance_results.instances[0].instance_id }}"
