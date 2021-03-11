@@ -279,8 +279,7 @@
       assert:
         that:
           - 'ec2_instance_metric_alarm_update_check.changed'
-          - 'ec2_instance_metric_alarm_update_check.period == 60'  # Period reported by Ansible should be 60, not matching old value
-          - 'alarm_info["MetricAlarms"][0].Period == 300'  # Period of actual alarm should not change
+          - 'ec2_instance_metric_alarm_update_check.period == alarm_info["MetricAlarms"][0].Period'  # Period of actual alarm should not change
           - 'ec2_instance_metric_alarm_update_check.alarm_arn == ec2_instance_metric_alarm.alarm_arn'
           - 'ec2_instance_metric_alarm_update_check.statistic == alarm_info["MetricAlarms"][0].Statistic'
           - 'ec2_instance_metric_alarm_update_check.name  == alarm_info["MetricAlarms"][0].AlarmName'
