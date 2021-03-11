@@ -266,8 +266,8 @@ def create_metric_alarm(connection, module, params):
     except ClientError as e:
         module.fail_json_aws(e)
 
-    result = []
-    if alarms['MetricsAlarms']:
+    result = {}
+    if alarms['MetricAlarms']:
         result = alarms['MetricAlarms'][0]
 
     module.exit_json(changed=changed,
