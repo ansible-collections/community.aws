@@ -459,7 +459,7 @@
 
     - name: convert it to an object
       set_fact:
-        alarm_info: "{{ alarm_info_query_no_unit.stdout | from_json }}"
+        alarm_info_no_unit: "{{ alarm_info_query_no_unit.stdout | from_json }}"
 
     - name: Verify that the alarm was deleted using cli
       assert:
