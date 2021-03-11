@@ -81,14 +81,14 @@
 
     - name: convert it to an object
       set_fact:
-        alarm_info: "{{ alarm_info_query_check.stdout | from_json }}"
+        alarm_info_check: "{{ alarm_info_query_check.stdout | from_json }}"
 
     - name: "verify that an alarm was not created in check mode"
       assert:
         that:
           - 'ec2_instance_metric_alarm_check.changed'
           - 'not ec2_instance_metric_alarm_check.alarm_arn'
-          - 'alarm_info_query_check["MetricAlarms"] | length == 0'
+          - 'alarm_info_check["MetricAlarms"] | length == 0'
 
     - name: create ec2 metric alarm on ec2 instance
       ec2_metric_alarm:
@@ -169,7 +169,7 @@
 
     - name: convert it to an object
       set_fact:
-        alarm_info_idempotent: "{{ alarm_info_query_idempotent_check.stdout | from_json }}"
+        alarm_info_idempotent_check: "{{ alarm_info_query_idempotent_check.stdout | from_json }}"
 
     - name: "Verify alarm does not register as changed after update in check mode"
       assert:
