@@ -72,6 +72,7 @@ options:
     choices: ['Standard', 'Advanced', 'Intelligent-Tiering']
     default: Standard
     type: str
+    version_added: 1.5.0
 
 author:
   - "Davinder Pal (@116davinder) <dpsangwal@gmail.com>"
