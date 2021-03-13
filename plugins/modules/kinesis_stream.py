@@ -229,7 +229,7 @@ def get_tags(client, stream_name):
     except botocore.exceptions.ClientError as e:
         err_msg = to_native(e)
 
-    return success, err_msg, results
+    return success, err_msg, boto3_tag_list_to_ansible_dict(results)
 
 
 def find_stream(client, stream_name):
@@ -415,31 +415,26 @@ def update_tags(client, stream_name, tags, check_mode=False):
     tag_success, tag_msg, current_tags = (
         get_tags(client, stream_name)
     )
-    if current_tags:
-        tags_to_set, tags_to_delete = compare_aws_tags(
-            current_tags, tags,
-            purge_tags=True,
-        )
-        if tags_to_delete:
-            delete_success, delete_msg = (
-                tags_action(
-                    client, stream_name, tags_to_delete, action='delete',
-                    check_mode=check_mode
-                )
-            )
-            if not delete_success:
-                return delete_success, changed, delete_msg
-            tag_msg = 'Tags removed'
-        if tags_to_set:
-            tags = tags_to_set
-        else:
-            tag_msg = tag_msg or 'Tags do not need to be updated'
-            return True, changed, tag_msg
 
-    if tags:
+    tags_to_set, tags_to_delete = compare_aws_tags(
+        current_tags, tags,
+        purge_tags=True,
+    )
+    if tags_to_delete:
+        delete_success, delete_msg = (
+            tags_action(
+                client, stream_name, tags_to_delete, action='delete',
+                check_mode=check_mode
+            )
+        )
+        if not delete_success:
+            return delete_success, changed, delete_msg
+        tag_msg = 'Tags removed'
+
+    if tags_to_set:
         create_success, create_msg = (
             tags_action(
-                client, stream_name, tags, action='create',
+                client, stream_name, tags_to_set, action='create',
                 check_mode=check_mode
             )
         )
@@ -809,6 +804,7 @@ def update(client, current_stream, stream_name, number_of_shards=1, retention_pe
         tag_success, tag_changed, err_msg = (
             update_tags(client, stream_name, tags, check_mode=check_mode)
         )
+        changed |= tag_changed
     if wait:
         success, err_msg, status_stream = (
             wait_for_status(
