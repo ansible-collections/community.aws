@@ -657,7 +657,6 @@ def update_shard_count(client, stream_name, number_of_shards=1, check_mode=False
     return success, err_msg
 
 
-
 def update(client, current_stream, stream_name, number_of_shards=1, retention_period=None,
            tags=None, wait=False, wait_timeout=300, check_mode=False):
     """Update an Amazon Kinesis Stream.
@@ -1184,7 +1183,6 @@ def stop_stream_encryption(client, stream_name, encryption_type='', key_id='',
 
         results = camel_dict_to_snake_dict(results)
         results['tags'] = current_tags
-
 
     return success, changed, err_msg, results
 
