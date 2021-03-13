@@ -657,6 +657,7 @@ def update_shard_count(client, stream_name, number_of_shards=1, check_mode=False
     return success, err_msg
 
 
+
 def update(client, current_stream, stream_name, number_of_shards=1, retention_period=None,
            tags=None, wait=False, wait_timeout=300, check_mode=False):
     """Update an Amazon Kinesis Stream.
@@ -1089,6 +1090,19 @@ def start_stream_encryption(client, stream_name, encryption_type='', key_id='',
         changed = False
         err_msg = 'Kinesis Stream {0} does not exist'.format(stream_name)
 
+    if success:
+        stream_found, stream_msg, results = (
+            find_stream(client, stream_name)
+        )
+        tag_success, tag_msg, current_tags = (
+            get_tags(client, stream_name)
+        )
+        if not current_tags:
+            current_tags = dict()
+
+        results = camel_dict_to_snake_dict(results)
+        results['tags'] = current_tags
+
     return success, changed, err_msg, results
 
 
@@ -1112,7 +1126,7 @@ def stop_stream_encryption(client, stream_name, encryption_type='', key_id='',
     Basic Usage:
         >>> client = boto3.client('kinesis')
         >>> stream_name = 'test-stream'
-        >>> start_stream_encryption(client, stream_name,encryption_type, key_id)
+        >>> stop_stream_encryption(client, stream_name,encryption_type, key_id)
 
     Returns:
         Tuple (bool, bool, str, dict)
@@ -1157,6 +1171,20 @@ def stop_stream_encryption(client, stream_name, encryption_type='', key_id='',
         success = True
         changed = False
         err_msg = 'Stream {0} does not exist.'.format(stream_name)
+
+    if success:
+        stream_found, stream_msg, results = (
+            find_stream(client, stream_name)
+        )
+        tag_success, tag_msg, current_tags = (
+            get_tags(client, stream_name)
+        )
+        if not current_tags:
+            current_tags = dict()
+
+        results = camel_dict_to_snake_dict(results)
+        results['tags'] = current_tags
+
 
     return success, changed, err_msg, results
 
