@@ -194,6 +194,9 @@ except ImportError:
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 
 def convert_to_lower(data):
@@ -232,60 +235,6 @@ def convert_to_lower(data):
             else:
                 results[key] = val
     return results
-
-
-def make_tags_in_proper_format(tags):
-    """Take a dictionary of tags and convert them into the AWS Tags format.
-    Args:
-        tags (list): The tags you want applied.
-
-    Basic Usage:
-        >>> tags = [{'Key': 'env', 'Value': 'development'}]
-        >>> make_tags_in_proper_format(tags)
-        {
-            "env": "development",
-        }
-
-    Returns:
-        Dict
-    """
-    formatted_tags = dict()
-    for tag in tags:
-        formatted_tags[tag.get('Key')] = tag.get('Value')
-
-    return formatted_tags
-
-
-def make_tags_in_aws_format(tags):
-    """Take a dictionary of tags and convert them into the AWS Tags format.
-    Args:
-        tags (dict): The tags you want applied.
-
-    Basic Usage:
-        >>> tags = {'env': 'development', 'service': 'web'}
-        >>> make_tags_in_proper_format(tags)
-        [
-            {
-                "Value": "web",
-                "Key": "service"
-             },
-            {
-               "Value": "development",
-               "key": "env"
-            }
-        ]
-
-    Returns:
-        List
-    """
-    formatted_tags = list()
-    for key, val in tags.items():
-        formatted_tags.append({
-            'Key': key,
-            'Value': val
-        })
-
-    return formatted_tags
 
 
 def get_tags(client, stream_name):
@@ -535,7 +484,7 @@ def update_tags(client, stream_name, tags, check_mode=False):
         get_tags(client, stream_name)
     )
     if current_tags:
-        tags = make_tags_in_aws_format(tags)
+        tags = ansible_dict_to_boto3_tag_list(tags)
         current_tags_set = (
             set(
                 reduce(
@@ -1089,7 +1038,7 @@ def create_stream(client, stream_name, number_of_shards=1, retention_period=None
             get_tags(client, stream_name)
         )
         if current_tags and not check_mode:
-            current_tags = make_tags_in_proper_format(current_tags)
+            current_tags = boto3_tag_list_to_ansible_dict(current_tags)
             results['Tags'] = current_tags
         elif check_mode and tags:
             results['Tags'] = tags
