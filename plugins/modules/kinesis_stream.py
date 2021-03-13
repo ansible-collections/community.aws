@@ -370,7 +370,7 @@ def tags_action(client, stream_name, tags, action='create', check_mode=False):
                 client.add_tags_to_stream(**params)
                 success = True
             elif action == 'delete':
-                params['TagKeys'] = list(tags)
+                params['TagKeys'] = tags
                 client.remove_tags_from_stream(**params)
                 success = True
             else:
@@ -387,38 +387,6 @@ def tags_action(client, stream_name, tags, action='create', check_mode=False):
         err_msg = to_native(e)
 
     return success, err_msg
-
-
-def recreate_tags_from_list(list_of_tags):
-    """Recreate tags from a list of tuples into the Amazon Tag format.
-    Args:
-        list_of_tags (list): List of tuples.
-
-    Basic Usage:
-        >>> list_of_tags = [('Env', 'Development')]
-        >>> recreate_tags_from_list(list_of_tags)
-        [
-            {
-                "Value": "Development",
-                "Key": "Env"
-            }
-        ]
-
-    Returns:
-        List
-    """
-    tags = list()
-    i = 0
-    for i in range(len(list_of_tags)):
-        key_name = list_of_tags[i][0]
-        key_val = list_of_tags[i][1]
-        tags.append(
-            {
-                'Key': key_name,
-                'Value': key_val
-            }
-        )
-    return tags
 
 
 def update_tags(client, stream_name, tags, check_mode=False):
@@ -448,30 +416,11 @@ def update_tags(client, stream_name, tags, check_mode=False):
         get_tags(client, stream_name)
     )
     if current_tags:
-        tags = ansible_dict_to_boto3_tag_list(tags)
-        current_tags_set = (
-            set(
-                reduce(
-                    lambda x, y: x + y,
-                    [make_tags_in_proper_format(current_tags).items()]
-                )
-            )
+        tags_to_set, tags_to_delete = compare_aws_tags(
+            current_tags, tags,
+            purge_tags=True,
         )
-
-        new_tags_set = (
-            set(
-                reduce(
-                    lambda x, y: x + y,
-                    [make_tags_in_proper_format(tags).items()]
-                )
-            )
-        )
-        tags_to_delete = list(current_tags_set.difference(new_tags_set))
-        tags_to_update = list(new_tags_set.difference(current_tags_set))
         if tags_to_delete:
-            tags_to_delete = make_tags_in_proper_format(
-                recreate_tags_from_list(tags_to_delete)
-            )
             delete_success, delete_msg = (
                 tags_action(
                     client, stream_name, tags_to_delete, action='delete',
@@ -480,12 +429,12 @@ def update_tags(client, stream_name, tags, check_mode=False):
             )
             if not delete_success:
                 return delete_success, changed, delete_msg
-        if tags_to_update:
-            tags = make_tags_in_proper_format(
-                recreate_tags_from_list(tags_to_update)
-            )
+            tag_msg = 'Tags removed'
+        if tags_to_set:
+            tags = tags_to_set
         else:
-            return True, changed, 'Tags do not need to be updated'
+            tag_msg = tag_msg or 'Tags do not need to be updated'
+            return True, changed, tag_msg
 
     if tags:
         create_success, create_msg = (
