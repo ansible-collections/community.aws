@@ -1,14 +1,5 @@
 ---
 # ============================================================
-# Known issues:
-#
-# - (Tag_snake) tag keys get snake_cased in return values
-# - (Tag_changed) changing tags doesn't return changed
-# - (Enc_snake) return values don't get snake_cased when updating encryption
-# - (Enc_disable) disabling encryption Requires key and type be set
-# - (Enc_idemp) Updating encryption settings isn't idempotent
-#
-# ============================================================
 - name: 'Setup AWS Module Defaults'
   module_defaults:
     group/aws:
