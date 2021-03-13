@@ -552,8 +552,6 @@
         that:
         - result is success
         - result is not changed
-      # XXX BUG (Enc_idemp)
-      ignore_errors: yes
     # Merge this into the main assertion when the main return keys are
     # snake_cased
     - name: 'Assert expected return values'
