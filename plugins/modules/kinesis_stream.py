@@ -192,49 +192,13 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
-
-
-def convert_to_lower(data):
-    """Convert all uppercase keys in dict with lowercase_
-    Args:
-        data (dict): Dictionary with keys that have upper cases in them
-            Example.. FooBar == foo_bar
-            if a val is of type datetime.datetime, it will be converted to
-            the ISO 8601
-
-    Basic Usage:
-        >>> test = {'FooBar': []}
-        >>> test = convert_to_lower(test)
-        {
-            'foo_bar': []
-        }
-
-    Returns:
-        Dictionary
-    """
-    results = dict()
-    if isinstance(data, dict):
-        for key, val in data.items():
-            key = re.sub(r'(([A-Z]{1,3}){1})', r'_\1', key).lower()
-            if key[0] == '_':
-                key = key[1:]
-            if isinstance(val, datetime.datetime):
-                results[key] = val.isoformat()
-            elif isinstance(val, dict):
-                results[key] = convert_to_lower(val)
-            elif isinstance(val, list):
-                converted = list()
-                for item in val:
-                    converted.append(convert_to_lower(item))
-                results[key] = converted
-            else:
-                results[key] = val
-    return results
 
 
 def get_tags(client, stream_name):
@@ -1037,14 +1001,14 @@ def create_stream(client, stream_name, number_of_shards=1, retention_period=None
         tag_success, tag_msg, current_tags = (
             get_tags(client, stream_name)
         )
-        if current_tags and not check_mode:
-            current_tags = boto3_tag_list_to_ansible_dict(current_tags)
-            results['Tags'] = current_tags
-        elif check_mode and tags:
-            results['Tags'] = tags
-        else:
-            results['Tags'] = dict()
-        results = convert_to_lower(results)
+        if check_mode:
+            current_tags = tags
+
+        if not current_tags:
+            current_tags = dict()
+
+        results = camel_dict_to_snake_dict(results)
+        results['tags'] = current_tags
 
     return success, changed, err_msg, results
 
