@@ -18,6 +18,7 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key }}'
+  register: result
 - name: 'Assert state is changed when enabling encryption (CHECK_MODE)'
   assert:
     that:
@@ -30,6 +31,7 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key }}'
+  register: result
 - name: 'Assert that state is changed when enabling encryption'
   assert:
     that:
@@ -66,13 +68,12 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key_id }}'
+  register: result
 - name: 'Assert state is changed when enabling encryption (CHECK_MODE)'
   assert:
     that:
     - result is success
     - result is not changed
-  # XXX BUG (Enc_Idemp)
-  ignore_errors: yes
 
 - name: 'Test encryption idempotency comparing {{ key_type }} and ID'
   kinesis_stream:
@@ -80,13 +81,12 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key_id }}'
+  register: result
 - name: 'Assert that state is changed when enabling encryption'
   assert:
     that:
     - result is success
     - result is not changed
-  # XXX BUG (Enc_Idemp)
-  ignore_errors: yes
 # Merge this into the main assertion when the main return keys are
 # snake_cased
 - name: 'Assert expected return values'
@@ -119,6 +119,7 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key_alias }}'
+  register: result
 - name: 'Assert state is changed when enabling encryption (CHECK_MODE)'
   assert:
     that:
@@ -133,6 +134,7 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key_alias }}'
+  register: result
 - name: 'Assert that state is changed when enabling encryption'
   assert:
     that:
@@ -171,6 +173,7 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key_arn }}'
+  register: result
 - name: 'Assert state is changed when enabling encryption (CHECK_MODE)'
   assert:
     that:
@@ -185,12 +188,12 @@
     encryption_state: 'enabled'
     encryption_type: 'KMS'
     key_id: '{{ kinesis_key_arn }}'
+  register: result
 - name: 'Assert that state is changed when enabling encryption'
   assert:
     that:
     - result is success
     - result is not changed
-  # XXX BUG (Enc_Idemp)
   ignore_errors: yes
 # Merge this into the main assertion when the main return keys are
 # snake_cased
@@ -224,9 +227,8 @@
     encryption_type: 'KMS'
     # XXX Oddity of Kinesis - This needs to match the existing setting
     key_id: '{{ kinesis_key_arn }}'
+  register: result
 - name: 'Assert state is changed when disabling encryption (CHECK_MODE)'
-  # XXX BUG (CM)
-  ignore_errors: yes
   assert:
     that:
     - result is success
@@ -240,7 +242,8 @@
     encryption_type: 'KMS'
     # XXX Oddity of Kinesis - This needs to match the existing setting
     key_id: '{{ kinesis_key_arn }}'
-- name: 'Assert state is not changed when disabling encryption (CHECK_MODE)'
+  register: result
+- name: 'Assert state is not changed when disabling encryption'
   assert:
     that:
     - result is success

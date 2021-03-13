@@ -288,15 +288,11 @@ def make_tags_in_aws_format(tags):
     return formatted_tags
 
 
-def get_tags(client, stream_name, check_mode=False):
+def get_tags(client, stream_name):
     """Retrieve the tags for a Kinesis Stream.
     Args:
         client (botocore.client.EC2): Boto3 client.
         stream_name (str): Name of the Kinesis stream.
-
-    Kwargs:
-        check_mode (bool): This will pass DryRun as one of the parameters to the aws api.
-            default=False
 
     Basic Usage:
         >>> client = boto3.client('kinesis')
@@ -313,17 +309,9 @@ def get_tags(client, stream_name, check_mode=False):
     }
     results = dict()
     try:
-        if not check_mode:
-            results = (
-                client.list_tags_for_stream(**params)['Tags']
-            )
-        else:
-            results = [
-                {
-                    'Key': 'DryRunMode',
-                    'Value': 'true'
-                },
-            ]
+        results = (
+            client.list_tags_for_stream(**params)['Tags']
+        )
         success = True
     except botocore.exceptions.ClientError as e:
         err_msg = to_native(e)
@@ -331,15 +319,11 @@ def get_tags(client, stream_name, check_mode=False):
     return success, err_msg, results
 
 
-def find_stream(client, stream_name, check_mode=False):
+def find_stream(client, stream_name):
     """Retrieve a Kinesis Stream.
     Args:
         client (botocore.client.EC2): Boto3 client.
         stream_name (str): Name of the Kinesis stream.
-
-    Kwargs:
-        check_mode (bool): This will pass DryRun as one of the parameters to the aws api.
-            default=False
 
     Basic Usage:
         >>> client = boto3.client('kinesis')
@@ -357,32 +341,19 @@ def find_stream(client, stream_name, check_mode=False):
     has_more_shards = True
     shards = list()
     try:
-        if not check_mode:
-            while has_more_shards:
-                results = (
-                    client.describe_stream(**params)['StreamDescription']
-                )
-                shards.extend(results.pop('Shards'))
-                has_more_shards = results['HasMoreShards']
-                if has_more_shards:
-                    params['ExclusiveStartShardId'] = shards[-1]['ShardId']
-            results['Shards'] = shards
-            num_closed_shards = len([s for s in shards if 'EndingSequenceNumber' in s['SequenceNumberRange']])
-            results['OpenShardsCount'] = len(shards) - num_closed_shards
-            results['ClosedShardsCount'] = num_closed_shards
-            results['ShardsCount'] = len(shards)
-        else:
-            results = {
-                'OpenShardsCount': 5,
-                'ClosedShardsCount': 0,
-                'ShardsCount': 5,
-                'HasMoreShards': True,
-                'RetentionPeriodHours': 24,
-                'StreamName': stream_name,
-                'StreamARN': 'arn:aws:kinesis:east-side:123456789:stream/{0}'.format(stream_name),
-                'StreamStatus': 'ACTIVE',
-                'EncryptionType': 'NONE'
-            }
+        while has_more_shards:
+            results = (
+                client.describe_stream(**params)['StreamDescription']
+            )
+            shards.extend(results.pop('Shards'))
+            has_more_shards = results['HasMoreShards']
+            if has_more_shards:
+                params['ExclusiveStartShardId'] = shards[-1]['ShardId']
+        results['Shards'] = shards
+        num_closed_shards = len([s for s in shards if 'EndingSequenceNumber' in s['SequenceNumberRange']])
+        results['OpenShardsCount'] = len(shards) - num_closed_shards
+        results['ClosedShardsCount'] = num_closed_shards
+        results['ShardsCount'] = len(shards)
         success = True
     except botocore.exceptions.ClientError as e:
         err_msg = to_native(e)
@@ -421,7 +392,7 @@ def wait_for_status(client, stream_name, status, wait_timeout=300,
     while wait_timeout > time.time():
         try:
             find_success, find_msg, stream = (
-                find_stream(client, stream_name, check_mode=check_mode)
+                find_stream(client, stream_name)
             )
             if check_mode:
                 status_achieved = True
@@ -561,7 +532,7 @@ def update_tags(client, stream_name, tags, check_mode=False):
     changed = False
     err_msg = ''
     tag_success, tag_msg, current_tags = (
-        get_tags(client, stream_name, check_mode=check_mode)
+        get_tags(client, stream_name)
     )
     if current_tags:
         tags = make_tags_in_aws_format(tags)
@@ -926,7 +897,7 @@ def update(client, current_stream, stream_name, number_of_shards=1, retention_pe
                     return wait_success, False, wait_msg
             elif changed and not wait:
                 stream_found, stream_msg, current_stream = (
-                    find_stream(client, stream_name, check_mode=check_mode)
+                    find_stream(client, stream_name)
                 )
                 if stream_found:
                     if current_stream['StreamStatus'] != 'ACTIVE':
@@ -963,7 +934,7 @@ def update(client, current_stream, stream_name, number_of_shards=1, retention_pe
                 return wait_success, changed, wait_msg
         else:
             stream_found, stream_msg, current_stream = (
-                find_stream(client, stream_name, check_mode=check_mode)
+                find_stream(client, stream_name)
             )
             if stream_found and current_stream['StreamStatus'] != 'ACTIVE':
                 err_msg = (
@@ -1028,7 +999,7 @@ def create_stream(client, stream_name, number_of_shards=1, retention_period=None
     results = dict()
 
     stream_found, stream_msg, current_stream = (
-        find_stream(client, stream_name, check_mode=check_mode)
+        find_stream(client, stream_name)
     )
 
     if stream_found and current_stream.get('StreamStatus') == 'DELETING' and wait:
@@ -1089,7 +1060,7 @@ def create_stream(client, stream_name, number_of_shards=1, retention_period=None
                     return success, changed, err_msg, results
 
             stream_found, stream_msg, current_stream = (
-                find_stream(client, stream_name, check_mode=check_mode)
+                find_stream(client, stream_name)
             )
             if retention_period and current_stream.get('StreamStatus') == 'ACTIVE':
                 changed, err_msg = (
@@ -1112,10 +1083,10 @@ def create_stream(client, stream_name, number_of_shards=1, retention_period=None
 
     if success:
         stream_found, stream_msg, results = (
-            find_stream(client, stream_name, check_mode=check_mode)
+            find_stream(client, stream_name)
         )
         tag_success, tag_msg, current_tags = (
-            get_tags(client, stream_name, check_mode=check_mode)
+            get_tags(client, stream_name)
         )
         if current_tags and not check_mode:
             current_tags = make_tags_in_proper_format(current_tags)
@@ -1157,7 +1128,7 @@ def delete_stream(client, stream_name, wait=False, wait_timeout=300,
     err_msg = ''
     results = dict()
     stream_found, stream_msg, current_stream = (
-        find_stream(client, stream_name, check_mode=check_mode)
+        find_stream(client, stream_name)
     )
     if stream_found:
         success, err_msg = (
@@ -1226,7 +1197,7 @@ def start_stream_encryption(client, stream_name, encryption_type='', key_id='',
 
     results = dict()
     stream_found, stream_msg, current_stream = (
-        find_stream(client, stream_name, check_mode=check_mode)
+        find_stream(client, stream_name)
     )
     if stream_found:
         if (current_stream.get("EncryptionType") == encryption_type and current_stream.get("KeyId") == key_id):
@@ -1297,7 +1268,7 @@ def stop_stream_encryption(client, stream_name, encryption_type='', key_id='',
 
     results = dict()
     stream_found, stream_msg, current_stream = (
-        find_stream(client, stream_name, check_mode=check_mode)
+        find_stream(client, stream_name)
     )
     if stream_found:
         if current_stream.get('EncryptionType') == 'KMS':
