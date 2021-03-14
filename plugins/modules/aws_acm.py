@@ -362,30 +362,39 @@ def main():
             else:
                 module.debug("Existing certificate in ACM is different, overwriting")
 
-                # update cert in ACM
-                arn = acm.import_certificate(client, module,
-                                             certificate=module.params['certificate'],
-                                             private_key=module.params['private_key'],
-                                             certificate_chain=module.params['certificate_chain'],
-                                             arn=old_cert['certificate_arn'],
-                                             tags=tags)
+                if module.check_mode:
+                    arn = old_cert['certificate_arn']
+                    # note: returned domain will be the domain of the previous cert
+                else:
+                    # update cert in ACM
+                    arn = acm.import_certificate(client, module,
+                                                 certificate=module.params['certificate'],
+                                                 private_key=module.params['private_key'],
+                                                 certificate_chain=module.params['certificate_chain'],
+                                                 arn=old_cert['certificate_arn'],
+                                                 tags=tags)
                 domain = acm.get_domain_of_cert(client=client, module=module, arn=arn)
                 module.exit_json(certificate=dict(domain_name=domain, arn=arn), changed=True)
         else:  # len(certificates) == 0
             module.debug("No certificate in ACM. Creating new one.")
-            arn = acm.import_certificate(client=client,
-                                         module=module,
-                                         certificate=module.params['certificate'],
-                                         private_key=module.params['private_key'],
-                                         certificate_chain=module.params['certificate_chain'],
-                                         tags=tags)
-            domain = acm.get_domain_of_cert(client=client, module=module, arn=arn)
+            if module.check_mode:
+                arn = 'arn:aws:acm:us-east-1:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901'
+                domain = 'example.com'
+            else:
+                arn = acm.import_certificate(client=client,
+                                             module=module,
+                                             certificate=module.params['certificate'],
+                                             private_key=module.params['private_key'],
+                                             certificate_chain=module.params['certificate_chain'],
+                                             tags=tags)
+                domain = acm.get_domain_of_cert(client=client, module=module, arn=arn)
 
             module.exit_json(certificate=dict(domain_name=domain, arn=arn), changed=True)
 
     else:  # state == absent
         for cert in certificates:
-            acm.delete_certificate(client, module, cert['certificate_arn'])
+            if not module.check_mode:
+                acm.delete_certificate(client, module, cert['certificate_arn'])
         module.exit_json(arns=[cert['certificate_arn'] for cert in certificates],
                          changed=(len(certificates) > 0))
 
