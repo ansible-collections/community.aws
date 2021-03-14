@@ -426,8 +426,8 @@ def find_asgs(conn, module, name=None, tags=None):
             try:
                 asg_lifecyclehooks = conn.describe_lifecycle_hooks(AutoScalingGroupName=asg['auto_scaling_group_name'])
                 asg['lifecycle_hooks'] = asg_lifecyclehooks['LifecycleHooks']
-            except ClientError as e:
-                module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Failed to fetch information about ASG lifecycle hooks")
             matched_asgs.append(asg)
 
     return matched_asgs
