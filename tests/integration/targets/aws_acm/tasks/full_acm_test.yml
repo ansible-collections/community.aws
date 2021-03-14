@@ -23,17 +23,15 @@
     aws_acm:
       name_tag: '{{ item.name }}'
       state: absent
-    with_nested:
-      - '{{ local_certs }}'
-      - [True, False]
+    with_items: '{{ local_certs }}'
   - name: ensure absent cert which doesn't exist - second time
     aws_acm:
       name_tag: '{{ item[0].name }}'
       state: absent
-    changed_when: '{{ item[1] }}'
+    check_mode: '{{ item[1] }}'
     with_nested:
       - '{{ local_certs }}'
-      - [True, False]
+      - [true, false]
     register: absent_start_two
   - name: check no change when ensuring absent cert is absent
     assert:
@@ -53,7 +51,7 @@
     assert:
       that:
         - (list_tag.certificates | length) == 0
-        -  not list_tag.changed
+        - not list_tag.changed
   - name: check directory was made
     assert:
       that:
@@ -304,10 +302,10 @@
     - 0
     - 1
   - name: test deletion with check mode detected change
-      assert:
-        that:
-          - delete_both_check.changed
-          - (check_del_one.certificates | length) == 2
+    assert:
+      that:
+        - delete_both_check.changed
+        - (check_del_one.certificates | length) == 2
   - name: delete certs 1 and 2 real
     aws_acm:
       state: absent
