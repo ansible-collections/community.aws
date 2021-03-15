@@ -322,26 +322,24 @@
       that:
         - endpoint_delete_check is changed
 
-# FIXME - need to add lookups
-#  - name: Delete minimal endpoint by ID - idempotency (check_mode)
-#    ec2_vpc_endpoint:
-#      state: absent
-#      vpc_endpoint_id: "{{ endpoint_id }}"
-#    check_mode: true
-#    register: endpoint_delete_check
-#  - assert:
-#      that:
-#        - endpoint_delete_check is not changed
-#
-#
-#  - name: Delete minimal endpoint by ID - idempotency
-#    ec2_vpc_endpoint:
-#      state: absent
-#      vpc_endpoint_id: "{{ endpoint_id }}"
-#    register: endpoint_delete_check
-#  - assert:
-#      that:
-#        - endpoint_delete_check is not changed
+  - name: Delete minimal endpoint by ID - idempotency (check_mode)
+    ec2_vpc_endpoint:
+      state: absent
+      vpc_endpoint_id: "{{ endpoint_id }}"
+    check_mode: true
+    register: endpoint_delete_check
+  - assert:
+      that:
+        - endpoint_delete_check is not changed
+
+  - name: Delete minimal endpoint by ID - idempotency
+    ec2_vpc_endpoint:
+      state: absent
+      vpc_endpoint_id: "{{ endpoint_id }}"
+    register: endpoint_delete_check
+  - assert:
+      that:
+        - endpoint_delete_check is not changed
 
   - name: Fetch Endpoints by ID (expect failed)
     ec2_vpc_endpoint_info:
@@ -711,18 +709,15 @@
       that:
         - endpoint_delete_check is changed
 
-# XXX Bug: uses AWS's check mode which only checks permissions
-# Still not idempotent in check_mode because we don't do any lookups
-# FIXME
-#  - name: Delete minimal endpoint by ID - idempotency (check_mode)
-#    ec2_vpc_endpoint:
-#      state: absent
-#      vpc_endpoint_id: "{{ rtb_endpoint_id }}"
-#    check_mode: true
-#    register: endpoint_delete_check
-#  - assert:
-#      that:
-#        - endpoint_delete_check is not changed
+  - name: Delete minimal endpoint by ID - idempotency (check_mode)
+    ec2_vpc_endpoint:
+      state: absent
+      vpc_endpoint_id: "{{ rtb_endpoint_id }}"
+    check_mode: true
+    register: endpoint_delete_check
+  - assert:
+      that:
+        - endpoint_delete_check is not changed
 
   - name: Delete endpoint by ID - idempotency
     ec2_vpc_endpoint:
