@@ -218,6 +218,7 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.core import normalize_boto3_result
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
@@ -395,11 +396,11 @@ def compare_and_remove_rule(current_lifecycle_rules, rule_id=None, prefix=None):
     return changed, lifecycle_configuration
 
 
-def compare_rule(rule_a, rule_b, purge_transitions):
+def compare_rule(new_rule, old_rule, purge_transitions):
 
     # Copy objects
-    rule1 = deepcopy(rule_a)
-    rule2 = deepcopy(rule_b)
+    rule1 = deepcopy(new_rule)
+    rule2 = deepcopy(old_rule)
 
     if purge_transitions:
         return rule1 == rule2
@@ -452,8 +453,11 @@ def create_lifecycle_rule(client, module):
             aws_retry=True,
             Bucket=name,
             LifecycleConfiguration=lifecycle_configuration)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
+    except is_boto3_error_message('At least one action needs to be specified in a rule'):
+        # Amazon interpretted this as not changing anything
+        changed = False
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, lifecycle_configuration=lifecycle_configuration, name=name, old_lifecycle_rules=old_lifecycle_rules)
 
     _changed = changed
     _retries = 10
