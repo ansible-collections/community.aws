@@ -67,7 +67,7 @@ options:
     type: str
   tier:
     description:
-      - Paramter Store Tier Type
+      - Parameter store tier type.
     required: false
     choices: ['Standard', 'Advanced', 'Intelligent-Tiering']
     default: Standard
