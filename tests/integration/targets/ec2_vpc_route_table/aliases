@@ -1,4 +1,4 @@
 cloud/aws
-shippable/aws/group2
-unstable
+shippable/aws/group4
+
 ec2_vpc_route_table_info

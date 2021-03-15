@@ -14,15 +14,15 @@ module: aws_api_gateway
 version_added: 1.0.0
 short_description: Manage AWS API Gateway APIs
 description:
-     - Allows for the management of API Gateway APIs
+     - Allows for the management of API Gateway APIs.
      - Normally you should give the api_id since there is no other
        stable guaranteed unique identifier for the API.  If you do
-       not give api_id then a new API will be create each time
+       not give api_id then a new API will be created each time
        this is run.
      - Beware that there are very hard limits on the rate that
        you can call API Gateway's REST API.  You may need to patch
        your boto.  See U(https://github.com/boto/boto3/issues/876)
-       and discuss with your AWS rep.
+       and discuss it with your AWS rep.
      - swagger_file and swagger_text are passed directly on to AWS
        transparently whilst swagger_dict is an ansible dict which is
        converted to JSON before the API definitions are uploaded.
@@ -40,7 +40,7 @@ options:
   swagger_file:
     description:
       - JSON or YAML file containing swagger definitions for API.
-        Exactly one of swagger_file, swagger_text or swagger_dict must
+        Exactly one of I(swagger_file), I(swagger_text) or I(swagger_dict) must
         be present.
     type: path
     aliases: ['src', 'api_file']
@@ -60,13 +60,13 @@ options:
     type: str
   deploy_desc:
     description:
-      - Description of the deployment - recorded and visible in the
-        AWS console.
+      - Description of the deployment.
+      - Recorded and visible in the AWS console.
     default: Automatic deployment by Ansible.
     type: str
   cache_enabled:
     description:
-      - Enable API GW caching of backend responses. Defaults to false.
+      - Enable API GW caching of backend responses.
     type: bool
     default: false
   cache_size:
@@ -83,21 +83,23 @@ options:
     description:
       - Canary settings for the deployment of the stage.
       - 'Dict with following settings:'
-      - 'percentTraffic: The percent (0-100) of traffic diverted to a canary deployment.'
-      - 'deploymentId: The ID of the canary deployment.'
-      - 'stageVariableOverrides: Stage variables overridden for a canary release deployment.'
-      - 'useStageCache: A Boolean flag to indicate whether the canary deployment uses the stage cache or not.'
+      - 'C(percentTraffic): The percent (0-100) of traffic diverted to a canary deployment.'
+      - 'C(deploymentId): The ID of the canary deployment.'
+      - 'C(stageVariableOverrides): Stage variables overridden for a canary release deployment.'
+      - 'C(useStageCache): A Boolean flag to indicate whether the canary deployment uses the stage cache or not.'
       - See docs U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/apigateway.html#APIGateway.Client.create_stage)
     type: dict
   tracing_enabled:
     description:
       - Specifies whether active tracing with X-ray is enabled for the API GW stage.
     type: bool
+    default: false
   endpoint_type:
     description:
-      - Type of endpoint configuration, use C(EDGE) for an edge optimized API endpoint,
-      - C(REGIONAL) for just a regional deploy or PRIVATE for a private API.
-      - This will flag will only be used when creating a new API Gateway setup, not for updates.
+      - Type of endpoint configuration.
+      - Use C(EDGE) for an edge optimized API endpoint,
+        C(REGIONAL) for just a regional deploy or C(PRIVATE) for a private API.
+      - This flag will only be used when creating a new API Gateway setup, not for updates.
     choices: ['EDGE', 'REGIONAL', 'PRIVATE']
     type: str
     default: EDGE
@@ -109,7 +111,7 @@ extends_documentation_fragment:
 
 notes:
    - A future version of this module will probably use tags or another
-     ID so that an API can be create only once.
+     ID so that an API can be created only once.
    - As an early work around an intermediate version will probably do
      the same using a tag embedded in the API name.
 
@@ -170,16 +172,17 @@ resource_actions:
 '''
 
 import json
+import traceback
 
 try:
     import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-import traceback
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def main():

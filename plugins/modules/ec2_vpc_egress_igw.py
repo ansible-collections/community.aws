@@ -57,36 +57,36 @@ vpc_id:
     sample: vpc-012345678
 '''
 
-
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-
 try:
     import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-def delete_eigw(module, conn, eigw_id):
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+
+
+def delete_eigw(module, connection, eigw_id):
     """
     Delete EIGW.
 
     module     : AnsibleAWSModule object
-    conn       : boto3 client connection object
+    connection : boto3 client connection object
     eigw_id    : ID of the EIGW to delete
     """
     changed = False
 
     try:
-        response = conn.delete_egress_only_internet_gateway(DryRun=module.check_mode, EgressOnlyInternetGatewayId=eigw_id)
-    except botocore.exceptions.ClientError as e:
-        # When boto3 method is run with DryRun=True it returns an error on success
-        # We need to catch the error and return something valid
-        if e.response.get('Error', {}).get('Code') == "DryRunOperation":
-            changed = True
-        else:
-            module.fail_json_aws(e, msg="Could not delete Egress-Only Internet Gateway {0} from VPC {1}".format(eigw_id, module.vpc_id))
-    except botocore.exceptions.BotoCoreError as e:
+        response = connection.delete_egress_only_internet_gateway(
+            aws_retry=True,
+            DryRun=module.check_mode,
+            EgressOnlyInternetGatewayId=eigw_id)
+    except is_boto3_error_code('DryRunOperation'):
+        changed = True
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Could not delete Egress-Only Internet Gateway {0} from VPC {1}".format(eigw_id, module.vpc_id))
 
     if not module.check_mode:
@@ -95,29 +95,29 @@ def delete_eigw(module, conn, eigw_id):
     return changed
 
 
-def create_eigw(module, conn, vpc_id):
+def create_eigw(module, connection, vpc_id):
     """
     Create EIGW.
 
     module       : AnsibleAWSModule object
-    conn         : boto3 client connection object
+    connection   : boto3 client connection object
     vpc_id       : ID of the VPC we are operating on
     """
     gateway_id = None
     changed = False
 
     try:
-        response = conn.create_egress_only_internet_gateway(DryRun=module.check_mode, VpcId=vpc_id)
-    except botocore.exceptions.ClientError as e:
+        response = connection.create_egress_only_internet_gateway(
+            aws_retry=True,
+            DryRun=module.check_mode,
+            VpcId=vpc_id)
+    except is_boto3_error_code('DryRunOperation'):
         # When boto3 method is run with DryRun=True it returns an error on success
         # We need to catch the error and return something valid
-        if e.response.get('Error', {}).get('Code') == "DryRunOperation":
-            changed = True
-        elif e.response.get('Error', {}).get('Code') == "InvalidVpcID.NotFound":
-            module.fail_json_aws(e, msg="invalid vpc ID '{0}' provided".format(vpc_id))
-        else:
-            module.fail_json_aws(e, msg="Could not create Egress-Only Internet Gateway for vpc ID {0}".format(vpc_id))
-    except botocore.exceptions.BotoCoreError as e:
+        changed = True
+    except is_boto3_error_code('InvalidVpcID.NotFound') as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="invalid vpc ID '{0}' provided".format(vpc_id))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Could not create Egress-Only Internet Gateway for vpc ID {0}".format(vpc_id))
 
     if not module.check_mode:
@@ -135,18 +135,19 @@ def create_eigw(module, conn, vpc_id):
     return changed, gateway_id
 
 
-def describe_eigws(module, conn, vpc_id):
+def describe_eigws(module, connection, vpc_id):
     """
     Describe EIGWs.
 
     module     : AnsibleAWSModule object
-    conn       : boto3 client connection object
+    connection : boto3 client connection object
     vpc_id     : ID of the VPC we are operating on
     """
     gateway_id = None
 
     try:
-        response = conn.describe_egress_only_internet_gateways()
+        response = connection.describe_egress_only_internet_gateways(
+            aws_retry=True)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Could not get list of existing Egress-Only Internet Gateways")
 
@@ -166,7 +167,8 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
-    connection = module.client('ec2')
+    retry_decorator = AWSRetry.jittered_backoff(retries=10)
+    connection = module.client('ec2', retry_decorator=retry_decorator)
 
     vpc_id = module.params.get('vpc_id')
     state = module.params.get('state')

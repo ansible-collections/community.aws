@@ -19,17 +19,20 @@ options:
     operation:
         description:
             - Which task operation to execute.
+            - When I(operation=run) I(task_definition) must be set.
+            - When I(operation=start) both I(task_definition) and I(container_instances) must be set.
+            - When I(operation=stop) both I(task_definition) and I(task) must be set.
         required: True
         choices: ['run', 'start', 'stop']
         type: str
     cluster:
         description:
             - The name of the cluster to run the task on.
-        required: False
+        required: True
         type: str
     task_definition:
         description:
-            - The task definition to start or run.
+            - The task definition to start, run or stop.
         required: False
         type: str
     overrides:
@@ -44,7 +47,7 @@ options:
         type: int
     task:
         description:
-            - The task to stop.
+            - The ARN of the task to stop.
         required: False
         type: str
     container_instances:
@@ -307,35 +310,32 @@ class EcsExecManager:
         return response['task']
 
     def ecs_api_handles_launch_type(self):
-        from distutils.version import LooseVersion
         # There doesn't seem to be a nice way to inspect botocore to look
         # for attributes (and networkConfiguration is not an explicit argument
         # to e.g. ecs.run_task, it's just passed as a keyword argument)
-        return LooseVersion(botocore.__version__) >= LooseVersion('1.8.4')
+        return self.module.botocore_at_least('1.8.4')
 
     def ecs_task_long_format_enabled(self):
         account_support = self.ecs.list_account_settings(name='taskLongArnFormat', effectiveSettings=True)
         return account_support['settings'][0]['value'] == 'enabled'
 
     def ecs_api_handles_tags(self):
-        from distutils.version import LooseVersion
         # There doesn't seem to be a nice way to inspect botocore to look
         # for attributes (and networkConfiguration is not an explicit argument
         # to e.g. ecs.run_task, it's just passed as a keyword argument)
-        return LooseVersion(botocore.__version__) >= LooseVersion('1.12.46')
+        return self.module.botocore_at_least('1.12.46')
 
     def ecs_api_handles_network_configuration(self):
-        from distutils.version import LooseVersion
         # There doesn't seem to be a nice way to inspect botocore to look
         # for attributes (and networkConfiguration is not an explicit argument
         # to e.g. ecs.run_task, it's just passed as a keyword argument)
-        return LooseVersion(botocore.__version__) >= LooseVersion('1.7.44')
+        return self.module.botocore_at_least('1.7.44')
 
 
 def main():
     argument_spec = dict(
         operation=dict(required=True, choices=['run', 'start', 'stop']),
-        cluster=dict(required=False, type='str'),  # R S P
+        cluster=dict(required=True, type='str'),  # R S P
         task_definition=dict(required=False, type='str'),  # R* S*
         overrides=dict(required=False, type='dict'),  # R S
         count=dict(required=False, type='int'),  # R
@@ -348,28 +348,26 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True,
-                              required_if=[('launch_type', 'FARGATE', ['network_configuration'])])
+                              required_if=[
+                                  ('launch_type', 'FARGATE', ['network_configuration']),
+                                  ('operation', 'run', ['task_definition']),
+                                  ('operation', 'start', [
+                                      'task_definition',
+                                      'container_instances'
+                                  ]),
+                                  ('operation', 'stop', ['task_definition', 'task']),
+                              ])
 
     # Validate Inputs
     if module.params['operation'] == 'run':
-        if 'task_definition' not in module.params and module.params['task_definition'] is None:
-            module.fail_json(msg="To run a task, a task_definition must be specified")
         task_to_list = module.params['task_definition']
         status_type = "RUNNING"
 
     if module.params['operation'] == 'start':
-        if 'task_definition' not in module.params and module.params['task_definition'] is None:
-            module.fail_json(msg="To start a task, a task_definition must be specified")
-        if 'container_instances' not in module.params and module.params['container_instances'] is None:
-            module.fail_json(msg="To start a task, container instances must be specified")
         task_to_list = module.params['task']
         status_type = "RUNNING"
 
     if module.params['operation'] == 'stop':
-        if 'task' not in module.params and module.params['task'] is None:
-            module.fail_json(msg="To stop a task, a task must be specified")
-        if 'task_definition' not in module.params and module.params['task_definition'] is None:
-            module.fail_json(msg="To stop a task, a task definition must be specified")
         task_to_list = module.params['task_definition']
         status_type = "STOPPED"
 

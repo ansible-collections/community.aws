@@ -1,4 +1,5 @@
-cloud/aws
-#shippable/aws/group1
-# when running tests we saw an ~20% failure rate
+# reason: unstable
+# https://github.com/ansible/ansible/issues/63520
 unsupported
+
+cloud/aws

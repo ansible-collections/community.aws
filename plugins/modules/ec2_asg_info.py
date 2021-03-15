@@ -241,12 +241,14 @@ termination_policies:
 import re
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def match_asg_tags(tags_to_match, asg):
@@ -371,7 +373,7 @@ def find_asgs(conn, module, name=None, tags=None):
     try:
         asgs_paginator = conn.get_paginator('describe_auto_scaling_groups')
         asgs = asgs_paginator.paginate().build_full_result()
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to describe AutoScalingGroups')
 
     if not asgs:
@@ -379,7 +381,7 @@ def find_asgs(conn, module, name=None, tags=None):
 
     try:
         elbv2 = module.client('elbv2')
-    except ClientError as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         # This is nice to have, not essential
         elbv2 = None
     matched_asgs = []
@@ -414,12 +416,9 @@ def find_asgs(conn, module, name=None, tags=None):
                         tg_paginator = elbv2.get_paginator('describe_target_groups')
                         tg_result = tg_paginator.paginate(TargetGroupArns=asg['target_group_arns']).build_full_result()
                         asg['target_group_names'] = [tg['TargetGroupName'] for tg in tg_result['TargetGroups']]
-                    except ClientError as e:
-                        if e.response['Error']['Code'] == 'TargetGroupNotFound':
-                            asg['target_group_names'] = []
-                        else:
-                            module.fail_json_aws(e, msg="Failed to describe Target Groups")
-                    except BotoCoreError as e:
+                    except is_boto3_error_code('TargetGroupNotFound'):
+                        asg['target_group_names'] = []
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
                         module.fail_json_aws(e, msg="Failed to describe Target Groups")
             else:
                 asg['target_group_names'] = []
@@ -427,8 +426,8 @@ def find_asgs(conn, module, name=None, tags=None):
             try:
                 asg_lifecyclehooks = conn.describe_lifecycle_hooks(AutoScalingGroupName=asg['auto_scaling_group_name'])
                 asg['lifecycle_hooks'] = asg_lifecyclehooks['LifecycleHooks']
-            except ClientError as e:
-                module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Failed to fetch information about ASG lifecycle hooks")
             matched_asgs.append(asg)
 
     return matched_asgs

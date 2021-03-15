@@ -227,7 +227,6 @@ import hashlib
 import mimetypes
 import os
 import stat as osstat  # os.stat constants
-import traceback
 
 try:
     from dateutil import tz
@@ -237,15 +236,16 @@ except ImportError:
 
 try:
     import botocore
+    from boto3.s3.transfer import TransferConfig
+    DEFAULT_CHUNK_SIZE = TransferConfig().multipart_chunksize
 except ImportError:
+    DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_text
 
 # import module snippets
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
 
 
 # the following function, calculate_multipart_etag, is from tlastowka
@@ -270,10 +270,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_excepti
 #
 # You should have received a copy of the GNU General Public License
 # along with calculate_multipart_etag.  If not, see <http://www.gnu.org/licenses/>.
-
-DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024
-
-
 def calculate_multipart_etag(source_path, chunk_size=DEFAULT_CHUNK_SIZE):
     """
     calculates a multipart upload etag for amazon s3
@@ -407,8 +403,6 @@ def head_s3(s3, bucket, s3keys):
                 pass
             else:
                 raise Exception(err)
-            # error_msg = boto_exception(err)
-            # return {'error': error_msg}
         retkeys.append(retentry)
     return retkeys
 
@@ -503,7 +497,7 @@ def main():
         mode=dict(choices=['push'], default='push'),
         file_change_strategy=dict(choices=['force', 'date_size', 'checksum'], default='date_size'),
         bucket=dict(required=True),
-        key_prefix=dict(required=False, default=''),
+        key_prefix=dict(required=False, default='', no_log=False),
         file_root=dict(required=True, type='path'),
         permission=dict(required=False, choices=['private', 'public-read', 'public-read-write', 'authenticated-read',
                                                  'aws-exec-read', 'bucket-owner-read', 'bucket-owner-full-control']),
@@ -547,9 +541,8 @@ def main():
             if result.get('uploads') or result.get('removed'):
                 result['changed'] = True
             # result.update(filelist=actionable_filelist)
-        except botocore.exceptions.ClientError as err:
-            error_msg = boto_exception(err)
-            module.fail_json(msg=error_msg, exception=traceback.format_exc(), **camel_dict_to_snake_dict(err.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to push file")
 
     module.exit_json(**result)
 

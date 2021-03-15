@@ -45,8 +45,8 @@ options:
         description:
             - If yes, remove the policy from the repository.
             - Alias C(delete_policy) has been deprecated and will be removed after 2022-06-01.
+            - Defaults to C(false).
         required: false
-        default: false
         type: bool
         aliases: [ delete_policy ]
     image_tag_mutability:
@@ -58,14 +58,14 @@ options:
         type: str
     lifecycle_policy:
         description:
-            - JSON or dict that represents the new lifecycle policy
+            - JSON or dict that represents the new lifecycle policy.
         required: false
         type: json
     purge_lifecycle_policy:
         description:
-            - if yes, remove the lifecycle policy from the repository
+            - if C(true), remove the lifecycle policy from the repository.
+            - Defaults to C(false).
         required: false
-        default: false
         type: bool
     state:
         description:
@@ -74,6 +74,14 @@ options:
         choices: [present, absent]
         default: 'present'
         type: str
+    scan_on_push:
+        description:
+            - if C(true), images are scanned for known vulnerabilities after being pushed to the repository.
+            - I(scan_on_push) requires botocore >= 1.13.3
+        required: false
+        default: false
+        type: bool
+        version_added: 1.3.0
 author:
  - David M. Lee (@leedm777)
 extends_documentation_fragment:
@@ -132,6 +140,7 @@ EXAMPLES = '''
 - name: set-lifecycle-policy
   community.aws.ecs_ecr:
     name: needs-lifecycle-policy
+    scan_on_push: yes
     lifecycle_policy:
       rules:
         - rulePriority: 1
@@ -179,13 +188,17 @@ import json
 import traceback
 
 try:
-    from botocore.exceptions import ClientError
+    import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception, compare_policies, sort_json_policy_dict
 from ansible.module_utils.six import string_types
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import sort_json_policy_dict
 
 
 def build_kwargs(registry_id):
@@ -215,11 +228,8 @@ class EcsEcr:
                 repositoryNames=[name], **build_kwargs(registry_id))
             repos = res.get('repositories')
             return repos and repos[0]
-        except ClientError as err:
-            code = err.response['Error'].get('Code', 'Unknown')
-            if code == 'RepositoryNotFoundException':
-                return None
-            raise
+        except is_boto3_error_code('RepositoryNotFoundException'):
+            return None
 
     def get_repository_policy(self, registry_id, name):
         try:
@@ -227,11 +237,8 @@ class EcsEcr:
                 repositoryName=name, **build_kwargs(registry_id))
             text = res.get('policyText')
             return text and json.loads(text)
-        except ClientError as err:
-            code = err.response['Error'].get('Code', 'Unknown')
-            if code == 'RepositoryPolicyNotFoundException':
-                return None
-            raise
+        except is_boto3_error_code('RepositoryPolicyNotFoundException'):
+            return None
 
     def create_repository(self, registry_id, name, image_tag_mutability):
         if registry_id:
@@ -318,11 +325,8 @@ class EcsEcr:
                 repositoryName=name, **build_kwargs(registry_id))
             text = res.get('lifecyclePolicyText')
             return text and json.loads(text)
-        except ClientError as err:
-            code = err.response['Error'].get('Code', 'Unknown')
-            if code == 'LifecyclePolicyNotFoundException':
-                return None
-            raise
+        except is_boto3_error_code('LifecyclePolicyNotFoundException'):
+            return None
 
     def put_lifecycle_policy(self, registry_id, name, policy_text):
         if not self.check_mode:
@@ -355,6 +359,25 @@ class EcsEcr:
                 return policy
             return None
 
+    def put_image_scanning_configuration(self, registry_id, name, scan_on_push):
+        if not self.check_mode:
+            if registry_id:
+                scan = self.ecr.put_image_scanning_configuration(
+                    registryId=registry_id,
+                    repositoryName=name,
+                    imageScanningConfiguration={'scanOnPush': scan_on_push}
+                )
+            else:
+                scan = self.ecr.put_image_scanning_configuration(
+                    repositoryName=name,
+                    imageScanningConfiguration={'scanOnPush': scan_on_push}
+                )
+            self.changed = True
+            return scan
+        else:
+            self.skipped = True
+            return None
+
 
 def sort_lists_of_strings(policy):
     for statement_index in range(0, len(policy.get('Statement', []))):
@@ -378,6 +401,7 @@ def run(ecr, params):
         image_tag_mutability = params['image_tag_mutability'].upper()
         lifecycle_policy_text = params['lifecycle_policy']
         purge_lifecycle_policy = params['purge_lifecycle_policy']
+        scan_on_push = params['scan_on_push']
 
         # Parse policies, if they are given
         try:
@@ -474,6 +498,13 @@ def run(ecr, params):
                     result['policy'] = policy_text
                     raise
 
+            original_scan_on_push = ecr.get_repository(registry_id, name)
+            if original_scan_on_push is not None:
+                if scan_on_push != original_scan_on_push['imageScanningConfiguration']['scanOnPush']:
+                    result['changed'] = True
+                    result['repository']['imageScanningConfiguration']['scanOnPush'] = scan_on_push
+                    response = ecr.put_image_scanning_configuration(registry_id, name, scan_on_push)
+
         elif state == 'absent':
             result['name'] = name
             if repo:
@@ -482,7 +513,7 @@ def run(ecr, params):
 
     except Exception as err:
         msg = str(err)
-        if isinstance(err, ClientError):
+        if isinstance(err, botocore.exceptions.ClientError):
             msg = boto_exception(err)
         result['msg'] = msg
         result['exception'] = traceback.format_exc()
@@ -510,7 +541,8 @@ def main():
         purge_policy=dict(required=False, type='bool', aliases=['delete_policy'],
                           deprecated_aliases=[dict(name='delete_policy', date='2022-06-01', collection_name='community.aws')]),
         lifecycle_policy=dict(required=False, type='json'),
-        purge_lifecycle_policy=dict(required=False, type='bool')
+        purge_lifecycle_policy=dict(required=False, type='bool'),
+        scan_on_push=(dict(required=False, type='bool', default=False))
     )
     mutually_exclusive = [
         ['policy', 'purge_policy'],

@@ -42,12 +42,13 @@ options:
             - Always create new task definition.
         required: False
         type: bool
+        default: false
     containers:
         description:
             - A list of containers definitions.
         required: False
         type: list
-        elements: str
+        elements: dict
     network_mode:
         description:
             - The Docker networking mode to use for the containers in the task.
@@ -95,7 +96,7 @@ options:
     memory:
         description:
             - The amount (in MiB) of memory used by the task. If using the EC2 launch type, this field is optional and any value can be used.
-            - If using the Fargate launch type, this field is required and is limited by the cpu.
+            - If using the Fargate launch type, this field is required and is limited by the CPU.
         required: false
         type: str
 extends_documentation_fragment:
@@ -212,9 +213,9 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible.module_utils._text import to_text
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 class EcsTaskManager:
@@ -321,7 +322,7 @@ def main():
         family=dict(required=False, type='str'),
         revision=dict(required=False, type='int'),
         force_create=dict(required=False, default=False, type='bool'),
-        containers=dict(required=False, type='list', elements='str'),
+        containers=dict(required=False, type='list', elements='dict'),
         network_mode=dict(required=False, default='bridge', choices=['default', 'bridge', 'host', 'none', 'awsvpc'], type='str'),
         task_role_arn=dict(required=False, default='', type='str'),
         execution_role_arn=dict(required=False, default='', type='str'),

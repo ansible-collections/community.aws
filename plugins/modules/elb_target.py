@@ -12,27 +12,30 @@ module: elb_target
 version_added: 1.0.0
 short_description: Manage a target in a target group
 description:
-    - Used to register or deregister a target in a target group
+    - Used to register or deregister a target in a target group.
 author: "Rob White (@wimnat)"
 options:
   deregister_unused:
     description:
-      - The default behaviour for targets that are unused is to leave them registered. If instead you would like to remove them
-        set I(deregister_unused) to yes.
+      - The default behaviour for targets that are unused is to leave them registered.
+      - If instead you would like to remove them set I(deregister_unused=true).
+    default: false
     type: bool
   target_az:
     description:
-      - An Availability Zone or all. This determines whether the target receives traffic from the load balancer nodes in the specified
+      - An Availability Zone or C(all). This determines whether the target receives traffic from the load balancer nodes in the specified
         Availability Zone or from all enabled Availability Zones for the load balancer. This parameter is not supported if the target
         type of the target group is instance.
     type: str
   target_group_arn:
     description:
-      - The Amazon Resource Name (ARN) of the target group. Mutually exclusive of I(target_group_name).
+      - The Amazon Resource Name (ARN) of the target group.
+      - Mutually exclusive of I(target_group_name).
     type: str
   target_group_name:
     description:
-      - The name of the target group. Mutually exclusive of I(target_group_arn).
+      - The name of the target group.
+      - Mutually exclusive of I(target_group_arn).
     type: str
   target_id:
     description:
@@ -55,7 +58,7 @@ options:
     type: str
   target_status_timeout:
     description:
-      - Maximum time in seconds to wait for target_status change
+      - Maximum time in seconds to wait for I(target_status) change.
     required: false
     default: 60
     type: int
@@ -108,20 +111,16 @@ RETURN = '''
 
 '''
 
-import traceback
 from time import time, sleep
 
 try:
-    import boto3
     import botocore
-    from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
@@ -134,12 +133,8 @@ def convert_tg_name_to_arn(connection, module, tg_name):
 
     try:
         response = describe_target_groups_with_backoff(connection, tg_name)
-    except ClientError as e:
-        module.fail_json(msg="Unable to describe target group {0}: {1}".format(tg_name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except BotoCoreError as e:
-        module.fail_json(msg="Unable to describe target group {0}: {1}".format(tg_name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to describe target group {0}".format(tg_name))
 
     tg_arn = response['TargetGroups'][0]['TargetGroupArn']
 
@@ -173,12 +168,8 @@ def describe_targets(connection, module, tg_arn, target=None):
         if not targets:
             return {}
         return targets[0]
-    except ClientError as e:
-        module.fail_json(msg="Unable to describe target health for target {0}: {1}".format(target, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except BotoCoreError as e:
-        module.fail_json(msg="Unable to describe target health for target {0}: {1}".format(target, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to describe target health for target {0}".format(target))
 
 
 @AWSRetry.jittered_backoff(retries=10, delay=10)
@@ -222,12 +213,8 @@ def register_target(connection, module):
                 changed = True
                 if target_status:
                     target_status_check(connection, module, target_group_arn, target, target_status, target_status_timeout)
-            except ClientError as e:
-                module.fail_json(msg="Unable to deregister target {0}: {1}".format(target, to_native(e)),
-                                 exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-            except BotoCoreError as e:
-                module.fail_json(msg="Unable to deregister target {0}: {1}".format(target, to_native(e)),
-                                 exception=traceback.format_exc())
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Unable to deregister target {0}".format(target))
 
     # Get all targets for the target group
     target_descriptions = describe_targets(connection, module, target_group_arn)
@@ -281,12 +268,8 @@ def deregister_target(connection, module):
         try:
             deregister_target_with_backoff(connection, target_group_arn, target)
             changed = True
-        except ClientError as e:
-            module.fail_json(msg="Unable to deregister target {0}: {1}".format(target, to_native(e)),
-                             exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-        except BotoCoreError as e:
-            module.fail_json(msg="Unable to deregister target {0}: {1}".format(target, to_native(e)),
-                             exception=traceback.format_exc())
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json(msg="Unable to deregister target {0}".format(target))
     else:
         if current_target_reason != 'Target.NotRegistered' and current_target_state != 'draining':
             module.warn(warning="Your specified target has an 'unused' state but is still registered to the target group. " +

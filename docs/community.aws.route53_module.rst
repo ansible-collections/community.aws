@@ -5,7 +5,7 @@
 community.aws.route53
 *********************
 
-**add or delete entries in Amazons Route53 DNS service**
+**add or delete entries in Amazons Route 53 DNS service**
 
 
 Version added: 1.0.0
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Creates and deletes DNS records in Amazons Route53 service
+- Creates and deletes DNS records in Amazons Route 53 service.
 
 
 
@@ -25,8 +25,10 @@ Requirements
 ------------
 The below requirements are needed on the host that executes this module.
 
-- python >= 2.6
 - boto
+- boto3
+- botocore
+- python >= 2.6
 
 
 Parameters
@@ -51,12 +53,13 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>no</li>
                                     <li>yes</li>
                         </ul>
                 </td>
                 <td>
                         <div>Indicates if this is an alias record.</div>
+                        <div>Defaults to <code>false</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -298,7 +301,8 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>If set to <code>yes</code>, the private zone matching the requested name within the domain will be used if there are both public and private zones. The default is to use the public zone.</div>
+                        <div>If set to <code>true</code>, the private zone matching the requested name within the domain will be used if there are both public and private zones.</div>
+                        <div>The default is to use the public zone.</div>
                 </td>
             </tr>
             <tr>
@@ -363,7 +367,7 @@ Parameters
                         <b>Default:</b><br/><div style="color: blue">500</div>
                 </td>
                 <td>
-                        <div>In the case that route53 is still servicing a prior request, this module will wait and try again after this many seconds. If you have many domain names, the default of 500 seconds may be too long.</div>
+                        <div>In the case that Route 53 is still servicing a prior request, this module will wait and try again after this many seconds. If you have many domain names, the default of <code>500</code> seconds may be too long.</div>
                 </td>
             </tr>
             <tr>
@@ -404,7 +408,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Specifies the state of the resource record. As of Ansible 2.4, the <em>command</em> option has been changed to <em>state</em> as default and the choices &#x27;present&#x27; and &#x27;absent&#x27; have been added, but <em>command</em> still works as well.</div>
+                        <div>Specifies the state of the resource record. As of Ansible 2.4, the <em>command</em> option has been changed to <em>state</em> as default and the choices <code>present</code> and <code>absent</code> have been added, but <em>command</em> still works as well.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: command</div>
                 </td>
             </tr>
@@ -486,7 +490,7 @@ Parameters
                 </td>
                 <td>
                         <div>The new value when creating a DNS record.  YAML lists or multiple comma-spaced values are allowed for non-alias records.</div>
-                        <div>When deleting a record all values for the record must be specified or Route53 will not delete it.</div>
+                        <div>When deleting a record all values for the record must be specified or Route 53 will not delete it.</div>
                 </td>
             </tr>
             <tr>
@@ -588,7 +592,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: Add new.foo.com as an A record with 3 IPs and wait until the changes have been replicated
       community.aws.route53:
@@ -599,7 +603,6 @@ Examples
         ttl: 7200
         value: 1.1.1.1,2.2.2.2,3.3.3.3
         wait: yes
-
     - name: Update new.foo.com as an A record with a list of 3 IPs and wait until the changes have been replicated
       community.aws.route53:
         state: present
@@ -612,7 +615,6 @@ Examples
           - 2.2.2.2
           - 3.3.3.3
         wait: yes
-
     - name: Retrieve the details for new.foo.com
       community.aws.route53:
         state: get
@@ -620,7 +622,6 @@ Examples
         record: new.foo.com
         type: A
       register: rec
-
     - name: Delete new.foo.com A record using the results from the get command
       community.aws.route53:
         state: absent
@@ -629,7 +630,6 @@ Examples
         ttl: "{{ rec.set.ttl }}"
         type: "{{ rec.set.type }}"
         value: "{{ rec.set.value }}"
-
     # Add an AAAA record.  Note that because there are colons in the value
     # that the IPv6 address must be quoted. Also shows using the old form command=create.
     - name: Add an AAAA record
@@ -640,7 +640,6 @@ Examples
         type: AAAA
         ttl: 7200
         value: "::1"
-
     # For more information on SRV records see:
     # https://en.wikipedia.org/wiki/SRV_record
     - name: Add a SRV record with multiple fields for a service on port 22222
@@ -650,7 +649,6 @@ Examples
         record: "_example-service._tcp.foo.com"
         type: SRV
         value: "0 0 22222 host1.foo.com,0 0 22222 host2.foo.com"
-
     # Note that TXT and SPF records must be surrounded
     # by quotes when sent to Route 53:
     - name: Add a TXT record.
@@ -661,7 +659,6 @@ Examples
         type: TXT
         ttl: 7200
         value: '"bar"'
-
     - name: Add an alias record that points to an Amazon ELB
       community.aws.route53:
         state: present
@@ -671,7 +668,6 @@ Examples
         value: "{{ elb_dns_name }}"
         alias: True
         alias_hosted_zone_id: "{{ elb_zone_id }}"
-
     - name: Retrieve the details for elb.foo.com
       community.aws.route53:
         state: get
@@ -679,7 +675,6 @@ Examples
         record: elb.foo.com
         type: A
       register: rec
-
     - name: Delete an alias record using the results from the get command
       community.aws.route53:
         state: absent
@@ -690,7 +685,6 @@ Examples
         value: "{{ rec.set.value }}"
         alias: True
         alias_hosted_zone_id: "{{ rec.set.alias_hosted_zone_id }}"
-
     - name: Add an alias record that points to an Amazon ELB and evaluates it health
       community.aws.route53:
         state: present
@@ -701,7 +695,6 @@ Examples
         alias: True
         alias_hosted_zone_id: "{{ elb_zone_id }}"
         alias_evaluate_target_health: True
-
     - name: Add an AAAA record with Hosted Zone ID
       community.aws.route53:
         state: present
@@ -711,7 +704,6 @@ Examples
         type: AAAA
         ttl: 7200
         value: "::1"
-
     - name: Use a routing policy to distribute traffic
       community.aws.route53:
         state: present
@@ -724,7 +716,6 @@ Examples
         identifier: "host1@www"
         weight: 100
         health_check: "d994b780-3150-49fd-9205-356abdd42e75"
-
     - name: Add a CAA record (RFC 6844)
       community.aws.route53:
         state: present

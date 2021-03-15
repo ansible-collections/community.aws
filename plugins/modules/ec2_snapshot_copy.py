@@ -109,19 +109,12 @@ snapshot_id:
     sample: "snap-e9095e8c"
 '''
 
-import traceback
-
 try:
-    import boto3
     import botocore
-    from botocore.exceptions import ClientError, WaiterError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils._text import to_native
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def copy_snapshot(module, ec2):
@@ -161,10 +154,8 @@ def copy_snapshot(module, ec2):
                 Tags=[{'Key': k, 'Value': v} for k, v in module.params.get('tags').items()]
             )
 
-    except WaiterError as we:
-        module.fail_json(msg='An error occurred waiting for the snapshot to become available. (%s)' % str(we), exception=traceback.format_exc())
-    except ClientError as ce:
-        module.fail_json(msg=str(ce), exception=traceback.format_exc(), **camel_dict_to_snake_dict(ce.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='An error occurred waiting for the snapshot to become available.')
 
     module.exit_json(changed=True, snapshot_id=snapshot_id)
 

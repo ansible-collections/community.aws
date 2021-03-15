@@ -539,7 +539,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: create alarm
         community.aws.ec2_metric_alarm:
@@ -554,7 +554,7 @@ Examples
           period: 300
           evaluation_periods: 3
           unit: "Percent"
-          description: "This will alarm when a bamboo slave's cpu usage average is lower than 5% for 15 minutes "
+          description: "This will alarm when a instance's CPU usage average is lower than 5% for 15 minutes"
           dimensions: {'InstanceId':'i-XXX'}
           alarm_actions: ["action1","action2"]
 

@@ -77,19 +77,14 @@ all_policy_names:
     type: list
 '''
 
-import json
-
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible.module_utils.six import string_types
-
-
-class PolicyError(Exception):
-    pass
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 class Policy:
@@ -147,10 +142,10 @@ class UserPolicy(Policy):
         return 'user'
 
     def _list(self, name):
-        return self.client.list_user_policies(UserName=name)
+        return self.client.list_user_policies(aws_retry=True, UserName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_user_policy(UserName=name, PolicyName=policy_name)
+        return self.client.get_user_policy(aws_retry=True, UserName=name, PolicyName=policy_name)
 
 
 class RolePolicy(Policy):
@@ -160,10 +155,10 @@ class RolePolicy(Policy):
         return 'role'
 
     def _list(self, name):
-        return self.client.list_role_policies(RoleName=name)
+        return self.client.list_role_policies(aws_retry=True, RoleName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_role_policy(RoleName=name, PolicyName=policy_name)
+        return self.client.get_role_policy(aws_retry=True, RoleName=name, PolicyName=policy_name)
 
 
 class GroupPolicy(Policy):
@@ -173,10 +168,10 @@ class GroupPolicy(Policy):
         return 'group'
 
     def _list(self, name):
-        return self.client.list_group_policies(GroupName=name)
+        return self.client.list_group_policies(aws_retry=True, GroupName=name)
 
     def _get(self, name, policy_name):
-        return self.client.get_group_policy(GroupName=name, PolicyName=policy_name)
+        return self.client.get_group_policy(aws_retry=True, GroupName=name, PolicyName=policy_name)
 
 
 def main():
@@ -189,7 +184,7 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
     args = dict(
-        client=module.client('iam'),
+        client=module.client('iam', retry_decorator=AWSRetry.jittered_backoff()),
         name=module.params.get('iam_name'),
         policy_name=module.params.get('policy_name'),
     )
@@ -204,12 +199,10 @@ def main():
             policy = GroupPolicy(**args)
 
         module.exit_json(**(policy.run()))
-    except (BotoCoreError, ClientError) as e:
-        if e.response['Error']['Code'] == 'NoSuchEntity':
-            module.exit_json(changed=False, msg=e.response['Error']['Message'])
+    except is_boto3_error_code('NoSuchEntity') as e:
+        module.exit_json(changed=False, msg=e.response['Error']['Message'])
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
-    except PolicyError as e:
-        module.fail_json(msg=str(e))
 
 
 if __name__ == '__main__':

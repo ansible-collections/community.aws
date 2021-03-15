@@ -325,6 +325,32 @@ options:
       U(http://docs.aws.amazon.com/AWSEC2/latest/WindowsGuide/ec2-instance-metadata.html#instancedata-add-user-data)
       documentation on user-data.
     type: str
+  metadata_options:
+    description:
+    - Configure EC2 Metadata options.
+    - For more information see the IMDS documentation
+      U(https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html).
+    type: dict
+    version_added: 1.5.0
+    suboptions:
+      http_endpoint:
+        type: str
+        description: >
+          This parameter enables or disables the HTTP metadata endpoint on your instances.
+        choices: [enabled, disabled]
+        default: 'enabled'
+      http_put_response_hop_limit:
+        type: int
+        description: >
+          The desired HTTP PUT response hop limit for instance metadata requests.
+          The larger the number, the further instance metadata requests can travel.
+        default: 1
+      http_tokens:
+        type: str
+        description: >
+          The state of token usage for your instance metadata requests.
+        choices: [optional, required]
+        default: 'optional'
 '''
 
 EXAMPLES = '''
@@ -367,13 +393,14 @@ import re
 from uuid import uuid4
 
 from ansible.module_utils._text import to_text
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_tag_list,
-                                                                     AWSRetry,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     ansible_dict_to_boto3_tag_list,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError, WaiterError
@@ -399,9 +426,9 @@ def existing_templates(module):
     matches = None
     try:
         if module.params.get('template_id'):
-            matches = ec2.describe_launch_templates(LaunchTemplateIds=[module.params.get('template_id')])
+            matches = ec2.describe_launch_templates(LaunchTemplateIds=[module.params.get('template_id')], aws_retry=True)
         elif module.params.get('template_name'):
-            matches = ec2.describe_launch_templates(LaunchTemplateNames=[module.params.get('template_name')])
+            matches = ec2.describe_launch_templates(LaunchTemplateNames=[module.params.get('template_name')], aws_retry=True)
     except is_boto3_error_code('InvalidLaunchTemplateName.NotFoundException') as e:
         # no named template was found, return nothing/empty versions
         return None, []
@@ -418,20 +445,18 @@ def existing_templates(module):
         template = matches['LaunchTemplates'][0]
         template_id, template_version, template_default = template['LaunchTemplateId'], template['LatestVersionNumber'], template['DefaultVersionNumber']
         try:
-            return template, ec2.describe_launch_template_versions(LaunchTemplateId=template_id)['LaunchTemplateVersions']
+            return template, ec2.describe_launch_template_versions(LaunchTemplateId=template_id, aws_retry=True)['LaunchTemplateVersions']
         except (ClientError, BotoCoreError, WaiterError) as e:
             module.fail_json_aws(e, msg='Could not find launch template versions for {0} (ID: {1}).'.format(template['LaunchTemplateName'], template_id))
 
 
 def params_to_launch_data(module, template_params):
     if template_params.get('tags'):
+        tag_list = ansible_dict_to_boto3_tag_list(template_params.get('tags'))
         template_params['tag_specifications'] = [
             {
                 'resource_type': r_type,
-                'tags': [
-                    {'Key': k, 'Value': v} for k, v
-                    in template_params['tags'].items()
-                ]
+                'tags': tag_list
             }
             for r_type in ('instance', 'volume')
         ]
@@ -456,6 +481,7 @@ def delete_template(module):
                 v_resp = ec2.delete_launch_template_versions(
                     LaunchTemplateId=template['LaunchTemplateId'],
                     Versions=non_default_versions,
+                    aws_retry=True,
                 )
                 if v_resp['UnsuccessfullyDeletedLaunchTemplateVersions']:
                     module.warn('Failed to delete template versions {0} on launch template {1}'.format(
@@ -468,6 +494,7 @@ def delete_template(module):
         try:
             resp = ec2.delete_launch_template(
                 LaunchTemplateId=template['LaunchTemplateId'],
+                aws_retry=True,
             )
         except (ClientError, BotoCoreError) as e:
             module.fail_json_aws(e, msg="Could not delete launch template {0}".format(template['LaunchTemplateId']))
@@ -634,6 +661,14 @@ def main():
             options=dict(
                 enabled=dict(type='bool')
             ),
+        ),
+        metadata_options=dict(
+            type='dict',
+            options=dict(
+                http_endpoint=dict(choices=['enabled', 'disabled'], default='enabled'),
+                http_put_response_hop_limit=dict(type='int', default=1),
+                http_tokens=dict(choices=['optional', 'required'], default='optional')
+            )
         ),
         network_interfaces=dict(
             type='list',

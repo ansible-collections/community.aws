@@ -357,7 +357,7 @@ Notes
 Examples
 --------
 
-.. code-block:: yaml+jinja
+.. code-block:: yaml
 
     - name: Create Configuration Recorder for AWS Config
       community.aws.aws_config_recorder:
@@ -365,8 +365,8 @@ Examples
         state: present
         role_arn: 'arn:aws:iam::123456789012:role/AwsConfigRecorder'
         recording_group:
-            all_supported: true
-            include_global_types: true
+          all_supported: true
+          include_global_types: true
 
 
 

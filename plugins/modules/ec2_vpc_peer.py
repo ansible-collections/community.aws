@@ -221,9 +221,6 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-import distutils.version
-import traceback
-
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
@@ -279,7 +276,7 @@ def create_peer_connection(client, module):
     params['VpcId'] = module.params.get('vpc_id')
     params['PeerVpcId'] = module.params.get('peer_vpc_id')
     if module.params.get('peer_region'):
-        if distutils.version.StrictVersion(botocore.__version__) < distutils.version.StrictVersion('1.8.6'):
+        if not module.botocore_at_least('1.8.6'):
             module.fail_json(msg="specifying peer_region parameter requires botocore >= 1.8.6")
         params['PeerRegion'] = module.params.get('peer_region')
     if module.params.get('peer_owner_id'):
@@ -334,10 +331,10 @@ def peer_status(client, module):
     try:
         vpc_peering_connection = client.describe_vpc_peering_connections(**params)
         return vpc_peering_connection['VpcPeeringConnections'][0]['Status']['Code']
-    except is_boto3_error_code('InvalidVpcPeeringConnectionId.Malformed') as e:  # pylint: disable=duplicate-except
-        module.fail_json(msg='Malformed connection ID: {0}'.format(e), traceback=traceback.format_exc())
-    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
-        module.fail_json(msg='Error while describing peering connection by peering_id: {0}'.format(e), traceback=traceback.format_exc())
+    except is_boto3_error_code('InvalidVpcPeeringConnectionId.Malformed') as e:
+        module.fail_json_aws(e, msg='Malformed connection ID')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg='Error while describing peering connection by peering_id')
 
 
 def accept_reject(state, client, module):

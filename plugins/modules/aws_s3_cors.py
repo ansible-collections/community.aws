@@ -25,7 +25,7 @@ options:
     description:
       - Cors rules to put on the s3 bucket
     type: list
-    elements: str
+    elements: dict
   state:
     description:
       - Create or remove cors on the s3 bucket
@@ -97,7 +97,7 @@ rules:
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError
-except Exception:
+except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
@@ -147,7 +147,7 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        rules=dict(type='list', elements='str'),
+        rules=dict(type='list', elements='dict'),
         state=dict(type='str', choices=['present', 'absent'], required=True)
     )
 

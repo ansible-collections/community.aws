@@ -21,6 +21,14 @@ options:
       - Required when creating a VPC endpoint.
     required: false
     type: str
+  vpc_endpoint_type:
+    description:
+      - The type of endpoint.
+    required: false
+    default: Gateway
+    choices: [ "Interface", "Gateway", "GatewayLoadBalancer" ]
+    type: str
+    version_added: 1.5.0
   service:
     description:
       - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
@@ -44,6 +52,9 @@ options:
         on how to use it properly. Cannot be used with I(policy).
       - Option when creating an endpoint. If not provided AWS will
         utilise a default policy which provides full access to the service.
+      - This option has been deprecated and will be removed after 2022-12-01
+        to maintain the existing functionality please use the I(policy) option
+        and a file lookup.
     required: false
     aliases: [ "policy_path" ]
     type: path
@@ -53,7 +64,7 @@ options:
         - absent to remove resource
     required: false
     default: present
-    choices: [ "present", "absent"]
+    choices: [ "present", "absent" ]
     type: str
   wait:
     description:
@@ -186,11 +197,10 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.six import string_types
-from ansible.module_utils._text import to_native
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def date_handler(obj):
@@ -210,9 +220,8 @@ def wait_for_status(client, module, resource_id, status):
                 break
             else:
                 time.sleep(polling_increment_secs)
-        except botocore.exceptions.ClientError as e:
-            module.fail_json(msg=str(e), exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failure while waiting for status')
 
     return status_achieved, resource
 
@@ -250,6 +259,7 @@ def create_vpc_endpoint(client, module):
     changed = False
     token_provided = False
     params['VpcId'] = module.params.get('vpc_id')
+    params['VpcEndpointType'] = module.params.get('vpc_endpoint_type')
     params['ServiceName'] = module.params.get('service')
     params['DryRun'] = module.check_mode
 
@@ -296,9 +306,8 @@ def create_vpc_endpoint(client, module):
         module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
     except is_boto3_error_code('RouteAlreadyExists'):  # pylint: disable=duplicate-except
         module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
-    except Exception as e:
-        module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to create VPC.")
 
     return changed, result
 
@@ -313,22 +322,28 @@ def setup_removal(client, module):
         params['VpcEndpointIds'] = module.params.get('vpc_endpoint_id')
     try:
         result = client.delete_vpc_endpoints(**params)['Unsuccessful']
-        if not module.check_mode and (result != []):
-            module.fail_json(msg=result)
+        if len(result) < len(params['VpcEndpointIds']):
+            changed = True
+        # For some reason delete_vpc_endpoints doesn't throw exceptions it
+        # returns a list of failed 'results' instead.  Throw these so we can
+        # catch them the way we expect
+        for r in result:
+            try:
+                raise botocore.exceptions.ClientError(r, 'delete_vpc_endpoints')
+            except is_boto3_error_code('InvalidVpcEndpoint.NotFound'):
+                continue
     except is_boto3_error_code('DryRunOperation'):
         changed = True
         result = 'Would have deleted VPC Endpoint if not in check mode'
-    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, "Failed to delete VPC endpoint")
-    except Exception as e:
-        module.fail_json(msg=to_native(e), exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
     return changed, result
 
 
 def main():
     argument_spec = dict(
         vpc_id=dict(),
+        vpc_endpoint_type=dict(default='Gateway', choices=['Interface', 'Gateway', 'GatewayLoadBalancer']),
         service=dict(),
         policy=dict(type='json'),
         policy_file=dict(type='path', aliases=['policy_path']),
@@ -337,7 +352,7 @@ def main():
         wait_timeout=dict(type='int', default=320, required=False),
         route_table_ids=dict(type='list', elements='str'),
         vpc_endpoint_id=dict(),
-        client_token=dict(),
+        client_token=dict(no_log=False),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
@@ -351,6 +366,11 @@ def main():
 
     # Validate Requirements
     state = module.params.get('state')
+
+    if module.params.get('policy_file'):
+        module.deprecate('The policy_file option has been deprecated and'
+                         ' will be removed after 2022-12-01',
+                         date='2022-12-01', collection_name='community.aws')
 
     try:
         ec2 = module.client('ec2')

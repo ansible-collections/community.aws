@@ -128,6 +128,7 @@ EXAMPLES = '''
   community.aws.kinesis_stream:
     name: test-stream
     state: present
+    shards: 1
     encryption_state: enabled
     encryption_type: KMS
     key_id: alias/aws/kinesis
@@ -140,6 +141,7 @@ EXAMPLES = '''
   community.aws.kinesis_stream:
     name: test-stream
     state: present
+    shards: 1
     encryption_state: disabled
     encryption_type: KMS
     key_id: alias/aws/kinesis
@@ -362,6 +364,8 @@ def find_stream(client, stream_name, check_mode=False):
                 )
                 shards.extend(results.pop('Shards'))
                 has_more_shards = results['HasMoreShards']
+                if has_more_shards:
+                    params['ExclusiveStartShardId'] = shards[-1]['ShardId']
             results['Shards'] = shards
             num_closed_shards = len([s for s in shards if 'EndingSequenceNumber' in s['SequenceNumberRange']])
             results['OpenShardsCount'] = len(shards) - num_closed_shards

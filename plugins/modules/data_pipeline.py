@@ -200,19 +200,17 @@ result:
 import hashlib
 import json
 import time
-import traceback
 
 try:
-    import boto3
     import botocore
-    from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 DP_ACTIVE_STATES = ['ACTIVE', 'SCHEDULED']
@@ -256,7 +254,7 @@ def pipeline_description(client, dp_id):
     """
     try:
         return client.describe_pipelines(pipelineIds=[dp_id])
-    except ClientError as e:
+    except is_boto3_error_code(['PipelineNotFoundException', 'PipelineDeletedException']):
         raise DataPipelineNotFound
 
 
@@ -363,9 +361,8 @@ def activate_pipeline(client, module):
     else:
         try:
             client.activate_pipeline(pipelineId=dp_id)
-        except ClientError as e:
-            if e.response["Error"]["Code"] == "InvalidRequestException":
-                module.fail_json(msg="You need to populate your pipeline before activation.")
+        except is_boto3_error_code('InvalidRequestException'):
+            module.fail_json(msg="You need to populate your pipeline before activation.")
         try:
             pipeline_status_timeout(client, dp_id, status=DP_ACTIVE_STATES,
                                     timeout=timeout)
@@ -546,10 +543,10 @@ def define_pipeline(client, module, objects, dp_id):
                                            parameterValues=values)
             msg = 'Data Pipeline {0} has been updated.'.format(dp_name)
             changed = True
-        except ClientError as e:
-            module.fail_json(msg="Failed to put the definition for pipeline {0}. Check that string/reference fields"
-                             "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
-                             "objects".format(dp_name), exception=traceback.format_exc())
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to put the definition for pipeline {0}. Check that string/reference fields"
+                                 "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
+                                 "objects".format(dp_name))
     else:
         changed = False
         msg = ""
@@ -585,11 +582,11 @@ def create_pipeline(client, module):
                                         tags=tags)
             dp_id = dp['pipelineId']
             pipeline_exists_timeout(client, dp_id, timeout)
-        except ClientError as e:
-            module.fail_json(msg="Failed to create the data pipeline {0}.".format(dp_name), exception=traceback.format_exc())
         except TimeOutException:
             module.fail_json(msg=('Data Pipeline {0} failed to create'
                                   'within timeout {1} seconds').format(dp_name, timeout))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to create the data pipeline {0}.".format(dp_name))
         # Put pipeline definition
         changed, msg = define_pipeline(client, module, objects, dp_id)
 

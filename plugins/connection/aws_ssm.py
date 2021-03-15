@@ -59,7 +59,7 @@ options:
     type: integer
     vars:
     - name: ansible_aws_ssm_retries
-  timeout:
+  ssm_timeout:
     description: Connection timeout seconds.
     default: 60
     type: integer
@@ -162,7 +162,6 @@ EXAMPLES = r'''
 import os
 import getpass
 import json
-import os
 import pty
 import random
 import re
@@ -173,16 +172,15 @@ import time
 
 try:
     import boto3
+    from botocore.client import Config
     HAS_BOTO_3 = True
 except ImportError as e:
     HAS_BOTO_3_ERROR = str(e)
     HAS_BOTO_3 = False
 
 from functools import wraps
-from ansible import constants as C
 from ansible.errors import AnsibleConnectionFailure, AnsibleError, AnsibleFileNotFound
 from ansible.module_utils.basic import missing_required_lib
-from ansible.module_utils.six import PY3
 from ansible.module_utils.six.moves import xrange
 from ansible.module_utils._text import to_bytes, to_native, to_text
 from ansible.plugins.connection import ConnectionBase
@@ -286,6 +284,11 @@ class Connection(ConnectionBase):
             self.start_session()
         return self
 
+    def reset(self):
+        ''' start a fresh ssm session '''
+        display.vvvv('reset called on ssm connection')
+        return self.start_session()
+
     def start_session(self):
         ''' start ssm session '''
 
@@ -373,7 +376,7 @@ class Connection(ConnectionBase):
         stdout = ''
         win_line = ''
         begin = False
-        stop_time = int(round(time.time())) + self.get_option('timeout')
+        stop_time = int(round(time.time())) + self.get_option('ssm_timeout')
         while session.poll() is None:
             remaining = stop_time - int(round(time.time()))
             if remaining < 1:
@@ -497,7 +500,8 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method):
         ''' Generate URL for get_object / put_object '''
-        client = self._get_boto_client('s3')
+        region_name = self.get_option('region') or 'us-east-1'
+        client = self._get_boto_client('s3', region_name)
         return client.generate_presigned_url(client_method, Params={'Bucket': bucket_name, 'Key': out_path}, ExpiresIn=3600, HttpMethod=http_method)
 
     def _get_boto_client(self, service, region_name=None):
@@ -515,14 +519,17 @@ class Connection(ConnectionBase):
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key,
             aws_session_token=aws_session_token,
-            region_name=region_name)
+            region_name=region_name,
+            config=Config(signature_version="s3v4")
+        )
         return client
 
     @_ssm_retry
     def _file_transport_command(self, in_path, out_path, ssm_action):
         ''' transfer a file from using an intermediate S3 bucket '''
 
-        s3_path = out_path.replace('\\', '/')
+        path_unescaped = u"{0}/{1}".format(self.instance_id, out_path)
+        s3_path = path_unescaped.replace('\\', '/')
         bucket_url = 's3://%s/%s' % (self.get_option('bucket_name'), s3_path)
 
         if self.is_windows:
@@ -545,6 +552,9 @@ class Connection(ConnectionBase):
             with open(to_bytes(in_path, errors='surrogate_or_strict'), 'rb') as data:
                 client.upload_fileobj(data, self.get_option('bucket_name'), s3_path)
             (returncode, stdout, stderr) = self.exec_command(get_command, in_data=None, sudoable=False)
+
+        # Remove the files from the bucket after they've been transferred
+        client.delete_object(Bucket=self.get_option('bucket_name'), Key=s3_path)
 
         # Check the return code
         if returncode == 0:

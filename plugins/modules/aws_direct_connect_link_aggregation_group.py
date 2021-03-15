@@ -59,6 +59,7 @@ options:
       - This allows the minimum number of links to be set to 0, any hosted connections disassociated,
         and any virtual interfaces associated to the LAG deleted.
     type: bool
+    default: false
   connection_id:
     description:
       - A connection ID to link with the link aggregation group upon creation.
@@ -67,12 +68,14 @@ options:
     description:
       - To be used with I(state=absent) to delete connections after disassociating them with the LAG.
     type: bool
+    default: false
   wait:
     description:
       - Whether or not to wait for the operation to complete.
       - May be useful when waiting for virtual interfaces to be deleted.
       - The time to wait can be controlled by setting I(wait_timeout).
     type: bool
+    default: false
   wait_timeout:
     description:
       - The duration in seconds to wait if I(wait=true).
@@ -166,12 +169,13 @@ import time
 
 try:
     import botocore
-except Exception:
+except ImportError:
     pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError
 from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import delete_connection

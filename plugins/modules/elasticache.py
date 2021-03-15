@@ -64,17 +64,17 @@ options:
     type: str
   cache_subnet_group:
     description:
-      - The subnet group name to associate with. Only use if inside a vpc.
-      - Required if inside a vpc
+      - The subnet group name to associate with. Only use if inside a VPC.
+      - Required if inside a VPC.
     type: str
   security_group_ids:
     description:
-      - A list of vpc security group IDs to associate with this cache cluster. Only use if inside a vpc.
+      - A list of VPC security group IDs to associate with this cache cluster. Only use if inside a VPC.
     type: list
     elements: str
   cache_security_groups:
     description:
-      - A list of cache security group names to associate with this cache cluster. Must be an empty list if inside a vpc.
+      - A list of cache security group names to associate with this cache cluster. Must be an empty list if inside a VPC.
     type: list
     elements: str
   zone:
@@ -89,8 +89,8 @@ options:
   hard_modify:
     description:
       - Whether to destroy and recreate an existing cache cluster if necessary in order to modify its state.
+      - Defaults to C(false).
     type: bool
-    default: false
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -127,17 +127,15 @@ EXAMPLES = r"""
 
 """
 from time import sleep
-from traceback import format_exc
 
 try:
-    import boto3
     import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 class ElastiCacheManager(object):
@@ -225,7 +223,7 @@ class ElastiCacheManager(object):
         try:
             self.conn.create_cache_cluster(**kwargs)
 
-        except botocore.exceptions.ClientError as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Failed to create cache cluster")
 
         self._refresh_data()
@@ -252,7 +250,7 @@ class ElastiCacheManager(object):
 
         try:
             response = self.conn.delete_cache_cluster(CacheClusterId=self.name)
-        except botocore.exceptions.ClientError as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Failed to delete cache cluster")
 
         cache_cluster_data = response['CacheCluster']
@@ -442,13 +440,12 @@ class ElastiCacheManager(object):
         if cache_cluster_data is None:
             try:
                 response = self.conn.describe_cache_clusters(CacheClusterId=self.name, ShowCacheNodeInfo=True)
-            except botocore.exceptions.ClientError as e:
-                if e.response['Error']['Code'] == 'CacheClusterNotFound':
-                    self.data = None
-                    self.status = 'gone'
-                    return
-                else:
-                    self.module.fail_json_aws(e, msg="Failed to describe cache clusters")
+            except is_boto3_error_code('CacheClusterNotFound'):
+                self.data = None
+                self.status = 'gone'
+                return
+            except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+                self.module.fail_json_aws(e, msg="Failed to describe cache clusters")
             cache_cluster_data = response['CacheClusters'][0]
         self.data = cache_cluster_data
         self.status = self.data['CacheClusterStatus']
