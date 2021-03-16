@@ -27,7 +27,7 @@
                 Service: glue.amazonaws.com
         create_instance_profile: false
         managed_policies:
-          - "arn:aws:iam::aws:policy/AWSGlueServiceRole"
+          - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 
     - name: Create Glue job (check mode)
       aws_glue_job:
