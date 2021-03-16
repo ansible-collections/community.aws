@@ -1,0 +1,5 @@
+---
+glue_job_name: '{{ resource_prefix }}'
+glue_job_role_name: 'ansible-test-{{ resource_prefix }}-glue-job'
+glue_job_description: Test job
+glue_job_command_script_location: test-s3-bucket-glue/job.py
