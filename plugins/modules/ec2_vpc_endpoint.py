@@ -400,9 +400,8 @@ def setup_removal(client, module):
                 result = {'msg': 'Would have deleted VPC Endpoint if not in check mode'}
                 changed = True
         except is_boto3_error_code('InvalidVpcEndpointId.NotFound'):
-                result = {'msg': 'Endpoint does not exist, nothing to delete.'}
-                changed = False
-                # module.exit_json(changed=False, msg='Endpoint does not exist, nothing to delete.')
+            result = {'msg': 'Endpoint does not exist, nothing to delete.'}
+            changed = False
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Failed to get endpoints")
 

@@ -149,7 +149,7 @@ def get_endpoints(client, module):
 
         results = normalize_boto3_result(results)
     except is_boto3_error_code('InvalidVpcEndpointId.NotFound'):
-        module.exit_json(msg='VpcEndpoint {} does not exist'.format(module.params.get('vpc_endpoint_ids')), vpc_endpoints=[])
+        module.exit_json(msg='VpcEndpoint {0} does not exist'.format(module.params.get('vpc_endpoint_ids')), vpc_endpoints=[])
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Failed to get endpoints")
     return dict(vpc_endpoints=[camel_dict_to_snake_dict(result) for result in results])
