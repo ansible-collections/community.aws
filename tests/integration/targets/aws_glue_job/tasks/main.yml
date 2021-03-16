@@ -18,7 +18,7 @@
     - name: Create minimal Glue job role
       iam_role:
         name: "{{ glue_job_role_name }}"
-        trust_policy:
+        assume_role_policy_document:
           Version: "2008-10-17"
           Statement:
             - Action: "sts:AssumeRole"
