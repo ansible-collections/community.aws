@@ -31,7 +31,6 @@ options:
   command_python_version:
     description:
       - Python version being used to execute a Python shell job. Allowed values are '2' or '3'.
-    default: 2
     type: str
   command_script_location:
     description:
@@ -56,7 +55,6 @@ options:
     description:
       - AWS Glue version. This determines the available version of Apache Scala and Python as described here
         U(https://docs.aws.amazon.com/glue/latest/dg/add-job.html).
-    default: 0.9
     type: str
   max_concurrent_runs:
     description:
@@ -404,7 +402,7 @@ def main():
             connections=dict(type='list', elements='str'),
             default_arguments=dict(type='dict'),
             description=dict(type='str'),
-            glue_version=dict(type='str', default='0.9'),
+            glue_version=dict(type='str'),
             max_concurrent_runs=dict(type='int'),
             max_retries=dict(type='int'),
             name=dict(required=True, type='str'),
