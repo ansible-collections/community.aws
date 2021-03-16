@@ -454,13 +454,13 @@ def get_eip_allocation_id_by_address(client, module, eip_address):
                 )
             else:
                 allocation_id = allocation.get('AllocationId')
-        else:
-            msg = (
-                "EIP {0} does not exist".format(eip_address)
-            )
+
     except is_boto3_error_code('InvalidAddress.Malformed') as e:
-        allocation_id = None
+        module.fail_json(msg='EIP address {0} is invalid.'.format(eip_address))
     except is_boto3_error_code('InvalidAddress.NotFound') as e:  # pylint: disable=duplicate-except
+        msg = (
+            "EIP {0} does not exist".format(eip_address)
+        )
         allocation_id = None
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
