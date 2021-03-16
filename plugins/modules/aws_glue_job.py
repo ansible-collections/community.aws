@@ -399,7 +399,7 @@ def main():
         dict(
             allocated_capacity=dict(type='int'),
             command_name=dict(type='str', default='glueetl'),
-            command_python_version=dict(type='str', default='2'),
+            command_python_version=dict(type='str'),
             command_script_location=dict(type='str'),
             connections=dict(type='list', elements='str'),
             default_arguments=dict(type='dict'),
