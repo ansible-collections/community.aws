@@ -167,7 +167,7 @@ def _describe_nat_gateways(client, module, **params):
     except is_boto3_error_code('InvalidNatGatewayID.NotFound'):
         module.exit_json(msg="NAT gateway not found.")
     except is_boto3_error_code('NatGatewayMalformed'):  # pylint: disable=duplicate-except
-        module.exit_json(msg="NAT gateway id is malformed.")
+        module.fail_json_aws(msg="NAT gateway id is malformed.")
 
 
 def get_nat_gateways(client, module):
