@@ -247,6 +247,124 @@
           - "output.tags | length == 1"
           - output is changed
 
+    # ============================================================
+
+    - name: Add some tags to the asg
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: present
+        tags:
+        - tag_d: 'value 4'
+          propagate_at_launch: no
+        - tag_e: 'value 5'
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - "output.added_tags | length == 2"
+          - output is changed
+
+    - name: Update propagate_at_launch on existing tag
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: present
+        tags:
+        - tag_d: 'value 4'
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - "output.added_tags | length == 1"
+          - output is changed
+
+    - name: Add an existing tag to the asg
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: present
+        tags:
+        - tag_d: 'value 4'
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+
+    - name: Remove a tag from the asg
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: absent
+        tags:
+        - tag_d: 'value 4'
+      register: output
+
+    - assert:
+        that:
+          - "output.removed_tags | length == 1"
+          - output is changed
+
+    - name: Remove a tag (without specifying the value) from the asg
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: absent
+        tags:
+        - tag_e:
+      register: output
+
+    - assert:
+        that:
+          - "output.removed_tags | length == 1"
+          - output is changed
+
+    - name: Remove a non-existent tag from the asg
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: absent
+        tags:
+        - tag_e:
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+
+    - name: Add some tags to the asg
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: present
+        tags:
+        - tag_f: 'value 6'
+          propagate_at_launch: no
+        - tag_g: 'value 7'
+          propagate_at_launch: yes
+        - tag_z: 'value 24'
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - "output.added_tags | length == 3"
+          - output is changed
+
+    - name: Remove all tags except tag_z
+      ec2_asg_tag:
+        name: "{{ resource_prefix }}-asg"
+        state: absent
+        tags:
+        - tag_z: ''
+        purge_tags: true
+      register: output
+
+    - assert:
+        that:
+          - "output.tags | length == 1"
+          - output is changed
+
+    # ============================================================
+
     - name: Enable metrics collection
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
