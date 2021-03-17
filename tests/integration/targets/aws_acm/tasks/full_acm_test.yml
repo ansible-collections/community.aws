@@ -48,9 +48,10 @@
       - '{{ local_certs }}'
       - [ False, True ] # read-only task, should work the same with check mode or not
   - name: check listing of missing cert returns no result
+    with_items: "{{ list_tag.results }}"
     assert:
       that:
-        - (list_tag.certificates | length) == 0
+        - (item.certificates | length) == 0
         - not list_tag.changed
   - name: check directory was made
     assert:
@@ -93,10 +94,11 @@
     register: list_after_check_mode_upload
     with_items: '{{ local_certs }}'
   - name: check cert was not really uploaded in check mode
+    with_items: "{{ list_after_check_mode_upload.results }}"
     assert:
       that:
         - upload_check.changed
-        - (list_after_check_mode_upload | length) == 0
+        - (item.certificates | length) == 0
   - name: upload certificates first time
     aws_acm:
       name_tag: '{{ item.name }}'
@@ -139,17 +141,6 @@
       fetch_after_up_result: '{{ item }}'
       upload_result: '{{ item.item }}'
       original_cert: '{{ item.item.item }}'
-  - name: fetch data about cert just uploaded, by ARN, check mode
-    aws_acm_info:
-      certificate_arn: '{{ item.certificate.arn }}'
-    check_mode: yes
-    register: fetch_after_up_check
-    with_items: '{{ upload.results }}'
-  - name: check values in uploaded cert
-    assert:
-      that:
-        - not fetch_after_up_check.changed
-        - fetch_after_up_check.certificates == fetch_after_up.certificates
   - name: fetch data about cert just uploaded, by name
     aws_acm_info:
       tags:
@@ -293,6 +284,10 @@
       domain_name: '{{ local_certs[1].domain }}'
     check_mode: yes
     register: delete_both_check
+  - name: test deletion with check mode detected change
+    assert:
+      that:
+        - delete_both_check.changed
   - name: fetch info for certs 1 and 2
     aws_acm_info:
       tags:
@@ -302,10 +297,10 @@
     - 0
     - 1
   - name: test deletion with check mode detected change
+    with_items: '{{ check_del_one_check.results }}'
     assert:
       that:
-        - delete_both_check.changed
-        - (check_del_one.certificates | length) == 2
+        - (item.certificates | length) == 1
   - name: delete certs 1 and 2 real
     aws_acm:
       state: absent

@@ -207,7 +207,7 @@ certificate:
     arn:
       description: The ARN of the certificate in ACM
       type: str
-      returned: when I(state=present)
+      returned: when I(state=present) and not in check mode
       sample: "arn:aws:acm:ap-southeast-2:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901"
     domain_name:
       description: The domain name encoded within the public certificate
@@ -378,8 +378,8 @@ def main():
         else:  # len(certificates) == 0
             module.debug("No certificate in ACM. Creating new one.")
             if module.check_mode:
-                arn = 'arn:aws:acm:us-east-1:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901'
                 domain = 'example.com'
+                module.exit_json(certificate=dict(domain_name=domain), changed=True)
             else:
                 arn = acm.import_certificate(client=client,
                                              module=module,
@@ -389,7 +389,7 @@ def main():
                                              tags=tags)
                 domain = acm.get_domain_of_cert(client=client, module=module, arn=arn)
 
-            module.exit_json(certificate=dict(domain_name=domain, arn=arn), changed=True)
+                module.exit_json(certificate=dict(domain_name=domain, arn=arn), changed=True)
 
     else:  # state == absent
         for cert in certificates:
