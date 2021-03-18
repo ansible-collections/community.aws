@@ -7,8 +7,17 @@
       region: "{{ aws_region }}"
 
   block:
+    - name: set up aws connection info
+      set_fact:
+        aws_connection_info: &aws_connection_info
+          aws_access_key: "{{ aws_access_key }}"
+          aws_secret_key: "{{ aws_secret_key }}"
+          security_token: "{{ security_token }}"
+          region: "{{ aws_region }}"
+
     - name: check_mode create ip set
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -30,6 +39,7 @@
 
     - name: create ip set
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -50,6 +60,7 @@
 
     - name: change ip set
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -71,6 +82,7 @@
 
     - name: test ip set immutable
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -93,6 +105,7 @@
 
     - name: add one ip
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -113,6 +126,7 @@
 
     - name: remove one ip
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: absent
         description: hallo eins
@@ -132,6 +146,7 @@
 
     - name: get ip set info
       wafv2_ip_set_info:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         scope: REGIONAL
       register: out
@@ -144,6 +159,7 @@
 
     - name: purge all but one
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: present
         description: hallo eins
@@ -162,6 +178,7 @@
 
     - name: get ip set info
       wafv2_ip_set_info:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         scope: REGIONAL
       register: out
@@ -173,6 +190,7 @@
 
     - name: delete ip set
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: absent
         scope: REGIONAL
@@ -186,6 +204,7 @@
 
     - name: delete ip set immutable
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: absent
         scope: REGIONAL
@@ -201,6 +220,7 @@
   always:
     - name: always delete ip set
       wafv2_ip_set:
+        <<: *aws_connection_info
         name: "{{ ip_set_name }}"
         state: absent
         scope: REGIONAL
