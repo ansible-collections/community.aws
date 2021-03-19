@@ -43,11 +43,14 @@
           C: D
       register: out
 
-    - debug: msg="{{ out }}"
     - name: verify create
       assert:
         that:
           - out is changed
+          - "'8.8.8.8/32' in out.addresses"
+          - out.ip_address_version == 'IPV4'
+          - out.addresses | count == 2
+          - out.description == 'hallo eins'
 
     - name: change ip set
       wafv2_ip_set:
@@ -69,6 +72,7 @@
       assert:
         that:
           - out is changed
+          - "'10.0.0.0/8' in out.addresses"
 
     - name: test ip set immutable
       wafv2_ip_set:
@@ -130,6 +134,7 @@
           - out is changed
           - out.addresses | count == 3
           - "'127.0.0.1/32' not in out.addresses"
+          - "'8.8.8.8/32' in out.addresses"
 
     - name: get ip set info
       wafv2_ip_set_info:
