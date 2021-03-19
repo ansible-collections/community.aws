@@ -245,15 +245,13 @@ def get_endpoints(client, module, endpoint_id=None):
     return normalized_result
 
 
-def match_endpoints(module, endpoint):
+def match_endpoints(route_table_ids, service_name, vpc_id, endpoint):
     found = False
     sorted_route_table_ids = []
 
-    if module.params.get('route_table_ids'):
-        sorted_route_table_ids = module.params.get('route_table_ids')
+    if route_table_ids:
+        sorted_route_table_ids = sorted(route_table_ids)
 
-    service_name = module.params.get('service')
-    vpc_id = module.params.get('vpc_id')
     if endpoint['VpcId'] == vpc_id and endpoint['ServiceName'] == service_name:
         sorted_endpoint_rt_ids = sorted(endpoint['RouteTableIds'])
         if sorted_endpoint_rt_ids == sorted_route_table_ids:
@@ -297,6 +295,9 @@ def ensure_tags(client, module, vpc_endpoint_id):
 
 def setup_creation(client, module):
     endpoint_id = module.params.get('vpc_endpoint_id')
+    route_table_ids = module.params.get('route_table_ids')
+    service_name = module.params.get('service')
+    vpc_id = module.params.get('vpc_id')
     changed = False
 
     if not endpoint_id:
@@ -304,7 +305,7 @@ def setup_creation(client, module):
         all_endpoints = get_endpoints(client, module, endpoint_id)
         if len(all_endpoints['VpcEndpoints']) > 0:
             for endpoint in all_endpoints['VpcEndpoints']:
-                if match_endpoints(module, endpoint):
+                if match_endpoints(route_table_ids, service_name, vpc_id, endpoint):
                     endpoint_id = endpoint['VpcEndpointId']
                     break
 
