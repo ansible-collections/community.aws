@@ -123,16 +123,17 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, ansible_dict_to_boto3_tag_list
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError, WaiterError
+    from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
 
 class IpSet:
-    def __init__(self, wafv2, name, scope):
+    def __init__(self, wafv2, name, scope, fail_json_aws):
         self.wafv2 = wafv2
         self.name = name
         self.scope = scope
+        self.fail_json_aws = fail_json_aws
         self.existing_set, self.id, self.locktoken = self.get_set()
 
     def description(self):
@@ -144,12 +145,15 @@ class IpSet:
         return None
 
     def remove(self):
-        response = self.wafv2.delete_ip_set(
-            Name=self.name,
-            Scope=self.scope,
-            Id=self.id,
-            LockToken=self.locktoken
-        )
+        try:
+            response = self.wafv2.delete_ip_set(
+                Name=self.name,
+                Scope=self.scope,
+                Id=self.id,
+                LockToken=self.locktoken
+            )
+        except (BotoCoreError, ClientError) as e:
+            self.fail_json_aws(e, msg="Failed to remove wafv2 ip set.")
         return {}
 
     def create(self, description, ip_address_version, addresses, tags):
@@ -166,7 +170,11 @@ class IpSet:
         if tags:
             req_obj['Tags'] = ansible_dict_to_boto3_tag_list(tags)
 
-        response = self.wafv2.create_ip_set(**req_obj)
+        try:
+            response = self.wafv2.create_ip_set(**req_obj)
+        except (BotoCoreError, ClientError) as e:
+            self.fail_json_aws(e, msg="Failed to create wafv2 ip set.")
+
         self.existing_set, self.id, self.locktoken = self.get_set()
         return camel_dict_to_snake_dict(self.existing_set)
 
@@ -182,7 +190,11 @@ class IpSet:
         if description:
             req_obj['Description'] = description
 
-        response = self.wafv2.update_ip_set(**req_obj)
+        try:
+            response = self.wafv2.update_ip_set(**req_obj)
+        except (BotoCoreError, ClientError) as e:
+            self.fail_json_aws(e, msg="Failed to update wafv2 ip set.")
+
         self.existing_set, self.id, self.locktoken = self.get_set()
         return camel_dict_to_snake_dict(self.existing_set)
 
@@ -197,11 +209,14 @@ class IpSet:
                 locktoken = item.get('LockToken')
                 arn = item.get('ARN')
         if id:
-            existing_set = self.wafv2.get_ip_set(
-                Name=self.name,
-                Scope=self.scope,
-                Id=id
-            ).get('IPSet')
+            try:
+                existing_set = self.wafv2.get_ip_set(
+                    Name=self.name,
+                    Scope=self.scope,
+                    Id=id
+                ).get('IPSet')
+            except (BotoCoreError, ClientError) as e:
+                self.fail_json_aws(e, msg="Failed to get wafv2 ip set.")
 
         return existing_set, id, locktoken
 
@@ -213,9 +228,14 @@ class IpSet:
         }
         if Nextmarker:
             req_obj['NextMarker'] = Nextmarker
-        response = self.wafv2.list_ip_sets(**req_obj)
-        if response.get('NextMarker'):
-            response['IPSets'] += self.list(Nextmarker=response.get('NextMarker')).get('IPSets')
+
+        try:
+            response = self.wafv2.list_ip_sets(**req_obj)
+            if response.get('NextMarker'):
+                response['IPSets'] += self.list(Nextmarker=response.get('NextMarker')).get('IPSets')
+        except (BotoCoreError, ClientError) as e:
+            self.fail_json_aws(e, msg="Failed to list wafv2 ip set.")
+
         return response
 
 
@@ -281,7 +301,7 @@ def main():
     change = False
     retval = {}
 
-    ip_set = IpSet(wafv2, name, scope)
+    ip_set = IpSet(wafv2, name, scope, module.fail_json_aws)
 
     if state == 'present':
         if ip_set.get():

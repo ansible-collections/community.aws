@@ -76,12 +76,12 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError, WaiterError
+    from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
 
-def list_ip_sets(wafv2, scope, Nextmarker=None):
+def list_ip_sets(wafv2, scope, fail_json_aws, Nextmarker=None):
     # there is currently no paginator for wafv2
     req_obj = {
         'Scope': scope,
@@ -89,18 +89,25 @@ def list_ip_sets(wafv2, scope, Nextmarker=None):
     }
     if Nextmarker:
         req_obj['NextMarker'] = Nextmarker
-    response = wafv2.list_ip_sets(**req_obj)
-    if response.get('NextMarker'):
-        response['IPSets'] += list_ip_sets(wafv2, scope, Nextmarker=response.get('NextMarker')).get('IPSets')
+
+    try:
+        response = wafv2.list_ip_sets(**req_obj)
+        if response.get('NextMarker'):
+            response['IPSets'] += list_ip_sets(wafv2, scope, fail_json_aws, Nextmarker=response.get('NextMarker')).get('IPSets')
+    except (BotoCoreError, ClientError) as e:
+        fail_json_aws(e, msg="Failed to list wafv2 ip set.")
     return response
 
 
-def get_ip_set(wafv2, name, scope, id):
-    response = wafv2.get_ip_set(
-        Name=name,
-        Scope=scope,
-        Id=id
-    )
+def get_ip_set(wafv2, name, scope, id, fail_json_aws):
+    try:
+        response = wafv2.get_ip_set(
+            Name=name,
+            Scope=scope,
+            Id=id
+        )
+    except (BotoCoreError, ClientError) as e:
+        fail_json_aws(e, msg="Failed to get wafv2 ip set.")
     return response
 
 
@@ -122,7 +129,7 @@ def main():
     wafv2 = module.client('wafv2')
 
     # check if ip set exist
-    response = list_ip_sets(wafv2, scope)
+    response = list_ip_sets(wafv2, scope, module.fail_json_aws)
 
     id = None
 
@@ -133,7 +140,7 @@ def main():
     retval = {}
     existing_set = None
     if id:
-        existing_set = get_ip_set(wafv2, name, scope, id)
+        existing_set = get_ip_set(wafv2, name, scope, id, module.fail_json_aws)
         retval = camel_dict_to_snake_dict(existing_set.get('IPSet'))
 
     module.exit_json(**retval)
