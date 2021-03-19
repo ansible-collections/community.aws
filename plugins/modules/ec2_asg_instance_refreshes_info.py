@@ -193,7 +193,7 @@ def main():
     argument_spec = dict(
         name=dict(required=True, type='str'),
         ids=dict(required=False, default=[], elements='str', type='list'),
-        next_token=dict(required=False, default=None, type='str'),
+        next_token=dict(required=False, default=None, type='str', no_log=True),
         max_records=dict(required=False, type='int'),
     )
 
