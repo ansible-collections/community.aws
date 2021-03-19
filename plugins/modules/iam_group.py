@@ -18,7 +18,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: iam_group
 version_added: 1.0.0
@@ -74,7 +74,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create a group
@@ -119,7 +119,7 @@ EXAMPLES = '''
     state: absent
 
 '''
-RETURN = '''
+RETURN = r'''
 iam_group:
     description: dictionary containing all the group information including group membership
     returned: success
@@ -177,14 +177,16 @@ iam_group:
                     sample: /
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def compare_attached_group_policies(current_attached_policies, new_attached_policies):
@@ -246,7 +248,7 @@ def create_or_update_group(connection, module):
     # Get group
     try:
         group = get_group(connection, module, params['GroupName'])
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't get group")
 
     # If group is None, create it
@@ -258,7 +260,7 @@ def create_or_update_group(connection, module):
         try:
             group = connection.create_group(**params)
             changed = True
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't create group")
 
     # Manage managed policies
@@ -276,7 +278,7 @@ def create_or_update_group(connection, module):
                 if not module.check_mode:
                     try:
                         connection.detach_group_policy(GroupName=params['GroupName'], PolicyArn=policy_arn)
-                    except (BotoCoreError, ClientError) as e:
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                         module.fail_json_aws(e, msg="Couldn't detach policy from group %s" % params['GroupName'])
         # If there are policies to adjust that aren't in the current list, then things have changed
         # Otherwise the only changes were in purging above
@@ -287,13 +289,13 @@ def create_or_update_group(connection, module):
                 for policy_arn in managed_policies:
                     try:
                         connection.attach_group_policy(GroupName=params['GroupName'], PolicyArn=policy_arn)
-                    except (BotoCoreError, ClientError) as e:
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                         module.fail_json_aws(e, msg="Couldn't attach policy to group %s" % params['GroupName'])
 
     # Manage group memberships
     try:
         current_group_members = get_group(connection, module, params['GroupName'])['Users']
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't get group %s" % params['GroupName'])
 
     current_group_members_list = []
@@ -310,7 +312,7 @@ def create_or_update_group(connection, module):
                 if not module.check_mode:
                     try:
                         connection.remove_user_from_group(GroupName=params['GroupName'], UserName=user)
-                    except (BotoCoreError, ClientError) as e:
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                         module.fail_json_aws(e, msg="Couldn't remove user %s from group %s" % (user, params['GroupName']))
         # If there are users to adjust that aren't in the current list, then things have changed
         # Otherwise the only changes were in purging above
@@ -321,7 +323,7 @@ def create_or_update_group(connection, module):
                 for user in users:
                     try:
                         connection.add_user_to_group(GroupName=params['GroupName'], UserName=user)
-                    except (BotoCoreError, ClientError) as e:
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                         module.fail_json_aws(e, msg="Couldn't add user %s to group %s" % (user, params['GroupName']))
     if module.check_mode:
         module.exit_json(changed=changed)
@@ -329,7 +331,7 @@ def create_or_update_group(connection, module):
     # Get the group again
     try:
         group = get_group(connection, module, params['GroupName'])
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't get group %s" % params['GroupName'])
 
     module.exit_json(changed=changed, iam_group=camel_dict_to_snake_dict(group))
@@ -342,7 +344,7 @@ def destroy_group(connection, module):
 
     try:
         group = get_group(connection, module, params['GroupName'])
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't get group %s" % params['GroupName'])
     if group:
         # Check mode means we would remove this group
@@ -353,26 +355,26 @@ def destroy_group(connection, module):
         try:
             for policy in get_attached_policy_list(connection, module, params['GroupName']):
                 connection.detach_group_policy(GroupName=params['GroupName'], PolicyArn=policy['PolicyArn'])
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't remove policy from group %s" % params['GroupName'])
 
         # Remove any users in the group otherwise deletion fails
         current_group_members_list = []
         try:
             current_group_members = get_group(connection, module, params['GroupName'])['Users']
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, "Couldn't get group %s" % params['GroupName'])
         for member in current_group_members:
             current_group_members_list.append(member['UserName'])
         for user in current_group_members_list:
             try:
                 connection.remove_user_from_group(GroupName=params['GroupName'], UserName=user)
-            except (BotoCoreError, ClientError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, "Couldn't remove user %s from group %s" % (user, params['GroupName']))
 
         try:
             connection.delete_group(**params)
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, "Couldn't delete group %s" % params['GroupName'])
 
     else:
@@ -386,11 +388,8 @@ def get_group(connection, module, name):
     try:
         paginator = connection.get_paginator('get_group')
         return paginator.paginate(GroupName=name).build_full_result()
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchEntity':
-            return None
-        else:
-            raise
+    except is_boto3_error_code('NoSuchEntity'):
+        return None
 
 
 @AWSRetry.exponential_backoff()
@@ -399,19 +398,16 @@ def get_attached_policy_list(connection, module, name):
     try:
         paginator = connection.get_paginator('list_attached_group_policies')
         return paginator.paginate(GroupName=name).build_full_result()['AttachedPolicies']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchEntity':
-            return None
-        else:
-            raise
+    except is_boto3_error_code('NoSuchEntity'):
+        return None
 
 
 def main():
 
     argument_spec = dict(
         name=dict(required=True),
-        managed_policies=dict(default=[], type='list', aliases=['managed_policy']),
-        users=dict(default=[], type='list'),
+        managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
+        users=dict(default=[], type='list', elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_users=dict(default=False, type='bool'),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies'])

@@ -128,6 +128,7 @@ EXAMPLES = '''
   community.aws.kinesis_stream:
     name: test-stream
     state: present
+    shards: 1
     encryption_state: enabled
     encryption_type: KMS
     key_id: alias/aws/kinesis
@@ -140,6 +141,7 @@ EXAMPLES = '''
   community.aws.kinesis_stream:
     name: test-stream
     state: present
+    shards: 1
     encryption_state: disabled
     encryption_type: KMS
     key_id: alias/aws/kinesis
@@ -187,11 +189,11 @@ from functools import reduce
 try:
     import botocore.exceptions
 except ImportError:
-    pass  # Taken care of by ec2.HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3, boto3_conn, ec2_argument_spec, get_aws_connection_info
 from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def convert_to_lower(data):
@@ -362,6 +364,8 @@ def find_stream(client, stream_name, check_mode=False):
                 )
                 shards.extend(results.pop('Shards'))
                 has_more_shards = results['HasMoreShards']
+                if has_more_shards:
+                    params['ExclusiveStartShardId'] = shards[-1]['ShardId']
             results['Shards'] = shards
             num_closed_shards = len([s for s in shards if 'EndingSequenceNumber' in s['SequenceNumberRange']])
             results['OpenShardsCount'] = len(shards) - num_closed_shards
@@ -1325,22 +1329,19 @@ def stop_stream_encryption(client, stream_name, encryption_type='', key_id='',
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            shards=dict(default=None, required=False, type='int'),
-            retention_period=dict(default=None, required=False, type='int'),
-            tags=dict(default=None, required=False, type='dict', aliases=['resource_tags']),
-            wait=dict(default=True, required=False, type='bool'),
-            wait_timeout=dict(default=300, required=False, type='int'),
-            state=dict(default='present', choices=['present', 'absent']),
-            encryption_type=dict(required=False, choices=['NONE', 'KMS']),
-            key_id=dict(required=False, type='str'),
-            encryption_state=dict(required=False, choices=['enabled', 'disabled']),
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        shards=dict(default=None, required=False, type='int'),
+        retention_period=dict(default=None, required=False, type='int'),
+        tags=dict(default=None, required=False, type='dict', aliases=['resource_tags']),
+        wait=dict(default=True, required=False, type='bool'),
+        wait_timeout=dict(default=300, required=False, type='int'),
+        state=dict(default='present', choices=['present', 'absent']),
+        encryption_type=dict(required=False, choices=['NONE', 'KMS']),
+        key_id=dict(required=False, type='str'),
+        encryption_state=dict(required=False, choices=['enabled', 'disabled']),
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
     )
@@ -1363,25 +1364,11 @@ def main():
         if retention_period < 24:
             module.fail_json(msg='Retention period can not be less than 24 hours.')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required.')
-
     check_mode = module.check_mode
     try:
-        region, ec2_url, aws_connect_kwargs = (
-            get_aws_connection_info(module, boto3=True)
-        )
-        client = (
-            boto3_conn(
-                module, conn_type='client', resource='kinesis',
-                region=region, endpoint=ec2_url, **aws_connect_kwargs
-            )
-        )
-    except botocore.exceptions.ClientError as e:
-        err_msg = 'Boto3 Client Error - {0}'.format(to_native(e.msg))
-        module.fail_json(
-            success=False, changed=False, result={}, msg=err_msg
-        )
+        client = module.client('kinesis')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if state == 'present':
         success, changed, err_msg, results = (

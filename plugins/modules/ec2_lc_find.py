@@ -137,8 +137,12 @@ associate_public_address:
 '''
 import re
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
+try:
+    import botocore
+except ImportError:
+    pass  # Handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def find_launch_configs(client, module):
@@ -191,21 +195,21 @@ def find_launch_configs(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         name_regex=dict(required=True),
         sort_order=dict(required=False, default='ascending', choices=['ascending', 'descending']),
         limit=dict(required=False, type='int'),
     )
-    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
     )
 
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, True)
+    try:
+        client = module.client('autoscaling')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
-    client = boto3_conn(module=module, conn_type='client', resource='autoscaling', region=region, **aws_connect_params)
     find_launch_configs(client, module)
 
 

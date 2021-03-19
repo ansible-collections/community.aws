@@ -1,3 +1,5 @@
-cloud/aws
-shippable/aws/group1
+# reason: broken
+# ansible/ansible#59311
 disabled
+
+cloud/aws

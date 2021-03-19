@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ecs_service_info
 version_added: 1.0.0
@@ -49,7 +49,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Basic listing example
@@ -65,7 +65,7 @@ EXAMPLES = '''
   register: output
 '''
 
-RETURN = '''
+RETURN = r'''
 services:
     description: When details is false, returns an array of service ARNs, otherwise an array of complex objects as described below.
     returned: success
@@ -138,6 +138,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
@@ -153,11 +154,8 @@ class EcsServiceManager:
         paginator = self.ecs.get_paginator('list_services')
         try:
             return paginator.paginate(**kwargs).build_full_result()
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] == 'ClusterNotFoundException':
-                self.module.fail_json_aws(e, "Could not find cluster to list services")
-            else:
-                raise
+        except is_boto3_error_code('ClusterNotFoundException') as e:
+            self.module.fail_json_aws(e, "Could not find cluster to list services")
 
     @AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
     def describe_services_with_backoff(self, **kwargs):
@@ -219,7 +217,7 @@ def main():
         details=dict(type='bool', default=False),
         events=dict(type='bool', default=True),
         cluster=dict(),
-        service=dict(type='list')
+        service=dict(type='list', elements='str')
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)

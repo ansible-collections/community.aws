@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: rds
 version_added: 1.0.0
@@ -188,7 +188,7 @@ options:
     type: int
   apply_immediately:
     description:
-      - When I(apply_immediately=trye), the modifications will be applied as soon as possible rather than waiting for the
+      - When I(apply_immediately=true), the modifications will be applied as soon as possible rather than waiting for the
         next preferred maintenance window.
       - Used only when I(command=modify).
     type: bool
@@ -235,7 +235,7 @@ extends_documentation_fragment:
 
 # FIXME: the command stuff needs a 'state' like alias to make things consistent -- MPD
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Basic mysql provisioning example
   community.aws.rds:
     command: create
@@ -305,11 +305,11 @@ EXAMPLES = '''
     region: us-west-2
     vpc_security_groups: sg-xxx945xx
 
-- debug:
+- ansible.builtin.debug:
     msg: "The new db endpoint is {{ rds.instance.endpoint }}"
 '''
 
-RETURN = '''
+RETURN = r'''
 instance:
     description: the rds instance
     returned: always
@@ -352,7 +352,7 @@ instance:
             sample: "1489707802.0"
         secondary_availability_zone:
             description: the name of the secondary AZ for a DB instance with multi-AZ support
-            returned: when RDS instance exists and is multy-AZ
+            returned: when RDS instance exists and is multi-AZ
             type: str
             sample: "eu-west-1b"
         backup_window:
@@ -532,9 +532,12 @@ try:
 except ImportError:
     HAS_RDS2 = False
 
-from ansible.module_utils.basic import AnsibleModule
+from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO, connect_to_aws, ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 DEFAULT_PORTS = {
@@ -981,7 +984,7 @@ def create_db_instance(module, conn):
                                              module.params.get('username'), module.params.get('password'), **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg="Failed to create instance: %s" % e.message)
+            module.fail_json(msg="Failed to create instance: %s" % to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1008,7 +1011,7 @@ def replicate_db_instance(module, conn):
             result = conn.create_db_instance_read_replica(instance_name, source_instance, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg="Failed to create replica instance: %s " % e.message)
+            module.fail_json(msg="Failed to create replica instance: %s " % to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1047,7 +1050,7 @@ def delete_db_instance_or_snapshot(module, conn):
         else:
             result = conn.delete_db_snapshot(snapshot)
     except RDSException as e:
-        module.fail_json(msg="Failed to delete instance: %s" % e.message)
+        module.fail_json(msg="Failed to delete instance: %s" % to_native(e))
 
     # If we're not waiting for a delete to complete then we're all done
     # so just return
@@ -1060,7 +1063,7 @@ def delete_db_instance_or_snapshot(module, conn):
         if e.code == 'DBInstanceNotFound':
             module.exit_json(changed=True)
         else:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
     except Exception as e:
         module.fail_json(msg=str(e))
 
@@ -1097,7 +1100,7 @@ def modify_db_instance(module, conn):
     try:
         result = conn.modify_db_instance(instance_name, **params)
     except RDSException as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
     if params.get('apply_immediately'):
         if new_instance_name:
             # Wait until the new instance name is valid
@@ -1135,7 +1138,7 @@ def promote_db_instance(module, conn):
             result = conn.promote_read_replica(instance_name, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
     else:
         changed = False
 
@@ -1160,7 +1163,7 @@ def snapshot_db_instance(module, conn):
             result = conn.create_db_snapshot(snapshot, instance_name, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1185,7 +1188,7 @@ def reboot_db_instance(module, conn):
         result = conn.reboot_db_instance(instance_name, **params)
         changed = True
     except RDSException as e:
-        module.fail_json(msg=e.message)
+        module.fail_json(msg=to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1216,7 +1219,7 @@ def restore_db_instance(module, conn):
             result = conn.restore_db_instance_from_db_snapshot(instance_name, snapshot, instance_type, **params)
             changed = True
         except RDSException as e:
-            module.fail_json(msg=e.message)
+            module.fail_json(msg=to_native(e))
 
     if module.params.get('wait'):
         resource = await_resource(conn, result, 'available', module)
@@ -1311,8 +1314,7 @@ def validate_parameters(required_vars, valid_vars, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         command=dict(choices=['create', 'replicate', 'delete', 'facts', 'modify', 'promote', 'snapshot', 'reboot', 'restore'], required=True),
         instance_name=dict(required=False),
         source_instance=dict(required=False),
@@ -1329,7 +1331,7 @@ def main():
         multi_zone=dict(type='bool', required=False),
         iops=dict(required=False),
         security_groups=dict(required=False),
-        vpc_security_groups=dict(type='list', required=False),
+        vpc_security_groups=dict(type='list', required=False, elements='str'),
         port=dict(required=False, type='int'),
         upgrade=dict(type='bool', default=False),
         option_group=dict(required=False),
@@ -1346,12 +1348,12 @@ def main():
         tags=dict(type='dict', required=False),
         publicly_accessible=dict(required=False),
         character_set_name=dict(required=False),
-        force_failover=dict(type='bool', required=False, default=False)
-    )
+        force_failover=dict(type='bool', required=False, default=False),
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        check_boto3=False,
     )
 
     if not HAS_BOTO:

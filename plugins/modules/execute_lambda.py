@@ -129,22 +129,18 @@ status:
 
 import base64
 import json
-import traceback
 
 try:
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
-from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         name=dict(),
         function_arn=dict(),
         wait=dict(default=True, type='bool'),
@@ -152,17 +148,14 @@ def main():
         dry_run=dict(default=False, type='bool'),
         version_qualifier=dict(),
         payload=dict(default={}, type='dict'),
-    ))
-    module = AnsibleModule(
+    )
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
             ['name', 'function_arn'],
         ]
     )
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     name = module.params.get('name')
     function_arn = module.params.get('function_arn')
@@ -172,23 +165,13 @@ def main():
     version_qualifier = module.params.get('version_qualifier')
     payload = module.params.get('payload')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='Python module "boto3" is missing, please install it')
-
     if not (name or function_arn):
         module.fail_json(msg="Must provide either a function_arn or a name to invoke.")
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=HAS_BOTO3)
-    if not region:
-        module.fail_json(msg="The AWS region must be specified as an "
-                         "environment variable or in the AWS credentials "
-                         "profile.")
-
     try:
-        client = boto3_conn(module, conn_type='client', resource='lambda',
-                            region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except (botocore.exceptions.ClientError, botocore.exceptions.ValidationError) as e:
-        module.fail_json(msg="Failure connecting boto3 to AWS: %s" % to_native(e), exception=traceback.format_exc())
+        client = module.client('lambda')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invoke_params = {}
 
@@ -224,20 +207,16 @@ def main():
 
     try:
         response = client.invoke(**invoke_params)
-    except botocore.exceptions.ClientError as ce:
-        if ce.response['Error']['Code'] == 'ResourceNotFoundException':
-            module.fail_json(msg="Could not find Lambda to execute. Make sure "
+    except is_boto3_error_code('ResourceNotFoundException') as nfe:
+        module.fail_json_aws(nfe, msg="Could not find Lambda to execute. Make sure "
                              "the ARN is correct and your profile has "
-                             "permissions to execute this function.",
-                             exception=traceback.format_exc())
-        module.fail_json(msg="Client-side error when invoking Lambda, check inputs and specific error",
-                         exception=traceback.format_exc())
-    except botocore.exceptions.ParamValidationError as ve:
-        module.fail_json(msg="Parameters to `invoke` failed to validate",
-                         exception=traceback.format_exc())
+                             "permissions to execute this function.")
+    except botocore.exceptions.ClientError as ce:  # pylint: disable=duplicate-except
+        module.fail_json_aws(ce, msg="Client-side error when invoking Lambda, check inputs and specific error")
+    except botocore.exceptions.ParamValidationError as ve:  # pylint: disable=duplicate-except
+        module.fail_json_aws(ve, msg="Parameters to `invoke` failed to validate")
     except Exception as e:
-        module.fail_json(msg="Unexpected failure while invoking Lambda function",
-                         exception=traceback.format_exc())
+        module.fail_json_aws(e, msg="Unexpected failure while invoking Lambda function")
 
     results = {
         'logs': '',
@@ -250,13 +229,13 @@ def main():
             # logs are base64 encoded in the API response
             results['logs'] = base64.b64decode(response.get('LogResult', ''))
         except Exception as e:
-            module.fail_json(msg="Failed while decoding logs", exception=traceback.format_exc())
+            module.fail_json_aws(e, msg="Failed while decoding logs")
 
     if invoke_params['InvocationType'] == 'RequestResponse':
         try:
             results['output'] = json.loads(response['Payload'].read().decode('utf8'))
         except Exception as e:
-            module.fail_json(msg="Failed while decoding function return value", exception=traceback.format_exc())
+            module.fail_json_aws(e, msg="Failed while decoding function return value")
 
         if isinstance(results.get('output'), dict) and any(
                 [results['output'].get('stackTrace'), results['output'].get('errorMessage')]):

@@ -143,6 +143,28 @@ launch_configuration_name:
     returned: success
     type: str
     sample: "public-webapp-production-1"
+lifecycle_hooks:
+    description: List of lifecycle hooks for the ASG.
+    returned: success
+    type: list
+    sample: [
+        {
+            "AutoScalingGroupName": "public-webapp-production-1",
+            "DefaultResult": "ABANDON",
+            "GlobalTimeout": 172800,
+            "HeartbeatTimeout": 3600,
+            "LifecycleHookName": "instance-launch",
+            "LifecycleTransition": "autoscaling:EC2_INSTANCE_LAUNCHING"
+        },
+        {
+            "AutoScalingGroupName": "public-webapp-production-1",
+            "DefaultResult": "ABANDON",
+            "GlobalTimeout": 172800,
+            "HeartbeatTimeout": 3600,
+            "LifecycleHookName": "instance-terminate",
+            "LifecycleTransition": "autoscaling:EC2_INSTANCE_TERMINATING"
+        }
+    ]
 load_balancer_names:
     description: List of load balancers names attached to the ASG.
     returned: success
@@ -219,12 +241,14 @@ termination_policies:
 import re
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def match_asg_tags(tags_to_match, asg):
@@ -287,6 +311,25 @@ def find_asgs(conn, module, name=None, tags=None):
                 ],
                 "launch_config_name": "public-webapp-production-1",
                 "launch_configuration_name": "public-webapp-production-1",
+                "lifecycle_hooks":
+                [
+                    {
+                        "AutoScalingGroupName": "public-webapp-production-1",
+                        "DefaultResult": "ABANDON",
+                        "GlobalTimeout": 172800,
+                        "HeartbeatTimeout": 3600,
+                        "LifecycleHookName": "instance-launch",
+                        "LifecycleTransition": "autoscaling:EC2_INSTANCE_LAUNCHING"
+                    },
+                    {
+                        "AutoScalingGroupName": "public-webapp-production-1",
+                        "DefaultResult": "ABANDON",
+                        "GlobalTimeout": 172800,
+                        "HeartbeatTimeout": 3600,
+                        "LifecycleHookName": "instance-terminate",
+                        "LifecycleTransition": "autoscaling:EC2_INSTANCE_TERMINATING"
+                    }
+                ],
                 "load_balancer_names": ["public-webapp-production-lb"],
                 "max_size": 4,
                 "min_size": 2,
@@ -330,7 +373,7 @@ def find_asgs(conn, module, name=None, tags=None):
     try:
         asgs_paginator = conn.get_paginator('describe_auto_scaling_groups')
         asgs = asgs_paginator.paginate().build_full_result()
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to describe AutoScalingGroups')
 
     if not asgs:
@@ -338,7 +381,7 @@ def find_asgs(conn, module, name=None, tags=None):
 
     try:
         elbv2 = module.client('elbv2')
-    except ClientError as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         # This is nice to have, not essential
         elbv2 = None
     matched_asgs = []
@@ -373,15 +416,18 @@ def find_asgs(conn, module, name=None, tags=None):
                         tg_paginator = elbv2.get_paginator('describe_target_groups')
                         tg_result = tg_paginator.paginate(TargetGroupArns=asg['target_group_arns']).build_full_result()
                         asg['target_group_names'] = [tg['TargetGroupName'] for tg in tg_result['TargetGroups']]
-                    except ClientError as e:
-                        if e.response['Error']['Code'] == 'TargetGroupNotFound':
-                            asg['target_group_names'] = []
-                        else:
-                            module.fail_json_aws(e, msg="Failed to describe Target Groups")
-                    except BotoCoreError as e:
+                    except is_boto3_error_code('TargetGroupNotFound'):
+                        asg['target_group_names'] = []
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
                         module.fail_json_aws(e, msg="Failed to describe Target Groups")
             else:
                 asg['target_group_names'] = []
+            # get asg lifecycle hooks if any
+            try:
+                asg_lifecyclehooks = conn.describe_lifecycle_hooks(AutoScalingGroupName=asg['auto_scaling_group_name'])
+                asg['lifecycle_hooks'] = asg_lifecyclehooks['LifecycleHooks']
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Failed to fetch information about ASG lifecycle hooks")
             matched_asgs.append(asg)
 
     return matched_asgs

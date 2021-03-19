@@ -227,18 +227,6 @@ import hashlib
 import mimetypes
 import os
 import stat as osstat  # os.stat constants
-import traceback
-
-# import module snippets
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     boto3_conn,
-                                                                     get_aws_connection_info,
-                                                                     HAS_BOTO3,
-                                                                     boto_exception,
-                                                                     )
-from ansible.module_utils._text import to_text
 
 try:
     from dateutil import tz
@@ -248,9 +236,16 @@ except ImportError:
 
 try:
     import botocore
+    from boto3.s3.transfer import TransferConfig
+    DEFAULT_CHUNK_SIZE = TransferConfig().multipart_chunksize
 except ImportError:
-    # Handled by imported HAS_BOTO3
-    pass
+    DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils._text import to_text
+
+# import module snippets
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 # the following function, calculate_multipart_etag, is from tlastowka
@@ -275,10 +270,6 @@ except ImportError:
 #
 # You should have received a copy of the GNU General Public License
 # along with calculate_multipart_etag.  If not, see <http://www.gnu.org/licenses/>.
-
-DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024
-
-
 def calculate_multipart_etag(source_path, chunk_size=DEFAULT_CHUNK_SIZE):
     """
     calculates a multipart upload etag for amazon s3
@@ -412,8 +403,6 @@ def head_s3(s3, bucket, s3keys):
                 pass
             else:
                 raise Exception(err)
-            # error_msg = boto_exception(err)
-            # return {'error': error_msg}
         retkeys.append(retentry)
     return retkeys
 
@@ -504,12 +493,11 @@ def remove_files(s3, sourcelist, params):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         mode=dict(choices=['push'], default='push'),
         file_change_strategy=dict(choices=['force', 'date_size', 'checksum'], default='date_size'),
         bucket=dict(required=True),
-        key_prefix=dict(required=False, default=''),
+        key_prefix=dict(required=False, default='', no_log=False),
         file_root=dict(required=True, type='path'),
         permission=dict(required=False, choices=['private', 'public-read', 'public-read-write', 'authenticated-read',
                                                  'aws-exec-read', 'bucket-owner-read', 'bucket-owner-full-control']),
@@ -521,25 +509,21 @@ def main():
         delete=dict(required=False, type='bool', default=False),
         # future options: encoding, metadata, storage_class, retries
     )
-    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
     )
 
     if not HAS_DATEUTIL:
         module.fail_json(msg='dateutil required for this module')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
     result = {}
     mode = module.params['mode']
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg="Region must be specified")
-    s3 = boto3_conn(module, conn_type='client', resource='s3', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        s3 = module.client('s3')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if mode == 'push':
         try:
@@ -557,9 +541,8 @@ def main():
             if result.get('uploads') or result.get('removed'):
                 result['changed'] = True
             # result.update(filelist=actionable_filelist)
-        except botocore.exceptions.ClientError as err:
-            error_msg = boto_exception(err)
-            module.fail_json(msg=error_msg, exception=traceback.format_exc(), **camel_dict_to_snake_dict(err.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to push file")
 
     module.exit_json(**result)
 

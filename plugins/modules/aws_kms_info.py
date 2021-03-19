@@ -16,12 +16,31 @@ description:
     - This module was called C(aws_kms_facts) before Ansible 2.9. The usage did not change.
 author: "Will Thames (@willthames)"
 options:
+  alias:
+    description:
+      - Alias for key.
+      - Mutually exclusive with I(key_id) and I(filters).
+    required: false
+    aliases:
+      - key_alias
+    type: str
+    version_added: 1.4.0
+  key_id:
+    description:
+      - Key ID or ARN of the key.
+      - Mutually exclusive with I(alias) and I(filters).
+    required: false
+    aliases:
+      - key_arn
+    type: str
+    version_added: 1.4.0
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
         The filters aren't natively supported by boto3, but are supported to provide similar
         functionality to other modules. Standard tag filters (C(tag-key), C(tag-value) and
         C(tag:tagName)) are available, as are C(key-id) and C(alias)
+      - Mutually exclusive with I(alias) and I(key_id).
     type: dict
   pending_deletion:
     description: Whether to get full details (tags, grants etc.) of keys pending deletion
@@ -105,7 +124,7 @@ keys:
       returned: always
       sample: false
     enable_key_rotation:
-      description: Whether the automatically key rotation every year is enabled.
+      description: Whether the automatically key rotation every year is enabled. Returns None if key rotation status can't be determined.
       type: bool
       returned: always
       sample: false
@@ -215,17 +234,17 @@ keys:
 '''
 
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, camel_dict_to_snake_dict, HAS_BOTO3
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-
-import traceback
-
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 # Caching lookup for aliases
 _aliases = dict()
@@ -288,8 +307,20 @@ def get_key_policy_with_backoff(connection, key_id, policy_name):
 
 @AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def get_enable_key_rotation_with_backoff(connection, key_id):
-    current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+    try:
+        current_rotation_status = connection.get_key_rotation_status(KeyId=key_id)
+    except is_boto3_error_code(['AccessDeniedException', 'UnsupportedOperationException']) as e:
+        return None
+
     return current_rotation_status.get('KeyRotationEnabled')
+
+
+def canonicalize_alias_name(alias):
+    if alias is None:
+        return None
+    if alias.startswith('alias/'):
+        return alias
+    return 'alias/' + alias
 
 
 def get_kms_tags(connection, module, key_id):
@@ -302,13 +333,10 @@ def get_kms_tags(connection, module, key_id):
         try:
             tag_response = get_kms_tags_with_backoff(connection, key_id, **kwargs)
             tags.extend(tag_response['Tags'])
-        except botocore.exceptions.ClientError as e:
-            if e.response['Error']['Code'] != 'AccessDeniedException':
-                module.fail_json(msg="Failed to obtain key tags",
-                                 exception=traceback.format_exc(),
-                                 **camel_dict_to_snake_dict(e.response))
-            else:
-                tag_response = {}
+        except is_boto3_error_code('AccessDeniedException'):
+            tag_response = {}
+        except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+            module.fail_json_aws(e, msg="Failed to obtain key tags")
         if tag_response.get('NextMarker'):
             kwargs['Marker'] = tag_response['NextMarker']
         else:
@@ -321,13 +349,10 @@ def get_kms_policies(connection, module, key_id):
         policies = list_key_policies_with_backoff(connection, key_id)['PolicyNames']
         return [get_key_policy_with_backoff(connection, key_id, policy)['Policy'] for
                 policy in policies]
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] != 'AccessDeniedException':
-            module.fail_json(msg="Failed to obtain key policies",
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
-        else:
-            return []
+    except is_boto3_error_code('AccessDeniedException'):
+        return []
+    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to obtain key policies")
 
 
 def key_matches_filter(key, filtr):
@@ -340,7 +365,10 @@ def key_matches_filter(key, filtr):
     if filtr[0] == 'alias':
         return filtr[1] in key['aliases']
     if filtr[0].startswith('tag:'):
-        return key['tags'][filtr[0][4:]] == filtr[1]
+        tag_key = filtr[0][4:]
+        if tag_key not in key['tags']:
+            return False
+        return key['tags'].get(tag_key) == filtr[1]
 
 
 def key_matches_filters(key, filters):
@@ -355,18 +383,19 @@ def get_key_details(connection, module, key_id, tokens=None):
         tokens = []
     try:
         result = get_kms_metadata_with_backoff(connection, key_id)['KeyMetadata']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain key metadata",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+        # Make sure we have the canonical ARN, we might have been passed an alias
+        key_id = result['Arn']
+    except is_boto3_error_code('NotFoundException'):
+        return None
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to obtain key metadata")
     result['KeyArn'] = result.pop('Arn')
 
     try:
         aliases = get_kms_aliases_lookup(connection)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain aliases",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to obtain aliases")
+    # We can only get aliases for our own account, so we don't need the full ARN
     result['aliases'] = aliases.get(result['KeyId'], [])
     result['enable_key_rotation'] = get_enable_key_rotation_with_backoff(connection, key_id)
 
@@ -375,10 +404,8 @@ def get_key_details(connection, module, key_id, tokens=None):
 
     try:
         result['grants'] = get_kms_grants_with_backoff(connection, key_id, tokens=tokens)['Grants']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain key grants",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to obtain key grants")
     tags = get_kms_tags(connection, module, key_id)
 
     result = camel_dict_to_snake_dict(result)
@@ -388,39 +415,44 @@ def get_key_details(connection, module, key_id, tokens=None):
 
 
 def get_kms_info(connection, module):
-    try:
-        keys = get_kms_keys_with_backoff(connection)['Keys']
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to obtain keys",
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
-
-    return [get_key_details(connection, module, key['KeyId']) for key in keys]
+    if module.params.get('key_id'):
+        key_id = module.params.get('key_id')
+        details = get_key_details(connection, module, key_id)
+        if details:
+            return [details]
+        return []
+    elif module.params.get('alias'):
+        alias = canonicalize_alias_name(module.params.get('alias'))
+        details = get_key_details(connection, module, alias)
+        if details:
+            return [details]
+        return []
+    else:
+        try:
+            keys = get_kms_keys_with_backoff(connection)['Keys']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to obtain keys")
+        return [get_key_details(connection, module, key['KeyId']) for key in keys]
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(type='dict'),
-            pending_deletion=dict(type='bool', default=False)
-        )
+    argument_spec = dict(
+        alias=dict(aliases=['key_alias']),
+        key_id=dict(aliases=['key_arn']),
+        filters=dict(type='dict'),
+        pending_deletion=dict(type='bool', default=False),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              mutually_exclusive=[['alias', 'filters', 'key_id']],
+                              supports_check_mode=True)
     if module._name == 'aws_kms_facts':
         module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 and botocore are required for this module')
-
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='kms', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        connection = module.client('kms')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     all_keys = get_kms_info(connection, module)
     module.exit_json(keys=[key for key in all_keys if key_matches_filters(key, module.params['filters'])])

@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_lc
 version_added: 1.0.0
@@ -190,7 +190,7 @@ requirements:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 
 # create a launch configuration using an AMI image and instance type as a basis
 
@@ -238,7 +238,7 @@ EXAMPLES = '''
 - name: Use EBS snapshot ID for volume
   block:
   - name: Set Volume Facts
-    set_fact:
+    ansible.builtin.set_fact:
       volumes:
       - device_name: /dev/sda1
         volume_size: 20
@@ -260,7 +260,7 @@ EXAMPLES = '''
     register: lc_info
 '''
 
-RETURN = '''
+RETURN = r'''
 arn:
   description: The Amazon Resource Name of the launch configuration.
   returned: when I(state=present)
@@ -449,22 +449,18 @@ security_groups:
 
 
 import traceback
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
-                                                                     ec2_argument_spec,
-                                                                     ec2_connect,
-                                                                     camel_dict_to_snake_dict,
-                                                                     get_ec2_security_group_ids_from_names,
-                                                                     boto3_conn,
-                                                                     snake_dict_to_camel_dict,
-                                                                     HAS_BOTO3,
-                                                                     )
-from ansible.module_utils._text import to_text
-from ansible.module_utils.basic import AnsibleModule
 
 try:
     import botocore
 except ImportError:
-    pass
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 
 
 def create_block_device_meta(module, volume):
@@ -517,11 +513,13 @@ def create_launch_config(connection, module):
     name = module.params.get('name')
     vpc_id = module.params.get('vpc_id')
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        ec2_connection = boto3_conn(module, 'client', 'ec2', region, ec2_url, **aws_connect_kwargs)
+        ec2_connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
+    try:
         security_groups = get_ec2_security_group_ids_from_names(module.params.get('security_groups'), ec2_connection, vpc_id=vpc_id, boto3=True)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to get Security Group IDs", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to get Security Group IDs')
     except ValueError as e:
         module.fail_json(msg="Failed to get Security Group IDs", exception=traceback.format_exc())
     user_data = module.params.get('user_data')
@@ -557,8 +555,8 @@ def create_launch_config(connection, module):
 
     try:
         launch_configs = connection.describe_launch_configurations(LaunchConfigurationNames=[name]).get('LaunchConfigurations')
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to describe launch configuration by name", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to describe launch configuration by name")
 
     changed = False
     result = {}
@@ -599,8 +597,8 @@ def create_launch_config(connection, module):
             changed = True
             if launch_configs:
                 launch_config = launch_configs[0]
-        except botocore.exceptions.ClientError as e:
-            module.fail_json(msg="Failed to create launch configuration", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to create launch configuration")
 
     result = (dict((k, v) for k, v in launch_config.items()
                    if k not in ['Connection', 'CreatedTime', 'InstanceMonitoring', 'BlockDeviceMappings']))
@@ -645,54 +643,45 @@ def delete_launch_config(connection, module):
             module.exit_json(changed=True)
         else:
             module.exit_json(changed=False)
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Failed to delete launch configuration", exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to delete launch configuration")
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True),
-            image_id=dict(),
-            instance_id=dict(),
-            key_name=dict(),
-            security_groups=dict(default=[], type='list'),
-            user_data=dict(),
-            user_data_path=dict(type='path'),
-            kernel_id=dict(),
-            volumes=dict(type='list'),
-            instance_type=dict(),
-            state=dict(default='present', choices=['present', 'absent']),
-            spot_price=dict(type='float'),
-            ramdisk_id=dict(),
-            instance_profile_name=dict(),
-            ebs_optimized=dict(default=False, type='bool'),
-            associate_public_ip_address=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
-            instance_monitoring=dict(default=False, type='bool'),
-            assign_public_ip=dict(type='bool'),
-            classic_link_vpc_security_groups=dict(type='list'),
-            classic_link_vpc_id=dict(),
-            vpc_id=dict(),
-            placement_tenancy=dict(choices=['default', 'dedicated'])
-        )
+    argument_spec = dict(
+        name=dict(required=True),
+        image_id=dict(),
+        instance_id=dict(),
+        key_name=dict(),
+        security_groups=dict(default=[], type='list', elements='str'),
+        user_data=dict(),
+        user_data_path=dict(type='path'),
+        kernel_id=dict(),
+        volumes=dict(type='list', elements='dict'),
+        instance_type=dict(),
+        state=dict(default='present', choices=['present', 'absent']),
+        spot_price=dict(type='float'),
+        ramdisk_id=dict(),
+        instance_profile_name=dict(),
+        ebs_optimized=dict(default=False, type='bool'),
+        associate_public_ip_address=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
+        instance_monitoring=dict(default=False, type='bool'),
+        assign_public_ip=dict(type='bool'),
+        classic_link_vpc_security_groups=dict(type='list', elements='str'),
+        classic_link_vpc_id=dict(),
+        vpc_id=dict(),
+        placement_tenancy=dict(choices=['default', 'dedicated'])
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        mutually_exclusive=[['user_data', 'user_data_path']]
+        mutually_exclusive=[['user_data', 'user_data_path']],
     )
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        connection = boto3_conn(module, conn_type='client', resource='autoscaling', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoRegionError:
-        module.fail_json(msg=("region must be specified as a parameter in AWS_DEFAULT_REGION environment variable or in boto configuration file"))
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="unable to establish connection - " + str(e), exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        connection = module.client('autoscaling')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="unable to establish connection")
 
     state = module.params.get('state')
 

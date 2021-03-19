@@ -20,6 +20,7 @@ options:
   device_id:
     description:
       - The id of the device for the EIP. Can be an EC2 Instance id or Elastic Network Interface (ENI) id.
+      - The I(instance_id) alias has been deprecated and will be removed after 2022-12-01.
     required: false
     aliases: [ instance_id ]
     type: str
@@ -137,7 +138,7 @@ EXAMPLES = '''
   register: eip
 
 - name: output the IP
-  debug:
+  ansible.builtin.debug:
     msg: "Allocated IP is {{ eip.public_ip }}"
 
 - name: provision new instances with ec2
@@ -162,7 +163,7 @@ EXAMPLES = '''
   register: eip
 
 - name: output the IP
-  debug:
+  ansible.builtin.debug:
     msg: "Allocated IP inside a VPC is {{ eip.public_ip }}"
 
 - name: allocate eip - reuse unallocated ips (if found) with FREE tag
@@ -222,8 +223,10 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
 
 def associate_ip_and_device(ec2, module, address, private_ip_address, device_id, allow_reassociation, check_mode, is_instance=True):
@@ -239,7 +242,7 @@ def associate_ip_and_device(ec2, module, address, private_ip_address, device_id,
                     AllowReassociation=allow_reassociation,
                 )
                 if private_ip_address:
-                    params['PrivateIPAddress'] = private_ip_address
+                    params['PrivateIpAddress'] = private_ip_address
                 if address['Domain'] == 'vpc':
                     params['AllocationId'] = address['AllocationId']
                 else:
@@ -436,7 +439,7 @@ def ensure_present(ec2, module, domain, address, private_ip_address, device_id,
         if is_instance:
             instance = find_device(ec2, module, device_id)
             if reuse_existing_ip_allowed:
-                if instance.vpc_id and len(instance.vpc_id) > 0 and domain is None:
+                if instance['VpcId'] and len(instance['VpcId']) > 0 and domain is None:
                     msg = "You must set 'in_vpc' to true to associate an instance with an existing ip in a vpc"
                     module.fail_json_aws(botocore.exceptions.ClientError, msg=msg)
 
@@ -499,7 +502,7 @@ def allocate_address_from_pool(ec2, module, domain, check_mode, public_ipv4_pool
 
 
 def generate_tag_dict(module, tag_name, tag_value):
-    # type: (AnsibleModule, str, str) -> Optional[Dict]
+    # type: (AnsibleAWSModule, str, str) -> Optional[Dict]
     """ Generates a dictionary to be passed as a filter to Amazon """
     if tag_name and not tag_value:
         if tag_name.startswith('tag:'):
@@ -517,7 +520,10 @@ def generate_tag_dict(module, tag_name, tag_value):
 
 def main():
     argument_spec = dict(
-        device_id=dict(required=False, aliases=['instance_id']),
+        device_id=dict(required=False, aliases=['instance_id'],
+                       deprecated_aliases=[dict(name='instance_id',
+                                           date='2022-12-01',
+                                           collection_name='community.aws')]),
         public_ip=dict(required=False, aliases=['ip']),
         state=dict(required=False, default='present',
                    choices=['present', 'absent']),
@@ -558,7 +564,6 @@ def main():
     public_ipv4_pool = module.params.get('public_ipv4_pool')
 
     if instance_id:
-        warnings = ["instance_id is no longer used, please use device_id going forward"]
         is_instance = True
         device_id = instance_id
     else:
@@ -627,8 +632,6 @@ def main():
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(str(e))
 
-    if instance_id:
-        result['warnings'] = warnings
     module.exit_json(**result)
 
 

@@ -6,21 +6,12 @@
           region_src: "{{ aws_region }}"
           region_dest: "{{ aws_region }}"
 
-      - name: set up aws connection info
-        set_fact:
-          aws_connection_info: &aws_connection_info
-            aws_access_key: "{{ aws_access_key }}"
-            aws_secret_key: "{{ aws_secret_key }}"
-            security_token: "{{ security_token }}"
-        no_log: yes
-
       - name: Ensure the resource doesn't exist
         rds_instance:
           id: "{{ instance_id }}"
           state: absent
           skip_final_snapshot: True
           region: "{{ region_src }}"
-          <<: *aws_connection_info
         register: result
 
       - assert:
@@ -39,7 +30,9 @@
           db_instance_class: "{{ db_instance_class }}"
           allocated_storage: "{{ allocated_storage }}"
           region: "{{ region_src }}"
-          <<: *aws_connection_info
+          tags:
+            Name: "{{ instance_id }}"
+            Created_by: Ansible rds_instance tests
         register: source_db
 
       - assert:
@@ -59,8 +52,18 @@
           db_instance_class: "{{ db_instance_class }}"
           allocated_storage: "{{ allocated_storage }}"
           region: "{{ region_dest }}"
-          <<: *aws_connection_info
+          tags:
+            Name: "{{ instance_id }}"
+            Created_by: Ansible rds_instance tests
         register: result
+
+      - assert:
+        that:
+          - result.changed
+          - "result.db_instance_identifier == '{{ instance_id }}-replica'"
+          - "result.tags | length == 2"
+          - "result.tags.Name == '{{ instance_id }}'"
+          - "result.tags.Created_by == 'Ansible rds_instance tests'"
 
       - name: Test idempotence with a read replica
         rds_instance:
@@ -73,7 +76,9 @@
           db_instance_class: "{{ db_instance_class }}"
           allocated_storage: "{{ allocated_storage }}"
           region: "{{ region_dest }}"
-          <<: *aws_connection_info
+          tags:
+            Name: "{{ instance_id }}"
+            Created_by: Ansible rds_instance tests
         register: result
 
       - assert:
@@ -92,7 +97,9 @@
           db_instance_class: "{{ db_instance_class }}"
           allocated_storage: "{{ allocated_storage }}"
           region: "{{ region_dest }}"
-          <<: *aws_connection_info
+          tags:
+            Name: "{{ instance_id }}"
+            Created_by: Ansible rds_instance tests
         register: result
 
       - name: Promote the read replica
@@ -101,7 +108,6 @@
           state: present
           read_replica: False
           region: "{{ region_dest }}"
-          <<: *aws_connection_info
         register: result
 
       - assert:
@@ -114,7 +120,6 @@
           state: present
           read_replica: False
           region: "{{ region_dest }}"
-          <<: *aws_connection_info
         register: result
 
       - assert:
@@ -129,7 +134,6 @@
           state: absent
           skip_final_snapshot: True
           region: "{{ region_src }}"
-          <<: *aws_connection_info
         ignore_errors: yes
 
       - name: Remove the DB replica
@@ -138,5 +142,4 @@
           state: absent
           skip_final_snapshot: True
           region: "{{ region_dest }}"
-          <<: *aws_connection_info
         ignore_errors: yes

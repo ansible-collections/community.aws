@@ -17,7 +17,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elb_classic_lb_info
 version_added: 1.0.0
@@ -33,6 +33,7 @@ options:
     description:
       - List of ELB names to gather information about. Pass this option to gather information about a set of ELBs, otherwise, all ELBs are returned.
     type: list
+    elements: str
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -42,7 +43,7 @@ requirements:
   - boto3
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # Output format tries to match amazon.aws.ec2_elb_lb module input parameters
 
@@ -50,7 +51,7 @@ EXAMPLES = '''
 - community.aws.elb_classic_lb_info:
   register: elb_info
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
@@ -59,7 +60,7 @@ EXAMPLES = '''
     names: frontend-prod-elb
   register: elb_info
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ elb_info.elbs.0.dns_name }}"
 
 # Gather information about a set of ELBs
@@ -69,13 +70,13 @@ EXAMPLES = '''
     - backend-prod-elb
   register: elb_info
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
 '''
 
-RETURN = '''
+RETURN = r'''
 elbs:
   description: a list of load balancers
   returned: always
@@ -141,7 +142,7 @@ elbs:
         vpc_id: vpc-c248fda4
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     AWSRetry,
     camel_dict_to_snake_dict,
@@ -153,14 +154,17 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+MAX_AWS_RETRIES = 5
+MAX_AWS_DELAY = 5
 
-@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
-def list_elbs(connection, names):
-    paginator = connection.get_paginator('describe_load_balancers')
-    load_balancers = paginator.paginate(LoadBalancerNames=names).build_full_result().get('LoadBalancerDescriptions', [])
+
+def list_elbs(connection, load_balancer_names):
     results = []
 
-    for lb in load_balancers:
+    for load_balancer_name in load_balancer_names:
+        lb = get_lb(connection, load_balancer_name)
+        if not lb:
+            continue
         description = camel_dict_to_snake_dict(lb)
         name = lb['LoadBalancerName']
         instances = lb.get('Instances', [])
@@ -173,13 +177,20 @@ def list_elbs(connection, names):
     return results
 
 
-def get_lb_attributes(connection, name):
-    attributes = connection.describe_load_balancer_attributes(LoadBalancerName=name).get('LoadBalancerAttributes', {})
+def get_lb(connection, load_balancer_name):
+    try:
+        return connection.describe_load_balancers(aws_retry=True, LoadBalancerNames=[load_balancer_name])['LoadBalancerDescriptions'][0]
+    except is_boto3_error_code('LoadBalancerNotFound'):
+        return []
+
+
+def get_lb_attributes(connection, load_balancer_name):
+    attributes = connection.describe_load_balancer_attributes(aws_retry=True, LoadBalancerName=load_balancer_name).get('LoadBalancerAttributes', {})
     return camel_dict_to_snake_dict(attributes)
 
 
 def get_tags(connection, load_balancer_name):
-    tags = connection.describe_tags(LoadBalancerNames=[load_balancer_name])['TagDescriptions']
+    tags = connection.describe_tags(aws_retry=True, LoadBalancerNames=[load_balancer_name])['TagDescriptions']
     if not tags:
         return {}
     return boto3_tag_list_to_ansible_dict(tags[0]['Tags'])
@@ -193,14 +204,14 @@ def lb_instance_health(connection, load_balancer_name, instances, state):
 
 def main():
     argument_spec = dict(
-        names={'default': [], 'type': 'list'}
+        names=dict(default=[], type='list', elements='str')
     )
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True)
     if module._name == 'elb_classic_lb_facts':
         module.deprecate("The 'elb_classic_lb_facts' module has been renamed to 'elb_classic_lb_info'", date='2021-12-01', collection_name='community.aws')
 
-    connection = module.client('elb')
+    connection = module.client('elb', retry_decorator=AWSRetry.jittered_backoff(retries=MAX_AWS_RETRIES, delay=MAX_AWS_DELAY))
 
     try:
         elbs = list_elbs(connection, module.params.get('names'))

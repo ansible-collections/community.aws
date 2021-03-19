@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_instance_info
 version_added: 1.0.0
@@ -24,6 +24,7 @@ options:
       - If you specify one or more instance IDs, only instances that have the specified IDs are returned.
     required: false
     type: list
+    elements: str
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value. See
@@ -32,6 +33,13 @@ options:
     required: false
     default: {}
     type: dict
+  minimum_uptime:
+    description:
+      - Minimum running uptime in minutes of instances.  For example if I(uptime) is C(60) return all instances that have run more than 60 minutes.
+    required: false
+    aliases: ['uptime']
+    type: int
+
 
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -39,7 +47,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all instances
@@ -65,9 +73,18 @@ EXAMPLES = '''
     filters:
       instance-state-name: [ "shutting-down", "stopping", "stopped" ]
 
+- name: Gather information about any instance with Name beginning with RHEL and an uptime of at least 60 minutes
+  community.aws.ec2_instance_info:
+    region: "{{ ec2_region }}"
+    uptime: 60
+    filters:
+      "tag:Name": "RHEL-*"
+      instance-state-name: [ "running"]
+  register: ec2_node_info
+
 '''
 
-RETURN = '''
+RETURN = r'''
 instances:
     description: a list of ec2 instances
     returned: always
@@ -490,40 +507,44 @@ instances:
             sample: vpc-0011223344
 '''
 
-import traceback
+import datetime
 
 try:
-    import boto3
+    import botocore
     from botocore.exceptions import ClientError
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_filter_list,
-                                                                     boto3_conn,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 def list_ec2_instances(connection, module):
 
     instance_ids = module.params.get("instance_ids")
+    uptime = module.params.get('minimum_uptime')
     filters = ansible_dict_to_boto3_filter_list(module.params.get("filters"))
 
     try:
         reservations_paginator = connection.get_paginator('describe_instances')
         reservations = reservations_paginator.paginate(InstanceIds=instance_ids, Filters=filters).build_full_result()
     except ClientError as e:
-        module.fail_json(msg=e.message, exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
+        module.fail_json_aws(e, msg="Failed to list ec2 instances")
 
-    # Get instances from reservations
     instances = []
-    for reservation in reservations['Reservations']:
-        instances = instances + reservation['Instances']
+
+    if uptime:
+        timedelta = int(uptime) if uptime else 0
+        oldest_launch_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=timedelta)
+        # Get instances from reservations
+        for reservation in reservations['Reservations']:
+            instances += [instance for instance in reservation['Instances'] if instance['LaunchTime'].replace(tzinfo=None) < oldest_launch_time]
+    else:
+        for reservation in reservations['Reservations']:
+            instances = instances + reservation['Instances']
 
     # Turn the boto3 result in to ansible_friendly_snaked_names
     snaked_instances = [camel_dict_to_snake_dict(instance) for instance in instances]
@@ -537,32 +558,26 @@ def list_ec2_instances(connection, module):
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            instance_ids=dict(default=[], type='list'),
-            filters=dict(default={}, type='dict')
-        )
+    argument_spec = dict(
+        minimum_uptime=dict(required=False, type='int', default=None, aliases=['uptime']),
+        instance_ids=dict(default=[], type='list', elements='str'),
+        filters=dict(default={}, type='dict')
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           mutually_exclusive=[
-                               ['instance_ids', 'filters']
-                           ],
-                           supports_check_mode=True
-                           )
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[
+            ['instance_ids', 'filters']
+        ],
+        supports_check_mode=True,
+    )
     if module._name == 'ec2_instance_facts':
         module.deprecate("The 'ec2_instance_facts' module has been renamed to 'ec2_instance_info'", date='2021-12-01', collection_name='community.aws')
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        connection = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        connection = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     list_ec2_instances(connection, module)
 

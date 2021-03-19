@@ -86,7 +86,7 @@ EXAMPLES = '''
       name: myLambdaFunction
     register: lambda_info
   - name: show results
-    debug:
+    ansible.builtin.debug:
       msg: "{{ lambda_info['lambda_facts'] }}"
 
 # The following will set the Dev alias to the latest version ($LATEST) since version is omitted (or = 0)
@@ -139,80 +139,31 @@ name:
     returned: success
     type: str
     sample: dev
+revision_id:
+    description: A unique identifier that changes when you update the alias.
+    returned: success
+    type: str
+    sample: 12345678-1234-1234-1234-123456789abc
 '''
 
 import re
 
 try:
-    import boto3
-    from botocore.exceptions import ClientError, ParamValidationError, MissingParametersError
-    HAS_BOTO3 = True
+    import botocore
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
-
-class AWSConnection:
-    """
-    Create the connection object and client objects as required.
-    """
-
-    def __init__(self, ansible_obj, resources, boto3_=True):
-
-        try:
-            self.region, self.endpoint, aws_connect_kwargs = get_aws_connection_info(ansible_obj, boto3=boto3_)
-
-            self.resource_client = dict()
-            if not resources:
-                resources = ['lambda']
-
-            resources.append('iam')
-
-            for resource in resources:
-                aws_connect_kwargs.update(dict(region=self.region,
-                                               endpoint=self.endpoint,
-                                               conn_type='client',
-                                               resource=resource
-                                               ))
-                self.resource_client[resource] = boto3_conn(ansible_obj, **aws_connect_kwargs)
-
-            # if region is not provided, then get default profile/session region
-            if not self.region:
-                self.region = self.resource_client['lambda'].meta.region_name
-
-        except (ClientError, ParamValidationError, MissingParametersError) as e:
-            ansible_obj.fail_json(msg="Unable to connect, authorize or access resource: {0}".format(e))
-
-        try:
-            self.account_id = self.resource_client['iam'].get_user()['User']['Arn'].split(':')[4]
-        except (ClientError, ValueError, KeyError, IndexError):
-            self.account_id = ''
-
-    def client(self, resource='lambda'):
-        return self.resource_client[resource]
-
-
-def pc(key):
-    """
-    Changes python key into Pascale case equivalent. For example, 'this_function_name' becomes 'ThisFunctionName'.
-
-    :param key:
-    :return:
-    """
-
-    return "".join([token.capitalize() for token in key.split('_')])
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def set_api_params(module, module_params):
     """
-    Sets module parameters to those expected by the boto3 API.
+    Sets non-None module parameters to those expected by the boto3 API.
 
     :param module:
     :param module_params:
@@ -224,17 +175,16 @@ def set_api_params(module, module_params):
     for param in module_params:
         module_param = module.params.get(param, None)
         if module_param:
-            api_params[pc(param)] = module_param
+            api_params[param] = module_param
 
-    return api_params
+    return snake_dict_to_camel_dict(api_params, capitalize_first=True)
 
 
-def validate_params(module, aws):
+def validate_params(module):
     """
     Performs basic parameter validation.
 
-    :param module: Ansible module reference
-    :param aws: AWS client connection
+    :param module: AnsibleAWSModule reference
     :return:
     """
 
@@ -257,58 +207,56 @@ def validate_params(module, aws):
     return
 
 
-def get_lambda_alias(module, aws):
+def get_lambda_alias(module, client):
     """
     Returns the lambda function alias if it exists.
 
-    :param module: Ansible module reference
-    :param aws: AWS client connection
+    :param module: AnsibleAWSModule
+    :param client: (wrapped) boto3 lambda client
     :return:
     """
-
-    client = aws.client('lambda')
 
     # set API parameters
     api_params = set_api_params(module, ('function_name', 'name'))
 
     # check if alias exists and get facts
     try:
-        results = client.get_alias(**api_params)
-
-    except (ClientError, ParamValidationError, MissingParametersError) as e:
-        if e.response['Error']['Code'] == 'ResourceNotFoundException':
-            results = None
-        else:
-            module.fail_json(msg='Error retrieving function alias: {0}'.format(e))
+        results = client.get_alias(aws_retry=True, **api_params)
+    except is_boto3_error_code('ResourceNotFoundException'):
+        results = None
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg='Error retrieving function alias')
 
     return results
 
 
-def lambda_alias(module, aws):
+def lambda_alias(module, client):
     """
     Adds, updates or deletes lambda function aliases.
 
-    :param module: Ansible module reference
-    :param aws: AWS client connection
+    :param module: AnsibleAWSModule
+    :param client: (wrapped) boto3 lambda client
     :return dict:
     """
-    client = aws.client('lambda')
     results = dict()
     changed = False
     current_state = 'absent'
     state = module.params['state']
 
-    facts = get_lambda_alias(module, aws)
+    facts = get_lambda_alias(module, client)
     if facts:
         current_state = 'present'
 
     if state == 'present':
         if current_state == 'present':
+            snake_facts = camel_dict_to_snake_dict(facts)
 
             # check if alias has changed -- only version and description can change
             alias_params = ('function_version', 'description')
             for param in alias_params:
-                if module.params.get(param) != facts.get(pc(param)):
+                if module.params.get(param) is None:
+                    continue
+                if module.params.get(param) != snake_facts.get(param):
                     changed = True
                     break
 
@@ -318,9 +266,9 @@ def lambda_alias(module, aws):
 
                 if not module.check_mode:
                     try:
-                        results = client.update_alias(**api_params)
-                    except (ClientError, ParamValidationError, MissingParametersError) as e:
-                        module.fail_json(msg='Error updating function alias: {0}'.format(e))
+                        results = client.update_alias(aws_retry=True, **api_params)
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                        module.fail_json_aws(e, msg='Error updating function alias')
 
         else:
             # create new function alias
@@ -328,10 +276,10 @@ def lambda_alias(module, aws):
 
             try:
                 if not module.check_mode:
-                    results = client.create_alias(**api_params)
+                    results = client.create_alias(aws_retry=True, **api_params)
                 changed = True
-            except (ClientError, ParamValidationError, MissingParametersError) as e:
-                module.fail_json(msg='Error creating function alias: {0}'.format(e))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg='Error creating function alias')
 
     else:  # state = 'absent'
         if current_state == 'present':
@@ -340,12 +288,12 @@ def lambda_alias(module, aws):
 
             try:
                 if not module.check_mode:
-                    results = client.delete_alias(**api_params)
+                    results = client.delete_alias(aws_retry=True, **api_params)
                 changed = True
-            except (ClientError, ParamValidationError, MissingParametersError) as e:
-                module.fail_json(msg='Error deleting function alias: {0}'.format(e))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg='Error deleting function alias')
 
-    return dict(changed=changed, **dict(results or facts))
+    return dict(changed=changed, **dict(results or facts or {}))
 
 
 def main():
@@ -354,33 +302,25 @@ def main():
 
     :return dict: ansible facts
     """
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            state=dict(required=False, default='present', choices=['present', 'absent']),
-            function_name=dict(required=True),
-            name=dict(required=True, aliases=['alias_name']),
-            function_version=dict(type='int', required=False, default=0, aliases=['version']),
-            description=dict(required=False, default=None),
-        )
+    argument_spec = dict(
+        state=dict(required=False, default='present', choices=['present', 'absent']),
+        function_name=dict(required=True),
+        name=dict(required=True, aliases=['alias_name']),
+        function_version=dict(type='int', required=False, default=0, aliases=['version']),
+        description=dict(required=False, default=None),
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[],
-        required_together=[]
+        required_together=[],
     )
 
-    # validate dependencies
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 is required for this module.')
+    client = module.client('lambda', retry_decorator=AWSRetry.jittered_backoff())
 
-    aws = AWSConnection(module, ['lambda'])
-
-    validate_params(module, aws)
-
-    results = lambda_alias(module, aws)
+    validate_params(module)
+    results = lambda_alias(module, client)
 
     module.exit_json(**camel_dict_to_snake_dict(results))
 

@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: s3_lifecycle
 version_added: 1.0.0
@@ -17,8 +17,6 @@ author: "Rob White (@wimnat)"
 notes:
   - If specifying expiration time as days then transition time must also be specified in days
   - If specifying expiration time as a date then transition time must also be specified as a date
-requirements:
-  - python-dateutil
 options:
   name:
     description:
@@ -56,7 +54,7 @@ options:
     description:
       - 'Transition noncurrent versions to this storage class'
     default: glacier
-    choices: ['glacier', 'onezone_ia', 'standard_ia']
+    choices: ['glacier', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
     required: false
     type: str
   noncurrent_version_transition_days:
@@ -72,6 +70,7 @@ options:
           I(transition_days)
           I(storage_class)
     type: list
+    elements: dict
   rule_id:
     description:
       - "Unique identifier for the rule. The value cannot be longer than 255 characters. A unique value for the rule will be generated if no value is provided."
@@ -90,10 +89,10 @@ options:
     type: str
   storage_class:
     description:
-      - "The storage class to transition to. Currently there are two supported values - 'glacier',  'onezone_ia', or 'standard_ia'."
+      - "The storage class to transition to."
       - "The 'standard_ia' class is only being available from Ansible version 2.2."
     default: glacier
-    choices: [ 'glacier', 'onezone_ia', 'standard_ia']
+    choices: [ 'glacier', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
     type: str
   transition_date:
     description:
@@ -114,6 +113,7 @@ options:
           I(transition_date)
           I(storage_class)
     type: list
+    elements: dict
   requester_pays:
     description:
       - The I(requester_pays) option does nothing and will be removed after 2022-06-01
@@ -124,7 +124,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Configure a lifecycle rule on a bucket to expire (delete) items with a prefix of /logs/ after 30 days
@@ -194,17 +194,12 @@ from copy import deepcopy
 import datetime
 
 try:
-    import dateutil.parser
-    HAS_DATEUTIL = True
-except ImportError:
-    HAS_DATEUTIL = False
-
-try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass  # handled by AnsibleAwsModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def create_lifecycle_rule(client, module):
@@ -230,12 +225,9 @@ def create_lifecycle_rule(client, module):
     try:
         current_lifecycle = client.get_bucket_lifecycle_configuration(Bucket=name)
         current_lifecycle_rules = current_lifecycle['Rules']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchLifecycleConfiguration':
-            current_lifecycle_rules = []
-        else:
-            module.fail_json_aws(e)
-    except BotoCoreError as e:
+    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
+        current_lifecycle_rules = []
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
     rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
@@ -311,7 +303,7 @@ def create_lifecycle_rule(client, module):
     # Write lifecycle to bucket
     try:
         client.put_bucket_lifecycle_configuration(Bucket=name, LifecycleConfiguration=lifecycle_configuration)
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
     module.exit_json(changed=changed)
@@ -394,12 +386,9 @@ def destroy_lifecycle_rule(client, module):
     # Get the bucket's current lifecycle rules
     try:
         current_lifecycle_rules = client.get_bucket_lifecycle_configuration(Bucket=name)['Rules']
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchLifecycleConfiguration':
-            current_lifecycle_rules = []
-        else:
-            module.fail_json_aws(e)
-    except BotoCoreError as e:
+    except is_boto3_error_code('NoSuchLifecycleConfiguration'):
+        current_lifecycle_rules = []
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
     # Create lifecycle
@@ -429,29 +418,30 @@ def destroy_lifecycle_rule(client, module):
         elif current_lifecycle_rules:
             changed = True
             client.delete_bucket_lifecycle(Bucket=name)
-    except (ClientError, BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
     module.exit_json(changed=changed)
 
 
 def main():
+    s3_storage_class = ['glacier', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
     argument_spec = dict(
         name=dict(required=True, type='str'),
         expiration_days=dict(type='int'),
         expiration_date=dict(),
         noncurrent_version_expiration_days=dict(type='int'),
-        noncurrent_version_storage_class=dict(default='glacier', type='str', choices=['glacier', 'onezone_ia', 'standard_ia']),
+        noncurrent_version_storage_class=dict(default='glacier', type='str', choices=s3_storage_class),
         noncurrent_version_transition_days=dict(type='int'),
-        noncurrent_version_transitions=dict(type='list'),
+        noncurrent_version_transitions=dict(type='list', elements='dict'),
         prefix=dict(),
         requester_pays=dict(type='bool', removed_at_date='2022-06-01', removed_from_collection='community.aws'),
         rule_id=dict(),
         state=dict(default='present', choices=['present', 'absent']),
         status=dict(default='enabled', choices=['enabled', 'disabled']),
-        storage_class=dict(default='glacier', type='str', choices=['glacier', 'onezone_ia', 'standard_ia']),
+        storage_class=dict(default='glacier', type='str', choices=s3_storage_class),
         transition_days=dict(type='int'),
         transition_date=dict(),
-        transitions=dict(type='list'),
+        transitions=dict(type='list', elements='dict'),
         purge_transitions=dict(default='yes', type='bool')
     )
 
@@ -465,9 +455,6 @@ def main():
                                   ['transition_date', 'transitions'],
                                   ['noncurrent_version_transition_days', 'noncurrent_version_transitions'],
                               ],)
-
-    if not HAS_DATEUTIL:
-        module.fail_json(msg='dateutil required for this module')
 
     client = module.client('s3')
 
@@ -491,13 +478,13 @@ def main():
     if expiration_date is not None:
         try:
             datetime.datetime.strptime(expiration_date, "%Y-%m-%dT%H:%M:%S.000Z")
-        except ValueError as e:
+        except ValueError:
             module.fail_json(msg="expiration_date is not a valid ISO-8601 format. The time must be midnight and a timezone of GMT must be included")
 
     if transition_date is not None:
         try:
             datetime.datetime.strptime(transition_date, "%Y-%m-%dT%H:%M:%S.000Z")
-        except ValueError as e:
+        except ValueError:
             module.fail_json(msg="expiration_date is not a valid ISO-8601 format. The time must be midnight and a timezone of GMT must be included")
 
     if state == 'present':

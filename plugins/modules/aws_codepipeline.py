@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_codepipeline
 version_added: 1.0.0
@@ -79,7 +79,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Example for creating a pipeline for continuous deploy of Github code to an ECS cluster (container)
@@ -148,7 +148,7 @@ EXAMPLES = '''
     state: present
 '''
 
-RETURN = '''
+RETURN = r'''
 pipeline:
   description: Returns the dictionary describing the code pipeline configuration.
   returned: success
@@ -194,17 +194,17 @@ pipeline:
 '''
 
 import copy
-import traceback
-
-from ansible.module_utils._text import to_native
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, compare_policies
-
 
 try:
     import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
 
 
 def create_pipeline(client, name, role_arn, artifact_store, stages, version, module):
@@ -214,36 +214,24 @@ def create_pipeline(client, name, role_arn, artifact_store, stages, version, mod
     try:
         resp = client.create_pipeline(pipeline=pipeline_dict)
         return resp
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable create pipeline {0}: {1}".format(name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to create pipeline {0}: {1}".format(name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable create pipeline {0}".format(pipeline_dict['name']))
 
 
 def update_pipeline(client, pipeline_dict, module):
     try:
         resp = client.update_pipeline(pipeline=pipeline_dict)
         return resp
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable update pipeline {0}: {1}".format(pipeline_dict['name'], to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to update pipeline {0}: {1}".format(pipeline_dict['name'], to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable update pipeline {0}".format(pipeline_dict['name']))
 
 
 def delete_pipeline(client, name, module):
     try:
         resp = client.delete_pipeline(name=name)
         return resp
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable delete pipeline {0}: {1}".format(name, to_native(e)),
-                         exception=traceback.format_exc(), **camel_dict_to_snake_dict(e.response))
-    except botocore.exceptions.BotoCoreError as e:
-        module.fail_json(msg="Unable to delete pipeline {0}: {1}".format(name, to_native(e)),
-                         exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable delete pipeline {0}".format(name))
 
 
 def describe_pipeline(client, name, version, module):
@@ -266,7 +254,7 @@ def main():
         name=dict(required=True, type='str'),
         role_arn=dict(required=True, type='str'),
         artifact_store=dict(required=True, type='dict'),
-        stages=dict(required=True, type='list'),
+        stages=dict(required=True, type='list', elements='dict'),
         version=dict(type='int'),
         state=dict(choices=['present', 'absent'], default='present')
     )

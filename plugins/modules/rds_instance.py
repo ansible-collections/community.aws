@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: rds_instance
 version_added: 1.0.0
@@ -99,8 +99,9 @@ options:
         type: str
     backup_retention_period:
         description:
-          - The number of days for which automated backups are retained (must be greater or equal to 1).
-            May be used when creating a new cluster, when restoring from S3, or when modifying a cluster.
+          - The number of days for which automated backups are retained.
+          - When set to C(0), automated backups will be disabled. (Not applicable if the DB instance is a source to read replicas)
+          - May be used when creating a new cluster, when restoring from S3, or when modifying a cluster.
         type: int
     ca_certificate_identifier:
         description:
@@ -152,6 +153,7 @@ options:
         description:
           - (EC2-Classic platform) A list of DB security groups to associate with this DB instance.
         type: list
+        elements: str
     db_snapshot_identifier:
         description:
           - The identifier for the DB snapshot to restore from if using I(creation_source=snapshot).
@@ -176,6 +178,7 @@ options:
         aliases:
           - cloudwatch_log_exports
         type: list
+        elements: str
     enable_iam_database_authentication:
         description:
           - Enable mapping of AWS Identity and Access Management (IAM) accounts to database accounts.
@@ -412,9 +415,10 @@ options:
         description:
           - A list of EC2 VPC security groups to associate with the DB cluster.
         type: list
+        elements: str
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 - name: create minimal aurora instance in default VPC and default subnet group
   community.aws.rds_instance:
@@ -449,7 +453,7 @@ EXAMPLES = '''
     final_snapshot_identifier: "{{ snapshot_id }}"
 '''
 
-RETURN = '''
+RETURN = r'''
 allocated_storage:
   description: The allocated storage size in gibibytes. This is always 1 for aurora database engines.
   returned: always
@@ -741,27 +745,29 @@ vpc_security_groups:
       sample: sg-12345678
 '''
 
-from ansible.module_utils._text import to_text
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code, get_boto3_client_method_parameters
-from ansible_collections.amazon.aws.plugins.module_utils.rds import (
-    arg_spec_to_rds_params,
-    call_method,
-    ensure_tags,
-    get_final_identifier,
-    get_rds_method_attribute,
-    get_tags,
-)
-from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, AWSRetry
-from ansible.module_utils.six import string_types
-
 from time import sleep
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError, WaiterError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.six import string_types
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
+from ansible_collections.amazon.aws.plugins.module_utils.core import get_boto3_client_method_parameters
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.rds import arg_spec_to_rds_params
+from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
+from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_final_identifier
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_rds_method_attribute
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
 
 
 def get_rds_method_attribute_name(instance, state, creation_source, read_replica):
@@ -803,7 +809,7 @@ def get_instance(client, module, db_instance_id):
                 sleep(3)
         else:
             instance = {}
-    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg='Failed to describe DB instances')
     return instance
 
@@ -816,7 +822,7 @@ def get_final_snapshot(client, module, snapshot_identifier):
         return {}
     except is_boto3_error_code('DBSnapshotNotFound') as e:  # May not be using wait: True
         return {}
-    except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg='Failed to retrieve information about the final snapshot')
 
 
@@ -838,8 +844,10 @@ def get_parameters(client, module, parameters, method_name):
     if parameters.get('ProcessorFeatures') == [] and not method_name == 'modify_db_instance':
         parameters.pop('ProcessorFeatures')
 
-    if method_name == 'create_db_instance' and parameters.get('Tags'):
-        parameters['Tags'] = ansible_dict_to_boto3_tag_list(parameters['Tags'])
+    if method_name == 'create_db_instance' or method_name == 'create_db_instance_read_replica':
+        if parameters.get('Tags'):
+            parameters['Tags'] = ansible_dict_to_boto3_tag_list(parameters['Tags'])
+
     if method_name == 'modify_db_instance':
         parameters = get_options_with_changing_values(client, module, parameters)
 
@@ -1029,11 +1037,8 @@ def promote_replication_instance(client, module, instance, read_replica):
         try:
             call_method(client, module, method_name='promote_read_replica', parameters={'DBInstanceIdentifier': instance['DBInstanceIdentifier']})
             changed = True
-        except is_boto3_error_code('InvalidDBInstanceState') as e:
-            if 'DB Instance is not a read replica' in e.response['Error']['Message']:
-                pass
-            else:
-                raise e
+        except is_boto3_error_message('DB Instance is not a read replica'):
+            pass
     return changed
 
 
@@ -1072,7 +1077,7 @@ def main():
     arg_spec = dict(
         state=dict(choices=['present', 'absent', 'terminated', 'running', 'started', 'stopped', 'rebooted', 'restarted'], default='present'),
         creation_source=dict(choices=['snapshot', 's3', 'instance']),
-        force_update_password=dict(type='bool', default=False),
+        force_update_password=dict(type='bool', default=False, no_log=False),
         purge_cloudwatch_logs_exports=dict(type='bool', default=True),
         purge_tags=dict(type='bool', default=True),
         read_replica=dict(type='bool'),
@@ -1094,12 +1099,12 @@ def main():
         db_instance_identifier=dict(required=True, aliases=['instance_id', 'id']),
         db_name=dict(),
         db_parameter_group_name=dict(),
-        db_security_groups=dict(type='list'),
+        db_security_groups=dict(type='list', elements='str'),
         db_snapshot_identifier=dict(),
         db_subnet_group_name=dict(aliases=['subnet_group']),
         domain=dict(),
         domain_iam_role_name=dict(),
-        enable_cloudwatch_logs_exports=dict(type='list', aliases=['cloudwatch_log_exports']),
+        enable_cloudwatch_logs_exports=dict(type='list', aliases=['cloudwatch_log_exports'], elements='str'),
         enable_iam_database_authentication=dict(type='bool'),
         enable_performance_insights=dict(type='bool'),
         engine=dict(),
@@ -1142,7 +1147,7 @@ def main():
         tde_credential_password=dict(no_log=True, aliases=['transparent_data_encryption_password']),
         timezone=dict(),
         use_latest_restorable_time=dict(type='bool', aliases=['restore_from_latest']),
-        vpc_security_group_ids=dict(type='list')
+        vpc_security_group_ids=dict(type='list', elements='str')
     )
     arg_spec.update(parameter_options)
 

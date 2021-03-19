@@ -41,7 +41,7 @@
   - name: list cert which shouldn't exist
     aws_acm_info:
       tags:
-        Name: '{{ item.name }}'
+        Name: '{{ item[0].name }}'
     register: list_tag
     with_items: '{{ local_certs }}'
   - name: check listing of missing cert returns no result

@@ -162,19 +162,14 @@ routing_rules:
 import time
 
 try:
-    import boto3
-    from botocore.exceptions import ClientError, ParamValidationError
-    HAS_BOTO3 = True
+    import botocore
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (HAS_BOTO3,
-                                                                     boto3_conn,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     )
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def _create_redirect_dict(url):
@@ -224,23 +219,22 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
 
     try:
         bucket_website = resource_connection.BucketWebsite(bucket_name)
-    except ClientError as e:
-        module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to get bucket")
 
     try:
         website_config = client_connection.get_bucket_website(Bucket=bucket_name)
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchWebsiteConfiguration':
-            website_config = None
-        else:
-            module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+    except is_boto3_error_code('NoSuchWebsiteConfiguration'):
+        website_config = None
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to get website configuration")
 
     if website_config is None:
         try:
             bucket_website.put(WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests))
             changed = True
-        except (ClientError, ParamValidationError) as e:
-            module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to set bucket website configuration")
         except ValueError as e:
             module.fail_json(msg=str(e))
     else:
@@ -252,14 +246,14 @@ def enable_or_update_bucket_as_website(client_connection, resource_connection, m
                 try:
                     bucket_website.put(WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests))
                     changed = True
-                except (ClientError, ParamValidationError) as e:
-                    module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    module.fail_json_aws(e, msg="Failed to update bucket website configuration")
         except KeyError as e:
             try:
                 bucket_website.put(WebsiteConfiguration=_create_website_configuration(suffix, error_key, redirect_all_requests))
                 changed = True
-            except (ClientError, ParamValidationError) as e:
-                module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Failed to update bucket website configuration")
         except ValueError as e:
             module.fail_json(msg=str(e))
 
@@ -277,51 +271,43 @@ def disable_bucket_as_website(client_connection, module):
 
     try:
         client_connection.get_bucket_website(Bucket=bucket_name)
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'NoSuchWebsiteConfiguration':
-            module.exit_json(changed=changed)
-        else:
-            module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+    except is_boto3_error_code('NoSuchWebsiteConfiguration'):
+        module.exit_json(changed=changed)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to get bucket website")
 
     try:
         client_connection.delete_bucket_website(Bucket=bucket_name)
         changed = True
-    except ClientError as e:
-        module.fail_json(msg=e.message, **camel_dict_to_snake_dict(e.response))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to delete bucket website")
 
     module.exit_json(changed=changed)
 
 
 def main():
 
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(type='str', required=True),
-            state=dict(type='str', required=True, choices=['present', 'absent']),
-            suffix=dict(type='str', required=False, default='index.html'),
-            error_key=dict(type='str', required=False),
-            redirect_all_requests=dict(type='str', required=False)
-        )
+    argument_spec = dict(
+        name=dict(type='str', required=True),
+        state=dict(type='str', required=True, choices=['present', 'absent']),
+        suffix=dict(type='str', required=False, default='index.html'),
+        error_key=dict(type='str', required=False, no_log=False),
+        redirect_all_requests=dict(type='str', required=False),
     )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['redirect_all_requests', 'suffix'],
             ['redirect_all_requests', 'error_key']
-        ])
+        ],
+    )
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
-    region, ec2_url, aws_connect_params = get_aws_connection_info(module, boto3=True)
-
-    if region:
-        client_connection = boto3_conn(module, conn_type='client', resource='s3', region=region, endpoint=ec2_url, **aws_connect_params)
-        resource_connection = boto3_conn(module, conn_type='resource', resource='s3', region=region, endpoint=ec2_url, **aws_connect_params)
-    else:
-        module.fail_json(msg="region must be specified")
+    try:
+        client_connection = module.client('s3')
+        resource_connection = module.resource('s3')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get("state")
 

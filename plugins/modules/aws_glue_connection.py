@@ -6,7 +6,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: aws_glue_connection
 version_added: 1.0.0
@@ -67,7 +67,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create an AWS Glue connection
@@ -86,7 +86,7 @@ EXAMPLES = '''
 
 '''
 
-RETURN = '''
+RETURN = r'''
 connection_properties:
     description: A dict of key-value pairs used as parameters for this connection.
     returned: when state is present
@@ -130,16 +130,19 @@ physical_connection_requirements:
     sample: {'subnet-id':'subnet-aabbccddee'}
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, get_ec2_security_group_ids_from_names
-
 # Non-ansible imports
 import copy
 import time
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    import botocore
 except ImportError:
     pass
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 
 
 def _get_glue_connection(connection, module):
@@ -160,11 +163,8 @@ def _get_glue_connection(connection, module):
 
     try:
         return connection.get_connection(**params)['Connection']
-    except (BotoCoreError, ClientError) as e:
-        if e.response['Error']['Code'] == 'EntityNotFoundException':
-            return None
-        else:
-            raise e
+    except is_boto3_error_code('EntityNotFoundException'):
+        return None
 
 
 def _compare_glue_connection_params(user_params, current_params):
@@ -251,13 +251,13 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
                 update_params['Name'] = update_params['ConnectionInput']['Name']
                 connection.update_connection(**update_params)
                 changed = True
-            except (BotoCoreError, ClientError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e)
     else:
         try:
             connection.create_connection(**params)
             changed = True
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
 
     # If changed, get the Glue connection again
@@ -292,7 +292,7 @@ def delete_glue_connection(connection, module, glue_connection):
         try:
             connection.delete_connection(**params)
             changed = True
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
 
     module.exit_json(changed=changed)
@@ -306,9 +306,9 @@ def main():
             connection_properties=dict(type='dict'),
             connection_type=dict(type='str', default='JDBC', choices=['JDBC', 'SFTP']),
             description=dict(type='str'),
-            match_criteria=dict(type='list'),
+            match_criteria=dict(type='list', elements='str'),
             name=dict(required=True, type='str'),
-            security_groups=dict(type='list'),
+            security_groups=dict(type='list', elements='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
             subnet_id=dict(type='str')
         )

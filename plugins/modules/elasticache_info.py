@@ -223,12 +223,11 @@ elasticache_clusters:
         Environment: test
 '''
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
-                                                                     camel_dict_to_snake_dict,
-                                                                     AWSRetry,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     )
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 try:
@@ -245,12 +244,8 @@ def describe_cache_clusters_with_backoff(client, cluster_id=None):
         params['CacheClusterId'] = cluster_id
     try:
         response = paginator.paginate(**params).build_full_result()
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'CacheClusterNotFound':
-            return []
-        raise
-    except botocore.exceptions.BotoCoreError:
-        raise
+    except is_boto3_error_code('CacheClusterNotFound'):
+        return []
     return response['CacheClusters']
 
 
@@ -272,7 +267,7 @@ def get_aws_account_id(module):
 
 
 def get_elasticache_clusters(client, module):
-    region = get_aws_connection_info(module, boto3=True)[0]
+    region = module.region
     try:
         clusters = describe_cache_clusters_with_backoff(client, cluster_id=module.params.get('name'))
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: route53_info
 short_description: Retrieves route53 details using AWS methods
 version_added: 1.0.0
@@ -134,7 +134,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of listing all hosted zones
 - name: List all hosted zones
   community.aws.route53_info:
@@ -204,22 +204,15 @@ EXAMPLES = '''
         start_record_name: "host1.workshop.test.io"
       register: RECORDS
 '''
+
 try:
-    import boto
     import botocore
-    HAS_BOTO = True
 except ImportError:
-    HAS_BOTO = False
+    pass  # Handled by AnsibleAWSModule
 
-try:
-    import boto3
-    HAS_BOTO3 = True
-except ImportError:
-    HAS_BOTO3 = False
-
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info
 from ansible.module_utils._text import to_native
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 
 def get_hosted_zone(client, module):
@@ -416,8 +409,7 @@ def hosted_zone_details(client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         query=dict(choices=[
             'change',
             'checker_ip_range',
@@ -436,7 +428,7 @@ def main():
             'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS'
         ]),
         dns_name=dict(),
-        resource_id=dict(type='list', aliases=['resource_ids']),
+        resource_id=dict(type='list', aliases=['resource_ids'], elements='str'),
         health_check_id=dict(),
         hosted_zone_method=dict(choices=[
             'details',
@@ -454,24 +446,22 @@ def main():
             'tags',
         ], default='list'),
     )
-    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
             ['hosted_zone_method', 'health_check_method'],
         ],
+        check_boto3=False,
     )
     if module._name == 'route53_facts':
         module.deprecate("The 'route53_facts' module has been renamed to 'route53_info'", date='2021-12-01', collection_name='community.aws')
 
-    # Validate Requirements
-    if not (HAS_BOTO or HAS_BOTO3):
-        module.fail_json(msg='json and boto/boto3 is required.')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    route53 = boto3_conn(module, conn_type='client', resource='route53', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        route53 = module.client('route53')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     invocations = {
         'change': change_details,

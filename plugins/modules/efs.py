@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: efs
 version_added: 1.0.0
@@ -106,7 +106,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: EFS provisioning
   community.aws.efs:
     state: present
@@ -134,7 +134,7 @@ EXAMPLES = '''
     name: myTestEFS
 '''
 
-RETURN = '''
+RETURN = r'''
 creation_time:
     description: timestamp of creation date
     returned: always
@@ -230,16 +230,17 @@ from time import sleep
 from time import time as timestamp
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    import botocore
 except ImportError as e:
     pass  # Handled by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (compare_aws_tags,
-                                                                     camel_dict_to_snake_dict,
-                                                                     ansible_dict_to_boto3_tag_list,
-                                                                     boto3_tag_list_to_ansible_dict,
-                                                                     )
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 
 def _index_by_key(key, items):
@@ -431,7 +432,7 @@ class EFSConnection(object):
             try:
                 self.connection.create_file_system(**params)
                 changed = True
-            except (ClientError, BotoCoreError) as e:
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Unable to create file system.")
 
         # we always wait for the state to be available when creating.
@@ -469,7 +470,7 @@ class EFSConnection(object):
                 try:
                     self.connection.update_file_system(FileSystemId=fs_id, **params)
                     changed = True
-                except (ClientError, BotoCoreError) as e:
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     self.module.fail_json_aws(e, msg="Unable to update file system.")
         return changed
 
@@ -489,7 +490,7 @@ class EFSConnection(object):
                         FileSystemId=fs_id,
                         TagKeys=tags_to_delete
                     )
-                except (ClientError, BotoCoreError) as e:
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     self.module.fail_json_aws(e, msg="Unable to delete tags.")
 
                 result = True
@@ -500,7 +501,7 @@ class EFSConnection(object):
                         FileSystemId=fs_id,
                         Tags=ansible_dict_to_boto3_tag_list(tags_need_modify)
                     )
-                except (ClientError, BotoCoreError) as e:
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     self.module.fail_json_aws(e, msg="Unable to create tags.")
 
                 result = True
@@ -624,8 +625,8 @@ def iterate_all(attr, map_method, **kwargs):
                 args['Marker'] = data['Nextmarker']
                 continue
             break
-        except ClientError as e:
-            if e.response['Error']['Code'] == "ThrottlingException" and wait < 600:
+        except is_boto3_error_code('ThrottlingException'):
+            if wait < 600:
                 sleep(wait)
                 wait = wait * 2
                 continue
@@ -692,7 +693,7 @@ def main():
         id=dict(required=False, type='str', default=None),
         name=dict(required=False, type='str', default=None),
         tags=dict(required=False, type="dict", default={}),
-        targets=dict(required=False, type="list", default=[]),
+        targets=dict(required=False, type="list", default=[], elements='dict'),
         performance_mode=dict(required=False, type='str', choices=["general_purpose", "max_io"], default="general_purpose"),
         throughput_mode=dict(required=False, type='str', choices=["bursting", "provisioned"], default=None),
         provisioned_throughput_in_mibps=dict(required=False, type='float'),

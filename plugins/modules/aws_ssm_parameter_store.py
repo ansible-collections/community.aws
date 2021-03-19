@@ -65,10 +65,21 @@ options:
     choices: ['never', 'changed', 'always']
     default: changed
     type: str
+  tier:
+    description:
+      - Parameter store tier type.
+    required: false
+    choices: ['Standard', 'Advanced', 'Intelligent-Tiering']
+    default: Standard
+    type: str
+    version_added: 1.5.0
+
 author:
-  - Nathan Webster (@nathanwebsterdotme)
-  - Bill Wang (@ozbillwang) <ozbillwang@gmail.com>
-  - Michael De La Rue (@mikedlr)
+  - "Davinder Pal (@116davinder) <dpsangwal@gmail.com>"
+  - "Nathan Webster (@nathanwebsterdotme)"
+  - "Bill Wang (@ozbillwang) <ozbillwang@gmail.com>"
+  - "Michael De La Rue (@mikedlr)"
+
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -111,8 +122,15 @@ EXAMPLES = '''
     value: "Test1234"
     overwrite_value: "always"
 
+- name: Create or update key/value pair in aws parameter store with tier
+  community.aws.aws_ssm_parameter_store:
+    name: "Hello"
+    description: "This is your first key"
+    value: "World"
+    tier: "Advanced"
+
 - name: recommend to use with aws_ssm lookup plugin
-  debug:
+  ansible.builtin.debug:
     msg: "{{ lookup('amazon.aws.aws_ssm', 'hello') }}"
 '''
 
@@ -127,12 +145,13 @@ delete_parameter:
     type: dict
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-
 try:
-    from botocore.exceptions import ClientError
+    import botocore
 except ImportError:
     pass  # Handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def update_parameter(client, module, args):
@@ -142,7 +161,7 @@ def update_parameter(client, module, args):
     try:
         response = client.put_parameter(**args)
         changed = True
-    except ClientError as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="setting parameter")
 
     return changed, response
@@ -156,7 +175,8 @@ def create_update_parameter(client, module):
     args = dict(
         Name=module.params.get('name'),
         Value=module.params.get('value'),
-        Type=module.params.get('string_type')
+        Type=module.params.get('string_type'),
+        Tier=module.params.get('tier')
     )
 
     if (module.params.get('overwrite_value') in ("always", "changed")):
@@ -195,7 +215,7 @@ def create_update_parameter(client, module):
                     describe_existing_parameter = describe_existing_parameter_paginator.paginate(
                         Filters=[{"Key": "Name", "Values": [args['Name']]}]).build_full_result()
 
-                except ClientError as e:
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     module.fail_json_aws(e, msg="getting description value")
 
                 if describe_existing_parameter['Parameters'][0]['Description'] != args['Description']:
@@ -213,9 +233,9 @@ def delete_parameter(client, module):
         response = client.delete_parameter(
             Name=module.params.get('name')
         )
-    except ClientError as e:
-        if e.response['Error']['Code'] == 'ParameterNotFound':
-            return False, {}
+    except is_boto3_error_code('ParameterNotFound'):
+        return False, {}
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="deleting parameter")
 
     return True, response
@@ -236,6 +256,7 @@ def setup_module_object():
         decryption=dict(default=True, type='bool'),
         key_id=dict(default="alias/aws/ssm"),
         overwrite_value=dict(default='changed', choices=['never', 'changed', 'always']),
+        tier=dict(default='Standard', choices=['Standard', 'Advanced', 'Intelligent-Tiering']),
     )
 
     return AnsibleAWSModule(

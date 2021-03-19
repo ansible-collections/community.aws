@@ -111,17 +111,15 @@ changed:
     changed: true
 """
 
-import traceback
-
 try:
-    import boto3
     import botocore
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, get_aws_connection_info, ec2_argument_spec, camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def create(module, connection, replication_id, cluster_id, name):
@@ -131,12 +129,11 @@ def create(module, connection, replication_id, cluster_id, name):
                                               CacheClusterId=cluster_id,
                                               SnapshotName=name)
         changed = True
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "SnapshotAlreadyExistsFault":
-            response = {}
-            changed = False
-        else:
-            module.fail_json(msg="Unable to create the snapshot.", exception=traceback.format_exc())
+    except is_boto3_error_code('SnapshotAlreadyExistsFault'):
+        response = {}
+        changed = False
+    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Unable to create the snapshot.")
     return response, changed
 
 
@@ -147,8 +144,8 @@ def copy(module, connection, name, target, bucket):
                                             TargetSnapshotName=target,
                                             TargetBucket=bucket)
         changed = True
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg="Unable to copy the snapshot.", exception=traceback.format_exc())
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to copy the snapshot.")
     return response, changed
 
 
@@ -157,35 +154,28 @@ def delete(module, connection, name):
     try:
         response = connection.delete_snapshot(SnapshotName=name)
         changed = True
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == "SnapshotNotFoundFault":
-            response = {}
-            changed = False
-        elif e.response['Error']['Code'] == "InvalidSnapshotState":
-            module.fail_json(msg="Error: InvalidSnapshotState. The snapshot is not in an available state or failed state to allow deletion."
-                             "You may need to wait a few minutes.")
-        else:
-            module.fail_json(msg="Unable to delete the snapshot.", exception=traceback.format_exc())
+    except is_boto3_error_code('SnapshotNotFoundFault'):
+        response = {}
+        changed = False
+    except is_boto3_error_code('InvalidSnapshotState'):  # pylint: disable=duplicate-except
+        module.fail_json(msg="Error: InvalidSnapshotState. The snapshot is not in an available state or failed state to allow deletion."
+                         "You may need to wait a few minutes.")
+    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Unable to delete the snapshot.")
     return response, changed
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            name=dict(required=True, type='str'),
-            state=dict(required=True, type='str', choices=['present', 'absent', 'copy']),
-            replication_id=dict(type='str'),
-            cluster_id=dict(type='str'),
-            target=dict(type='str'),
-            bucket=dict(type='str'),
-        )
+    argument_spec = dict(
+        name=dict(required=True, type='str'),
+        state=dict(required=True, type='str', choices=['present', 'absent', 'copy']),
+        replication_id=dict(type='str'),
+        cluster_id=dict(type='str'),
+        target=dict(type='str'),
+        bucket=dict(type='str'),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec)
-
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto required for this module')
+    module = AnsibleAWSModule(argument_spec=argument_spec)
 
     name = module.params.get('name')
     state = module.params.get('state')
@@ -194,14 +184,10 @@ def main():
     target = module.params.get('target')
     bucket = module.params.get('bucket')
 
-    # Retrieve any AWS settings from the environment.
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg=str("Either region or AWS_REGION or EC2_REGION environment variable or boto config aws_region or ec2_region must be set."))
-
-    connection = boto3_conn(module, conn_type='client',
-                            resource='elasticache', region=region,
-                            endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        connection = module.client('elasticache')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     changed = False
     response = {}

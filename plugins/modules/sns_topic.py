@@ -7,7 +7,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: sns_topic
 short_description: Manages AWS SNS topics and subscriptions
 version_added: 1.0.0
@@ -73,7 +73,7 @@ extends_documentation_fragment:
 requirements: [ "boto" ]
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 
 - name: Create alarm SNS topic
   community.aws.sns_topic:
@@ -99,7 +99,7 @@ EXAMPLES = """
 
 """
 
-RETURN = '''
+RETURN = r'''
 sns_arn:
     description: The ARN of the topic you are modifying
     type: str
@@ -349,8 +349,11 @@ class SnsTopicManager(object):
         return changed
 
     def _canonicalize_endpoint(self, protocol, endpoint):
+        # AWS SNS expects phone numbers in
+        # and canonicalizes to E.164 format
+        # See <https://docs.aws.amazon.com/sns/latest/dg/sms_publish-to-phone.html>
         if protocol == 'sms':
-            return re.sub('[^0-9]*', '', endpoint)
+            return re.sub('[^0-9+]*', '', endpoint)
         return endpoint
 
     def _set_topic_subs(self):
@@ -482,7 +485,7 @@ def main():
         display_name=dict(),
         policy=dict(type='dict'),
         delivery_policy=dict(type='dict'),
-        subscriptions=dict(default=[], type='list'),
+        subscriptions=dict(default=[], type='list', elements='dict'),
         purge_subscriptions=dict(type='bool', default=True),
     )
 

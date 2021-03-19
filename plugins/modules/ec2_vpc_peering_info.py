@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_peering_info
 short_description: Retrieves AWS VPC Peering details using AWS methods.
 version_added: 1.0.0
@@ -33,7 +33,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Simple example of listing all VPC Peers
 - name: List all vpc peers
   community.aws.ec2_vpc_peering_info:
@@ -41,7 +41,7 @@ EXAMPLES = '''
   register: all_vpc_peers
 
 - name: Debugging the result
-  debug:
+  ansible.builtin.debug:
     msg: "{{ all_vpc_peers.result }}"
 
 - name: Get details on specific VPC peer
@@ -60,7 +60,7 @@ EXAMPLES = '''
   register: pending_vpc_peers
 '''
 
-RETURN = '''
+RETURN = r'''
 result:
   description: The result of the describe.
   returned: success
@@ -72,17 +72,13 @@ import json
 try:
     import botocore
 except ImportError:
-    pass  # will be picked up by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (boto3_tag_list_to_ansible_dict,
-                                                                     ec2_argument_spec,
-                                                                     boto3_conn,
-                                                                     get_aws_connection_info,
-                                                                     ansible_dict_to_boto3_filter_list,
-                                                                     HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
+from ansible.module_utils._text import to_native
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def date_handler(obj):
@@ -97,45 +93,26 @@ def get_vpc_peers(client, module):
     try:
         result = json.loads(json.dumps(client.describe_vpc_peering_connections(**params), default=date_handler))
     except Exception as e:
-        module.fail_json(msg=str(e.message))
+        module.fail_json(msg=to_native(e))
 
     return result['VpcPeeringConnections']
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            filters=dict(default=dict(), type='dict'),
-            peer_connection_ids=dict(default=None, type='list'),
-        )
+    argument_spec = dict(
+        filters=dict(default=dict(), type='dict'),
+        peer_connection_ids=dict(default=None, type='list', elements='str'),
     )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           supports_check_mode=True)
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              supports_check_mode=True,)
     if module._name == 'ec2_vpc_peering_facts':
         module.deprecate("The 'ec2_vpc_peering_facts' module has been renamed to 'ec2_vpc_peering_info'", date='2021-12-01', collection_name='community.aws')
 
-    # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore and boto3 are required.')
-
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    except NameError as e:
-        # Getting around the get_aws_connection_info boto reliance for region
-        if "global name 'boto' is not defined" in e.message:
-            module.params['region'] = botocore.session.get_session().get_config_variable('region')
-            if not module.params['region']:
-                module.fail_json(msg="Error - no region provided")
-        else:
-            module.fail_json(msg="Can't retrieve connection information - " + str(e))
-
-    try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        ec2 = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg=str(e))
+        ec2 = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     # Turn the boto3 result in to ansible friendly_snaked_names
     results = [camel_dict_to_snake_dict(peer) for peer in get_vpc_peers(ec2, module)]

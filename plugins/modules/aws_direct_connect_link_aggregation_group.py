@@ -59,6 +59,7 @@ options:
       - This allows the minimum number of links to be set to 0, any hosted connections disassociated,
         and any virtual interfaces associated to the LAG deleted.
     type: bool
+    default: false
   connection_id:
     description:
       - A connection ID to link with the link aggregation group upon creation.
@@ -67,12 +68,14 @@ options:
     description:
       - To be used with I(state=absent) to delete connections after disassociating them with the LAG.
     type: bool
+    default: false
   wait:
     description:
       - Whether or not to wait for the operation to complete.
       - May be useful when waiting for virtual interfaces to be deleted.
       - The time to wait can be controlled by setting I(wait_timeout).
     type: bool
+    default: false
   wait_timeout:
     description:
       - The duration in seconds to wait if I(wait=true).
@@ -161,29 +164,23 @@ region:
   returned: when I(state=present)
 """
 
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
-    AWSRetry,
-    HAS_BOTO3,
-    boto3_conn,
-    camel_dict_to_snake_dict,
-    ec2_argument_spec,
-    get_aws_connection_info,
-)
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import (
-    DirectConnectError,
-    delete_connection,
-    delete_virtual_interface,
-    disassociate_connection_and_lag,
-)
 import traceback
 import time
 
 try:
     import botocore
-except Exception:
-    pass
-    # handled by imported HAS_BOTO3
+except ImportError:
+    pass  # Handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import DirectConnectError
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import delete_connection
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import delete_virtual_interface
+from ansible_collections.amazon.aws.plugins.module_utils.direct_connect import disassociate_connection_and_lag
 
 
 def lag_status(client, lag_id):
@@ -408,8 +405,7 @@ def ensure_absent(client, lag_id, lag_name, force_delete, delete_with_disassocia
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=True, choices=['present', 'absent']),
         name=dict(),
         link_aggregation_group_id=dict(),
@@ -422,22 +418,18 @@ def main():
         force_delete=dict(type='bool', default=False),
         wait=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=120),
-    ))
+    )
 
-    module = AnsibleModule(argument_spec=argument_spec,
-                           required_one_of=[('link_aggregation_group_id', 'name')],
-                           required_if=[('state', 'present', ('location', 'bandwidth'))])
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_one_of=[('link_aggregation_group_id', 'name')],
+        required_if=[('state', 'present', ('location', 'bandwidth'))],
+    )
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
-
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    if not region:
-        module.fail_json(msg="Either region or AWS_REGION or EC2_REGION environment variable or boto config aws_region or ec2_region must be set.")
-
-    connection = boto3_conn(module, conn_type='client',
-                            resource='directconnect', region=region,
-                            endpoint=ec2_url, **aws_connect_kwargs)
+    try:
+        connection = module.client('directconnect')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     state = module.params.get('state')
     response = {}

@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_transit_gateway_info
 short_description: Gather information about ec2 transit gateways in AWS
 version_added: 1.0.0
@@ -23,6 +23,7 @@ options:
       - A list of transit gateway IDs to gather information for.
     aliases: [transit_gateway_id]
     type: list
+    elements: str
   filters:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
@@ -34,7 +35,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather info about all transit gateways
@@ -58,7 +59,7 @@ EXAMPLES = '''
       - tgw-03c53443d5a8cb716
 '''
 
-RETURN = '''
+RETURN = r'''
 transit_gateways:
     description: >
         Transit gateways that match the provided filters. Each element consists of a dict with all the information
@@ -164,18 +165,17 @@ transit_gateways:
 '''
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
-except Exception:
-    pass
-    # handled by imported AnsibleAWSModule
+    import botocore
+except ImportError:
+    pass  # handled by imported AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
-    AWSRetry,
-    boto3_tag_list_to_ansible_dict,
-    camel_dict_to_snake_dict,
-    ansible_dict_to_boto3_filter_list
-)
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
 class AnsibleEc2TgwInfo(object):
@@ -208,11 +208,9 @@ class AnsibleEc2TgwInfo(object):
         try:
             response = self._connection.describe_transit_gateways(
                 TransitGatewayIds=transit_gateway_ids, Filters=filters)
-        except ClientError as e:
-            if e.response['Error']['Code'] == 'InvalidTransitGatewayID.NotFound':
-                self._results['transit_gateways'] = []
-                return
-            raise
+        except is_boto3_error_code('InvalidTransitGatewayID.NotFound'):
+            self._results['transit_gateways'] = []
+            return
 
         for transit_gateway in response['TransitGateways']:
             transit_gateway_info.append(camel_dict_to_snake_dict(transit_gateway, ignore_list=['Tags']))
@@ -253,7 +251,7 @@ def main():
     tgwf_manager = AnsibleEc2TgwInfo(module=module, results=results)
     try:
         tgwf_manager.describe_transit_gateways()
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
     module.exit_json(**results)

@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: dynamodb_table
 version_added: 1.0.0
@@ -121,7 +121,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Create dynamo table with hash and range primary key
   community.aws.dynamodb_table:
     name: my-table
@@ -164,7 +164,7 @@ EXAMPLES = '''
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 table_status:
     description: The current status of the table.
     returned: success
@@ -183,26 +183,23 @@ try:
     from boto.dynamodb2.types import STRING, NUMBER, BINARY
     from boto.exception import BotoServerError, NoAuthHandlerFound, JSONResponseError
     from boto.dynamodb2.exceptions import ValidationException
-    HAS_BOTO = True
-
     DYNAMO_TYPE_MAP = {
         'STRING': STRING,
         'NUMBER': NUMBER,
         'BINARY': BINARY
     }
-
-except ImportError:
-    HAS_BOTO = False
-
-try:
+    # Boto 2 is mandatory, Boto3 is only needed for tagging
     import botocore
-    from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list, boto3_conn
-    HAS_BOTO3 = True
 except ImportError:
-    HAS_BOTO3 = False
+    pass  # Handled by ec2.HAS_BOTO and ec2.HAS_BOTO3
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError, connect_to_aws, ec2_argument_spec, get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AnsibleAWSError
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import connect_to_aws
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
 
 
 DYNAMO_TYPE_DEFAULT = 'STRING'
@@ -457,8 +454,7 @@ def get_indexes(all_indexes):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(default='present', choices=['present', 'absent']),
         name=dict(required=True, type='str'),
         hash_key_name=dict(type='str'),
@@ -467,14 +463,16 @@ def main():
         range_key_type=dict(default='STRING', type='str', choices=['STRING', 'NUMBER', 'BINARY']),
         read_capacity=dict(default=1, type='int'),
         write_capacity=dict(default=1, type='int'),
-        indexes=dict(default=[], type='list'),
+        indexes=dict(default=[], type='list', elements='dict'),
         tags=dict(type='dict'),
         wait_for_active_timeout=dict(default=60, type='int'),
-    ))
+    )
 
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True)
+        supports_check_mode=True,
+        check_boto3=False,
+    )
 
     if not HAS_BOTO:
         module.fail_json(msg='boto required for this module')
@@ -493,13 +491,12 @@ def main():
 
     if module.params.get('tags'):
         try:
-            region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-            boto3_dynamodb = boto3_conn(module, conn_type='client', resource='dynamodb', region=region, endpoint=ec2_url, **aws_connect_kwargs)
+            boto3_dynamodb = module.client('dynamodb')
             if not hasattr(boto3_dynamodb, 'tag_resource'):
                 module.fail_json(msg='boto3 connection does not have tag_resource(), likely due to using an old version')
-            boto3_sts = boto3_conn(module, conn_type='client', resource='sts', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-        except botocore.exceptions.NoCredentialsError as e:
-            module.fail_json(msg='cannot connect to AWS', exception=traceback.format_exc())
+            boto3_sts = module.client('sts')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failed to connect to AWS')
     else:
         boto3_dynamodb = None
         boto3_sts = None

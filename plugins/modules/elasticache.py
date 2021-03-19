@@ -7,7 +7,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: elasticache
 version_added: 1.0.0
@@ -64,17 +64,17 @@ options:
     type: str
   cache_subnet_group:
     description:
-      - The subnet group name to associate with. Only use if inside a vpc.
-      - Required if inside a vpc
+      - The subnet group name to associate with. Only use if inside a VPC.
+      - Required if inside a VPC.
     type: str
   security_group_ids:
     description:
-      - A list of vpc security group IDs to associate with this cache cluster. Only use if inside a vpc.
+      - A list of VPC security group IDs to associate with this cache cluster. Only use if inside a VPC.
     type: list
     elements: str
   cache_security_groups:
     description:
-      - A list of cache security group names to associate with this cache cluster. Must be an empty list if inside a vpc.
+      - A list of cache security group names to associate with this cache cluster. Must be an empty list if inside a VPC.
     type: list
     elements: str
   zone:
@@ -89,15 +89,15 @@ options:
   hard_modify:
     description:
       - Whether to destroy and recreate an existing cache cluster if necessary in order to modify its state.
+      - Defaults to C(false).
     type: bool
-    default: false
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 
 '''
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
@@ -127,20 +127,15 @@ EXAMPLES = """
 
 """
 from time import sleep
-from traceback import format_exc
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ec2_argument_spec,
-                                                                     get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
 
 try:
-    import boto3
     import botocore
 except ImportError:
-    pass  # will be detected by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
 class ElastiCacheManager(object):
@@ -228,9 +223,8 @@ class ElastiCacheManager(object):
         try:
             self.conn.create_cache_cluster(**kwargs)
 
-        except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
-                                  **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Failed to create cache cluster")
 
         self._refresh_data()
 
@@ -256,9 +250,8 @@ class ElastiCacheManager(object):
 
         try:
             response = self.conn.delete_cache_cluster(CacheClusterId=self.name)
-        except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
-                                  **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Failed to delete cache cluster")
 
         cache_cluster_data = response['CacheCluster']
         self._refresh_data(cache_cluster_data)
@@ -308,8 +301,7 @@ class ElastiCacheManager(object):
                                            ApplyImmediately=True,
                                            EngineVersion=self.cache_engine_version)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
-                                  **camel_dict_to_snake_dict(e.response))
+            self.module.fail_json_aws(e, msg="Failed to modify cache cluster")
 
         self._refresh_data()
 
@@ -337,8 +329,7 @@ class ElastiCacheManager(object):
             self.conn.reboot_cache_cluster(CacheClusterId=self.name,
                                            CacheNodeIdsToReboot=cache_node_ids)
         except botocore.exceptions.ClientError as e:
-            self.module.fail_json(msg=e.message, exception=format_exc(),
-                                  **camel_dict_to_snake_dict(e.response))
+            self.module.fail_json_aws(e, msg="Failed to reboot cache cluster")
 
         self._refresh_data()
 
@@ -429,12 +420,10 @@ class ElastiCacheManager(object):
 
     def _get_elasticache_connection(self):
         """Get an elasticache connection"""
-        region, ec2_url, aws_connect_params = get_aws_connection_info(self.module, boto3=True)
-        if region:
-            return boto3_conn(self.module, conn_type='client', resource='elasticache',
-                              region=region, endpoint=ec2_url, **aws_connect_params)
-        else:
-            self.module.fail_json(msg="region must be specified")
+        try:
+            return self.module.client('elasticache')
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     def _get_port(self):
         """Get the port. Where this information is retrieved from is engine dependent."""
@@ -451,14 +440,12 @@ class ElastiCacheManager(object):
         if cache_cluster_data is None:
             try:
                 response = self.conn.describe_cache_clusters(CacheClusterId=self.name, ShowCacheNodeInfo=True)
-            except botocore.exceptions.ClientError as e:
-                if e.response['Error']['Code'] == 'CacheClusterNotFound':
-                    self.data = None
-                    self.status = 'gone'
-                    return
-                else:
-                    self.module.fail_json(msg=e.message, exception=format_exc(),
-                                          **camel_dict_to_snake_dict(e.response))
+            except is_boto3_error_code('CacheClusterNotFound'):
+                self.data = None
+                self.status = 'gone'
+                return
+            except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
+                self.module.fail_json_aws(e, msg="Failed to describe cache clusters")
             cache_cluster_data = response['CacheClusters'][0]
         self.data = cache_cluster_data
         self.status = self.data['CacheClusterStatus']
@@ -485,8 +472,7 @@ class ElastiCacheManager(object):
 
 def main():
     """ elasticache ansible module """
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(dict(
+    argument_spec = dict(
         state=dict(required=True, choices=['present', 'absent', 'rebooted']),
         name=dict(required=True),
         engine=dict(default='memcached'),
@@ -497,19 +483,16 @@ def main():
         cache_parameter_group=dict(default="", aliases=['parameter_group']),
         cache_port=dict(type='int'),
         cache_subnet_group=dict(default=""),
-        cache_security_groups=dict(default=[], type='list'),
-        security_group_ids=dict(default=[], type='list'),
+        cache_security_groups=dict(default=[], type='list', elements='str'),
+        security_group_ids=dict(default=[], type='list', elements='str'),
         zone=dict(),
         wait=dict(default=True, type='bool'),
-        hard_modify=dict(type='bool')
-    ))
-
-    module = AnsibleModule(
-        argument_spec=argument_spec,
+        hard_modify=dict(type='bool'),
     )
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='boto3 required for this module')
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+    )
 
     region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module)
 

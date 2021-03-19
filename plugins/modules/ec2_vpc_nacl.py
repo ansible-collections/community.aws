@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_nacl
 short_description: create and delete Network ACLs.
 version_added: 1.0.0
@@ -39,28 +39,31 @@ options:
       - Each subnet can be specified as subnet ID, or its tagged name.
     required: false
     type: list
+    elements: str
   egress:
     description:
       - A list of rules for outgoing traffic. Each rule must be specified as a list.
-        Each rule may contain the rule number (integer 1-32766), protocol (one of ['tcp', 'udp', 'icmp', '-1', 'all']),
-        the rule action ('allow' or 'deny') the CIDR of the IPv4 network range to allow or deny,
+        Each rule may contain the rule number (integer 1-32766), protocol (one of ['tcp', 'udp', 'icmp', 'ipv6-icmp', '-1', 'all']),
+        the rule action ('allow' or 'deny') the CIDR of the IPv4 or IPv6 network range to allow or deny,
         the ICMP type (-1 means all types), the ICMP code (-1 means all codes), the last port in the range for
         TCP or UDP protocols, and the first port in the range for TCP or UDP protocols.
         See examples.
     default: []
     required: false
     type: list
+    elements: list
   ingress:
     description:
       - List of rules for incoming traffic. Each rule must be specified as a list.
-        Each rule may contain the rule number (integer 1-32766), protocol (one of ['tcp', 'udp', 'icmp', '-1', 'all']),
-        the rule action ('allow' or 'deny') the CIDR of the IPv4 network range to allow or deny,
+        Each rule may contain the rule number (integer 1-32766), protocol (one of ['tcp', 'udp', 'icmp', 'ipv6-icmp', '-1', 'all']),
+        the rule action ('allow' or 'deny') the CIDR of the IPv4 or IPv6 network range to allow or deny,
         the ICMP type (-1 means all types), the ICMP code (-1 means all codes), the last port in the range for
         TCP or UDP protocols, and the first port in the range for TCP or UDP protocols.
         See examples.
     default: []
     required: false
     type: list
+    elements: list
   tags:
     description:
       - Dictionary of tags to look for and apply when creating a network ACL.
@@ -82,7 +85,7 @@ extends_documentation_fragment:
 requirements: [ botocore, boto3, json ]
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 
 # Complete example to create and delete a network ACL
 # that allows SSH, HTTP and ICMP in, and all traffic out.
@@ -101,9 +104,12 @@ EXAMPLES = '''
         #                                             port from, port to
         - [100, 'tcp', 'allow', '0.0.0.0/0', null, null, 22, 22]
         - [200, 'tcp', 'allow', '0.0.0.0/0', null, null, 80, 80]
+        - [205, 'tcp', 'allow', '::/0', null, null, 80, 80]
         - [300, 'icmp', 'allow', '0.0.0.0/0', 0, 8]
+        - [305, 'ipv6-icmp', 'allow', '::/0', 0, 8]
     egress:
         - [100, 'all', 'allow', '0.0.0.0/0', null, null, null, null]
+        - [105, 'all', 'allow', '::/0', null, null, null, null]
     state: 'present'
 
 - name: "Remove the ingress and egress rules - defaults to deny all"
@@ -138,7 +144,7 @@ EXAMPLES = '''
     nacl_id: acl-33b4ee5b
     state: absent
 '''
-RETURN = '''
+RETURN = r'''
 task:
   description: The result of the create, or delete action.
   returned: success
@@ -160,12 +166,12 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 # VPC-supported IANA protocol numbers
 # http://www.iana.org/assignments/protocol-numbers/protocol-numbers.xhtml
-PROTOCOL_NUMBERS = {'all': -1, 'icmp': 1, 'tcp': 6, 'udp': 17, }
+PROTOCOL_NUMBERS = {'all': -1, 'icmp': 1, 'tcp': 6, 'udp': 17, 'ipv6-icmp': 58}
 
 
 # Utility methods
 def icmp_present(entry):
-    if len(entry) == 6 and entry[1] == 'icmp' or entry[1] == 1:
+    if len(entry) == 6 and entry[1] in ['icmp', 'ipv6-icmp'] or entry[1] in [1, 58]:
         return True
 
 
@@ -288,13 +294,20 @@ def rules_changed(aws_rules, param_rules, Egress, nacl_id, client, module):
     return changed
 
 
+def is_ipv6(cidr):
+    return ':' in cidr
+
+
 def process_rule_entry(entry, Egress):
     params = dict()
     params['RuleNumber'] = entry[0]
     params['Protocol'] = str(PROTOCOL_NUMBERS[entry[1]])
     params['RuleAction'] = entry[2]
     params['Egress'] = Egress
-    params['CidrBlock'] = entry[3]
+    if is_ipv6(entry[3]):
+        params['Ipv6CidrBlock'] = entry[3]
+    else:
+        params['CidrBlock'] = entry[3]
     if icmp_present(entry):
         params['IcmpTypeCode'] = {"Type": int(entry[4]), "Code": int(entry[5])}
     else:
@@ -602,10 +615,10 @@ def main():
         vpc_id=dict(),
         name=dict(),
         nacl_id=dict(),
-        subnets=dict(required=False, type='list', default=list()),
+        subnets=dict(required=False, type='list', default=list(), elements='str'),
         tags=dict(required=False, type='dict'),
-        ingress=dict(required=False, type='list', default=list()),
-        egress=dict(required=False, type='list', default=list()),
+        ingress=dict(required=False, type='list', default=list(), elements='list'),
+        egress=dict(required=False, type='list', default=list(), elements='list'),
         state=dict(default='present', choices=['present', 'absent']),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec,

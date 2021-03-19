@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 module: ec2_vpc_endpoint
 short_description: Create and delete AWS VPC Endpoints.
 version_added: 1.0.0
@@ -21,6 +21,14 @@ options:
       - Required when creating a VPC endpoint.
     required: false
     type: str
+  vpc_endpoint_type:
+    description:
+      - The type of endpoint.
+    required: false
+    default: Gateway
+    choices: [ "Interface", "Gateway", "GatewayLoadBalancer" ]
+    type: str
+    version_added: 1.5.0
   service:
     description:
       - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
@@ -44,6 +52,9 @@ options:
         on how to use it properly. Cannot be used with I(policy).
       - Option when creating an endpoint. If not provided AWS will
         utilise a default policy which provides full access to the service.
+      - This option has been deprecated and will be removed after 2022-12-01
+        to maintain the existing functionality please use the I(policy) option
+        and a file lookup.
     required: false
     aliases: [ "policy_path" ]
     type: path
@@ -53,7 +64,7 @@ options:
         - absent to remove resource
     required: false
     default: present
-    choices: [ "present", "absent"]
+    choices: [ "present", "absent" ]
     type: str
   wait:
     description:
@@ -96,7 +107,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create new vpc endpoint with a json template for policy
@@ -141,7 +152,7 @@ EXAMPLES = '''
     region: ap-southeast-2
 '''
 
-RETURN = '''
+RETURN = r'''
 endpoints:
   description: The resulting endpoints from the module call
   returned: success
@@ -183,16 +194,13 @@ import traceback
 try:
     import botocore
 except ImportError:
-    pass  # will be picked up by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (get_aws_connection_info,
-                                                                     boto3_conn,
-                                                                     ec2_argument_spec,
-                                                                     HAS_BOTO3,
-                                                                     camel_dict_to_snake_dict,
-                                                                     )
 from ansible.module_utils.six import string_types
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def date_handler(obj):
@@ -212,9 +220,8 @@ def wait_for_status(client, module, resource_id, status):
                 break
             else:
                 time.sleep(polling_increment_secs)
-        except botocore.exceptions.ClientError as e:
-            module.fail_json(msg=str(e), exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg='Failure while waiting for status')
 
     return status_achieved, resource
 
@@ -252,6 +259,7 @@ def create_vpc_endpoint(client, module):
     changed = False
     token_provided = False
     params['VpcId'] = module.params.get('vpc_id')
+    params['VpcEndpointType'] = module.params.get('vpc_endpoint_type')
     params['ServiceName'] = module.params.get('service')
     params['DryRun'] = module.check_mode
 
@@ -291,20 +299,15 @@ def create_vpc_endpoint(client, module):
             status_achieved, result = wait_for_status(client, module, result['vpc_endpoint_id'], 'available')
             if not status_achieved:
                 module.fail_json(msg='Error waiting for vpc endpoint to become available - please check the AWS console')
-    except botocore.exceptions.ClientError as e:
-        if "DryRunOperation" in e.message:
-            changed = True
-            result = 'Would have created VPC Endpoint if not in check mode'
-        elif "IdempotentParameterMismatch" in e.message:
-            module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
-        elif "RouteAlreadyExists" in e.message:
-            module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
-        else:
-            module.fail_json(msg=str(e), exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
-    except Exception as e:
-        module.fail_json(msg=str(e), exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+    except is_boto3_error_code('DryRunOperation'):
+        changed = True
+        result = 'Would have created VPC Endpoint if not in check mode'
+    except is_boto3_error_code('IdempotentParameterMismatch'):  # pylint: disable=duplicate-except
+        module.fail_json(msg="IdempotentParameterMismatch - updates of endpoints are not allowed by the API")
+    except is_boto3_error_code('RouteAlreadyExists'):  # pylint: disable=duplicate-except
+        module.fail_json(msg="RouteAlreadyExists for one of the route tables - update is not allowed by the API")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Failed to create VPC.")
 
     return changed, result
 
@@ -319,73 +322,60 @@ def setup_removal(client, module):
         params['VpcEndpointIds'] = module.params.get('vpc_endpoint_id')
     try:
         result = client.delete_vpc_endpoints(**params)['Unsuccessful']
-        if not module.check_mode and (result != []):
-            module.fail_json(msg=result)
-    except botocore.exceptions.ClientError as e:
-        if "DryRunOperation" in e.message:
+        if len(result) < len(params['VpcEndpointIds']):
             changed = True
-            result = 'Would have deleted VPC Endpoint if not in check mode'
-        else:
-            module.fail_json(msg=str(e), exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
-    except Exception as e:
-        module.fail_json(msg=str(e), exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+        # For some reason delete_vpc_endpoints doesn't throw exceptions it
+        # returns a list of failed 'results' instead.  Throw these so we can
+        # catch them the way we expect
+        for r in result:
+            try:
+                raise botocore.exceptions.ClientError(r, 'delete_vpc_endpoints')
+            except is_boto3_error_code('InvalidVpcEndpoint.NotFound'):
+                continue
+    except is_boto3_error_code('DryRunOperation'):
+        changed = True
+        result = 'Would have deleted VPC Endpoint if not in check mode'
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, "Failed to delete VPC endpoint")
     return changed, result
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            vpc_id=dict(),
-            service=dict(),
-            policy=dict(type='json'),
-            policy_file=dict(type='path', aliases=['policy_path']),
-            state=dict(default='present', choices=['present', 'absent']),
-            wait=dict(type='bool', default=False),
-            wait_timeout=dict(type='int', default=320, required=False),
-            route_table_ids=dict(type='list'),
-            vpc_endpoint_id=dict(),
-            client_token=dict(),
-        )
+    argument_spec = dict(
+        vpc_id=dict(),
+        vpc_endpoint_type=dict(default='Gateway', choices=['Interface', 'Gateway', 'GatewayLoadBalancer']),
+        service=dict(),
+        policy=dict(type='json'),
+        policy_file=dict(type='path', aliases=['policy_path']),
+        state=dict(default='present', choices=['present', 'absent']),
+        wait=dict(type='bool', default=False),
+        wait_timeout=dict(type='int', default=320, required=False),
+        route_table_ids=dict(type='list', elements='str'),
+        vpc_endpoint_id=dict(),
+        client_token=dict(no_log=False),
     )
-    module = AnsibleModule(
+    module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[['policy', 'policy_file']],
         required_if=[
             ['state', 'present', ['vpc_id', 'service']],
             ['state', 'absent', ['vpc_endpoint_id']],
-        ]
+        ],
     )
 
     # Validate Requirements
-    if not HAS_BOTO3:
-        module.fail_json(msg='botocore and boto3 are required for this module')
-
     state = module.params.get('state')
 
-    try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-    except NameError as e:
-        # Getting around the get_aws_connection_info boto reliance for region
-        if "global name 'boto' is not defined" in e.message:
-            module.params['region'] = botocore.session.get_session().get_config_variable('region')
-            if not module.params['region']:
-                module.fail_json(msg="Error - no region provided")
-        else:
-            module.fail_json(msg="Can't retrieve connection information - " + str(e),
-                             exception=traceback.format_exc(),
-                             **camel_dict_to_snake_dict(e.response))
+    if module.params.get('policy_file'):
+        module.deprecate('The policy_file option has been deprecated and'
+                         ' will be removed after 2022-12-01',
+                         date='2022-12-01', collection_name='community.aws')
 
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        ec2 = boto3_conn(module, conn_type='client', resource='ec2', region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Failed to connect to AWS due to wrong or missing credentials: %s" % str(e),
-                         exception=traceback.format_exc(),
-                         **camel_dict_to_snake_dict(e.response))
+        ec2 = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     # Ensure resource is present
     if state == 'present':

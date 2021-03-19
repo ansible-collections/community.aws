@@ -219,13 +219,9 @@ task:
 try:
     import botocore
 except ImportError:
-    pass  # caught by imported HAS_BOTO3
+    pass  # Handled by AnsibleAWSModule
 
-import distutils.version
-import traceback
-
-from ansible.module_utils.basic import AnsibleModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn, ec2_argument_spec, get_aws_connection_info, HAS_BOTO3
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
@@ -280,7 +276,7 @@ def create_peer_connection(client, module):
     params['VpcId'] = module.params.get('vpc_id')
     params['PeerVpcId'] = module.params.get('peer_vpc_id')
     if module.params.get('peer_region'):
-        if distutils.version.StrictVersion(botocore.__version__) < distutils.version.StrictVersion('1.8.6'):
+        if not module.botocore_at_least('1.8.6'):
             module.fail_json(msg="specifying peer_region parameter requires botocore >= 1.8.6")
         params['PeerRegion'] = module.params.get('peer_region')
     if module.params.get('peer_owner_id'):
@@ -335,10 +331,10 @@ def peer_status(client, module):
     try:
         vpc_peering_connection = client.describe_vpc_peering_connections(**params)
         return vpc_peering_connection['VpcPeeringConnections'][0]['Status']['Code']
-    except is_boto3_error_code('InvalidVpcPeeringConnectionId.Malformed') as e:  # pylint: disable=duplicate-except
-        module.fail_json(msg='Malformed connection ID: {0}'.format(e), traceback=traceback.format_exc())
-    except botocore.exceptions.ClientError as e:  # pylint: disable=duplicate-except
-        module.fail_json(msg='Error while describing peering connection by peering_id: {0}'.format(e), traceback=traceback.format_exc())
+    except is_boto3_error_code('InvalidVpcPeeringConnectionId.Malformed') as e:
+        module.fail_json_aws(e, msg='Malformed connection ID')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg='Error while describing peering connection by peering_id')
 
 
 def accept_reject(state, client, module):
@@ -392,18 +388,14 @@ def find_pcx_by_id(pcx_id, client, module):
 
 
 def main():
-    argument_spec = ec2_argument_spec()
-    argument_spec.update(
-        dict(
-            vpc_id=dict(),
-            peer_vpc_id=dict(),
-            peer_region=dict(),
-            peering_id=dict(),
-            peer_owner_id=dict(),
-            tags=dict(required=False, type='dict'),
-            profile=dict(),
-            state=dict(default='present', choices=['present', 'absent', 'accept', 'reject'])
-        )
+    argument_spec = dict(
+        vpc_id=dict(),
+        peer_vpc_id=dict(),
+        peer_region=dict(),
+        peering_id=dict(),
+        peer_owner_id=dict(),
+        tags=dict(required=False, type='dict'),
+        state=dict(default='present', choices=['present', 'absent', 'accept', 'reject']),
     )
     required_if = [
         ('state', 'present', ['vpc_id', 'peer_vpc_id']),
@@ -411,20 +403,17 @@ def main():
         ('state', 'reject', ['peering_id'])
     ]
 
-    module = AnsibleModule(argument_spec=argument_spec, required_if=required_if)
+    module = AnsibleAWSModule(argument_spec=argument_spec, required_if=required_if)
 
-    if not HAS_BOTO3:
-        module.fail_json(msg='json, botocore and boto3 are required.')
     state = module.params.get('state')
     peering_id = module.params.get('peering_id')
     vpc_id = module.params.get('vpc_id')
     peer_vpc_id = module.params.get('peer_vpc_id')
+
     try:
-        region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module, boto3=True)
-        client = boto3_conn(module, conn_type='client', resource='ec2',
-                            region=region, endpoint=ec2_url, **aws_connect_kwargs)
-    except botocore.exceptions.NoCredentialsError as e:
-        module.fail_json(msg="Can't authorize connection - " + str(e))
+        client = module.client('ec2')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     if state == 'present':
         (changed, results) = create_peer_connection(client, module)

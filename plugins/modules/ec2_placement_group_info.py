@@ -6,7 +6,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: ec2_placement_group_info
 version_added: 1.0.0
@@ -45,13 +45,13 @@ EXAMPLES = r'''
      - my-other-cluster
   register: specific_ec2_placement_groups
 
-- debug:
+- ansible.builtin.debug:
     msg: "{{ specific_ec2_placement_groups | json_query(\"[?name=='my-cluster']\") }}"
 
 '''
 
 
-RETURN = '''
+RETURN = r'''
 placement_groups:
   description: Placement group attributes
   returned: always
@@ -107,7 +107,7 @@ def get_placement_groups_details(connection, module):
 
 def main():
     argument_spec = dict(
-        names=dict(type='list', default=[])
+        names=dict(type='list', default=[], elements='str')
     )
 
     module = AnsibleAWSModule(
