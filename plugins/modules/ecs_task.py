@@ -405,10 +405,10 @@ def main():
 
     service_mgr = EcsExecManager(module)
 
-    if module.params['network_configuration'] and not service_mgr.ecs_api_handles_network_configuration():
+    if module.params['network_configuration']:
         if module.params['network_configuration']['assignPublicIp'] and not service_mgr.ecs_api_handles_network_configuration_assignIp():
             module.fail_json(msg='botocore needs to be version 1.8.4 or higher to use assign_public_ip in network_configuration')
-        else:
+        elif not service_mgr.ecs_api_handles_network_configuration():
             module.fail_json(msg='botocore needs to be version 1.7.44 or higher to use network configuration')
 
     if module.params['launch_type'] and not service_mgr.ecs_api_handles_launch_type():

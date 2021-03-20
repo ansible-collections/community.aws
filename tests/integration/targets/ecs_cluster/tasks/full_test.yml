@@ -759,7 +759,7 @@
         started_by: ansible_user
       register: fargate_run_task_output_with_tags
 
-      - name: create fargate ECS task with run task and assign public ip disable
+    - name: create fargate ECS task with run task and assign public ip disable
       ecs_task:
         operation: run
         cluster: "{{ ecs_cluster_name }}"
