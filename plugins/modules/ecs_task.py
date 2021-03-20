@@ -269,13 +269,10 @@ class EcsExecManager:
                     self.module.fail_json_aws(e, msg="Couldn't look up security groups")
             result['securityGroups'] = groups
         if 'assign_public_ip' in network_config:
-            if self.module.botocore_at_least('1.8.4'):
-                if network_config['assign_public_ip'] is True:
-                    result['assignPublicIp'] = "ENABLED"
-                else:
-                    result['assignPublicIp'] = "DISABLED"
+            if network_config['assign_public_ip'] is True:
+                result['assignPublicIp'] = "ENABLED"
             else:
-                self.module.fail_json(msg='botocore needs to be version 1.8.4 or higher to use assign_public_ip in network_configuration')
+                result['assignPublicIp'] = "DISABLED"
 
         return dict(awsvpcConfiguration=result)
 
@@ -359,6 +356,12 @@ class EcsExecManager:
         # for attributes (and networkConfiguration is not an explicit argument
         # to e.g. ecs.run_task, it's just passed as a keyword argument)
         return self.module.botocore_at_least('1.7.44')
+    
+    def ecs_api_handles_network_configuration_assignIp(self):
+        # There doesn't seem to be a nice way to inspect botocore to look
+        # for attributes (and networkConfiguration is not an explicit argument
+        # to e.g. ecs.run_task, it's just passed as a keyword argument)
+        return self.module.botocore_at_least('1.8.4')
 
 
 def main():
@@ -403,7 +406,10 @@ def main():
     service_mgr = EcsExecManager(module)
 
     if module.params['network_configuration'] and not service_mgr.ecs_api_handles_network_configuration():
-        module.fail_json(msg='botocore needs to be version 1.7.44 or higher to use network configuration')
+        if module.params['network_configuration']['assignPublicIp'] and not service_mgr.ecs_api_handles_network_configuration_assignIp():
+            module.fail_json(msg='botocore needs to be version 1.8.4 or higher to use assign_public_ip in network_configuration')
+        else:
+            module.fail_json(msg='botocore needs to be version 1.7.44 or higher to use network configuration')
 
     if module.params['launch_type'] and not service_mgr.ecs_api_handles_launch_type():
         module.fail_json(msg='botocore needs to be version 1.8.4 or higher to use launch type')
