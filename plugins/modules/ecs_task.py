@@ -356,7 +356,7 @@ class EcsExecManager:
         # for attributes (and networkConfiguration is not an explicit argument
         # to e.g. ecs.run_task, it's just passed as a keyword argument)
         return self.module.botocore_at_least('1.7.44')
-    
+
     def ecs_api_handles_network_configuration_assignIp(self):
         # There doesn't seem to be a nice way to inspect botocore to look
         # for attributes (and networkConfiguration is not an explicit argument
