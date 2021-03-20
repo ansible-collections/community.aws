@@ -70,6 +70,7 @@ options:
             assign_public_ip:
                 description: Whether the task's elastic network interface receives a public IP address.
                 type: bool
+                version_added: 1.5.0
             subnets:
                 description: A list of subnet IDs to which the task is attached.
                 type: list
