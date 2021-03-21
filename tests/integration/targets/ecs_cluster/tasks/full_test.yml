@@ -772,7 +772,6 @@
             - '{{ setup_sg.group_id }}'
           assign_public_ip: false
         started_by: ansible_user
-        <<: *aws_connection_info
       register: fargate_run_task_output_with_assign_ip
 
 
