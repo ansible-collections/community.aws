@@ -56,6 +56,7 @@ options:
     description:
       - AWS Glue version. This determines the available version of Apache Scala and Python as described here
         U(https://docs.aws.amazon.com/glue/latest/dg/add-job.html).
+    default: 0.9
     type: str
   max_concurrent_runs:
     description:
@@ -467,7 +468,7 @@ def main():
             connections=dict(type='list', elements='str'),
             default_arguments=dict(type='dict'),
             description=dict(type='str'),
-            glue_version=dict(type='str'),
+            glue_version=dict(type='str', default='0.9'),
             max_concurrent_runs=dict(type='int'),
             max_retries=dict(type='int'),
             name=dict(required=True, type='str'),
