@@ -204,6 +204,44 @@
       - not ecs_service_scale_down.changed
       - ecs_service_scale_down.service.desiredCount == 0
 
+- name: update task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}"
+    task_role_arn: "{{ ecs_task_role_name }}"
+    state: present
+  register: ecs_task_update
+
+- name: check that initial task definition changes
+  assert:
+    that:
+      - ecs_task_update.changed
+
+- name: Enable ExecuteCommand
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_update.taskdefinition.revision }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    placement_strategy: "{{ ecs_service_placement_strategy }}"
+    placement_constraints:
+      - type: distinctInstance
+    health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
+    load_balancers:
+      - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+        containerName: "{{ ecs_task_name }}"
+        containerPort: "{{ ecs_task_container_port }}"
+    role: "{{ ecs_service_role_name }}"
+    enable_execute_command: True
+  register: ecs_service_execute
+
+- name: check that ECS service changed
+  assert:
+    that:
+      - ecs_service_execute.changed
+
 - name: delete ECS service definition
   ecs_service:
     state: absent
@@ -650,24 +688,9 @@
     that:
       - ecs_service_remove_strategy.changed
       - "ecs_service_remove_strategy.service.placementStrategy | length == 0"
+
 # ============================================================
 # Begin tests for Fargate
-
-- name: ensure AmazonECSTaskExecutionRolePolicy exists
-  iam_role:
-    name: "{{ ecs_task_role_name }}"
-    assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
-    description: "Allows ECS containers to make calls to ECR"
-    state: present
-    create_instance_profile: false
-    managed_policy:
-      - AmazonECSTaskExecutionRolePolicy
-    wait: True
-  register: iam_execution_role
-
-- name: pause for iam availability
-  ansible.builtin.pause:
-    seconds: 20
 
 - name: create Fargate VPC-networked task definition with host port set to 8080 and unsupported network mode (expected to fail)
   ecs_taskdefinition:
