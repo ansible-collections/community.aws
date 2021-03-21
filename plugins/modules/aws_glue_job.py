@@ -81,6 +81,12 @@ options:
     required: true
     choices: [ 'present', 'absent' ]
     type: str
+  tags:
+    description:
+      - A hash/dictionary of tags to be applied to the job.
+      - Remove completely or specify an empty dictionary to remove all tags.
+    default: {}
+    type: dict
   timeout:
     description:
       - The job timeout in minutes.
@@ -112,7 +118,10 @@ EXAMPLES = r'''
 
 # Create an AWS Glue job
 - community.aws.aws_glue_job:
-    command_script_location: s3bucket/script.py
+    command_script_location: "s3://s3bucket/script.py"
+    default_arguments:
+      "--extra-py-files": s3://s3bucket/script-package.zip
+      "--TempDir": "s3://s3bucket/temp/"
     name: my-glue-job
     role: my-iam-role
     state: present
@@ -232,8 +241,28 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
+def _get_account_info(module):
+    """
+    Return the account information (account ID and partition) we are currently working on.
+    """
+    account_id = None
+    partition = None
+    sts_client = module.client('sts')
+    caller_identity = sts_client.get_caller_identity()
+    account_id = caller_identity.get('Account')
+    partition = caller_identity.get('Arn').split(':')[1]
+    return account_id, partition
+
+
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def _get_glue_job(connection, module, glue_job_name):
     """
     Get an AWS Glue job based on name. If not found, return None.
@@ -300,6 +329,44 @@ def _compare_glue_job_params(user_params, current_params):
     return False
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
+def ensure_tags(connection, module, glue_job):
+    changed = False
+
+    account_id, partition = _get_account_info(module)
+    arn = 'arn:{0}:glue:{1}:{2}:job/{3}'.format(partition, module.region, account_id, module.params.get('name'))
+
+    try:
+        response = connection.get_tags(ResourceArn=arn)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Unable to get tags for Glue job %s' % module.params.get('name'))
+
+    if module.params.get('tags') is None:
+        return False
+
+    existing_tags = response.get('Tags')
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), True)
+
+    if tags_to_remove:
+        changed = True
+        if not module.check_mode:
+            try:
+                connection.untag_resource(ResourceArn=arn, TagsToRemove=tags_to_remove)
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg='Unable to set tags for Glue job %s' % module.params.get('name'))
+
+    if tags_to_add:
+        changed = True
+        if not module.check_mode:
+            try:
+                connection.tag_resource(ResourceArn=arn, TagsToAdd=tags_to_add)
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg='Unable to set tags for Glue job %s' % module.params.get('name'))
+
+    return changed
+
+
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def create_or_update_glue_job(connection, module, glue_job):
     """
     Create or update an AWS Glue job
@@ -361,13 +428,14 @@ def create_or_update_glue_job(connection, module, glue_job):
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
 
-    # If changed, get the Glue job again
-    if changed:
-        glue_job = _get_glue_job(connection, module, params['Name'])
+    glue_job = _get_glue_job(connection, module, params['Name'])
+
+    changed |= ensure_tags(connection, module, glue_job)
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_job))
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def delete_glue_job(connection, module, glue_job):
     """
     Delete an AWS Glue job
@@ -402,16 +470,16 @@ def main():
             connections=dict(type='list', elements='str'),
             default_arguments=dict(type='dict'),
             description=dict(type='str'),
-            glue_version=dict(type='str'),
             max_concurrent_runs=dict(type='int'),
             max_retries=dict(type='int'),
             name=dict(required=True, type='str'),
             role=dict(type='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
-            timeout=dict(type='int'),
             glue_version=dict(type='str'),
             worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str'),
             number_of_workers=dict(type='int'),
+            tags=dict(type='dict', default={}),
+            timeout=dict(type='int')
         )
     )
 
