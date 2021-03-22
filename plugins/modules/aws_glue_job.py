@@ -305,9 +305,9 @@ def _compare_glue_job_params(user_params, current_params):
             return True
         if user_params['Command']['PythonVersion'] != current_params['Command']['PythonVersion']:
             return True
-    if 'Connections' in user_params and set(user_params['Connections']) != set(current_params['Connections']):
+    if 'Connections' in user_params and user_params['Connections'] != current_params['Connections']:
         return True
-    if 'DefaultArguments' in user_params and set(user_params['DefaultArguments']) != set(current_params['DefaultArguments']):
+    if 'DefaultArguments' in user_params and user_params['DefaultArguments'] != current_params['DefaultArguments']:
         return True
     if 'Description' in user_params and user_params['Description'] != current_params['Description']:
         return True

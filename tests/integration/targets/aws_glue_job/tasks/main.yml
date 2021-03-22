@@ -34,6 +34,8 @@
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
+        default_arguments:
+          "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
         glue_version: "2.0"
         role: "{{ glue_job_role_name }}"
@@ -55,6 +57,8 @@
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
+        default_arguments:
+          "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
         glue_version: "2.0"
         role: "{{ glue_job_role_name }}"
@@ -83,6 +87,7 @@
           - glue_job.changed"
           - glue_job.command.python_version == job_info["Job"]["Command"]["PythonVersion"]
           - glue_job.command.script_location == job_info["Job"]["Command"]["ScriptLocation"]
+          - glue_job.default_arguments == job_info["Job"]["DefaultArguments"]
           - glue_job.description == job_info["Job"]["Description"]
           - glue_job.glue_version == job_info["Job"]["GlueVersion"]
           - glue_job.role == job_info["Job"]["Role"]
@@ -92,6 +97,8 @@
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
+        default_arguments:
+          "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
         glue_version: "2.0"
         role: "{{ glue_job_role_name }}"
@@ -122,6 +129,7 @@
           - job_info["Job"]["Name"] == job_info_idempotent_check["Job"]["Name"]
           - job_info["Job"]["Command"]['PythonVersion'] == job_info_idempotent_check["Job"]["Command"]["PythonVersion"]
           - job_info["Job"]["Command"]['ScriptLocation'] == job_info_idempotent_check["Job"]["Command"]["ScriptLocation"]
+          - job_info["Job"]["DefaultArguments"] == job_info_idempotent_check["Job"]["DefaultArguments"]
           - job_info["Job"]["Description"] == job_info_idempotent_check["Job"]["Description"]
           - job_info["Job"]["GlueVersion"] == job_info_idempotent_check["Job"]["GlueVersion"]
           - job_info["Job"]["Role"] == job_info_idempotent_check["Job"]["Role"]
@@ -131,6 +139,8 @@
         name: "{{ glue_job_name }}"
         command_python_version: 3
         command_script_location: "{{ glue_job_command_script_location }}"
+        default_arguments:
+          "--TempDir": "{{ glue_job_temp_dir }}"
         description: "{{ glue_job_description }}"
         glue_version: "2.0"
         role: "{{ glue_job_role_name }}"
@@ -158,8 +168,9 @@
         that:
           - not glue_job_idempotent.changed
           - job_info["Job"]["Name"] == job_info_idempotent["Job"]["Name"]
-          - job_info["Job"]["Command"]['PythonVersion'] == job_info_idempotent["Job"]["Command"]["PythonVersion"]
-          - job_info["Job"]["Command"]['ScriptLocation'] == job_info_idempotent["Job"]["Command"]["ScriptLocation"]
+          - job_info["Job"]["Command"]["PythonVersion"] == job_info_idempotent["Job"]["Command"]["PythonVersion"]
+          - job_info["Job"]["Command"]["ScriptLocation"] == job_info_idempotent["Job"]["Command"]["ScriptLocation"]
+          - job_info["Job"]["DefaultArguments"] == job_info_idempotent["Job"]["DefaultArguments"]
           - job_info["Job"]["Description"] == job_info_idempotent["Job"]["Description"]
           - job_info["Job"]["GlueVersion"] == job_info_idempotent["Job"]["GlueVersion"]
           - job_info["Job"]["Role"] == job_info_idempotent["Job"]["Role"]
@@ -169,6 +180,8 @@
         name: "{{ glue_job_name }}"
         command_python_version: 2
         command_script_location: "{{ glue_job_command_script_location }}"
+        default_arguments:
+          "--TempDir": "{{ glue_job_temp_dir }}subfolder/"
         description: "{{ glue_job_description }}"
         glue_version: "0.9"
         role: "{{ glue_job_role_name }}"
@@ -195,10 +208,11 @@
       assert:
         that:
           - glue_job_update_check.changed
-          - glue_job_update_check.command.python_version == "3"
+          - glue_job_update_check.command.python_version == job_info_update_check["Job"]["Command"]["PythonVersion"]
           - glue_job_update_check.command.script_location == job_info_update_check["Job"]["Command"]["ScriptLocation"]
+          - glue_job_update_check.default_arguments == job_info_update_check["Job"]["DefaultArguments"]
           - glue_job_update_check.description == job_info_update_check["Job"]["Description"]
-          - glue_job_update_check.glue_version == "2.0"
+          - glue_job_update_check.glue_version == job_info_update_check["Job"]["Command"]["GlueVersion"]
           - glue_job_update_check.role == job_info_update_check["Job"]["Role"]
 
     - name: Update Glue job
@@ -206,6 +220,8 @@
         name: "{{ glue_job_name }}"
         command_python_version: 2
         command_script_location: "{{ glue_job_command_script_location }}"
+        default_arguments:
+          "--TempDir": "{{ glue_job_temp_dir }}subfolder/"
         description: "{{ glue_job_description }}"
         glue_version: "0.9"
         role: "{{ glue_job_role_name }}"
@@ -233,6 +249,7 @@
           - glue_job_update.changed
           - glue_job_update.command.python_version == job_info_update["Job"]["Command"]["PythonVersion"]
           - glue_job_update.command.script_location == job_info_update["Job"]["Command"]["ScriptLocation"]
+          - glue_job_update.default_arguments == job_info_update["Job"]["DefaultArguments"]
           - glue_job_update.description == job_info_update["Job"]["Description"]
           - glue_job_update.glue_version == job_info_update["Job"]["Command"]["GlueVersion"]
           - glue_job_update.role == job_info_update["Job"]["Role"]
