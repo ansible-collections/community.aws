@@ -1,0 +1,184 @@
+---
+- name: ec2_vpc_igw tests
+  collections:
+    - amazon.aws
+
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+  # ============================================================
+  - name: Fetch Peers in check_mode
+    ec2_vpc_peering_info:
+    register: peers_info
+    check_mode: True
+
+  - name: Assert success
+    assert:
+      that:
+          - peers_info is successful
+          - '"result" in peers_info'
+
+  # ============================================================
+  - name: create VPC 1
+    ec2_vpc_net:
+      name: "{{ vpc_1_name }}"
+      state: present
+      cidr_block: "{{ vpc_1_cidr }}"
+      tags:
+        Name: "{{ vpc_1_name }}"
+        TestPrefex: "{{ resource_prefix }}"
+    register: vpc_1_result
+
+  - name: Assert success
+    assert:
+      that:
+          - vpc_1_result is successful
+
+  - name: create VPC 2
+    ec2_vpc_net:
+      name: "{{ vpc_2_name }}"
+      state: present
+      cidr_block: "{{ vpc_2_cidr }}"
+      tags:
+        Name: "{{ vpc_2_name }}"
+        TestPrefex: "{{ resource_prefix }}"
+    register: vpc_2_result
+
+  - name: Assert success
+    assert:
+      that:
+          - vpc_2_result is successful
+
+  - name: Store VPC IDs
+    set_fact:
+      vpc_1: '{{ vpc_1_result.vpc.id }}'
+      vpc_2: '{{ vpc_2_result.vpc.id }}'
+
+  - name: Create local account VPC peering Connection
+    ec2_vpc_peer:
+      vpc_id: '{{ vpc_1 }}'
+      peer_vpc_id: '{{ vpc_2 }}'
+      state: present
+      tags:
+        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+    register: vpc_peer
+
+  - name: (re-) Create local account VPC peering Connection (idempotency)
+    ec2_vpc_peer:
+      vpc_id: '{{ vpc_1 }}'
+      peer_vpc_id: '{{ vpc_2 }}'
+      state: present
+      tags:
+        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+    register: vpc_peer
+
+  - name: Get details on specific VPC peer
+    ec2_vpc_peering_info:
+      peer_connection_ids:
+        - '{{ vpc_peer.peering_id }}'
+    register: peer_info
+
+  - name: Get all vpc peers with specific filters
+    ec2_vpc_peering_info:
+      filters:
+        status-code: ['pending-acceptance']
+    register: pending_vpc_peers
+
+  - name: Accept local VPC peering request
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer.peering_id }}"
+      state: accept
+    register: action_peer
+
+  - name: Get details on specific VPC peer
+    ec2_vpc_peering_info:
+      peer_connection_ids:
+        - '{{ vpc_peer.peering_id }}'
+    register: peer_info
+
+  - name: (re-) Accept local VPC peering request (idempotency)
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer.peering_id }}"
+      state: accept
+    register: action_peer
+
+  - name: delete a local VPC peering Connection
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer.peering_id }}"
+      state: absent
+    register: delete_peer
+
+  - name: Get details on specific VPC peer
+    ec2_vpc_peering_info:
+      peer_connection_ids:
+        - '{{ vpc_peer.peering_id }}'
+    register: peer_info
+
+  - name: (re-) delete a local VPC peering Connection (idempotency)
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer.peering_id }}"
+      state: absent
+    register: delete_peer
+
+  - name: Create local account VPC peering Connection
+    ec2_vpc_peer:
+      vpc_id: '{{ vpc_1 }}'
+      peer_vpc_id: '{{ vpc_2 }}'
+      state: present
+      tags:
+        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+    register: vpc_peer2
+
+  - name: reject a local VPC peering Connection
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer2.peering_id }}"
+      state: reject
+    register: reject_peer
+
+  - name: (re-) reject a local VPC peering Connection
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer2.peering_id }}"
+      state: reject
+    register: reject_peer
+
+  - name: delete a local VPC peering Connection
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer2.peering_id }}"
+      state: absent
+    register: delete_peer
+    ignore_errors: True
+
+  always:
+    # ============================================================
+
+  - name: delete a local VPC peering Connection
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer.peering_id }}"
+      state: absent
+    register: delete_peer
+    ignore_errors: True
+
+  - name: delete a local VPC peering Connection
+    ec2_vpc_peer:
+      peering_id: "{{ vpc_peer2.peering_id }}"
+      state: absent
+    register: delete_peer
+    ignore_errors: True
+
+  - name: tidy up VPC 2
+    ec2_vpc_net:
+      name: "{{ vpc_2_name }}"
+      state: absent
+      cidr_block: "{{ vpc_2_cidr }}"
+    ignore_errors: true
+
+  - name: tidy up VPC 1
+    ec2_vpc_net:
+      name: "{{ vpc_1_name }}"
+      state: absent
+      cidr_block: "{{ vpc_1_cidr }}"
+    ignore_errors: true
