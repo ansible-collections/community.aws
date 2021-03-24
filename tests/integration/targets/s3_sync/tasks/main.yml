@@ -41,7 +41,7 @@
 
     - name: Prepare file with size bigger than chunk size
       shell: |
-        dd if=/dev/zero of=test4.txt bs=1m count=10
+        dd if=/dev/zero of=test4.txt bs=1M count=10
       args:
         chdir: "{{ output_dir }}/s3_sync"
    
