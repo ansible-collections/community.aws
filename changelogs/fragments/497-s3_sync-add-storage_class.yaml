@@ -1,0 +1,2 @@
+minor_changes:
+- s3_sync: new storage_class feature allowing to specify the storage_class when any object is added to an s3_bucket (https://github.com/ansible-collections/community.aws/issues/358).
