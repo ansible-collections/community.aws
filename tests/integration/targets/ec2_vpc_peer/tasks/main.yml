@@ -15,7 +15,6 @@
     ec2_vpc_peering_info:
     register: peers_info
     check_mode: True
-
   - name: Assert success
     assert:
       that:
@@ -32,7 +31,6 @@
         Name: "{{ vpc_1_name }}"
         TestPrefex: "{{ resource_prefix }}"
     register: vpc_1_result
-
   - name: Assert success
     assert:
       that:
@@ -47,7 +45,6 @@
         Name: "{{ vpc_2_name }}"
         TestPrefex: "{{ resource_prefix }}"
     register: vpc_2_result
-
   - name: Assert success
     assert:
       that:
@@ -66,6 +63,11 @@
       tags:
         Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
     register: vpc_peer
+  - name: Assert success
+    assert:
+      that:
+          - vpc_peer is changed
+          - vpc_peer is successful
 
   - name: (re-) Create local account VPC peering Connection (idempotency)
     ec2_vpc_peer:
@@ -75,6 +77,11 @@
       tags:
         Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
     register: vpc_peer
+  - name: Assert success
+    assert:
+      that:
+          - vpc_peer is not changed
+          - vpc_peer is successful
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -97,6 +104,11 @@
         Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
         testPrefix: '{{ resource_prefix }}'
     register: tag_peer
+  - name: Assert success
+    assert:
+      that:
+          - tag_peer is changed
+          - tag_peer is successful
 
   - name: (re-) Update tags on the VPC Peering Connection (idempotency)
     ec2_vpc_peer:
@@ -107,6 +119,11 @@
         Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
         testPrefix: '{{ resource_prefix }}'
     register: tag_peer
+  - name: Assert success
+    assert:
+      that:
+          - tag_peer is not changed
+          - tag_peer is successful
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -119,6 +136,11 @@
       peering_id: "{{ vpc_peer.peering_id }}"
       state: accept
     register: action_peer
+  - name: Assert success
+    assert:
+      that:
+          - action_peer is changed
+          - action_peer is successful
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -131,12 +153,22 @@
       peering_id: "{{ vpc_peer.peering_id }}"
       state: accept
     register: action_peer
+  - name: Assert success
+    assert:
+      that:
+          - action_peer is not changed
+          - action_peer is successful
 
   - name: delete a local VPC peering Connection
     ec2_vpc_peer:
       peering_id: "{{ vpc_peer.peering_id }}"
       state: absent
     register: delete_peer
+  - name: Assert success
+    assert:
+      that:
+          - delete_peer is changed
+          - delete_peer is successful
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -149,6 +181,11 @@
       peering_id: "{{ vpc_peer.peering_id }}"
       state: absent
     register: delete_peer
+  - name: Assert success
+    assert:
+      that:
+          - delete_peer is not changed
+          - delete_peer is successful
 
   - name: Create local account VPC peering Connection
     ec2_vpc_peer:
@@ -158,25 +195,44 @@
       tags:
         Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
     register: vpc_peer2
+  - name: Assert success
+    assert:
+      that:
+          - vpc_peer2 is changed
+          - vpc_peer2 is successful
 
   - name: reject a local VPC peering Connection
     ec2_vpc_peer:
       peering_id: "{{ vpc_peer2.peering_id }}"
       state: reject
     register: reject_peer
+  - name: Assert success
+    assert:
+      that:
+          - reject_peer is changed
+          - reject_peer is successful
 
   - name: (re-) reject a local VPC peering Connection
     ec2_vpc_peer:
       peering_id: "{{ vpc_peer2.peering_id }}"
       state: reject
     register: reject_peer
+  - name: Assert success
+    assert:
+      that:
+          - reject_peer is not changed
+          - reject_peer is successful
 
   - name: delete a local VPC peering Connection
     ec2_vpc_peer:
       peering_id: "{{ vpc_peer2.peering_id }}"
       state: absent
     register: delete_peer
-    ignore_errors: True
+  - name: Assert success
+    assert:
+      that:
+          - delete_peer is not changed
+          - delete_peer is successful
 
   always:
     # ============================================================
