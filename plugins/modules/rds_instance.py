@@ -902,7 +902,7 @@ def get_options_with_changing_values(client, module, parameters):
         parameters['DBInstanceIdentifier'] = instance_id
         if apply_immediately is not None:
             parameters['ApplyImmediately'] = apply_immediately
-    
+
     return parameters
 
 
@@ -927,8 +927,8 @@ def get_current_attributes_with_inconsistent_keys(instance):
     else:
         options['ProcessorFeatures'] = instance.get('ProcessorFeatures', {})
     options['OptionGroupName'] = [g['OptionGroupName'] for g in instance['OptionGroupMemberships']]
-    options['DBSecurityGroups'] = [sg['DBSecurityGroupName'] for sg in instance['DBSecurityGroups']] if sg['Status'] in ['adding', 'active']]
-    options['VpcSecurityGroupIds'] = [sg['VpcSecurityGroupId'] for sg in instance['VpcSecurityGroups']] if sg['Status'] in ['adding', 'active']]
+    options['DBSecurityGroups'] = [sg['DBSecurityGroupName'] for sg in instance['DBSecurityGroups'] if sg['Status'] in ['adding', 'active']]
+    options['VpcSecurityGroupIds'] = [sg['VpcSecurityGroupId'] for sg in instance['VpcSecurityGroups'] if sg['Status'] in ['adding', 'active']]
     options['DBParameterGroupName'] = [parameter_group['DBParameterGroupName'] for parameter_group in instance['DBParameterGroups']]
     options['AllowMajorVersionUpgrade'] = None
     options['EnableIAMDatabaseAuthentication'] = instance['IAMDatabaseAuthenticationEnabled']
