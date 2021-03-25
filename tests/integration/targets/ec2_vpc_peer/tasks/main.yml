@@ -88,6 +88,32 @@
         status-code: ['pending-acceptance']
     register: pending_vpc_peers
 
+  - name: Update tags on the VPC Peering Connection
+    ec2_vpc_peer:
+      vpc_id: '{{ vpc_1 }}'
+      peer_vpc_id: '{{ vpc_2 }}'
+      state: present
+      tags:
+        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+        testPrefix: '{{ resource_prefix }}'
+    register: tag_peer
+
+  - name: (re-) Update tags on the VPC Peering Connection (idempotency)
+    ec2_vpc_peer:
+      vpc_id: '{{ vpc_1 }}'
+      peer_vpc_id: '{{ vpc_2 }}'
+      state: present
+      tags:
+        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+        testPrefix: '{{ resource_prefix }}'
+    register: tag_peer
+
+  - name: Get details on specific VPC peer
+    ec2_vpc_peering_info:
+      peer_connection_ids:
+        - '{{ vpc_peer.peering_id }}'
+    register: peer_info
+
   - name: Accept local VPC peering request
     ec2_vpc_peer:
       peering_id: "{{ vpc_peer.peering_id }}"
