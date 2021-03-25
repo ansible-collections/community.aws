@@ -223,6 +223,7 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def tags_changed(pcx_id, client, module):
@@ -247,6 +248,7 @@ def tags_changed(pcx_id, client, module):
 
 def describe_peering_connections(params, client):
     result = client.describe_vpc_peering_connections(
+        aws_retry=True,
         Filters=[
             {'Name': 'requester-vpc-info.vpc-id', 'Values': [params['VpcId']]},
             {'Name': 'accepter-vpc-info.vpc-id', 'Values': [params['PeerVpcId']]}
@@ -254,6 +256,7 @@ def describe_peering_connections(params, client):
     )
     if result['VpcPeeringConnections'] == []:
         result = client.describe_vpc_peering_connections(
+            aws_retry=True,
             Filters=[
                 {'Name': 'requester-vpc-info.vpc-id', 'Values': [params['PeerVpcId']]},
                 {'Name': 'accepter-vpc-info.vpc-id', 'Values': [params['VpcId']]}
@@ -291,7 +294,7 @@ def create_peer_connection(client, module):
         if is_pending(peering_conn):
             return (changed, peering_conn['VpcPeeringConnectionId'])
     try:
-        peering_conn = client.create_vpc_peering_connection(**params)
+        peering_conn = client.create_vpc_peering_connection(aws_retry=True, **params)
         pcx_id = peering_conn['VpcPeeringConnection']['VpcPeeringConnectionId']
         if module.params.get('tags'):
             create_tags(pcx_id, client, module)
@@ -319,7 +322,7 @@ def remove_peer_connection(client, module):
     try:
         params = dict()
         params['VpcPeeringConnectionId'] = pcx_id
-        client.delete_vpc_peering_connection(**params)
+        client.delete_vpc_peering_connection(aws_retry=True, **params)
         module.exit_json(changed=True)
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
@@ -329,7 +332,7 @@ def peer_status(client, module):
     params = dict()
     params['VpcPeeringConnectionIds'] = [module.params.get('peering_id')]
     try:
-        vpc_peering_connection = client.describe_vpc_peering_connections(**params)
+        vpc_peering_connection = client.describe_vpc_peering_connections(aws_retry=True, **params)
         return vpc_peering_connection['VpcPeeringConnections'][0]['Status']['Code']
     except is_boto3_error_code('InvalidVpcPeeringConnectionId.Malformed') as e:
         module.fail_json_aws(e, msg='Malformed connection ID')
@@ -344,9 +347,9 @@ def accept_reject(state, client, module):
     if peer_status(client, module) != 'active':
         try:
             if state == 'accept':
-                client.accept_vpc_peering_connection(**params)
+                client.accept_vpc_peering_connection(aws_retry=True, **params)
             else:
-                client.reject_vpc_peering_connection(**params)
+                client.reject_vpc_peering_connection(aws_retry=True, **params)
             if module.params.get('tags'):
                 create_tags(params['VpcPeeringConnectionId'], client, module)
             changed = True
@@ -368,21 +371,21 @@ def load_tags(module):
 def create_tags(pcx_id, client, module):
     try:
         delete_tags(pcx_id, client, module)
-        client.create_tags(Resources=[pcx_id], Tags=load_tags(module))
+        client.create_tags(aws_retry=True, Resources=[pcx_id], Tags=load_tags(module))
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
 
 def delete_tags(pcx_id, client, module):
     try:
-        client.delete_tags(Resources=[pcx_id])
+        client.delete_tags(aws_retry=True, Resources=[pcx_id])
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
 
 def find_pcx_by_id(pcx_id, client, module):
     try:
-        return client.describe_vpc_peering_connections(VpcPeeringConnectionIds=[pcx_id])
+        return client.describe_vpc_peering_connections(aws_retry=True, VpcPeeringConnectionIds=[pcx_id])
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
@@ -411,7 +414,7 @@ def main():
     peer_vpc_id = module.params.get('peer_vpc_id')
 
     try:
-        client = module.client('ec2')
+        client = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
