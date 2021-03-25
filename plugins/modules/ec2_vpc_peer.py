@@ -352,7 +352,8 @@ def accept_reject(state, client, module):
     changed = False
     params = dict()
     params['VpcPeeringConnectionId'] = module.params.get('peering_id')
-    if peer_status(client, module) != 'active':
+    current_state = peer_status(client, module)
+    if current_state not in ['active', 'rejected']:
         try:
             if state == 'accept':
                 client.accept_vpc_peering_connection(aws_retry=True, **params)
