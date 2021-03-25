@@ -306,7 +306,9 @@ def create_peer_connection(client, module):
 
 def remove_peer_connection(client, module):
     pcx_id = module.params.get('peering_id')
-    if not pcx_id:
+    if pcx_id:
+        peering_conns = client.describe_vpc_peering_connections(aws_retry=True, VpcPeeringConnectionIds=[pcx_id])
+    else:
         params = dict()
         params['VpcId'] = module.params.get('vpc_id')
         params['PeerVpcId'] = module.params.get('peer_vpc_id')
@@ -314,10 +316,16 @@ def remove_peer_connection(client, module):
         if module.params.get('peer_owner_id'):
             params['PeerOwnerId'] = str(module.params.get('peer_owner_id'))
         peering_conns = describe_peering_connections(params, client)
-        if not peering_conns:
-            module.exit_json(changed=False)
-        else:
-            pcx_id = peering_conns['VpcPeeringConnections'][0]['VpcPeeringConnectionId']
+
+    if not peering_conns:
+        module.exit_json(changed=False)
+    else:
+        pcx_id = pcx_id or peering_conns['VpcPeeringConnections'][0]['VpcPeeringConnectionId']
+
+    if peering_conns['VpcPeeringConnections'][0]['Status']['Code'] == 'deleted':
+        module.exit_json(msg='Connection in deleted state.', changed=False)
+    if peering_conns['VpcPeeringConnections'][0]['Status']['Code'] == 'rejected':
+        module.exit_json(msg='Connection has been rejected.  State cannot be changed and will be removed automatically by AWS', changed=False)
 
     try:
         params = dict()
