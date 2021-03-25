@@ -41,7 +41,7 @@ options:
   purge_transitions:
     description:
       - Whether to replace all the current transition(s) with the new transition(s).
-      - When false, the provided transition(s) will be added, replacing transitions
+      - When C(false), the provided transition(s) will be added, replacing transitions
         with the same storage_class. When true, existing transitions will be removed
         and replaced with the new transition(s)
     default: true
