@@ -84,7 +84,7 @@
     - name: Verity that Glue job was created
       assert:
         that:
-          - glue_job.changed"
+          - glue_job.changed
           - glue_job.command.python_version == job_info["Job"]["Command"]["PythonVersion"]
           - glue_job.command.script_location == job_info["Job"]["Command"]["ScriptLocation"]
           - glue_job.default_arguments == job_info["Job"]["DefaultArguments"]
@@ -127,8 +127,8 @@
         that:
           - not glue_job_idempotent_check.changed
           - job_info["Job"]["Name"] == job_info_idempotent_check["Job"]["Name"]
-          - job_info["Job"]["Command"]['PythonVersion'] == job_info_idempotent_check["Job"]["Command"]["PythonVersion"]
-          - job_info["Job"]["Command"]['ScriptLocation'] == job_info_idempotent_check["Job"]["Command"]["ScriptLocation"]
+          - job_info["Job"]["Command"]["PythonVersion"] == job_info_idempotent_check["Job"]["Command"]["PythonVersion"]
+          - job_info["Job"]["Command"]["ScriptLocation"] == job_info_idempotent_check["Job"]["Command"]["ScriptLocation"]
           - job_info["Job"]["DefaultArguments"] == job_info_idempotent_check["Job"]["DefaultArguments"]
           - job_info["Job"]["Description"] == job_info_idempotent_check["Job"]["Description"]
           - job_info["Job"]["GlueVersion"] == job_info_idempotent_check["Job"]["GlueVersion"]

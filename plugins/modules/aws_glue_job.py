@@ -317,6 +317,8 @@ def _compare_glue_job_params(user_params, current_params):
         return True
     if 'MaxRetries' in user_params and user_params['MaxRetries'] != current_params['MaxRetries']:
         return True
+    if 'Role' in user_params and user_params['Role'] != current_params['Role']:
+        return True
     if 'Timeout' in user_params and user_params['Timeout'] != current_params['Timeout']:
         return True
     if 'GlueVersion' in user_params and user_params['GlueVersion'] != current_params['GlueVersion']:
@@ -333,18 +335,20 @@ def _compare_glue_job_params(user_params, current_params):
 def ensure_tags(connection, module, glue_job):
     changed = False
 
+    if module.params.get('tags') is None:
+        return False
+
     account_id, partition = _get_account_info(module)
     arn = 'arn:{0}:glue:{1}:{2}:job/{3}'.format(partition, module.region, account_id, module.params.get('name'))
 
     try:
-        response = connection.get_tags(ResourceArn=arn)
+        existing_tags = connection.get_tags(ResourceArn=arn).get('Tags', {})
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg='Unable to get tags for Glue job %s' % module.params.get('name'))
+        if module.check_mode:
+            existing_tags = {}
+        else:
+            module.fail_json_aws(e, msg='Unable to get tags for Glue job %s' % module.params.get('name'))
 
-    if module.params.get('tags') is None:
-        return False
-
-    existing_tags = response.get('Tags')
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), True)
 
     if tags_to_remove:
@@ -432,7 +436,7 @@ def create_or_update_glue_job(connection, module, glue_job):
 
     changed |= ensure_tags(connection, module, glue_job)
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_job))
+    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_job or {}))
 
 
 @AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
