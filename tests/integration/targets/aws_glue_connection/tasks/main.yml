@@ -66,6 +66,7 @@
         description: Test connection
         security_groups:
           - "{{ resource_prefix }}-sg-glue-1"
+        subnet_id: "{{ glue_subnet_a.subnet.id }}"
         state: present
       check_mode: true
       register: glue_connection_check
@@ -86,6 +87,7 @@
         description: Test connection
         security_groups:
           - "{{ resource_prefix }}-sg-glue-1"
+        subnet_id: "{{ glue_subnet_a.subnet.id }}"
         state: present
       register: glue_connection
 
@@ -124,6 +126,7 @@
         description: Test connection
         security_groups:
           - "{{ resource_prefix }}-sg-glue-1"
+        subnet_id: "{{ glue_subnet_a.subnet.id }}"
         state: present
       check_mode: true
       register: glue_connection_idempotent_check
@@ -163,6 +166,7 @@
         description: Test connection
         security_groups:
           - "{{ resource_prefix }}-sg-glue-1"
+        subnet_id: "{{ glue_subnet_a.subnet.id }}"
         state: present
       register: glue_connection_idempotent
 
@@ -201,6 +205,7 @@
         description: Test connection modified
         security_groups:
           - "{{ resource_prefix }}-sg-glue-2"
+        subnet_id: "{{ glue_subnet_a.subnet.id }}"
         state: present
       check_mode: true
       register: glue_connection_update_check
@@ -240,6 +245,7 @@
         description: Test connection modified
         security_groups:
           - "{{ resource_prefix }}-sg-glue-2"
+        subnet_id: "{{ glue_subnet_a.subnet.id }}"
         state: present
       register: glue_connection_update
 
