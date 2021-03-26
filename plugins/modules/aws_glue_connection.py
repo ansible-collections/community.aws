@@ -16,6 +16,11 @@ description:
 requirements: [ boto3 ]
 author: "Rob White (@wimnat)"
 options:
+  availability_zone:
+    description:
+      - Availability Zone used by the connection
+      - Required when I(connection_type=NETWORK).
+    type: str
   catalog_id:
     description:
       - The ID of the Data Catalog in which to create the connection. If none is supplied,
@@ -28,9 +33,9 @@ options:
     type: dict
   connection_type:
     description:
-      - The type of the connection. Currently, only JDBC is supported; SFTP is not supported.
+      - The type of the connection. Currently, SFTP is not supported.
     default: JDBC
-    choices: [ 'JDBC', 'SFTP' ]
+    choices: [ 'CUSTOM', 'JDBC', 'KAFKA', 'MARKETPLACE', 'MONGODB', 'NETWORK' ]
     type: str
   description:
     description:
@@ -49,6 +54,7 @@ options:
   security_groups:
     description:
       - A list of security groups to be used by the connection. Use either security group name or ID.
+      - Required when I(connection_type=NETWORK).
     type: list
     elements: str
   state:
@@ -60,6 +66,7 @@ options:
   subnet_id:
     description:
       - The subnet ID used by the connection.
+      - Required when I(connection_type=NETWORK).
     type: str
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -207,6 +214,10 @@ def _compare_glue_connection_params(user_params, current_params):
                 user_params['ConnectionInput']['PhysicalConnectionRequirements']['SubnetId'] \
                 != current_params['PhysicalConnectionRequirements']['SubnetId']:
             return True
+        if 'AvailabilityZone' in user_params['ConnectionInput']['PhysicalConnectionRequirements'] and \
+                user_params['ConnectionInput']['PhysicalConnectionRequirements']['AvailabilityZone'] \
+                != current_params['PhysicalConnectionRequirements']['AvailabilityZone']:
+            return True
 
     return False
 
@@ -241,6 +252,8 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
         params['ConnectionInput']['PhysicalConnectionRequirements']['SecurityGroupIdList'] = security_group_ids
     if module.params.get("subnet_id") is not None:
         params['ConnectionInput']['PhysicalConnectionRequirements']['SubnetId'] = module.params.get("subnet_id")
+    if module.params.get("availability_zone") is not None:
+        params['ConnectionInput']['PhysicalConnectionRequirements']['AvailabilityZone'] = module.params.get("availability_zone")
 
     # If glue_connection is not None then check if it needs to be modified, else create it
     if glue_connection:
@@ -249,13 +262,15 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
                 # We need to slightly modify the params for an update
                 update_params = copy.deepcopy(params)
                 update_params['Name'] = update_params['ConnectionInput']['Name']
-                connection.update_connection(**update_params)
+                if not module.check_mode:
+                    connection.update_connection(**update_params)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e)
     else:
         try:
-            connection.create_connection(**params)
+            if not module.check_mode:
+                connection.create_connection(**params)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
@@ -290,7 +305,8 @@ def delete_glue_connection(connection, module, glue_connection):
 
     if glue_connection:
         try:
-            connection.delete_connection(**params)
+            if not module.check_mode:
+                connection.delete_connection(**params)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
@@ -302,9 +318,10 @@ def main():
 
     argument_spec = (
         dict(
+            availability_zone=dict(type='str'),
             catalog_id=dict(type='str'),
             connection_properties=dict(type='dict'),
-            connection_type=dict(type='str', default='JDBC', choices=['JDBC', 'SFTP']),
+            connection_type=dict(type='str', default='JDBC', choices=['CUSTOM', 'JDBC', 'KAFKA', 'MARKETPLACE', 'MONGODB', 'NETWORK']),
             description=dict(type='str'),
             match_criteria=dict(type='list', elements='str'),
             name=dict(required=True, type='str'),
@@ -316,8 +333,10 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               required_if=[
-                                  ('state', 'present', ['connection_properties'])
-                              ]
+                                  ('state', 'present', ['connection_properties']),
+                                  ('connection_type', 'NETWORK', ['availability_zone', 'security_groups', 'subnet_id'])
+                              ],
+                              supports_check_mode=True
                               )
 
     connection_glue = module.client('glue')
