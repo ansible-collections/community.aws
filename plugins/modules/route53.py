@@ -557,6 +557,10 @@ def main():
             DNSName=value_in[0],
             EvaluateTargetHealth=alias_evaluate_target_health_in
         )
+        if 'ResourceRecords' in resource_record_set:
+            del resource_record_set['ResourceRecords']
+        if 'TTL' in resource_record_set:
+            del resource_record_set['TTL']
 
     # On CAA records order doesn't matter
     if type_in == 'CAA':
