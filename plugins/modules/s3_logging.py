@@ -115,7 +115,7 @@ def verify_acls(connection, module, target_bucket):
     updated_acl['Grants'] = updated_grants
     del updated_acl['ResponseMetadata']
     try:
-        connection.put_bucket_acl(Bucket=target_bucket, AccessControlPolicy=updated_acl)
+        connection.put_bucket_acl(aws_retry=True, Bucket=target_bucket, AccessControlPolicy=updated_acl)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to update target bucket ACL to allow log delivery")
 
@@ -147,6 +147,7 @@ def enable_bucket_logging(connection, module):
             module.exit_json(changed=True)
 
         result = connection.put_bucket_logging(
+            aws_retry=True,
             Bucket=bucket_name,
             BucketLoggingStatus={
                 'LoggingEnabled': {
