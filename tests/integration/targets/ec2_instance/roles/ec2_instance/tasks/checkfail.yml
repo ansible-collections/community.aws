@@ -1,0 +1,27 @@
+- name: "Wrap up all tests and setup AWS credentials"
+  hosts: localhost
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+      aws_config:
+        retries:
+          # Unfortunately AWSRetry doesn't support paginators and boto3's paginators
+          # don't support any configuration of the delay between retries.
+          max_attempts: 20
+  collections:
+    - amazon.aws
+  tasks:
+  - name: Create instance for test
+    ec2_instance:
+      name: checktest
+      image_id: 'ami-07669fc90e6e6cc47'
+      security_group: 'sg-09b7b04fa5d826ac3'
+      wait: no  ## Don't delay the tests, we'll check again before we need it
+      termination_protection: False
+      tags:
+        Foobaz: "barbaz"
+    check_mode: true
+#      state: present

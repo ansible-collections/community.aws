@@ -822,6 +822,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
+# import q
 
 module = None
 
@@ -1512,6 +1513,7 @@ def change_instance_state(filters, desired_state, ec2=None):
     unchanged = set()
     failure_reason = ""
 
+    # TODO: better check_moding in here https://github.com/ansible-collections/community.aws/issues/16
     for inst in instances:
         try:
             if desired_state == 'TERMINATED':
@@ -1588,7 +1590,8 @@ def handle_existing(existing_matches, changed, ec2, state):
         )
     changes = diff_instance_and_params(existing_matches[0], module.params)
     for c in changes:
-        ec2.modify_instance_attribute(aws_retry=True, **c)
+        if not module.check_mode:
+            ec2.modify_instance_attribute(aws_retry=True, **c)
     changed |= bool(changes)
     changed |= add_or_update_instance_profile(existing_matches[0], module.params.get('instance_role'))
     changed |= change_network_attachments(existing_matches[0], module.params, ec2)
@@ -1776,6 +1779,7 @@ def main():
                 tags['Name'] = name
             changed |= manage_tags(match, tags, module.params.get('purge_tags', False), ec2)
 
+    # q('state: ', state)
     if state in ('present', 'running', 'started'):
         ensure_present(existing_matches=existing_matches, changed=changed, ec2=ec2, state=state)
     elif state in ('restarted', 'rebooted', 'stopped', 'absent', 'terminated'):
