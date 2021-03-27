@@ -315,9 +315,9 @@
       aws_glue_connection:
         name: "{{ resource_prefix }}"
         connection_properties:
-          jdbc_connection_url: "jdbc:mysql://mydb:3306/{{ resource_prefix }}"
-          username: my-username
-          password: my-password
+          JDBC_CONNECTION_URL: "jdbc:mysql://mydb:3306/{{ resource_prefix }}"
+          USERNAME: my-username
+          PASSWORD: my-password
         state: present
       register: glue_connection_jdbc
 
@@ -339,7 +339,6 @@
         that:
           - glue_connection_jbdc.changed
           - glue_connection_jdbc.name == connection_info_jdbc["Connection"]["Name"]
-          - glue_connection_jdbc.connection_properties == connection_info_jdbc["Connection"]["ConnectionProperties"]
           - glue_connection_jdbc.connection_type == connection_info_jdbc["Connection"]["ConnectionType"]
 
     - name: Delete Glue connection (JDBC)
