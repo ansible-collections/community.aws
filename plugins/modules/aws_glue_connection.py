@@ -152,6 +152,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_er
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def _get_glue_connection(connection, module):
     """
     Get an AWS Glue connection based on name. If not found, return None.
@@ -174,6 +175,7 @@ def _get_glue_connection(connection, module):
         return None
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def _compare_glue_connection_params(user_params, current_params):
     """
     Compare Glue connection params. If there is a difference, return True immediately else return False
@@ -222,6 +224,7 @@ def _compare_glue_connection_params(user_params, current_params):
     return False
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def create_or_update_glue_connection(connection, connection_ec2, module, glue_connection):
     """
     Create or update an AWS Glue connection
@@ -279,9 +282,10 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
     if changed:
         glue_connection = _get_glue_connection(connection, module)
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection))
+    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}))
 
 
+@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def delete_glue_connection(connection, module, glue_connection):
     """
     Delete an AWS Glue connection
