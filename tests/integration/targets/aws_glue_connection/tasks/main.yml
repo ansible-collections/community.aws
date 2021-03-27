@@ -92,7 +92,7 @@
       register: glue_connection
 
     - name: Get info on Glue connection
-      command: "aws glue get-connection --connection-name {{ resource_prefix }}"
+      command: "aws glue get-connection --name {{ resource_prefix }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -132,7 +132,7 @@
       register: glue_connection_idempotent_check
 
     - name: Get info on Glue connection
-      command: "aws glue get-connection --connection-name {{ resource_prefix }}"
+      command: "aws glue get-connection --name {{ resource_prefix }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -171,7 +171,7 @@
       register: glue_connection_idempotent
 
     - name: Get info on Glue connection
-      command: "aws glue get-connection --connection-name {{ resource_prefix }}"
+      command: "aws glue get-connection --name {{ resource_prefix }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -211,7 +211,7 @@
       register: glue_connection_update_check
 
     - name: Get info on Glue connection
-      command: "aws glue get-connection --connection-name {{ resource_prefix }}"
+      command: "aws glue get-connection --name {{ resource_prefix }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -250,7 +250,7 @@
       register: glue_connection_update
 
     - name: Get info on Glue connection
-      command: "aws glue get-connection --connection-name {{ resource_prefix }}"
+      command: "aws glue get-connection --name {{ resource_prefix }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -282,7 +282,7 @@
       register: glue_connection_delete_check
 
     - name: Get info on Glue connection
-      command: "aws glue get-connection --connection-name {{ resource_prefix }}"
+      command: "aws glue get-connection --name {{ resource_prefix }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
