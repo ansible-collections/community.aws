@@ -337,7 +337,7 @@
     - name: Verity that Glue connection was created
       assert:
         that:
-          - glue_connection_jbdc.changed
+          - glue_connection_jdbc.changed
           - glue_connection_jdbc.name == connection_info_jdbc["Connection"]["Name"]
           - glue_connection_jdbc.connection_type == connection_info_jdbc["Connection"]["ConnectionType"]
 
