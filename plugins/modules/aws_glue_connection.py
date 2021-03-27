@@ -226,10 +226,6 @@ def _compare_glue_connection_params(user_params, current_params):
 
 # Glue module doesn't appear to have any waiters, unlike EC2 or RDS
 def _await_glue_connection(connection, module):
-    if module.check_mode:
-        # In check mode, there is no change even if you wait
-        return
-
     start_time = time.time()
     wait_timeout = start_time + 30
     check_interval = 5
@@ -297,7 +293,7 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
             module.fail_json_aws(e)
 
     # If changed, get the Glue connection again
-    if changed:
+    if changed and not module.check_mode:
         glue_connection = _await_glue_connection(connection, module)
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}))
