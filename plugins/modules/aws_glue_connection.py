@@ -171,7 +171,7 @@ def _get_glue_connection(connection, module):
         params['CatalogId'] = connection_catalog_id
 
     try:
-        return connection.get_connection(**params, aws_retry=True)['Connection']
+        return connection.get_connection(aws_retry=True, **params)['Connection']
     except is_boto3_error_code('EntityNotFoundException'):
         return None
 
@@ -284,14 +284,14 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
                 update_params = copy.deepcopy(params)
                 update_params['Name'] = update_params['ConnectionInput']['Name']
                 if not module.check_mode:
-                    connection.update_connection(**update_params, aws_retry=True)
+                    connection.update_connection(aws_retry=True, **update_params)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e)
     else:
         try:
             if not module.check_mode:
-                connection.create_connection(**params, aws_retry=True)
+                connection.create_connection(aws_retry=True, **params)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
@@ -321,7 +321,7 @@ def delete_glue_connection(connection, module, glue_connection):
     if glue_connection:
         try:
             if not module.check_mode:
-                connection.delete_connection(**params, aws_retry=True)
+                connection.delete_connection(aws_retry=True, **params)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
