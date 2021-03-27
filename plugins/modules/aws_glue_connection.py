@@ -21,6 +21,7 @@ options:
       - Availability Zone used by the connection
       - Required when I(connection_type=NETWORK).
     type: str
+    version_added: 1.5.0
   catalog_id:
     description:
       - The ID of the Data Catalog in which to create the connection. If none is supplied,

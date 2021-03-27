@@ -310,6 +310,48 @@
       assert:
         that:
           - glue_connection_delete.changed
+
+    - name: Create Glue connection (JDBC)
+      aws_glue_connection:
+        name: "{{ resource_prefix }}"
+        connection_properties:
+          jdbc_connection_url: "jdbc:mysql://mydb:3306/{{ resource_prefix }}"
+          username: my-username
+          password: my-password
+        state: present
+      register: glue_connection_jdbc
+
+    - name: Get info on Glue connection
+      command: "aws glue get-connection --name {{ resource_prefix }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: connection_info_query_jdbc
+
+    - name: Convert it to an object
+      set_fact:
+        connection_info_jdbc: "{{ connection_info_query_jdbc.stdout | from_json }}"
+
+    - name: Verity that Glue connection was created
+      assert:
+        that:
+          - glue_connection_jbdc.changed
+          - glue_connection_jdbc.name == connection_info_jdbc["Connection"]["Name"]
+          - glue_connection_jdbc.connection_properties == connection_info_jdbc["Connection"]["ConnectionProperties"]
+          - glue_connection_jdbc.connection_type == connection_info_jdbc["Connection"]["ConnectionType"]
+
+    - name: Delete Glue connection (JDBC)
+      aws_glue_connection:
+        name: "{{ resource_prefix }}"
+        state: absent
+      register: glue_connection_delete_jdbc
+
+    - name: Verity that Glue connection was deleted
+      assert:
+        that:
+          - glue_connection_delete_jdbc.changed
   always:
     - name: Delete Glue connection
       aws_glue_connection:
