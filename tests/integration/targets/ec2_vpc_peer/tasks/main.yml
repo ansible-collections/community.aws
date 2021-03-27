@@ -18,8 +18,8 @@
   - name: Assert success
     assert:
       that:
-          - peers_info is successful
-          - '"result" in peers_info'
+        - peers_info is successful
+        - '"result" in peers_info'
 
   # ============================================================
   - name: create VPC 1
@@ -34,7 +34,7 @@
   - name: Assert success
     assert:
       that:
-          - vpc_1_result is successful
+        - vpc_1_result is successful
 
   - name: create VPC 2
     ec2_vpc_net:
@@ -48,7 +48,7 @@
   - name: Assert success
     assert:
       that:
-          - vpc_2_result is successful
+        - vpc_2_result is successful
 
   - name: Store VPC IDs
     set_fact:
@@ -66,8 +66,14 @@
   - name: Assert success
     assert:
       that:
-          - vpc_peer is changed
-          - vpc_peer is successful
+        - vpc_peer is changed
+        - vpc_peer is successful
+        - "'peering_id' in vpc_peer"
+        - vpc_peer.peering_id.startswith('pcx-')
+
+  - name: Store Connection ID
+    set_fact:
+      peer_id_1: '{{ vpc_peer.peering_id }}'
 
   - name: (re-) Create local account VPC peering Connection (idempotency)
     ec2_vpc_peer:
@@ -80,8 +86,9 @@
   - name: Assert success
     assert:
       that:
-          - vpc_peer is not changed
-          - vpc_peer is successful
+        - vpc_peer is not changed
+        - vpc_peer is successful
+        - vpc_peer.peering_id == peer_id_1
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -107,8 +114,9 @@
   - name: Assert success
     assert:
       that:
-          - tag_peer is changed
-          - tag_peer is successful
+        - tag_peer is changed
+        - tag_peer is successful
+        - tag_peer.peering_id == peer_id_1
 
   - name: (re-) Update tags on the VPC Peering Connection (idempotency)
     ec2_vpc_peer:
@@ -122,8 +130,9 @@
   - name: Assert success
     assert:
       that:
-          - tag_peer is not changed
-          - tag_peer is successful
+        - tag_peer is not changed
+        - tag_peer is successful
+        - tag_peer.peering_id == peer_id_1
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -139,8 +148,9 @@
   - name: Assert success
     assert:
       that:
-          - action_peer is changed
-          - action_peer is successful
+        - action_peer is changed
+        - action_peer is successful
+        - action_peer.peering_id == peer_id_1
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -156,8 +166,9 @@
   - name: Assert success
     assert:
       that:
-          - action_peer is not changed
-          - action_peer is successful
+        - action_peer is not changed
+        - action_peer is successful
+        - action_peer.peering_id == peer_id_1
 
   - name: delete a local VPC peering Connection
     ec2_vpc_peer:
@@ -167,8 +178,8 @@
   - name: Assert success
     assert:
       that:
-          - delete_peer is changed
-          - delete_peer is successful
+        - delete_peer is changed
+        - delete_peer is successful
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -184,8 +195,8 @@
   - name: Assert success
     assert:
       that:
-          - delete_peer is not changed
-          - delete_peer is successful
+        - delete_peer is not changed
+        - delete_peer is successful
 
   - name: Create local account VPC peering Connection
     ec2_vpc_peer:
@@ -198,8 +209,14 @@
   - name: Assert success
     assert:
       that:
-          - vpc_peer2 is changed
-          - vpc_peer2 is successful
+        - vpc_peer2 is changed
+        - vpc_peer2 is successful
+        - "'peering_id' in vpc_peer2"
+        - vpc_peer2.peering_id.startswith('pcx-')
+
+  - name: Store Connection ID
+    set_fact:
+      peer_id_2: '{{ vpc_peer2.peering_id }}'
 
   - name: reject a local VPC peering Connection
     ec2_vpc_peer:
@@ -209,8 +226,9 @@
   - name: Assert success
     assert:
       that:
-          - reject_peer is changed
-          - reject_peer is successful
+        - reject_peer is changed
+        - reject_peer is successful
+        - reject_peer.peering_id == peer_id_2
 
   - name: (re-) reject a local VPC peering Connection
     ec2_vpc_peer:
@@ -220,8 +238,9 @@
   - name: Assert success
     assert:
       that:
-          - reject_peer is not changed
-          - reject_peer is successful
+        - reject_peer is not changed
+        - reject_peer is successful
+        - reject_peer.peering_id == peer_id_2
 
   - name: delete a local VPC peering Connection
     ec2_vpc_peer:
@@ -231,8 +250,8 @@
   - name: Assert success
     assert:
       that:
-          - delete_peer is not changed
-          - delete_peer is successful
+        - delete_peer is not changed
+        - delete_peer is successful
 
   always:
     # ============================================================
