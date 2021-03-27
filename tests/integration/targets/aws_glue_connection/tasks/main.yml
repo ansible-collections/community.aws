@@ -75,7 +75,7 @@
       assert:
         that:
           - glue_connection_check.changed
-          - not glue_connection_check.description
+          - glue_connection_check.description is not defined
 
     - name: Create Glue connection
       aws_glue_connection:
