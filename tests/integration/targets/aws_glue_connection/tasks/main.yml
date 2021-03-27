@@ -186,7 +186,7 @@
     - name: Verity that Glue connection was not modified
       assert:
         that:
-          - note glue_connection_idempotent.changed
+          - not glue_connection_idempotent.changed
           - connection_info_idempotent["Connection"]["Name"] == connection_info["Connection"]["Name"]
           - connection_info_idempotent["Connection"]["Description"] == connection_info["Connection"]["Description"]
           - connection_info_idempotent["Connection"]["ConnectionProperties"] == connection_info["Connection"]["ConnectionProperties"]
