@@ -153,7 +153,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
 
 
-@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def _get_glue_connection(connection, module):
     """
     Get an AWS Glue connection based on name. If not found, return None.
@@ -171,12 +170,11 @@ def _get_glue_connection(connection, module):
         params['CatalogId'] = connection_catalog_id
 
     try:
-        return connection.get_connection(**params)['Connection']
+        return connection.get_connection(**params, aws_retry=True)['Connection']
     except is_boto3_error_code('EntityNotFoundException'):
         return None
 
 
-@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def _compare_glue_connection_params(user_params, current_params):
     """
     Compare Glue connection params. If there is a difference, return True immediately else return False
@@ -225,7 +223,25 @@ def _compare_glue_connection_params(user_params, current_params):
     return False
 
 
-@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
+# Glue module doesn't appear to have any waiters, unlike EC2 or RDS
+def _await_glue_connection(connection, module):
+    if module.check_mode:
+        # In check mode, there is no change even if you wait
+        return
+
+    start_time = time.time()
+    wait_timeout = start_time + 30
+    check_interval = 5
+
+    while wait_timeout > time.time():
+        glue_connection = _get_glue_connection(connection, module)
+        if glue_connection and glue_connection.get('Name'):
+            return glue_connection
+        time.sleep(check_interval)
+
+    module.fail_json(msg='Timeout waiting for Glue connection %s' % module.params.get('name'))
+
+
 def create_or_update_glue_connection(connection, connection_ec2, module, glue_connection):
     """
     Create or update an AWS Glue connection
@@ -235,8 +251,8 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
     :param glue_connection: a dict of AWS Glue connection parameters or None
     :return:
     """
-
     changed = False
+
     params = dict()
     params['ConnectionInput'] = dict()
     params['ConnectionInput']['Name'] = module.params.get("name")
@@ -267,26 +283,25 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
                 update_params = copy.deepcopy(params)
                 update_params['Name'] = update_params['ConnectionInput']['Name']
                 if not module.check_mode:
-                    connection.update_connection(**update_params)
+                    connection.update_connection(**update_params, aws_retry=True)
                 changed = True
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e)
     else:
         try:
             if not module.check_mode:
-                connection.create_connection(**params)
+                connection.create_connection(**params, aws_retry=True)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
 
     # If changed, get the Glue connection again
     if changed:
-        glue_connection = _get_glue_connection(connection, module)
+        glue_connection = _await_glue_connection(connection, module)
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}))
 
 
-@AWSRetry.backoff(tries=5, delay=5, backoff=2.0)
 def delete_glue_connection(connection, module, glue_connection):
     """
     Delete an AWS Glue connection
@@ -296,7 +311,6 @@ def delete_glue_connection(connection, module, glue_connection):
     :param glue_connection: a dict of AWS Glue connection parameters or None
     :return:
     """
-
     changed = False
 
     params = {'ConnectionName': module.params.get("name")}
@@ -306,7 +320,7 @@ def delete_glue_connection(connection, module, glue_connection):
     if glue_connection:
         try:
             if not module.check_mode:
-                connection.delete_connection(**params)
+                connection.delete_connection(**params, aws_retry=True)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e)
@@ -339,8 +353,9 @@ def main():
                               supports_check_mode=True
                               )
 
-    connection_glue = module.client('glue')
-    connection_ec2 = module.client('ec2')
+    retry_decorator = AWSRetry.jittered_backoff(retries=10)
+    connection_glue = module.client('glue', retry_decorator=retry_decorator)
+    connection_ec2 = module.client('ec2', retry_decorator=retry_decorator)
 
     glue_connection = _get_glue_connection(connection_glue, module)
 
