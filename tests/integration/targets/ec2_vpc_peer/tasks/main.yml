@@ -156,6 +156,40 @@
       filters:
         status-code: ['pending-acceptance']
     register: pending_vpc_peers
+  - name: Assert expected values
+    assert:
+      that:
+        # Not guaranteed to just be us, only assert the shape
+        - pending_vpc_peers is successful
+        - "'vpc_peering_connections' in peer_info"
+        - "'result' in peer_info"
+        - "'accepter_vpc_info' in peer_details"
+        - "'requester_vpc_info' in peer_details"
+        - "'status' in peer_details"
+        - "'code' in peer_details.status"
+        - peer_details.status.code == "pending-acceptance"
+        - "'message' in peer_details.status"
+        - "'tags' in peer_details"
+        - "'vpc_peering_connection_id' in peer_details"
+        # Acceptor info isn't available until the connection has been accepted
+        - "'cidr_block' not in acceptor_details"
+        - "'cidr_block_set' not in acceptor_details"
+        - "'peering_options' not in acceptor_details"
+        - "'owner_id' in acceptor_details"
+        - "'region' in acceptor_details"
+        - "'vpc_id' in acceptor_details"
+        # Information about the 'requesting' VPC
+        - "'cidr_block' in requester_details"
+        - "'cidr_block_set' in requester_details"
+        - "'cidr_block' in requester_details.cidr_block_set[0]"
+        - "'peering_options' in requester_details"
+        - "'owner_id' in requester_details"
+        - "'region' in requester_details"
+        - "'vpc_id' in requester_details"
+    vars:
+      peer_details: '{{ pending_vpc_peers.vpc_peering_connections[0] }}'
+      acceptor_details: '{{ peer_details["accepter_vpc_info"] }}'
+      requester_details: '{{ peer_details["requester_vpc_info"] }}'
 
   - name: Update tags on the VPC Peering Connection
     ec2_vpc_peer:
