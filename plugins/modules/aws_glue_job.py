@@ -79,17 +79,20 @@ options:
     type: int
   glue_version:
     description:
-      - Glue version determines the versions of Apache Spark and Python that AWS Glue supports
+      - Glue version determines the versions of Apache Spark and Python that AWS Glue supports.
     type: str
+    version_added: 1.5.0
   worker_type:
     description:
-      - The type of predefined worker that is allocated when a job runs. Accepts a value of Standard, G.1X, or G.2X.
+      - The type of predefined worker that is allocated when a job runs.
     choices: [ 'Standard', 'G.1X', 'G.2X' ]
     type: str
+    version_added: 1.5.0
   number_of_workers:
     description:
       - The number of workers of a defined workerType that are allocated when a job runs.
     type: int
+    version_added: 1.5.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
