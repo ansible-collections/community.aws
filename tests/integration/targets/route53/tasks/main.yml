@@ -67,14 +67,11 @@
       hosted_zone_method: details
     register: hosted_zones
 
-  - name: debug (to remove)
-    debug:
-      var: hosted_zones
-
   - name: Assert newly created hosted zone only has NS and SOA records
     assert:
       that:
         - hosted_zones.HostedZone.ResourceRecordSetCount == 2
+        - hosted_zones.HostedZone.Config.PrivateZone
 
   - name: Create A record using zone fqdn
     route53:
@@ -353,6 +350,7 @@
       record: '{{ item.Name }}'
       type: '{{ item.Type }}'
       value: '{{ item.ResourceRecords | map(attribute="Value") | join(",") }}'
+      private_zone: true
     loop: '{{ z2_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA", "CNAME", "CAA"]) | list }}'
   - name: Delete test zone one '{{ zone_one }}'
     route53_zone:
