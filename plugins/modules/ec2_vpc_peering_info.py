@@ -73,16 +73,16 @@ vpc_peering_connections:
       contains:
         cidr_block:
           description: The primary CIDR for the VPC.
-          returned: success
+          returned: when connection is in the accepted state.
           type: str
           example: '10.10.10.0/23'
         cidr_block_set:
           description: A list of all CIDRs for the VPC.
-          returned: success
+          returned: when connection is in the accepted state.
           type: complex
           contains:
             cidr_block:
-              description: A CIDR block used by the VPC
+              description: A CIDR block used by the VPC.
               returned: success
               type: str
               example: '10.10.10.0/23'
@@ -93,7 +93,7 @@ vpc_peering_connections:
           example: 012345678901
         peering_options:
           description: Additional peering configuration.
-          returned: success
+          returned: when connection is in the accepted state.
           type: dict
           contains:
             allow_dns_resolution_from_remote_vpc:
@@ -125,12 +125,12 @@ vpc_peering_connections:
       contains:
         cidr_block:
           description: The primary CIDR for the VPC.
-          returned: success
+          returned: when connection is not in the deleted state.
           type: str
           example: '10.10.10.0/23'
         cidr_block_set:
           description: A list of all CIDRs for the VPC.
-          returned: success
+          returned: when connection is not in the deleted state.
           type: complex
           contains:
             cidr_block:
@@ -145,7 +145,7 @@ vpc_peering_connections:
           example: 012345678901
         peering_options:
           description: Additional peering configuration.
-          returned: success
+          returned: when connection is not in the deleted state.
           type: dict
           contains:
             allow_dns_resolution_from_remote_vpc:
