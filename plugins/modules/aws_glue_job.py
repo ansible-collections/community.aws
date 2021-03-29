@@ -378,7 +378,7 @@ def main():
             timeout=dict(type='int'),
             glue_version=dict(type='str'),
             worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str'),
-            number_of_workers=dict(type='int')
+            number_of_workers=dict(type='int'),
         )
     )
 
