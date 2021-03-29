@@ -2,7 +2,6 @@
 - name: ec2_vpc_igw tests
   collections:
     - amazon.aws
-
   module_defaults:
     group/aws:
       aws_access_key: "{{ aws_access_key }}"
@@ -10,6 +9,13 @@
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
+  - name: get ARN of calling user
+    aws_caller_info:
+    register: aws_caller_info
+  - name: Store Account ID for later use
+    set_fact:
+      account_id: '{{ aws_caller_info.account }}'
+
   # ============================================================
   - name: Fetch Peers in check_mode
     ec2_vpc_peering_info:
@@ -55,6 +61,10 @@
       vpc_1: '{{ vpc_1_result.vpc.id }}'
       vpc_2: '{{ vpc_2_result.vpc.id }}'
 
+  - name: Set a name to use with the connections
+    set_fact:
+      connection_name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+
   - name: Create local account VPC peering Connection
     ec2_vpc_peer:
       vpc_id: '{{ vpc_1 }}'
@@ -81,7 +91,7 @@
       peer_vpc_id: '{{ vpc_2 }}'
       state: present
       tags:
-        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+        Name: '{{ connection_name }}'
     register: vpc_peer
   - name: Assert success
     assert:
@@ -93,8 +103,53 @@
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
       peer_connection_ids:
-        - '{{ vpc_peer.peering_id }}'
+        - '{{ peer_id_1 }}'
     register: peer_info
+  - name: Assert expected values
+    assert:
+      that:
+        - peer_info is successful
+        - "'vpc_peering_connections' in peer_info"
+        - "'result' in peer_info"
+        - "'accepter_vpc_info' in peer_details"
+        - "'requester_vpc_info' in peer_details"
+        - "'status' in peer_details"
+        - "'code' in peer_details.status"
+        - peer_details.status.code == "pending-acceptance"
+        - "'message' in peer_details.status"
+        - "'tags' in peer_details"
+        - "'Name' in peer_details.tags"
+        - peer_details.tags.Name == connection_name
+        - "'vpc_peering_connection_id' in peer_details"
+        - peer_details.vpc_peering_connection_id == peer_id_1
+        # Acceptor info isn't available until the connection has been accepted
+        - "'cidr_block' not in acceptor_details"
+        - "'cidr_block_set' not in acceptor_details"
+        - "'peering_options' not in acceptor_details"
+        - "'owner_id' in acceptor_details"
+        - acceptor_details.owner_id == account_id
+        - "'region' in acceptor_details"
+        - acceptor_details.region == aws_region
+        - "'vpc_id' in acceptor_details"
+        - acceptor_details.vpc_id == vpc_2
+        # Information about the 'requesting' VPC
+        - "'cidr_block' in requester_details"
+        - requester_details.cidr_block == vpc_1_cidr
+        - "'cidr_block_set' in requester_details"
+        - requester_details.cidr_block_set | length == 1
+        - "'cidr_block' in requester_details.cidr_block_set[0]"
+        - requester_details.cidr_block_set[0].cidr_block == vpc_1_cidr
+        - "'peering_options' in requester_details"
+        - "'owner_id' in requester_details"
+        - requester_details.owner_id == account_id
+        - "'region' in requester_details"
+        - requester_details.region == aws_region
+        - "'vpc_id' in requester_details"
+        - requester_details.vpc_id == vpc_1
+    vars:
+      peer_details: '{{ peer_info.vpc_peering_connections[0] }}'
+      acceptor_details: '{{ peer_details["accepter_vpc_info"] }}'
+      requester_details: '{{ peer_details["requester_vpc_info"] }}'
 
   - name: Get all vpc peers with specific filters
     ec2_vpc_peering_info:
@@ -108,7 +163,7 @@
       peer_vpc_id: '{{ vpc_2 }}'
       state: present
       tags:
-        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+        Name: '{{ connection_name }}'
         testPrefix: '{{ resource_prefix }}'
     register: tag_peer
   - name: Assert success
@@ -124,7 +179,7 @@
       peer_vpc_id: '{{ vpc_2 }}'
       state: present
       tags:
-        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
+        Name: '{{ connection_name }}'
         testPrefix: '{{ resource_prefix }}'
     register: tag_peer
   - name: Assert success
@@ -137,8 +192,19 @@
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
       peer_connection_ids:
-        - '{{ vpc_peer.peering_id }}'
+        - '{{ peer_id_1 }}'
     register: peer_info
+  - name: Assert expected tags
+    assert:
+      that:
+        - peer_info is successful
+        - "'tags' in peer_details"
+        - "'Name' in peer_details.tags"
+        - "'testPrefix' in peer_details.tags"
+        - peer_details.tags.Name == connection_name
+        - peer_details.tags.testPrefix == resource_prefix
+    vars:
+      peer_details: '{{ peer_info.vpc_peering_connections[0] }}'
 
   - name: Accept local VPC peering request
     ec2_vpc_peer:
@@ -155,8 +221,63 @@
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
       peer_connection_ids:
-        - '{{ vpc_peer.peering_id }}'
+        - '{{ peer_id_1 }}'
     register: peer_info
+    until:
+      - peer_info.vpc_peering_connections[0].status.code == "active"
+    retries: 5
+    delay: 3
+  - name: Assert expected values
+    assert:
+      that:
+        - peer_info is successful
+        - "'vpc_peering_connections' in peer_info"
+        - "'result' in peer_info"
+        - "'accepter_vpc_info' in peer_details"
+        - "'requester_vpc_info' in peer_details"
+        - "'status' in peer_details"
+        - "'code' in peer_details.status"
+        - peer_details.status.code == "active"
+        - "'message' in peer_details.status"
+        - "'tags' in peer_details"
+        - "'Name' in peer_details.tags"
+        - peer_details.tags.Name == connection_name
+        - "'testPrefix' in peer_details.tags"
+        - peer_details.tags.testPrefix == resource_prefix
+        - "'vpc_peering_connection_id' in peer_details"
+        - peer_details.vpc_peering_connection_id == peer_id_1
+        # Information about the 'accepting' VPC should be available now
+        - "'cidr_block' in acceptor_details"
+        - acceptor_details.cidr_block == vpc_2_cidr
+        - "'cidr_block_set' in acceptor_details"
+        - acceptor_details.cidr_block_set | length == 1
+        - "'cidr_block' in acceptor_details.cidr_block_set[0]"
+        - acceptor_details.cidr_block_set[0].cidr_block == vpc_2_cidr
+        - "'peering_options' in acceptor_details"
+        - "'owner_id' in acceptor_details"
+        - acceptor_details.owner_id == account_id
+        - "'region' in acceptor_details"
+        - acceptor_details.region == aws_region
+        - "'vpc_id' in acceptor_details"
+        - acceptor_details.vpc_id == vpc_2
+        # Information about the 'requesting' VPC
+        - "'cidr_block' in requester_details"
+        - requester_details.cidr_block == vpc_1_cidr
+        - "'cidr_block_set' in requester_details"
+        - requester_details.cidr_block_set | length == 1
+        - "'cidr_block' in requester_details.cidr_block_set[0]"
+        - requester_details.cidr_block_set[0].cidr_block == vpc_1_cidr
+        - "'peering_options' in requester_details"
+        - "'owner_id' in requester_details"
+        - requester_details.owner_id == account_id
+        - "'region' in requester_details"
+        - requester_details.region == aws_region
+        - "'vpc_id' in requester_details"
+        - requester_details.vpc_id == vpc_1
+    vars:
+      peer_details: '{{ peer_info.vpc_peering_connections[0] }}'
+      acceptor_details: '{{ peer_details["accepter_vpc_info"] }}'
+      requester_details: '{{ peer_details["requester_vpc_info"] }}'
 
   - name: (re-) Accept local VPC peering request (idempotency)
     ec2_vpc_peer:
@@ -184,8 +305,51 @@
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
       peer_connection_ids:
-        - '{{ vpc_peer.peering_id }}'
+        - '{{  peer_id_1}}'
     register: peer_info
+  - name: Assert expected values
+    assert:
+      that:
+        - peer_info is successful
+        - "'vpc_peering_connections' in peer_info"
+        - "'result' in peer_info"
+        - "'accepter_vpc_info' in peer_details"
+        - "'requester_vpc_info' in peer_details"
+        - "'status' in peer_details"
+        - "'code' in peer_details.status"
+        - peer_details.status.code == "deleted"
+        - "'message' in peer_details.status"
+        - "'tags' in peer_details"
+        - "'Name' in peer_details.tags"
+        - peer_details.tags.Name == connection_name
+        - "'testPrefix' in peer_details.tags"
+        - peer_details.tags.testPrefix == resource_prefix
+        - "'vpc_peering_connection_id' in peer_details"
+        - peer_details.vpc_peering_connection_id == peer_id_1
+        # Information about the 'accepting' VPC is reduced again
+        - "'cidr_block' not in acceptor_details"
+        - "'cidr_block_set' not in acceptor_details"
+        - "'peering_options' not in acceptor_details"
+        - "'owner_id' in acceptor_details"
+        - acceptor_details.owner_id == account_id
+        - "'region' in acceptor_details"
+        - acceptor_details.region == aws_region
+        - "'vpc_id' in acceptor_details"
+        - acceptor_details.vpc_id == vpc_2
+        # Information about the 'requesting' VPC is reduced once the VPC's deleted
+        - "'cidr_block' not in requester_details"
+        - "'cidr_block_set' not in requester_details"
+        - "'peering_options' not in requester_details"
+        - "'owner_id' in requester_details"
+        - requester_details.owner_id == account_id
+        - "'region' in requester_details"
+        - requester_details.region == aws_region
+        - "'vpc_id' in requester_details"
+        - requester_details.vpc_id == vpc_1
+    vars:
+      peer_details: '{{ peer_info.vpc_peering_connections[0] }}'
+      acceptor_details: '{{ peer_details["accepter_vpc_info"] }}'
+      requester_details: '{{ peer_details["requester_vpc_info"] }}'
 
   - name: (re-) delete a local VPC peering Connection (idempotency)
     ec2_vpc_peer:
