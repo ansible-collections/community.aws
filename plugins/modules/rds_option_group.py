@@ -249,6 +249,7 @@ def match_option_group_options(client, module):
 							for groups in option[name]:
 								if groups['VpcSecurityGroupId'] not in setting_name[name]:
 									requires_update = True
+
 				for new_option in new_options:
 					if option['OptionName'] == new_option['OptionName']:
 						for current_option_setting in option['OptionSettings']:
@@ -256,8 +257,8 @@ def match_option_group_options(client, module):
 								if new_option_setting['Name'] == current_option_setting['Name']:
 									if new_option_setting['Value'] != current_option_setting['Value']:
 										requires_update = True
-	
-				
+
+
 
 	return requires_update
 
@@ -276,18 +277,18 @@ def compare_option_group(client, module):
         old_settings = []
         new_settings = []
         new_settings = set([item['OptionName'] for item in new_options])
-        #q("new_setting", new_settings)
+        q("new_setting", new_settings)
 
         old_settings = set([item['OptionName'] for item in current_option['Options']])
 
         
-        #q("old_settings", old_settings)
+        q("old_settings", old_settings)
 
         if new_settings != old_settings:
             to_be_added = list(new_settings - old_settings)
             to_be_removed = list(old_settings - new_settings)
         
-        #q("to be addded, to be removed", new_settings, old_settings)
+        q("to be addded, to be removed", new_settings, old_settings)
         return to_be_added, to_be_removed
 
 @q
@@ -306,7 +307,7 @@ def setup_rds_option_group(client, module):
             # Check if existing options require updating
             update_required = match_option_group_options(client, module)
             # Check if there are options to be added or removed
-            #to_be_added, to_be_removed = compare_option_group(client, module)
+            to_be_added, to_be_removed = compare_option_group(client, module)
         '''
             if to_be_added or update_required:
                 changed, new_option_group_options = create_option_group_options(client, module)
