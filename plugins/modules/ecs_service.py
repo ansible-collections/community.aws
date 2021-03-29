@@ -162,6 +162,7 @@ options:
           - Numeric part of platform version or LATEST
           - See U(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html) for more details.
         required: false
+        version_added: 1.5.0
     health_check_grace_period_seconds:
         description:
           - Seconds to wait before health checking the freshly added/updated services.
