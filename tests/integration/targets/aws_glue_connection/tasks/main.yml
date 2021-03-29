@@ -9,5 +9,5 @@
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
-    - include: ./connection_network.yml
-    - include: ./connection_jdbc.yml
+    - include_tasks: test_connection_network.yml
+    - include_tasks: test_connection_jdbc.yml
