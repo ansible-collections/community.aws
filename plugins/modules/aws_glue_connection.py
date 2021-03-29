@@ -87,6 +87,19 @@ EXAMPLES = r'''
       PASSWORD: my-password
     state: present
 
+# Create an AWS Glue network connection
+- community.aws.aws_glue_connection:
+    name: my-glue-network-connection
+    availability_zone: us-east-1a
+    connection_properties:
+      JDBC_ENFORCE_SSL: "false"
+    connection_type: NETWORK
+    description: Test connection
+    security_groups:
+      - sg-glue
+    subnet_id: subnet-123abc
+    state: present
+
 # Delete an AWS Glue connection
 - community.aws.aws_glue_connection:
     name: my-glue-connection
