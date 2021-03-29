@@ -51,6 +51,12 @@ options:
     default: present
     choices: ['present', 'absent', 'accept', 'reject']
     type: str
+  wait:
+    description:
+      - Wait for peering state changes to complete.
+    required: false
+    default: false
+    type: bool
 author: Mike Mochan (@mmochan)
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -227,6 +233,22 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
 
+def wait_for_state(client, module, state, pcx_id):
+    waiter = client.get_waiter('vpc_peering_connection_exists')
+    peer_filter = {
+        'vpc-peering-connection-id': pcx_id,
+        'status-code': state,
+    }
+    try:
+        waiter.wait(
+            Filters=ansible_dict_to_boto3_filter_list(peer_filter)
+        )
+    except botocore.exceptions.WaiterError as e:
+        module.fail_json_aws(e, "Failed to wait for state change")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, "Enable to describe Peerig Connection while waiting for state to change")
+
+
 def tags_changed(pcx_id, client, module):
     changed = False
     tags = dict()
@@ -295,6 +317,8 @@ def create_peer_connection(client, module):
     try:
         peering_conn = client.create_vpc_peering_connection(aws_retry=True, **params)
         pcx_id = peering_conn['VpcPeeringConnection']['VpcPeeringConnectionId']
+        if module.params.get('wait'):
+            wait_for_state(client, module, 'pending-acceptance', pcx_id)
         if module.params.get('tags'):
             create_tags(pcx_id, client, module)
         changed = True
@@ -330,6 +354,8 @@ def remove_peer_connection(client, module):
         params = dict()
         params['VpcPeeringConnectionId'] = pcx_id
         client.delete_vpc_peering_connection(aws_retry=True, **params)
+        if module.params.get('wait'):
+            wait_for_state(client, module, 'deleted', pcx_id)
         module.exit_json(changed=True)
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
@@ -350,17 +376,22 @@ def peer_status(client, module):
 def accept_reject(state, client, module):
     changed = False
     params = dict()
-    params['VpcPeeringConnectionId'] = module.params.get('peering_id')
+    pcx_id = module.params.get('peering_id')
+    params['VpcPeeringConnectionId'] = pcx_id
     current_state = peer_status(client, module)
     if current_state not in ['active', 'rejected']:
         try:
             if state == 'accept':
                 client.accept_vpc_peering_connection(aws_retry=True, **params)
+                target_state = 'active'
             else:
                 client.reject_vpc_peering_connection(aws_retry=True, **params)
+                target_state = 'rejected'
             if module.params.get('tags'):
                 create_tags(params['VpcPeeringConnectionId'], client, module)
             changed = True
+            if module.params.get('wait'):
+                wait_for_state(client, module, target_state, pcx_id)
         except botocore.exceptions.ClientError as e:
             module.fail_json(msg=str(e))
     if tags_changed(params['VpcPeeringConnectionId'], client, module):
@@ -407,6 +438,7 @@ def main():
         peer_owner_id=dict(),
         tags=dict(required=False, type='dict'),
         state=dict(default='present', choices=['present', 'absent', 'accept', 'reject']),
+        wait=dict(default=False, type='bool'),
     )
     required_if = [
         ('state', 'present', ['vpc_id', 'peer_vpc_id']),
