@@ -956,9 +956,12 @@ def get_changing_options_with_inconsistent_keys(modify_params, instance, purge_c
         # TODO: allow other purge_option module parameters rather than just checking for things to add
         if isinstance(current_option, list):
             if isinstance(desired_option, list):
-                if set(desired_option) < set(current_option):
-                    if (option == 'DBSecurityGroups' or option == 'VpcSecurityGroupIds') and purge_security_groups:
-                        changing_params[option] = desired_option
+                if (
+                    set(desired_option) < set(current_option) and
+                    option in ('DBSecurityGroups', 'VpcSecurityGroupIds',) and purge_security_groups
+                ):
+                    changing_params[option] = desired_option
+                elif set(desired_option) <= set(current_option):
                     continue
             elif isinstance(desired_option, string_types):
                 if desired_option in current_option:
@@ -978,7 +981,7 @@ def get_changing_options_with_inconsistent_keys(modify_params, instance, purge_c
                 format_option['DisableLogTypes'] = list(current_option.difference(desired_option))
             if format_option['EnableLogTypes'] or format_option['DisableLogTypes']:
                 changing_params[option] = format_option
-        elif option == 'DBSecurityGroups' or option == 'VpcSecurityGroupIds':
+        elif option in ('DBSecurityGroups', 'VpcSecurityGroupIds',):
             if purge_security_groups:
                 changing_params[option] = desired_option
             else:
