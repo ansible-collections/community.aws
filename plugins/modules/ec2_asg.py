@@ -103,12 +103,14 @@ options:
           - 'See also U(https://docs.aws.amazon.com/autoscaling/ec2/APIReference/API_InstancesDistribution.html)'
         required: false
         type: dict
+        version_added: 1.5.0
         suboptions:
           on_demand_allocation_strategy:
             description:
               - Indicates how to allocate instance types to fulfill On-Demand capacity.
             type: str
             required: false
+            version_added: 1.5.0
           on_demand_base_capacity:
             description:
               - >-
@@ -119,6 +121,7 @@ options:
                 percentage of the Auto Scaling group's desired capacity, per the OnDemandPercentageAboveBaseCapacity setting.
             type: int
             required: false
+            version_added: 1.5.0
           on_demand_percentage_above_base_capacity:
             description:
               - Controls the percentages of On-Demand Instances and Spot Instances for your additional capacity beyond OnDemandBaseCapacity.
@@ -126,11 +129,13 @@ options:
               - 'Valid range: 0 to 100'
             type: int
             required: false
+            version_added: 1.5.0
           spot_allocation_strategy:
             description:
               - Indicates how to allocate instances across Spot Instance pools.
             type: str
             required: false
+            version_added: 1.5.0
           spot_instance_pools:
             description:
               - >-
@@ -140,6 +145,7 @@ options:
               - 'Valid Range: Minimum value of 1. Maximum value of 20.'
             type: int
             required: false
+            version_added: 1.5.0
           spot_max_price:
             description:
               - The maximum price per unit hour that you are willing to pay for a Spot Instance.
@@ -147,6 +153,7 @@ options:
               - To remove a value that you previously set, include the parameter but leave the value blank.
             type: str
             required: false
+            version_added: 1.5.0
     type: dict
   placement_group:
     description:
