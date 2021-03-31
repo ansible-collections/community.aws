@@ -8,11 +8,15 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_option_group
+version_added: 1.5.0
 short_description: Manages RDS Option Groups
 description:
   -Manages the creation, modification, deletion of RDS option groups.
 version_added: "2.4"
-author: "Nick Aslanidis (@naslanidis)"
+author:
+  - "Nick Aslanidis (@naslanidis)"
+  - "Will Thames (@willthames)"
+  - "Alina Buzachis (@alinabuzachis)"
 options:
   option_group_name:
     description:
@@ -150,19 +154,18 @@ import q
 
 @q
 def get_option_group(client, module):
-	params = dict()
-	params['OptionGroupName'] = module.params.get('option_group_name')
-	
-	try:
-		_result = client.describe_option_groups(aws_retry=True, **params)
-	except is_boto3_error_code('OptionGroupNotFoundFault'):
-		return {}
-	except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-		module.fail_json_aws(e)
-	
-	result = _result['OptionGroupsList'][0]
-	
-	return result
+    params = dict()
+    params['OptionGroupName'] = module.params.get('option_group_name')
+
+    try:
+        _result = client.describe_option_groups(aws_retry=True, **params)
+    except is_boto3_error_code('OptionGroupNotFoundFault'):
+        return {}
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e)
+
+    result = _result['OptionGroupsList'][0]
+    return result
 
 
 def create_option_group_options(client, module):
@@ -217,79 +220,73 @@ def create_option_group(client, module):
         module.fail_json_aws(e)
 
     result = camel_dict_to_snake_dict(_result['OptionGroup'])
-    
+
     return changed, result
+
 
 @q
 def match_option_group_options(client, module):
-	requires_update = False
-	new_options = module.params.get('options')
-		
-	# Get existing option groups and compare to our new options spec
-	current_option_group = get_option_group(client, module)
-	
-	if current_option_group['Options'] == [] and new_options:
-		requires_update = True
-	
-	else:
-		for option in current_option_group['Options']:
-			q("option", option)
-			for setting_name in new_options:
-				if setting_name['OptionName'] == option['OptionName']:
-					q("setting_name['OptionName']", setting_name['OptionName'])
-					for name in iter(setting_name):
-                        # Security groups need to be handled separately due to different keys on request and what is
-                        # returned by the API
-						q("name", name)
-						if name in iter(option) and name != 'OptionSettings' and name != 'VpcSecurityGroupMemberships':
-							if setting_name[name] != option[name]:
-								requires_update = True
-						
-						if name in iter(option) and name == 'VpcSecurityGroupMemberships':
-							for groups in option[name]:
-								if groups['VpcSecurityGroupId'] not in setting_name[name]:
-									requires_update = True
+    requires_update = False
+    new_options = module.params.get('options')
 
-				for new_option in new_options:
-					if option['OptionName'] == new_option['OptionName']:
-						for current_option_setting in option['OptionSettings']:
-							for new_option_setting in new_option['OptionSettings']:
-								if new_option_setting['Name'] == current_option_setting['Name']:
-									if new_option_setting['Value'] != current_option_setting['Value']:
-										requires_update = True
+    # Get existing option groups and compare to our new options spec
+    current_option = get_option_group(client, module)
 
+    if current_option['Options'] == [] and new_options:
+        requires_update = True
+    else:
+        for option in current_option['Options']:
+            for setting_name in new_options:
+                if setting_name['OptionName'] == option['OptionName']:
 
+                    # Security groups need to be handled separately due to different keys on request and what is
+                    # returned by the API
 
-	return requires_update
+                    if any(
+                        name in option.keys() - ['OptionSettings', 'VpcSecurityGroupMemberships'] and
+                        setting_name[name] != option[name]
+                        for name in setting_name
+                    ):
+                        requires_update = True
+
+                    if any(
+                        name in option and name == 'VpcSecurityGroupMemberships'
+                        for name in setting_name
+                    ):
+                        current_sg = set(sg['VpcSecurityGroupId'] for sg in option['VpcSecurityGroupMemberships'])
+                        new_sg = set(setting_name['VpcSecurityGroupMemberships'])
+
+                        if current_sg != new_sg:
+                            requires_update = True
+
+                    for new_option_setting in setting_name['OptionSettings']:
+                        if any(
+                                new_option_setting['Name'] == current_option_setting['Name'] and
+                                new_option_setting['Value'] != current_option_setting['Value']
+                                for current_option_setting in option['OptionSettings']
+                        ):
+                            requires_update = True
+
+    return requires_update
+
 
 @q
 def compare_option_group(client, module):
-    current_option_group = get_option_group(client, module)
-    new_options = module.params.get('options')
     to_be_added = None
     to_be_removed = None
 
-    q("current_option_group", current_option_group)
-    q("new_options", new_options)
+    current_option = get_option_group(client, module)
+    new_options = module.params.get('options')
 
-    for current_option in current_option_group:
-        # Catch new settings you've provided that aren't in the current settings
-        old_settings = []
-        new_settings = []
-        new_settings = set([item['OptionName'] for item in new_options])
-        q("new_setting", new_settings)
+    new_settings = set([item['OptionName'] for item in new_options])
+    old_settings = set([item['OptionName'] for item in current_option['Options']])
 
-        old_settings = set([item['OptionName'] for item in current_option['Options']])
+    if new_settings != old_settings:
+        to_be_added = list(new_settings - old_settings)
+        to_be_removed = list(old_settings - new_settings)
 
-        
-        q("old_settings", old_settings)
+    return to_be_added, to_be_removed
 
-        if new_settings != old_settings:
-            to_be_added = list(new_settings - old_settings)
-            to_be_removed = list(old_settings - new_settings)
-        
-        q("to be addded, to be removed", new_settings, old_settings)
-        return to_be_added, to_be_removed
 
 @q
 def setup_rds_option_group(client, module):
@@ -301,46 +298,47 @@ def setup_rds_option_group(client, module):
 
     if existing_option_group:
         results = existing_option_group
-        #q("create option group", results)
-        
+
         if module.params.get('options'):
             # Check if existing options require updating
             update_required = match_option_group_options(client, module)
+
             # Check if there are options to be added or removed
             to_be_added, to_be_removed = compare_option_group(client, module)
-        '''
+
             if to_be_added or update_required:
                 changed, new_option_group_options = create_option_group_options(client, module)
 
             if to_be_removed:
                 changed, removed_option_group_options = remove_option_group_options(client, module, to_be_removed)
-            # If changed, get updated version of option group
 
+            # If changed, get updated version of option group
             if changed:
                 results = get_option_group(client, module)
 
         else:
             # No options were supplied. If options exist, remove them
             current_option_group = get_option_group(client, module)
+
             if current_option_group['Options'] != []:
                 # Here we would call our remove options function
                 options_to_remove = []
+
                 for option in current_option_group['Options']:
                     options_to_remove.append(option['OptionName'])
 
                 changed, removed_option_group_options = remove_option_group_options(client, module, options_to_remove)
+
                 # If changed, get updated version of option group
                 if changed:
                     results = get_option_group(client, module)
-        '''
+
     else:
         changed, new_option_group = create_option_group(client, module)
-        q("new_option_group", new_option_group)
 
         if module.params.get('options'):
             changed, new_option_group_options = create_option_group_options(client, module)
         results = get_option_group(client, module)
-
 
     return changed, results
 
@@ -379,7 +377,7 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True,
     )
-    
+
     try:
         client = module.client('rds', retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

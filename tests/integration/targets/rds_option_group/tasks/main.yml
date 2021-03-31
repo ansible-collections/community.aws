@@ -33,8 +33,8 @@
     register: subnets_result
     loop:
         - {"cidr": "10.122.122.128/28", "zone": "{{ aws_region }}a"}
-        #- {"cidr": "10.122.122.144/28", "zone": "{{ aws_region }}b"}
-        #- {"cidr": "10.122.122.160/28", "zone": "{{ aws_region }}c"}
+        - {"cidr": "10.122.122.144/28", "zone": "{{ aws_region }}b"}
+        - {"cidr": "10.122.122.160/28", "zone": "{{ aws_region }}c"}
 
   - name: Create security groups
     ec2_group:
@@ -44,10 +44,20 @@
     register: sgs_result
     loop:
         - "{{ resource_prefix }}-sg-1"
-        #- "{{ resource_prefix }}-sg-2"
-        #- "{{ resource_prefix }}-sg-3"
+        - "{{ resource_prefix }}-sg-2"
+        - "{{ resource_prefix }}-sg-3"
 
   - debug: var=sgs_result
+
+  - name: List all the option groups
+    rds_option_group_info:
+      region: "{{ aws_region }}"
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+    register: option_groups
+  
+  - debug: var=option_groups
 
   - name: Create an RDS Mysql option group
     rds_option_group:
@@ -74,9 +84,40 @@
               Value: '1.25'
     register: new_rds_mysql_option_group
 
-  - debug: var=new_rds_mysql_option_group
+  - assert:
+      that:
+        - new_rds_mysql_option_group.changed
 
-  - name: Create an RDS Mysql option group
+  - name: Create an RDS Mysql option group (idempotency)
+    rds_option_group:
+        #profile: production
+        region: "{{ aws_region }}"
+        aws_access_key: '{{ aws_access_key }}'
+        aws_secret_key: '{{ aws_secret_key }}'
+        security_token: '{{ security_token | default(omit) }}'
+        state: present
+        option_group_name: "{{ option_group_name }}"
+        engine_name: "{{ engine_name }}"
+        major_engine_version: "{{ major_engine_version }}"
+        option_group_description: "{{ option_group_description }}"
+        apply_immediately: true
+        options:
+        - OptionName: MEMCACHED
+          Port: 11211
+          VpcSecurityGroupMemberships:
+            - "{{ sgs_result.results.0.group_id }}"
+          OptionSettings:
+            - Name: MAX_SIMULTANEOUS_CONNECTIONS
+              Value: '20'
+            - Name: CHUNK_SIZE_GROWTH_FACTOR
+              Value: '1.25'
+    register: new_rds_mysql_option_group
+
+  - assert:
+      that:
+        - not new_rds_mysql_option_group.changed
+
+  - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
     rds_option_group:
         #profile: production
         region: "{{ aws_region }}"
@@ -96,40 +137,56 @@
             - "{{ sgs_result.results.0.group_id }}"
           OptionSettings:
             - Name: CHUNK_SIZE_GROWTH_FACTOR
-              Value: '1.25'
+              Value: '1.5'
     register: new_rds_mysql_option_group
 
-  - debug: var=new_rds_mysql_option_group
+  - assert:
+      that:
+        - new_rds_mysql_option_group.changed
+  
+  - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
+    rds_option_group:
+        #profile: production
+        region: "{{ aws_region }}"
+        aws_access_key: '{{ aws_access_key }}'
+        aws_secret_key: '{{ aws_secret_key }}'
+        security_token: '{{ security_token | default(omit) }}'
+        state: present
+        option_group_name: "{{ option_group_name }}"
+        engine_name: "{{ engine_name }}"
+        major_engine_version: "{{ major_engine_version }}"
+        option_group_description: "{{ option_group_description }}"
+        apply_immediately: true
+        options:
+        - OptionName: MEMCACHED
+          Port: 11211
+          VpcSecurityGroupMemberships:
+            - "{{ sgs_result.results.0.group_id }}"
+            - "{{ sgs_result.results.1.group_id }}"
+            - "{{ sgs_result.results.2.group_id }}"
+          OptionSettings:
+            - Name: CHUNK_SIZE_GROWTH_FACTOR
+              Value: '1.5'
+    register: new_rds_mysql_option_group
 
-  #- name: Create a DB instance in the VPC with two security groups
-  #  rds_instance:
-  #      id: "{{ instance_id }}"
-  #      state: present
-  #      engine: mariadb
-  #      username: "{{ username }}"
-  #      password: "{{ password }}"
-  #      db_instance_class: "{{ db_instance_class }}"
-  #      allocated_storage: "{{ allocated_storage }}"
-  #      vpc_security_group_ids:
-  #          - "{{ sgs_result.results.0.group_id }}"
-  #  register: result
-
-  #- assert:
-  #      that:
-  #          - result.changed
-  #          - "result.db_instance_identifier == '{{ instance_id }}'"
-
+  - assert:
+      that:
+        - new_rds_mysql_option_group.changed
+  
+  - name: Get info about an option group
+    rds_option_group_info:
+      region: "{{ aws_region }}"
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      option_group_name: "{{ option_group_name }}"
+    register: option_groups
+  
+  - debug: var=option_groups
 
   always:
-  #- name: Ensure the resource doesn't exist
-  #  rds_instance:
-  #      id: "{{ instance_id }}"
-  #      state: absent
-  #      skip_final_snapshot: True
-  #  register: result
-  #  ignore_errors: yes
 
-  - name: Delete an RDS Mysql Option group
+  - name: Delete an RDS Mysql option group
     community.aws.rds_option_group:
         state: absent
         region: "{{ aws_region }}"
@@ -148,8 +205,8 @@
     register: sgs_result
     loop:
         - "{{ resource_prefix }}-sg-1"
-        #- "{{ resource_prefix }}-sg-2"
-        #- "{{ resource_prefix }}-sg-3"
+        - "{{ resource_prefix }}-sg-2"
+        - "{{ resource_prefix }}-sg-3"
     ignore_errors: yes
 
   - name: remove subnets
@@ -168,8 +225,8 @@
     delay: 10
     loop:
         - {"cidr": "10.122.122.128/28", "zone": "{{ aws_region }}a"}
-        #- {"cidr": "10.122.122.144/28", "zone": "{{ aws_region }}b"}
-        #- {"cidr": "10.122.122.160/28", "zone": "{{ aws_region }}c"}
+        - {"cidr": "10.122.122.144/28", "zone": "{{ aws_region }}b"}
+        - {"cidr": "10.122.122.160/28", "zone": "{{ aws_region }}c"}
 
   - name: create a VPC
     ec2_vpc_net:
@@ -184,13 +241,3 @@
     retries: 30
     until: vpc_result is not failed
     delay: 10
-
-  #- name: Ensure the resource doesn't exist
-  #  rds_instance:
-  #      id: "{{ instance_id }}"
-  #      state: absent
-  #      skip_final_snapshot: True
-  #  register: result
-  #  ignore_errors: yes
-
-
