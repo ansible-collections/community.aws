@@ -4,37 +4,63 @@
     - amazon.aws
   
   module_defaults:
-    group/aws:
+    group/aws: &creds
       aws_access_key: '{{ aws_access_key }}'
       aws_secret_key: '{{ aws_secret_key }}'
       security_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
+      
 
   block:
   - name: create a VPC
     ec2_vpc_net:
-        name: "{{ resource_prefix }}-vpc"
+        name: "{{ vpc_name }}"
         state: present
-        cidr_block: "10.122.122.128/26"
-        tags:
-            Name: "{{ resource_prefix }}-vpc"
-            Description: "created by rds_instance integration tests"
+        cidr_block: "{{ vpc_cidr }}"
     register: vpc_result
+  
+  - name: Assert success
+    assert:
+      that:
+          - vpc_result is successful
+          - '"vpc" in vpc_result'
+          - '"cidr_block" in vpc_result.vpc'
+          - vpc_result.vpc.cidr_block == vpc_cidr
+          - '"id" in vpc_result.vpc'
+          - vpc_result.vpc.id.startswith("vpc-")
+          - '"state" in vpc_result.vpc'
+          - vpc_result.vpc.state == 'available'
+          - '"tags" in vpc_result.vpc'
 
-  - name: create subnets
+  - name: "set fact: VPC ID"
+    set_fact:
+      vpc_id: "{{ vpc_result.vpc.id }}"
+
+  - name: create subnet
     ec2_vpc_subnet:
-        cidr: "{{ item.cidr }}"
-        az: "{{ item.zone }}"
-        vpc_id: "{{ vpc_result.vpc.id }}"
-        tags:
-            Name: "{{ resource_prefix }}-subnet"
-            Description: "created by rds_instance integration tests"
+        cidr: "{{ subnet_cidr}}"
+        vpc_id: "{{ vpc_id }}"
         state: present
-    register: subnets_result
-    loop:
-        - {"cidr": "10.122.122.128/28", "zone": "{{ aws_region }}a"}
-        - {"cidr": "10.122.122.144/28", "zone": "{{ aws_region }}b"}
-        - {"cidr": "10.122.122.160/28", "zone": "{{ aws_region }}c"}
+    register: subnet_result
+  
+  - name: Assert success
+    assert:
+      that:
+        - subnet_result is successful
+        - '"subnet" in subnet_result'
+        - '"cidr_block" in subnet_result.subnet'
+        - subnet_result.subnet.cidr_block == subnet_cidr
+        - '"id" in subnet_result.subnet'
+        - subnet_result.subnet.id.startswith("subnet-")
+        - '"state" in subnet_result.subnet'
+        - subnet_result.subnet.state == 'available'
+        - '"tags" in subnet_result.subnet'
+        - subnet_result.subnet.vpc_id == vpc_id
+
+  - name: "set fact: VPC subnet ID"
+    set_fact:
+      subnet_id: "{{ subnet_result.subnet.id }}"
+
 
   - name: Create security groups
     ec2_group:
@@ -43,29 +69,36 @@
         state: present
     register: sgs_result
     loop:
-        - "{{ resource_prefix }}-sg-1"
-        - "{{ resource_prefix }}-sg-2"
-        - "{{ resource_prefix }}-sg-3"
+        - "{{ sg_1_name }}"
+        - "{{ sg_2_name }}"
+        - "{{ sg_3_name }}"
 
-  - debug: var=sgs_result
+  - name: Assert success
+    assert:
+      that:
+        - sgs_result is successful
+
+  - name: "set fact: security groups ID"
+    set_fact:
+      sg_1: "{{ sgs_result.results.0.group_id }}"
+      sg_2: "{{ sgs_result.results.1.group_id }}"
+      sg_3: "{{ sgs_result.results.2.group_id }}"
+
 
   - name: List all the option groups
     rds_option_group_info:
-      region: "{{ aws_region }}"
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
-    register: option_groups
+      <<: *creds
+    register: option_groups_result
   
-  - debug: var=option_groups
+  - name: Assert success
+    assert:
+      that:
+          - option_groups_result is successful
+
 
   - name: Create an RDS Mysql option group
     rds_option_group:
-        #profile: production
-        region: "{{ aws_region }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        <<: *creds
         state: present
         option_group_name: "{{ option_group_name }}"
         engine_name: "{{ engine_name }}"
@@ -76,7 +109,7 @@
         - OptionName: MEMCACHED
           Port: 11211
           VpcSecurityGroupMemberships:
-            - "{{ sgs_result.results.0.group_id }}"
+            - "{{ sg_1 }}"
           OptionSettings:
             - Name: MAX_SIMULTANEOUS_CONNECTIONS
               Value: '20'
@@ -90,11 +123,7 @@
 
   - name: Create an RDS Mysql option group (idempotency)
     rds_option_group:
-        #profile: production
-        region: "{{ aws_region }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        <<: *creds
         state: present
         option_group_name: "{{ option_group_name }}"
         engine_name: "{{ engine_name }}"
@@ -105,7 +134,7 @@
         - OptionName: MEMCACHED
           Port: 11211
           VpcSecurityGroupMemberships:
-            - "{{ sgs_result.results.0.group_id }}"
+            - "{{ sg_1 }}"
           OptionSettings:
             - Name: MAX_SIMULTANEOUS_CONNECTIONS
               Value: '20'
@@ -119,11 +148,7 @@
 
   - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
     rds_option_group:
-        #profile: production
-        region: "{{ aws_region }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        <<: *creds
         state: present
         option_group_name: "{{ option_group_name }}"
         engine_name: "{{ engine_name }}"
@@ -134,7 +159,7 @@
         - OptionName: MEMCACHED
           Port: 11211
           VpcSecurityGroupMemberships:
-            - "{{ sgs_result.results.0.group_id }}"
+            - "{{ sg_1 }}"
           OptionSettings:
             - Name: CHUNK_SIZE_GROWTH_FACTOR
               Value: '1.5'
@@ -146,11 +171,7 @@
   
   - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
     rds_option_group:
-        #profile: production
-        region: "{{ aws_region }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
+        <<: *creds
         state: present
         option_group_name: "{{ option_group_name }}"
         engine_name: "{{ engine_name }}"
@@ -161,9 +182,9 @@
         - OptionName: MEMCACHED
           Port: 11211
           VpcSecurityGroupMemberships:
-            - "{{ sgs_result.results.0.group_id }}"
-            - "{{ sgs_result.results.1.group_id }}"
-            - "{{ sgs_result.results.2.group_id }}"
+            - "{{ sg_1 }}"
+            - "{{ sg_2 }}"
+            - "{{ sg_3 }}"
           OptionSettings:
             - Name: CHUNK_SIZE_GROWTH_FACTOR
               Value: '1.5'
@@ -175,24 +196,22 @@
   
   - name: Get info about an option group
     rds_option_group_info:
-      region: "{{ aws_region }}"
-      aws_access_key: '{{ aws_access_key }}'
-      aws_secret_key: '{{ aws_secret_key }}'
-      security_token: '{{ security_token | default(omit) }}'
+      <<: *creds
       option_group_name: "{{ option_group_name }}"
     register: option_groups
   
-  - debug: var=option_groups
+  - name: Assert success
+    assert:
+      that:
+          - option_groups_result is successful
+
 
   always:
 
   - name: Delete an RDS Mysql option group
     community.aws.rds_option_group:
+        <<: *creds
         state: absent
-        region: "{{ aws_region }}"
-        aws_access_key: '{{ aws_access_key }}'
-        aws_secret_key: '{{ aws_secret_key }}'
-        security_token: '{{ security_token | default(omit) }}'
         option_group_name: "{{ option_group_name }}"
     register: deleted_rds_mysql_option_group
     ignore_errors: yes
@@ -204,40 +223,22 @@
         state: absent
     register: sgs_result
     loop:
-        - "{{ resource_prefix }}-sg-1"
-        - "{{ resource_prefix }}-sg-2"
-        - "{{ resource_prefix }}-sg-3"
+        - "{{ sg_1_name }}"
+        - "{{ sg_2_name }}"
+        - "{{ sg_3_name }}"
     ignore_errors: yes
 
-  - name: remove subnets
+  - name: remove subnet
     ec2_vpc_subnet:
-        cidr: "{{ item.cidr }}"
-        az: "{{ item.zone }}"
-        vpc_id: "{{ vpc_result.vpc.id }}"
-        tags:
-            Name: "{{ resource_prefix }}-subnet"
-            Description: "created by rds_instance integration tests"
+        cidr: "{{ subnet_cidr }}"
+        vpc_id: "{{ vpc_id }}"
         state: absent
-    register: subnets
     ignore_errors: yes
-    retries: 30
-    until: subnets is not failed
-    delay: 10
-    loop:
-        - {"cidr": "10.122.122.128/28", "zone": "{{ aws_region }}a"}
-        - {"cidr": "10.122.122.144/28", "zone": "{{ aws_region }}b"}
-        - {"cidr": "10.122.122.160/28", "zone": "{{ aws_region }}c"}
 
-  - name: create a VPC
+  - name: Delete VPC
     ec2_vpc_net:
-        name: "{{ resource_prefix }}-vpc"
-        state: absent
-        cidr_block: "10.122.122.128/26"
-        tags:
-            Name: "{{ resource_prefix }}-vpc"
-            Description: "created by rds_instance integration tests"
-    register: vpc_result
+      name: "{{ vpc_name }}"
+      cidr_block: "{{ vpc_cidr }}"
+      state: absent
+      purge_cidrs: yes
     ignore_errors: yes
-    retries: 30
-    until: vpc_result is not failed
-    delay: 10

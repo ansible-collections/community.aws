@@ -9,10 +9,9 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: rds_option_group
 version_added: 1.5.0
-short_description: Manages RDS Option Groups
+short_description: Manages RDS option groups
 description:
-  -Manages the creation, modification, deletion of RDS option groups.
-version_added: "2.4"
+  - Manages the creation, modification, deletion of RDS option groups
 author:
   - "Nick Aslanidis (@naslanidis)"
   - "Will Thames (@willthames)"
@@ -20,17 +19,17 @@ author:
 options:
   option_group_name:
     description:
-      - Specifies the name of the option group to be created.
+      - Specifies the name of the option group to be created
     required: true
     default: null
   engine_name:
     description:
-      - Specifies the name of the engine that this option group should be associated with.
+      - Specifies the name of the engine that this option group should be associated with
     required: true
     default: null
   major_engine_version:
     description:
-      - Specifies the major version of the engine that this option group should be associated with.
+      - Specifies the major version of the engine that this option group should be associated with
     required: true
     default: null
   option_group_description:
@@ -45,9 +44,9 @@ options:
     default: false
   options:
     description:
-      - Options in this list are added to the option group.
-      - If already present, the specified configuration is used to update the existing configuration.
-      - If none are supplied, any existing options are removed.
+      - Options in this list are added to the option group
+      - If already present, the specified configuration is used to update the existing configuration
+      - If none are supplied, any existing options are removed
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -259,13 +258,13 @@ def match_option_group_options(client, module):
                         if current_sg != new_sg:
                             requires_update = True
 
-                    for new_option_setting in setting_name['OptionSettings']:
-                        if any(
-                                new_option_setting['Name'] == current_option_setting['Name'] and
-                                new_option_setting['Value'] != current_option_setting['Value']
-                                for current_option_setting in option['OptionSettings']
-                        ):
-                            requires_update = True
+                    if any(
+                        new_option_setting['Name'] == current_option_setting['Name'] and
+                        new_option_setting['Value'] != current_option_setting['Value']
+                        for new_option_setting in setting_name['OptionSettings']
+                        for current_option_setting in option['OptionSettings']
+                    ):
+                        requires_update = True
 
     return requires_update
 
