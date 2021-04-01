@@ -309,7 +309,7 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
     if changed and not module.check_mode:
         glue_connection = _await_glue_connection(connection, module)
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}))
+    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}, ignore_list=['ConnectionProperties']))
 
 
 def delete_glue_connection(connection, module, glue_connection):

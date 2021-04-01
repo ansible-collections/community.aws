@@ -52,7 +52,7 @@
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
-          jdbc_enforce_ssl: "false"
+          JDBC_ENFORCE_SSL: "false"
         connection_type: NETWORK
         description: Test connection
         security_groups:
@@ -73,7 +73,7 @@
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
-          jdbc_enforce_ssl: "false"
+          JDBC_ENFORCE_SSL: "false"
         connection_type: NETWORK
         description: Test connection
         security_groups:
@@ -112,7 +112,7 @@
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
-          jdbc_enforce_ssl: "false"
+          JDBC_ENFORCE_SSL: "false"
         connection_type: NETWORK
         description: Test connection
         security_groups:
@@ -152,7 +152,7 @@
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
-          jdbc_enforce_ssl: "false"
+          JDBC_ENFORCE_SSL: "false"
         connection_type: NETWORK
         description: Test connection
         security_groups:
@@ -191,7 +191,7 @@
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
-          jdbc_enforce_ssl: "false"
+          JDBC_ENFORCE_SSL: "false"
         connection_type: NETWORK
         description: Test connection modified
         security_groups:
@@ -231,7 +231,7 @@
         name: "{{ resource_prefix }}"
         availability_zone: "{{ aws_region }}a"
         connection_properties:
-          jdbc_enforce_ssl: "false"
+          JDBC_ENFORCE_SSL: "false"
         connection_type: NETWORK
         description: Test connection modified
         security_groups:
