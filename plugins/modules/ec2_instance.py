@@ -822,7 +822,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
-# import q
 
 module = None
 
@@ -1779,7 +1778,6 @@ def main():
                 tags['Name'] = name
             changed |= manage_tags(match, tags, module.params.get('purge_tags', False), ec2)
 
-    # q('state: ', state)
     if state in ('present', 'running', 'started'):
         ensure_present(existing_matches=existing_matches, changed=changed, ec2=ec2, state=state)
     elif state in ('restarted', 'rebooted', 'stopped', 'absent', 'terminated'):

@@ -57,9 +57,6 @@
       set_fact:
         instance_termination_status: "{{ instance_termination_check.stdout | from_json }}"
 
-    - debug:
-        msg: '{{ instance_termination_status.DisableApiTermination.Value }}'
-
     - name: Assert termination protection status did not change in check_mode
       assert:
         that:
