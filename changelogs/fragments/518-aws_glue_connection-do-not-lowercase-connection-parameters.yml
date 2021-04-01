@@ -1,2 +1,2 @@
 minor_changes:
-  - aws_glue_connection - Avoid converting connection_parameters to lowercase (https://github.com/ansible-collections/community.aws/pull/518).
+  - aws_glue_connection - Avoid converting connection_parameters to lowercase (https://github.com/ansible-collections/community.aws/pull/518)
