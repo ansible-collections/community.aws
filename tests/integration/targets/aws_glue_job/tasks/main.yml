@@ -50,7 +50,7 @@
       assert:
         that:
           - glue_job_check.changed
-          - not glue_job_check.description
+          - "description" not in glue_job_check
 
     - name: Create Glue job
       aws_glue_job:

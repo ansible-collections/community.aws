@@ -432,7 +432,7 @@ def create_or_update_glue_job(connection, module, glue_job):
 
     changed |= ensure_tags(connection, module, glue_job)
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_job or {}))
+    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_job or {}, ignore_list=['DefaultArguments']))
 
 
 def delete_glue_job(connection, module, glue_job):
