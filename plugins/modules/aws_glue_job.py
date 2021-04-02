@@ -52,13 +52,6 @@ options:
     description:
       - Description of the job being defined.
     type: str
-  glue_version:
-    description:
-      - AWS Glue version. This determines the available version of Apache Scala and Python as described here
-        U(https://docs.aws.amazon.com/glue/latest/dg/add-job.html).
-    default: 0.9
-    type: str
-    version_added: 1.5.0
   max_concurrent_runs:
     description:
       - The maximum number of concurrent runs allowed for the job. The default is 1. An error is returned when
