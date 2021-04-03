@@ -8,6 +8,7 @@
 
 - set_fact:
     virtualenv_interpreter: "{{ virtualenv }}/bin/python"
+    aws_cli: "{{ virtualenv }}/bin/aws"
 
 - pip:
     name: "virtualenv"
