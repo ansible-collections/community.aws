@@ -562,6 +562,8 @@ def main():
     # On CAA records order doesn't matter
     if type_in == 'CAA':
         resource_record_set['ResourceRecords'] = sorted(resource_record_set['ResourceRecords'], key=itemgetter('Value'))
+        if aws_record:
+            aws_record['ResourceRecords'] = sorted(aws_record['ResourceRecords'], key=itemgetter('Value'))
 
     if command_in == 'create' and aws_record == resource_record_set:
         module.exit_json(changed=False)
