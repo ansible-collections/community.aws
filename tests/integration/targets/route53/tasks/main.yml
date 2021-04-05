@@ -315,6 +315,8 @@
       zone: '{{ zone_one }}'
       record: '*.wildcard_test.{{ zone_one }}'
       type: A
+      value:
+        - 192.0.2.2
     register: wc_a_record
   - assert:
       that:
