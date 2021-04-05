@@ -384,8 +384,9 @@ def get_record(route53, zone_id, record_name, record_type, record_identifier):
     record_sets_results = _list_record_sets(route53, HostedZoneId=zone_id)
 
     for record_set in record_sets_results:
+        record_set['Name'] = record_set['Name'].encode().decode('unicode_escape')
         # If the record name and type is not equal, move to the next record
-        if (record_name, record_type) != (record_set['Name'], record_set['Type']):
+        if (record_name.lower(), record_type) != (record_set['Name'].lower(), record_set['Type']):
             continue
 
         if record_identifier and record_identifier != record_set.get("SetIdentifier"):
