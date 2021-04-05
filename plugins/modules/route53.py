@@ -44,6 +44,7 @@ options:
   ttl:
     description:
       - The TTL, in second, to give the new record.
+      - Mutually exclusive with I(alias).
     default: 3600
     type: int
   type:
@@ -55,6 +56,7 @@ options:
   alias:
     description:
       - Indicates if this is an alias record.
+      - Mutually exclusive with I(ttl).
       - Defaults to C(false).
     type: bool
   alias_hosted_zone_id:
@@ -468,7 +470,10 @@ def main():
             ('state', 'delete', ['value']),
         ),
         # failover, region and weight are mutually exclusive
-        mutually_exclusive=[('failover', 'region', 'weight')],
+        mutually_exclusive=[
+            ('failover', 'region', 'weight'),
+            ('alias', 'ttl'),
+        ],
         # failover, region and weight require identifier
         required_by=dict(
             failover=('identifier',),
