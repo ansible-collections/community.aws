@@ -101,6 +101,7 @@ options:
         have the same combination of DNS name and type, a value that
         determines what portion of traffic for the current resource record set
         is routed to the associated location.
+      - Mutually exclusive with I(region) and I(failover).
     type: int
   region:
     description:
@@ -108,6 +109,7 @@ options:
         that have the same combination of DNS name and type, a value that
         determines which region this should be associated with for the
         latency-based routing
+      - Mutually exclusive with I(weight) and I(failover).
     type: str
   health_check:
     description:
@@ -117,6 +119,7 @@ options:
     description:
       - Failover resource record sets only. Whether this is the primary or
         secondary resource record set. Allowed values are PRIMARY and SECONDARY
+      - Mutually exclusive with I(weight) and I(region).
     type: str
     choices: ['SECONDARY', 'PRIMARY']
   vpc_id:
