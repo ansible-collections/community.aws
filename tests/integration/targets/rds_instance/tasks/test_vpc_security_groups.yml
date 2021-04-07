@@ -90,7 +90,6 @@
           that:
             - result.changed
             - "result.db_instance_identifier == '{{ instance_id }}'"
-      
       - name: Add a new security group without purge
         rds_instance:
           id: "{{ instance_id }}"
@@ -106,7 +105,6 @@
             - result.changed
             - "result.db_instance_identifier == '{{ instance_id }}'"
             - "result.vpc_security_groups | selectattr('status', 'in', ['active', 'adding']) | list | length == 3"
-      
       - name: Add a new security group without purge (test idempotence)
         rds_instance:
           id: "{{ instance_id }}"
