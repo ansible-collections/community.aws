@@ -185,7 +185,7 @@ def update_parameters(module, connection):
         if _existing:
             existing = _existing['Parameters']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
+        module.fail_json_aws(e, msg="Failed to describe existing parameter groups")
     lookup = dict((param['ParameterName'], param) for param in existing)
     for param_key, param_value in desired.items():
         if param_key not in lookup:
