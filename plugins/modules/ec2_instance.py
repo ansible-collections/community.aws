@@ -1393,9 +1393,15 @@ def find_instances(ec2, ids=None, filters=None):
         params = dict(Filters=ansible_dict_to_boto3_filter_list(filters))
 
     try:
-        results = paginator.paginate(**params).search('Reservations[].Instances[]')
+        results = _describe_instances(ec2, **params)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Could not describe instances")
+
+
+@AWSRetry.jittered_backoff()
+def _describe_instances(ec2, **params):   
+    paginator = ec2.get_paginator('describe_instances')
+    paginator.paginate(**params).search('Reservations[].Instances[]')
     return list(results)
 
 
