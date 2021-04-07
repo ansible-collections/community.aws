@@ -282,7 +282,7 @@ def ensure_present(module, connection):
         group = camel_dict_to_snake_dict(response['DBParameterGroups'][0])
     except is_boto3_error_code('DBParameterGroupNotFound'):
         module.exit_json(changed=True, errors=errors)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't obtain parameter group information")
     try:
         tags = connection.list_tags_for_resource(aws_retry=True, ResourceName=group['db_parameter_group_arn'])['TagList']
