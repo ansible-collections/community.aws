@@ -1396,13 +1396,12 @@ def find_instances(ec2, ids=None, filters=None):
         results = _describe_instances(ec2, **params)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Could not describe instances")
-
+    return list(results)
 
 @AWSRetry.jittered_backoff()
 def _describe_instances(ec2, **params):   
     paginator = ec2.get_paginator('describe_instances')
-    results = paginator.paginate(**params).search('Reservations[].Instances[]')
-    return list(results)
+    return paginator.paginate(**params).search('Reservations[].Instances[]')
 
 
 def get_default_vpc(ec2):
