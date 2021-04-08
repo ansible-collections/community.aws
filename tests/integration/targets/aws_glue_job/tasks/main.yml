@@ -212,7 +212,7 @@
           - glue_job_update_check.command.script_location == job_info_update_check["Job"]["Command"]["ScriptLocation"]
           - glue_job_update_check.default_arguments == job_info_update_check["Job"]["DefaultArguments"]
           - glue_job_update_check.description == job_info_update_check["Job"]["Description"]
-          - glue_job_update_check.glue_version == job_info_update_check["Job"]["Command"]["GlueVersion"]
+          - glue_job_update_check.glue_version == job_info_update_check["Job"]["GlueVersion"]
           - glue_job_update_check.role == job_info_update_check["Job"]["Role"]
 
     - name: Update Glue job
@@ -251,7 +251,7 @@
           - glue_job_update.command.script_location == job_info_update["Job"]["Command"]["ScriptLocation"]
           - glue_job_update.default_arguments == job_info_update["Job"]["DefaultArguments"]
           - glue_job_update.description == job_info_update["Job"]["Description"]
-          - glue_job_update.glue_version == job_info_update["Job"]["Command"]["GlueVersion"]
+          - glue_job_update.glue_version == job_info_update["Job"]["GlueVersion"]
           - glue_job_update.role == job_info_update["Job"]["Role"]
 
     - name: Delete Glue job (check mode)
