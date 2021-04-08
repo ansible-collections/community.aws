@@ -1401,7 +1401,7 @@ def find_instances(ec2, ids=None, filters=None):
 @AWSRetry.jittered_backoff()
 def _describe_instances(ec2, **params):   
     paginator = ec2.get_paginator('describe_instances')
-    paginator.paginate(**params).search('Reservations[].Instances[]')
+    results = paginator.paginate(**params).search('Reservations[].Instances[]')
     return list(results)
 
 
