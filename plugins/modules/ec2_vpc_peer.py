@@ -383,9 +383,11 @@ def peer_status(client, module):
 def accept_reject(state, client, module):
     changed = False
     params = dict()
-    pcx_id = module.params.get('peering_id')
-    params['VpcPeeringConnectionId'] = pcx_id
+    peering_id = module.params.get('peering_id')
+    params['VpcPeeringConnectionId'] = peering_id
+    vpc_peering_connection = find_pcx_by_id(peering_id, client, module)['VpcPeeringConnections'][0]
     current_state = peer_status(client, module)
+
     if current_state not in ['active', 'rejected']:
         try:
             if state == 'accept':
@@ -398,7 +400,7 @@ def accept_reject(state, client, module):
                 create_tags(peering_id, client, module)
             changed = True
             if module.params.get('wait'):
-                wait_for_state(client, module, target_state, pcx_id)
+                wait_for_state(client, module, target_state, peering_id)
         except botocore.exceptions.ClientError as e:
             module.fail_json(msg=str(e))
     if tags_changed(peering_id, client, module):
@@ -477,6 +479,10 @@ def main():
         (changed, results) = accept_reject(state, client, module)
 
     formatted_results = camel_dict_to_snake_dict(results)
+    # Turn the boto3 result in to ansible friendly tag dictionary
+    for peer in formatted_results:
+        peer['tags'] = boto3_tag_list_to_ansible_dict(peer.get('tags', []))
+
     module.exit_json(changed=changed, vpc_peering_connection=formatted_results, peering_id=results['VpcPeeringConnectionId'])
 
 if __name__ == '__main__':
