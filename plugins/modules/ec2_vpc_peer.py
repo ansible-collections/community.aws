@@ -482,11 +482,11 @@ def main():
         (changed, results) = accept_reject(state, client, module)
 
     formatted_results = camel_dict_to_snake_dict(results)
-    # Turn the boto3 result in to ansible friendly tag dictionary
-    for peer in formatted_results:
-        peer['tags'] = boto3_tag_list_to_ansible_dict(peer.get('tags', []))
+    # Turn the resource tags from boto3 into an ansible friendly tag dictionary
+    formatted_results['tags'] = boto3_tag_list_to_ansible_dict(formatted_results.get('tags', []))
 
     module.exit_json(changed=changed, vpc_peering_connection=formatted_results, peering_id=results['VpcPeeringConnectionId'])
+
 
 if __name__ == '__main__':
     main()
