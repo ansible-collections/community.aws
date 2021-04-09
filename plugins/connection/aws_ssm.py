@@ -517,7 +517,7 @@ class Connection(ConnectionBase):
             aws_secret_access_key = os.environ.get("AWS_SECRET_ACCESS_KEY", None)
         if aws_session_token is None:
             aws_session_token = os.environ.get("AWS_SESSION_TOKEN", None)
-        
+
         client = boto3.client(
             service,
             aws_access_key_id=aws_access_key_id,
