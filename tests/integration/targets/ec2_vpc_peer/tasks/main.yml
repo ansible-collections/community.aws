@@ -103,22 +103,6 @@
         - vpc_peer is successful
         - vpc_peer.peering_id == peer_id_1
 
-  - name: Accespt local VPC peering connection from destination VPC
-    ec2_vpc_peer:
-      peering_id: '{{ vpc_peer.peering_id }}'
-      state: accept
-      tags:
-        Name: '{{ connection_name }}'
-    register: vpc_peer_accept
-
-  - name: Assert success
-    assert:
-      tath:
-        - vpc_peer_accept is successful
-        - vpc_peer_accept is changed
-        - vpc_peer_accept.peering_id == vpc_peer.peering_id
-        - vpc_peer_accept.vpc_peering_connection.accepter_vpc_info.cidr_block == vpc_2_cidr
-
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
       peer_connection_ids:
@@ -271,6 +255,8 @@
         - action_peer is changed
         - action_peer is successful
         - action_peer.peering_id == peer_id_1
+        - action_peer.vpc_peering_connection.accepter_vpc_info.cidr_block == vpc_2_cidr
+        - action_peer.vpc_peering_connection.vpc_peering_connection_id == peer_id_1
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -340,6 +326,7 @@
         - action_peer is not changed
         - action_peer is successful
         - action_peer.peering_id == peer_id_1
+        - action_peer.vpc_peering_connection.vpc_peering_connection_id == peer_id_1
 
   - name: delete a local VPC peering Connection
     ec2_vpc_peer:
@@ -351,6 +338,7 @@
       that:
         - delete_peer is changed
         - delete_peer is successful
+        - "'peering_id' in delete_peer"
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:
@@ -456,6 +444,7 @@
         - reject_peer is not changed
         - reject_peer is successful
         - reject_peer.peering_id == peer_id_2
+        - reject_peer.vpc_peering_connection.vpc_peering_connection_id == peer_id_2
 
   - name: delete a local VPC peering Connection
     ec2_vpc_peer:

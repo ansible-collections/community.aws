@@ -486,7 +486,7 @@ def remove_peer_connection(client, module):
         module.exit_json(msg='Connection in deleted state.', changed=False, peering_id=pcx_id)
     if peering_conn['Status']['Code'] == 'rejected':
         module.exit_json(
-            msg='Connection has been rejected. State cannot be changed and will be removed automatically by AWS', 
+            msg='Connection has been rejected. State cannot be changed and will be removed automatically by AWS',
             changed=False,
             peering_id=pcx_id
         )
