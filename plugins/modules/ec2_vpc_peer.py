@@ -262,7 +262,7 @@ def tags_changed(pcx_id, client, module):
     if module.params.get('tags'):
         tags = module.params.get('tags')
     peering_connection = get_peering_connection_by_id(pcx_id, client, module)
-    if peering_connection['Tags']
+    if peering_connection['Tags']:
         pcx_values = [t.values() for t in peering_connection['Tags']
         pcx_tags = [item for sublist in pcx_values for item in sublist]
         tag_values = [[key, str(value)] for key, value in tags.items()]
@@ -338,7 +338,7 @@ def create_peer_connection(client, module):
 def remove_peer_connection(client, module):
     pcx_id = module.params.get('peering_id')
     if pcx_id:
-        peering_conns = client.describe_vpc_peering_connections(aws_retry=True, VpcPeeringConnectionIds=[pcx_id])
+        peering_conn = get_peering_connection_by_id(pcx_id, client, module)
     else:
         params = dict()
         params['VpcId'] = module.params.get('vpc_id')
@@ -346,16 +346,16 @@ def remove_peer_connection(client, module):
         params['PeerRegion'] = module.params.get('peer_region')
         if module.params.get('peer_owner_id'):
             params['PeerOwnerId'] = str(module.params.get('peer_owner_id'))
-        peering_conns = describe_peering_connections(params, client)
+        peering_conn = describe_peering_connections(params, client)['VpcPeeringConnections'][0]
 
-    if not peering_conns:
+    if not peering_conn:
         module.exit_json(changed=False)
     else:
-        pcx_id = pcx_id or peering_conns['VpcPeeringConnections'][0]['VpcPeeringConnectionId']
+        pcx_id = pcx_id or peering_conn['VpcPeeringConnectionId']
 
-    if peering_conns['VpcPeeringConnections'][0]['Status']['Code'] == 'deleted':
+    if peering_conn[0]['Status']['Code'] == 'deleted':
         module.exit_json(msg='Connection in deleted state.', changed=False)
-    if peering_conns['VpcPeeringConnections'][0]['Status']['Code'] == 'rejected':
+    if peering_conn[0]['Status']['Code'] == 'rejected':
         module.exit_json(msg='Connection has been rejected.  State cannot be changed and will be removed automatically by AWS', changed=False)
 
     try:
