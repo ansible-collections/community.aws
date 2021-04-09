@@ -45,6 +45,7 @@ Bugfixes
 - ec2_vpc_endpoint - fix exception when attempting to delete an endpoint which has already been deleted (https://github.com/ansible-collections/community.aws/pull/362).
 - ecs_task - use `required_if` to enforce mandatory parameters based on specified operation (https://github.com/ansible-collections/community.aws/pull/402).
 - elb_application_lb - during the removal of an instance, the associated listeners are also removed.
+- aws_ssm - enable aws ssm connections if **AWS_SESSION_TOKEN** is missing (https://github.com/ansible-collections/community.aws/issues/343).
 
 v1.3.0
 ======
