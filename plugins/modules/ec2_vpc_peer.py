@@ -330,7 +330,7 @@ def create_peer_connection(client, module):
         if module.params.get('tags'):
             create_tags(pcx_id, client, module)
         changed = True
-        return (changed, peering_conn)
+        return (changed, peering_conn['VpcPeeringConnection'])
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
