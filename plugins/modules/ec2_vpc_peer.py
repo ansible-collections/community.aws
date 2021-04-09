@@ -368,12 +368,12 @@ def remove_peer_connection(client, module):
         module.fail_json(msg=str(e))
 
 
-def peer_status(client, module):
+def get_peering_connection_by_id(peering_id, client, module):
     params = dict()
-    params['VpcPeeringConnectionIds'] = [module.params.get('peering_id')]
+    params['VpcPeeringConnectionIds'] = peering_id
     try:
         vpc_peering_connection = client.describe_vpc_peering_connections(aws_retry=True, **params)
-        return vpc_peering_connection['VpcPeeringConnections'][0]['Status']['Code']
+        return vpc_peering_connection['VpcPeeringConnections'][0]
     except is_boto3_error_code('InvalidVpcPeeringConnectionId.Malformed') as e:
         module.fail_json_aws(e, msg='Malformed connection ID')
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -385,10 +385,10 @@ def accept_reject(state, client, module):
     params = dict()
     peering_id = module.params.get('peering_id')
     params['VpcPeeringConnectionId'] = peering_id
-    vpc_peering_connection = find_pcx_by_id(peering_id, client, module)['VpcPeeringConnections'][0]
-    current_state = peer_status(client, module)
+    vpc_peering_connection = get_peering_connection_by_id(peering_id, client, module)
+    peering_status = vpc_peering_connection['Status']['Code']
 
-    if current_state not in ['active', 'rejected']:
+    if peering_status not in ['active', 'rejected']:
         try:
             if state == 'accept':
                 client.accept_vpc_peering_connection(aws_retry=True, **params)
@@ -406,6 +406,8 @@ def accept_reject(state, client, module):
     if tags_changed(peering_id, client, module):
         changed = True
 
+    # Relaod peering conection infos to return latest state/params
+    vpc_peering_connection = get_peering_connection_by_id(peering_id, client, module)
     return (changed, vpc_peering_connection)
 
 
