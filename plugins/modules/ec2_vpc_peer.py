@@ -371,7 +371,7 @@ def remove_peer_connection(client, module):
 
 def get_peering_connection_by_id(peering_id, client, module):
     params = dict()
-    params['VpcPeeringConnectionIds'] = peering_id
+    params['VpcPeeringConnectionIds'] = [peering_id]
     try:
         vpc_peering_connection = client.describe_vpc_peering_connections(aws_retry=True, **params)
         return vpc_peering_connection['VpcPeeringConnections'][0]
