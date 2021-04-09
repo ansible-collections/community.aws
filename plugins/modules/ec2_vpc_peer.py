@@ -224,7 +224,19 @@ peering_id:
 vpc_peering_connection:
   description: The details of the VPC peering connection as returned by Boto3 (snake cased).
   returned: success
-  type: dict
+  type: complex
+  contains:
+    vpc_peering_connection_id:
+      type: str
+      sample: pcx-034223d7c0aec3cde
+    accepter_vpc_info:
+      type: dict
+    requester_vpc_info:
+      type: dict
+    tags:
+      type: dict
+    status:
+      type: dict
 '''
 
 try:
@@ -353,9 +365,9 @@ def remove_peer_connection(client, module):
     else:
         pcx_id = pcx_id or peering_conn['VpcPeeringConnectionId']
 
-    if peering_conn[0]['Status']['Code'] == 'deleted':
+    if peering_conn['Status']['Code'] == 'deleted':
         module.exit_json(msg='Connection in deleted state.', changed=False)
-    if peering_conn[0]['Status']['Code'] == 'rejected':
+    if peering_conn['Status']['Code'] == 'rejected':
         module.exit_json(msg='Connection has been rejected.  State cannot be changed and will be removed automatically by AWS', changed=False)
 
     try:
