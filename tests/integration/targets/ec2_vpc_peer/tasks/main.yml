@@ -65,27 +65,7 @@
     set_fact:
       connection_name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
 
-  - name: Create local account VPC peering Connection
-    ec2_vpc_peer:
-      vpc_id: '{{ vpc_1 }}'
-      peer_vpc_id: '{{ vpc_2 }}'
-      state: present
-      tags:
-        Name: 'Peering connection for VPC {{ vpc_1 }} to VPC {{ vpc_2 }}'
-    register: vpc_peer
-  - name: Assert success
-    assert:
-      that:
-        - vpc_peer is changed
-        - vpc_peer is successful
-        - "'peering_id' in vpc_peer"
-        - vpc_peer.peering_id.startswith('pcx-')
-
-  - name: Store Connection ID
-    set_fact:
-      peer_id_1: '{{ vpc_peer.peering_id }}'
-
-  - name: (re-) Create local account VPC peering Connection (idempotency)
+  - name: Create local account VPC peering Connection request
     ec2_vpc_peer:
       vpc_id: '{{ vpc_1 }}'
       peer_vpc_id: '{{ vpc_2 }}'
@@ -93,12 +73,51 @@
       tags:
         Name: '{{ connection_name }}'
     register: vpc_peer
+
+  - name: Assert success
+    assert:
+      that:
+        - vpc_peer is changed
+        - vpc_peer is successful
+        - "'peering_id' in vpc_peer"
+        - vpc_peer.vpc_peering_connection.requester_vpc_info.cidr_block == vpc_1_cidr
+        - vpc_peer.peering_id.startswith('pcx-')
+
+  - name: Store Connection ID
+    set_fact:
+      peer_id_1: '{{ vpc_peer.peering_id }}'
+
+  - name: (re-) Create local account VPC peering Connection request (idempotency)
+    ec2_vpc_peer:
+      vpc_id: '{{ vpc_1 }}'
+      peer_vpc_id: '{{ vpc_2 }}'
+      state: present
+      tags:
+        Name: '{{ connection_name }}'
+    register: vpc_peer
+
   - name: Assert success
     assert:
       that:
         - vpc_peer is not changed
         - vpc_peer is successful
         - vpc_peer.peering_id == peer_id_1
+
+  - name: Accespt local VPC peering connection from destination VPC
+    ec2_vpc_peer:
+      peering_id: '{{ vpc_peer.peering_id }}'
+      state: accept
+      tags:
+        Name: '{{ connection_name }}'
+    register: vpc_peer_accept
+
+  - name: Assert success
+    assert:
+      tath:
+        - vpc_peer_accept is successful
+        - vpc_peer_accept is changed
+        - vpc_peer_accept.peering_id == vpc_peer.peering_id
+        - vpc_peer_accept.vpc_peering_connection.accepter_vpc_info.cidr_block == vpc_2_cidr
 
   - name: Get details on specific VPC peer
     ec2_vpc_peering_info:

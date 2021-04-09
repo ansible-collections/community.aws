@@ -261,9 +261,9 @@ def tags_changed(pcx_id, client, module):
     tags = dict()
     if module.params.get('tags'):
         tags = module.params.get('tags')
-    pcx = find_pcx_by_id(pcx_id, client, module)
-    if pcx['VpcPeeringConnections']:
-        pcx_values = [t.values() for t in pcx['VpcPeeringConnections'][0]['Tags']]
+    peering_connection = get_peering_connection_by_id(pcx_id, client, module)
+    if peering_connection['Tags']
+        pcx_values = [t.values() for t in peering_connection['Tags']
         pcx_tags = [item for sublist in pcx_values for item in sublist]
         tag_values = [[key, str(value)] for key, value in tags.items()]
         tags = [item for sublist in tag_values for item in sublist]
@@ -431,13 +431,6 @@ def create_tags(pcx_id, client, module):
 def delete_tags(pcx_id, client, module):
     try:
         client.delete_tags(aws_retry=True, Resources=[pcx_id])
-    except botocore.exceptions.ClientError as e:
-        module.fail_json(msg=str(e))
-
-
-def find_pcx_by_id(pcx_id, client, module):
-    try:
-        return client.describe_vpc_peering_connections(aws_retry=True, VpcPeeringConnectionIds=[pcx_id])
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
