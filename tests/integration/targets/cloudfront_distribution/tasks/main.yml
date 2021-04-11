@@ -50,20 +50,28 @@
       that:
         - not cf_dist_with_id.changed
 
-  - name: update origin http port
+  - name: set custom origin config
     cloudfront_distribution:
       distribution_id: "{{ distribution_id }}"
       origins:
       - domain_name: "{{ cloudfront_hostname }}-origin.example.com"
         custom_origin_config:
           http_port: 8080
+          https_port: 8443
+          origin_keepalive_timeout: 15
+          origin_protocol_policy: https-only
+          origin_read_timeout: 5
+          origin_ssl_protocols: TLSv1.2
       state: present
-    register: update_origin_http_port
+    loop: [0, 1, 2]
+    check_mode: "{{ item == 0 }}"
+    register: update_origin_custom_config
 
-  - name: ensure http port was updated
-    assert:
+  - assert:
       that:
-        - update_origin_http_port.changed
+        - update_origin_custom_config.results.0 is changed
+        - update_origin_custom_config.results.1 is changed
+        - update_origin_custom_config.results.2 is not changed
 
   - name: update restrictions
     cloudfront_distribution:

@@ -1726,8 +1726,6 @@ class CloudFrontValidationManager(object):
                 custom_origin_config = self.add_missing_key(custom_origin_config, 'origin_keepalive_timeout', self.__default_custom_origin_keepalive_timeout)
                 custom_origin_config = self.add_key_else_change_dict_key(custom_origin_config, 'http_port', 'h_t_t_p_port', self.__default_http_port)
                 custom_origin_config = self.add_key_else_change_dict_key(custom_origin_config, 'https_port', 'h_t_t_p_s_port', self.__default_https_port)
-                if custom_origin_config.get('origin_ssl_protocols', {}).get('items'):
-                    custom_origin_config['origin_ssl_protocols'] = custom_origin_config['origin_ssl_protocols']['items']
                 if custom_origin_config.get('origin_ssl_protocols'):
                     self.validate_attribute_list_with_allowed_list(custom_origin_config['origin_ssl_protocols'], 'origins[].origin_ssl_protocols',
                                                                    self.__valid_origin_ssl_protocols)
@@ -2102,7 +2100,35 @@ def main():
         aliases=dict(type='list', default=[], elements='str'),
         purge_aliases=dict(type='bool', default=False),
         default_root_object=dict(),
-        origins=dict(type='list', elements='dict'),
+        origins=dict(
+            type='list',
+            elements='dict',
+            options=dict(
+                id=dict(),
+                domain_name=dict(),
+                origin_path=dict(),
+                custom_headers=dict(
+                    type='list',
+                    elements='dict',
+                    options=dict(
+                        header_name=dict(required=True),
+                        header_value=dict(required=True),
+                    ),
+                ),
+                s3_origin_access_identity_enabled=dict(type='bool', default=False),
+                custom_origin_config=dict(
+                    type='dict',
+                    options=dict(
+                        http_port=dict(type='int'),
+                        https_port=dict(type='int'),
+                        origin_protocol_policy=dict(),
+                        origin_ssl_protocols=dict(type='list', elements='str'),
+                        origin_read_timeout=dict(type='int'),
+                        origin_keepalive_timeout=dict(type='int'),
+                    ),
+                ),
+            ),
+        ),
         purge_origins=dict(type='bool', default=False),
         default_cache_behavior=dict(type='dict'),
         cache_behaviors=dict(type='list', elements='dict'),
