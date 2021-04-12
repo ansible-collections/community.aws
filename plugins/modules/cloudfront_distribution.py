@@ -1699,6 +1699,8 @@ class CloudFrontValidationManager(object):
             origin = self.add_missing_key(origin, 'origin_path', existing_config.get('origin_path', default_origin_path or ''))
             self.validate_required_key('origin_path', 'origins[].origin_path', origin)
             origin = self.add_missing_key(origin, 'id', existing_config.get('id', self.__default_datetime_string))
+            origin = self.add_missing_key(origin, 'connection_attempts', existing_config.get('connection_attempts', None))
+            origin = self.add_missing_key(origin, 'connection_timeout', existing_config.get('connection_timeout', None))
             if 'custom_headers' in origin and len(origin.get('custom_headers')) > 0:
                 for custom_header in origin.get('custom_headers'):
                     if 'header_name' not in custom_header or 'header_value' not in custom_header:
