@@ -1365,6 +1365,7 @@ web_acl_id:
 
 from ansible.module_utils._text import to_text, to_native
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
 from ansible.module_utils.common.dict_transformations import recursive_diff
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags, ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
@@ -2200,6 +2201,9 @@ def main():
 
     if alias and alias not in aliases:
         aliases.append(alias)
+
+    if origins:
+        origins = [scrub_none_parameters(origin, descend_into_lists=True) for origin in origins]
 
     distribution = validation_mgr.validate_distribution_from_aliases_caller_reference(distribution_id, aliases, caller_reference)
 
