@@ -63,15 +63,17 @@
           origin_read_timeout: 5
           origin_ssl_protocols: TLSv1.2
       state: present
-    loop: [0, 1, 2]
-    check_mode: "{{ item == 0 }}"
+    loop: [0, 1, 2, 3]
+    check_mode: "{{ item % 2 == 0 }}"
     register: update_origin_custom_config
 
   - assert:
       that:
-        - update_origin_custom_config.results.0 is changed
+        # check_mode not supported
+        #- update_origin_custom_config.results.0 is changed
         - update_origin_custom_config.results.1 is changed
-        - update_origin_custom_config.results.2 is not changed
+        #- update_origin_custom_config.results.2 is not changed
+        - update_origin_custom_config.results.3 is not changed
 
   - name: update restrictions
     cloudfront_distribution:
