@@ -1718,6 +1718,9 @@ class CloudFrontValidationManager(object):
                     if 'custom_origin_config' in origin:
                         self.module.fail_json(msg="s3_origin_access_identity_enabled and custom_origin_config are mutually exclusive")
             else:
+                existing_origin_config = existing_config.get('custom_origin_config', {})
+                if existing_origin_config.get('origin_ssl_protocols'):
+                    existing_origin_config['origin_ssl_protocols'] = existing_origin_config['origin_ssl_protocols']['items']
                 origin = self.add_missing_key(origin, 'custom_origin_config', existing_config.get('custom_origin_config', {}))
                 custom_origin_config = origin.get('custom_origin_config')
                 custom_origin_config = self.add_key_else_validate(custom_origin_config, 'origin_protocol_policy',
