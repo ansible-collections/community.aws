@@ -2121,7 +2121,7 @@ def main():
                         header_value=dict(required=True),
                     ),
                 ),
-                s3_origin_access_identity_enabled=dict(type='bool', default=False),
+                s3_origin_access_identity_enabled=dict(type='bool'),
                 custom_origin_config=dict(
                     type='dict',
                     options=dict(
