@@ -10,9 +10,9 @@ DOCUMENTATION = r'''
 ---
 module: rds_option_group_info
 version_added: 1.5.0
-short_description: Gather information about ...
+short_description: Gather information about the RDS option groups.
 description:
-    - Gather information about ....
+    - Gather information about RDS option groups.
 requirements: [ boto3 ]
 author: "Alina Buzachis (@alinabuzachis)"
 options:
@@ -66,7 +66,7 @@ def list_option_groups(client, module):
     try:
         result = client.describe_option_groups(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
+        module.fail_json_aws(e, msg="Couldn't describe option groups.")
 
     return result
 

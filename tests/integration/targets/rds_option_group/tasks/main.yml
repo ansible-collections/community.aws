@@ -5,11 +5,11 @@
   
   module_defaults:
     group/aws: &creds
+      region: '{{ aws_region }}'
       aws_access_key: '{{ aws_access_key }}'
       aws_secret_key: '{{ aws_secret_key }}'
       security_token: '{{ security_token | default(omit) }}'
-      region: '{{ aws_region }}'
-      
+
 
   block:
   - name: create a VPC
@@ -106,15 +106,15 @@
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
         options:
-        - OptionName: MEMCACHED
-          Port: 11211
-          VpcSecurityGroupMemberships:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
             - "{{ sg_1 }}"
-          OptionSettings:
-            - Name: MAX_SIMULTANEOUS_CONNECTIONS
-              Value: '20'
-            - Name: CHUNK_SIZE_GROWTH_FACTOR
-              Value: '1.25'
+          option_settings:
+            - name: MAX_SIMULTANEOUS_CONNECTIONS
+              value: '20'
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.25'
     register: new_rds_mysql_option_group
 
   - assert:
@@ -131,15 +131,15 @@
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
         options:
-        - OptionName: MEMCACHED
-          Port: 11211
-          VpcSecurityGroupMemberships:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
             - "{{ sg_1 }}"
-          OptionSettings:
-            - Name: MAX_SIMULTANEOUS_CONNECTIONS
-              Value: '20'
-            - Name: CHUNK_SIZE_GROWTH_FACTOR
-              Value: '1.25'
+          option_settings:
+            - name: MAX_SIMULTANEOUS_CONNECTIONS
+              value: '20'
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.25'
     register: new_rds_mysql_option_group
 
   - assert:
@@ -156,13 +156,13 @@
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
         options:
-        - OptionName: MEMCACHED
-          Port: 11211
-          VpcSecurityGroupMemberships:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
             - "{{ sg_1 }}"
-          OptionSettings:
-            - Name: CHUNK_SIZE_GROWTH_FACTOR
-              Value: '1.5'
+          option_settings:
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.5'
     register: new_rds_mysql_option_group
 
   - assert:
@@ -179,15 +179,15 @@
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
         options:
-        - OptionName: MEMCACHED
-          Port: 11211
-          VpcSecurityGroupMemberships:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
             - "{{ sg_1 }}"
             - "{{ sg_2 }}"
             - "{{ sg_3 }}"
-          OptionSettings:
-            - Name: CHUNK_SIZE_GROWTH_FACTOR
-              Value: '1.5'
+          option_settings:
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.5'
     register: new_rds_mysql_option_group
 
   - assert:

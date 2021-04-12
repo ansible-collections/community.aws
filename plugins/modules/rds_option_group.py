@@ -54,7 +54,7 @@ extends_documentation_fragment:
 
 EXAMPLES = r'''
 # Create an RDS Mysql Option group
-- name: Create an RDS Mysql Option group
+- name: Create an RDS Mysql Option Group
   community.aws.rds_option_group:
     region: ap-southeast-2
     profile: production
@@ -65,19 +65,19 @@ EXAMPLES = r'''
     option_group_description: test mysql option group
     apply_immediately: true
     options:
-      - OptionName: MEMCACHED
-        Port: 11211
-        VpcSecurityGroupMemberships:
-          - sg-d188c123
-        OptionSettings:
-          - Name: MAX_SIMULTANEOUS_CONNECTIONS
-            Value: '20'
-          - Name: CHUNK_SIZE_GROWTH_FACTOR
-            Value: '1.25'
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
+            - "sg-d188c123"
+          option_settings:
+            - name: MAX_SIMULTANEOUS_CONNECTIONS
+              value: "20"
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: "1.25"
   register: new_rds_mysql_option_group
 
 # Remove currently configured options for an option group by removing options argument
-- name: Create an RDS Mysql Option group
+- name: Create an RDS Mysql Option Group
   community.aws.rds_option_group:
     region: ap-southeast-2
     profile: production
@@ -90,7 +90,7 @@ EXAMPLES = r'''
   register: rds_mysql_option_group
 
 # Delete an RDS Mysql Option group
-- name: Delete an RDS Mysql Option group
+- name: Delete an RDS Mysql Option Group
   community.aws.rds_option_group:
     region: ap-southeast-2
     profile: production
@@ -101,46 +101,155 @@ EXAMPLES = r'''
 
 RETURN = r'''
 allows_vpc_and_non_vpc_instance_memberships:
-  description: Specifies the allocated storage size in gigabytes (GB).
-  returned: when state=present
-  type: boolean
-  sample: false
+    description: Specifies the allocated storage size in gigabytes (GB).
+    returned: I(state=present)
+    type: bool
+    sample: false
+changed:
+    description: If the Option Group has changed.
+    type: bool
+    returned: always
+    sample:
+        changed: true
 engine_name:
-  description: Indicates the name of the engine that this option group can be applied to.
-  returned: when state=present
-  type: string
-  sample: "mysql"
+    description: Indicates the name of the engine that this option group can be applied to.
+    returned: I(state=present)
+    type: str
+    sample: "mysql"
 major_engine_version:
-  description: Indicates the major engine version associated with this option group.
-  returned: when state=present
-  type: string
-  sample: "5.6"
+    description: Indicates the major engine version associated with this option group.
+    returned: I(state=present)
+    type: str
+    sample: "5.6"
+option_group_arn:
+    description: The Amazon Resource Name (ARN) for the option group.
+    returned: I(state=present)
+    type: str
+    sample: "arn:aws:rds:ap-southeast-2:721066863947:og:ansible-test-option-group"
 option_group_description:
-  description: Provides a description of the option group.
-  returned: when state=present
-  type: string
-  sample: "test mysql option group"
+    description: Provides a description of the option group.
+    returned: I(state=present)
+    type: str
+    sample: "test mysql option group"
 option_group_name:
-  description: Specifies the name of the option group.
-  returned: when state=present
-  type: string
-  sample: "test-mysql-option-group"
+    description: Specifies the name of the option group.
+    returned: I(state=present)
+    type: str
+    sample: "test-mysql-option-group"
 options:
-  description: Indicates what options are available in the option group.
-  returned: when state=present
-  type: list
-  sample: []
+    description: Indicates what options are available in the option group.
+    returned: I(state=present)
+    type: complex
+    contains:
+        db_security_group_memberships:
+            description: Any VPCs attached to the internet gateway
+            returned: I(state=present)
+            type: complex
+            sample: list
+            elements: dict
+        option_description:
+            description: TThe description of the option.
+            returned: I(state=present)
+            type: str
+            sample: "Innodb Memcached for MySQL"
+        option_name:
+            description: The name of the option.
+            returned: I(state=present)
+            type: str
+            sample: "MEMCACHED"
+        option_settings:
+            description: The name of the option.
+            returned: I(state=present)
+            type: complex
+            contains:
+                allowed_values:
+                    description: The allowed values of the option setting.
+                    returned: I(state=present)
+                    type: str
+                    sample: "1-2048"
+                apply_type:
+                    description: The DB engine specific parameter type.
+                    returned: I(state=present)
+                    type: str
+                    sample: "STATIC"
+                data_type:
+                    description: The data type of the option setting.
+                    returned: I(state=present)
+                    type: str
+                    sample: "INTEGER"
+                default_value:
+                    description: The default value of the option setting.
+                    returned: I(state=present)
+                    type: str
+                    sample: "1024"
+                description:
+                    description: The description of the option setting.
+                    returned: I(state=present)
+                    type: str
+                    sample: "Verbose level for memcached."
+                is_collection:
+                    description: Indicates if the option setting is part of a collection.
+                    returned: I(state=present)
+                    type: bool
+                    sample: true
+                is_modifiable:
+                    description: A Boolean value that, when true, indicates the option setting can be modified from the default.
+                    returned: I(state=present)
+                    type: bool
+                    sample: true
+                name:
+                    description: The name of the option that has settings that you can set.
+                    returned: I(state=present)
+                    type: str
+                    sample: "INNODB_API_ENABLE_MDL"
+                value:
+                    description: The current value of the option setting.
+                    returned: I(state=present)
+                    type: str
+                    sample: "0"
+        permanent:
+            description: Indicate if this option is permanent.
+            returned: I(state=present)
+            type: bool
+            sample: true
+        persistent:
+            description: Indicate if this option is persistent.
+            returned: I(state=present)
+            type: bool
+            sample: true
+        port:
+            description: If required, the port configured for this option to use.
+            returned: I(state=present)
+            type: int
+            sample: 11211
+        vpc_security_group_memberships:
+            description: The name of the option.
+            returned: I(state=present)
+            type: list
+            elements: dict
+            contains:
+                status:
+                    description: The status of the VPC security group.
+                    returned: I(state=present)
+                    type: str
+                    sample: "available"
+                vpc_security_group_id:
+                    description: The name of the VPC security group.
+                    returned: I(state=present)
+                    type: str
+                    sample: "sg-0cd636a23ae76e9a4"
 vpc_id:
-  description: If present, this option group can only be applied to instances that are in the VPC indicated by this field.
-  returned: when state=present
-  type: string
-  sample: "vpc-aac12acf"
+    description: If present, this option group can only be applied to instances that are in the VPC indicated by this field.
+    returned: I(state=present)
+    type: str
+    sample: "vpc-bf07e9d6"
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible.module_utils.ec2 import snake_dict_to_camel_dict
 
 
 try:
@@ -148,10 +257,7 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-import q
 
-
-@q
 def get_option_group(client, module):
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
@@ -161,7 +267,7 @@ def get_option_group(client, module):
     except is_boto3_error_code('OptionGroupNotFoundFault'):
         return {}
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e)
+        module.fail_json_aws(e, msg="Couldn't describe option groups.")
 
     result = _result['OptionGroupsList'][0]
     return result
@@ -171,17 +277,16 @@ def create_option_group_options(client, module):
     changed = True
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
-    params['OptionsToInclude'] = module.params.get('options')
+    _options_to_include = module.params.get('options')
+    params['OptionsToInclude'] = snake_dict_to_camel_dict(_options_to_include, capitalize_first=True)
 
     if module.params.get('apply_immediately'):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
 
     try:
-        _result = client.modify_option_group(aws_retry=True, **params)
+        result = client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
-
-    result = camel_dict_to_snake_dict(_result['OptionGroup'])
+        module.fail_json_aws(e, msg="Unable to update Option Group.")
 
     return changed, result
 
@@ -196,11 +301,9 @@ def remove_option_group_options(client, module, options_to_remove):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
 
     try:
-        _result = client.modify_option_group(aws_retry=True, **params)
+        result = client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
-
-    result = camel_dict_to_snake_dict(_result['OptionGroup'])
 
     return changed, result
 
@@ -214,19 +317,17 @@ def create_option_group(client, module):
     params['OptionGroupDescription'] = module.params.get('option_group_description')
 
     try:
-        _result = client.create_option_group(aws_retry=True, **params)
+        result = client.create_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
-
-    result = camel_dict_to_snake_dict(_result['OptionGroup'])
+        module.fail_json_aws(e, msg='Unable to create Option Group.')
 
     return changed, result
 
 
-@q
 def match_option_group_options(client, module):
     requires_update = False
-    new_options = module.params.get('options')
+    _new_options = module.params.get('options')
+    new_options = snake_dict_to_camel_dict(_new_options, capitalize_first=True)
 
     # Get existing option groups and compare to our new options spec
     current_option = get_option_group(client, module)
@@ -240,7 +341,6 @@ def match_option_group_options(client, module):
 
                     # Security groups need to be handled separately due to different keys on request and what is
                     # returned by the API
-
                     if any(
                         name in option.keys() - ['OptionSettings', 'VpcSecurityGroupMemberships'] and
                         setting_name[name] != option[name]
@@ -254,7 +354,6 @@ def match_option_group_options(client, module):
                     ):
                         current_sg = set(sg['VpcSecurityGroupId'] for sg in option['VpcSecurityGroupMemberships'])
                         new_sg = set(setting_name['VpcSecurityGroupMemberships'])
-
                         if current_sg != new_sg:
                             requires_update = True
 
@@ -269,14 +368,12 @@ def match_option_group_options(client, module):
     return requires_update
 
 
-@q
 def compare_option_group(client, module):
     to_be_added = None
     to_be_removed = None
-
     current_option = get_option_group(client, module)
-    new_options = module.params.get('options')
-
+    _new_options = module.params.get('options')
+    new_options = snake_dict_to_camel_dict(_new_options, capitalize_first=True)
     new_settings = set([item['OptionName'] for item in new_options])
     old_settings = set([item['OptionName'] for item in current_option['Options']])
 
@@ -287,8 +384,7 @@ def compare_option_group(client, module):
     return to_be_added, to_be_removed
 
 
-@q
-def setup_rds_option_group(client, module):
+def setup_option_group(client, module):
     results = []
     changed = False
 
@@ -337,12 +433,13 @@ def setup_rds_option_group(client, module):
 
         if module.params.get('options'):
             changed, new_option_group_options = create_option_group_options(client, module)
+
         results = get_option_group(client, module)
 
     return changed, results
 
 
-def remove_rds_option_group(client, module):
+def remove_option_group(client, module):
     changed = False
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
@@ -352,24 +449,24 @@ def remove_rds_option_group(client, module):
 
     if existing_option_group:
         changed = True
-
         try:
             client.delete_option_group(aws_retry=True, **params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e)
+            module.fail_json_aws(e, msg="Unable to delete Option Group.")
 
     return changed, {}
 
 
 def main():
     argument_spec = dict(
-            option_group_name=dict(required=True),
-            engine_name=dict(),
-            major_engine_version=dict(),
-            option_group_description=dict(),
+            option_group_name=dict(required=True, type=str),
+            engine_name=dict(type=str),
+            major_engine_version=dict(type=str),
+            option_group_description=dict(type=str),
             options=dict(type='list'),
             apply_immediately=dict(type='bool'),
             state=dict(required=True, choices=['present', 'absent']),
+            required_if=[['state', 'present', ['engine_name', 'major_engine_version', 'option_group_description']]],
     )
 
     module = AnsibleAWSModule(
@@ -385,9 +482,9 @@ def main():
     state = module.params.get('state')
 
     if state == 'present':
-        changed, results = setup_rds_option_group(client, module)
+        changed, results = setup_option_group(client, module)
     else:
-        changed, results = remove_rds_option_group(client, module)
+        changed, results = remove_option_group(client, module)
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(results))
 
