@@ -281,10 +281,64 @@
           - taglist.changed == true
           - '"Name" not in taglist.tags'
 
+    # Test tags and tags_propagate with service creation
+
+    - name: create ecs_service with tags
+      ecs_service:
+        name: "{{ resource_prefix }}-tags"
+        cluster: "{{ resource_prefix }}"
+        task_definition: "{{ resource_prefix }}"
+        desired_count: 1
+        state: present
+        tags:
+          Name: foo
+          "Last Name": bar
+      register: ecs_service_creation_tags
+
+    - name: ecs_service up
+      assert:
+        that:
+          - ecs_service_creation_tags.changed
+
+    - name: service tags - tags should be there
+      assert:
+        that:
+          - '"Name" in ecs_service_creation_tags.service.tags'
+          - '"Last Name" in ecs_service_creation_tags.service.tags'
+          - ecs_service_creation_tags.service.tags.Name == "foo"
+          - ecs_service_creation_tags.service.tags["Last Name"] == "bar"
+
+    - name: create the same ecs_service with tags
+      ecs_service:
+        name: "{{ resource_prefix }}-tags"
+        cluster: "{{ resource_prefix }}"
+        task_definition: "{{ resource_prefix }}"
+        desired_count: 1
+        state: present
+        tags:
+          test: test
+      ignore_errors: yes
+      register: ecs_service_creation_again
+
+    - name: check that creation again with tags failed
+      assert:
+        that:
+          - ecs_service_creation_again is failed
+          - '"msg" in ecs_service_creation_again'
+
   always:
     - name: scale down ecs service
       ecs_service:
         name: "{{ resource_prefix }}"
+        cluster: "{{ resource_prefix }}"
+        task_definition: "{{ resource_prefix }}"
+        desired_count: 0
+        state: present
+      ignore_errors: yes
+
+    - name: scale down ecs service
+      ecs_service:
+        name: "{{ resource_prefix }}-tags"
         cluster: "{{ resource_prefix }}"
         task_definition: "{{ resource_prefix }}"
         desired_count: 0
@@ -298,6 +352,15 @@
     - name: remove ecs service
       ecs_service:
         name: "{{ resource_prefix }}"
+        cluster: "{{ resource_prefix }}"
+        task_definition: "{{ resource_prefix }}"
+        desired_count: 1
+        state: absent
+      ignore_errors: yes
+
+    - name: remove ecs service
+      ecs_service:
+        name: "{{ resource_prefix }}-tags"
         cluster: "{{ resource_prefix }}"
         task_definition: "{{ resource_prefix }}"
         desired_count: 1
