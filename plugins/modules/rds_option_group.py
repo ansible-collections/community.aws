@@ -101,7 +101,7 @@ EXAMPLES = r'''
 
 RETURN = r'''
 allows_vpc_and_non_vpc_instance_memberships:
-    description: Specifies the allocated storage size in gigabytes (GB).
+    description: Indicates whether this option group can be applied to both VPC and non-VPC instances.
     returned: I(state=present)
     type: bool
     sample: false
@@ -109,8 +109,7 @@ changed:
     description: If the Option Group has changed.
     type: bool
     returned: always
-    sample:
-        changed: true
+    sample: true
 engine_name:
     description: Indicates the name of the engine that this option group can be applied to.
     returned: I(state=present)
@@ -142,13 +141,24 @@ options:
     type: complex
     contains:
         db_security_group_memberships:
-            description: Any VPCs attached to the internet gateway
+            description: If the option requires access to a port, then this DB security group allows access to the port.
             returned: I(state=present)
             type: complex
             sample: list
             elements: dict
+            contains:
+                status:
+                    description: The status of the DB security group.
+                    returned: I(state=present)
+                    type: str
+                    sample: "available"
+                db_security_group_name:
+                    description: The name of the DB security group.
+                    returned: I(state=present)
+                    type: str
+                    sample: "mydbsecuritygroup"
         option_description:
-            description: TThe description of the option.
+            description: The description of the option.
             returned: I(state=present)
             type: str
             sample: "Innodb Memcached for MySQL"
@@ -223,7 +233,7 @@ options:
             type: int
             sample: 11211
         vpc_security_group_memberships:
-            description: The name of the option.
+            description: If the option requires access to a port, then this VPC security group allows access to the port.
             returned: I(state=present)
             type: list
             elements: dict
@@ -284,11 +294,11 @@ def create_option_group_options(client, module):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
 
     try:
-        result = client.modify_option_group(aws_retry=True, **params)
+        _result = client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to update Option Group.")
 
-    return changed, result
+    return changed
 
 
 def remove_option_group_options(client, module, options_to_remove):
@@ -301,11 +311,11 @@ def remove_option_group_options(client, module, options_to_remove):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
 
     try:
-        result = client.modify_option_group(aws_retry=True, **params)
+        _result = client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
-    return changed, result
+    return changed
 
 
 def create_option_group(client, module):
@@ -317,11 +327,11 @@ def create_option_group(client, module):
     params['OptionGroupDescription'] = module.params.get('option_group_description')
 
     try:
-        result = client.create_option_group(aws_retry=True, **params)
+        _result = client.create_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Unable to create Option Group.')
 
-    return changed, result
+    return changed
 
 
 def match_option_group_options(client, module):
@@ -402,10 +412,10 @@ def setup_option_group(client, module):
             to_be_added, to_be_removed = compare_option_group(client, module)
 
             if to_be_added or update_required:
-                changed, new_option_group_options = create_option_group_options(client, module)
+                changed = create_option_group_options(client, module)
 
             if to_be_removed:
-                changed, removed_option_group_options = remove_option_group_options(client, module, to_be_removed)
+                changed = remove_option_group_options(client, module, to_be_removed)
 
             # If changed, get updated version of option group
             if changed:
@@ -422,17 +432,17 @@ def setup_option_group(client, module):
                 for option in current_option_group['Options']:
                     options_to_remove.append(option['OptionName'])
 
-                changed, removed_option_group_options = remove_option_group_options(client, module, options_to_remove)
+                changed = remove_option_group_options(client, module, options_to_remove)
 
                 # If changed, get updated version of option group
                 if changed:
                     results = get_option_group(client, module)
 
     else:
-        changed, new_option_group = create_option_group(client, module)
+        changed = create_option_group(client, module)
 
         if module.params.get('options'):
-            changed, new_option_group_options = create_option_group_options(client, module)
+            changed = create_option_group_options(client, module)
 
         results = get_option_group(client, module)
 
@@ -459,19 +469,19 @@ def remove_option_group(client, module):
 
 def main():
     argument_spec = dict(
-            option_group_name=dict(required=True, type=str),
-            engine_name=dict(type=str),
-            major_engine_version=dict(type=str),
-            option_group_description=dict(type=str),
+            option_group_name=dict(required=True, type='str'),
+            engine_name=dict(type='str'),
+            major_engine_version=dict(type='str'),
+            option_group_description=dict(type='str'),
             options=dict(type='list'),
-            apply_immediately=dict(type='bool'),
+            apply_immediately=dict(type='bool', default=False),
             state=dict(required=True, choices=['present', 'absent']),
-            required_if=[['state', 'present', ['engine_name', 'major_engine_version', 'option_group_description']]],
     )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
+        required_if=[['state', 'present', ['engine_name', 'major_engine_version', 'option_group_description']]],
     )
 
     try:

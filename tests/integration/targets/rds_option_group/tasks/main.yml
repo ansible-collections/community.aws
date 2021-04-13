@@ -120,6 +120,17 @@
   - assert:
       that:
         - new_rds_mysql_option_group.changed
+  
+  - name: List specifig option group 
+    rds_option_group_info:
+      <<: *creds
+      option_group_name: "{{ option_group_name }}"
+    register: option_groups_result
+  
+  - name: Assert success
+    assert:
+      that:
+          - option_groups_result is successful
 
   - name: Create an RDS Mysql option group (idempotency)
     rds_option_group:
@@ -145,6 +156,18 @@
   - assert:
       that:
         - not new_rds_mysql_option_group.changed
+  
+  - name: List option groups with specific (engine_name and major_engine_version)
+    rds_option_group_info:
+      <<: *creds
+      engine_name: "{{ engine_name }}"
+      major_engine_version: "{{ major_engine_version }}"
+    register: option_groups_result
+  
+  - name: Assert success
+    assert:
+      that:
+          - option_groups_result is successful
 
   - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
     rds_option_group:
