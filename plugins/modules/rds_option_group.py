@@ -9,9 +9,8 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: rds_option_group
 version_added: 1.5.0
-short_description: Manages RDS option groups
 description:
-  - Manages the creation, modification, deletion of RDS option groups
+  - Manages the creation, modification, deletion of RDS option groups.
 author:
   - "Nick Aslanidis (@naslanidis)"
   - "Will Thames (@willthames)"
@@ -19,17 +18,17 @@ author:
 options:
   option_group_name:
     description:
-      - Specifies the name of the option group to be created
+      - Specifies the name of the option group to be created.
     required: true
     default: null
   engine_name:
     description:
-      - Specifies the name of the engine that this option group should be associated with
+      - Specifies the name of the engine that this option group should be associated with.
     required: true
     default: null
   major_engine_version:
     description:
-      - Specifies the major version of the engine that this option group should be associated with
+      - Specifies the major version of the engine that this option group should be associated with.
     required: true
     default: null
   option_group_description:
@@ -39,14 +38,14 @@ options:
     default: null
   apply_immediately:
     description:
-      - Indicates whether the changes should be applied immediately, or during the next maintenance window
+      - Indicates whether the changes should be applied immediately, or during the next maintenance window.
     required: false
     default: false
   options:
     description:
-      - Options in this list are added to the option group
-      - If already present, the specified configuration is used to update the existing configuration
-      - If none are supplied, any existing options are removed
+      - Options in this list are added to the option group.
+      - If already present, the specified configuration is used to update the existing configuration.
+      - If none are supplied, any existing options are removed.
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2

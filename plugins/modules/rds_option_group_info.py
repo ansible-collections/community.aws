@@ -10,7 +10,6 @@ DOCUMENTATION = r'''
 ---
 module: rds_option_group_info
 version_added: 1.5.0
-short_description: Gather information about the RDS option groups.
 description:
     - Gather information about RDS option groups.
 requirements: [ boto3 ]
