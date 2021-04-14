@@ -5,25 +5,19 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
-ANSIBLE_METADATA = {
-    'metadata_version': '1.1',
-    'status': ['preview'],
-    'supported_by': 'community'
-}
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: rds_cluster
 version_added: "1.3.0"
-short_description: Manage RDS clusters
 description:
     - Create, modify, and delete RDS clusters.
 requirements:
     - botocore
     - boto3
 extends_documentation_fragment:
-    - aws
-    - ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 author:
     - Sloane Hertel (@s-hertel)
 options:
@@ -258,7 +252,7 @@ options:
           - A list of EC2 VPC security groups to associate with the DB cluster.
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 - name: create minimal aurora cluster in default VPC and default subnet group
   rds_cluster:
@@ -266,7 +260,7 @@ EXAMPLES = '''
     cluster_id: ansible-test-cluster
 '''
 
-RETURN = '''
+RETURN = r'''
 allocated_storage:
   description:
     - The allocated storage size in gibibytes. Since aurora storage size is not fixed this is
@@ -435,11 +429,17 @@ vpc_security_groups:
       sample: sg-12345678
 '''
 
-from ansible.module_utils._text import to_text
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict, camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags, boto3_tag_list_to_ansible_dict, ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError, WaiterError
@@ -864,8 +864,9 @@ def main():
         ],
         supports_check_mode=True
     )
-
-    client = module.client('rds')
+    
+    retry_decorator = AWSRetry.jittered_backoff(retries=10)
+    client = module.client('rds', retry_decorator=retry_decorator)
 
     module.params['db_cluster_identifier'] = module.params['db_cluster_identifier'].lower()
     cluster = get_cluster(client, module, module.params['db_cluster_identifier'])
