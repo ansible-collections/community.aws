@@ -21,15 +21,10 @@ options:
             - Can't be supplied together with EngineName or MajorEngineVersion.
         type: str
         required: true
-    filters:
-        description:
-            - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
-              See U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_option_groups) for possible filters.
-        type: dict
     marker:
         description:
             - If this parameter is specified, the response includes only records beyond the marker, up to the value specified by MaxRecords.
-            - Constraints: Minimum 20, maximum 100.
+            - Constraints: minimum 20, maximum 100.
         type: str
         required: false
     max_records:
@@ -62,7 +57,6 @@ EXAMPLES = r'''
     profile: production
     option_group_name: test-mysql-option-group
   register: option_group
-
 '''
 
 RETURN = r'''
@@ -235,16 +229,23 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
 def list_option_groups(client, module):
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
-    params['Filters'] = ansible_dict_to_boto3_filter_list(module.params.get('filters'))
-    params['Marker'] = module.params.get('marker')
-    params['MaxRecords'] = module.params.get('max_records')
+
+    if module.params.get('marker'):
+        params['Marker'] = module.params.get('marker')
+        if params['Marker'] < 20 or params['Marker'] > 100:
+            module.fail_json(msg="marker must be between 10 and 100 minutes")
+
+    if module.params.get('max_records'):
+        params['MaxRecords'] = module.params.get('max_records')
+        if params['MaxRecords'] > 100:
+            module.fail_json(msg="The maximum number of records to include in the response is 100.")
+
     params['EngineName'] = module.params.get('engine_name')
     params['MajorEngineVersion'] = module.params.get('major_engine_version')
 
@@ -259,7 +260,6 @@ def list_option_groups(client, module):
 def main():
     argument_spec = dict(
         option_group_name=dict(default='', type='str'),
-        filters=dict(type='dict', default=dict()),
         marker=dict(type='str', default=''),
         max_records=dict(type=int, default=100),
         engine_name=dict(type='str', default=''),

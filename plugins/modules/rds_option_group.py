@@ -254,11 +254,12 @@ vpc_id:
     sample: "vpc-bf07e9d6"
 '''
 
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible.module_utils.ec2 import snake_dict_to_camel_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 
 try:
@@ -292,6 +293,9 @@ def create_option_group_options(client, module):
     if module.params.get('apply_immediately'):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
 
+    if module.check_mode:
+        return changed
+
     try:
         _result = client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -308,6 +312,9 @@ def remove_option_group_options(client, module, options_to_remove):
 
     if module.params.get('apply_immediately'):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
+
+    if module.check_mode:
+        return changed
 
     try:
         _result = client.modify_option_group(aws_retry=True, **params)
@@ -457,6 +464,10 @@ def remove_option_group(client, module):
     existing_option_group = get_option_group(client, module)
 
     if existing_option_group:
+
+        if module.check_mode:
+            return True, {}
+
         changed = True
         try:
             client.delete_option_group(aws_retry=True, **params)

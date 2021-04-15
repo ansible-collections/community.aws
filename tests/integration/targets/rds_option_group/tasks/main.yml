@@ -67,6 +67,7 @@
         name: "{{ item }}"
         description: "created by rds_instance integration tests"
         state: present
+        vpc_id: "{{ vpc_id }}"
     register: sgs_result
     loop:
         - "{{ sg_1_name }}"
@@ -85,15 +86,65 @@
       sg_3: "{{ sgs_result.results.2.group_id }}"
 
 
+  - name: List all the option groups - CHECK_MODE
+    rds_option_group_info:
+      <<: *creds
+    register: option_groups_result
+    check_mode: true
+  
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+          - option_groups_result is successful
+  
+  
   - name: List all the option groups
     rds_option_group_info:
       <<: *creds
     register: option_groups_result
+    check_mode: true
   
   - name: Assert success
     assert:
       that:
           - option_groups_result is successful
+  
+  - name: Create an RDS Mysql option group - CHECK_MODE
+    rds_option_group:
+        <<: *creds
+        state: present
+        option_group_name: "{{ option_group_name }}"
+        engine_name: "{{ engine_name }}"
+        major_engine_version: "{{ major_engine_version }}"
+        option_group_description: "{{ option_group_description }}"
+        apply_immediately: true
+        options:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
+            - "{{ sg_1 }}"
+          option_settings:
+            - name: MAX_SIMULTANEOUS_CONNECTIONS
+              value: '20'
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.25'
+    check_mode: true
+    register: new_rds_mysql_option_group
+ 
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+        - new_rds_mysql_option_group.changed
+        - "'engine_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
+        - "'major_engine_version' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
+        - "'option_group_arn' in new_rds_mysql_option_group"
+        - "'option_group_description' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
+        - "'option_group_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
+        - "'options' in new_rds_mysql_option_group"
 
 
   - name: Create an RDS Mysql option group
@@ -120,8 +171,38 @@
   - assert:
       that:
         - new_rds_mysql_option_group.changed
+        - "'engine_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
+        - "'major_engine_version' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
+        - "'option_group_arn' in new_rds_mysql_option_group"
+        - "'option_group_description' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
+        - "'option_group_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
+        - "'vpc_id' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.vpc_id == vpc_id
+        - "'options' in new_rds_mysql_option_group"
+        - (new_rds_mysql_option_group.options | length) > 0
+        - "'option_name' in option"
+        - option.option_name == "MEMCACHED"
+        - "'permanent' in option"
+        - "'persistent' in option"
+        - "'port' in option"
+        - option.port == 11211
+        - "'vpc_security_group_memberships' in option"
+        - (option.vpc_security_group_memberships | length) == 1
+        - option.vpc_security_group_memberships[0].vpc_security_group_id == "{{ sg_1 }}"
+        - "'option_settings' in option"
+        - (option_settings | length) > 0
+        - option_settings | selectattr('name','equalto','MAX_SIMULTANEOUS_CONNECTIONS') | list | count > 0
+        - option_settings | selectattr('name','equalto','CHUNK_SIZE_GROWTH_FACTOR') | list | count > 0
+    vars:
+        option: '{{ new_rds_mysql_option_group.options[0] }}' 
+        option_settings: '{{ new_rds_mysql_option_group.options[0].option_settings }}' 
   
-  - name: List specifig option group 
+
+  - name: List specific option group
     rds_option_group_info:
       <<: *creds
       option_group_name: "{{ option_group_name }}"
@@ -131,7 +212,93 @@
     assert:
       that:
           - option_groups_result is successful
+          - (option_groups_result.option_groups_list | length) == 1
+          - "'engine_name' in option_groups_list"
+          - option_groups_list.engine_name == "{{ engine_name }}"
+          - "'major_engine_version' in option_groups_list"
+          - option_groups_list.major_engine_version == "{{ major_engine_version }}"
+          - "'option_group_arn' in option_groups_list"
+          - "'option_group_description' in option_groups_list"
+          - option_groups_list.option_group_description == "{{ option_group_description }}"
+          - "'option_group_name' in option_groups_list"
+          - option_groups_list.option_group_name == "{{ option_group_name }}"
+          - "'vpc_id' in option_groups_list"
+          - new_rds_mysql_option_group.vpc_id == vpc_id
+          - "'options' in option_groups_list"
+          - (option_groups_list.options | length) > 0
+          - "'option_name' in options"
+          - options.option_name == "MEMCACHED"
+          - "'permanent' in options"
+          - "'persistent' in options"
+          - "'port' in options"
+          - options.port == 11211
+          - "'vpc_security_group_memberships' in options"
+          - (options.vpc_security_group_memberships | length) == 1
+          - options.vpc_security_group_memberships[0].vpc_security_group_id == "{{ sg_1 }}"
+          - "'option_settings' in options"
+          - (options.option_settings | length) > 0
+    vars:
+        option_groups_list: '{{ option_groups_result.option_groups_list[0] }}'
+        options: '{{ option_groups_result.option_groups_list[0].options[0] }}'  
 
+
+  - name: Create an RDS Mysql option group (idempotency) - CHECK_MODE
+    rds_option_group:
+        <<: *creds
+        state: present
+        option_group_name: "{{ option_group_name }}"
+        engine_name: "{{ engine_name }}"
+        major_engine_version: "{{ major_engine_version }}"
+        option_group_description: "{{ option_group_description }}"
+        apply_immediately: true
+        options:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
+            - "{{ sg_1 }}"
+          option_settings:
+            - name: MAX_SIMULTANEOUS_CONNECTIONS
+              value: '20'
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.25'
+    check_mode: true
+    register: new_rds_mysql_option_group
+
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+        - not new_rds_mysql_option_group.changed
+        - "'engine_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
+        - "'major_engine_version' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
+        - "'option_group_arn' in new_rds_mysql_option_group"
+        - "'option_group_description' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
+        - "'option_group_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
+        - "'vpc_id' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.vpc_id == vpc_id
+        - "'options' in new_rds_mysql_option_group"
+        - (new_rds_mysql_option_group.options | length) > 0
+        - "'option_name' in option"
+        - option.option_name == "MEMCACHED"
+        - "'permanent' in option"
+        - "'persistent' in option"
+        - "'port' in option"
+        - option.port == 11211
+        - "'vpc_security_group_memberships' in option"
+        - (option.vpc_security_group_memberships | length) == 1
+        - option.vpc_security_group_memberships[0].vpc_security_group_id == "{{ sg_1 }}"
+        - "'option_settings' in option"
+        - (option_settings | length) > 0
+        - option_settings | selectattr('name','equalto','MAX_SIMULTANEOUS_CONNECTIONS') | list | count > 0
+        - option_settings | selectattr('name','equalto','CHUNK_SIZE_GROWTH_FACTOR') | list | count > 0
+    vars:
+        option: '{{ new_rds_mysql_option_group.options[0] }}' 
+        option_settings: '{{ new_rds_mysql_option_group.options[0].option_settings }}' 
+        
+  
   - name: Create an RDS Mysql option group (idempotency)
     rds_option_group:
         <<: *creds
@@ -156,7 +323,37 @@
   - assert:
       that:
         - not new_rds_mysql_option_group.changed
+        - "'engine_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
+        - "'major_engine_version' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
+        - "'option_group_arn' in new_rds_mysql_option_group"
+        - "'option_group_description' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
+        - "'option_group_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
+        - "'vpc_id' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.vpc_id == vpc_id
+        - "'options' in new_rds_mysql_option_group"
+        - (new_rds_mysql_option_group.options | length) > 0
+        - "'option_name' in option"
+        - option.option_name == "MEMCACHED"
+        - "'permanent' in option"
+        - "'persistent' in option"
+        - "'port' in option"
+        - option.port == 11211
+        - "'vpc_security_group_memberships' in option"
+        - (option.vpc_security_group_memberships | length) == 1
+        - option.vpc_security_group_memberships[0].vpc_security_group_id == "{{ sg_1 }}"
+        - "'option_settings' in option"
+        - (option_settings | length) > 0
+        - option_settings | selectattr('name','equalto','MAX_SIMULTANEOUS_CONNECTIONS') | list | count > 0
+        - option_settings | selectattr('name','equalto','CHUNK_SIZE_GROWTH_FACTOR') | list | count > 0
+    vars:
+        option: '{{ new_rds_mysql_option_group.options[0] }}' 
+        option_settings: '{{ new_rds_mysql_option_group.options[0].option_settings }}' 
   
+
   - name: List option groups with specific (engine_name and major_engine_version)
     rds_option_group_info:
       <<: *creds
@@ -168,29 +365,8 @@
     assert:
       that:
           - option_groups_result is successful
+          - (option_groups_result.option_groups_list | length) > 0
 
-  - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
-    rds_option_group:
-        <<: *creds
-        state: present
-        option_group_name: "{{ option_group_name }}"
-        engine_name: "{{ engine_name }}"
-        major_engine_version: "{{ major_engine_version }}"
-        option_group_description: "{{ option_group_description }}"
-        apply_immediately: true
-        options:
-        - option_name: MEMCACHED
-          port: 11211
-          vpc_security_group_memberships:
-            - "{{ sg_1 }}"
-          option_settings:
-            - name: CHUNK_SIZE_GROWTH_FACTOR
-              value: '1.5'
-    register: new_rds_mysql_option_group
-
-  - assert:
-      that:
-        - new_rds_mysql_option_group.changed
   
   - name: Create an RDS Mysql option group - apply different changes (expected changed=true)
     rds_option_group:
@@ -216,23 +392,107 @@
   - assert:
       that:
         - new_rds_mysql_option_group.changed
+        - "'engine_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
+        - "'major_engine_version' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
+        - "'option_group_arn' in new_rds_mysql_option_group"
+        - "'option_group_description' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
+        - "'option_group_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
+        - "'vpc_id' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.vpc_id == vpc_id
+        - "'options' in new_rds_mysql_option_group"
+        - (new_rds_mysql_option_group.options | length) > 0
+        - "'option_name' in option"
+        - option.option_name == "MEMCACHED"
+        - "'permanent' in option"
+        - "'persistent' in option"
+        - "'port' in option"
+        - option.port == 11211
+        - "'vpc_security_group_memberships' in option"
+        - (option.vpc_security_group_memberships | length) == 3
+        - "'option_settings' in option"
+        - (option_settings | length) > 0
+        #- option_settings | selectattr('name','equalto','MAX_SIMULTANEOUS_CONNECTIONS') | list | count == 0
+        - option_settings | selectattr('name','equalto','CHUNK_SIZE_GROWTH_FACTOR') | list | count > 0
+    vars:
+        option: '{{ new_rds_mysql_option_group.options[0] }}' 
+        option_settings: '{{ new_rds_mysql_option_group.options[0].option_settings }}' 
   
-  - name: Get info about an option group
+  
+  - name: Get info about an option group - CHECK_MODE
     rds_option_group_info:
       <<: *creds
       option_group_name: "{{ option_group_name }}"
-    register: option_groups
+    check_mode: true
+    register: option_groups_result
+  
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+          - option_groups_result is successful
+          - (option_groups_result.option_groups_list | length) == 1
+          - "'engine_name' in option_groups_list"
+          - option_groups_list.engine_name == "{{ engine_name }}"
+          - "'major_engine_version' in option_groups_list"
+          - option_groups_list.major_engine_version == "{{ major_engine_version }}"
+          - "'option_group_arn' in option_groups_list"
+          - "'option_group_description' in option_groups_list"
+          - option_groups_list.option_group_description == "{{ option_group_description }}"
+          - "'option_group_name' in option_groups_list"
+          - option_groups_list.option_group_name == "{{ option_group_name }}"
+          - "'vpc_id' in option_groups_list"
+          - new_rds_mysql_option_group.vpc_id == vpc_id
+          - "'options' in option_groups_list"
+          - (option_groups_list.options | length) > 0
+          - "'option_name' in options"
+          - options.option_name == "MEMCACHED"
+          - "'permanent' in options"
+          - "'persistent' in options"
+          - "'port' in options"
+          - options.port == 11211
+          - "'vpc_security_group_memberships' in options"
+          - (options.vpc_security_group_memberships | length) == 3
+          - "'option_settings' in options"
+          - (options.option_settings | length) > 0
+    vars:
+        option_groups_list: '{{ option_groups_result.option_groups_list[0] }}'
+        options: '{{ option_groups_result.option_groups_list[0].options[0] }}' 
+  
+  
+  - name: Delete an RDS Mysql option group -  CHECK_MODE
+    rds_option_group:
+        <<: *creds
+        state: absent
+        option_group_name: "{{ option_group_name }}"
+    check_mode: yes
+    register: deleted_rds_mysql_option_group
+  
+  - name: Assert success - CHECK_MODE
+    assert:
+      that:
+          - deleted_rds_mysql_option_group.changed
+
+  
+  - name: Delete an RDS Mysql option group
+    rds_option_group:
+        <<: *creds
+        state: absent
+        option_group_name: "{{ option_group_name }}"
+    register: deleted_rds_mysql_option_group
   
   - name: Assert success
     assert:
       that:
-          - option_groups_result is successful
-
+          - deleted_rds_mysql_option_group.changed
+  
 
   always:
 
   - name: Delete an RDS Mysql option group
-    community.aws.rds_option_group:
+    rds_option_group:
         <<: *creds
         state: absent
         option_group_name: "{{ option_group_name }}"
