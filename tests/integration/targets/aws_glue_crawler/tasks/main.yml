@@ -322,7 +322,7 @@
 
   always:
     - name: Delete Glue crawler
-      aws_glue_connection:
+      aws_glue_crawler:
         name: "{{ glue_crawler_name }}"
         state: absent
       ignore_errors: true

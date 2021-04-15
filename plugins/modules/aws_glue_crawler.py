@@ -33,8 +33,8 @@ options:
   recrawl_policy:
     description:
       - A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.
-      - I(RecrawlBehavior) specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run:
-      - CRAWL_EVERYTHING or CRAWL_NEW_FOLDERS_ONLY.
+      - I(RecrawlBehavior) specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run
+      - Options are CRAWL_EVERYTHING or CRAWL_NEW_FOLDERS_ONLY.
     type: dict
   role:
     description:
@@ -44,8 +44,8 @@ options:
   schema_change_policy:
     description:
       - The policy for the crawler's update and deletion behavior.
-      - I(UpdateBehavior) defines the update behavior when the crawler finds a changed schema.
-      - I(DeleteBehavior) defines the deletion behavior when the crawler finds a deleted object.
+      - I(UpdateBehavior) defines the update behavior when the crawler finds a changed schema. Options are LOG or UPDATE_IN_DATABASE.
+      - I(DeleteBehavior) defines the deletion behavior when the crawler finds a deleted object. Options are LOG, DELETE_FROM_DATABASE, DEPRECATE_IN_DATABASE
     type: dict
   state:
     description:
@@ -119,7 +119,7 @@ description:
     returned: when state is present
     type: str
     sample: My crawler
-last_updated
+last_updated:
     description: The time and date that this crawler definition was last updated.
     returned: when state is present
     type: str
