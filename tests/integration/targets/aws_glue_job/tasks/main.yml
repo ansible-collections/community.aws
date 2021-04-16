@@ -293,7 +293,7 @@
 
   always:
     - name: Delete Glue job
-      aws_glue_connection:
+      aws_glue_job:
         name: "{{ glue_job_name }}"
         state: absent
       ignore_errors: true
