@@ -169,6 +169,27 @@ targets:
     description: A list of targets to crawl.
     returned: when state is present
     type: complex
+    contains:
+        S3Targets:
+            description: List of S3 targets.
+            returned: when state is present
+            type: list
+        JdbcTargets:
+            description: List of JDBC targets.
+            returned: when state is present
+            type: list
+        MongoDBTargets:
+            description: List of Mongo DB targets.
+            returned: when state is present
+            type: list
+        DynamoDBTargets:
+            description: List of DynamoDB targets.
+            returned: when state is present
+            type: list
+        CatalogTargets:
+            description: List of catalog targets.
+            returned: when state is present
+            type: list
 '''
 
 # Non-ansible imports
