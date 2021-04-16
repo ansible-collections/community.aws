@@ -230,7 +230,7 @@ def _get_glue_crawler(connection, module, glue_crawler_name):
         return connection.get_crawler(aws_retry=True, Name=glue_crawler_name)['Crawler']
     except is_boto3_error_code('EntityNotFoundException'):
         return None
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e)
 
 
