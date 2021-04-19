@@ -9,39 +9,44 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_option_group_info
+short_description: rds_option_group_info
 version_added: 1.5.0
 description:
     - Gather information about RDS option groups.
-requirements: [ boto3 ]
+requirements: [ botocore, boto3 ]
 author: "Alina Buzachis (@alinabuzachis)"
 options:
     option_group_name:
         description:
             - The name of the option group to describe.
             - Can't be supplied together with EngineName or MajorEngineVersion.
+        default: ''
+        required: false
         type: str
-        required: true
     marker:
         description:
             - If this parameter is specified, the response includes only records beyond the marker, up to the value specified by MaxRecords.
             - Constraints: minimum 20, maximum 100.
-        type: str
+        default: ''
         required: false
+        type: str
     max_records:
         description:
             - The maximum number of records to include in the response.
         type: int
         default: 100
-        required: true
+        required: false
     engine_name:
         description: Filters the list of option groups to only include groups associated with a specific database engine.
         type: str
+        default: ''
         required: false
     major_engine_version:
         description:
             - Filters the list of option groups to only include groups associated with a specific database engine version.
             - If specified, then EngineName must also be specified.
         type: str
+        default: ''
         required: false
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -233,13 +238,14 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 
 
 def list_option_groups(client, module):
+    option_groups = list()
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
 
     if module.params.get('marker'):
         params['Marker'] = module.params.get('marker')
-        if params['Marker'] < 20 or params['Marker'] > 100:
-            module.fail_json(msg="marker must be between 10 and 100 minutes")
+        if int(params['Marker']) < 20 or int(params['Marker']) > 100:
+            module.fail_json(msg="marker must be between 20 and 100 minutes")
 
     if module.params.get('max_records'):
         params['MaxRecords'] = module.params.get('max_records')
@@ -251,16 +257,30 @@ def list_option_groups(client, module):
 
     try:
         result = client.describe_option_groups(aws_retry=True, **params)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except is_boto3_error_code('OptionGroupNotFoundFault'):
+        return {}
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't describe option groups.")
 
-    return result
+    for option_group in result['OptionGroupsList']:
+        # Turn the boto3 result into ansible_friendly_snaked_names
+        converted_option_group = camel_dict_to_snake_dict(option_group)
+        try:
+            tags = client.list_tags_for_resource(ResourceName=converted_option_group['option_group_arn'])['TagList']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't obtain option group tags.")
+
+        converted_option_group['tags'] = boto3_tag_list_to_ansible_dict(tags)
+
+        option_groups.append(converted_option_group)
+
+    return option_groups
 
 
 def main():
     argument_spec = dict(
         option_group_name=dict(default='', type='str'),
-        marker=dict(type='str', default=''),
+        marker=dict(type='str'),
         max_records=dict(type=int, default=100),
         engine_name=dict(type='str', default=''),
         major_engine_version=dict(type='str', default=''),
@@ -286,7 +306,7 @@ def main():
 
     results = list_option_groups(connection, module)
 
-    module.exit_json(**camel_dict_to_snake_dict(results))
+    module.exit_json(result=results)
 
 
 if __name__ == '__main__':

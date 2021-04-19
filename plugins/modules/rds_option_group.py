@@ -8,6 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_option_group
+short_description: rds_option_group
 version_added: 1.5.0
 description:
   - Manages the creation, modification, deletion of RDS option groups.
@@ -16,36 +17,55 @@ author:
   - "Will Thames (@willthames)"
   - "Alina Buzachis (@alinabuzachis)"
 options:
+  state:
+    description:
+      - Specifies whether the option group should be present or absent.
+    required: true
+    choices: [ 'present', 'absent' ]
+    type: str
   option_group_name:
     description:
       - Specifies the name of the option group to be created.
     required: true
-    default: null
+    type: str
   engine_name:
     description:
       - Specifies the name of the engine that this option group should be associated with.
     required: true
-    default: null
+    type: str
   major_engine_version:
     description:
       - Specifies the major version of the engine that this option group should be associated with.
     required: true
-    default: null
+    type: str
   option_group_description:
     description:
       - The description of the option group.
     required: true
-    default: null
+    type: str
   apply_immediately:
     description:
       - Indicates whether the changes should be applied immediately, or during the next maintenance window.
     required: false
+    type: bool
     default: false
   options:
     description:
       - Options in this list are added to the option group.
       - If already present, the specified configuration is used to update the existing configuration.
       - If none are supplied, any existing options are removed.
+    type: list
+  tags:
+    description:
+      - A dictionary of key value pairs to assign the DB cluster.
+      - To remove all tags set I(tags={}) and I(purge_tags=true).
+    type: dict
+  purge_tags:
+    description:
+      - Remove tags not listed in I(tags).
+    type: bool
+    default: true
+requirements: [ botocore, boto3 ]
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -53,7 +73,7 @@ extends_documentation_fragment:
 
 EXAMPLES = r'''
 # Create an RDS Mysql Option group
-- name: Create an RDS Mysql Option Group
+- name: Create an RDS Mysql option group
   community.aws.rds_option_group:
     region: ap-southeast-2
     profile: production
@@ -76,7 +96,7 @@ EXAMPLES = r'''
   register: new_rds_mysql_option_group
 
 # Remove currently configured options for an option group by removing options argument
-- name: Create an RDS Mysql Option Group
+- name: Create an RDS Mysql option group
   community.aws.rds_option_group:
     region: ap-southeast-2
     profile: production
@@ -88,8 +108,23 @@ EXAMPLES = r'''
     apply_immediately: true
   register: rds_mysql_option_group
 
+- name: Create an RDS Mysql option group using tags
+  community.aws.rds_option_group:
+    region: ap-southeast-2
+    profile: production
+    state: present
+    option_group_name: test-mysql-option-group
+    engine_name: mysql
+    major_engine_version: 5.6
+    option_group_description: test mysql option group
+    apply_immediately: true
+    tags:
+        Tag1: tag1
+        Tag2: tag2
+  register: rds_mysql_option_group
+
 # Delete an RDS Mysql Option group
-- name: Delete an RDS Mysql Option Group
+- name: Delete an RDS Mysql option group
   community.aws.rds_option_group:
     region: ap-southeast-2
     profile: production
@@ -258,6 +293,10 @@ vpc_id:
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
@@ -273,13 +312,20 @@ def get_option_group(client, module):
     params['OptionGroupName'] = module.params.get('option_group_name')
 
     try:
-        _result = client.describe_option_groups(aws_retry=True, **params)
+        result = camel_dict_to_snake_dict(client.describe_option_groups(aws_retry=True, **params)['OptionGroupsList'][0])
     except is_boto3_error_code('OptionGroupNotFoundFault'):
         return {}
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't describe option groups.")
 
-    result = _result['OptionGroupsList'][0]
+    if result:
+        try:
+            tags = client.list_tags_for_resource(ResourceName=result['option_group_arn'])['TagList']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't obtain option group tags.")
+
+        result['tags'] = boto3_tag_list_to_ansible_dict(tags)
+
     return result
 
 
@@ -332,6 +378,9 @@ def create_option_group(client, module):
     params['MajorEngineVersion'] = str(module.params.get('major_engine_version'))
     params['OptionGroupDescription'] = module.params.get('option_group_description')
 
+    if module.params.get('tags'):
+        params['Tags'] = ansible_dict_to_boto3_tag_list(module.params.get('tags'))
+
     try:
         _result = client.create_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -342,44 +391,45 @@ def create_option_group(client, module):
 
 def match_option_group_options(client, module):
     requires_update = False
-    _new_options = module.params.get('options')
-    new_options = snake_dict_to_camel_dict(_new_options, capitalize_first=True)
+    new_options = module.params.get('options')
 
     # Get existing option groups and compare to our new options spec
     current_option = get_option_group(client, module)
 
-    if current_option['Options'] == [] and new_options:
+    if current_option['options'] == [] and new_options:
         requires_update = True
     else:
-        for option in current_option['Options']:
+        for option in current_option['options']:
             for setting_name in new_options:
-                if setting_name['OptionName'] == option['OptionName']:
+                if setting_name['option_name'] == option['option_name']:
 
                     # Security groups need to be handled separately due to different keys on request and what is
                     # returned by the API
                     if any(
-                        name in option.keys() - ['OptionSettings', 'VpcSecurityGroupMemberships'] and
+                        name in option.keys() - ['option_settings', 'vpc_security_group_memberships'] and
                         setting_name[name] != option[name]
                         for name in setting_name
                     ):
                         requires_update = True
 
                     if any(
-                        name in option and name == 'VpcSecurityGroupMemberships'
+                        name in option and name == 'vpc_security_group_memberships'
                         for name in setting_name
                     ):
-                        current_sg = set(sg['VpcSecurityGroupId'] for sg in option['VpcSecurityGroupMemberships'])
-                        new_sg = set(setting_name['VpcSecurityGroupMemberships'])
+                        current_sg = set(sg['vpc_security_group_id'] for sg in option['vpc_security_group_memberships'])
+                        new_sg = set(setting_name['vpc_security_group_memberships'])
                         if current_sg != new_sg:
                             requires_update = True
 
                     if any(
-                        new_option_setting['Name'] == current_option_setting['Name'] and
-                        new_option_setting['Value'] != current_option_setting['Value']
-                        for new_option_setting in setting_name['OptionSettings']
-                        for current_option_setting in option['OptionSettings']
+                        new_option_setting['name'] == current_option_setting['name'] and
+                        new_option_setting['value'] != current_option_setting['value']
+                        for new_option_setting in setting_name['option_settings']
+                        for current_option_setting in option['option_settings']
                     ):
                         requires_update = True
+                else:
+                    requires_update = True
 
     return requires_update
 
@@ -388,10 +438,9 @@ def compare_option_group(client, module):
     to_be_added = None
     to_be_removed = None
     current_option = get_option_group(client, module)
-    _new_options = module.params.get('options')
-    new_options = snake_dict_to_camel_dict(_new_options, capitalize_first=True)
-    new_settings = set([item['OptionName'] for item in new_options])
-    old_settings = set([item['OptionName'] for item in current_option['Options']])
+    new_options = module.params.get('options')
+    new_settings = set([item['option_name'] for item in new_options])
+    old_settings = set([item['option_name'] for item in current_option['options']])
 
     if new_settings != old_settings:
         to_be_added = list(new_settings - old_settings)
@@ -403,6 +452,8 @@ def compare_option_group(client, module):
 def setup_option_group(client, module):
     results = []
     changed = False
+    to_be_added = None
+    to_be_removed = None
 
     # Check if there is an existing options group
     existing_option_group = get_option_group(client, module)
@@ -410,40 +461,45 @@ def setup_option_group(client, module):
     if existing_option_group:
         results = existing_option_group
 
+        if module.params.get('tags'):
+            tags = module.params.get('tags')
+
+            # Check tagging
+            changed |= update_tags(client, module, existing_option_group, tags)
+
         if module.params.get('options'):
             # Check if existing options require updating
             update_required = match_option_group_options(client, module)
 
             # Check if there are options to be added or removed
-            to_be_added, to_be_removed = compare_option_group(client, module)
+            if update_required:
+                to_be_added, to_be_removed = compare_option_group(client, module)
 
             if to_be_added or update_required:
-                changed = create_option_group_options(client, module)
+                changed |= create_option_group_options(client, module)
 
             if to_be_removed:
-                changed = remove_option_group_options(client, module, to_be_removed)
+                changed |= remove_option_group_options(client, module, to_be_removed)
 
             # If changed, get updated version of option group
             if changed:
                 results = get_option_group(client, module)
-
         else:
             # No options were supplied. If options exist, remove them
             current_option_group = get_option_group(client, module)
 
-            if current_option_group['Options'] != []:
+            if current_option_group['options'] != []:
                 # Here we would call our remove options function
                 options_to_remove = []
 
-                for option in current_option_group['Options']:
-                    options_to_remove.append(option['OptionName'])
+                for option in current_option_group['options']:
+                    options_to_remove.append(option['option_name'])
 
-                changed = remove_option_group_options(client, module, options_to_remove)
+                changed |= remove_option_group_options(client, module, options_to_remove)
 
-                # If changed, get updated version of option group
-                if changed:
-                    results = get_option_group(client, module)
-
+            # If changed, get updated version of option group
+            if changed:
+                results = get_option_group(client, module)
     else:
         changed = create_option_group(client, module)
 
@@ -472,9 +528,37 @@ def remove_option_group(client, module):
         try:
             client.delete_option_group(aws_retry=True, **params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Unable to delete Option Group.")
+            module.fail_json_aws(e, msg="Unable to delete option group.")
 
     return changed, {}
+
+
+def update_tags(client, module, option_group, tags):
+    changed = False
+    existing_tags = client.list_tags_for_resource(ResourceName=option_group['option_group_arn'])['TagList']
+    to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
+                                            tags, module.params['purge_tags'])
+
+    if to_update:
+        try:
+            if module.check_mode:
+                return True
+            client.add_tags_to_resource(ResourceName=option_group['option_group_arn'],
+                                        Tags=ansible_dict_to_boto3_tag_list(to_update))
+            changed = True
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't add tags to option group.")
+    if to_delete:
+        try:
+            if module.check_mode:
+                return True
+            client.remove_tags_from_resource(ResourceName=option_group['option_group_arn'],
+                                             TagKeys=to_delete)
+            changed = True
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't remove tags from option group.")
+
+    return changed
 
 
 def main():
@@ -486,6 +570,8 @@ def main():
             options=dict(type='list'),
             apply_immediately=dict(type='bool', default=False),
             state=dict(required=True, choices=['present', 'absent']),
+            tags=dict(required=False, type='dict', default={}),
+            purge_tags=dict(type='bool', default=True),
     )
 
     module = AnsibleAWSModule(
@@ -506,7 +592,7 @@ def main():
     else:
         changed, results = remove_option_group(client, module)
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(results))
+    module.exit_json(changed=changed, **results)
 
 
 if __name__ == '__main__':
