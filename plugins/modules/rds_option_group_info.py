@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_option_group_info
-short_description: rds_option_group_info
+short_description: rds_option_group_info module
 version_added: 1.5.0
 description:
     - Gather information about RDS option groups.

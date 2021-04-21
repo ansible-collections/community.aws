@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_option_group
-short_description: rds_option_group
+short_description: rds_option_group module
 version_added: 1.5.0
 description:
   - Manages the creation, modification, deletion of RDS option groups.
@@ -31,17 +31,17 @@ options:
   engine_name:
     description:
       - Specifies the name of the engine that this option group should be associated with.
-    required: true
+    required: I(state=present)
     type: str
   major_engine_version:
     description:
       - Specifies the major version of the engine that this option group should be associated with.
-    required: true
+    required: I(state=present)
     type: str
   option_group_description:
     description:
       - The description of the option group.
-    required: true
+    required: I(state=present)
     type: str
   apply_immediately:
     description:
@@ -563,15 +563,15 @@ def update_tags(client, module, option_group, tags):
 
 def main():
     argument_spec = dict(
-            option_group_name=dict(required=True, type='str'),
-            engine_name=dict(type='str'),
-            major_engine_version=dict(type='str'),
-            option_group_description=dict(type='str'),
-            options=dict(type='list'),
-            apply_immediately=dict(type='bool', default=False),
-            state=dict(required=True, choices=['present', 'absent']),
-            tags=dict(required=False, type='dict', default={}),
-            purge_tags=dict(type='bool', default=True),
+        option_group_name=dict(required=True, type='str'),
+        engine_name=dict(type='str'),
+        major_engine_version=dict(type='str'),
+        option_group_description=dict(type='str'),
+        options=dict(type='list'),
+        apply_immediately=dict(type='bool', default=False),
+        state=dict(required=True, choices=['present', 'absent']),
+        tags=dict(required=False, type='dict', default={}),
+        purge_tags=dict(type='bool', default=True),
     )
 
     module = AnsibleAWSModule(
