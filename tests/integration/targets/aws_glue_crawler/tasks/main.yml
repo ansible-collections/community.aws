@@ -36,10 +36,10 @@
         description: "{{ glue_crawler_description }}"
         role: "{{ glue_crawler_role_name }}"
         recrawl_policy:
-          RecrawlBehavior: CRAWL_EVERYTHING
+          recrawl_behavior: CRAWL_EVERYTHING
         schema_change_policy:
-          DeleteBehavior: DELETE_FROM_DATABASE
-          UpdateBehavior: UPDATE_IN_DATABASE
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
         targets:
           S3Targets:
             - Path: "{{ glue_crawler_s3_path }}"
@@ -63,10 +63,10 @@
         description: "{{ glue_crawler_description }}"
         role: "{{ glue_crawler_role_name }}"
         recrawl_policy:
-          RecrawlBehavior: CRAWL_EVERYTHING
+          recrawl_behavior: CRAWL_EVERYTHING
         schema_change_policy:
-          DeleteBehavior: DELETE_FROM_DATABASE
-          UpdateBehavior: UPDATE_IN_DATABASE
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
         targets:
           S3Targets:
             - Path: "{{ glue_crawler_s3_path }}"
@@ -108,10 +108,10 @@
         description: "{{ glue_crawler_description }}"
         role: "{{ glue_crawler_role_name }}"
         recrawl_policy:
-          RecrawlBehavior: CRAWL_EVERYTHING
+          recrawl_behavior: CRAWL_EVERYTHING
         schema_change_policy:
-          DeleteBehavior: DELETE_FROM_DATABASE
-          UpdateBehavior: UPDATE_IN_DATABASE
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
         targets:
           S3Targets:
             - Path: "{{ glue_crawler_s3_path }}"
@@ -154,10 +154,10 @@
         description: "{{ glue_crawler_description }}"
         role: "{{ glue_crawler_role_name }}"
         recrawl_policy:
-          RecrawlBehavior: CRAWL_EVERYTHING
+          recrawl_behavior: CRAWL_EVERYTHING
         schema_change_policy:
-          DeleteBehavior: DELETE_FROM_DATABASE
-          UpdateBehavior: UPDATE_IN_DATABASE
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
         targets:
           S3Targets:
             - Path: "{{ glue_crawler_s3_path }}"
@@ -199,10 +199,10 @@
         description: "{{ glue_crawler_description }}"
         role: "{{ glue_crawler_role_name }}"
         recrawl_policy:
-          RecrawlBehavior: CRAWL_EVERYTHING
+          recrawl_behavior: CRAWL_EVERYTHING
         schema_change_policy:
-          DeleteBehavior: DELETE_FROM_DATABASE
-          UpdateBehavior: UPDATE_IN_DATABASE
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
         targets:
           S3Targets:
             - Path: "{{ glue_crawler_s3_path }}"
@@ -245,10 +245,10 @@
         description: "{{ glue_crawler_description }}"
         role: "{{ glue_crawler_role_name }}"
         recrawl_policy:
-          RecrawlBehavior: CRAWL_EVERYTHING
+          recrawl_behavior: CRAWL_EVERYTHING
         schema_change_policy:
-          DeleteBehavior: DELETE_FROM_DATABASE
-          UpdateBehavior: UPDATE_IN_DATABASE
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
         targets:
           S3Targets:
             - Path: "{{ glue_crawler_s3_path }}"

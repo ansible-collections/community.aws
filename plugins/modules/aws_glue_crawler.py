@@ -30,11 +30,22 @@ options:
       - The name you assign to this crawler definition. It must be unique in your account.
     required: true
     type: str
+  purge_tags:
+    description:
+      - If C(true), existing tags will be purged from the resource to match exactly what is defined by I(tags) parameter.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    default: true
+    type: bool
+    version_added: 1.5.0
   recrawl_policy:
     description:
       - A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.
-      - I(RecrawlBehavior) specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run
-      - Options are CRAWL_EVERYTHING or CRAWL_NEW_FOLDERS_ONLY.
+    suboptions:
+      recrawl_behavior:
+        description:i
+          - Specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run.
+          - Supported options are C(CRAWL_EVERYTHING) and C(CRAWL_NEW_FOLDERS_ONLY).
+        type: str
     type: dict
   role:
     description:
@@ -44,8 +55,17 @@ options:
   schema_change_policy:
     description:
       - The policy for the crawler's update and deletion behavior.
-      - I(UpdateBehavior) defines the update behavior when the crawler finds a changed schema. Options are LOG or UPDATE_IN_DATABASE.
-      - I(DeleteBehavior) defines the deletion behavior when the crawler finds a deleted object. Options are LOG, DELETE_FROM_DATABASE, DEPRECATE_IN_DATABASE
+    suboptions:
+      delete_behavior:
+        description:i
+          - Defines the deletion behavior when the crawler finds a deleted object.
+          - Supported options are C(LOG), C(DELETE_FROM_DATABASE), and C(DEPRECATE_IN_DATABASE).
+        type: str
+      update_behavior:
+        description:i
+          - Defines the update behavior when the crawler finds a changed schema..
+          - Supported options are C(LOG) and C(UPDATE_IN_DATABASE).
+        type: str
     type: dict
   state:
     description:
@@ -61,7 +81,6 @@ options:
     description:
       - A hash/dictionary of tags to be applied to the crawler.
       - Remove completely or specify an empty dictionary to remove all tags.
-    default: {}
     type: dict
   targets:
     description:
@@ -83,10 +102,10 @@ EXAMPLES = r'''
     database_name: my_database
     role: my-iam-role
     schema_change_policy:
-      DeleteBehavior: DELETE_FROM_DATABASE
-      UpdateBehavior: UPDATE_IN_DATABASE
+      delete_behavior: DELETE_FROM_DATABASE
+      update_behavior: UPDATE_IN_DATABASE
     recrawl_policy:
-      RecrawlBehavior: CRAWL_EVERYTHING
+      recrawl_ehavior: CRAWL_EVERYTHING
     targets:
       S3Targets:
         - Path: "s3://my-bucket/prefix/folder/"
@@ -200,6 +219,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
@@ -207,19 +227,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
-
-
-def _get_account_info(module):
-    '''
-    Return the account information (account ID and partition) we are currently working on.
-    '''
-    account_id = None
-    partition = None
-    sts_client = module.client('sts')
-    caller_identity = sts_client.get_caller_identity()
-    account_id = caller_identity.get('Account')
-    partition = caller_identity.get('Arn').split(':')[1]
-    return account_id, partition
+from ansible_collections.amazon.aws.plugins.module_utils.iam import get_aws_account_info
 
 
 def _get_glue_crawler(connection, module, glue_crawler_name):
@@ -271,7 +279,7 @@ def ensure_tags(connection, module, glue_crawler):
     if module.params.get('tags') is None:
         return False
 
-    account_id, partition = _get_account_info(module)
+    account_id, partition = get_aws_account_info(module)
     arn = 'arn:{0}:glue:{1}:{2}:crawler/{3}'.format(partition, module.region, account_id, module.params.get('name'))
 
     try:
@@ -282,7 +290,7 @@ def ensure_tags(connection, module, glue_crawler):
         else:
             module.fail_json_aws(e, msg='Unable to get tags for Glue crawler %s' % module.params.get('name'))
 
-    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), True)
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
 
     if tags_to_remove:
         changed = True
@@ -318,11 +326,11 @@ def create_or_update_glue_crawler(connection, module, glue_crawler):
     if module.params.get('description') is not None:
         params['Description'] = module.params.get('description')
     if module.params.get('recrawl_policy') is not None:
-        params['RecrawlPolicy'] = module.params.get('recrawl_policy')
+        params['RecrawlPolicy'] = snake_dict_to_camel_dict(module.params.get('recrawl_policy'), capitalize_first=True)
     if module.params.get('role') is not None:
         params['Role'] = module.params.get('role')
     if module.params.get('schema_change_policy') is not None:
-        params['SchemaChangePolicy'] = module.params.get('schema_change_policy')
+        params['SchemaChangePolicy'] = snake_dict_to_camel_dict(module.params.get('schema_change_policy'), capitalize_first=True)
     if module.params.get('table_prefix') is not None:
         params['TablePrefix'] = module.params.get('table_prefix')
     if module.params.get('targets') is not None:
@@ -330,7 +338,6 @@ def create_or_update_glue_crawler(connection, module, glue_crawler):
 
     if glue_crawler:
         if _compare_glue_crawler_params(params, glue_crawler):
-            module.fail_json(msg='%s vs %s' % (params, glue_crawler))
             try:
                 if not module.check_mode:
                     connection.update_crawler(aws_retry=True, **params)
@@ -376,12 +383,18 @@ def main():
             database_name=dict(type='str'),
             description=dict(type='str'),
             name=dict(required=True, type='str'),
-            recrawl_policy=dict(type='dict'),
+            purge_tags=dict(type='bool', default=True),
+            recrawl_policy=dict(type='dict', options=dict(
+                recrawl_behavior=dict(type='str')
+            )),
             role=dict(type='str'),
-            schema_change_policy=dict(type='dict'),
+            schema_change_policy=dict(type='dict', options=dict(
+                delete_behavior=dict(type='str'),
+                update_behavior=dict(type='str')
+            )),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
             table_prefix=dict(type='str'),
-            tags=dict(type='dict', default={}),
+            tags=dict(type='dict'),
             targets=dict(type='dict')
         )
     )
