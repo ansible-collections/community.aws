@@ -42,7 +42,7 @@ options:
       - A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.
     suboptions:
       recrawl_behavior:
-        description:i
+        description:
           - Specifies whether to crawl the entire dataset again or to crawl only folders that were added since the last crawler run.
           - Supported options are C(CRAWL_EVERYTHING) and C(CRAWL_NEW_FOLDERS_ONLY).
         type: str
@@ -57,12 +57,12 @@ options:
       - The policy for the crawler's update and deletion behavior.
     suboptions:
       delete_behavior:
-        description:i
+        description:
           - Defines the deletion behavior when the crawler finds a deleted object.
           - Supported options are C(LOG), C(DELETE_FROM_DATABASE), and C(DEPRECATE_IN_DATABASE).
         type: str
       update_behavior:
-        description:i
+        description:
           - Defines the update behavior when the crawler finds a changed schema..
           - Supported options are C(LOG) and C(UPDATE_IN_DATABASE).
         type: str
