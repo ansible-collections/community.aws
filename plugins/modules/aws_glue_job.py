@@ -30,7 +30,8 @@ options:
     type: str
   command_python_version:
     description:
-      - Python version being used to execute a Python shell job. Allowed values are '2' or '3'.
+      - Python version being used to execute a Python shell job.
+      - AWS currently supports C('2') or C('3').
     type: str
     version_added: 1.5.0
   command_script_location:
@@ -52,6 +53,11 @@ options:
     description:
       - Description of the job being defined.
     type: str
+  glue_version:
+    description:
+      - Glue version determines the versions of Apache Spark and Python that AWS Glue supports.
+    type: str
+    version_added: 1.5.0
   max_concurrent_runs:
     description:
       - The maximum number of concurrent runs allowed for the job. The default is 1. An error is returned when
@@ -66,6 +72,18 @@ options:
       - The name you assign to this job definition. It must be unique in your account.
     required: true
     type: str
+  number_of_workers:
+    description:
+      - The number of workers of a defined workerType that are allocated when a job runs.
+    type: int
+    version_added: 1.5.0
+  purge_tags:
+    description:
+      - If C(true), existing tags will be purged from the resource to match exactly what is defined by I(tags) parameter.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    default: true
+    type: bool
+    version_added: 1.5.0
   role:
     description:
       - The name or ARN of the IAM role associated with this job.
@@ -81,28 +99,17 @@ options:
     description:
       - A hash/dictionary of tags to be applied to the job.
       - Remove completely or specify an empty dictionary to remove all tags.
-    default: {}
     type: dict
     version_added: 1.5.0
   timeout:
     description:
       - The job timeout in minutes.
     type: int
-  glue_version:
-    description:
-      - Glue version determines the versions of Apache Spark and Python that AWS Glue supports.
-    type: str
-    version_added: 1.5.0
   worker_type:
     description:
       - The type of predefined worker that is allocated when a job runs.
     choices: [ 'Standard', 'G.1X', 'G.2X' ]
     type: str
-    version_added: 1.5.0
-  number_of_workers:
-    description:
-      - The number of workers of a defined workerType that are allocated when a job runs.
-    type: int
     version_added: 1.5.0
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -242,19 +249,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
-
-
-def _get_account_info(module):
-    """
-    Return the account information (account ID and partition) we are currently working on.
-    """
-    account_id = None
-    partition = None
-    sts_client = module.client('sts')
-    caller_identity = sts_client.get_caller_identity()
-    account_id = caller_identity.get('Account')
-    partition = caller_identity.get('Arn').split(':')[1]
-    return account_id, partition
+from ansible_collections.amazon.aws.plugins.module_utils.iam import get_aws_account_info
 
 
 def _get_glue_job(connection, module, glue_job_name):
@@ -329,7 +324,7 @@ def ensure_tags(connection, module, glue_job):
     if module.params.get('tags') is None:
         return False
 
-    account_id, partition = _get_account_info(module)
+    account_id, partition = get_aws_account_info(module)
     arn = 'arn:{0}:glue:{1}:{2}:job/{3}'.format(partition, module.region, account_id, module.params.get('name'))
 
     try:
@@ -340,7 +335,7 @@ def ensure_tags(connection, module, glue_job):
         else:
             module.fail_json_aws(e, msg='Unable to get tags for Glue job %s' % module.params.get('name'))
 
-    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), True)
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
 
     if tags_to_remove:
         changed = True
@@ -462,16 +457,17 @@ def main():
             connections=dict(type='list', elements='str'),
             default_arguments=dict(type='dict'),
             description=dict(type='str'),
+            glue_version=dict(type='str'),
             max_concurrent_runs=dict(type='int'),
             max_retries=dict(type='int'),
             name=dict(required=True, type='str'),
+            number_of_workers=dict(type='int'),
+            purge_tags=dict(type='bool', default=True),
             role=dict(type='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
-            glue_version=dict(type='str'),
-            worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str'),
-            number_of_workers=dict(type='int'),
             tags=dict(type='dict', default={}),
-            timeout=dict(type='int')
+            timeout=dict(type='int'),
+            worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str'),
         )
     )
 
