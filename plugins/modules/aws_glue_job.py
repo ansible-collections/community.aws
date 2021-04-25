@@ -465,7 +465,7 @@ def main():
             purge_tags=dict(type='bool', default=True),
             role=dict(type='str'),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
-            tags=dict(type='dict', default={}),
+            tags=dict(type='dict'),
             timeout=dict(type='int'),
             worker_type=dict(choices=['Standard', 'G.1X', 'G.2X'], type='str'),
         )
