@@ -66,12 +66,12 @@ EXAMPLES = r'''
 
 RETURN = r'''
 changed:
-    description: True if listing the internet gateways succeeds.
+    description: True if listing the RDS option group succeeds.
     type: bool
     returned: always
     sample: "false"
 option_groups_list:
-    description: The internet gateways for the account.
+    description: The available RDS option groups.
     returned: always
     type: complex
     contains:
@@ -223,6 +223,14 @@ option_groups_list:
             returned: I(state=present)
             type: str
             sample: "vpc-bf07e9d6"
+        tags:
+            description: The tags associated the Internet Gateway.
+            type: dict
+            returned: I(state=present)
+            sample:
+            tags:
+                "Ansible": "Test"
+
 '''
 
 try:

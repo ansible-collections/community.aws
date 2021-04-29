@@ -287,6 +287,13 @@ vpc_id:
     returned: I(state=present)
     type: str
     sample: "vpc-bf07e9d6"
+tags:
+    description: The tags associated the Internet Gateway.
+    type: dict
+    returned: I(state=present)
+    sample:
+    tags:
+        "Ansible": "Test"
 '''
 
 
@@ -320,7 +327,7 @@ def get_option_group(client, module):
 
     if result:
         try:
-            tags = client.list_tags_for_resource(ResourceName=result['option_group_arn'])['TagList']
+            tags = client.list_tags_for_resource(aws_retry=True, ResourceName=result['option_group_arn'])['TagList']
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't obtain option group tags.")
 
@@ -333,8 +340,8 @@ def create_option_group_options(client, module):
     changed = True
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
-    _options_to_include = module.params.get('options')
-    params['OptionsToInclude'] = snake_dict_to_camel_dict(_options_to_include, capitalize_first=True)
+    options_to_include = module.params.get('options')
+    params['OptionsToInclude'] = snake_dict_to_camel_dict(options_to_include, capitalize_first=True)
 
     if module.params.get('apply_immediately'):
         params['ApplyImmediately'] = module.params.get('apply_immediately')
@@ -461,11 +468,8 @@ def setup_option_group(client, module):
     if existing_option_group:
         results = existing_option_group
 
-        if module.params.get('tags'):
-            tags = module.params.get('tags')
-
-            # Check tagging
-            changed |= update_tags(client, module, existing_option_group, tags)
+        # Check tagging
+        changed |= update_tags(client, module, existing_option_group)
 
         if module.params.get('options'):
             # Check if existing options require updating
@@ -533,17 +537,21 @@ def remove_option_group(client, module):
     return changed, {}
 
 
-def update_tags(client, module, option_group, tags):
+def update_tags(client, module, option_group):
     changed = False
-    existing_tags = client.list_tags_for_resource(ResourceName=option_group['option_group_arn'])['TagList']
+    try:
+        existing_tags = client.list_tags_for_resource(aws_retry=True, ResourceName=option_group['option_group_arn'])['TagList']
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Couldn't obtain option group tags.")
+
     to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
-                                            tags, module.params['purge_tags'])
+                                            module.params['tags'], module.params['purge_tags'])
 
     if to_update:
         try:
             if module.check_mode:
                 return True
-            client.add_tags_to_resource(ResourceName=option_group['option_group_arn'],
+            client.add_tags_to_resource(aws_retry=True, ResourceName=option_group['option_group_arn'],
                                         Tags=ansible_dict_to_boto3_tag_list(to_update))
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -552,7 +560,7 @@ def update_tags(client, module, option_group, tags):
         try:
             if module.check_mode:
                 return True
-            client.remove_tags_from_resource(ResourceName=option_group['option_group_arn'],
+            client.remove_tags_from_resource(aws_retry=True, ResourceName=option_group['option_group_arn'],
                                              TagKeys=to_delete)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
