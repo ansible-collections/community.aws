@@ -44,5 +44,3 @@ plugins/modules/rds_instance_info.py pylint:ansible-deprecated-no-version
 plugins/modules/rds_snapshot_info.py pylint:ansible-deprecated-no-version
 plugins/modules/redshift_info.py pylint:ansible-deprecated-no-version
 plugins/modules/route53_info.py pylint:ansible-deprecated-no-version
-tests/utils/shippable/check_matrix.py replace-urlopen
-tests/utils/shippable/timing.py shebang
