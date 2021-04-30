@@ -276,7 +276,7 @@ def update_tags(client, module, subnet_group):
             if module.check_mode:
                 return True
             client.remove_tags_from_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'],
-                                            TagKeys=to_delete)
+                                             TagKeys=to_delete)
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't remove tags from subnet group.")
@@ -321,7 +321,7 @@ def main():
         matching_groups = get_subnet_group(connection, module)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, 'Failed to get subnet groups description.')
-    
+
     if state == 'present':
         if matching_groups:
             # We have one or more subnets at this point.
@@ -335,7 +335,8 @@ def main():
             group_subnets.sort()
 
             # See if anything changed.
-            if (matching_groups['db_subnet_group_name'] != group_name or
+            if (
+                matching_groups['db_subnet_group_name'] != group_name or
                 matching_groups['db_subnet_group_description'] != group_description or
                 existing_subnets != group_subnets
             ):
@@ -361,7 +362,7 @@ def main():
                     )
                 except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                     module.fail_json_aws(e, 'Failed to create a new subnet group.')
-            subnet_update = True        
+            subnet_update = True
     elif state == 'absent':
         if not module.check_mode:
             try:
@@ -370,13 +371,13 @@ def main():
                 module.exit_json(**result)
             except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
                 module.fail_json_aws(e, 'Failed to delete a subnet group.')
-        subnet_update = True    
+        subnet_update = True
 
     try:
         subnet_group = get_subnet_group(connection, module)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, 'Failed to get subnet groups description.')
-    
+
     changed = tags_update or subnet_update
     result = create_result(changed, subnet_group)
     module.exit_json(**result)
