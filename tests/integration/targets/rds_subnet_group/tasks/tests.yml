@@ -573,7 +573,7 @@
     that:
     - result is changed
 
-- name: 'Update with CamelCase tagss'
+- name: 'Update with CamelCase tags'
   rds_subnet_group:
     state: present
     name: '{{ resource_prefix }}'
@@ -632,7 +632,6 @@
     state: absent
     name: '{{ resource_prefix }}'
   register: result
-  ignore_errors: true
 
 - assert:
     that:

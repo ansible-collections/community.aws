@@ -48,7 +48,7 @@ options:
     description:
        - Whether or not to remove tags assigned to the RDS subnet group if not specified in the playbook.
        - To remove all tags set I(tags) to an empty dictionary in conjunction with this.
-    default: false
+    default: True
     type: bool
     version_added: 1.5.0
 author:
