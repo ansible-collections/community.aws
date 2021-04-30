@@ -9,10 +9,33 @@
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   block:
-    # AWS CLI is needed until there's a module to get info about Glue crawlers
-    - name: Install AWS CLI
+    # virtualenv is needed because RecrawlPolicy requires a version of boto3
+    # newer than currently available in the default test image
+    - name: Define virtualenv facts
+      set_fact:
+        virtualenv: "{{ remote_tmp_dir }}/virtualenv"
+        virtualenv_command: "{{ ansible_python_interpreter }} -m virtualenv"
+
+    - name: Define virtualenv facts
+      set_fact:
+        virtualenv_interpreter: "{{ virtualenv }}/bin/python"
+
+    - name: Install virtualenv
       pip:
-        name: awscli
+        name: virtualenv
+
+    - name: Install the appropriate libraries
+      pip:
+        name:
+          - awscli
+          - boto3
+          - botocore
+          - boto
+          - coverage
+          - cryptography
+        virtualenv: "{{ virtualenv }}"
+        virtualenv_command: "{{ virtualenv_command }}"
+        virtualenv_site_packages: no
         state: present
 
     - name: Create minimal Glue crawler role
@@ -326,8 +349,14 @@
         name: "{{ glue_crawler_name }}"
         state: absent
       ignore_errors: true
+
     - name: Delete Glue crawler role
       iam_role:
         name: "{{ glue_crawler_role_name }}"
         state: absent
       ignore_errors: true
+
+    - name: Delete virtualenv
+      file:
+        path: "{{ virtualenv }}"
+        state: absent
