@@ -604,6 +604,33 @@
     - result.subnet_group.tags["CamelCase"] == 'SimpleCamelCase'
     - result.subnet_group.tags["snake_case"] == 'simple_snake_case'
 
+- name: 'Do not specify any tag to ensure previous tags are not removed'
+  rds_subnet_group:
+    state: present
+    name: '{{ resource_prefix }}'
+    description: '{{ group_description_changed }}'
+    subnets:
+    - '{{ subnet_ids[0] }}'
+    - '{{ subnet_ids[1] }}'
+  register: result
+
+- assert:
+    that:
+    - result is not changed
+    - result.subnet_group.description == group_description_changed
+    - result.subnet_group.name == resource_prefix
+    - result.subnet_group.vpc_id == vpc.vpc.id
+    - result.subnet_group.subnet_ids | length == 2
+    - subnet_ids[0] in result.subnet_group.subnet_ids
+    - subnet_ids[1] in result.subnet_group.subnet_ids
+    - '"tags" in result.subnet_group'
+    - result.subnet_group.tags | length == 4
+    - result.subnet_group.tags["lowercase spaced"] == 'hello cruel world'
+    - result.subnet_group.tags["Title Case"] == 'Hello Cruel World'
+    - result.subnet_group.tags["CamelCase"] == 'SimpleCamelCase'
+    - result.subnet_group.tags["snake_case"] == 'simple_snake_case'
+
+
 # ============================================================
 # Deletion
 - name: 'Delete a subnet group - CHECK_MODE'

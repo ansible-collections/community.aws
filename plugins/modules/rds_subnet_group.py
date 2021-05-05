@@ -253,7 +253,9 @@ def create_subnet_list(subnets):
 
 
 def update_tags(client, module, subnet_group):
-    changed = False
+    if module.params.get('tags') is None:
+        return False
+
     try:
         existing_tags = client.list_tags_for_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'])['TagList']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -261,23 +263,22 @@ def update_tags(client, module, subnet_group):
 
     to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
                                             module.params['tags'], module.params['purge_tags'])
+    changed = (to_update or to_delete)
 
     if to_update:
         try:
             if module.check_mode:
-                return True
+                return changed
             client.add_tags_to_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'],
                                         Tags=ansible_dict_to_boto3_tag_list(to_update))
-            changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't add tags to subnet group.")
     if to_delete:
         try:
             if module.check_mode:
-                return True
+                return changed
             client.remove_tags_from_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'],
                                              TagKeys=to_delete)
-            changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't remove tags from subnet group.")
 
@@ -290,7 +291,7 @@ def main():
         name=dict(required=True),
         description=dict(required=False),
         subnets=dict(required=False, type='list', elements='str'),
-        tags=dict(required=False, type='dict', default={}),
+        tags=dict(required=False, type='dict'),
         purge_tags=dict(type='bool', default=True),
     )
     required_if = [('state', 'present', ['description', 'subnets'])]
@@ -317,6 +318,11 @@ def main():
     tags_update = False
     subnet_update = False
 
+    if module.params.get("tags") is not None:
+        _tags = ansible_dict_to_boto3_tag_list(module.params.get("tags"))
+    else:
+        _tags = list()
+
     try:
         matching_groups = get_subnet_group(connection, module)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
@@ -326,7 +332,7 @@ def main():
         if matching_groups:
             # We have one or more subnets at this point.
 
-            # Check if there is a tags update
+            # Check if there is any tags update
             tags_update = update_tags(connection, module, matching_groups)
 
             # Sort the subnet groups before we compare them
@@ -358,7 +364,7 @@ def main():
                         DBSubnetGroupName=group_name,
                         DBSubnetGroupDescription=group_description,
                         SubnetIds=group_subnets,
-                        Tags=ansible_dict_to_boto3_tag_list(module.params.get("tags"))
+                        Tags=_tags
                     )
                 except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                     module.fail_json_aws(e, 'Failed to create a new subnet group.')
