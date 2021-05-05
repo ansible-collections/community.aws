@@ -19,14 +19,14 @@ options:
     option_group_name:
         description:
             - The name of the option group to describe.
-            - Can't be supplied together with EngineName or MajorEngineVersion.
+            - Can't be supplied together with I(engine_name) or I(major_engine_version).
         default: ''
         required: false
         type: str
     marker:
         description:
-            - If this parameter is specified, the response includes only records beyond the marker, up to the value specified by MaxRecords.
-            - Constraints: minimum 20, maximum 100.
+            - If this parameter is specified, the response includes only records beyond the marker, up to the value specified by I(max_records).
+            - Allowed values are between C(20) and C(100).
         default: ''
         required: false
         type: str
@@ -44,7 +44,7 @@ options:
     major_engine_version:
         description:
             - Filters the list of option groups to only include groups associated with a specific database engine version.
-            - If specified, then EngineName must also be specified.
+            - If specified, then I(engine_name) must also be specified.
         type: str
         default: ''
         required: false
@@ -289,7 +289,7 @@ def main():
     argument_spec = dict(
         option_group_name=dict(default='', type='str'),
         marker=dict(type='str'),
-        max_records=dict(type=int, default=100),
+        max_records=dict(type='int', default=100),
         engine_name=dict(type='str', default=''),
         major_engine_version=dict(type='str', default=''),
     )

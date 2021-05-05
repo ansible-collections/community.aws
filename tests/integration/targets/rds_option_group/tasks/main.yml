@@ -115,7 +115,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -152,7 +152,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -245,7 +245,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -301,7 +301,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -368,7 +368,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -459,7 +459,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -517,7 +517,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -576,7 +576,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -635,7 +635,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -694,7 +694,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -754,7 +754,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        options:
+        option_group_options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -774,6 +774,63 @@
   - assert:
       that:
         - new_rds_mysql_option_group.changed
+        - "'engine_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
+        - "'major_engine_version' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
+        - "'option_group_arn' in new_rds_mysql_option_group"
+        - "'option_group_description' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
+        - "'option_group_name' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
+        - "'vpc_id' in new_rds_mysql_option_group"
+        - new_rds_mysql_option_group.vpc_id == vpc_id
+        - "'tags' in new_rds_mysql_option_group"
+        - (new_rds_mysql_option_group.tags | length) == 4
+        - new_rds_mysql_option_group.tags["lowercase spaced"] == 'hello cruel world'
+        - new_rds_mysql_option_group.tags["Title Case"] == 'Hello Cruel World'
+        - new_rds_mysql_option_group.tags["CamelCase"] == 'SimpleCamelCase'
+        - new_rds_mysql_option_group.tags["snake_case"] == 'simple_snake_case'
+        - "'options' in new_rds_mysql_option_group"
+        - (new_rds_mysql_option_group.options | length) > 0
+        - "'option_name' in option"
+        - option.option_name == "MEMCACHED"
+        - "'permanent' in option"
+        - "'persistent' in option"
+        - "'port' in option"
+        - option.port == 11211
+        - "'vpc_security_group_memberships' in option"
+        - (option.vpc_security_group_memberships | length) == 3
+        - "'option_settings' in option"
+        - (option_settings | length) > 0
+        - option_settings | selectattr('name','equalto','CHUNK_SIZE_GROWTH_FACTOR') | list | count > 0
+    vars:
+        option: '{{ new_rds_mysql_option_group.options[0] }}' 
+        option_settings: '{{ new_rds_mysql_option_group.options[0].option_settings }}'
+  
+  - name: RDS Mysql option group - do not specify any tag to ensure previous tags are not removed
+    rds_option_group:
+        state: present
+        option_group_name: "{{ option_group_name }}"
+        engine_name: "{{ engine_name }}"
+        major_engine_version: "{{ major_engine_version }}"
+        option_group_description: "{{ option_group_description }}"
+        apply_immediately: true
+        option_group_options:
+        - option_name: MEMCACHED
+          port: 11211
+          vpc_security_group_memberships:
+            - "{{ sg_1 }}"
+            - "{{ sg_2 }}"
+            - "{{ sg_3 }}"
+          option_settings:
+            - name: CHUNK_SIZE_GROWTH_FACTOR
+              value: '1.2'
+    register: new_rds_mysql_option_group
+
+  - assert:
+      that:
+        - not new_rds_mysql_option_group.changed
         - "'engine_name' in new_rds_mysql_option_group"
         - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
         - "'major_engine_version' in new_rds_mysql_option_group"

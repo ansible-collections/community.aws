@@ -19,7 +19,7 @@ author:
 options:
   state:
     description:
-      - Specifies whether the option group should be present or absent.
+      - Specifies whether the option group should be C(present) or C(absent).
     required: true
     choices: [ 'present', 'absent' ]
     type: str
@@ -31,17 +31,14 @@ options:
   engine_name:
     description:
       - Specifies the name of the engine that this option group should be associated with.
-    required: I(state=present)
     type: str
   major_engine_version:
     description:
       - Specifies the major version of the engine that this option group should be associated with.
-    required: I(state=present)
     type: str
   option_group_description:
     description:
       - The description of the option group.
-    required: I(state=present)
     type: str
   apply_immediately:
     description:
@@ -49,7 +46,7 @@ options:
     required: false
     type: bool
     default: false
-  options:
+  option_group_options:
     description:
       - Options in this list are added to the option group.
       - If already present, the specified configuration is used to update the existing configuration.
@@ -57,7 +54,7 @@ options:
     type: list
   tags:
     description:
-      - A dictionary of key value pairs to assign the DB cluster.
+      - A dictionary of key value pairs to assign the option group.
       - To remove all tags set I(tags={}) and I(purge_tags=true).
     type: dict
   purge_tags:
@@ -172,13 +169,12 @@ option_group_name:
 options:
     description: Indicates what options are available in the option group.
     returned: I(state=present)
-    type: complex
+    type: list
     contains:
         db_security_group_memberships:
             description: If the option requires access to a port, then this DB security group allows access to the port.
             returned: I(state=present)
-            type: complex
-            sample: list
+            type: list
             elements: dict
             contains:
                 status:
@@ -204,7 +200,7 @@ options:
         option_settings:
             description: The name of the option.
             returned: I(state=present)
-            type: complex
+            type: list
             contains:
                 allowed_values:
                     description: The allowed values of the option setting.
@@ -292,7 +288,6 @@ tags:
     type: dict
     returned: I(state=present)
     sample:
-    tags:
         "Ansible": "Test"
 '''
 
@@ -340,7 +335,7 @@ def create_option_group_options(client, module):
     changed = True
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
-    options_to_include = module.params.get('options')
+    options_to_include = module.params.get('option_group_options')
     params['OptionsToInclude'] = snake_dict_to_camel_dict(options_to_include, capitalize_first=True)
 
     if module.params.get('apply_immediately'):
@@ -387,7 +382,8 @@ def create_option_group(client, module):
 
     if module.params.get('tags'):
         params['Tags'] = ansible_dict_to_boto3_tag_list(module.params.get('tags'))
-
+    else:
+        params['Tags'] = list()
     try:
         _result = client.create_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -398,7 +394,7 @@ def create_option_group(client, module):
 
 def match_option_group_options(client, module):
     requires_update = False
-    new_options = module.params.get('options')
+    new_options = module.params.get('option_group_options')
 
     # Get existing option groups and compare to our new options spec
     current_option = get_option_group(client, module)
@@ -445,7 +441,7 @@ def compare_option_group(client, module):
     to_be_added = None
     to_be_removed = None
     current_option = get_option_group(client, module)
-    new_options = module.params.get('options')
+    new_options = module.params.get('option_group_options')
     new_settings = set([item['option_name'] for item in new_options])
     old_settings = set([item['option_name'] for item in current_option['options']])
 
@@ -471,7 +467,7 @@ def setup_option_group(client, module):
         # Check tagging
         changed |= update_tags(client, module, existing_option_group)
 
-        if module.params.get('options'):
+        if module.params.get('option_group_options'):
             # Check if existing options require updating
             update_required = match_option_group_options(client, module)
 
@@ -492,11 +488,11 @@ def setup_option_group(client, module):
             # No options were supplied. If options exist, remove them
             current_option_group = get_option_group(client, module)
 
-            if current_option_group['options'] != []:
+            if current_option_group['option_group_options'] != []:
                 # Here we would call our remove options function
                 options_to_remove = []
 
-                for option in current_option_group['options']:
+                for option in current_option_group['option_group_options']:
                     options_to_remove.append(option['option_name'])
 
                 changed |= remove_option_group_options(client, module, options_to_remove)
@@ -507,7 +503,7 @@ def setup_option_group(client, module):
     else:
         changed = create_option_group(client, module)
 
-        if module.params.get('options'):
+        if module.params.get('option_group_options'):
             changed = create_option_group_options(client, module)
 
         results = get_option_group(client, module)
@@ -538,7 +534,9 @@ def remove_option_group(client, module):
 
 
 def update_tags(client, module, option_group):
-    changed = False
+    if module.params.get('tags') is None:
+        return False
+
     try:
         existing_tags = client.list_tags_for_resource(aws_retry=True, ResourceName=option_group['option_group_arn'])['TagList']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -546,23 +544,22 @@ def update_tags(client, module, option_group):
 
     to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
                                             module.params['tags'], module.params['purge_tags'])
+    changed = bool(to_update or to_delete)
 
     if to_update:
         try:
             if module.check_mode:
-                return True
+                return changed
             client.add_tags_to_resource(aws_retry=True, ResourceName=option_group['option_group_arn'],
                                         Tags=ansible_dict_to_boto3_tag_list(to_update))
-            changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't add tags to option group.")
     if to_delete:
         try:
             if module.check_mode:
-                return True
+                return changed
             client.remove_tags_from_resource(aws_retry=True, ResourceName=option_group['option_group_arn'],
                                              TagKeys=to_delete)
-            changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't remove tags from option group.")
 
@@ -575,10 +572,10 @@ def main():
         engine_name=dict(type='str'),
         major_engine_version=dict(type='str'),
         option_group_description=dict(type='str'),
-        options=dict(type='list'),
+        option_group_options=dict(type='list'),
         apply_immediately=dict(type='bool', default=False),
         state=dict(required=True, choices=['present', 'absent']),
-        tags=dict(required=False, type='dict', default={}),
+        tags=dict(required=False, type='dict'),
         purge_tags=dict(type='bool', default=True),
     )
 

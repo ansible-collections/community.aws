@@ -16,4 +16,3 @@ subnet_cidr: "10.0.{{ 256 | random(seed=vpc_seed) }}.0/24"
 sg_1_name: "{{ resource_prefix }}-sg-1"
 sg_2_name: "{{ resource_prefix }}-sg-2"
 sg_3_name: "{{ resource_prefix }}-sg-3"
-
