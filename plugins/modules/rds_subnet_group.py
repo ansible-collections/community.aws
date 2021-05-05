@@ -263,7 +263,7 @@ def update_tags(client, module, subnet_group):
 
     to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
                                             module.params['tags'], module.params['purge_tags'])
-    changed = (to_update or to_delete)
+    changed = bool(to_update or to_delete)
 
     if to_update:
         try:
@@ -350,6 +350,7 @@ def main():
                     # Modify existing group.
                     try:
                         changed_group = connection.modify_db_subnet_group(
+                            aws_retry=True,
                             DBSubnetGroupName=group_name,
                             DBSubnetGroupDescription=group_description,
                             SubnetIds=group_subnets
@@ -361,6 +362,7 @@ def main():
             if not module.check_mode:
                 try:
                     new_group = connection.create_db_subnet_group(
+                        aws_retry=True,
                         DBSubnetGroupName=group_name,
                         DBSubnetGroupDescription=group_description,
                         SubnetIds=group_subnets,
@@ -372,7 +374,7 @@ def main():
     elif state == 'absent':
         if not module.check_mode:
             try:
-                connection.delete_db_subnet_group(DBSubnetGroupName=group_name)
+                connection.delete_db_subnet_group(aws_retry=True, DBSubnetGroupName=group_name)
             except is_boto3_error_code('DBSubnetGroupNotFoundFault'):
                 module.exit_json(**result)
             except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
