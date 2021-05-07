@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: rds_option_group
 short_description: rds_option_group module
-version_added: 1.5.0
+version_added: 2.0.0
 description:
   - Manages the creation, modification, deletion of RDS option groups.
 author:
@@ -46,12 +46,74 @@ options:
     required: false
     type: bool
     default: false
-  option_group_options:
+  options:
     description:
       - Options in this list are added to the option group.
       - If already present, the specified configuration is used to update the existing configuration.
       - If none are supplied, any existing options are removed.
     type: list
+    suboptions:
+        option_name:
+            description: The configuration of options to include in a group.
+            required: false
+            type: str
+        port:
+            description: The optional port for the option.
+            required: false
+            type: int
+        option_version:
+            description: The version for the option.
+            required: false
+            type: str
+        option_settings:
+            description: The option settings to include in an option group.
+            required: false
+            type: list
+            suboptions:
+                name:
+                    description: The name of the option that has settings that you can set.
+                    required: false
+                    type: str
+                value:
+                    description: The current value of the option setting.
+                    required: false
+                    type: str
+                default_value:
+                    description: The default value of the option setting.
+                    required: false
+                    type: str
+                description:
+                    description: The description of the option setting.
+                    required: false
+                    type: str
+                apply_type:
+                    description: The DB engine specific parameter type.
+                    required: false
+                    type: str
+                data_type:
+                    description: The data type of the option setting.
+                    required: false
+                    type: str
+                allowed_values:
+                    description: The allowed values of the option setting.
+                    required: false
+                    type: str
+                is_modifiable:
+                    description: A Boolean value that, when C(true), indicates the option setting can be modified from the default.
+                    required: false
+                    type: bool
+                is_collection:
+                    description: Indicates if the option setting is part of a collection.
+                    required: false
+                    type: bool
+        db_security_group_memberships:
+            description: A list of C(DBSecurityGroupMembership) name strings used for this option.
+            required: false
+            type: list
+        vpc_security_group_memberships:
+            description: A list of C(VpcSecurityGroupMembership) name strings used for this option.
+            required: false
+            type: list
   tags:
     description:
       - A dictionary of key value pairs to assign the option group.
@@ -287,8 +349,9 @@ tags:
     description: The tags associated the Internet Gateway.
     type: dict
     returned: I(state=present)
-    sample:
+    sample: {
         "Ansible": "Test"
+    }
 '''
 
 
@@ -335,7 +398,7 @@ def create_option_group_options(client, module):
     changed = True
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
-    options_to_include = module.params.get('option_group_options')
+    options_to_include = module.params.get('options')
     params['OptionsToInclude'] = snake_dict_to_camel_dict(options_to_include, capitalize_first=True)
 
     if module.params.get('apply_immediately'):
@@ -394,7 +457,7 @@ def create_option_group(client, module):
 
 def match_option_group_options(client, module):
     requires_update = False
-    new_options = module.params.get('option_group_options')
+    new_options = module.params.get('options')
 
     # Get existing option groups and compare to our new options spec
     current_option = get_option_group(client, module)
@@ -441,7 +504,7 @@ def compare_option_group(client, module):
     to_be_added = None
     to_be_removed = None
     current_option = get_option_group(client, module)
-    new_options = module.params.get('option_group_options')
+    new_options = module.params.get('options')
     new_settings = set([item['option_name'] for item in new_options])
     old_settings = set([item['option_name'] for item in current_option['options']])
 
@@ -467,7 +530,7 @@ def setup_option_group(client, module):
         # Check tagging
         changed |= update_tags(client, module, existing_option_group)
 
-        if module.params.get('option_group_options'):
+        if module.params.get('options'):
             # Check if existing options require updating
             update_required = match_option_group_options(client, module)
 
@@ -488,11 +551,11 @@ def setup_option_group(client, module):
             # No options were supplied. If options exist, remove them
             current_option_group = get_option_group(client, module)
 
-            if current_option_group['option_group_options'] != []:
+            if current_option_group['options'] != []:
                 # Here we would call our remove options function
                 options_to_remove = []
 
-                for option in current_option_group['option_group_options']:
+                for option in current_option_group['options']:
                     options_to_remove.append(option['option_name'])
 
                 changed |= remove_option_group_options(client, module, options_to_remove)
@@ -503,7 +566,7 @@ def setup_option_group(client, module):
     else:
         changed = create_option_group(client, module)
 
-        if module.params.get('option_group_options'):
+        if module.params.get('options'):
             changed = create_option_group_options(client, module)
 
         results = get_option_group(client, module)
@@ -572,7 +635,7 @@ def main():
         engine_name=dict(type='str'),
         major_engine_version=dict(type='str'),
         option_group_description=dict(type='str'),
-        option_group_options=dict(type='list'),
+        options=dict(required=False, type='list'),
         apply_immediately=dict(type='bool', default=False),
         state=dict(required=True, choices=['present', 'absent']),
         tags=dict(required=False, type='dict'),

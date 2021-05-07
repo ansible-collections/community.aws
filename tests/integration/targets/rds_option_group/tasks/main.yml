@@ -115,7 +115,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -152,7 +152,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -245,7 +245,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -301,7 +301,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -368,7 +368,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -459,7 +459,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -517,7 +517,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -576,7 +576,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -635,7 +635,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -694,7 +694,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -754,7 +754,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
@@ -816,7 +816,7 @@
         major_engine_version: "{{ major_engine_version }}"
         option_group_description: "{{ option_group_description }}"
         apply_immediately: true
-        option_group_options:
+        options:
         - option_name: MEMCACHED
           port: 11211
           vpc_security_group_memberships:
