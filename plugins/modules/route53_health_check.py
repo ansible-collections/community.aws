@@ -19,7 +19,7 @@ options:
   state:
     description:
       - Specifies the action to take.
-    choices: [ 'present', 'absent' ]
+    choices: [ 'present', 'absent', 'enabled', 'disabled' ]
     type: str
     default: 'present'
   ip_address:
@@ -182,7 +182,7 @@ def health_check_diff(a, b):
     return diff
 
 
-def to_template_params(health_check):
+def to_template_params(health_check, state):
     params = {
         'ip_addr_part': '',
         'port': health_check.port,
@@ -192,6 +192,7 @@ def to_template_params(health_check):
         'string_match_part': '',
         'request_interval': health_check.request_interval,
         'failure_threshold': health_check.failure_threshold,
+        'state': state,
     }
     if health_check.ip_addr:
         params['ip_addr_part'] = HealthCheck.XMLIpAddrPart % {'ip_addr': health_check.ip_addr}
@@ -218,6 +219,7 @@ POSTXMLBody = """
             %(string_match_part)s
             <RequestInterval>%(request_interval)s</RequestInterval>
             <FailureThreshold>%(failure_threshold)s</FailureThreshold>
+            <Disabled>%(state)s</Disabled>
         </HealthCheckConfig>
     </CreateHealthCheckRequest>
     """
@@ -231,15 +233,16 @@ UPDATEHCXMLBody = """
         %(fqdn_part)s
         %(string_match_part)s
         <FailureThreshold>%(failure_threshold)i</FailureThreshold>
+        <Disabled>%(state)s</Disabled>
     </UpdateHealthCheckRequest>
     """
 
 
-def create_health_check(conn, health_check, caller_ref=None):
+def create_health_check(conn, health_check, state, caller_ref=None):
     if caller_ref is None:
         caller_ref = str(uuid.uuid4())
     uri = '/%s/healthcheck' % conn.Version
-    params = to_template_params(health_check)
+    params = to_template_params(health_check, state)
     params.update(xmlns=conn.XMLNameSpace, caller_ref=caller_ref)
 
     xml_body = POSTXMLBody % params
@@ -255,9 +258,9 @@ def create_health_check(conn, health_check, caller_ref=None):
         raise exception.DNSServerError(response.status, response.reason, body)
 
 
-def update_health_check(conn, health_check_id, health_check_version, health_check):
+def update_health_check(conn, health_check_id, health_check_version, health_check, state):
     uri = '/%s/healthcheck/%s' % (conn.Version, health_check_id)
-    params = to_template_params(health_check)
+    params = to_template_params(health_check, state)
     params.update(
         xmlns=conn.XMLNameSpace,
         health_check_version=health_check_version,
@@ -278,7 +281,7 @@ def update_health_check(conn, health_check_id, health_check_version, health_chec
 
 def main():
     argument_spec = dict(
-        state=dict(choices=['present', 'absent'], default='present'),
+        state=dict(choices=['present', 'absent', 'enabled', 'disabled'], default='present'),
         ip_address=dict(),
         port=dict(type='int'),
         type=dict(required=True, choices=['HTTP', 'HTTPS', 'HTTP_STR_MATCH', 'HTTPS_STR_MATCH', 'TCP']),
@@ -340,16 +343,22 @@ def main():
         check_id = existing_check.Id
         existing_config = to_health_check(existing_check.HealthCheckConfig)
 
-    if state_in == 'present':
+    if state_in in ('present', 'enabled', 'disabled'):
+        state_new = 0
+        if state_in == 'disabled':
+            state_new = 1
+        state_old = 0
+        if existing_check.Disabled == 'true':
+            state_old = 1
         if existing_check is None:
             action = "create"
-            check_id = create_health_check(conn, wanted_config).HealthCheck.Id
+            check_id = create_health_check(conn, wanted_config, state_new).HealthCheck.Id
             changed = True
         else:
             diff = health_check_diff(existing_config, wanted_config)
-            if diff:
+            if diff or (state_new != state_old):
                 action = "update"
-                update_health_check(conn, existing_check.Id, int(existing_check.HealthCheckVersion), wanted_config)
+                update_health_check(conn, existing_check.Id, int(existing_check.HealthCheckVersion), wanted_config, state_new)
                 changed = True
     elif state_in == 'absent':
         if check_id:
