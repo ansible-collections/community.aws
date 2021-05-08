@@ -348,13 +348,13 @@ def main():
         if state_in == 'disabled':
             state_new = 1
         state_old = 0
-        if existing_check.Disabled == 'true':
-            state_old = 1
         if existing_check is None:
             action = "create"
             check_id = create_health_check(conn, wanted_config, state_new).HealthCheck.Id
             changed = True
         else:
+            if existing_check.Disabled == 'true':
+                state_old = 1
             diff = health_check_diff(existing_config, wanted_config)
             if diff or (state_new != state_old):
                 action = "update"
