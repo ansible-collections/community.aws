@@ -29,6 +29,20 @@ options:
     choices: [ "Interface", "Gateway", "GatewayLoadBalancer" ]
     type: str
     version_added: 1.5.0
+  vpc_endpoint_subnets:
+    description:
+      - The list of subnets to attach to the endpoint (Works only with Interface and GatewayLoadBalancer type endpoint).
+    required: false
+    default: None
+    type: list
+    version_added: 1.5.1
+  vpc_endpoint_security_groups:
+    description:
+      - The list of security groups to attach to the endpoint (Works only with Interface type endpoint).
+    required: false
+    default: None
+    type: list
+    version_added: 1.5.1
   service:
     description:
       - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
@@ -329,6 +343,7 @@ def create_vpc_endpoint(client, module):
     params['VpcEndpointType'] = module.params.get('vpc_endpoint_type')
     params['ServiceName'] = module.params.get('service')
 
+
     if module.check_mode:
         changed = True
         result = 'Would have created VPC Endpoint if not in check mode'
@@ -336,6 +351,12 @@ def create_vpc_endpoint(client, module):
 
     if module.params.get('route_table_ids'):
         params['RouteTableIds'] = module.params.get('route_table_ids')
+
+    if module.params.get('vpc_endpoint_subnets'):
+        params['SubnetIds'] = module.params.get('vpc_endpoint_subnets')
+
+    if module.params.get('vpc_endpoint_security_groups'):
+        params['SecurityGroupIds'] = module.params.get('vpc_endpoint_security_groups')
 
     if module.params.get('client_token'):
         token_provided = True
@@ -434,6 +455,8 @@ def main():
     argument_spec = dict(
         vpc_id=dict(),
         vpc_endpoint_type=dict(default='Gateway', choices=['Interface', 'Gateway', 'GatewayLoadBalancer']),
+        vpc_endpoint_security_groups=dict(type='list', elements='str'),
+        vpc_endpoint_subnets=dict(type='list', elements='str'),
         service=dict(),
         policy=dict(type='json'),
         policy_file=dict(type='path', aliases=['policy_path']),
