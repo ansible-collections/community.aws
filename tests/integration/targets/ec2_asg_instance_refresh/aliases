@@ -1,2 +1,3 @@
 cloud/aws
-+ec2_asg_instance_refresh
+ec2_asg_instance_refresh
+ec2_asg_instance_refreshes_info
