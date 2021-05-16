@@ -10,9 +10,9 @@ DOCUMENTATION = '''
 ---
 module: ec2_asg_instance_refresh
 version_added: 1.0.0
-short_description: Start or cancel an ec2 Auto Scaling Group (ASG) Instance Refresh in AWS
+short_description: Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
 description:
-  - Start or cancel an ec2 Auto Scaling Group Instance Refresh in AWS
+  - Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
   - Can be used with ec2_asg_instance_refreshes_info to track the subsequent progress
 requirements: [ boto3 ]
 author: "Dan Khersonsky (@danquixote)"
@@ -39,7 +39,8 @@ options:
   preferences:
     description:
       - Set of preferences associated with the instance refresh request.
-      - If not provided, the default values are used. For MinHealthyPercentage, the default value is 90.
+      - If not provided, the default values are used.
+      - For I(min_healthy_percentage), the default value is C(90).
       - For InstanceWarmup, the default is to use the value specified for the health check grace period for the Auto Scaling group.
     required: false
     suboptions:

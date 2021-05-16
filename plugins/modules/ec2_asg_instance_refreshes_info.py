@@ -15,16 +15,7 @@ version_added: 1.0.0
 short_description: Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 description:
   - Describes one or more instance refreshes.
-  - You can determine the status of a request by looking at the Status parameter. The following are the possible statuses
-  -    Pending --  The request was created, but the operation has not started.
-  -    InProgress --  The operation is in progress.
-  -    Successful --  The operation completed successfully.
-  -    Failed --  The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.
-  -    Cancelling --
-  -        An ongoing operation is being cancelled.
-  -        Cancellation does not roll back any replacements that have already been completed,
-  -        but it prevents new replacements from being started.
-  -    Cancelled --  The operation is cancelled.
+  - You can determine the status of a request by looking at the I(status) parameter.
 requirements: [ boto3 ]
 author: "Dan Khersonsky (@danquixote)"
 options:
@@ -93,10 +84,21 @@ auto_scaling_group_name:
     type: str
     sample: "public-webapp-production-1"
 status:
-    description: The current state of the group when DeleteAutoScalingGroup is in progress.
+    description: 
+      -  The current state of the group when DeleteAutoScalingGroup is in progress.
+      -  The following are the possible statuses
+      -    Pending --  The request was created, but the operation has not started.
+      -    InProgress --  The operation is in progress.
+      -    Successful --  The operation completed successfully.
+      -    Failed --  The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.
+      -    Cancelling --
+      -        An ongoing operation is being cancelled.
+      -        Cancellation does not roll back any replacements that have already been completed,
+      -        but it prevents new replacements from being started.
+      -    Cancelled --  The operation is cancelled.
     returned: success
     type: str
-    sample: None
+    sample: "Pending"
 start_time:
     description: The date and time this ASG was created, in ISO 8601 format.
     returned: success
