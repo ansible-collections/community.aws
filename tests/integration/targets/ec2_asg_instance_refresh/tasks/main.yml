@@ -19,6 +19,10 @@
         filters:
           name: '{{ ec2_ami_name }}'
       register: ec2_amis
+    - name: "Set fact with latest AMI"
+      run_once: yes
+      vars:
+        latest_ami: '{{ ec2_amis.images | sort(attribute="creation_date") | last }}'
     - set_fact:
         ec2_ami_image: '{{ ec2_amis.images[0].image_id }}'
   
