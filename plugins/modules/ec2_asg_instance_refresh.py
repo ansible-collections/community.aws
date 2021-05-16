@@ -22,7 +22,7 @@ options:
       - Desired state of the ASG
     type: str
     required: true
-    choices: [ 'started', 'canceled' ]
+    choices: [ 'started', 'cancelled' ]
   name:
     description:
       - The name of the auto scaling group you are searching for.
@@ -74,7 +74,7 @@ EXAMPLES = '''
 - name: Cancel a refresh
   community.aws.ec2_asg_instance_refresh:
     name: some-asg
-    state: canceled
+    state: cancelled
 
 - name: Start a refresh and pass preferences
   community.aws.ec2_asg_instance_refresh:
@@ -131,12 +131,12 @@ def start_or_cancel_instance_refresh(conn, module):
     if asg_state == 'started':
         args['Strategy'] = 'Rolling'
     if preferences:
-        if asg_state == 'canceled':
+        if asg_state == 'cancelled':
             module.fail_json(msg='can not pass preferences dict when canceling a refresh')
         _prefs = scrub_none_parameters(preferences)
         args['Preferences'] = snake_dict_to_camel_dict(_prefs, capitalize_first=True)
     cmd_invocations = {
-        'canceled': conn.cancel_instance_refresh,
+        'cancelled': conn.cancel_instance_refresh,
         'started': conn.start_instance_refresh,
     }
     try:
@@ -160,7 +160,7 @@ def main():
         state=dict(
             type='str',
             required=True,
-            choices=['started', 'canceled'],
+            choices=['started', 'cancelled'],
         ),
         name=dict(required=True),
         strategy=dict(
