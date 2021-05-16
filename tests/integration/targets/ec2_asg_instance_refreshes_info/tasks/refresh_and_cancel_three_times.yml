@@ -14,5 +14,5 @@
 - name: test canceling a refresh with an ASG name
   ec2_asg_instance_refresh:
     name: "{{ resource_prefix }}-asg"
-    state: "canceled"
+    state: "cancelled"
   ignore_errors: yes

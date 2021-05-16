@@ -122,7 +122,7 @@
     - name: test invalid cancelation - V1 - (pre-refresh)
       ec2_asg_instance_refresh:
         name: "{{ resource_prefix }}-asg"
-        state: "canceled"
+        state: "cancelled"
       ignore_errors: yes
       register: result
 
@@ -157,7 +157,7 @@
     - name: test canceling a refresh with an ASG name
       ec2_asg_instance_refresh:
         name: "{{ resource_prefix }}-asg"
-        state: "canceled"
+        state: "cancelled"
       register: output
 
     - assert:
@@ -184,7 +184,7 @@
     - name: re-test canceling a refresh with an ASG name
       ec2_asg_instance_refresh:
         name: "{{ resource_prefix }}-asg"
-        state: "canceled"
+        state: "cancelled"
       register: output
 
     - assert:
@@ -211,7 +211,7 @@
     - name: re-test canceling a refresh with an ASG name
       ec2_asg_instance_refresh:
         name: "{{ resource_prefix }}-asg"
-        state: "canceled"
+        state: "cancelled"
       register: output
 
     - assert:
@@ -238,7 +238,7 @@
     - name: test invalid cancelation - V2 - (with preferences)
       ec2_asg_instance_refresh:
         name: "{{ resource_prefix }}-asg"
-        state: "canceled"
+        state: "cancelled"
         preferences:
           min_healthy_percentage: 10
           instance_warmup: 10
