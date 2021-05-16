@@ -4,9 +4,6 @@
   ec2_asg_instance_refresh:
     name: "{{ resource_prefix }}-asg"
     state: "started"
-    aws_access_key: "{{ aws_access_key }}"
-    aws_secret_key: "{{ aws_secret_key }}"
-    region: "{{ aws_region }}"
   ignore_errors: no
   retries: 10
   delay: 5
@@ -18,7 +15,4 @@
   ec2_asg_instance_refresh:
     name: "{{ resource_prefix }}-asg"
     state: "canceled"
-    aws_access_key: "{{ aws_access_key }}"
-    aws_secret_key: "{{ aws_secret_key }}"
-    region: "{{ aws_region }}"
   ignore_errors: yes
