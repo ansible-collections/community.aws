@@ -84,7 +84,7 @@ auto_scaling_group_name:
     type: str
     sample: "public-webapp-production-1"
 status:
-    description: 
+    description:
       -  The current state of the group when DeleteAutoScalingGroup is in progress.
       -  The following are the possible statuses
       -    Pending --  The request was created, but the operation has not started.
