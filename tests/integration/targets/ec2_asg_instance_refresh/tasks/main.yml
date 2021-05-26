@@ -19,6 +19,7 @@
         filters:
           name: '{{ ec2_ami_name }}'
       register: ec2_amis
+
     - name: "Set fact with latest AMI"
       run_once: yes
       vars:
