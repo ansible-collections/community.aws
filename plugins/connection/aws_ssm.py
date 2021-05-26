@@ -239,7 +239,7 @@ def _ssm_retry(func):
 
             try:
                 return_tuple = func(self, *args, **kwargs)
-                display.vvv(return_tuple, host=self.host)
+                display.vvvv(return_tuple, host=self.host)
                 break
 
             except (AnsibleConnectionFailure, Exception) as e:
@@ -387,7 +387,7 @@ class Connection(ConnectionBase):
 
         super(Connection, self).exec_command(cmd, in_data=in_data, sudoable=sudoable)
 
-        display.vvv(u"EXEC {0}".format(to_text(cmd)), host=self.host)
+        display.vvvv(u"EXEC {0}".format(to_text(cmd)), host=self.host)
 
         session = self._session
 
@@ -408,7 +408,6 @@ class Connection(ConnectionBase):
 
         # Read stdout between the markers
         stdout = ''
-        win_line = ''
         begin = False
         stop_time = int(round(time.time())) + self.get_option('ssm_timeout')
         while session.poll() is None:
@@ -425,22 +424,26 @@ class Connection(ConnectionBase):
                 display.vvvv(u"EXEC remaining: {0}".format(remaining), host=self.host)
                 continue
 
-            if not begin and self.is_windows:
-                win_line = win_line + line
-                line = win_line
-
-            if mark_start in line:
+            stdout = stdout + line
+            if begin or mark_begin in stdout:
                 begin = True
-                if not line.startswith(mark_start):
-                    stdout = ''
-                continue
-            if begin:
-                if mark_end in line:
-                    display.vvvv(u"POST_PROCESS: {0}".format(to_text(stdout)), host=self.host)
-                    returncode, stdout = self._post_process(stdout, mark_begin)
-                    break
+                if mark_end in stdout:
+                    if "LASTEXITCODE" in stdout or "$?" in stdout:
+                        # This is windows and $LASTCODE was in line  or this is Linux and $? is in line
+                        # which means this is not the output of command, clear stdout and keep waiting for output
+                        stdout = ''
+                        continue
+                    else:
+                        # Line contains mark_start and ends with mark_end and has valid exitcode.  Send to post_process
+                        display.vvvv(u"POST_PROCESS: {0}".format(to_text(stdout)), host=self.host)
+                        (returncode, stdout) = self._post_process(stdout, mark_begin)
+                        break
                 else:
-                    stdout = stdout + line
+                    # mark_end not found, keep adding lines until it's found
+                    continue
+            else:
+                # Mark_begin not found, keep adding lines until it's found
+                continue
 
         stderr = self._flush_stderr(session)
 
@@ -460,11 +463,16 @@ class Connection(ConnectionBase):
         if self.is_windows:
             if not cmd.startswith(" ".join(_common_args) + " -EncodedCommand"):
                 cmd = self._shell._encode_script(cmd, preserve_rc=True)
-            cmd = cmd + "; echo " + mark_start + "\necho " + mark_end + "\n"
+            cmd = cmd + "; echo " + mark_start + "; echo " + mark_end + "\n"
         else:
             if sudoable:
                 cmd = "sudo " + cmd
-            cmd = "echo " + mark_start + "\n" + cmd + "\necho $'\\n'$?\n" + "echo " + mark_end + "\n"
+            # cmd = "echo " + mark_start + ";\n" + cmd + ";\necho $'\\n'$?\n" + "echo " + mark_end + ";\n"
+            cmd = (
+                f"printf '%s\\n' '{mark_start}';\n"
+                f"echo | {cmd};\n"
+                f"printf '\\n%s\\n%s\\n' \"$?\" '{mark_end}';\n"
+             )
 
         display.vvvv(u"_wrap_command: '{0}'".format(to_text(cmd)), host=self.host)
         return cmd
@@ -472,31 +480,28 @@ class Connection(ConnectionBase):
     def _post_process(self, stdout, mark_begin):
         ''' extract command status and strip unwanted lines '''
 
-        if self.is_windows:
-            # Value of $LASTEXITCODE will be the line after the mark
-            trailer = stdout[stdout.rfind(mark_begin):]
-            last_exit_code = trailer.splitlines()[1]
-            if last_exit_code.isdigit:
-                returncode = int(last_exit_code)
-            else:
-                returncode = -1
-            # output to keep will be before the mark
-            stdout = stdout[:stdout.rfind(mark_begin)]
+        # Value of $LASTEXITCODE will be the line after the mark
+        trailer = stdout[stdout.rfind(mark_begin):]
+        last_exit_code = list(filter(None, trailer.splitlines()))[-2]  # Filter out empty lines and the 2nd one is the exit code
 
-            # If it looks like JSON remove any newlines
-            if stdout.startswith('{'):
-                stdout = stdout.replace('\n', '')
-
-            return (returncode, stdout)
+        if last_exit_code.isdigit:
+            returncode = int(last_exit_code)
         else:
-            # Get command return code
-            returncode = int(stdout.splitlines()[-2])
-
+            returncode = -1
+        # output to keep will be before the mark
+        if self.is_windows:
+            stdout = stdout[:stdout.rfind(mark_begin)]
+        else:
             # Throw away ending lines
             for x in range(0, 3):
                 stdout = stdout[:stdout.rfind('\n')]
 
-            return (returncode, stdout)
+        # If it looks like JSON remove any newlines
+        if stdout.startswith('{'):
+            stdout = stdout.replace('\n', '')
+            stdout = stdout.replace('\r', '')
+        display.vvvv(u"_post_process: stdout: {0}".format(to_text(stdout)), host=self.host)
+        return (returncode, stdout)
 
     def _filter_ansi(self, line):
         ''' remove any ANSI terminal control codes '''
@@ -579,6 +584,7 @@ class Connection(ConnectionBase):
 
         path_unescaped = u"{0}/{1}".format(self.instance_id, out_path)
         s3_path = path_unescaped.replace('\\', '/')
+        s3_path = s3_path.replace('./', '')
         bucket_url = 's3://%s/%s' % (self.get_option('bucket_name'), s3_path)
 
         profile_name = self.get_option('profile')
@@ -634,7 +640,7 @@ class Connection(ConnectionBase):
 
         super(Connection, self).put_file(in_path, out_path)
 
-        display.vvv(u"PUT {0} TO {1}".format(in_path, out_path), host=self.host)
+        display.vvvv(u"PUT {0} TO {1}".format(in_path, out_path), host=self.host)
         if not os.path.exists(to_bytes(in_path, errors='surrogate_or_strict')):
             raise AnsibleFileNotFound("file or module does not exist: {0}".format(to_native(in_path)))
 
@@ -645,7 +651,7 @@ class Connection(ConnectionBase):
 
         super(Connection, self).fetch_file(in_path, out_path)
 
-        display.vvv(u"FETCH {0} TO {1}".format(in_path, out_path), host=self.host)
+        display.vvvv(u"FETCH {0} TO {1}".format(in_path, out_path), host=self.host)
         return self._file_transport_command(in_path, out_path, 'get')
 
     def close(self):

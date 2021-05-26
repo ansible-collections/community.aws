@@ -1,0 +1,2 @@
+bugfixes:
+  - aws_ssm plugin was failing to gather facts. These changes fix both linux and windows (https://github.com/ansible-collections/community.aws/issues/113)
