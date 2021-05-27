@@ -124,7 +124,7 @@
 
     - assert:
         that:
-        - "'Failed to cancel InstanceRefresh: An error occurred (ActiveInstanceRefreshNotFound) when calling the CancelInstanceRefresh operation: No in progress or pending Instance Refresh found for Auto Scaling group {{ resource_prefix }}-asg' == result.msg"
+        - "'An error occurred (ActiveInstanceRefreshNotFound) when calling the CancelInstanceRefresh operation: No in progress or pending Instance Refresh found for Auto Scaling group {{ resource_prefix }}-asg' in result.msg"
       ignore_errors: no
 
     - name: test starting a refresh with a valid ASG name
