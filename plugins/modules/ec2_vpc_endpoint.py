@@ -33,16 +33,16 @@ options:
     description:
       - The list of subnets to attach to the endpoint (Works only with Interface and GatewayLoadBalancer type endpoint).
     required: false
-    default: None
     type: list
-    version_added: 1.5.1
+    elements: str
+    version_added: 1.6.0
   vpc_endpoint_security_groups:
     description:
       - The list of security groups to attach to the endpoint (Works only with Interface type endpoint).
     required: false
-    default: None
     type: list
-    version_added: 1.5.1
+    elements: str
+    version_added: 1.6.0
   service:
     description:
       - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
