@@ -246,6 +246,113 @@
         - "'can not pass preferences dict when canceling a refresh' in result.msg"
       ignore_errors: no
 
+  # ============================================================
+  # ============================================================
+  
+    - name: run setup with refresh_and_cancel_three_times.yml
+      include_tasks: refresh_and_cancel_three_times.yml
+      loop: "{{ query('sequence', 'start=1 end=3') }}"
+  
+    - name: test getting info for an ASG name
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        region: "{{ aws_region }}"
+      ignore_errors: yes
+      register: output
+
+    - assert:
+        that:
+          - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 3
+      vars:
+        inst_refresh_id_json_query: instance_refreshes[].instance_refresh_id
+ 
+    - name: test using fake refresh ID
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        ids: ['0e367f58-blabla-bla-bla-ca870dc5dbfe']
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "{{ output.instance_refreshes|length }} == 0 "
+  
+    - name: test using a real refresh ID
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        ids: [ '{{ refreshout.instance_refresh_id }}' ]
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "{{ output.instance_refreshes|length }} == 1 "
+  
+    - name: test getting info for an ASG name which doesn't exist
+      ec2_asg_instance_refreshes_info:
+        name: n0n3x1stentname27b
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "'Failed to describe InstanceRefreshes: An error occurred (ValidationError) when calling the DescribeInstanceRefreshes operation: AutoScalingGroup name not found - AutoScalingGroup n0n3x1stentname27b not found' == output.msg"
+  
+    - name: assert that the correct number of records are returned
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "{{ output.instance_refreshes|length }} == 3"
+  
+    - name: assert that valid message with fake-token is returned
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        next_token: "fake-token-123"
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - '"Failed to describe InstanceRefreshes: An error occurred (InvalidNextToken) when calling the DescribeInstanceRefreshes operation: The token ''fake-token-123'' is invalid." == output.msg'
+  
+    - name: assert that max records=1 returns no more than one record
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        max_records: 1
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "{{ output.instance_refreshes|length }} < 2"
+  
+    - name: assert that valid message with real-token is returned
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        next_token: "{{ output.next_token }}"
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "{{ output.instance_refreshes|length }} == 2 "
+  
+    - name: test using both real nextToken and max_records=1
+      ec2_asg_instance_refreshes_info:
+        name: "{{ resource_prefix }}-asg"
+        max_records: 1
+        next_token: "{{ output.next_token }}"
+      ignore_errors: yes
+      register: output
+  
+    - assert:
+        that:
+          - "{{ output.instance_refreshes|length }} == 1"
+  
  
   always:
 
