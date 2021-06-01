@@ -14,10 +14,10 @@
   until: refreshout is not failed
 - debug: var=refreshout
 
-- name: test canceling a refresh with an ASG name
+- name: test cancelling a refresh with an ASG name
   ec2_asg_instance_refresh:
     name: "{{ resource_prefix }}-asg"
-    state: "canceled"
+    state: "cancelled"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
     region: "{{ aws_region }}"
