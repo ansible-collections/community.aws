@@ -22,4 +22,3 @@
     aws_secret_key: "{{ aws_secret_key }}"
     region: "{{ aws_region }}"
   ignore_errors: yes
-
