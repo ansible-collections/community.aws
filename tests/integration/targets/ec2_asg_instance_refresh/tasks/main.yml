@@ -306,7 +306,7 @@
   
     - assert:
         that:
-          - "{{ output.instance_refreshes|length }} == 3"
+          - "{{ output.instance_refreshes|length }} == 7"
   
     - name: assert that valid message with fake-token is returned
       ec2_asg_instance_refreshes_info:
