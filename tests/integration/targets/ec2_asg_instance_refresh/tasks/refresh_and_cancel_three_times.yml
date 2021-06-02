@@ -1,5 +1,11 @@
 ---
 
+- name: try to cancel pre-loop
+  ec2_asg_instance_refresh:
+    name: "{{ resource_prefix }}-asg"
+    state: "cancelled"
+  ignore_errors: yes
+
 - name: test starting a refresh with an ASG name
   ec2_asg_instance_refresh:
     name: "{{ resource_prefix }}-asg"
