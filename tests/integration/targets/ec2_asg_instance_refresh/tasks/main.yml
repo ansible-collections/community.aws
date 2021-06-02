@@ -317,7 +317,7 @@
   
     - assert:
         that:
-          - '"Failed to describe InstanceRefreshes: An error occurred (InvalidNextToken) when calling the DescribeInstanceRefreshes operation: The token ''fake-token-123'' is invalid." == output.msg'
+          - '"Failed to describe InstanceRefreshes: An error occurred (InvalidNextToken) when calling the DescribeInstanceRefreshes operation: The token ''********'' is invalid." == output.msg'
   
     - name: assert that max records=1 returns no more than one record
       ec2_asg_instance_refreshes_info:
