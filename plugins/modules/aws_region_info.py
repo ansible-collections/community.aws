@@ -79,6 +79,9 @@ def main():
 
     connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
 
+    # Do some random thing that will only work in Python 3+
+    _myvar = {'foo': 'bar', 'baz': 'foo'}
+    _myunpackedvar = {**_myvar}
     # Replace filter key underscores with dashes, for compatibility
     sanitized_filters = dict(module.params.get('filters'))
     for k in module.params.get('filters').keys():
