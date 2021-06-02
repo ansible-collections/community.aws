@@ -262,7 +262,7 @@
 
     - assert:
         that:
-          - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 3
+          - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 7 
       vars:
         inst_refresh_id_json_query: instance_refreshes[].instance_refresh_id
  
