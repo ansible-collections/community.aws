@@ -51,7 +51,8 @@ options:
       - Options in this list are added to the option group.
       - If already present, the specified configuration is used to update the existing configuration.
       - If none are supplied, any existing options are removed.
-    type: dict
+    type: list
+    elements: dict
     suboptions:
         option_name:
             description: The configuration of options to include in a group.
