@@ -51,7 +51,7 @@ options:
       - Options in this list are added to the option group.
       - If already present, the specified configuration is used to update the existing configuration.
       - If none are supplied, any existing options are removed.
-    type: list
+    type: complex
     suboptions:
         option_name:
             description: The configuration of options to include in a group.
@@ -232,6 +232,7 @@ options:
     description: Indicates what options are available in the option group.
     returned: I(state=present)
     type: list
+    elements: dict
     contains:
         db_security_group_memberships:
             description: If the option requires access to a port, then this DB security group allows access to the port.
@@ -635,7 +636,7 @@ def main():
         engine_name=dict(type='str'),
         major_engine_version=dict(type='str'),
         option_group_description=dict(type='str'),
-        options=dict(required=False, type='list'),
+        options=dict(required=False, type='list', elements='dict'),
         apply_immediately=dict(type='bool', default=False),
         state=dict(required=True, choices=['present', 'absent']),
         tags=dict(required=False, type='dict'),
