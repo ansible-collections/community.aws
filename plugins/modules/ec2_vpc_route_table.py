@@ -460,7 +460,7 @@ def ensure_routes(connection=None, module=None, route_table=None, route_specs=No
                 route_specs_to_create.append(route_spec)
             else:
                 module.warn("Skipping creating {0} because it has no destination cidr block. "
-                            "To add VPC endpoints to route tables use the ec2_vpc_endpoint module.".format(route_spec))
+                            "To add VPC endpoints to route tables use the amazon.aws.ec2_vpc_endpoint module.".format(route_spec))
         else:
             if match[0] == "replace":
                 if route_spec.get('DestinationCidrBlock'):
@@ -474,7 +474,7 @@ def ensure_routes(connection=None, module=None, route_table=None, route_specs=No
         for r in routes_to_match:
             if not r.get('DestinationCidrBlock'):
                 module.warn("Skipping purging route {0} because it has no destination cidr block. "
-                            "To remove VPC endpoints from route tables use the ec2_vpc_endpoint module.".format(r))
+                            "To remove VPC endpoints from route tables use the amazon.aws.ec2_vpc_endpoint module.".format(r))
                 continue
             if r['Origin'] == 'CreateRoute':
                 routes_to_delete.append(r)
