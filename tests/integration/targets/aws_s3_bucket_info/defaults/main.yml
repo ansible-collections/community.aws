@@ -1,6 +1,6 @@
 ---
-name_pattern: "testbucket-ansible-integration"
+name_pattern: "info"
 
 testing_buckets:
-  - "{{ resource_prefix }}-{{ name_pattern }}-1"
-  - "{{ resource_prefix }}-{{ name_pattern }}-2"
+  - "ansible-test-{{ resource_prefix | hash('md5') }}-{{ name_pattern }}-1"
+  - "ansible-test-{{ resource_prefix | hash('md5') }}-{{ name_pattern }}-2"
