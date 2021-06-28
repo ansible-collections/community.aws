@@ -512,7 +512,10 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name):
         ''' Generate URL for get_object / put_object '''
-        region_name = self.get_option('bucket_region') or self.get_option('region') or 'us-east-1'
+        try:
+            region_name = self.get_option('bucket_region') or self.get_option('region')
+        except KeyError:
+            region_name = 'us-east-1'
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
         return client.generate_presigned_url(client_method, Params={'Bucket': bucket_name, 'Key': out_path}, ExpiresIn=3600, HttpMethod=http_method)
 
