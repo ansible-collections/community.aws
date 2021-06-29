@@ -52,6 +52,7 @@ options:
     description: The region of the S3 bucket used for file transfers.
     vars:
     - name: ansible_aws_ssm_bucket_region
+    version_added: 2.0.0
   plugin:
     description: This defines the location of the session-manager-plugin binary.
     vars:
@@ -512,10 +513,13 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name):
         ''' Generate URL for get_object / put_object '''
-        try:
-            region_name = self.get_option('bucket_region') or self.get_option('region')
-        except KeyError:
+        if self.has_option('bucket_region'):
+            region_name = self.get_option('bucket_region')
+        elif self.has_option('region'):
+            region_name = self.get_option('region')
+        else:
             region_name = 'us-east-1'
+
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
         return client.generate_presigned_url(client_method, Params={'Bucket': bucket_name, 'Key': out_path}, ExpiresIn=3600, HttpMethod=http_method)
 

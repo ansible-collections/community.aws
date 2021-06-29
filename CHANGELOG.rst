@@ -4,6 +4,12 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+v2.0.0
+======
+
+Minor Changes
+-------------
+- aws_ssm connection plugin - added support for an independent bucket region (https://github.com/ansible-collections/community.aws/pull/603).
 
 v1.5.0
 ======
