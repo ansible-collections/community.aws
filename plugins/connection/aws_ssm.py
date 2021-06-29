@@ -513,11 +513,10 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name):
         ''' Generate URL for get_object / put_object '''
-        if self.has_option('bucket_region'):
-            region_name = self.get_option('bucket_region')
-        elif self.has_option('region'):
+        region_name = self.get_option('bucket_region')
+        if region_name is None:
             region_name = self.get_option('region')
-        else:
+        if region_name is None:
             region_name = 'us-east-1'
 
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
