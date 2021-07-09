@@ -141,6 +141,7 @@ EXAMPLES = r'''
     name: MyInstanceLaunchEvent
     description: "Rule for EC2 instance launch"
     state: present
+    event_pattern: '{"source":["aws.ec2"],"detail-type":["EC2 Instance State-change Notification"],"detail":{"state":["pending"]}}'
     targets:
       - id: MyTargetSnsTopic
         arn: arn:aws:sns:us-east-1:123456789012:MySNSTopic
