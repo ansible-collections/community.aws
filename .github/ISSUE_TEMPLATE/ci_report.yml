@@ -1,6 +1,6 @@
 ---
-name: Feature request
-description: Suggest an idea for this project
+name: CI Bug Report
+description: Create a report to help us improve our CI
 
 body:
 - type: markdown
@@ -8,7 +8,6 @@ body:
     value: |
       ⚠
       Verify first that your issue is not [already reported on GitHub][issue search].
-      Where possible also test if the latest release and main branch are affected too.
       *Complete **all** sections as described, this form is processed automatically.*
 
       [issue search]: https://github.com/ansible-collections/community.aws/search?q=is%3Aissue&type=issues
@@ -17,11 +16,9 @@ body:
   attributes:
     label: Summary
     description: |
-      Describe the new feature/improvement briefly below.
+      Describe the new issue briefly below.
     placeholder: >-
-      I am trying to do X with the collection from the main branch on GitHub and
-      I think that implementing a feature Y would be very helpful for me and
-      every other user of community.aws because of Z.
+      I opened a Pull Request and CI failed to run.  I believe this is due to a problem with the CI rather than my code.
   validations:
     required: true
 
@@ -30,29 +27,34 @@ body:
     label: Issue Type
     # FIXME: Once GitHub allows defining the default choice, update this
     options:
-    - Feature Idea
+    - CI Bug Report
   validations:
     required: true
 
 - type: textarea
   attributes:
-    # For smaller collections we could use a multi-select and hardcode the list
-    # May generate this list via GitHub action and walking files under https://github.com/ansible-collections/community.general/tree/main/plugins
-    # Select from list, filter as you type (`mysql` would only show the 3 mysql components)
-    # OR freeform - doesn't seem to be supported in adaptivecards
-    label: Component Name
+    label: CI Jobs
     description: >-
-      Write the short name of the module or plugin below,
-      *use your best guess if unsure*.
-    placeholder: ec2_instance, ec2_security_group
+      Please provide a link to the failed CI tests.
+    placeholder: https://dashboard.zuul.ansible.com/t/ansible/buildset/be956faa49d84e43bc860d0cd3dc8503
   validations:
-    required: true
+    required: false
+
+- type: textarea
+  attributes:
+    label: Pull Request
+    description: >-
+      Please provide a link to the Pull Request where the tests are failing
+    placeholder: https://github.com/ansible-collections/community.aws/runs/3040421733
+  validations:
+    required: false
 
 - type: textarea
   attributes:
     label: Additional Information
     description: |
-      Describe how the feature would be used, why it is needed and what it would solve.
+      Please provide as much information as possible to help us understand the issue being reported.
+      Where possible, please include the specific errors that you're seeing.
 
       **HINT:** You can paste https://gist.github.com links for larger files.
     value: |

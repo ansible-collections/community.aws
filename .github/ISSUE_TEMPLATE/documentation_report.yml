@@ -1,79 +1,28 @@
 ---
-name: 📝 Documentation Report
+name: Documentation Report
 description: Ask us about docs
+# NOTE: issue body is enabled to allow screenshots
 
 body:
 - type: markdown
   attributes:
-    value: >
-      **Thank you for wanting to report a problem with ansible-core
-      documentation!**
-
-
-      Please fill out your suggestions below. If the problem seems
-      straightforward, feel free to go ahead and
-      [submit a pull request] instead!
-
-
+    value: |
       ⚠
-      Verify first that your issue is not [already reported on
-      GitHub][issue search].
+      Verify first that your issue is not [already reported on GitHub][issue search].
+      Where possible also test if the latest release and main branch are affected too.
+      *Complete **all** sections as described, this form is processed automatically.*
 
-      Also test if the latest release and devel branch are affected too.
-
-
-      **Tip:** If you are seeking community support, please consider
-      [starting a mailing list thread or chatting in IRC][ML||IRC].
-
-
-      [ML||IRC]:
-      https://docs.ansible.com/ansible-core/devel/community/communication.html?utm_medium=github&utm_source=issue_form--documentation_report.yml#mailing-list-information
-
-      [issue search]: ../search?q=is%3Aissue&type=issues
-
-      [submit a pull request]:
-      https://docs.ansible.com/ansible-core/devel/community/documentation_contributions.html
-
-- type: markdown
-  attributes:
-    value: >
-      **Check the repository for your issue.**
-
-      Source files for Ansible community documentation are
-      hosted in different repositories. Please make sure to file an
-      issue in the correct project.
-
-      Documentation for modules/plugins/etc that are officially
-      supported by the Ansible Core Engineering team is available
-      in this (`ansible/ansible`) repository.
-
-      The Installation Guide, Playbook Guide, Developer Guide,
-      and other documentation is available in the
-      [ansible/ansible-documentation] repository.
-      Documentation for other modules/plugins/etc is likely to be
-      available in one of the [Ansible Collections][collections index].
-      If available in the collection documentation, select the
-      **Issue Tracker** button to go directly to the GitHub issues.
-
-
-      [ansible/ansible-documentation]: /ansible/ansible-documentation
-
-      [collections index]:
-      https://docs.ansible.com/ansible/latest/collections/index.html
+      [issue search]: https://github.com/ansible-collections/community.aws/search?q=is%3Aissue&type=issues
 
 - type: textarea
   attributes:
     label: Summary
-    description: >
-      Explain the problem briefly below, add suggestions to wording
-      or structure.
+    description: |
+      Explain the problem briefly below, add suggestions to wording or structure.
 
-
-      **HINT:** Did you know the documentation has a `View on GitHub`
-      link on some pages? Feel free to use it to start a pull request
-      right from the GitHub UI!
+      **HINT:** Did you know the documentation has an `Edit on GitHub` link on every page?
     placeholder: >-
-      I was reading the ansible-core documentation of version X and I'm having
+      I was reading the Collection documentation of version X and I'm having
       problems understanding Y. It would be very helpful if that got
       rephrased as Z.
   validations:
@@ -82,33 +31,23 @@ body:
 - type: dropdown
   attributes:
     label: Issue Type
-    description: >
-      Please select the single available option in the drop-down.
-
-      <details>
-        <summary>
-          <em>Why?</em>
-        </summary>
-
-
-        _We will make it easier in the future, once GitHub
-        supports dropdown defaults. Promise!_
-
-      </details>
     # FIXME: Once GitHub allows defining the default choice, update this
     options:
     - Documentation Report
   validations:
     required: true
 
-- type: input
+- type: textarea
   attributes:
+    # For smaller collections we could use a multi-select and hardcode the list
+    # May generate this list via GitHub action and walking files under https://github.com/ansible-collections/community.general/tree/main/plugins
+    # Select from list, filter as you type (`mysql` would only show the 3 mysql components)
+    # OR freeform - doesn't seem to be supported in adaptivecards
     label: Component Name
-    description: >
-      Write the short name of the rst file, module, plugin, task or
-      feature below, *use your best guess if unsure*.
-
-    placeholder: lib/ansible/modules/copy.py
+    description: >-
+      Write the short name of the rst file, module, plugin or task below,
+      *use your best guess if unsure*.
+    placeholder: ec2_instance, ec2_security_group
   validations:
     required: true
 
@@ -116,46 +55,44 @@ body:
   attributes:
     label: Ansible Version
     description: >-
-      Paste verbatim output from `ansible --version` below, under
-      the prompt line. Please don't wrap it with triple backticks — your
-      whole input will be turned into a code snippet automatically.
-    render: console
+      Paste verbatim output from `ansible --version` between
+      tripple backticks.
     value: |
+      ```console (paste below)
       $ ansible --version
-    placeholder: |
-      $ ansible --version
-      ansible [core 2.11.0b4.post0]  (detached HEAD ref: refs/) last updated 2021/04/02 00:33:35 (GMT +200)
-        config file = None
-        configured module search path = ['~/.ansible/plugins/modules', '/usr/share/ansible/plugins/modules']
-        ansible python module location = ~/src/github/ansible/ansible/lib/ansible
-        ansible collection location = ~/.ansible/collections:/usr/share/ansible/collections
-        executable location = bin/ansible
-        python version = 3.9.0 (default, Oct 26 2020, 13:08:59) [GCC 10.2.0]
-        jinja version = 2.11.3
-        libyaml = True
+
+      ```
   validations:
-    required: true
+    required: false
+
+- type: textarea
+  attributes:
+    label: Collection Versions
+    description: >-
+      Paste verbatim output from `ansible-galaxy collection list` between
+      tripple backticks.
+    value: |
+      ```console (paste below)
+      $ ansible-galaxy collection list
+      ```
+  validations:
+    required: false
 
 - type: textarea
   attributes:
     label: Configuration
     description: >-
-      Paste verbatim output from `ansible-config dump --only-changed -t all` below, under the prompt line.
-      (if using a version older than ansible-core 2.12 you should omit the '-t all')
-      Please don't wrap it with triple backticks — your
-      whole input will be turned into a code snippet automatically.
-    render: console
+      If this issue has an example piece of YAML that can help to reproduce this problem, please provide it.
+      This can be a piece of YAML from, e.g., an automation, script, scene or configuration.
+
+      Paste verbatim output from `ansible-config dump --only-changed` between quotes
     value: |
-      # if using a version older than ansible-core 2.12 you should omit the '-t all'
-      $ ansible-config dump --only-changed -t all
-    placeholder: |
-      # if using a version older than ansible-core 2.12 you should omit the '-t all'
-      $ ansible-config dump --only-changed -t all
-      DEFAULT_GATHERING(~/src/github/ansible/ansible/ansible.cfg) = smart
-      DEFAULT_HOST_LIST(~/src/github/ansible/ansible/ansible.cfg) = ['~/src/github/ansible/ansible/hosts']
-      DEFAULT_VAULT_PASSWORD_FILE(~/src/github/ansible/ansible/ansible.cfg) = ~/src/github/ansible/ansible/vault/print-password.sh
+      ```console (paste below)
+      $ ansible-config dump --only-changed
+
+      ```
   validations:
-    required: true
+    required: false
 
 - type: textarea
   attributes:
@@ -163,10 +100,9 @@ body:
     description: >-
       Provide all relevant information below, e.g. OS version,
       browser, etc.
-    placeholder: Fedora 33, Firefox etc.
+    placeholder: RHEL 8, Firefox etc.
   validations:
-    required: true
-
+    required: false
 
 - type: textarea
   attributes:
@@ -174,38 +110,20 @@ body:
     description: |
       Describe how this improves the documentation, e.g. before/after situation or screenshots.
 
+      **Tip:** It's not possible to upload the screenshot via this field directly but you can use the last textarea in this form to attach them.
+
       **HINT:** You can paste https://gist.github.com links for larger files.
     placeholder: >-
       When the improvement is applied, it makes it more straightforward
       to understand X.
   validations:
-    required: true
-
-
-- type: markdown
-  attributes:
-    value: >
-      *One last thing...*
-
-
-      *Please, complete **all** sections as described, this form
-      is [processed automatically by a robot][ansibot help].*
-
-
-      Thank you for your collaboration!
-
-
-      [ansibot help]:
-      /ansible/ansibullbot/blob/master/ISSUE_HELP.md#for-issue-submitters
-
+    required: false
 
 - type: checkboxes
   attributes:
     label: Code of Conduct
     description: |
-      Read the [Ansible Code of Conduct][CoC] first.
-
-      [CoC]: https://docs.ansible.com/ansible/latest/community/code_of_conduct.html?utm_medium=github&utm_source=issue_form--documentation_report.yml
+      Read the [Ansible Code of Conduct](https://docs.ansible.com/ansible/latest/community/code_of_conduct.html?utm_medium=github&utm_source=issue_form--ansible-collections) first.
     options:
     - label: I agree to follow the Ansible Code of Conduct
       required: true
