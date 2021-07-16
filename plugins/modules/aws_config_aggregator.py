@@ -14,6 +14,7 @@ version_added: 1.0.0
 short_description: Manage AWS Config aggregations across multiple accounts
 description:
     - Module manages AWS Config resources
+requirements: [ 'botocore', 'boto3' ]
 author:
     - "Aaron Smith (@slapula)"
 options:
@@ -128,13 +129,13 @@ def create_resource(client, module, params, result):
 def update_resource(client, module, params, result):
     current_params = client.describe_configuration_aggregators(
         ConfigurationAggregatorNames=[params['ConfigurationAggregatorName']]
-    )
+    )['ConfigurationAggregators'][0]
 
     del current_params['ConfigurationAggregatorArn']
     del current_params['CreationTime']
     del current_params['LastUpdatedTime']
 
-    if params != current_params['ConfigurationAggregators'][0]:
+    if params != current_params:
         try:
             client.put_configuration_aggregator(
                 ConfigurationAggregatorName=params['ConfigurationAggregatorName'],
@@ -180,8 +181,8 @@ def main():
     params = {}
     if name:
         params['ConfigurationAggregatorName'] = name
-    params['AccountAggregationSources'] = []
     if module.params.get('account_sources'):
+        params['AccountAggregationSources'] = []
         for i in module.params.get('account_sources'):
             tmp_dict = {}
             if i.get('account_ids'):
