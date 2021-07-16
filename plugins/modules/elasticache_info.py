@@ -192,6 +192,171 @@ elasticache_clusters:
       returned: always
       type: str
       sample: sat:12:00-sat:13:00
+    replication_group:
+      description: Informations about the associated replication group
+      returned: if replication_group_id is not empty
+      type: complex
+      contains:
+        arn:
+          description: The ARN (Amazon Resource Name) of the replication group
+          returned: always
+          type: str
+        at_rest_encryption_enabled:
+          description: A flag that enables encryption at-rest when set to true
+          returned: always
+          type: bool
+        auth_token_enabled:
+          description: A flag that enables using an AuthToken (password) when issuing Redis commands
+          returned: always
+          type: bool
+        automatic_failover:
+          description: Indicates the status of automatic failover for this Redis replication group
+          returned: always
+          type: str
+          sample: enabled
+        cache_node_type:
+          description: The name of the compute and memory capacity node type for each node in the replication group
+          returned: always
+          type: str
+          sample: cache.t3.medium
+        cluster_enabled:
+          description: 'A flag indicating whether or not this replication group is cluster enabled; i.e., whether its data can be partitioned across multiple shards (API/CLI: node groups)'
+          returned: always
+          type: bool
+        description:
+          description: The user supplied description of the replication group
+          returned: always
+          type: str
+        global_replication_group_info:
+          description: The name of the Global datastore and role of this replication group in the Global datastore.
+          returned: always
+          type: complex
+          contains:
+            global_replication_group_id:
+              description: The name of the Global datastore
+              returned: always
+              type: str
+            global_replication_group_member_role:
+              description: The role of the replication group in a Global datastore. Can be primary or secondary.
+              returned: always
+              type: str
+        kms_key_id:
+          description: The ID of the KMS key used to encrypt the disk in the cluster
+          returned: always
+          type: str
+        member_clusters:
+          description: The names of all the cache clusters that are part of this replication group.
+          returned: always
+          type: list
+        multi_az:
+          description: A flag indicating if you have Multi-AZ enabled to enhance fault tolerance
+          returned: always
+          type: str
+          sample: enabled
+        node_groups:
+          description: A list of node groups in this replication group
+          returned: always
+          type: complex
+          contains:
+            node_group_id:
+              description: The identifier for the node group (shard).
+              returned: always
+              type: str
+            node_group_members:
+              description: A list containing information about individual nodes within the node group (shard)
+              returned: always
+              type: complex
+              contains:
+                cache_cluster_id:
+                  description: The ID of the cluster to which the node belongs
+                  returned: always
+                  type: str
+                cache_node_id:
+                  description: The ID of the node within its cluster
+                  returned: always
+                  type: str
+                current_role:
+                  description: The role that is currently assigned to the node - primary or replica
+                  returned: always
+                  type: str
+                  sample: primary
+                preferred_availability_zone:
+                  description: The name of the Availability Zone in which the node is located.
+                  returned: always
+                  type: str
+                read_endpoint:
+                  description: The information required for client programs to connect to a node for read operations
+                  returned: always
+                  type: complex
+                  contains:
+                    address:
+                      description: The DNS hostname of the cache node
+                      returned: always
+                      type: str
+                    port:
+                      description: The port number that the cache engine is listening on.
+                      returned: always
+                      type: int
+                      sample: 6379
+            primary_endpoint:
+              description: The endpoint of the primary node in this node group (shard)
+              returned: always
+              type: complex
+              contains:
+                address:
+                  description: The DNS hostname of the cache node
+                  returned: always
+                  type: str
+                port:
+                  description: The port number that the cache engine is listening on
+                  returned: always
+                  type: int
+                  sample: 6379
+            reader_endpoint:
+              address:
+                description: The DNS hostname of the cache node
+                returned: always
+                type: str
+              port:
+                description: The port number that the cache engine is listening on
+                returned: always
+                type: int
+                sample: 6379
+            status:
+              description: The current state of this replication group - creating , available , modifying , deleting
+              returned: always
+              type: str
+              sample: available
+        pending_modified_values:
+          description: A group of settings to be applied to the replication group, either immediately or during the next maintenance window
+          returned: always
+          type: complex
+        replication_group_id:
+          description: Replication Group Id
+          returned: always
+          type: str
+          sample: replication-001
+        snapshot_retention_limit:
+          description: The number of days for which ElastiCache retains automatic cluster snapshots before deleting them
+          returned: always
+          type: int
+        snapshot_window:
+          description: The daily time range (in UTC) during which ElastiCache begins taking a daily snapshot of your node group (shard)
+          returned: always
+          type: str
+          sample: 07:00-09:00
+        snapshotting_cluster_id:
+          description: The cluster ID that is used as the daily snapshot source for the replication group
+          returned: always
+          type: str
+        status:
+          description: The current state of this replication group - creating , available , modifying , deleting , create-failed , snapshotting
+          returned: always
+          type: str
+        transit_encryption_enabled:
+          description: A flag that enables in-transit encryption when set to true
+          returned: always
+          type: bool
     replication_group_id:
       description: Replication Group Id
       returned: always
@@ -249,6 +414,15 @@ def describe_cache_clusters_with_backoff(client, cluster_id=None):
 
 
 @AWSRetry.exponential_backoff()
+def describe_replication_group_with_backoff(client, replication_group_id):
+    try:
+        response = client.describe_replication_groups(ReplicationGroupId=replication_group_id)
+    except is_boto3_error_code('ReplicationGroupNotFoundFault'):
+        return None
+
+    return response['ReplicationGroups'][0]
+
+@AWSRetry.exponential_backoff()
 def get_elasticache_tags_with_backoff(client, cluster_id):
     return client.list_tags_for_resource(ResourceName=cluster_id)['TagList']
 
@@ -284,6 +458,17 @@ def get_elasticache_clusters(client, module):
             module.fail_json_aws(e, msg="Couldn't get tags for cluster %s")
 
         cluster['tags'] = boto3_tag_list_to_ansible_dict(tags)
+
+        if cluster['replication_group_id'] != None and cluster['replication_group_id'] != '':
+            try:
+                replication_group = describe_replication_group_with_backoff(client, cluster['replication_group_id'])
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Couldn't obtain replication group info")
+
+            if replication_group != None:
+                replication_group = camel_dict_to_snake_dict(replication_group)
+                cluster['replication_group'] = replication_group
+
         results.append(cluster)
     return results
 
