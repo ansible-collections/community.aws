@@ -8,8 +8,8 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: aws_elasticsearch_info
-version_added: 1.0.0
+module: elasticsearch_info
+version_added: 1.6.0
 
 short_description: Describe AWS Elasticsearch domains
 description: Describe AWS Elasticsearch domains
