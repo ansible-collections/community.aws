@@ -15,7 +15,9 @@ short_description: Describe AWS Elasticsearch domains
 description: Describe AWS Elasticsearch domains
 options:
   domain_name:
-    description: The name of the AWS Elasticsearch domain.
+    description:
+      - The name of the AWS Elasticsearch domain.
+    required: false
     type: str
 
 author:
@@ -26,12 +28,210 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-# Retrieve informations about some cluster
-- community.aws.elasticsearch_info:
-    domain_name: name
+- name: Retrieve informations about a specific Elasticsearch domain
+  community.aws.elasticsearch_info:
+    domain_name: app_domain
+
+- name: Retrieve informations about all Elasticsearch domains
+  community.aws.elasticsearch_info:
 '''
 
 RETURN = '''
+elasticsearch_domains:
+  description: List of Elasticsearch domains descriptions
+  returned: always
+  type: complex
+  contains:
+    access_policies:
+      type: str
+    advanced_options:
+      type: complex
+      contains:
+        rest.action.multi.allow_explicit_index:
+          type: str
+          sample: 'true'
+    advanced_security_options:
+      type: complex
+      contains:
+        enabled:
+          type: bool
+          sample: true
+        internal_user_database_enabled:
+          type: bool
+          sample: true
+    arn:
+      returned: always
+      type: str
+    cognito_options:
+      type: complex
+      contains:
+        enabled:
+          type: bool
+          sample: false
+    created:
+      type: bool
+      returned: always
+      sample: true
+    deleted:
+      type: bool
+      returned: always
+      sample: false
+    domain_endpoint_options:
+      type: complex
+      contains:
+        custom_endpoint_enabled:
+          type: bool
+          sample: false
+        enforce_https:
+          type: bool
+          sample: true
+        tls_security_policy:
+          type: str
+    domain_id:
+      type: str
+    domain_name:
+      type: str
+    ebs_options:
+      type: complex
+      contains:
+        ebs_enabled:
+          type: bool
+        volume_size:
+          type: int
+        volume_type:
+          type: str
+    elasticsearch_cluster_config:
+      type: complex
+      contains:
+        dedicated_master_enabled:
+          type: bool
+          sample: false
+        instance_count:
+          type: int
+          sample: 3
+        instance_type:
+          type: str
+          sample: c5.xlarge.elasticsearch
+        warm_enabled:
+          type: bool
+          sample: false
+        zone_awareness_config:
+          type: complex
+          contains:
+            availability_zone_count:
+              type: int
+              sample: 3
+        zone_awareness_enabled:
+          type: bool
+          sample: true
+    elasticsearch_version:
+      type: str
+      sample: '7.9'
+    encryption_at_rest_options:
+      type: complex
+      contains:
+        enabled:
+          type: bool
+          sample: true
+        kms_key_id:
+          type: str
+    endpoints:
+      type: complex
+      contains:
+        vpc:
+          type: str
+    log_publishing_options:
+      type: complex
+      contains:
+        es_application_logs:
+          type: complex
+          contains:
+            cloud_watch_logs_log_group_arn:
+              type: str
+            enabled:
+              type: bool
+              sample: true
+        index_slow_logs:
+          type: complex
+          contains:
+            cloud_watch_logs_log_group_arn:
+              type: str
+            enabled:
+              type: bool
+              sample: true
+        search_slow_logs:
+          type: complex
+          contains:
+            cloud_watch_logs_log_group_arn:
+              type: str
+            enabled:
+              type: bool
+              sample: true
+    node_to_node_encryption_options:
+      type: complex
+      contains:
+        enabled:
+          type: bool
+          sample: true
+    processing:
+      type: bool
+      sample: false
+    service_software_options:
+      type: complex
+      contains:
+        automated_update_date:
+          type: str
+          sample: '2021-07-08T10:15:43+02:00'
+        cancellable:
+          type: bool
+          sample: false
+        current_version:
+          type: str
+          sample: R20210426-P2
+        description:
+          type: str
+          sample: There is no software update available for this domain.
+        new_version:
+          type: str
+        optional_deployment:
+          type: bool
+          sample: false
+        update_available:
+          type: bool
+          sample: false
+        update_status:
+          type: str
+          sample: COMPLETED
+    snapshot_options:
+      type: complex
+      contains:
+        automated_snapshot_start_hour:
+          type: int
+          sample: 23
+    tags:
+      returned: always
+      type: dict
+      sample:
+        application: api
+        environment: prod
+    upgrade_processing:
+      type: bool
+      sample: false
+    vpc_options:
+      type: complex
+      contains:
+        availability_zones:
+          type: list
+          sample: [ eu-west-3a, eu-west-3b, eu-west-3c ]
+        security_group_ids:
+          type: list
+          sample: [ sg-0123456789abcdef0 ]
+        subnet_ids:
+          type: list
+          sample: [ subnet-0123456789abcdef0 ]
+        vpc_id:
+          type: str
+          sample: vpc-0123456789abcdef0
 '''
 
 try:
