@@ -157,7 +157,8 @@ def update_parameter(client, module, args):
     response = {}
 
     try:
-        response = client.put_parameter(**args)
+        if not module.check_mode:
+            response = client.put_parameter(**args)
         changed = True
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="setting parameter")
@@ -228,9 +229,10 @@ def delete_parameter(client, module):
     response = {}
 
     try:
-        response = client.delete_parameter(
-            Name=module.params.get('name')
-        )
+        if not module.check_mode:
+            response = client.delete_parameter(
+                Name=module.params.get('name')
+            )
     except is_boto3_error_code('ParameterNotFound'):
         return False, {}
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -259,6 +261,7 @@ def setup_module_object():
 
     return AnsibleAWSModule(
         argument_spec=argument_spec,
+        supports_check_mode=True,
     )
 
 
