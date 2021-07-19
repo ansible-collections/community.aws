@@ -866,19 +866,24 @@ def main():
         wait=dict(type='bool', default=False)
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              required_if=[
-                                  ['target_type', 'instance', ['protocol', 'port', 'vpc_id']],
-                                  ['target_type', 'ip', ['protocol', 'port', 'vpc_id']],
-                              ]
-                              )
+    state = module.params.get('state')
+    module_kwargs = {}
+    if state == 'present':
+        # ansible-collections/community.aws/issues/69
+        # Don't require additional parameters if state==absent
+        module_kwargs["required_if"] = [
+            ['target_type', 'instance', ['protocol', 'port', 'vpc_id']],
+            ['target_type', 'ip', ['protocol', 'port', 'vpc_id']],
+        ]
+
+    module = AnsibleAWSModule(argument_spec=argument_spec, **module_kwargs)
 
     if module.params.get('target_type') is None:
         module.params['target_type'] = 'instance'
 
     connection = module.client('elbv2', retry_decorator=AWSRetry.jittered_backoff(retries=10))
 
-    if module.params.get('state') == 'present':
+    if state == 'present':
         create_or_update_target_group(connection, module)
     else:
         delete_target_group(connection, module)
