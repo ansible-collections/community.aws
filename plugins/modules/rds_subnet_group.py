@@ -43,14 +43,14 @@ options:
     description:
       - A hash/dictionary of tags to add to the new RDS subnet group or to add/remove from an existing one.
     type: dict
-    version_added: 1.5.0
+    version_added: 2.0.0
   purge_tags:
     description:
        - Whether or not to remove tags assigned to the RDS subnet group if not specified in the playbook.
        - To remove all tags set I(tags) to an empty dictionary in conjunction with this.
     default: True
     type: bool
-    version_added: 1.5.0
+    version_added: 2.0.0
 author:
     - "Scott Anderson (@tastychutney)"
     - "Alina Buzachis (@alinabuzachis)"
