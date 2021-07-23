@@ -140,7 +140,7 @@ iam_group:
                 group_id:
                     description: the stable and unique string identifying the group
                     type: str
-                    sample: AGPAIDBWE12NSFINE55TM
+                    sample: AGPAIDBWE12NSFEXAMPLE
                 group_name:
                     description: the friendly name that identifies the group
                     type: str
@@ -165,7 +165,7 @@ iam_group:
                 user_id:
                     description: the stable and unique string identifying the user
                     type: str
-                    sample: AIDAIZTPY123YQRS22YU2
+                    sample: AIDAIZTPY123YQEXAMPLE
                 user_name:
                     description: the friendly name that identifies the user
                     type: str

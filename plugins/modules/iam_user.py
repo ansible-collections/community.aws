@@ -94,7 +94,7 @@ user:
         user_id:
             description: the stable and unique string identifying the user
             type: str
-            sample: AGPAIDBWE12NSFINE55TM
+            sample: AGPAIDBWE12NSFEXAMPLE
         user_name:
             description: the friendly name that identifies the user
             type: str
