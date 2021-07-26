@@ -159,7 +159,7 @@ role_result:
                 "assume_role_policy_document": "...truncated...",
                 "create_date": "2017-09-02T14:32:23Z",
                 "path": "/",
-                "role_id": "AROAA1B2C3D4E5F6G7H8I",
+                "role_id": "AIDA1EXAMPLE1EXAMPLE1",
                 "role_name": "my-new-role"
             }
 roles:

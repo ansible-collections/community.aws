@@ -108,7 +108,7 @@ iam_roles:
           description: Amazon Identifier for the instance profile.
           returned: always
           type: str
-          sample: AROAII7ABCD123456EFGH
+          sample: AIDA1EXAMPLE1EXAMPLE1
         instance_profile_name:
           description: Name of instance profile.
           returned: always
@@ -133,7 +133,7 @@ iam_roles:
       description: Amazon Identifier for the role.
       returned: always
       type: str
-      sample: AROAII7ABCD123456EFGH
+      sample: AIDA1EXAMPLE1EXAMPLE1
     role_name:
       description: Name of the role.
       returned: always
