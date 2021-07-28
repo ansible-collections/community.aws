@@ -869,8 +869,6 @@ def main():
     state = module.params.get('state')
     module_kwargs = {}
     if state == 'present':
-        # ansible-collections/community.aws/issues/69
-        # Don't require additional parameters if state==absent
         module_kwargs["required_if"] = [
             ['target_type', 'instance', ['protocol', 'port', 'vpc_id']],
             ['target_type', 'ip', ['protocol', 'port', 'vpc_id']],

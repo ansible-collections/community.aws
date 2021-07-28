@@ -1,0 +1,4 @@
+bugfixes:
+  - elb_target_group - do not unnecessarily raise an error for required parameters ``['protocol', 'port', 'vpc_id']`` if ``state=='absent'`` (https://github.com/ansible-collections/community.aws/issues/69)
+minor_changes:
+  - elb_target_group - the parameters ``['protocol', 'port', 'vpc_id']`` are no longer rquired if ``state=='absent'`` (https://github.com/ansible-collections/community.aws/issues/69)
