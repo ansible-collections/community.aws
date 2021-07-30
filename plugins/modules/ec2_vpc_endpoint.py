@@ -35,14 +35,14 @@ options:
     required: false
     type: list
     elements: str
-    version_added: 1.6.0
+    version_added: 2.0.0
   vpc_endpoint_security_groups:
     description:
       - The list of security groups to attach to the endpoint (Works only with Interface type endpoint).
     required: false
     type: list
     elements: str
-    version_added: 1.6.0
+    version_added: 2.0.0
   service:
     description:
       - An AWS supported vpc endpoint service. Use the M(community.aws.ec2_vpc_endpoint_info)
@@ -485,6 +485,23 @@ def main():
         module.deprecate('The policy_file option has been deprecated and'
                          ' will be removed after 2022-12-01',
                          date='2022-12-01', collection_name='community.aws')
+
+    if module.params.get('vpc_endpoint_type'):
+        if module.params.get('vpc_endpoint_type') == 'Gateway':
+            if module.params.get('vpc_endpoint_subnets') or module.params.get('vpc_endpoint_security_groups'):
+                module.fail_json(msg="Parameter vpc_endpoint_subnets and/or vpc_endpoint_security_groups can't be used with Gateway endpoint type")
+
+        if module.params.get('vpc_endpoint_type') == 'GatewayLoadBalancer':
+            if module.params.get('vpc_endpoint_security_groups'):
+                module.fail_json(msg="Parameter vpc_endpoint_security_groups can't be used with GatewayLoadBalancer endpoint type")
+
+        if module.params.get('vpc_endpoint_type') == 'Interface':
+            if module.params.get('vpc_endpoint_subnets') and not module.params.get('vpc_endpoint_security_groups'):
+                module.fail_json(msg="Parameter vpc_endpoint_security_groups must be set when endpoint type is Interface and vpc_endpoint_subnets is defined")
+            if not module.params.get('vpc_endpoint_subnets') and module.params.get('vpc_endpoint_security_groups'):
+                module.fail_json(msg="Parameter vpc_endpoint_subnets must be set when endpoint type is Interface and vpc_endpoint_security_groups is defined")
+
+
 
     try:
         ec2 = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
