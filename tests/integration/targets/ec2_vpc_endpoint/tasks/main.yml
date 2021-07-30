@@ -760,7 +760,7 @@
       state: present
       vpc_id: '{{ vpc_id }}'
       az: "{{ aws_region}}a"
-      cidr: "10.228.228.0/24"
+      cidr: "{{ vpc_cidr }}"
     register: interface_endpoint_create_subnet_check
 
   - name: Create a security group

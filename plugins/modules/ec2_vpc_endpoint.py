@@ -501,8 +501,6 @@ def main():
             if not module.params.get('vpc_endpoint_subnets') and module.params.get('vpc_endpoint_security_groups'):
                 module.fail_json(msg="Parameter vpc_endpoint_subnets must be set when endpoint type is Interface and vpc_endpoint_security_groups is defined")
 
-
-
     try:
         ec2 = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
