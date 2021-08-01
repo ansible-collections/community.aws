@@ -754,7 +754,6 @@
       that:
         - interface_endpoint_delete_check is changed
 
-
   - name: Create a subnet
     ec2_vpc_subnet:
       state: present
