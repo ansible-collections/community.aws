@@ -152,6 +152,15 @@ options:
             - Will automatically create an Identity for you.
             - See also U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/PrivateContent.html).
           type: bool
+        type:
+          description:
+            - An optional requirement that specifies the origin type to be configured.
+            - This can be s3 (s3 bucket) or custom (custom configuration)
+            - For backwards compatibility, if the type is not specified, and the domain name contains .s3.amazonaws.com in its name, then the module automatically configures the origin as an S3 bucket.
+          choices: ['s3', 'custom']
+          default: 'custom'
+          type: str
+
         custom_origin_config:
           description: Connection information about the origin.
           type: dict
@@ -1586,6 +1595,10 @@ class CloudFrontValidationManager(object):
             'http1.1',
             'http2'
         ])
+        self.__valid_origin_types = set([
+            's3',
+            'custom'
+        ])
         self.__s3_bucket_domain_identifier = '.s3.amazonaws.com'
 
     def add_missing_key(self, dict_object, key_to_set, value_to_set):
@@ -1700,7 +1713,8 @@ class CloudFrontValidationManager(object):
                 origin['custom_headers'] = ansible_list_to_cloudfront_list(origin.get('custom_headers'))
             else:
                 origin['custom_headers'] = ansible_list_to_cloudfront_list()
-            if self.__s3_bucket_domain_identifier in origin.get('domain_name').lower():
+            if ( ('type' not in origin and self.__s3_bucket_domain_identifier in origin.get('domain_name').lower()) or 
+                 ('type' in origin and origin.get('type').lower() == "s3") ):
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     s3_origin_config = self.validate_s3_origin_configuration(client, existing_config, origin)
                     if s3_origin_config:
@@ -1729,6 +1743,8 @@ class CloudFrontValidationManager(object):
                 else:
                     custom_origin_config['origin_ssl_protocols'] = self.__default_origin_ssl_protocols
                 custom_origin_config['origin_ssl_protocols'] = ansible_list_to_cloudfront_list(custom_origin_config['origin_ssl_protocols'])
+            if 'type' in origin:
+              del(origin["type"])
             return origin
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error validating distribution origin")
