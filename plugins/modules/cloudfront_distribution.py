@@ -3,6 +3,7 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import (absolute_import, division, print_function)
+import re
 __metaclass__ = type
 
 
@@ -1586,7 +1587,7 @@ class CloudFrontValidationManager(object):
             'http1.1',
             'http2'
         ])
-        self.__s3_bucket_domain_identifier = '.s3.amazonaws.com'
+        self.__s3_bucket_domain_identifier = re.compile('.*.s3.*?.amazonaws.com', re.IGNORECASE)
 
     def add_missing_key(self, dict_object, key_to_set, value_to_set):
         if key_to_set not in dict_object and value_to_set is not None:
@@ -1700,7 +1701,7 @@ class CloudFrontValidationManager(object):
                 origin['custom_headers'] = ansible_list_to_cloudfront_list(origin.get('custom_headers'))
             else:
                 origin['custom_headers'] = ansible_list_to_cloudfront_list()
-            if self.__s3_bucket_domain_identifier in origin.get('domain_name').lower():
+            if self.__s3_bucket_domain_identifier.match(origin.get('domain_name')):
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     s3_origin_config = self.validate_s3_origin_configuration(client, existing_config, origin)
                     if s3_origin_config:
