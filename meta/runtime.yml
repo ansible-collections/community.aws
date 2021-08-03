@@ -21,7 +21,6 @@ action_groups:
   - ec2_elb_facts
   - ec2_lc_facts
   - ec2_placement_group_facts
-  - ec2_vpc_endpoint_facts
   - ec2_vpc_igw_facts
   - ec2_vpc_nacl_facts
   - ec2_vpc_nat_gateway_facts
@@ -126,9 +125,6 @@ action_groups:
   - ec2_transit_gateway
   - ec2_transit_gateway_info
   - ec2_vpc_egress_igw
-  - ec2_vpc_endpoint
-  - ec2_vpc_endpoint_info
-  - ec2_vpc_endpoint_service_info
   - ec2_vpc_igw
   - ec2_vpc_igw_info
   - ec2_vpc_nacl
@@ -226,7 +222,6 @@ action_groups:
   - wafv2_rule_group_info
   - wafv2_web_acl
   - wafv2_web_acl_info
-
 plugin_routing:
   modules:
     aws_acm_facts:
@@ -305,7 +300,7 @@ plugin_routing:
     ec2_instance:
       redirect: amazon.aws.ec2_instance
     ec2_instance_facts:
-        redirect: amazon.aws.ec2_instance_info
+      redirect: amazon.aws.ec2_instance_info
     ec2_instance_info:
       redirect: amazon.aws.ec2_instance_info
     ec2_eip_facts:
@@ -340,13 +335,6 @@ plugin_routing:
         warning_text: >-
           ec2_placement_group_facts was renamed in Ansible 2.9 to
           ec2_placement_group_info.
-          Please update your tasks.
-    ec2_vpc_endpoint_facts:
-      deprecation:
-        removal_date: 2021-12-01
-        warning_text: >-
-          ec2_vpc_endpoint_facts was renamed in Ansible 2.9 to
-          ec2_vpc_endpoint_info.
           Please update your tasks.
     ec2_vpc_igw_facts:
       deprecation:
@@ -505,3 +493,11 @@ plugin_routing:
         warning_text: >-
           route53_facts was renamed in Ansible 2.9 to route53_info.
           Please update your tasks.
+    ec2_vpc_endpoint_facts:
+      redirect: amazon.aws.ec2_vpc_endpoint_facts
+    ec2_vpc_endpoint:
+      redirect: amazon.aws.ec2_vpc_endpoint
+    ec2_vpc_endpoint_info:
+      redirect: amazon.aws.ec2_vpc_endpoint_info
+    ec2_vpc_endpoint_service_info:
+      redirect: amazon.aws.ec2_vpc_endpoint_service_info
