@@ -1,5 +1,5 @@
 - module_defaults:
-    group/aws:
+    group/aws: &creds
       aws_secret_key: '{{ aws_secret_key }}'
       aws_access_key: '{{ aws_access_key }}'
       security_token: '{{ security_token|default(omit) }}'
@@ -21,6 +21,16 @@
     pause:
       seconds: 10
     when: iam_role is changed
+  
+  - name: list all the topics
+    sns_topic_info:
+      <<: *creds
+    register: sns_topic_list
+  
+  - name: assert success
+    assert:
+      that:
+          - sns_topic_list is successful
 
   - name: create standard SNS topic
     sns_topic:
