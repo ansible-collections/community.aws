@@ -9,12 +9,9 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster
-version_added: "1.3.0"
+version_added: "2.0.0"
 description:
     - Create, modify, and delete RDS clusters.
-requirements:
-    - botocore
-    - boto3
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -63,34 +60,44 @@ options:
           - The timestamp of the time to backtrack the DB cluster to in ISO 8601 format, such as "2017-07-08T18:00Z".
     backtrack_window:
         description:
-          - The target backtrack window, in seconds. To disable backtracking, set this value to 0.
+          - The target backtrack window, in seconds. To disable backtracking, set this value to C(0).
+          - If specified, this value must be set to a number from C(0) to C(259,200) (72 hours).
+        default: 0
+        type: int
     backup_retention_period:
         description:
-          - The number of days for which automated backups are retained (must be greater or equal to 1).
+          - The number of days for which automated backups are retained (must be within C(1) to C(35)).
             May be used when creating a new cluster, when restoring from S3, or when modifying a cluster.
+        type: int
+        default: 1
     character_set_name:
         description:
           - The character set to associate with the DB cluster.
+        type: str
     database_name:
         description:
           - The name for your database. If a name is not provided Amazon RDS will not create a database.
         aliases:
           - db_name
+        type: str
     db_cluster_identifier:
         description:
-          - The DB cluster (lowercase) identifier. The identifier must contain from 1 to 63 letters, numbers, or
+          - The DB cluster (lowercase) identifier. The identifier must contain from C(1) to C(63) letters, numbers, or
             hyphens and the first character must be a letter and may not end in a hyphen or contain consecutive hyphens.
         aliases:
           - cluster_id
           - id
+        type: str
         required: True
     db_cluster_parameter_group_name:
         description:
           - The name of the DB cluster parameter group to associate with this DB cluster.
-            If this argument is omitted when creating a cluster, default.aurora5.6 is used.
+            If this argument is omitted when creating a cluster, the default DB cluster parameter group for the specified DB engine and version is used.
+        type: str
     db_subnet_group_name:
         description:
           - A DB subnet group to associate with this DB cluster if not using the default.
+        type: str
     enable_cloudwatch_logs_exports:
         description:
           - A list of log types that need to be enabled for exporting to CloudWatch Logs.
@@ -106,10 +113,12 @@ options:
           - aurora
           - aurora-mysql
           - aurora-postgresql
+        type: str
     engine_version:
         description:
           - The version number of the database engine to use. For Aurora MySQL that could be 5.6.10a , 5.7.12.
             Aurora PostgreSQL example, 9.6.3
+        type: str
     final_snapshot_identifier:
         description:
           - The DB cluster snapshot identifier of the new DB cluster snapshot created when I(skip_final_snapshot) is false.
@@ -124,6 +133,7 @@ options:
             KMS key, in which case the KMS key alias may be used).
           - If I(replication_source_identifier) specifies an encrypted source Amazon RDS will use the key used toe encrypt the source.
           - If I(storage_encrypted) is true and and I(replication_source_identifier) is not provided, the default encryption key is used.
+        type: str
     master_user_password:
         description:
           - An 8-41 character password for the master database user. The password can contain any printable ASCII character
@@ -131,11 +141,13 @@ options:
             the password immediately, otherwise it is updated during the next maintenance window.
         aliases:
           - password
+        type: str
     master_username:
         description:
           - The name of the master user for the DB cluster. Must be 1-16 letters or numbers and begin with a letter.
         aliases:
           - username
+        type: str
     new_db_cluster_identifier:
         description:
           - The new DB cluster (lowercase) identifier for the DB cluster when renaming a DB cluster. The identifier must contain
@@ -147,10 +159,12 @@ options:
     option_group_name:
         description:
           - The option group to associate with the DB cluster.
+        type: str
     port:
         description:
           - The port number on which the instances in the DB cluster accept connections. If not specified, Amazon RDS
-            defaults this to 3306 if the engine is aurora and 5432 if the engine is aurora-postgresql.
+            defaults this to C(3306) if the I(engine) is C(aurora) and c(5432) if the I(engine) is C(aurora-postgresql).
+        type: int
     preferred_backup_window:
         description:
           - The daily time range (in UTC) of at least 30 minutes, during which automated backups are created if automated backups are
@@ -158,12 +172,14 @@ options:
             I(preferred_maintenance_window).
         aliases:
           - backup_window
+        type: str
     preferred_maintenance_window:
         description:
           - The weekly time range (in UTC) of at least 30 minutes, during which system maintenance can occur. The option must
             be in the format "ddd:hh24:mi-ddd:hh24:mi" where ddd is one of Mon, Tue, Wed, Thu, Fri, Sat, Sun.
         aliases:
           - maintenance_window
+        type: str
     purge_cloudwatch_logs_exports:
         description:
           - Whether or not to disable Cloudwatch logs enabled for the DB cluster that are not provided in I(enable_cloudwatch_logs_exports).
@@ -181,6 +197,7 @@ options:
           - The Amazon Resource Name (ARN) of the source DB instance or DB cluster if this DB cluster is created as a Read Replica.
         aliases:
           - replication_src_id
+        type: str
     restore_to_time:
         description:
           - The UTC date and time to restore the DB cluster to. Must be in the format "2015-03-07T23:45:00Z". If this is not provided while
@@ -250,6 +267,7 @@ options:
     vpc_security_group_ids:
         description:
           - A list of EC2 VPC security groups to associate with the DB cluster.
+        type: list
 '''
 
 EXAMPLES = r'''
@@ -435,14 +453,18 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-
+from ansible_collections.amazon.aws.plugins.module_utils.rds import wait_for_cluster_status
+from ansible_collections.amazon.aws.plugins.module_utils.rds import arg_spec_to_rds_params
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
+from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
+from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
+import q
 try:
-    from botocore.exceptions import ClientError, BotoCoreError, WaiterError
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
@@ -522,82 +544,90 @@ def get_restore_cluster_options(params_dict):
     ]
     return dict((k, v) for k, v in params_dict.items() if k in restore_time_cluster and v is not None)
 
-
-def wait_for_available(client, module, db_cluster_id):
-    if not module.params['wait']:
-        return
-    try:
-        pass
-        # FIXME
-        #get_waiter(client, 'cluster_available').wait(DBClusterIdentifier=db_cluster_id)
-    except WaiterError as e:
-        module.fail_json_aws(e, msg="Failed to wait for DB cluster {0} to reach an available state".format(db_cluster_id))
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg="Failed with an unexpected error while waiting for the DB cluster {0} to reach an "
-            "available state".format(db_cluster_id))
+def get_rds_method_attribute_name(cluster, state, creation_source):
+    method_name = None
+    if state == 'absent':
+        if cluster and cluster['Status'] not in ['deleting', 'deleted']:
+            method_name = 'delete_db_cluster'
+    else:
+        if cluster:
+            method_name = 'modify_db_cluster'
+        elif creation_source == 'snapshot':
+            method_name = 'restore_db_cluster_from_db_snapshot'
+        elif creation_source == 's3':
+            method_name = 'restore_db_cluster_from_s3'
+        else:
+            method_name = 'create_db_cluster'
+    return method_name
 
 
 def add_role(client, module, params):
     if not module.check_mode:
         try:
             client.add_role_to_db_cluster(**params)
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Unable to add role {0} to cluster {0}".format(params['RoleArn'], params['DBClusterIdentifier']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
+        wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
 
 
 def restore_s3_cluster(client, module, params):
-    cluster = {}
-    if not module.check_mode:
-        try:
-            cluster = client.restore_db_cluster_from_s3(**params)['DBCluster']
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Unable to create cluster {0} from S3 bucket {1}".format(
-                params['DBClusterIdentifier'], params['S3BucketName']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
-    return cluster
+    #cluster = {}
+    #if not module.check_mode:
+    #    try:
+    #        cluster = client.restore_db_cluster_from_s3(**params)['DBCluster']
+    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    #        module.fail_json_aws(e, msg="Unable to create cluster {0} from S3 bucket {1}".format(
+    #            params['DBClusterIdentifier'], params['S3BucketName']))
+    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
+    result, changed = call_method(client, module, 'restore_db_cluster_from_s3', params)
+    return result
 
 
 def restore_snapshot_cluster(client, module, params):
-    cluster = {}
-    if module.check_mode:
-        try:
-            cluster = client.restore_db_cluster_from_snapshot(**params)['DBCluster']
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Unable to create cluster {0} from snapshot {1}".format(
-                params['DBClusterIdentifier'], params['SnapshotIdentifier']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
-    return cluster
+    #cluster = {}
+    #if module.check_mode:
+    #    try:
+    #        cluster = client.restore_db_cluster_from_snapshot(**params)['DBCluster']
+    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    #        module.fail_json_aws(e, msg="Unable to create cluster {0} from snapshot {1}".format(
+    #            params['DBClusterIdentifier'], params['SnapshotIdentifier']))
+    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
+    result, changed = call_method(client, module, 'restore_db_cluster_from_snapshot', params)
+    return result
 
 
 def restore_cluster(client, module, params):
-    cluster = {}
-    if not module.check_mode:
-        try:
-            cluster = client.restore_db_cluster_to_point_in_time(**params)['DBCluster']
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Unable to create cluster {0} from source cluster {1}".format(
-                params['DBClusterIdentifier'], params['SourceDBClusterIdentifier']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
-    return cluster
+    #cluster = {}
+    #if not module.check_mode:
+    #    try:
+    #        cluster = client.restore_db_cluster_to_point_in_time(**params)['DBCluster']
+    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    #        module.fail_json_aws(e, msg="Unable to create cluster {0} from source cluster {1}".format(
+    #            params['DBClusterIdentifier'], params['SourceDBClusterIdentifier']))
+    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
+    result, changed = call_method(client, module, 'restore_db_cluster_to_point_in_time', params)
+    return result
 
 
 def backtrack_cluster(client, module, params):
     if not module.check_mode:
         try:
             client.backtrack_db_cluster(**params)
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Unable to backtrack cluster {0}".format(params['DBClusterIdentifier']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
+        wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
 
 
 def promote_cluster(client, module, db_cluster_id):
-    if not module.check_mode:
-        try:
-            client.promote_read_replica_db_cluster(DBClusterIdentifier=db_cluster_id)
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Unable to promote cluster {0}".format(params['DBClusterIdentifier']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
+    #if not module.check_mode:
+    #    try:
+    #        client.promote_read_replica_db_cluster(DBClusterIdentifier=db_cluster_id)
+    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    #        module.fail_json_aws(e, msg="Unable to promote cluster {0}".format(params['DBClusterIdentifier']))
+    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
+    parameters={'DBClusterIdentifier': db_cluster_id}
+    result, changed = call_method(client, module, 'promote_read_replica_db_cluster', parameters)
+    return result
 
 
 def get_cluster(client, module, db_cluster_id):
@@ -605,56 +635,52 @@ def get_cluster(client, module, db_cluster_id):
         return client.describe_db_clusters(DBClusterIdentifier=db_cluster_id)['DBClusters'][0]
     except is_boto3_error_code('DBClusterNotFoundFault'):
         return {}
-    except (BotoCoreError, ClientError) as e:
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to describe DB clusters")
 
 
 def create_cluster(client, module, params):
     cluster = {}
-    if not module.check_mode:
-        try:
-            cluster = client.create_db_cluster(**params)['DBCluster']
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Failed to create DB cluster {0}".format(params['DBClusterIdentifier']))
-        wait_for_available(client, module, params['DBClusterIdentifier'])
-    return cluster
+    #if not module.check_mode:
+    #    try:
+    #        cluster = client.create_db_cluster(**params)['DBCluster']
+    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    #        module.fail_json_aws(e, msg="Failed to create DB cluster {0}".format(params['DBClusterIdentifier']))
+    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
+    result, changed = call_method(client, module, 'create_db_cluster', params)
+    return result
 
 
 def modify_cluster(client, module, params):
-    if module.check_mode:
-        return get_cluster(client, module, params['DBClusterIdentifier'])
-    try:
-        cluster = client.modify_db_cluster(**params)['DBCluster']
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg="Failed to modify DB cluster {0}".format(params['DBClusterIdentifier']))
+    #if module.check_mode:
+    #    return get_cluster(client, module, params['DBClusterIdentifier'])
+    #try:
+    #    cluster = client.modify_db_cluster(**params)['DBCluster']
+    #except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    #    module.fail_json_aws(e, msg="Failed to modify DB cluster {0}".format(params['DBClusterIdentifier']))
 
-    if 'NewDBClusterIdentifier' in params and params['ApplyImmediately']:
-        cluster_id = params['NewDBClusterIdentifier']
-    else:
-        cluster_id = params['DBClusterIdentifier']
-    wait_for_available(client, module, cluster_id)
+    #if 'NewDBClusterIdentifier' in params and params['ApplyImmediately']:
+    #    cluster_id = params['NewDBClusterIdentifier']
+    #else:
+    #    cluster_id = params['DBClusterIdentifier']
+    #wait_for_cluster_status(client, module, cluster_id, 'cluster_available')
+    result, changed = call_method(client, module, 'modify_db_cluster', params)
 
-    return cluster
+    return result
 
 
 def delete_cluster(client, module, params):
+    changed = True
     if not module.check_mode:
         try:
             client.delete_db_cluster(**params)
-        except (BotoCoreError, ClientError) as e:
+        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Failed to delete DB cluster {0}".format(params['DBClusterIdentifier']))
-
-        try:
-            if module.params['wait']:
-                pass
-                # FIXME
-                #get_waiter(client, 'cluster_deleted').wait(DBClusterIdentifier=params['DBClusterIdentifier'])
-        except WaiterError as e:
-            module.fail_json_aws(e, msg="Failed to wait for DB cluster {0} to be deleted".format(params['DBClusterIdentifier']))
-        except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Failed with an unexpected error while waiting for the DB cluster {0} to be "
-                "deleted".format(params['DBClusterIdentifier']))
-
+        
+        if module.params['wait']:
+            wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_deleted')
+    
+    return changed
 
 def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_logs):
     changing_params = {}
@@ -710,6 +736,7 @@ def ensure_present(client, module, cluster, parameters):
             cluster = create_cluster(client, module, get_create_options(parameters))
         elif module.params['creation_source'] == 's3':
             cluster = restore_s3_cluster(client, module, get_restore_s3_options(parameters))
+
         elif module.params['creation_source'] == 'snapshot':
             cluster = restore_snapshot_cluster(client, module, get_restore_snapshot_options(parameters))
         else:
@@ -725,7 +752,8 @@ def ensure_present(client, module, cluster, parameters):
                 changed = True
                 cluster = modify_cluster(client, module, modify_options)
             if module.params['tags'] is not None:
-                changed |= ensure_tags(client, module, cluster, module.params['tags'], module.params['purge_tags'])
+                existing_tags = get_tags(client, module, cluster['DBClusterArn'])
+                changed |= ensure_tags(client, module, cluster['DBClusterArn'], existing_tags, module.params['tags'], module.params['purge_tags'])
 
     add_role_params = get_add_role_options(parameters, cluster)
     if add_role_params:
@@ -737,58 +765,6 @@ def ensure_present(client, module, cluster, parameters):
         promote_cluster(client, module, module.params['db_cluster_identifier'])
 
     return changed
-
-
-def ensure_tags(client, module, cluster, tags, purge_tags):
-    existing_tags = get_tags(client, module, cluster['DBClusterArn'])
-    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, tags, purge_tags)
-    changed = bool(tags_to_add or tags_to_remove)
-
-    if not module.check_mode and changed:
-        if tags_to_add:
-            try:
-                client.add_tags_to_resource(
-                    ResourceName=cluster['DBClusterArn'],
-                    Tags=ansible_dict_to_boto3_tag_list(tags_to_add)
-                )
-            except (BotoCoreError, ClientError) as e:
-                module.fail_json_aws(e, msg="Failed to add tags {0} to DB cluster {1}".format(
-                    tags_to_add, cluster['DBClusterIdentifier']))
-        if tags_to_remove:
-            try:
-                client.remove_tags_from_resource(ResourceName=cluster['DBClusterArn'], TagKeys=tags_to_remove)
-            except (BotoCoreError, ClientError) as e:
-                module.fail_json_aws(e, msg="Failed to remove tags {0} from DB cluster {1}".format(tags_to_remove,
-                    cluster['DBClusterIdentifier']))
-        # FIXME
-        #get_waiter(client, 'cluster_available').wait(DBClusterIdentifier=cluster['DBClusterIdentifier'])
-
-    return changed
-
-
-def get_tags(client, module, cluster_arn):
-    try:
-        return boto3_tag_list_to_ansible_dict(
-            client.list_tags_for_resource(ResourceName=cluster_arn)['TagList']
-        )
-    except (BotoCoreError, ClientError) as e:
-        module.fail_json_aws(e, msg="Unable to describe tags")
-
-
-def arg_spec_to_rds_params(options_dict):
-    tags = options_dict.pop('tags')
-    camel_options = snake_dict_to_camel_dict(options_dict, capitalize_first=True)
-    for key, value in camel_options.items():
-        if 'Db' in key:
-            del camel_options[key]
-            key = key.replace('Db', 'DB')
-            camel_options[key] = value
-        if 'Iam' in key:
-            del camel_options[key]
-            key = key.replace('Iam', 'IAM')
-            camel_options[key] = value
-    camel_options['Tags'] = tags
-    return camel_options
 
 
 def main():
@@ -864,9 +840,13 @@ def main():
         ],
         supports_check_mode=True
     )
-    
+
     retry_decorator = AWSRetry.jittered_backoff(retries=10)
-    client = module.client('rds', retry_decorator=retry_decorator)
+
+    try:
+        client = module.client('rds', retry_decorator=retry_decorator)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed to connect to AWS.')
 
     module.params['db_cluster_identifier'] = module.params['db_cluster_identifier'].lower()
     cluster = get_cluster(client, module, module.params['db_cluster_identifier'])
@@ -885,14 +865,16 @@ def main():
     parameters = arg_spec_to_rds_params(
         dict((k, module.params[k]) for k in module.params if k in parameter_options)
     )
-
+    
     changed = False
+    #method_name = get_rds_method_attribute_name(cluster, module.params['state'], module.params['creation_source'])
+    #if method_name:
+    #  q("method_name", method_name)
     if module.params['state'] == 'present':
         changed |= ensure_present(client, module, cluster, parameters)
     elif module.params['state'] == 'absent' and cluster:
-        changed = True
-        delete_cluster(client, module, get_delete_options(parameters))
-
+        changed |= delete_cluster(client, module, get_delete_options(parameters))
+    #    q("changed if absent", changed)
     if not module.check_mode and module.params['new_db_cluster_identifier'] and module.params['apply_immediately']:
         cluster_id = module.params['new_db_cluster_identifier']
     else:
@@ -900,7 +882,7 @@ def main():
     result = camel_dict_to_snake_dict(get_cluster(client, module, cluster_id))
     if result:
         result['tags'] = get_tags(client, module, result['db_cluster_arn'])
-
+    q("changed", changed)
     module.exit_json(changed=changed, **result)
 
 
