@@ -153,6 +153,23 @@
            - output.failed
            - 'output.msg.startswith("missing required arguments: organization_source")'
 
+    - name: test resource_type configuration_aggregator with organization_source parameter
+      aws_config_aggregator:
+        name: random_name
+        state: present
+        account_sources: []
+        organization_source: 
+          all_aws_regions: true
+          role_arn: "{{ config_iam_role.arn }}"
+      register: output
+      ignore_errors: true
+
+    - name: assert failure when called with organization_source parameter
+      assert:
+        that:
+           - output.failed
+           - 'output.msg.startswith("missing required arguments: organization_source")'
+
     # ============================================================
     # Creation testing
     # ============================================================
