@@ -8,6 +8,15 @@
           security_token: "{{ security_token }}"
           region: "{{ aws_region }}"
       no_log: yes
+    
+    - name: get info of all existing clusters
+      rds_cluster_info:
+        <<: *aws_connection_info
+      register: result_cluster_info
+    
+    - assert:
+        that:
+            - result_cluster_info is successful
 
     - name: create minimal aurora cluster in default VPC and default subnet group (CHECK MODE)
       rds_cluster:
@@ -41,8 +50,18 @@
     - assert:
         that:
           - result.changed
-          #- result.status == 'available'
+          - result.status == 'available'
           - result.port == 3306
+    
+    - name: get info of the existing cluster
+      rds_cluster_info:
+        cluster_id: "cluster-{{ resource_prefix }}"
+        <<: *aws_connection_info
+      register: result_cluster_info
+    
+    - assert:
+        that:
+            - result_cluster_info is successful
 
     - name: test idempotence (CHECK MODE)
       rds_cluster:
@@ -141,43 +160,43 @@
         that:
           - result.changed
 
-    #- name: rename the cluster (CHECK MODE)
-    #  rds_cluster:
-    #    engine: aurora
-    #    username: "testrdsusername"
-    #    cluster_id: "cluster-{{ resource_prefix }}"
-    #    new_cluster_id: "cluster-{{ resource_prefix }}-updated"
-    #    apply_immediately: true
-    #    <<: *aws_connection_info
-    #  register: result
-    #  check_mode: true
+    - name: rename the cluster (CHECK MODE)
+      rds_cluster:
+        engine: aurora
+        username: "testrdsusername"
+        cluster_id: "cluster-{{ resource_prefix }}"
+        new_cluster_id: "cluster-{{ resource_prefix }}-updated"
+        apply_immediately: true
+        <<: *aws_connection_info
+      register: result
+      check_mode: true
 
-    #- assert:
-    #    that:
-    #      - result.changed
+    - assert:
+        that:
+          - result.changed
 
-    #- name: rename the cluster
-    #  rds_cluster:
-    #    engine: aurora
-    #    username: "testrdsusername"
-    #    cluster_id: "cluster-{{ resource_prefix }}"
-    #    new_cluster_id: "cluster-{{ resource_prefix }}-updated"
-    #    apply_immediately: true
-    #    <<: *aws_connection_info
-    #  register: result
+    - name: rename the cluster
+      rds_cluster:
+        engine: aurora
+        username: "testrdsusername"
+        cluster_id: "cluster-{{ resource_prefix }}"
+        new_cluster_id: "cluster-{{ resource_prefix }}-updated"
+        apply_immediately: true
+        <<: *aws_connection_info
+      register: result
 
-    #- assert:
-    #    that:
-    #      - result.changed
-    #      - 'result.db_cluster_identifier == "cluster-{{ resource_prefix }}-updated"'
+    - assert:
+        that:
+          - result.changed
+          - 'result.db_cluster_identifier == "cluster-{{ resource_prefix }}-updated"'
 
     - name: delete aurora cluster without creating a final snapshot (CHECK MODE)
       rds_cluster:
         engine: aurora
         username: "testrdsusername"
         password: "test-rds_password"
-        #cluster_id: "cluster-{{ resource_prefix }}-updated"
-        cluster_id: "cluster-{{ resource_prefix }}"
+        cluster_id: "cluster-{{ resource_prefix }}-updated"
+        #cluster_id: "cluster-{{ resource_prefix }}"
         skip_final_snapshot: True
         tags:
           Name: "cluster-{{ resource_prefix }}"

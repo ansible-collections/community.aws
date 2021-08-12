@@ -17,6 +17,7 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 author:
     - Sloane Hertel (@s-hertel)
+    - Alina Buzachis (@alinabuzachis)
 options:
   # General module options
     state:
@@ -28,8 +29,8 @@ options:
         choices: ['snapshot', 's3', 'cluster']
     force_update_password:
         description:
-          - Set to True to update your cluster password with I(master_user_password). Since comparing passwords to determine
-            if it needs to be updated is not possible this is set to False by default to allow idempotence.
+          - Set to C(True) to update your cluster password with I(master_user_password). Since comparing passwords to determine
+            if it needs to be updated is not possible this is set to C(False) by default to allow idempotence.
         type: bool
         default: False
     promote:
@@ -44,7 +45,7 @@ options:
     apply_immediately:
         description:
           - A value that specifies whether modifying a cluster with I(new_db_cluster_identifier) and I(master_user_password)
-            should be applied as soon as possible, regardless of the I(preferred_maintenance_window) setting. If false, changes
+            should be applied as soon as possible, regardless of the I(preferred_maintenance_window) setting. If C(False), changes
             are applied during the next maintenance window.
         type: bool
         default: False
@@ -101,6 +102,40 @@ options:
     enable_cloudwatch_logs_exports:
         description:
           - A list of log types that need to be enabled for exporting to CloudWatch Logs.
+    deletion_protection:
+        description:
+          -  A value that indicates whether the DB cluster has deletion protection enabled.
+             The database can't be deleted when deletion protection is enabled.
+             By default, deletion protection is disabled.
+        type: bool
+    global_cluster_identifier:
+        description:
+          -  The global cluster ID of an Aurora cluster that becomes the primary cluster in the new global database cluster.
+        type: str
+    enable_http_endpoint:
+        description:
+          -  A value that indicates whether to enable the HTTP endpoint for an Aurora Serverless DB cluster.
+             By default, the HTTP endpoint is disabled.
+        type: bool
+    copy_tags_to_snapshot:
+        description:
+          - Indicates whether to copy all tags from the DB cluster to snapshots of the DB cluster.
+            The default is not to copy them.
+        type: bool
+    domain:
+        description:
+          - The Active Directory directory ID to create the DB cluster in.
+        type: str
+    domain_iam_role_name:
+        description:
+          - Specify the name of the IAM role to be used when making API calls to the Directory Service.
+        type: str
+    enable_global_write_forwarding:
+        description:
+          - A value that indicates whether to enable this DB cluster to forward write operations to the primary cluster of an Aurora global database.
+            By default, write operations are not allowed on Aurora DB clusters that are secondary clusters in an Aurora global database.
+          - This value can be only set on Aurora DB clusters that are members of an Aurora global database. 
+        type: bool
     enable_iam_database_authentication:
         description:
           - Enable mapping of AWS Identity and Access Management (IAM) accounts to database accounts.
@@ -279,10 +314,15 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
+activity_stream_status:
+  description: The status of the database activity stream.
+  returned: always
+  type: str
+  sample: stopped
 allocated_storage:
   description:
-    - The allocated storage size in gibibytes. Since aurora storage size is not fixed this is
-      always 1 for aurora database engines
+    - The allocated storage size in gigabytes. Since aurora storage size is not fixed this is
+      always 1 for aurora database engines.
   returned: always
   type: int
   sample: 1
@@ -294,7 +334,7 @@ associated_roles:
   type: list
   sample: []
 availability_zones:
-  description: The list of availability zones that instances in the DB cluster can be created in
+  description: The list of availability zones that instances in the DB cluster can be created in.
   returned: always
   type: list
   sample:
@@ -302,22 +342,39 @@ availability_zones:
   - us-east-1a
   - us-east-1e
 backup_retention_period:
-  description: The number of days for which automatic DB snapshots are retained
+  description: The number of days for which automatic DB snapshots are retained.
   returned: always
   type: int
   sample: 1
+changed:
+  description: If the RDS cluster has changed.
+  returned: always
+  type: bool
+  sample: true
 cluster_create_time:
-  description: The time in UTC when the DB cluster was created
+  description: The time in UTC when the DB cluster was created.
   returned: always
   type: string
   sample: '2018-06-29T14:08:58.491000+00:00'
+copy_tags_to_snapshot:
+  description:
+    - Specifies whether tags are copied from the DB cluster to snapshots of the DB cluster.
+  returned: always
+  type: bool
+  sample: false
+cross_account_clone:
+  description:
+    - Specifies whether the DB cluster is a clone of a DB cluster owned by a different Amazon Web Services account.
+  returned: always
+  type: bool
+  sample: false
 db_cluster_arn:
-  description: The Amazon Resource Name (ARN) for the DB cluster
+  description: The Amazon Resource Name (ARN) for the DB cluster.
   returned: always
   type: string
   sample: arn:aws:rds:us-east-1:123456789012:cluster:rds-cluster-demo
 db_cluster_identifier:
-  description: The lowercase user-supplied DB cluster identifier
+  description: The lowercase user-supplied DB cluster identifier.
   returned: always
   type: string
   sample: rds-cluster-demo
@@ -330,123 +387,161 @@ db_cluster_members:
   type: list
   sample: []
 db_cluster_parameter_group:
-  description: The parameter group associated with the DB cluster
+  description: The parameter group associated with the DB cluster.
   returned: always
   type: string
   sample: default.aurora5.6
 db_cluster_resource_id:
-  description: The AWS Region-unique, immutable identifier for the DB cluster
+  description: The AWS Region-unique, immutable identifier for the DB cluster.
   returned: always
   type: string
   sample: cluster-D2MEQDN3BQNXDF74K6DQJTHASU
 db_subnet_group:
-  description: The name of the subnet group associated with the DB Cluster
+  description: The name of the subnet group associated with the DB Cluster.
   returned: always
   type: string
   sample: default
+deletion_protection:
+  description:
+    - Indicates if the DB cluster has deletion protection enabled.
+      The database can't be deleted when deletion protection is enabled.
+  returned: always
+  type: bool
+  sample: false
+domain_memberships:
+  description:
+    - The Active Directory Domain membership records associated with the DB cluster.
+  returned: always
+  type: list
+  sample: []
 earliest_restorable_time:
-  description: The earliest time to which a database can be restored with point-in-time restore
+  description: The earliest time to which a database can be restored with point-in-time restore.
   returned: always
   type: string
   sample: '2018-06-29T14:09:34.797000+00:00'
 endpoint:
-  description: The connection endpoint for the primary instance of the DB cluster
+  description: The connection endpoint for the primary instance of the DB cluster.
   returned: always
   type: string
   sample: rds-cluster-demo.cluster-cvlrtwiennww.us-east-1.rds.amazonaws.com
 engine:
-  description: The database engine of the DB cluster
+  description: The database engine of the DB cluster.
   returned: always
   type: string
   sample: aurora
+engine_mode:
+  description: The DB engine mode of the DB cluster.
+  returned: always
+  type: str
+  sample: provisioned
 engine_version:
-  description: The database engine version
+  description: The database engine version.
   returned: always
   type: string
   sample: 5.6.10a
 hosted_zone_id:
-  description: The ID that Amazon Route 53 assigns when you create a hosted zone
+  description: The ID that Amazon Route 53 assigns when you create a hosted zone.
   returned: always
   type: string
   sample: Z2R2ITUGPM61AM
+http_endpoint_enabled:
+  description:
+    - A value that indicates whether the HTTP endpoint for an Aurora Serverless DB cluster is enabled.
+  returned: always
+  type: bool
+  sample: false
 iam_database_authentication_enabled:
-  description: Whether IAM accounts may be mapped to database accounts
+  description: Whether IAM accounts may be mapped to database accounts.
   returned: always
   type: bool
   sample: false
 latest_restorable_time:
-  description: The latest time to which a database can be restored with point-in-time restore
+  description: The latest time to which a database can be restored with point-in-time restore.
   returned: always
   type: string
   sample: '2018-06-29T14:09:34.797000+00:00'
 master_username:
-  description: The master username for the DB cluster
+  description: The master username for the DB cluster.
   returned: always
   type: string
   sample: username
 multi_az:
-  description: Whether the DB cluster has instances in multiple availability zones
+  description: Whether the DB cluster has instances in multiple availability zones.
   returned: always
   type: bool
   sample: false
 port:
-  description: The port that the database engine is listening on
+  description: The port that the database engine is listening on.
   returned: always
   type: int
   sample: 3306
 preferred_backup_window:
-  description: The UTC weekly time range during which system maintenance can occur
+  description: The UTC weekly time range during which system maintenance can occur.
   returned: always
   type: string
   sample: 10:18-10:48
 preferred_maintenance_window:
-  description: The UTC weekly time range during which system maintenance can occur
+  description: The UTC weekly time range during which system maintenance can occur.
   returned: always
   type: string
   sample: tue:03:23-tue:03:53
 read_replica_identifiers:
-  description: A list of read replica ID strings associated with the DB cluster
+  description: A list of read replica ID strings associated with the DB cluster.
   returned: always
   type: list
   sample: []
 reader_endpoint:
-  description: The reader endpoint for the DB cluster
+  description: The reader endpoint for the DB cluster.
   returned: always
   type: string
   sample: rds-cluster-demo.cluster-ro-cvlrtwiennww.us-east-1.rds.amazonaws.com
 status:
-  description: The status of the DB cluster
+  description: The status of the DB cluster.
   returned: always
   type: string
   sample: available
 storage_encrypted:
-  description: Whether the DB cluster is storage encrypted
+  description: Whether the DB cluster is storage encrypted.
   returned: always
   type: bool
   sample: false
 tags:
-  description: A dictionary of key value pairs
+  description: A dictionary of key value pairs.
   returned: always
   sample:
     Name: rds-cluster-demo
   type: dict
+tag_list:
+  description: A list of tags consisting of key-value pairs.
+  returned: always
+  sample: {
+       "key": "Created_By",
+       "value": "Ansible_rds_cluster_integration_test"
+  }
+  type: list
+  elements: dict
 vpc_security_groups:
-  description: A list of the DB cluster's security groups and their status
+  description: A list of the DB cluster's security groups and their status.
   returned: always
   type: complex
   contains:
     status:
-      description: status of the security group
+      description: Status of the security group.
       returned: always
       type: string
       sample: active
     vpc_security_group_id:
-      description: security group of the cluster
+      description: Security group of the cluster.
       returned: always
       type: string
       sample: sg-12345678
 '''
 
+import q
+try:
+    import botocore
+except ImportError:
+    pass  # caught by AnsibleAWSModule
 
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
@@ -454,19 +549,21 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.rds import wait_for_cluster_status
 from ansible_collections.amazon.aws.plugins.module_utils.rds import arg_spec_to_rds_params
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
 from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
 from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
-import q
-try:
-    import botocore
-except ImportError:
-    pass  # caught by AnsibleAWSModule
+
+
+@AWSRetry.jittered_backoff(retries=10)
+def _describe_db_clusters(client, **params):
+    try:
+        paginator = client.get_paginator('describe_db_clusters')
+        return paginator.paginate(**params).build_full_result()['DBClusters'][0]
+    except is_boto3_error_code('DBClusterNotFoundFault'):
+        return {}
 
 
 def get_add_role_options(params_dict, cluster):
@@ -493,16 +590,21 @@ def get_create_options(params_dict):
         'DBClusterIdentifier', 'DBClusterParameterGroupName', 'DBSubnetGroupName', 'DatabaseName',
         'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'KmsKeyId', 'Engine',
         'EngineVersion', 'PreferredMaintenanceWindow', 'MasterUserPassword', 'MasterUsername', 'OptionGroupName',
-        'Port', 'ReplicationSourceIdentifier', 'SourceRegion', 'StorageEncrypted', 'Tags', 'VpcSecurityGroupIds'
+        'Port', 'ReplicationSourceIdentifier', 'SourceRegion', 'StorageEncrypted', 'Tags', 'VpcSecurityGroupIds',
+        'EngineMode', 'ScalingConfiguration', 'DeletionProtection', 'EnableHttpEndpoint', 'CopyTagsToSnapshot',
+        'Domain', 'DomainIAMRoleName', 'EnableGlobalWriteForwarding'
     ]
+
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
 
 
 def get_modify_options(params_dict, force_update_password):
     options = [
-        'ApplyImmediately', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow', 'EnableCloudwatchLogsExports',
-        'DBClusterIdentifier', 'DBClusterParameterGroupName', 'EnableIAMDatabaseAuthentication', 'EngineVersion',
-        'PreferredMaintenanceWindow', 'MasterUserPassword', 'NewDBClusterIdentifier', 'OptionGroupName', 'Port', 'VpcSecurityGroupIds'
+        'ApplyImmediately', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow', 'DBClusterIdentifier',
+        'DBClusterParameterGroupName', 'EnableIAMDatabaseAuthentication', 'EngineVersion', 'PreferredMaintenanceWindow',
+        'MasterUserPassword', 'NewDBClusterIdentifier', 'OptionGroupName', 'Port', 'VpcSecurityGroupIds',
+        'EnableIAMDatabaseAuthentication', 'CloudwatchLogsExportConfiguration', 'DeletionProtection', 'EnableHttpEndpoint',
+        'CopyTagsToSnapshot', 'EnableGlobalWriteForwarding', 'Domain', 'DomainIAMRoleName'
     ]
     modify_options = dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
     if not force_update_password:
@@ -515,15 +617,17 @@ def get_delete_options(params_dict):
     return dict((k, params_dict[k]) for k in options if params_dict[k] is not None)
 
 
-def get_restore_s3_options(params_dict):
+def get_restore_s3_options(params_dict): 
     options = [
         'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'CharacterSetName', 'DBClusterIdentifier',
         'DBClusterParameterGroupName', 'DBSubnetGroupName', 'DatabaseName', 'EnableCloudwatchLogsExports',
         'EnableIAMDatabaseAuthentication', 'Engine', 'EngineVersion', 'KmsKeyId', 'MasterUserPassword',
         'MasterUsername', 'OptionGroupName', 'Port', 'PreferredBackupWindow', 'PreferredMaintenanceWindow',
         'S3BucketName', 'S3IngestionRoleArn', 'S3Prefix', 'SourceEngine', 'SourceEngineVersion', 'StorageEncrypted',
-        'Tags', 'VpcSecurityGroupIds'
+        'Tags', 'VpcSecurityGroupIds', 'DeletionProtection', 'EnableHttpEndpoint',
+        'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName' 
     ]
+    
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
 
 
@@ -531,7 +635,8 @@ def get_restore_snapshot_options(params_dict):
     options = [
         'AvailabilityZones', 'BacktrackWindow', 'DBClusterIdentifier', 'DBSubnetGroupName', 'DatabaseName',
         'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'Engine', 'EngineVersion', 'KmsKeyId',
-        'OptionGroupName', 'Port', 'SnapshotIdentifier', 'Tags', 'VpcSecurityGroupIds'
+        'OptionGroupName', 'Port', 'SnapshotIdentifier', 'Tags', 'VpcSecurityGroupIds', 'DBClusterParameterGroupName',
+        'DeletionProtection', 'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName' 
     ]
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
 
@@ -540,25 +645,38 @@ def get_restore_cluster_options(params_dict):
     options = [
         'BacktrackWindow', 'DBClusterIdentifier', 'DBSubnetGroupName', 'EnableCloudwatchLogsExports',
         'EnableIAMDatabaseAuthentication', 'KmsKeyId', 'OptionGroupName', 'Port', 'RestoreToTime', 'RestoreType',
-        'SourceDBClusterIdentifier', 'Tags', 'UseLatestRestorableTime', 'VpcSecurityGroupIds'
+        'SourceDBClusterIdentifier', 'Tags', 'UseLatestRestorableTime', 'VpcSecurityGroupIds',
+        'DeletionProtection', 'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName'
     ]
     return dict((k, v) for k, v in params_dict.items() if k in restore_time_cluster and v is not None)
 
+
 def get_rds_method_attribute_name(cluster, state, creation_source):
     method_name = None
+    method_options_name = None
+
     if state == 'absent':
         if cluster and cluster['Status'] not in ['deleting', 'deleted']:
             method_name = 'delete_db_cluster'
+            method_options_name = 'get_delete_options'
     else:
         if cluster:
             method_name = 'modify_db_cluster'
+            method_options_name = 'get_modify_options'
         elif creation_source == 'snapshot':
             method_name = 'restore_db_cluster_from_db_snapshot'
+            method_options_name = 'get_restore_snapshot_options'
         elif creation_source == 's3':
             method_name = 'restore_db_cluster_from_s3'
+            method_options_name = 'get_restore_s3_options'
+        elif creation_source == 'cluster':
+            method_name = 'restore_db_cluster_to_point_in_time'
+            method_options_name = 'get_restore_cluster_options'
         else:
             method_name = 'create_db_cluster'
-    return method_name
+            method_options_name = 'get_create_options'
+
+    return method_name, method_options_name
 
 
 def add_role(client, module, params):
@@ -570,45 +688,6 @@ def add_role(client, module, params):
         wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
 
 
-def restore_s3_cluster(client, module, params):
-    #cluster = {}
-    #if not module.check_mode:
-    #    try:
-    #        cluster = client.restore_db_cluster_from_s3(**params)['DBCluster']
-    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    #        module.fail_json_aws(e, msg="Unable to create cluster {0} from S3 bucket {1}".format(
-    #            params['DBClusterIdentifier'], params['S3BucketName']))
-    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
-    result, changed = call_method(client, module, 'restore_db_cluster_from_s3', params)
-    return result
-
-
-def restore_snapshot_cluster(client, module, params):
-    #cluster = {}
-    #if module.check_mode:
-    #    try:
-    #        cluster = client.restore_db_cluster_from_snapshot(**params)['DBCluster']
-    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    #        module.fail_json_aws(e, msg="Unable to create cluster {0} from snapshot {1}".format(
-    #            params['DBClusterIdentifier'], params['SnapshotIdentifier']))
-    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
-    result, changed = call_method(client, module, 'restore_db_cluster_from_snapshot', params)
-    return result
-
-
-def restore_cluster(client, module, params):
-    #cluster = {}
-    #if not module.check_mode:
-    #    try:
-    #        cluster = client.restore_db_cluster_to_point_in_time(**params)['DBCluster']
-    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    #        module.fail_json_aws(e, msg="Unable to create cluster {0} from source cluster {1}".format(
-    #            params['DBClusterIdentifier'], params['SourceDBClusterIdentifier']))
-    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
-    result, changed = call_method(client, module, 'restore_db_cluster_to_point_in_time', params)
-    return result
-
-
 def backtrack_cluster(client, module, params):
     if not module.check_mode:
         try:
@@ -618,69 +697,12 @@ def backtrack_cluster(client, module, params):
         wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
 
 
-def promote_cluster(client, module, db_cluster_id):
-    #if not module.check_mode:
-    #    try:
-    #        client.promote_read_replica_db_cluster(DBClusterIdentifier=db_cluster_id)
-    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    #        module.fail_json_aws(e, msg="Unable to promote cluster {0}".format(params['DBClusterIdentifier']))
-    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
-    parameters={'DBClusterIdentifier': db_cluster_id}
-    result, changed = call_method(client, module, 'promote_read_replica_db_cluster', parameters)
-    return result
-
-
 def get_cluster(client, module, db_cluster_id):
     try:
-        return client.describe_db_clusters(DBClusterIdentifier=db_cluster_id)['DBClusters'][0]
-    except is_boto3_error_code('DBClusterNotFoundFault'):
-        return {}
+        return _describe_db_clusters(client, DBClusterIdentifier=db_cluster_id)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to describe DB clusters")
 
-
-def create_cluster(client, module, params):
-    cluster = {}
-    #if not module.check_mode:
-    #    try:
-    #        cluster = client.create_db_cluster(**params)['DBCluster']
-    #    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    #        module.fail_json_aws(e, msg="Failed to create DB cluster {0}".format(params['DBClusterIdentifier']))
-    #    wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
-    result, changed = call_method(client, module, 'create_db_cluster', params)
-    return result
-
-
-def modify_cluster(client, module, params):
-    #if module.check_mode:
-    #    return get_cluster(client, module, params['DBClusterIdentifier'])
-    #try:
-    #    cluster = client.modify_db_cluster(**params)['DBCluster']
-    #except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    #    module.fail_json_aws(e, msg="Failed to modify DB cluster {0}".format(params['DBClusterIdentifier']))
-
-    #if 'NewDBClusterIdentifier' in params and params['ApplyImmediately']:
-    #    cluster_id = params['NewDBClusterIdentifier']
-    #else:
-    #    cluster_id = params['DBClusterIdentifier']
-    #wait_for_cluster_status(client, module, cluster_id, 'cluster_available')
-    result, changed = call_method(client, module, 'modify_db_cluster', params)
-
-    return result
-
-
-def delete_cluster(client, module, params):
-    changed = True
-    if not module.check_mode:
-        try:
-            client.delete_db_cluster(**params)
-        except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-            module.fail_json_aws(e, msg="Failed to delete DB cluster {0}".format(params['DBClusterIdentifier']))
-        
-        if module.params['wait']:
-            wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_deleted')
-    
-    return changed
 
 def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_logs):
     changing_params = {}
@@ -726,43 +748,36 @@ def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_lo
     return changing_params
 
 
-def ensure_present(client, module, cluster, parameters):
+def ensure_present(client, module, cluster, parameters, method_name, method_options_name):
     changed = False
+
     if not cluster:
-        changed = True
         if parameters.get('Tags') is not None:
             parameters['Tags'] = ansible_dict_to_boto3_tag_list(parameters['Tags'])
-        if module.params['creation_source'] is None:
-            cluster = create_cluster(client, module, get_create_options(parameters))
-        elif module.params['creation_source'] == 's3':
-            cluster = restore_s3_cluster(client, module, get_restore_s3_options(parameters))
-
-        elif module.params['creation_source'] == 'snapshot':
-            cluster = restore_snapshot_cluster(client, module, get_restore_snapshot_options(parameters))
-        else:
-            cluster = restore_cluster(client, module, get_restore_cluster_options(parameters))
+        call_method(client, module, method_name, eval(method_options_name)(parameters))
+        changed = True
     else:
         if get_backtrack_options(parameters):
-            changed = True
             backtrack_cluster(client, module, get_backtrack_options(parameters))
+            changed = True
         else:
-            modifiable_options = get_modify_options(parameters, force_update_password=module.params['force_update_password'])
+            modifiable_options = eval(method_options_name)(parameters, force_update_password=module.params['force_update_password'])
             modify_options = changing_cluster_options(modifiable_options, cluster, module.params['purge_cloudwatch_logs_exports'])
             if modify_options:
+                call_method(client, module, method_name, modify_options)
                 changed = True
-                cluster = modify_cluster(client, module, modify_options)
             if module.params['tags'] is not None:
                 existing_tags = get_tags(client, module, cluster['DBClusterArn'])
                 changed |= ensure_tags(client, module, cluster['DBClusterArn'], existing_tags, module.params['tags'], module.params['purge_tags'])
 
     add_role_params = get_add_role_options(parameters, cluster)
     if add_role_params:
-        changed = True
         add_role(client, module, add_role_params)
+        changed = True
 
     if module.params['promote'] and cluster.get('ReplicationSourceIdentifier'):
+        call_method(client, module, 'promote_read_replica_db_cluster', module.params['db_cluster_identifier'])
         changed = True
-        promote_cluster(client, module, module.params['db_cluster_identifier'])
 
     return changed
 
@@ -790,6 +805,13 @@ def main():
         db_cluster_parameter_group_name=dict(),
         db_subnet_group_name=dict(),
         enable_cloudwatch_logs_exports=dict(type='list'),
+        deletion_protection=dict(type='bool'),
+        global_cluster_identifier=dict(),
+        enable_http_endpoint=dict(type='bool'),
+        copy_tags_to_snapshot=dict(type='bool'),
+        domain=dict(),
+        domain_iam_role_name=dict(),
+        enable_global_write_forwarding=dict(type='bool'),
         enable_iam_database_authentication=dict(type='bool'),
         engine=dict(choices=["aurora", "aurora-mysql", "aurora-postgresql"]),
         engine_version=dict(),
@@ -867,22 +889,24 @@ def main():
     )
     
     changed = False
-    #method_name = get_rds_method_attribute_name(cluster, module.params['state'], module.params['creation_source'])
-    #if method_name:
-    #  q("method_name", method_name)
-    if module.params['state'] == 'present':
-        changed |= ensure_present(client, module, cluster, parameters)
-    elif module.params['state'] == 'absent' and cluster:
-        changed |= delete_cluster(client, module, get_delete_options(parameters))
-    #    q("changed if absent", changed)
+    method_name, method_options_name = get_rds_method_attribute_name(cluster, module.params['state'], module.params['creation_source'])
+    if method_name:
+      if method_name == 'delete_db_cluster':
+          call_method(client, module, method_name, eval(method_options_name)(parameters))
+          changed = True
+      else:
+          changed |= ensure_present(client, module, cluster, parameters, method_name, method_options_name)
+
     if not module.check_mode and module.params['new_db_cluster_identifier'] and module.params['apply_immediately']:
         cluster_id = module.params['new_db_cluster_identifier']
     else:
         cluster_id = module.params['db_cluster_identifier']
+        
     result = camel_dict_to_snake_dict(get_cluster(client, module, cluster_id))
+    
     if result:
         result['tags'] = get_tags(client, module, result['db_cluster_arn'])
-    q("changed", changed)
+
     module.exit_json(changed=changed, **result)
 
 
