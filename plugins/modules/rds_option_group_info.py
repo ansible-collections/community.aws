@@ -56,11 +56,15 @@ extends_documentation_fragment:
 EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
+- name: List an option group
+  community.aws.rds_option_group_info:
+    option_group_name: test-mysql-option-group
+  register: option_group
+
 - name: List all the option groups
   community.aws.rds_option_group_info:
     region: ap-southeast-2
     profile: production
-    option_group_name: test-mysql-option-group
   register: option_group
 '''
 
@@ -69,7 +73,7 @@ changed:
     description: True if listing the RDS option group succeeds.
     type: bool
     returned: always
-    sample: "false"
+    sample: false
 option_groups_list:
     description: The available RDS option groups.
     returned: always
@@ -244,6 +248,17 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
+
+
+@AWSRetry.jittered_backoff(retries=10)
+def _describe_option_groups(client, **params):
+    try:
+        paginator = client.get_paginator('describe_option_groups')
+        return paginator.paginate(**params).build_full_result()
+    except is_boto3_error_code('OptionGroupNotFoundFault'):
+        return {}
+
 
 def list_option_groups(client, module):
     option_groups = list()
@@ -264,22 +279,14 @@ def list_option_groups(client, module):
     params['MajorEngineVersion'] = module.params.get('major_engine_version')
 
     try:
-        result = client.describe_option_groups(aws_retry=True, **params)
-    except is_boto3_error_code('OptionGroupNotFoundFault'):
-        return {}
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        result = _describe_option_groups(client, **params)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't describe option groups.")
 
     for option_group in result['OptionGroupsList']:
         # Turn the boto3 result into ansible_friendly_snaked_names
         converted_option_group = camel_dict_to_snake_dict(option_group)
-        try:
-            tags = client.list_tags_for_resource(ResourceName=converted_option_group['option_group_arn'])['TagList']
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't obtain option group tags.")
-
-        converted_option_group['tags'] = boto3_tag_list_to_ansible_dict(tags)
-
+        converted_option_group['tags'] = get_tags(client, module, converted_option_group['option_group_arn'])
         option_groups.append(converted_option_group)
 
     return option_groups

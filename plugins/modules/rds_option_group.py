@@ -125,6 +125,10 @@ options:
       - Remove tags not listed in I(tags).
     type: bool
     default: true
+  wait:
+    description: Whether to wait for the cluster to be available or deleted.
+    type: bool
+    default: True
 requirements: [ botocore, boto3 ]
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -135,8 +139,6 @@ EXAMPLES = r'''
 # Create an RDS Mysql Option group
 - name: Create an RDS Mysql option group
   community.aws.rds_option_group:
-    region: ap-southeast-2
-    profile: production
     state: present
     option_group_name: test-mysql-option-group
     engine_name: mysql
@@ -158,8 +160,6 @@ EXAMPLES = r'''
 # Remove currently configured options for an option group by removing options argument
 - name: Create an RDS Mysql option group
   community.aws.rds_option_group:
-    region: ap-southeast-2
-    profile: production
     state: present
     option_group_name: test-mysql-option-group
     engine_name: mysql
@@ -170,8 +170,6 @@ EXAMPLES = r'''
 
 - name: Create an RDS Mysql option group using tags
   community.aws.rds_option_group:
-    region: ap-southeast-2
-    profile: production
     state: present
     option_group_name: test-mysql-option-group
     engine_name: mysql
@@ -186,8 +184,6 @@ EXAMPLES = r'''
 # Delete an RDS Mysql Option group
 - name: Delete an RDS Mysql option group
   community.aws.rds_option_group:
-    region: ap-southeast-2
-    profile: production
     state: absent
     option_group_name: test-mysql-option-group
   register: deleted_rds_mysql_option_group
@@ -367,6 +363,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_li
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
 
 try:
     import botocore
@@ -374,24 +371,26 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 
+@AWSRetry.jittered_backoff(retries=10)
+def _describe_option_groups(client, **params):
+    try:
+        paginator = client.get_paginator('describe_option_groups')
+        return paginator.paginate(**params).build_full_result()['OptionGroupsList'][0]
+    except is_boto3_error_code('OptionGroupNotFoundFault'):
+        return {}
+
+
 def get_option_group(client, module):
     params = dict()
     params['OptionGroupName'] = module.params.get('option_group_name')
 
     try:
-        result = camel_dict_to_snake_dict(client.describe_option_groups(aws_retry=True, **params)['OptionGroupsList'][0])
-    except is_boto3_error_code('OptionGroupNotFoundFault'):
-        return {}
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        result = camel_dict_to_snake_dict(_describe_option_groups(client, **params))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't describe option groups.")
 
     if result:
-        try:
-            tags = client.list_tags_for_resource(aws_retry=True, ResourceName=result['option_group_arn'])['TagList']
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't obtain option group tags.")
-
-        result['tags'] = boto3_tag_list_to_ansible_dict(tags)
+        result['tags'] = get_tags(client, module, result['option_group_arn'])
 
     return result
 
@@ -410,7 +409,7 @@ def create_option_group_options(client, module):
         return changed
 
     try:
-        _result = client.modify_option_group(aws_retry=True, **params)
+        client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to update Option Group.")
 
@@ -430,7 +429,7 @@ def remove_option_group_options(client, module, options_to_remove):
         return changed
 
     try:
-        _result = client.modify_option_group(aws_retry=True, **params)
+        client.modify_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e)
 
@@ -450,7 +449,7 @@ def create_option_group(client, module):
     else:
         params['Tags'] = list()
     try:
-        _result = client.create_option_group(aws_retry=True, **params)
+        client.create_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Unable to create Option Group.')
 
@@ -642,6 +641,7 @@ def main():
         state=dict(required=True, choices=['present', 'absent']),
         tags=dict(required=False, type='dict'),
         purge_tags=dict(type='bool', default=True),
+        wait=dict(type='bool', default=True),
     )
 
     module = AnsibleAWSModule(
