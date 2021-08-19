@@ -157,20 +157,32 @@ MAX_AWS_DELAY = 5
 def list_elbs(connection, load_balancer_names):
     results = []
 
+    if not load_balancer_names:
+        for lb in get_all_lb(connection):
+            results.append(describe_elb(connection, lb))
+
     for load_balancer_name in load_balancer_names:
         lb = get_lb(connection, load_balancer_name)
         if not lb:
             continue
-        description = camel_dict_to_snake_dict(lb)
-        name = lb['LoadBalancerName']
-        instances = lb.get('Instances', [])
-        description['tags'] = get_tags(connection, name)
-        description['instances_inservice'], description['instances_inservice_count'] = lb_instance_health(connection, name, instances, 'InService')
-        description['instances_outofservice'], description['instances_outofservice_count'] = lb_instance_health(connection, name, instances, 'OutOfService')
-        description['instances_unknownservice'], description['instances_unknownservice_count'] = lb_instance_health(connection, name, instances, 'Unknown')
-        description['attributes'] = get_lb_attributes(connection, name)
-        results.append(description)
+        results.append(describe_elb(connection, lb))
     return results
+
+
+def describe_elb(connection, lb):
+    description = camel_dict_to_snake_dict(lb)
+    name = lb['LoadBalancerName']
+    instances = lb.get('Instances', [])
+    description['tags'] = get_tags(connection, name)
+    description['instances_inservice'], description['instances_inservice_count'] = lb_instance_health(connection, name, instances, 'InService')
+    description['instances_outofservice'], description['instances_outofservice_count'] = lb_instance_health(connection, name, instances, 'OutOfService')
+    description['instances_unknownservice'], description['instances_unknownservice_count'] = lb_instance_health(connection, name, instances, 'Unknown')
+    description['attributes'] = get_lb_attributes(connection, name)
+    return description
+
+
+def get_all_lb(connection):
+    return connection.describe_load_balancers(aws_retry=True)['LoadBalancerDescriptions']
 
 
 def get_lb(connection, load_balancer_name):
