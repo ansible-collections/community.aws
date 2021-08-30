@@ -200,6 +200,8 @@ def main():
         supports_check_mode=False,
     )
 
+    # Small, completely useless chnage to make CI check pipeline run a relatively fast test
+    result = dict()
     result = {
         'changed': False
     }
