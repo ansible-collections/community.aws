@@ -76,6 +76,7 @@ def main():
         module.deprecate("The 'aws_region_facts' module has been renamed to 'aws_region_info'", date='2021-12-01', collection_name='community.aws')
 
     connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
+    # Add a comment to make a git diff to trigger CI
 
     # Replace filter key underscores with dashes, for compatibility
     sanitized_filters = dict(module.params.get('filters'))
