@@ -1,3 +1,4 @@
 placebo
 botocore>=1.16.0
 boto3>=1.13.0
+setuptools < 58.0.2 ; python_version >= '3.5' # setuptools 58.0.2 breaks installation of packages, such as coverage, that reference the 'use_2to3' feature
