@@ -357,8 +357,8 @@ class SnsTopicManager(object):
 
             # Ensure delivery_policy attributes are cast as integers
             for setting, value in self.delivery_policy['http']['defaultHealthyRetryPolicy'].items():
-              if setting != 'backoffFunction': # this is the only item that should be a string
-                self.delivery_policy['http']['defaultHealthyRetryPolicy'][setting] = int(value)
+                if setting != 'backoffFunction':  # this is the only item that should be a string
+                    self.delivery_policy['http']['defaultHealthyRetryPolicy'][setting] = int(value)
 
             self.attributes_set.append('delivery_policy')
             if not self.check_mode:
