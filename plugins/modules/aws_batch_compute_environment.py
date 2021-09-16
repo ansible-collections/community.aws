@@ -118,6 +118,10 @@ options:
     description:
       - The Amazon Resource Name (ARN) of the Amazon EC2 Spot Fleet IAM role applied to a SPOT compute environment.
     type: str
+  launch_template:
+     description:
+      -  The Name/id and version of the launch template to use for the compute resources. 
+	   type: dict
 
 requirements:
     - boto3
@@ -152,6 +156,9 @@ EXAMPLES = r'''
       tag1: value1
       tag2: value2
     service_role: arn:aws:iam::<account>:role/service-role/<role>
+    launch_template:
+      launch_template_name: batch_launch_template_example
+      version: 1
   register: aws_batch_compute_environment_action
 
 - name: show results
@@ -198,6 +205,9 @@ output:
           Environment: <name>
           Name: <name>
         type: MANAGED
+        launch_template:
+          launch_template_name: batch_launch_template_example
+          version: 1
         validate_certs: true
     response:
       computeEnvironmentArn: "arn:aws:batch:...."
@@ -223,6 +233,9 @@ output:
       status: VALID
       statusReason: "ComputeEnvironment Healthy"
       type: MANAGED
+      launcTemplate:
+         launchTemplateTame: batch_launch_template_example
+         version: 1
   type: dict
 '''
 
@@ -318,7 +331,7 @@ def create_compute_environment(module, client):
 
     compute_resources_param_list = ('minv_cpus', 'maxv_cpus', 'desiredv_cpus', 'instance_types', 'image_id', 'subnets',
                                     'security_group_ids', 'ec2_key_pair', 'instance_role', 'tags', 'bid_percentage',
-                                    'spot_iam_fleet_role')
+                                    'spot_iam_fleet_role','launch_template')
     compute_resources_params = set_api_params(module, compute_resources_param_list)
 
     if module.params['compute_resource_type'] is not None:
@@ -372,6 +385,7 @@ def manage_state(module, client):
     minv_cpus = module.params['minv_cpus']
     maxv_cpus = module.params['maxv_cpus']
     desiredv_cpus = module.params['desiredv_cpus']
+    launch_template = snake_dict_to_camel_dict(module.params['launch_template'])
     action_taken = 'none'
     update_env_response = ''
 
@@ -391,6 +405,9 @@ def manage_state(module, client):
 
             # Update configuration if needed
             compute_resources = {}
+            if current_compute_environment['computeResources']['launchTemplate'] != launch_template:
+                module.fail_json(msg="""Batch doesn't support updating a compute environment with a new launch template version.
+                 If you update your launch template, you must create a new compute environment with the new template""")
             if compute_environment_state and current_compute_environment['state'] != compute_environment_state:
                 compute_kwargs.update({'state': compute_environment_state})
                 updates = True
@@ -465,6 +482,7 @@ def main():
         tags=dict(type='dict'),
         bid_percentage=dict(type='int'),
         spot_iam_fleet_role=dict(),
+        launch_template=dict(type='dict'),
     )
 
     module = AnsibleAWSModule(
