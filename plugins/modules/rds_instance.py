@@ -994,7 +994,7 @@ def get_changing_options_with_consistent_keys(modify_params, instance):
     for param in modify_params:
         current_option = instance.get('PendingModifiedValues', {}).get(param, None)
         if current_option is None:
-            current_option = instance[param]
+            current_option = instance.get(param, None)
         if modify_params[param] != current_option:
             changing_params[param] = modify_params[param]
 
