@@ -54,12 +54,9 @@
   always:
     - name: Delete the instance
       rds_instance:
-        id: "{{ item }}"
+        id: "{{ instance_id }}"
         state: absent
         skip_final_snapshot: True
-      loop:
-        - "{{ instance_id }}"
-        - "{{ modified_instance_id }}"
       ignore_errors: yes
 
     - name: Delete the role
