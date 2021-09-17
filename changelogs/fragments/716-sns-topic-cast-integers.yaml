@@ -1,0 +1,2 @@
+bugfixes:
+- sns_topic - loop through defaultHealthyRetryPolicy attributes and cast them as integers to avoid type errors from the AWS API.
