@@ -116,6 +116,7 @@
     sampled_requests: no
     cloudwatch_metrics: yes
     metric_name: blub
+    purge_rules: yes
     rules:
       - name: admin_protect
         priority: 1

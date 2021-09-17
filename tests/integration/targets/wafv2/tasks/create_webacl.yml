@@ -39,6 +39,10 @@
           managed_rule_group_statement:
             vendor_name: AWS
             name: AWSManagedRulesAdminProtectionRuleSet
+    custom_response_bodies:
+      too_many_requests:
+        content_type: APPLICATION_JSON
+        content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
     tags:
       A: B
       C: D
@@ -88,6 +92,25 @@
           managed_rule_group_statement:
             vendor_name: AWS
             name: AWSManagedRulesAdminProtectionRuleSet
+      - name: rate-limit-per-IP
+        priority: 3
+        action:
+          block:
+            custom_response:
+              response_code: 429
+              custom_response_body_key: too_many_requests
+        statement:
+          rate_based_statement:
+            limit: 5000
+            aggregate_key_type: IP
+          visibility_config:
+            sampled_requests_enabled: yes
+            cloud_watch_metrics_enabled: yes
+            metric_name: waf-acl-rule-rate-limit-per-IP
+    custom_response_bodies:
+      too_many_requests:
+        content_type: APPLICATION_JSON
+        content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
     tags:
       A: B
       C: D
@@ -99,7 +122,7 @@
       - ACL is changed
       - ACL.web_acl.name == web_acl_name
       - not ACL.web_acl.visibility_config.sampled_requests_enabled
-      - ACL.web_acl.rules | count == 2
+      - ACL.web_acl.rules | count == 3
       - ACL.web_acl.description == 'hallo eins'
 
 - name: immutable create web acl
@@ -140,6 +163,25 @@
           managed_rule_group_statement:
             vendor_name: AWS
             name: AWSManagedRulesAdminProtectionRuleSet
+      - name: rate-limit-per-IP
+        priority: 3
+        action:
+          block:
+            custom_response:
+              response_code: 429
+              custom_response_body_key: too_many_requests
+        statement:
+          rate_based_statement:
+            limit: 5000
+            aggregate_key_type: IP
+          visibility_config:
+            sampled_requests_enabled: yes
+            cloud_watch_metrics_enabled: yes
+            metric_name: waf-acl-rule-rate-limit-per-IP
+    custom_response_bodies:
+      too_many_requests:
+        Content-Type: APPLICATION_JSON
+        Content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
     tags:
       A: B
       C: D
