@@ -42,7 +42,7 @@
         id: "{{ instance_id }}"
         state: present
         monitoring_interval: "{{ monitoring_interval }}"
-        monitoring_role_arn: "{{ enhanced_monitoring.arn }}"
+        monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
         apply_immediately: True
       register: result
 
