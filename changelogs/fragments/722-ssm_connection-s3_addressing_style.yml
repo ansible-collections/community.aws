@@ -1,0 +1,2 @@
+bugfixes:
+- aws_ssm - set S3 addressing style to avoid redirects (https://github.com/ansible-collections/community.aws/pull/722).

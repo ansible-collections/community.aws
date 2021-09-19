@@ -540,7 +540,7 @@ class Connection(ConnectionBase):
 
         client = session.client(
             service,
-            config=Config(signature_version="s3v4")
+            config=Config(signature_version='s3v4', s3={'addressing_style': 'virtual'})
         )
         return client
 
