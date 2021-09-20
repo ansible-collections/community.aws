@@ -92,7 +92,7 @@ options:
       description:
         - A map of custom response keys and content bodies. Define response bodies here and reference them in the rules by providing
         - the key of the body dictionary element.
-        - Each element must have a unique dict key and in the dict two keys for I(content_type) and I(content).
+        - Each element must have a unique dict key and in the dict two keys for I(content_type) and I(content). Needs botocore >= 1.21.0 to work.
       type: dict
       version_added: 2.1.0
     purge_rules:
@@ -335,22 +335,26 @@ class WebACL:
         self.existing_acl, self.id, self.locktoken = self.get_web_acl()
 
     def update(self, default_action, description, rules, sampled_requests, cloudwatch_metrics, metric_name, custom_response_bodies):
+        req_obj = {
+            'Name': self.name,
+            'Scope': self.scope,
+            'Id': self.id,
+            'DefaultAction': default_action,
+            'Description': description,
+            'Rules': rules,
+            'VisibilityConfig': {
+                'SampledRequestsEnabled': sampled_requests,
+                'CloudWatchMetricsEnabled': cloudwatch_metrics,
+                'MetricName': metric_name
+            },
+            'LockToken': self.locktoken
+        }
+
+        if len(custom_response_bodies) > 0:
+            req_obj['CustomResponseBodies'] = custom_response_bodies
+
         try:
-            response = self.wafv2.update_web_acl(
-                Name=self.name,
-                Scope=self.scope,
-                Id=self.id,
-                DefaultAction=default_action,
-                Description=description,
-                Rules=rules,
-                VisibilityConfig={
-                    'SampledRequestsEnabled': sampled_requests,
-                    'CloudWatchMetricsEnabled': cloudwatch_metrics,
-                    'MetricName': metric_name
-                },
-                CustomResponseBodies=custom_response_bodies,
-                LockToken=self.locktoken
-            )
+            response = self.wafv2.update_web_acl(**req_obj)
         except (BotoCoreError, ClientError) as e:
             self.fail_json_aws(e, msg="Failed to update wafv2 web acl.")
         return response
@@ -412,6 +416,9 @@ class WebACL:
             },
             'CustomResponseBodies': custom_response_bodies
         }
+
+        if len(custom_response_bodies) > 0:
+            req_obj['CustomResponseBodies'] = custom_response_bodies
         if description:
             req_obj['Description'] = description
         if tags:
@@ -465,6 +472,9 @@ def main():
     custom_response_bodies = {}
     for name, body in module.params.get("custom_response_bodies").items():
         custom_response_bodies[name] = snake_dict_to_camel_dict(body, capitalize_first=True)
+
+    if custom_response_bodies:
+        module.require_botocore_at_least('1.21.0', reason='to set custom response bodies')
 
     if default_action == 'Block':
         default_action = {'Block': {}}
