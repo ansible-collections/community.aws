@@ -21,6 +21,9 @@
   - name: 'Fetch AZ availability'
     aws_az_info:
     register: az_info
+  
+  - debug:
+      msg: az_info
 
   - name: 'Assert that we have multiple AZs available to us'
     assert:
