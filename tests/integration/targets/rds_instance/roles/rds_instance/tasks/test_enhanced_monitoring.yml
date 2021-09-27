@@ -58,8 +58,3 @@
         state: absent
         skip_final_snapshot: True
       ignore_errors: yes
-
-    - name: Delete the role
-      iam_role:
-        name: "{{ instance_id }}-role"
-        state: absent
