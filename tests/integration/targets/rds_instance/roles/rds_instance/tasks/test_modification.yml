@@ -14,6 +14,14 @@
             - not result.changed
         ignore_errors: yes
 
+      - name: Create an enhanced monitoring role
+        iam_role:
+          assume_role_policy_document: "{{ lookup('file','files/enhanced_monitoring_assume_policy.json') }}"
+          name: "{{ instance_id }}-role"
+          state: present
+          managed_policy: "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+        register: enhanced_monitoring_role
+
       - name: Create a mariadb instance
         rds_instance:
           id: "{{ instance_id }}"
@@ -100,6 +108,8 @@
       # TODO: test modifying db_subnet_group_name, db_security_groups, db_parameter_group_name, option_group_name,
       # monitoring_role_arn, monitoring_interval, domain, domain_iam_role_name, cloudwatch_logs_export_configuration
 
+      # Test multiple modifications including enabling enhanced monitoring
+
       - name: Modify several attributes
         rds_instance:
           id: '{{ instance_id }}'
@@ -112,6 +122,8 @@
           engine_version: "{{ mariadb_engine_version_2 }}"
           allow_major_version_upgrade: true
           auto_minor_version_upgrade: false
+          monitoring_interval: "{{ monitoring_interval }}"
+          monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
           port: 1150
           max_allocated_storage: 100
           apply_immediately: True
@@ -125,6 +137,7 @@
             - '"port" in result.pending_modified_values or result.endpoint.port == 1150'
             - '"db_instance_class" in result.pending_modified_values or result.db_instance_class == modified_db_instance_class'
             - '"engine_version" in result.pending_modified_values or result.engine_version == mariadb_engine_version_2'
+            - '"monitoring_interval" in result.pending_modified_values or result.monitoring_interval == monitoring_interval'
 
       - name: Idempotence modifying several pending attributes
         rds_instance:
@@ -138,6 +151,8 @@
           engine_version: "{{ mariadb_engine_version_2 }}"
           allow_major_version_upgrade: true
           auto_minor_version_upgrade: false
+          monitoring_interval: "{{ monitoring_interval }}"
+          monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
           port: 1150
           max_allocated_storage: 100
         register: result
@@ -166,6 +181,8 @@
           engine_version: "10.2.21"
           allow_major_version_upgrade: true
           auto_minor_version_upgrade: false
+          monitoring_interval: "{{ monitoring_interval }}"
+          monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
           port: 1150
           max_allocated_storage: 100
         register: result
