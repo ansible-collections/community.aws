@@ -28,6 +28,7 @@
           state: present
           engine: mariadb
           engine_version: "{{ mariadb_engine_version }}"
+          allow_major_version_upgrade: true
           username: "{{ username }}"
           password: "{{ password }}"
           db_instance_class: "{{ db_instance_class }}"
@@ -118,7 +119,7 @@
           db_instance_class: "{{ modified_db_instance_class }}"
           backup_retention_period: 2
           preferred_backup_window: "05:00-06:00"
-          preferred_maintenance_window: "mon:06:20-mon:06:50"
+          preferred_maintenance_window: "{{ preferred_maintenance_window }}"
           engine_version: "{{ mariadb_engine_version_2 }}"
           allow_major_version_upgrade: true
           auto_minor_version_upgrade: false
@@ -147,7 +148,7 @@
           db_instance_class: "{{ modified_db_instance_class }}"
           backup_retention_period: 2
           preferred_backup_window: "05:00-06:00"
-          preferred_maintenance_window: "mon:06:20-mon:06:50"
+          preferred_maintenance_window: "{{ preferred_maintenance_window }}"
           engine_version: "{{ mariadb_engine_version_2 }}"
           allow_major_version_upgrade: true
           auto_minor_version_upgrade: false
@@ -177,8 +178,8 @@
           db_instance_class: "{{ modified_db_instance_class }}"
           backup_retention_period: 2
           preferred_backup_window: "05:00-06:00"
-          preferred_maintenance_window: "Mon:06:20-Mon:06:50"
-          engine_version: "10.2.21"
+          preferred_maintenance_window: "{{ preferred_maintenance_window }}"
+          engine_version: "{{ mariadb_engine_version_2 }}"
           allow_major_version_upgrade: true
           auto_minor_version_upgrade: false
           monitoring_interval: "{{ monitoring_interval }}"
