@@ -385,7 +385,7 @@ def manage_state(module, client):
     minv_cpus = module.params['minv_cpus']
     maxv_cpus = module.params['maxv_cpus']
     desiredv_cpus = module.params['desiredv_cpus']
-    launch_template = snake_dict_to_camel_dict(module.params['launch_template'])
+    #launch_template = snake_dict_to_camel_dict(module.params['launch_template'])
     action_taken = 'none'
     update_env_response = ''
 
@@ -405,9 +405,9 @@ def manage_state(module, client):
 
             # Update configuration if needed
             compute_resources = {}
-            if current_compute_environment['computeResources']['launchTemplate'] != launch_template:
-                module.fail_json(msg="""Batch doesn't support updating a compute environment with a new launch template version.
-                 If you update your launch template, you must create a new compute environment with the new template""")
+            #if current_compute_environment['computeResources']['launchTemplate'] != launch_template:
+            #    module.fail_json(msg="""Batch doesn't support updating a compute environment with a new launch template version.
+            #     If you update your launch template, you must create a new compute environment with the new template""")
             if compute_environment_state and current_compute_environment['state'] != compute_environment_state:
                 compute_kwargs.update({'state': compute_environment_state})
                 updates = True
