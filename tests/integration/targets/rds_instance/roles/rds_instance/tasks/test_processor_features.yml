@@ -104,6 +104,7 @@
           id: "{{ instance_id }}"
           state: absent
           skip_final_snapshot: True
+          wait: false
         register: result
 
       - assert:

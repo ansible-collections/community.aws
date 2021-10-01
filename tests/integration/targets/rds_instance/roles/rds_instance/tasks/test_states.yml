@@ -277,7 +277,7 @@
         rds_snapshot:
           db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
           state: absent
-          wait: yes
+          wait: false
         ignore_errors: yes
 
       - name: Remove DB instance
@@ -285,4 +285,5 @@
           id: '{{ instance_id }}'
           state: absent
           skip_final_snapshot: True
+          wait: false
         ignore_errors: yes

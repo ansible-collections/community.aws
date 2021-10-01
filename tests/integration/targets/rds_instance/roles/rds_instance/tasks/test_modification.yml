@@ -219,5 +219,6 @@
           id: '{{ item }}'
           state: absent
           skip_final_snapshot: True
+          wait: false
         loop: ['{{ instance_id }}', '{{ modified_instance_id }}']
         ignore_errors: yes

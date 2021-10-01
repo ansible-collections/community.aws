@@ -70,6 +70,7 @@
           id: "{{ instance_id }}"
           state: absent
           skip_final_snapshot: True
+          wait: false
         ignore_errors: yes
 
 
@@ -78,4 +79,5 @@
           id: "{{ instance_id }}-point-in-time"
           state: absent
           skip_final_snapshot: True
+          wait: false
         ignore_errors: yes
