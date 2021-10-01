@@ -145,6 +145,7 @@
           id: "{{ instance_id }}"
           state: absent
           skip_final_snapshot: True
+          wait: false
         register: result
         ignore_errors: yes
 
@@ -153,6 +154,7 @@
           name: "{{ item }}"
           description: "created by rds_instance integration tests"
           state: absent
+          wait: false
         register: sgs_result
         loop:
           - "{{ resource_prefix }}-sg-1"
@@ -168,6 +170,7 @@
             Name: "{{ resource_prefix }}-subnet"
             Description: "created by rds_instance integration tests"
           state: absent
+          wait: false
         register: subnets
         ignore_errors: yes
         retries: 30
@@ -198,5 +201,6 @@
           id: "{{ instance_id }}"
           state: absent
           skip_final_snapshot: True
+          wait: false
         register: result
         ignore_errors: yes
