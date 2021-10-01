@@ -200,18 +200,6 @@
             - '"db_instance_class" in result.pending_modified_values or result.db_instance_class == "db.t2.medium"'
             - '"engine_version" in result.pending_modified_values or result.engine_version == "10.2.21"'
 
-      - name: Delete the instance
-        rds_instance:
-          id: '{{ instance_id }}'
-          state: absent
-          skip_final_snapshot: True
-        register: result
-
-      - assert:
-          that:
-            - result.changed
-            - '"pending_modified_values" not in result'
-
     always:
 
       - name: Delete the instance

@@ -73,7 +73,6 @@
           wait: false
         ignore_errors: yes
 
-
       - name: Remove the point in time restored DB
         rds_instance:
           id: "{{ instance_id }}-point-in-time"
