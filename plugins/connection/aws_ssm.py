@@ -508,7 +508,8 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name):
         ''' Generate URL for get_object / put_object '''
-        region_name = self.get_option('region') or 'us-east-1'
+        # Create a client using the bucket's region
+        region_name = self._get_boto_client('s3').get_bucket_location(Bucket=bucket_name)['LocationConstraint']  
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
         return client.generate_presigned_url(client_method, Params={'Bucket': bucket_name, 'Key': out_path}, ExpiresIn=3600, HttpMethod=http_method)
 
@@ -540,7 +541,9 @@ class Connection(ConnectionBase):
 
         client = session.client(
             service,
-            config=Config(signature_version="s3v4")
+            config=Config(signature_version="s3v4",
+	    s3={'addressing_style': 'virtual'}),
+            region_name=region_name
         )
         return client
 
