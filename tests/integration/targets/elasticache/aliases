@@ -3,3 +3,5 @@
 unstable
 
 cloud/aws
+
+elasticache_subnet_group
