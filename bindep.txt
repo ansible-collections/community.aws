@@ -1,4 +1,0 @@
-# Needed for generating EC2 format fingerprints
-openssl [test platform:rpm]
-gcc [test platform:rpm]
-python3-devel [test platform:rpm]
