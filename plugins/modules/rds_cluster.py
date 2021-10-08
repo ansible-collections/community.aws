@@ -558,7 +558,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
 
 
 @AWSRetry.jittered_backoff(retries=10)
-def _describe_db_clusters(client, **params):
+def _describe_db_clusters(**params):
     try:
         paginator = client.get_paginator('describe_db_clusters')
         return paginator.paginate(**params).build_full_result()['DBClusters'][0]
@@ -586,13 +586,14 @@ def get_backtrack_options(params_dict):
 
 def get_create_options(params_dict):
     options = [
-        'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow', 'CharacterSetName',
-        'DBClusterIdentifier', 'DBClusterParameterGroupName', 'DBSubnetGroupName', 'DatabaseName',
-        'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'KmsKeyId', 'Engine',
-        'EngineVersion', 'PreferredMaintenanceWindow', 'MasterUserPassword', 'MasterUsername', 'OptionGroupName',
-        'Port', 'ReplicationSourceIdentifier', 'SourceRegion', 'StorageEncrypted', 'Tags', 'VpcSecurityGroupIds',
-        'EngineMode', 'ScalingConfiguration', 'DeletionProtection', 'EnableHttpEndpoint', 'CopyTagsToSnapshot',
-        'Domain', 'DomainIAMRoleName', 'EnableGlobalWriteForwarding'
+        'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow', 
+        'CharacterSetName', 'DBClusterIdentifier', 'DBClusterParameterGroupName', 'DBSubnetGroupName',
+        'DatabaseName', 'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'KmsKeyId',
+        'Engine', 'EngineVersion', 'PreferredMaintenanceWindow', 'MasterUserPassword', 'MasterUsername',
+        'OptionGroupName', 'Port', 'ReplicationSourceIdentifier', 'SourceRegion', 'StorageEncrypted',
+        'Tags', 'VpcSecurityGroupIds', 'EngineMode', 'ScalingConfiguration', 'DeletionProtection',
+        'EnableHttpEndpoint', 'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName',
+        'EnableGlobalWriteForwarding',
     ]
 
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
@@ -600,11 +601,12 @@ def get_create_options(params_dict):
 
 def get_modify_options(params_dict, force_update_password):
     options = [
-        'ApplyImmediately', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow', 'DBClusterIdentifier',
-        'DBClusterParameterGroupName', 'EnableIAMDatabaseAuthentication', 'EngineVersion', 'PreferredMaintenanceWindow',
-        'MasterUserPassword', 'NewDBClusterIdentifier', 'OptionGroupName', 'Port', 'VpcSecurityGroupIds',
-        'EnableIAMDatabaseAuthentication', 'CloudwatchLogsExportConfiguration', 'DeletionProtection', 'EnableHttpEndpoint',
-        'CopyTagsToSnapshot', 'EnableGlobalWriteForwarding', 'Domain', 'DomainIAMRoleName'
+        'ApplyImmediately', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow',
+        'DBClusterIdentifier', 'DBClusterParameterGroupName', 'EnableIAMDatabaseAuthentication',
+        'EngineVersion', 'PreferredMaintenanceWindow', 'MasterUserPassword', 'NewDBClusterIdentifier',
+        'OptionGroupName', 'Port', 'VpcSecurityGroupIds', 'EnableIAMDatabaseAuthentication',
+        'CloudwatchLogsExportConfiguration', 'DeletionProtection', 'EnableHttpEndpoint',
+        'CopyTagsToSnapshot', 'EnableGlobalWriteForwarding', 'Domain', 'DomainIAMRoleName',
     ]
     modify_options = dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
     if not force_update_password:
@@ -619,13 +621,14 @@ def get_delete_options(params_dict):
 
 def get_restore_s3_options(params_dict): 
     options = [
-        'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'CharacterSetName', 'DBClusterIdentifier',
-        'DBClusterParameterGroupName', 'DBSubnetGroupName', 'DatabaseName', 'EnableCloudwatchLogsExports',
-        'EnableIAMDatabaseAuthentication', 'Engine', 'EngineVersion', 'KmsKeyId', 'MasterUserPassword',
-        'MasterUsername', 'OptionGroupName', 'Port', 'PreferredBackupWindow', 'PreferredMaintenanceWindow',
-        'S3BucketName', 'S3IngestionRoleArn', 'S3Prefix', 'SourceEngine', 'SourceEngineVersion', 'StorageEncrypted',
-        'Tags', 'VpcSecurityGroupIds', 'DeletionProtection', 'EnableHttpEndpoint',
-        'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName' 
+        'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'CharacterSetName',
+        'DBClusterIdentifier', 'DBClusterParameterGroupName', 'DBSubnetGroupName', 'DatabaseName',
+        'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'Engine', 'EngineVersion',
+        'KmsKeyId', 'MasterUserPassword', 'MasterUsername', 'OptionGroupName', 'Port',
+        'PreferredBackupWindow', 'PreferredMaintenanceWindow', 'S3BucketName', 'S3IngestionRoleArn',
+        'S3Prefix', 'SourceEngine', 'SourceEngineVersion', 'StorageEncrypted', 'Tags',
+        'VpcSecurityGroupIds', 'DeletionProtection', 'EnableHttpEndpoint', 'CopyTagsToSnapshot',
+        'Domain', 'DomainIAMRoleName',
     ]
     
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
@@ -633,10 +636,11 @@ def get_restore_s3_options(params_dict):
 
 def get_restore_snapshot_options(params_dict):
     options = [
-        'AvailabilityZones', 'BacktrackWindow', 'DBClusterIdentifier', 'DBSubnetGroupName', 'DatabaseName',
-        'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'Engine', 'EngineVersion', 'KmsKeyId',
-        'OptionGroupName', 'Port', 'SnapshotIdentifier', 'Tags', 'VpcSecurityGroupIds', 'DBClusterParameterGroupName',
-        'DeletionProtection', 'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName' 
+        'AvailabilityZones', 'BacktrackWindow', 'DBClusterIdentifier', 'DBSubnetGroupName',
+        'DatabaseName', 'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication',
+        'Engine', 'EngineVersion', 'KmsKeyId', 'OptionGroupName', 'Port', 'SnapshotIdentifier',
+        'Tags', 'VpcSecurityGroupIds', 'DBClusterParameterGroupName', 'DeletionProtection',
+        'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName',
     ]
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
 
@@ -644,9 +648,10 @@ def get_restore_snapshot_options(params_dict):
 def get_restore_cluster_options(params_dict):
     options = [
         'BacktrackWindow', 'DBClusterIdentifier', 'DBSubnetGroupName', 'EnableCloudwatchLogsExports',
-        'EnableIAMDatabaseAuthentication', 'KmsKeyId', 'OptionGroupName', 'Port', 'RestoreToTime', 'RestoreType',
-        'SourceDBClusterIdentifier', 'Tags', 'UseLatestRestorableTime', 'VpcSecurityGroupIds',
-        'DeletionProtection', 'CopyTagsToSnapshot', 'Domain', 'DomainIAMRoleName'
+        'EnableIAMDatabaseAuthentication', 'KmsKeyId', 'OptionGroupName', 'Port', 'RestoreToTime',
+        'RestoreType', 'SourceDBClusterIdentifier', 'Tags', 'UseLatestRestorableTime',
+        'VpcSecurityGroupIds', 'DeletionProtection', 'CopyTagsToSnapshot', 'Domain',
+        'DomainIAMRoleName',
     ]
     return dict((k, v) for k, v in params_dict.items() if k in restore_time_cluster and v is not None)
 
@@ -679,27 +684,27 @@ def get_rds_method_attribute_name(cluster, state, creation_source):
     return method_name, method_options_name
 
 
-def add_role(client, module, params):
+def add_role(params):
     if not module.check_mode:
         try:
             client.add_role_to_db_cluster(**params)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-            module.fail_json_aws(e, msg="Unable to add role {0} to cluster {0}".format(params['RoleArn'], params['DBClusterIdentifier']))
+            module.fail_json_aws(e, msg=f"Unable to add role {params['RoleArn']} to cluster {params['DBClusterIdentifier']}")
         wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
 
 
-def backtrack_cluster(client, module, params):
+def backtrack_cluster(params):
     if not module.check_mode:
         try:
             client.backtrack_db_cluster(**params)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-            module.fail_json_aws(e, msg="Unable to backtrack cluster {0}".format(params['DBClusterIdentifier']))
+            module.fail_json_aws(e, msg=F"Unable to backtrack cluster {params['DBClusterIdentifier']}")
         wait_for_cluster_status(client, module, params['DBClusterIdentifier'], 'cluster_available')
 
 
-def get_cluster(client, module, db_cluster_id):
+def get_cluster(db_cluster_id):
     try:
-        return _describe_db_clusters(client, DBClusterIdentifier=db_cluster_id)
+        return _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to describe DB clusters")
 
@@ -729,11 +734,17 @@ def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_lo
         changing_params['NewDBClusterIdentifier'] = new_cluster_id
 
     option_group = modify_params.pop('OptionGroupName', None)
-    if option_group and option_group not in [g['DBClusterOptionGroupName'] for g in current_cluster['DBClusterOptionGroupMemberships']]:
+    if (
+        option_group and option_group not in [g['DBClusterOptionGroupName']
+        for g in current_cluster['DBClusterOptionGroupMemberships']]
+    ):
         changing_params['OptionGroupName'] = option_group
 
     vpc_sgs = modify_params.pop('VpcSecurityGroupIds', None)
-    if vpc_sgs and vpc_sgs not in [sg['VpcSecurityGroupId'] for sg in current_cluster['VpcSecurityGroups']]:
+    if (
+        vpc_sgs and vpc_sgs not in [sg['VpcSecurityGroupId']
+        for sg in current_cluster['VpcSecurityGroups']]
+    ):
         changing_params['VpcSecurityGroupIds'] = vpc_sgs
 
     for param in modify_params:
@@ -748,7 +759,7 @@ def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_lo
     return changing_params
 
 
-def ensure_present(client, module, cluster, parameters, method_name, method_options_name):
+def ensure_present(cluster, parameters, method_name, method_options_name):
     changed = False
 
     if not cluster:
@@ -761,14 +772,17 @@ def ensure_present(client, module, cluster, parameters, method_name, method_opti
             backtrack_cluster(client, module, get_backtrack_options(parameters))
             changed = True
         else:
-            modifiable_options = eval(method_options_name)(parameters, force_update_password=module.params['force_update_password'])
-            modify_options = changing_cluster_options(modifiable_options, cluster, module.params['purge_cloudwatch_logs_exports'])
+            modifiable_options = eval(method_options_name)(parameters,
+                                                           force_update_password=module.params['force_update_password'])
+            modify_options = changing_cluster_options(modifiable_options, cluster,
+                                                      module.params['purge_cloudwatch_logs_exports'])
             if modify_options:
                 call_method(client, module, method_name, modify_options)
                 changed = True
             if module.params['tags'] is not None:
                 existing_tags = get_tags(client, module, cluster['DBClusterArn'])
-                changed |= ensure_tags(client, module, cluster['DBClusterArn'], existing_tags, module.params['tags'], module.params['purge_tags'])
+                changed |= ensure_tags(client, module, cluster['DBClusterArn'], existing_tags, module.params['tags'],
+                                       module.params['purge_tags'])
 
     add_role_params = get_add_role_options(parameters, cluster)
     if add_role_params:
@@ -783,6 +797,9 @@ def ensure_present(client, module, cluster, parameters, method_name, method_opti
 
 
 def main():
+    global module
+    global client
+
     arg_spec = dict(
         state=dict(choices=['present', 'absent'], default='present'),
         creation_source=dict(choices=['snapshot', 's3', 'cluster']),
@@ -871,17 +888,20 @@ def main():
         module.fail_json_aws(e, msg='Failed to connect to AWS.')
 
     module.params['db_cluster_identifier'] = module.params['db_cluster_identifier'].lower()
-    cluster = get_cluster(client, module, module.params['db_cluster_identifier'])
+    cluster = get_cluster(module.params['db_cluster_identifier'])
 
     if module.params['new_db_cluster_identifier']:
         module.params['new_db_cluster_identifier'] = module.params['new_db_cluster_identifier'].lower()
 
-        if get_cluster(client, module, module.params['new_db_cluster_identifier']):
-            module.fail_json("A new cluster ID '{0}' was provided but it already exists".format(module.params['new_db_cluster_identifier']))
+        if get_cluster(module.params['new_db_cluster_identifier']):
+            module.fail_json(f"A new cluster ID {module.params['new_db_cluster_identifier']} was provided but it already exists")
         if not cluster:
-            module.fail_json("A new cluster ID '{0}' was provided but the cluster to be renamed does not exist".format(module.params['new_db_cluster_identifier']))
+            module.fail_json(f"A new cluster ID {module.params['new_db_cluster_identifier']} was provided but the cluster to be renamed does not exist")
 
-    if module.params['state'] == 'absent' and module.params['skip_final_snapshot'] is False and module.params['final_snapshot_identifier'] is None:
+    if (
+        module.params['state'] == 'absent' and module.params['skip_final_snapshot'] is False
+        and module.params['final_snapshot_identifier'] is None
+    ):
         module.fail_json(msg='skip_final_snapshot is False but all of the following are missing: final_snapshot_identifier')
 
     parameters = arg_spec_to_rds_params(
@@ -889,20 +909,21 @@ def main():
     )
     
     changed = False
-    method_name, method_options_name = get_rds_method_attribute_name(cluster, module.params['state'], module.params['creation_source'])
+    method_name, method_options_name = get_rds_method_attribute_name(cluster, module.params['state'],
+                                                                     module.params['creation_source'])
     if method_name:
       if method_name == 'delete_db_cluster':
           call_method(client, module, method_name, eval(method_options_name)(parameters))
           changed = True
       else:
-          changed |= ensure_present(client, module, cluster, parameters, method_name, method_options_name)
+          changed |= ensure_present(cluster, parameters, method_name, method_options_name)
 
     if not module.check_mode and module.params['new_db_cluster_identifier'] and module.params['apply_immediately']:
         cluster_id = module.params['new_db_cluster_identifier']
     else:
         cluster_id = module.params['db_cluster_identifier']
         
-    result = camel_dict_to_snake_dict(get_cluster(client, module, cluster_id))
+    result = camel_dict_to_snake_dict(get_cluster(cluster_id))
     
     if result:
         result['tags'] = get_tags(client, module, result['db_cluster_arn'])
