@@ -13,6 +13,25 @@
             - not result.changed
         ignore_errors: yes
 
+      # Test invalid bad options
+      - name: Create a DB instance with an invalid engine
+        rds_instance:
+          id: "{{ instance_id }}"
+          state: present
+          engine: thisisnotavalidengine
+          username: "{{ username }}"
+          password: "{{ password }}"
+          db_instance_class: "{{ db_instance_class }}"
+          allocated_storage: "{{ allocated_storage }}"
+        register: result
+        ignore_errors: True
+
+      - assert:
+          that:
+            - result.failed
+            - '"DB engine thisisnotavalidengine should be one of" in result.msg'
+
+      # Test clean instance creation with good options
       - name: Check Mode - Create a mariadb instance
         rds_instance:
           id: "{{ instance_id }}"
@@ -22,6 +41,10 @@
           password: "{{ password }}"
           db_instance_class: "{{ db_instance_class }}"
           allocated_storage: "{{ allocated_storage }}"
+          storage_encrypted: True
+          tags:
+            Name: "{{ instance_id }}"
+            Created_by: Ansible rds_instance tests
         register: result
         check_mode: yes
 
@@ -29,6 +52,7 @@
           that:
             - result.changed
 
+      # Test creation, adding tags and enabling encryption
       - name: Create a mariadb instance
         rds_instance:
           id: "{{ instance_id }}"
@@ -38,14 +62,23 @@
           password: "{{ password }}"
           db_instance_class: "{{ db_instance_class }}"
           allocated_storage: "{{ allocated_storage }}"
+          storage_encrypted: True
+          tags:
+            Name: "{{ instance_id }}"
+            Created_by: Ansible rds_instance tests
         register: result
 
       - assert:
           that:
             - result.changed
             - "result.db_instance_identifier == '{{ instance_id }}'"
+            - "result.tags | length == 2"
+            - "result.tags.Name == '{{ instance_id }}'"
+            - "result.tags.Created_by == 'Ansible rds_instance tests'"
+            - result.kms_key_id
+            - result.storage_encrypted == true
 
-      - name: Idempotence
+      - name: Test impotency omitting tags
         rds_instance:
           id: '{{ instance_id }}'
           state: present
@@ -60,6 +93,7 @@
           that:
             - not result.changed
             - result.db_instance_identifier
+            - "result.tags | length == 2"
 
       - name: Idempotence with minimal options
         rds_instance:
@@ -71,7 +105,60 @@
           that:
             - not result.changed
             - result.db_instance_identifier
+            - "result.tags | length == 2"
 
+      - name: Test tags are not purged if purge_tags is False
+        rds_instance:
+          db_instance_identifier: "{{ instance_id }}"
+          state: present
+          engine: mariadb
+          username: "{{ username }}"
+          password: "{{ password }}"
+          db_instance_class: "{{ db_instance_class }}"
+          allocated_storage: "{{ allocated_storage }}"
+          tags: {}
+          purge_tags: False
+        register: result
+
+      - assert:
+          that:
+            - not result.changed
+            - "result.tags | length == 2"
+
+      - name: Add a tag and remove a tag
+        rds_instance:
+          db_instance_identifier: "{{ instance_id }}"
+          state: present
+          tags:
+            Name: "{{ instance_id }}-new"
+            Created_by: Ansible rds_instance tests
+          purge_tags: True
+        register: result
+
+      - assert:
+          that:
+            - result.changed
+            - "result.tags | length == 2"
+            - "result.tags.Name == '{{ instance_id }}-new'"
+
+      - name: Remove all tags
+        rds_instance:
+          db_instance_identifier: "{{ instance_id }}"
+          state: present
+          engine: mariadb
+          username: "{{ username }}"
+          password: "{{ password }}"
+          db_instance_class: "{{ db_instance_class }}"
+          allocated_storage: "{{ allocated_storage }}"
+          tags: {}
+        register: result
+
+      - assert:
+          that:
+            - result.changed
+            - not result.tags
+
+      # Test stopping / rebooting instances
       - name: Check Mode - stop the instance
         rds_instance:
           id: '{{ instance_id }}'
@@ -161,73 +248,28 @@
           that:
             - result.changed
 
-      - name: take a snapshot
-        rds_snapshot:
-          db_instance_identifier: '{{ instance_id }}'
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
-          state: present
-          wait: yes
-
-      - name: take a snapshot - idempotence
-        rds_snapshot:
-          db_instance_identifier: '{{ instance_id }}'
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
-          state: present
-        register: result
-
-      - assert:
-          that:
-            - not result.changed
-
-      - name: check snapshot is ok
-        rds_snapshot_info:
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
-        register: result
-
-      - assert:
-          that:
-            - (result.snapshots | length) == 1
-
-      - name: remove a snapshot without wait
-        rds_snapshot:
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
+      # Test final snapshot on deletion
+      - name: Delete the DB instance
+        rds_instance:
+          id: "{{ instance_id }}"
           state: absent
+          final_snapshot_identifier: "{{ instance_id }}"
         register: result
 
       - assert:
           that:
             - result.changed
+            - "result.final_snapshot.db_instance_identifier == '{{ instance_id }}'"
 
-      - name: remove a snapshot without wait - idempotence
-        rds_snapshot:
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
-          state: absent
-          wait: yes
-        register: result
-
-      - assert:
-          that:
-            - not result.changed
-
-      - name: remove a snapshot with wait - idempotence
-        rds_snapshot:
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
-          state: absent
-          wait: yes
-        register: result
-
-      - assert:
-          that:
-            - not result.changed
-
-      - name: check snapshot is removed
+      - name: Check that snapshot exists
         rds_snapshot_info:
-          db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
+          db_snapshot_identifier: "{{ instance_id }}"
         register: result
 
       - assert:
           that:
-            - not result.snapshots
+            - "result.snapshots | length == 1"
+            - "result.snapshots.0.engine == 'mariadb'"
 
     always:
 
@@ -235,7 +277,7 @@
         rds_snapshot:
           db_snapshot_identifier: '{{ resource_prefix }}-test-snapshot'
           state: absent
-          wait: yes
+          wait: false
         ignore_errors: yes
 
       - name: Remove DB instance
@@ -243,4 +285,5 @@
           id: '{{ instance_id }}'
           state: absent
           skip_final_snapshot: True
+          wait: false
         ignore_errors: yes
