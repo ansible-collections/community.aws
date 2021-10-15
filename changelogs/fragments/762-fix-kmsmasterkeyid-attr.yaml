@@ -1,0 +1,2 @@
+minor_changes:
+- sqs_queue - add KmsMasterKeyId as boto3 attribute option for SSE (https://github.com/ansible-collections/community.aws/pull/762)
