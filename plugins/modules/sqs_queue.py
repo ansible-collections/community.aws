@@ -303,10 +303,10 @@ def create_or_update_sqs_queue(client, module):
 
     # Create a dict() to hold attributes that will be passed to boto3
     create_attributes = {}
-  
+
     if not queue_url:
         if is_fifo:
-            create_attributes['FifoQueue'] = True
+            create_attributes['FifoQueue'] = "True"
         if kmsMasterKeyId:
             create_attributes['KmsMasterKeyId'] = kmsMasterKeyId
         result['changed'] = True
