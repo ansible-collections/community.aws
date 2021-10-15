@@ -70,6 +70,16 @@ options:
     type: integer
     vars:
     - name: ansible_aws_ssm_timeout
+  bucket_sse_mode:
+    description: Server-side encryption mode to use for uploads on the S3 bucket used for file transfer.
+    choices: [ 'AES256', 'aws:kms' ]
+    required: false
+    vars:
+    - name: ansible_aws_ssm_bucket_sse_mode
+  bucket_sse_kms_key_id:
+    description: KMS key id to use when encrypting objects using C(bucket_sse_mode=aws:kms). Ignored otherwise.
+    vars:
+    - name: ansible_aws_ssm_bucket_sse_kms_key_id
 '''
 
 EXAMPLES = r'''
@@ -506,11 +516,13 @@ class Connection(ConnectionBase):
 
         return stderr
 
-    def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name):
+    def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name, extra_args={}):
         ''' Generate URL for get_object / put_object '''
         region_name = self.get_option('region') or 'us-east-1'
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
-        return client.generate_presigned_url(client_method, Params={'Bucket': bucket_name, 'Key': out_path}, ExpiresIn=3600, HttpMethod=http_method)
+        params = {'Bucket': bucket_name, 'Key': out_path}
+        params.update(extra_args)
+        return client.generate_presigned_url(client_method, Params=params, ExpiresIn=3600, HttpMethod=http_method)
 
     def _get_boto_client(self, service, region_name=None, profile_name=None):
         ''' Gets a boto3 client based on the STS token '''
@@ -554,14 +566,31 @@ class Connection(ConnectionBase):
 
         profile_name = self.get_option('profile')
 
+        put_args = dict()
+        put_headers = dict()
+        if self.get_option('bucket_sse_mode') and self.get_option('bucket_sse_mode') in {'AES256', 'aws:kms'}:
+            put_args['ServerSideEncryption'] = self.get_option('bucket_sse_mode')
+            put_headers['x-amz-server-side-encryption'] = self.get_option('bucket_sse_mode')
+            if self.get_option('bucket_sse_mode') == 'aws:kms' and self.get_option('bucket_sse_kms_key_id'):
+                put_args['SSEKMSKeyId'] = self.get_option('bucket_sse_kms_key_id')
+                put_headers['x-amz-server-side-encryption-aws-kms-key-id'] = self.get_option('bucket_sse_kms_key_id')
+        put_command_headers = ""
+
         if self.is_windows:
-            put_command = "Invoke-WebRequest -Method PUT -InFile '%s' -Uri '%s' -UseBasicParsing" % (
-                in_path, self._get_url('put_object', self.get_option('bucket_name'), s3_path, 'PUT', profile_name))
+            if put_args:
+                put_command_headers = "-Headers @{" + \
+                                      "; ".join(["'%s' = '%s'" % (h, v) for h, v in put_headers.items()]) + "} "
+            put_command = "Invoke-WebRequest -Method PUT %s-InFile '%s' -Uri '%s' -UseBasicParsing" % (
+                put_command_headers, in_path,
+                self._get_url('put_object', self.get_option('bucket_name'), s3_path, 'PUT', profile_name, put_args))
             get_command = "Invoke-WebRequest '%s' -OutFile '%s'" % (
                 self._get_url('get_object', self.get_option('bucket_name'), s3_path, 'GET', profile_name), out_path)
         else:
-            put_command = "curl --request PUT --upload-file '%s' '%s'" % (
-                in_path, self._get_url('put_object', self.get_option('bucket_name'), s3_path, 'PUT', profile_name))
+            if put_args:
+                put_command_headers = "".join(["-H '%s: %s' " % (h, v) for h, v in put_headers.items()])
+            put_command = "curl --request PUT %s--upload-file '%s' '%s'" % (
+                put_command_headers, in_path,
+                self._get_url('put_object', self.get_option('bucket_name'), s3_path, 'PUT', profile_name))
             get_command = "curl '%s' -o '%s'" % (
                 self._get_url('get_object', self.get_option('bucket_name'), s3_path, 'GET', profile_name), out_path)
 
@@ -572,7 +601,7 @@ class Connection(ConnectionBase):
                 client.download_fileobj(self.get_option('bucket_name'), s3_path, data)
         else:
             with open(to_bytes(in_path, errors='surrogate_or_strict'), 'rb') as data:
-                client.upload_fileobj(data, self.get_option('bucket_name'), s3_path)
+                client.upload_fileobj(data, self.get_option('bucket_name'), s3_path, put_args)
             (returncode, stdout, stderr) = self.exec_command(get_command, in_data=None, sudoable=False)
 
         # Remove the files from the bucket after they've been transferred
