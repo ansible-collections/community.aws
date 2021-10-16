@@ -258,7 +258,7 @@ def associate_ip_and_device(ec2, module, address, private_ip_address, device_id,
                     params['AllocationId'] = address['AllocationId']
                 else:
                     params['PublicIp'] = address['PublicIp']
-                res = ec2.associate_address(**params)
+                res = ec2.associate_address(aws_retry=True, **params)
             except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                 msg = "Couldn't associate Elastic IP address with instance '{0}'".format(device_id)
                 module.fail_json_aws(e, msg=msg)
