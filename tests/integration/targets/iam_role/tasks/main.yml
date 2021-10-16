@@ -33,6 +33,7 @@
       assume_role_policy_document: '{{ lookup("file", "deny-assume.json") }}'
   collections:
     - amazon.aws
+    - community.general
   block:
     # ===================================================================
     # Parameter Checks

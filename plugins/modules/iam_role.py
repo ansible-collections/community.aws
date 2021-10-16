@@ -254,7 +254,7 @@ def convert_friendly_names_to_arns(policy_names):
     if not any(not policy.startswith('arn:') for policy in policy_names):
         return policy_names
     allpolicies = {}
-    policies = _list_policies(client)
+    policies = _list_policies()
 
     for policy in policies:
         allpolicies[policy['PolicyName']] = policy['Arn']
@@ -455,7 +455,7 @@ def create_or_update_role():
     if role is None:
         role = create_basic_role(params)
 
-        if module.params.get('wait'):
+        if not module.check_mode and module.params.get('wait'):
             wait_iam_exists()
 
         changed = True
@@ -466,25 +466,25 @@ def create_or_update_role():
         changed |= update_role_max_session_duration(params, role)
         changed |= update_role_permissions_boundary(params, role)
 
-        if module.params.get('wait'):
+        if not module.check_mode and module.params.get('wait'):
             wait_iam_exists()
 
     if create_instance_profile:
         changed |= create_instance_profiles(params, role)
 
-        if module.params.get('wait'):
+        if not module.check_mode and module.params.get('wait'):
             wait_iam_exists()
 
     changed |= update_managed_policies(params, role, managed_policies, purge_policies)
 
-    if module.params.get('wait'):
+    if not module.check_mode and module.params.get('wait'):
         wait_iam_exists()
 
     # Get the role again
     if not role.get('MadeInCheckMode', False):
         role = get_role(params['RoleName'])
         role['AttachedPolicies'] = get_attached_policy_list(params['RoleName'])
-        role['tags'] = get_role_tags(client, module)
+        role['tags'] = get_role_tags()
 
     module.exit_json(
         changed=changed, iam_role=camel_dict_to_snake_dict(role, ignore_list=['tags']),
@@ -691,9 +691,9 @@ def main():
     state = module.params.get("state")
 
     if state == 'present':
-        create_or_update_role(client, module)
+        create_or_update_role()
     else:
-        destroy_role(client, module)
+        destroy_role()
 
 
 if __name__ == '__main__':

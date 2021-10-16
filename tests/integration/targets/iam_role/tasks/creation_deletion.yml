@@ -1,9 +1,5 @@
 ---
 - name: Try running some rapid fire create/delete tests
-  # We've previously seen issues with iam_role returning before creation's
-  # actually complete, if we think the issue's gone, let's try creating and
-  # deleting things in quick succession
-  when: not (standard_pauses | bool)
   block:
     - name: "Minimal IAM Role without instance profile (rapid)"
       iam_role:
