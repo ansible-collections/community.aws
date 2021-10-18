@@ -481,9 +481,7 @@ def create_or_update_role():
             wait_iam_exists()
 
     changed |= update_managed_policies(params, role, managed_policies, purge_policies)
-
-    if not module.check_mode and module.params.get('wait'):
-        wait_iam_exists()
+    wait_iam_exists()
 
     # Get the role again
     if not role.get('MadeInCheckMode', False):
