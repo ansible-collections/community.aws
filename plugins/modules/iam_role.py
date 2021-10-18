@@ -232,6 +232,11 @@ def _list_policies():
 
 
 def wait_iam_exists():
+    if module.check_mode:
+        return
+    if not module.params.get('wait'):
+        return
+
     role_name = module.params.get('name')
     wait_timeout = module.params.get('wait_timeout')
 
