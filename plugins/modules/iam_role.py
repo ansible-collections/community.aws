@@ -246,7 +246,7 @@ def wait_iam_exists():
         )
     except botocore.exceptions.WaiterError as e:
         module.fail_json_aws(e, msg='Timeout while waiting on IAM role creation')
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed while waiting on IAM role creation')
 
 
