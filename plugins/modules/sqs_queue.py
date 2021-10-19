@@ -290,7 +290,7 @@ def describe_queue(client, queue_url):
 
 def create_or_update_sqs_queue(client, module):
     is_fifo = (module.params.get('queue_type') == 'fifo')
-    kmsMasterKeyId = module.params.get('kms_master_key_id')
+    kms_master_key_id = module.params.get('kms_master_key_id')
     queue_name = get_queue_name(module, is_fifo)
     result = dict(
         name=queue_name,
@@ -307,8 +307,8 @@ def create_or_update_sqs_queue(client, module):
     if not queue_url:
         if is_fifo:
             create_attributes['FifoQueue'] = "True"
-        if kmsMasterKeyId:
-            create_attributes['KmsMasterKeyId'] = kmsMasterKeyId
+        if kms_master_key_id:
+            create_attributes['KmsMasterKeyId'] = kms_master_key_id
         result['changed'] = True
         if module.check_mode:
             return result
