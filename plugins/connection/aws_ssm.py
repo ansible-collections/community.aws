@@ -74,10 +74,12 @@ options:
     description: Server-side encryption mode to use for uploads on the S3 bucket used for file transfer.
     choices: [ 'AES256', 'aws:kms' ]
     required: false
+    version_added: 2.1.0
     vars:
     - name: ansible_aws_ssm_bucket_sse_mode
   bucket_sse_kms_key_id:
     description: KMS key id to use when encrypting objects using C(bucket_sse_mode=aws:kms). Ignored otherwise.
+    version_added: 2.1.0
     vars:
     - name: ansible_aws_ssm_bucket_sse_kms_key_id
 '''
