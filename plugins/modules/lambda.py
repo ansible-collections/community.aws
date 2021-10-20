@@ -319,17 +319,6 @@ def set_tag(client, module, tags, function):
 
     return changed
 
-def handle_zip(current_config):
-    func_kwargs = {}
-    if role_arn and current_config['Role'] != role_arn:
-        func_kwargs.update({'Role': role_arn})
-    if handler and current_config['Handler'] != handler:
-        func_kwargs.update({'Handler': handler})
-    return func_kwargs
-
-def handle_image(current_config):
-    func_kwargs = {}
-    return func_kwargs
 
 def main():
     argument_spec = dict(
@@ -357,7 +346,7 @@ def main():
     mutually_exclusive = [['zip_file', 's3_key'],
                           ['zip_file', 's3_bucket'],
                           ['zip_file', 's3_object_version'],
-                          ['image_uri', 'zip_file']
+                          ['image_uri', 'zip_file'],
                           ['image_uri', 'runtime'],
                           ['image_uri', 'handler'],
                           ['image_uri', 's3_key'],
@@ -426,15 +415,21 @@ def main():
         func_kwargs = {'FunctionName': name}
 
         # Update configuration if needed
+        if current_config['PackageType'] == 'Zip':
+            if handler and current_config['Handler'] != handler:
+                func_kwargs.update({'Handler': handler})
+            if runtime and current_config['Runtime'] != runtime:
+                func_kwargs.update({'Runtime': runtime})
 
+        if role_arn and current_config['Role'] != role_arn:
+            func_kwargs.update({'Role': role_arn})
         if description and current_config['Description'] != description:
             func_kwargs.update({'Description': description})
         if timeout and current_config['Timeout'] != timeout:
             func_kwargs.update({'Timeout': timeout})
         if memory_size and current_config['MemorySize'] != memory_size:
             func_kwargs.update({'MemorySize': memory_size})
-        if runtime and current_config['Runtime'] != runtime:
-            func_kwargs.update({'Runtime': runtime})
+        
         if (environment_variables is not None) and (current_config.get(
                 'Environment', {}).get('Variables', {}) != environment_variables):
             func_kwargs.update({'Environment': {'Variables': environment_variables}})
@@ -504,6 +499,10 @@ def main():
                     code_kwargs.update({'ZipFile': encoded_zip})
                 except IOError as e:
                     module.fail_json(msg=str(e), exception=traceback.format_exc())
+
+        elif image_uri:
+            if image_uri != current_code['ImageUri']:
+              code_kwargs.update({'ImageUri': image_uri})
 
         # Tag Function
         if tags is not None:
