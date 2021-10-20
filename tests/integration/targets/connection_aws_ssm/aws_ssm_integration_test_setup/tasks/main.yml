@@ -99,6 +99,12 @@
       wait_for_connection:
         delay: 360
 
+    - name: create a key
+      aws_kms:
+        alias: '{{ resource_prefix }}-kms'
+        tags:
+          ansible-test: '{{ resource_prefix }}'
+
     - name: Create S3 bucket
       s3_bucket:
         name: "{{resource_prefix}}-aws-ssm-s3"
