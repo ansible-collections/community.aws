@@ -174,6 +174,20 @@ EXAMPLES = r'''
         state: directory
 # Execution:  ansible-playbook win_file.yaml -i aws_ec2.yml
 # The playbook tasks will get executed on the instance ids returned from the dynamic inventory plugin using ssm connection.
+
+# Install a Nginx Package on Linux Instance; with specific SSE for file transfer
+- name: Install a Nginx Package
+  vars:
+    ansible_connection: aws_ssm
+    ansible_aws_ssm_bucket_name: nameofthebucket
+    ansible_aws_ssm_region: us-west-2
+    ansible_aws_ssm_bucket_sse_mode: 'aws:kms'
+    ansible_aws_ssm_bucket_sse_kms_key_id: alias/kms-key-alias
+  tasks:
+    - name: Install a Nginx Package
+      yum:
+        name: nginx
+        state: present
 '''
 
 import os
