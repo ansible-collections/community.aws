@@ -356,13 +356,10 @@ def main():
     required_together = [['s3_key', 's3_bucket'],
                          ['vpc_subnet_ids', 'vpc_security_group_ids']]
     
-    required_if = [['state', 'present', ['role']]]
-
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True,
                               mutually_exclusive=mutually_exclusive,
-                              required_together=required_together,
-                              required_if=required_if)
+                              required_together=required_together)
 
     name = module.params.get('name')
     state = module.params.get('state').lower()
@@ -387,6 +384,26 @@ def main():
     check_mode = module.check_mode
     changed = False
 
+    if state == 'present' and image_uri is None:
+        fail_tuple = []
+        if not role:
+            fail_tuple.append('role')
+        if not handler:
+            fail_tuple.append('handler')
+        if not runtime:
+            fail_tuple.append('runtime')
+
+        if len(fail_tuple) > 0:
+            module.fail_json(msg=f"state is present but all of the following are missing: {', '.join(fail_tuple)}")
+          
+    if state == 'present' and image_uri:
+        fail_tuple = []
+        if not role:
+            fail_tuple.append('role')
+
+        if len(fail_tuple) > 0:
+            module.fail_json(msg=f"state is present but all of the following are missing: {', '.join(fail_tuple)}")
+
     try:
         client = module.client('lambda', retry_decorator=AWSRetry.jittered_backoff())
     except (ClientError, BotoCoreError) as e:
@@ -402,6 +419,8 @@ def main():
 
     # Get function configuration if present, False otherwise
     current_function = get_current_function(client, name)
+
+
 
     # Update existing Lambda function
     if state == 'present' and current_function:
