@@ -319,6 +319,17 @@ def set_tag(client, module, tags, function):
 
     return changed
 
+def handle_zip(current_config):
+    func_kwargs = {}
+    if role_arn and current_config['Role'] != role_arn:
+        func_kwargs.update({'Role': role_arn})
+    if handler and current_config['Handler'] != handler:
+        func_kwargs.update({'Handler': handler})
+    return func_kwargs
+
+def handle_image(current_config):
+    func_kwargs = {}
+    return func_kwargs
 
 def main():
     argument_spec = dict(
@@ -331,6 +342,7 @@ def main():
         s3_bucket=dict(),
         s3_key=dict(no_log=False),
         s3_object_version=dict(),
+        image_uri=dict(),
         description=dict(default=''),
         timeout=dict(type='int', default=3),
         memory_size=dict(type='int', default=128),
@@ -344,12 +356,18 @@ def main():
 
     mutually_exclusive = [['zip_file', 's3_key'],
                           ['zip_file', 's3_bucket'],
-                          ['zip_file', 's3_object_version']]
+                          ['zip_file', 's3_object_version'],
+                          ['image_uri', 'zip_file']
+                          ['image_uri', 'runtime'],
+                          ['image_uri', 'handler'],
+                          ['image_uri', 's3_key'],
+                          ['image_uri', 's3_bucket'],
+                          ['image_uri', 's3_object_version']]
 
     required_together = [['s3_key', 's3_bucket'],
                          ['vpc_subnet_ids', 'vpc_security_group_ids']]
-
-    required_if = [['state', 'present', ['runtime', 'handler', 'role']]]
+    
+    required_if = [['state', 'present', ['role']]]
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True,
@@ -363,6 +381,7 @@ def main():
     role = module.params.get('role')
     handler = module.params.get('handler')
     s3_bucket = module.params.get('s3_bucket')
+    image_uri = module.params.get('image_uri')
     s3_key = module.params.get('s3_key')
     s3_object_version = module.params.get('s3_object_version')
     zip_file = module.params.get('zip_file')
@@ -400,16 +419,14 @@ def main():
 
         # Get current state
         current_config = current_function['Configuration']
+        current_code = current_function['Code']
         current_version = None
 
         # Update function configuration
         func_kwargs = {'FunctionName': name}
 
         # Update configuration if needed
-        if role_arn and current_config['Role'] != role_arn:
-            func_kwargs.update({'Role': role_arn})
-        if handler and current_config['Handler'] != handler:
-            func_kwargs.update({'Handler': handler})
+
         if description and current_config['Description'] != description:
             func_kwargs.update({'Description': description})
         if timeout and current_config['Timeout'] != timeout:
@@ -472,6 +489,7 @@ def main():
             # If S3 Object Version is given
             if s3_object_version:
                 code_kwargs.update({'S3ObjectVersion': s3_object_version})
+        
 
         # Compare local checksum, update remote code when different
         elif zip_file:
@@ -518,6 +536,10 @@ def main():
                     'S3Key': s3_key}
             if s3_object_version:
                 code.update({'S3ObjectVersion': s3_object_version})
+        elif image_uri:
+          # If function is a container image
+          code = {'ImageUri': image_uri}
+
         elif zip_file:
             # If function is stored in local zipfile
             try:
@@ -533,12 +555,14 @@ def main():
 
         func_kwargs = {'FunctionName': name,
                        'Publish': True,
-                       'Runtime': runtime,
                        'Role': role_arn,
                        'Code': code,
                        'Timeout': timeout,
                        'MemorySize': memory_size,
                        }
+
+        if runtime is not None:
+            func_kwargs.update({'Runtime': runtime})
 
         if description is not None:
             func_kwargs.update({'Description': description})
@@ -554,6 +578,10 @@ def main():
 
         if tracing_mode:
             func_kwargs.update({'TracingConfig': {'Mode': tracing_mode}})
+
+        # If Container Image
+        if image_uri:
+            func_kwargs.update({'PackageType': 'Image'})
 
         # If VPC configuration is given
         if vpc_subnet_ids:
