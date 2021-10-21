@@ -368,7 +368,7 @@ def main():
 
     required_together = [['s3_key', 's3_bucket'],
                          ['vpc_subnet_ids', 'vpc_security_group_ids']]
-    
+
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True,
                               mutually_exclusive=mutually_exclusive,
@@ -408,7 +408,7 @@ def main():
 
         if len(fail_tuple) > 0:
             module.fail_json(msg=f"state is present but all of the following are missing: {', '.join(fail_tuple)}")
-          
+
     if state == 'present' and image_uri:
         fail_tuple = []
         if not role:
@@ -461,7 +461,7 @@ def main():
             func_kwargs.update({'Timeout': timeout})
         if memory_size and current_config['MemorySize'] != memory_size:
             func_kwargs.update({'MemorySize': memory_size})
-        
+
         if (environment_variables is not None) and (current_config.get(
                 'Environment', {}).get('Variables', {}) != environment_variables):
             func_kwargs.update({'Environment': {'Variables': environment_variables}})
@@ -516,7 +516,6 @@ def main():
             # If S3 Object Version is given
             if s3_object_version:
                 code_kwargs.update({'S3ObjectVersion': s3_object_version})
-        
 
         # Compare local checksum, update remote code when different
         elif zip_file:
@@ -534,7 +533,7 @@ def main():
 
         elif image_uri:
             if image_uri != current_code['ImageUri']:
-              code_kwargs.update({'ImageUri': image_uri})
+                code_kwargs.update({'ImageUri': image_uri})
 
         # Tag Function
         if tags is not None:
@@ -568,8 +567,8 @@ def main():
             if s3_object_version:
                 code.update({'S3ObjectVersion': s3_object_version})
         elif image_uri:
-          # If function is a container image
-          code = {'ImageUri': image_uri}
+            # If function is a container image
+            code = {'ImageUri': image_uri}
 
         elif zip_file:
             # If function is stored in local zipfile
