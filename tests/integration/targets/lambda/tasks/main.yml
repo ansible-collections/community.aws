@@ -7,6 +7,7 @@
       region: '{{ aws_region }}'
   collections:
     - community.general
+    - community.docker
   block:
   # Preparation
   - name: create minimal lambda role
@@ -32,6 +33,39 @@
       format: zip
       path: '{{ output_dir }}/mini_lambda.py'
       dest: '{{ output_dir }}/mini_lambda.zip'
+  - name: Create ECR
+    ecs_ecr:
+      name: ansible/test
+    register: ecr_repo
+  - name: ecr docker get-authorization-token
+    shell: "aws ecr get-authorization-token"
+    register: ecr_command
+    no_log: yes
+  - set_fact:
+      ecr_authorization_data: "{{ (ecr_command.stdout | from_json).authorizationData[0] }}"
+    no_log: yes
+  - set_fact:
+      ecr_credentials: "{{ (ecr_authorization_data.authorizationToken | b64decode).split(':') }}"
+    no_log: yes
+  - name: Log into ECR registry and force re-authorization
+    docker_login:
+      registry_url: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
+      username: "{{ ecr_credentials[0] }}"
+      password: "{{ ecr_credentials[1] }}"
+      reauthorize: yes
+    no_log: yes
+  - name: Pull image
+    docker_image:
+      name: cirros:latest
+      source: pull
+  - name: Tag and Push
+    docker_image:
+      name: cirros:latest
+      repository: "{{ ecr_repo.repository.repositoryUri }}:whale"
+      push: yes
+      source: local
+    register: ecr_image
+
 
   # Parameter tests
   - name: test with no parameters
@@ -92,8 +126,47 @@
       - result.changed == False
       - '"parameters are required together" in result.msg'
 
-  # Prepare minimal Lambda
+  # Prepare container image Lambda
+  - name: Create Lambda
+    lambda:
+      name: '{{ lambda_funciton_name }}-image'
+      image_uri: "{{ ecr_image.image.RepoDigests[0] }}"
+      role: '{{ lambda_role_name }}'
+    register: result
+  - name: assert lambda was created
+    assert:
+      that:
+      - result is not failed
+      - result.configuration.package_type == "Image"
 
+  # Check idempotency of image lambda
+  - name: Create Lambda
+    lambda:
+      name: '{{ lambda_funciton_name }}-image'
+      image_uri: "{{ ecr_image.image.RepoDigests[0] }}"
+      role: '{{ lambda_role_name }}'
+    register: result
+  - name: assert lambda was not changed
+    assert:
+      that:
+      - result is not failed
+      - result.changed == False
+
+  # Test updating Lambda
+  - name: Create Lambda
+    lambda:
+      name: '{{ lambda_funciton_name }}-image'
+      image_uri: "{{ ecr_image.image.RepoDigests[0] }}"
+      role: '{{ lambda_role_name }}'
+      tracing_mode: Active
+    register: result
+  - name: assert that update succeeded
+    assert:
+      - result is not failed
+      - result.changed == True
+      - update_result.configuration.tracing_config.mode == 'Active'
+
+  # Prepare minimal Lambda
   - name: test state=present - upload the lambda
     lambda:
       name: '{{ lambda_function_name }}'
@@ -397,6 +470,11 @@
   - name: ensure function is absent at end of test
     lambda:
       name: '{{lambda_function_name}}'
+      state: absent
+    ignore_errors: true
+  - name: ensure function is absent at end of test
+    lambda:
+      name: '{{lambda_function_name}}-image'
       state: absent
     ignore_errors: true
   - name: ensure role has been removed at end of test
