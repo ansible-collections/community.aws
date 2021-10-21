@@ -67,6 +67,7 @@ options:
     description:
       - The Amazon ECR URI of the image to use.
     type: str
+    version_added: 2.1.0
   description:
     description:
       - A short, user-defined function description. Lambda does not use this value. Assign a meaningful description as you see fit.
