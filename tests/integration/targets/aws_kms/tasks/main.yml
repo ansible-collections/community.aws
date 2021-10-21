@@ -514,7 +514,7 @@
           - create_diff_kms.key_arn.endswith(create_kms.key_id)
           - create_diff_kms.key_arn.startswith("arn:aws")
           - create_diff_kms.key_usage == 'SIGN_VERIFY'
-          - create_diff_kms.customer_master_key_spec == 'SIGN_VERIFY'
+          - create_diff_kms.customer_master_key_spec == 'ECC_NIST_P256'
 
   always:
     # ============================================================
