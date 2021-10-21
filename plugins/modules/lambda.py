@@ -63,6 +63,10 @@ options:
     description:
       - The Amazon S3 object (the deployment package) version you want to upload.
     type: str
+  image_uri:
+    description:
+      - The Amazon ECR URI of the image to use.
+    type: str
   description:
     description:
       - A short, user-defined function description. Lambda does not use this value. Assign a meaningful description as you see fit.
@@ -156,6 +160,14 @@ EXAMPLES = r'''
     role: 'arn:aws:iam::987654321012:role/lambda_basic_execution'
     handler: 'hello_python.my_handler'
     tags: {}
+
+# Create Lambda with Container Image
+- name: Create Container Lambda
+  community.aws.lambda:
+    name: 'Lambda function'
+    state: present
+    role: 'arn:aws:iam::987654321012:role/lambda_basic_execution'
+    image_uri: 987654321012.dkr.ecr.us-east-1.amazonaws.com/docker/container@sha256:85620283b480a8c86c0e9748ca73b09482df04d03d8db9a2105600e8b9493604
 
 # Basic Lambda function deletion
 - name: Delete Lambda functions HelloWorld and ByeBye
