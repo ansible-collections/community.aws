@@ -511,7 +511,7 @@
           - create_diff_kms.key_id | length >= 36
           - not create_diff_kms.key_id.startswith("arn:aws")
           - '"key_arn" in create_diff_kms'
-          - create_diff_kms.key_arn.endswith(create_kms.key_id)
+          - create_diff_kms.key_arn.endswith(create_diff_kms.key_id)
           - create_diff_kms.key_arn.startswith("arn:aws")
           - create_diff_kms.key_usage == 'SIGN_VERIFY'
           - create_diff_kms.customer_master_key_spec == 'ECC_NIST_P256'
