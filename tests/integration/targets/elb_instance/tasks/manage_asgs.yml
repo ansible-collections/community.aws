@@ -1,7 +1,7 @@
 ---
 - name: Get ASG info
   ec2_asg_info:
-    name: "ansible-test-{{ tiny_prefix }}-elb$"
+    name: "{{ asg_name }}$"
   register: asg_info
 
 - name: Store Instance ID from ASG
@@ -26,7 +26,7 @@
 - assert:
     that:
     - remove_instance is successful
-    # - remove_instance is changed
+    - remove_instance is changed
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in remove_instance'
     - '"ec2_elbs" in remove_instance.ansible_facts'
@@ -103,8 +103,7 @@
 - assert:
     that:
     - remove_instance is successful
-    # XXX always returns the ELBs the ASG belongs to
-    # - remove_instance is not changed
+    - remove_instance is not changed
     # Check the real state
     - instance_asg not in elb_info_1.elbs[0].instances_inservice
     - instance_asg not in elb_info_2.elbs[0].instances_inservice
