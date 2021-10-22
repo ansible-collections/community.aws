@@ -14,7 +14,6 @@ version_added: 1.0.0
 short_description: Manage AWS Config aggregations across multiple accounts
 description:
     - Module manages AWS Config resources
-requirements: [ 'botocore', 'boto3' ]
 author:
     - "Aaron Smith (@slapula)"
 options:
@@ -127,22 +126,25 @@ def create_resource(client, module, params, result):
 
 
 def update_resource(client, module, params, result):
+    result['changed'] = False
+
     current_params = client.describe_configuration_aggregators(
         ConfigurationAggregatorNames=[params['ConfigurationAggregatorName']]
     )['ConfigurationAggregators'][0]
 
-    del current_params['ConfigurationAggregatorArn']
-    del current_params['CreationTime']
-    del current_params['LastUpdatedTime']
+    if params['AccountAggregationSources'] != current_params.get('AccountAggregationSources', []):
+       result['changed'] = True
 
-    if params != current_params:
+    if params['OrganizationAggregationSource'] != current_params.get('OrganizationAggregationSource', {}):
+       result['changed'] = True
+
+    if result['changed']:
         try:
             client.put_configuration_aggregator(
                 ConfigurationAggregatorName=params['ConfigurationAggregatorName'],
                 AccountAggregationSources=params['AccountAggregationSources'],
                 OrganizationAggregationSource=params['OrganizationAggregationSource']
             )
-            result['changed'] = True
             result['aggregator'] = camel_dict_to_snake_dict(resource_exists(client, module, params))
             return result
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -181,8 +183,8 @@ def main():
     params = {}
     if name:
         params['ConfigurationAggregatorName'] = name
+    params['AccountAggregationSources'] = []
     if module.params.get('account_sources'):
-        params['AccountAggregationSources'] = []
         for i in module.params.get('account_sources'):
             tmp_dict = {}
             if i.get('account_ids'):

@@ -158,7 +158,7 @@
         name: random_name
         state: present
         account_sources: []
-        organization_source: 
+        organization_source:
           all_aws_regions: true
           role_arn: "{{ config_iam_role.arn }}"
       register: output
@@ -168,7 +168,7 @@
       assert:
         that:
            - output.failed
-           - 'output.msg.startswith("missing required arguments: organization_source")'
+           - output.changed
 
     # ============================================================
     # Creation testing
