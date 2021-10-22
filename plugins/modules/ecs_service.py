@@ -132,6 +132,7 @@ options:
           - Forcabily delete the service. Required when deleting a service with >0 scale, or no target group.
         default: False
         type: bool
+        version_added: 2.1.0
     network_configuration:
         description:
           - Network configuration of the service. Only applicable for task definitions created with I(network_mode=awsvpc).
