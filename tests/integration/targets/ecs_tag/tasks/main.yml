@@ -92,21 +92,6 @@
         that:
           - taglist.changed == false
 
-    - name: cluster tags - List tags
-      ecs_tag:
-        cluster_name: "{{ resource_prefix}}"
-        resource: "{{ resource_prefix}}"
-        resource_type: cluster
-        state: list
-      register: taglist
-
-    - name: cluster tags - should have 2 tags
-      assert:
-        that:
-          - taglist.tags|list|length == 2
-          - taglist.failed == false
-          - taglist.changed == false
-
     - name: cluster tags - remove tag another
       ecs_tag:
         cluster_name: "{{resource_prefix}}"
@@ -248,21 +233,6 @@
         that:
           - taglist.changed == false
           - taglist.tags.Name == "task_definition-{{ resource_prefix }}"
-
-    - name: task_definition tags - retrieve all tags on a task_definition
-      ecs_tag:
-        cluster_name: "{{resource_prefix}}"
-        resource: "{{ecs_taskdefinition_creation.taskdefinition.family}}"
-        resource_type: task_definition
-        state: list
-      register: taglist
-
-    - name: task_definition tags - should have 1 tag
-      assert:
-        that:
-          - taglist.tags|list|length == 1
-          - taglist.failed == false
-          - taglist.changed == false
 
     - name: task_definition tags - remove task_definition tags
       ecs_tag:
