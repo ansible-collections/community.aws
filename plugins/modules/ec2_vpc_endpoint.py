@@ -31,14 +31,16 @@ options:
     version_added: 1.5.0
   vpc_endpoint_subnets:
     description:
-      - The list of subnets to attach to the endpoint (Works only with Interface and GatewayLoadBalancer type endpoint).
+      - The list of subnets to attach to the endpoint.
+      - Requires I(vpc_endpoint_type=GatewayLoadBalancer) or I(vpc_endpoint_type=Interface).
     required: false
     type: list
     elements: str
     version_added: 2.1.0
   vpc_endpoint_security_groups:
     description:
-      - The list of security groups to attach to the endpoint (Works only with Interface type endpoint).
+      - The list of security groups to attach to the endpoint.
+      - Requires I(vpc_endpoint_type=GatewayLoadBalancer) or I(vpc_endpoint_type=Interface).
     required: false
     type: list
     elements: str
