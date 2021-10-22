@@ -181,8 +181,10 @@ def describe_elb(connection, lb):
     return description
 
 
+@AWSRetry.jittered_backoff()
 def get_all_lb(connection):
-    return connection.describe_load_balancers(aws_retry=True)['LoadBalancerDescriptions']
+    paginator = connection.get_paginator('describe_load_balancers')
+    return paginator.paginate().build_full_result()['LoadBalancerDescriptions']
 
 
 def get_lb(connection, load_balancer_name):
