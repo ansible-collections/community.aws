@@ -133,10 +133,10 @@ def update_resource(client, module, params, result):
     )['ConfigurationAggregators'][0]
 
     if params['AccountAggregationSources'] != current_params.get('AccountAggregationSources', []):
-       result['changed'] = True
+        result['changed'] = True
 
     if params['OrganizationAggregationSource'] != current_params.get('OrganizationAggregationSource', {}):
-       result['changed'] = True
+        result['changed'] = True
 
     if result['changed']:
         try:
