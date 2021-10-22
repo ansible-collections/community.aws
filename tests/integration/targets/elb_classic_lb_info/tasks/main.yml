@@ -289,6 +289,17 @@
           - info.elbs|length==1
           - info.elbs[0].load_balancer_name == elb_name
 
+    # ============================================================
+
+    - name: get all load balancers
+      elb_classic_lb_info:
+        names: "{{ omit }}"
+      register: info
+
+    - assert:
+        that:
+          - info.elbs|length>0
+
   always:
 
     # ============================================================
