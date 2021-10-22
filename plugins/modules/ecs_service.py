@@ -1015,10 +1015,10 @@ def main():
                         task_definition = module.params['task_definition']
 
                     if module.params['propagate_tags'] and module.params['propagate_tags'] != existing['propagateTags']:
-                        module.fail_json(msg="It is not possible to enable propagation tags of an existing service")
+                        module.fail_json(msg="It is not currently supported to enable propagation tags of an existing service")
 
                     if module.params['tags'] and boto3_tag_list_to_ansible_dict(existing['tags']) != module.params['tags']:
-                        module.fail_json(msg="It is not possible to change tags of an existing service")
+                        module.fail_json(msg="It is not currently supported to change tags of an existing service")
 
                     # update required
                     response = service_mgr.update_service(module.params['name'],
