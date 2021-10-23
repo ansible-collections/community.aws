@@ -103,7 +103,7 @@ options:
               to an IA storage class.
             - If this parameter is absent, any existing lifecycle policy will not be affected.
         choices: ['None', '7', '14', '30', '60', '90']
-
+        version_added: 2.1.0
 
 extends_documentation_fragment:
 - amazon.aws.aws
