@@ -8,7 +8,7 @@ files:
   $modules/:
     authors: wimnat
     maintainers: $team_aws
-    ignore: erydo joshsouza nadirollo seiffert tedder willthames
+    ignore: erydo joshsouza nadirollo seiffert tedder willthames wimnat
     label: modules
   $modules/_aws_region_facts.py:
     authors: Sodki
@@ -30,6 +30,7 @@ files:
     authors: mjschultz nand0p
   $modules/_ec2_instance_facts.py:
     authors: michaeljs1990 wimnat
+    ignore: wimnat
   $modules/_ec2_lc_facts.py:
     authors: psykotox
   $modules/_ec2_placement_group_facts.py:
@@ -170,6 +171,7 @@ files:
     ignore: erydo nadirollo ryansb simplesteph
   $modules/ec2_instance_info.py:
     authors: michaeljs1990 wimnat
+    ignore: wimnat
   $modules/ec2_launch_template.py:
     authors: ryansb
     ignore: erydo nadirollo ryansb simplesteph
@@ -207,6 +209,7 @@ files:
     authors: Etherdaemon
   $modules/ec2_vpc_route_table.py:
     authors: erydo willthames wimnat
+    ignore: wimnat
   $modules/ec2_vpc_vpn.py:
     authors: s-hertel
     maintainers: jillr tremble
