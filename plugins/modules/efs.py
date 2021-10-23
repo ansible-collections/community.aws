@@ -770,7 +770,7 @@ def main():
         changed = connection.converge_file_system(name=name, tags=tags, purge_tags=purge_tags, targets=targets,
                                                   throughput_mode=throughput_mode, provisioned_throughput_in_mibps=provisioned_throughput_in_mibps) or changed
         if transition_to_ia:
-            changed = connection.update_lifecycle_policy(name, transition_to_ia)
+            changed |= connection.update_lifecycle_policy(name, transition_to_ia)
         result = first_or_default(connection.get_file_systems(CreationToken=name))
 
     elif state == 'absent':
