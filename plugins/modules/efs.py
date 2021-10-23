@@ -98,8 +98,10 @@ options:
         type: int
     transition_to_ia:
         description:
-            - How many days before objects transition to the lower-cost EFS Infrequent Access (IA) storage class. If set to None, any existing lifecyle policy will be removed, and objects will not transition to an IA storage class. If this parameter is absent or left empty, any existing lifecycle policy will not be affected.
-        default: not set
+            - How many days before objects transition to the lower-cost EFS Infrequent Access (IA) storage class.
+            - If set to the string C(None), any existing lifecyle policy will be removed, and objects will not transition
+              to an IA storage class.
+            - If this parameter is absent, any existing lifecycle policy will not be affected.
         choices: ['None', '7', '14', '30', '60', '90']
 
 
@@ -495,11 +497,11 @@ class EFSConnection(object):
             if transition_to_ia == 'None':
                 LifecyclePolicies = []
             else:
-                LifecyclePolicies = [{ 'TransitionToIA': 'AFTER_' + transition_to_ia + '_DAYS' }]
+                LifecyclePolicies = [{'TransitionToIA': 'AFTER_' + transition_to_ia + '_DAYS'}]
             if current_policies.get('LifecyclePolicies') != LifecyclePolicies:
                 response = self.connection.put_lifecycle_configuration(
                     FileSystemId=fs_id,
-                    LifecyclePolicies = LifecyclePolicies
+                    LifecyclePolicies=LifecyclePolicies,
                 )
                 changed = True
         return changed
