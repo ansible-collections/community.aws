@@ -39,6 +39,11 @@ base_lambda_config = {
     'Version': 1,
 }
 
+base_lambda_code = {
+    'RepositoryType': 'S3',
+    'Location': 'https://s3.amazonaws.com'
+}
+
 one_change_lambda_config = copy.copy(base_lambda_config)
 one_change_lambda_config['Timeout'] = 4
 two_change_lambda_config = copy.copy(one_change_lambda_config)
@@ -98,7 +103,7 @@ class TestLambdaModule(ModuleTestCase):
 
     @patch.object(lda, 'sha256sum')
     def test_update_lambda_if_code_changed(self, mock_sha256sum, client_mock):
-        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config}, code_change_lambda_config]
+        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config, 'Code': base_lambda_code}, code_change_lambda_config]
         mock_sha256sum.return_value = code_change_lambda_config['CodeSha256']
 
         with self.assertRaises(AnsibleExitJson) as exec_info:
@@ -114,7 +119,7 @@ class TestLambdaModule(ModuleTestCase):
         client_mock.return_value.update_function_code.assert_called_once_with(**update_kwargs)
 
     def test_update_lambda_if_config_changed(self, client_mock):
-        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config}, two_change_lambda_config]
+        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config, 'Code': base_lambda_code}, two_change_lambda_config]
 
         with self.assertRaises(AnsibleExitJson) as exec_info:
             set_module_args(two_change_module_args)
@@ -129,7 +134,7 @@ class TestLambdaModule(ModuleTestCase):
         client_mock.return_value.update_function_configuration.assert_called_once_with(**update_kwargs)
 
     def test_update_lambda_if_only_one_config_item_changed(self, client_mock):
-        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config}, one_change_lambda_config]
+        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config, 'Code': base_lambda_code}, one_change_lambda_config]
 
         with self.assertRaises(AnsibleExitJson) as exec_info:
             set_module_args(one_change_module_args)
@@ -144,7 +149,7 @@ class TestLambdaModule(ModuleTestCase):
         client_mock.return_value.update_function_configuration.assert_called_once_with(**update_kwargs)
 
     def test_update_lambda_if_added_environment_variable(self, client_mock):
-        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config}, base_lambda_config]
+        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config, 'Code': base_lambda_code}, base_lambda_config]
 
         with self.assertRaises(AnsibleExitJson) as exec_info:
             set_module_args(module_args_with_environment)
@@ -161,7 +166,7 @@ class TestLambdaModule(ModuleTestCase):
         self.assertEqual(update_kwargs['Environment']['Variables'], module_args_with_environment['environment_variables'])
 
     def test_dont_update_lambda_if_nothing_changed(self, client_mock):
-        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config}, base_lambda_config]
+        client_mock.return_value.get_function.side_effect = [{'Configuration': base_lambda_config, 'Code': base_lambda_code}, base_lambda_config]
 
         with self.assertRaises(AnsibleExitJson) as exec_info:
             set_module_args(base_module_args)
