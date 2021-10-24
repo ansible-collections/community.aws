@@ -162,8 +162,9 @@
     register: result
   - name: assert that update succeeded
     assert:
-      - result is not failed
-      - result.changed == True
+      that:
+      - update_result is not failed
+      - update_result.changed == True
       - update_result.configuration.tracing_config.mode == 'Active'
 
   # Prepare minimal Lambda
