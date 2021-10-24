@@ -468,6 +468,10 @@
       - result is not failed
 
   always:
+  - name: ensure ecr repo is absent
+    ecs_ecr:
+      name: ansible/test
+      state: absent
   - name: ensure function is absent at end of test
     lambda:
       name: '{{lambda_function_name}}'
