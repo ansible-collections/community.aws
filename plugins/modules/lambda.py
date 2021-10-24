@@ -440,7 +440,6 @@ def main():
 
         # Get current state
         current_config = current_function['Configuration']
-        current_code = current_function['Code']
         current_version = None
 
         # Update function configuration
@@ -506,6 +505,7 @@ def main():
                 module.fail_json_aws(e, msg="Trying to update lambda configuration")
 
         # Update code configuration
+        current_code = current_function['Code']
         code_kwargs = {'FunctionName': name, 'Publish': True}
 
         # Update S3 location
