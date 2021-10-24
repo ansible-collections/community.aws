@@ -48,18 +48,18 @@
       ecr_credentials: "{{ (ecr_authorization_data.authorizationToken | b64decode).split(':') }}"
     no_log: yes
   - name: Log into ECR registry and force re-authorization
-    docker_login:
+    community.docker.docker_login:
       registry_url: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
       username: "{{ ecr_credentials[0] }}"
       password: "{{ ecr_credentials[1] }}"
       reauthorize: yes
     no_log: yes
   - name: Pull image
-    docker_image:
+    community.docker.docker_image:
       name: cirros:latest
       source: pull
   - name: Tag and Push
-    docker_image:
+    community.docker.docker_image:
       name: cirros:latest
       repository: "{{ ecr_repo.repository.repositoryUri }}:whale"
       push: yes
