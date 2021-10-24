@@ -31,6 +31,7 @@ base_lambda_config = {
     'Role': 'arn:aws:iam::987654321012:role/lambda_basic_execution',
     'Handler': 'lambda_python.my_handler',
     'Description': 'this that the other',
+    'PackageType': 'Zip',
     'Timeout': 3,
     'MemorySize': 128,
     'Runtime': 'python2.7',
