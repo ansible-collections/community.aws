@@ -132,16 +132,6 @@
     assert:
       that:
         - new_rds_mysql_option_group.changed
-        - "'engine_name' in new_rds_mysql_option_group"
-        - new_rds_mysql_option_group.engine_name == "{{ engine_name }}"
-        - "'major_engine_version' in new_rds_mysql_option_group"
-        - new_rds_mysql_option_group.major_engine_version == "{{ major_engine_version }}"
-        - "'option_group_arn' in new_rds_mysql_option_group"
-        - "'option_group_description' in new_rds_mysql_option_group"
-        - new_rds_mysql_option_group.option_group_description == "{{ option_group_description }}"
-        - "'option_group_name' in new_rds_mysql_option_group"
-        - new_rds_mysql_option_group.option_group_name == "{{ option_group_name }}"
-        - "'options' in new_rds_mysql_option_group"
 
 
   - name: Create an RDS Mysql option group
