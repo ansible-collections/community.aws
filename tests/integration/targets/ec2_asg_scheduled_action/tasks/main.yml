@@ -1,14 +1,14 @@
 ---
-- module_defaults:
+- name: "ec2_asg_scheduled_action integration tests"
+  collections:
+    - amazon.aws
+    - community.aws
+  module_defaults:
     group/aws:
       aws_access_key: "{{ aws_access_key }}"
       aws_secret_key: "{{ aws_secret_key }}"
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
-
-    collections:
-      - amazon.aws
-
   block:
     - name: Find AMI to use
       ec2_ami_info:
