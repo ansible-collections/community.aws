@@ -53,8 +53,8 @@ options:
   recurrence:
     description:
       - Cron style schedule.
+      - Required when I(state=present).
     type: str
-    required: true
   min_size:
     description:
       - ASG min capacity.
@@ -222,14 +222,18 @@ def main():
         start_time=dict(default=None, type='str'),
         end_time=dict(default=None, type='str'),
         time_zone=dict(default=None, type='str'),
-        recurrence=dict(required=True, type='str'),
+        recurrence=dict(type='str'),
         min_size=dict(default=None, type='int'),
         max_size=dict(default=None, type='int'),
         desired_capacity=dict(default=None, type='int'),
         state=dict(default='present', choices=['present', 'absent'])
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=[['state', 'present', ['recurrence']]],
+        supports_check_mode=True
+    )
     client = module.client('autoscaling', retry_decorator=AWSRetry.jittered_backoff())
     current_actions = get_scheduled_actions()
     state = module.params.get('state')
