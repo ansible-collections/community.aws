@@ -332,11 +332,16 @@ class CloudFrontServiceManager:
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing streaming distribution")
 
+    # Split out paginator to allow for the backoff decorator to function
     @AWSRetry.jittered_backoff()
+    def _paginated_result(self, paginator_name, **params):
+        paginator = self.client.get_paginator(paginator_name)
+        results = paginator.paginate(**params).build_full_result()
+        return results
+
     def list_origin_access_identities(self):
         try:
-            paginator = self.client.get_paginator('list_cloud_front_origin_access_identities')
-            results = paginator.paginate().build_full_result()
+            results = self._paginated_result('list_cloud_front_origin_access_identities')
             origin_access_identity_list = results.get('CloudFrontOriginAccessIdentityList', {'Items': []})
 
             if len(origin_access_identity_list['Items']) > 0:
@@ -345,11 +350,9 @@ class CloudFrontServiceManager:
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing cloud front origin access identities")
 
-    @AWSRetry.jittered_backoff()
     def list_distributions(self, keyed=True):
         try:
-            paginator = self.client.get_paginator('list_distributions')
-            results = paginator.paginate().build_full_result()
+            results = self._paginated_result('list_distributions')
             distribution_list = results.get('DistributionList', {'Items': []})
 
             if len(distribution_list['Items']) > 0:
@@ -363,11 +366,9 @@ class CloudFrontServiceManager:
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing distributions")
 
-    @AWSRetry.jittered_backoff()
     def list_distributions_by_web_acl_id(self, web_acl_id):
         try:
-            paginator = self.client.get_paginator('list_distributions')
-            results = paginator.paginate(WebAclId=web_acl_id).build_full_result()
+            results = self._paginated_result('list_cloud_front_origin_access_identities', WebAclId=web_acl_id)
             distribution_list = results.get('DistributionList', {'Items': []})
 
             if len(distribution_list['Items']) > 0:
@@ -378,11 +379,9 @@ class CloudFrontServiceManager:
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing distributions by web acl id")
 
-    @AWSRetry.jittered_backoff()
     def list_invalidations(self, distribution_id):
         try:
-            paginator = self.client.get_paginator('list_invalidations')
-            results = paginator.paginate(DistributionId=distribution_id).build_full_result()
+            results = self._paginated_result('list_invalidations', DistributionId=distribution_id)
             invalidation_list = results.get('InvalidationList', {'Items': []})
 
             if len(invalidation_list['Items']) > 0:
@@ -391,11 +390,9 @@ class CloudFrontServiceManager:
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing invalidations")
 
-    @AWSRetry.jittered_backoff()
     def list_streaming_distributions(self, keyed=True):
         try:
-            paginator = self.client.get_paginator('list_streaming_distributions')
-            results = paginator.paginate().build_full_result()
+            results = self._paginated_result('list_streaming_distributions')
             streaming_distribution_list = results.get('StreamingDistributionList', {'Items': []})
 
             if len(streaming_distribution_list['Items']) > 0:
