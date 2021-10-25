@@ -38,12 +38,16 @@
       when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat" or ansible_distribution == "Amazon"
       register: install_plugin_redhat
 
-    - name: Fail if the plugin was not installed
-      fail:
-        msg: The distribution does not contain the required Session Manager Plugin
-      when:
-        - install_plugin_debian is skipped
-        - install_plugin_redhat is skipped
+    - block:
+        - name: Fail if the plugin was not installed
+          fail:
+            msg: The distribution does not contain the required Session Manager Plugin
+          when:
+            - install_plugin_debian is skipped
+            - install_plugin_redhat is skipped
+      always:
+        - debug:
+            var: ansible_distribution
 
     - name: Ensure IAM instance role exists
       iam_role:
