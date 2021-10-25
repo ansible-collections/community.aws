@@ -22,7 +22,8 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 DOCUMENTATION = r'''
-module: ec2_asg_scheduled_actions
+---
+module: ec2_asg_scheduled_action
 short_description: Create, modify and delete ASG scheduled scaling actions.
 description:
   - The module will create a new scheduled action when I(state=present) and no given action is found.
@@ -32,6 +33,7 @@ options:
   autoscaling_group_name:
     description:
       - The name of the autoscaling group to add a scheduled action to.
+    type: str
     required: true
   scheduled_action_name:
     description:
@@ -52,7 +54,7 @@ options:
     type: str
   recurrence:
     description:
-      - Cron style schedule.
+      - Cron style schedule to repeat the action on.
       - Required when I(state=present).
     type: str
   min_size:
@@ -70,6 +72,7 @@ options:
   state:
     description:
       - Create / update or delete scheduled action.
+    type: str
     required: false
     default: present
     choices: ['present', 'absent']
@@ -83,6 +86,7 @@ EXAMPLES = r'''
 # Create a scheduled action for a autoscaling group.
 - name: Create a minimal scheduled action for autoscaling group
   community.aws.ec2_asg_scheduled_action:
+    region: eu-west-1
     autoscaling_group_name: test_asg
     scheduled_action_name: test_scheduled_action
     start_time: 2021 October 25 08:00 UTC
@@ -93,6 +97,7 @@ EXAMPLES = r'''
 
 - name: Create a scheduled action for autoscaling group
   community.aws.ec2_asg_scheduled_action:
+    region: eu-west-1
     autoscaling_group_name: test_asg
     scheduled_action_name: test_scheduled_action
     start_time: 2021 October 25 08:00 UTC
@@ -107,15 +112,52 @@ EXAMPLES = r'''
 
 - name: Delete scheduled action
   community.aws.ec2_asg_scheduled_action:
+    region: eu-west-1
     autoscaling_group_name: test_asg
     scheduled_action_name: test_scheduled_action
     state: absent
 '''
 RETURN = r'''
-task:
-  description: The result of the present, and absent actions.
-  returned: success
-  type: dictionary
+scheduled_action_name:
+  description: The name of the scheduled action.
+  returned: when I(state=present)
+  type: str
+  sample: test_scheduled_action
+start_time:
+  description: Start time for the action.
+  returned: when I(state=present)
+  type: str
+  sample: '2021 October 25 08:00 UTC'
+end_time:
+  description: End time for the action.
+  returned: when I(state=present)
+  type: str
+  sample: '2021 October 25 08:00 UTC'
+time_zone:
+  description: The ID of the Amazon Machine Image used by the launch configuration.
+  returned: when I(state=present)
+  type: str
+  sample: Europe/London
+recurrence:
+  description: Cron style schedule to repeat the action on.
+  returned: when I(state=present)
+  type: str
+  sample: '40 22 * * 1-5'
+min_size:
+  description: ASG min capacity.
+  returned: when I(state=present)
+  type: int
+  sample: 1
+max_size:
+  description: ASG max capacity.
+  returned: when I(state=present)
+  type: int
+  sample: 2
+desired_capacity:
+  description: ASG desired capacity.
+  returned: when I(state=present)
+  type: int
+  sample: 1
 '''
 
 try:
@@ -179,11 +221,13 @@ def delete_scheduled_action(current_actions):
 
 
 def get_scheduled_actions():
+    params = dict(
+        AutoScalingGroupName=module.params.get('autoscaling_group_name'),
+        ScheduledActionNames=[module.params.get('scheduled_action_name')]
+    )
+
     try:
-        actions = client.describe_scheduled_actions(aws_retry=True,
-            AutoScalingGroupName=module.params.get('autoscaling_group_name'),
-            ScheduledActionNames=[module.params.get('scheduled_action_name')]
-        )
+        actions = client.describe_scheduled_actions(aws_retry=True, **params)
     except botocore.exceptions.ClientError as e:
         module.fail_json_aws(e)
 
