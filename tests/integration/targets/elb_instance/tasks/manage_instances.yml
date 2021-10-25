@@ -28,6 +28,9 @@
     that:
     - add_instance is successful
     - add_instance is changed
+    - '"updated_elbs" in add_instance'
+    - elb_name_1 in add_instance.updated_elbs
+    - elb_name_2 in add_instance.updated_elbs
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in add_instance'
     - '"ec2_elbs" in add_instance.ansible_facts'
@@ -58,6 +61,9 @@
     that:
     - add_instance is successful
     - add_instance is changed
+    - '"updated_elbs" in add_instance'
+    - elb_name_1 in add_instance.updated_elbs
+    - elb_name_2 in add_instance.updated_elbs
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in add_instance'
     - '"ec2_elbs" in add_instance.ansible_facts'
@@ -89,6 +95,9 @@
     that:
     - add_instance is successful
     - add_instance is not changed
+    - '"updated_elbs" in add_instance'
+    - elb_name_1 not in add_instance.updated_elbs
+    - elb_name_2 not in add_instance.updated_elbs
     # Check the real state didn't change
     - instance_a in elb_info_1.elbs[0].instances_inservice
     - instance_a in elb_info_2.elbs[0].instances_inservice
@@ -114,6 +123,9 @@
     that:
     - add_instance is successful
     - add_instance is not changed
+    - '"updated_elbs" in add_instance'
+    - elb_name_1 not in add_instance.updated_elbs
+    - elb_name_2 not in add_instance.updated_elbs
     # Check the real state didn't change
     - instance_a in elb_info_1.elbs[0].instances_inservice
     - instance_a in elb_info_2.elbs[0].instances_inservice
@@ -265,6 +277,9 @@
     that:
     - remove_instance is successful
     - remove_instance is changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 in remove_instance.updated_elbs
+    - elb_name_2 in remove_instance.updated_elbs
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in remove_instance'
     - '"ec2_elbs" in remove_instance.ansible_facts'
@@ -295,6 +310,9 @@
     that:
     - remove_instance is successful
     - remove_instance is changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 in remove_instance.updated_elbs
+    - elb_name_2 in remove_instance.updated_elbs
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in remove_instance'
     - '"ec2_elbs" in remove_instance.ansible_facts'
@@ -326,6 +344,9 @@
     that:
     - remove_instance is successful
     - remove_instance is not changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 not in remove_instance.updated_elbs
+    - elb_name_2 not in remove_instance.updated_elbs
     # Check the real state didn't change
     - instance_a not in elb_info_1.elbs[0].instances_inservice
     - instance_a not in elb_info_2.elbs[0].instances_inservice
@@ -351,6 +372,9 @@
     that:
     - remove_instance is successful
     - remove_instance is not changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 not in remove_instance.updated_elbs
+    - elb_name_2 not in remove_instance.updated_elbs
     # Check the real state didn't change
     - instance_a not in elb_info_1.elbs[0].instances_inservice
     - instance_a not in elb_info_2.elbs[0].instances_inservice
@@ -365,6 +389,19 @@
     - '{{ elb_name_2 }}'
     wait_timeout: 60
   register: add_instance
+
+- assert:
+    that:
+    - add_instance is successful
+    - add_instance is changed
+    - '"updated_elbs" in add_instance'
+    - elb_name_1 not in add_instance.updated_elbs
+    - elb_name_2 in add_instance.updated_elbs
+    # It really shouldn't be returning a fact here
+    - '"ansible_facts" in add_instance'
+    - '"ec2_elbs" in add_instance.ansible_facts'
+    - elb_name_1 not in add_instance.ansible_facts.ec2_elbs
+    - elb_name_2 in add_instance.ansible_facts.ec2_elbs
 
 - name: 'Remove an instance without specifying ELBs (check_mode)'
   elb_instance:
@@ -385,6 +422,9 @@
     that:
     - remove_instance is successful
     - remove_instance is changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 not in remove_instance.updated_elbs
+    - elb_name_2 in remove_instance.updated_elbs
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in remove_instance'
     - '"ec2_elbs" in remove_instance.ansible_facts'
@@ -412,6 +452,9 @@
     that:
     - remove_instance is successful
     - remove_instance is changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 not in remove_instance.updated_elbs
+    - elb_name_2 in remove_instance.updated_elbs
     # It really shouldn't be returning a fact here
     - '"ansible_facts" in remove_instance'
     - '"ec2_elbs" in remove_instance.ansible_facts'
@@ -440,6 +483,9 @@
     that:
     - remove_instance is successful
     - remove_instance is not changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 not in remove_instance.updated_elbs
+    - elb_name_2 not in remove_instance.updated_elbs
     # Check the real state didn't change
     - instance_b not in elb_info_1.elbs[0].instances_inservice
     - instance_b not in elb_info_2.elbs[0].instances_inservice
@@ -462,6 +508,9 @@
     that:
     - remove_instance is successful
     - remove_instance is not changed
+    - '"updated_elbs" in remove_instance'
+    - elb_name_1 not in remove_instance.updated_elbs
+    - elb_name_2 not in remove_instance.updated_elbs
     # Check the real state didn't change
     - instance_b not in elb_info_1.elbs[0].instances_inservice
     - instance_b not in elb_info_2.elbs[0].instances_inservice

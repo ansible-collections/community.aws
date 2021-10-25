@@ -14,8 +14,6 @@ short_description: De-registers or registers instances from EC2 ELBs
 description:
   - This module de-registers or registers an AWS EC2 instance from the ELBs
     that it belongs to.
-  - Returns fact "ec2_elbs" which is a list of elbs attached to the instance
-    if state=absent is passed as an argument.
   - Will be marked changed when called only if there are ELBs found to operate on.
 author: "John Jarvis (@jarv)"
 options:
@@ -27,13 +25,13 @@ options:
     type: str
   instance_id:
     description:
-      - EC2 Instance ID
+      - EC2 Instance ID.
     required: true
     type: str
   ec2_elbs:
     description:
-      - List of ELB names, required for registration.
-      - The ec2_elbs fact should be used if there was a previous de-register.
+      - List of ELB names
+      - Required when I(state=present).
     type: list
     elements: str
   enable_availability_zone:
@@ -68,6 +66,7 @@ pre_tasks:
     community.aws.elb_instance:
       instance_id: "{{ ansible_ec2_instance_id }}"
       state: absent
+    register: deregister_instances
     delegate_to: localhost
 roles:
   - myrole
@@ -75,11 +74,18 @@ post_tasks:
   - name: Instance Register
     community.aws.elb_instance:
       instance_id: "{{ ansible_ec2_instance_id }}"
-      ec2_elbs: "{{ item }}"
+      ec2_elbs: "{{ deregister_instances.updated_elbs }}"
       state: present
     delegate_to: localhost
-    loop: "{{ ec2_elbs }}"
 """
+
+RETURN = '''
+updated_elbs:
+  description: A list of ELB names that the instance has been added to or removed from.
+  returned: always
+  type: list
+  elements: str
+'''
 
 try:
     import botocore
@@ -103,6 +109,7 @@ class ElbManager:
         self.instance_id = instance_id
         self.lbs = self._get_instance_lbs(ec2_elbs)
         self.changed = False
+        self.updated_elbs = set()
 
     def deregister(self, wait, timeout):
         """De-register the instance from all ELBs and wait for the ELB
@@ -112,6 +119,8 @@ class ElbManager:
             instance_ids = [i['InstanceId'] for i in lb['Instances']]
             if self.instance_id not in instance_ids:
                 continue
+
+            self.updated_elbs.add(lb['LoadBalancerName'])
 
             if self.module.check_mode:
                 self.changed = True
@@ -142,6 +151,8 @@ class ElbManager:
             instance_ids = [i['InstanceId'] for i in lb['Instances']]
             if self.instance_id in instance_ids:
                 continue
+
+            self.updated_elbs.add(lb['LoadBalancerName'])
 
             if enable_availability_zone:
                 self.changed |= self._enable_availailability_zone(lb)
@@ -372,10 +383,15 @@ def main():
     elif module.params['state'] == 'absent':
         elb_man.deregister(wait, timeout)
 
+    # XXX We're not an _fact module we shouldn't be returning a fact and poluting
+    # the namespace
     ansible_facts = {'ec2_elbs': [lb['LoadBalancerName'] for lb in elb_man.lbs]}
-    ec2_facts_result = dict(changed=elb_man.changed, ansible_facts=ansible_facts)
 
-    module.exit_json(**ec2_facts_result)
+    module.exit_json(
+        changed=elb_man.changed,
+        ansible_facts=ansible_facts,
+        updated_elbs=list(elb_man.updated_elbs),
+    )
 
 
 if __name__ == '__main__':
