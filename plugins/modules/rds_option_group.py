@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: rds_option_group
 short_description: rds_option_group module
-version_added: 2.0.0
+version_added: 2.1.0
 description:
   - Manages the creation, modification, deletion of RDS option groups.
 author:
@@ -129,7 +129,6 @@ options:
     description: Whether to wait for the cluster to be available or deleted.
     type: bool
     default: True
-requirements: [ botocore, boto3 ]
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -448,6 +447,9 @@ def create_option_group(client, module):
         params['Tags'] = ansible_dict_to_boto3_tag_list(module.params.get('tags'))
     else:
         params['Tags'] = list()
+
+        if module.check_mode:
+            return changed
     try:
         client.create_option_group(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

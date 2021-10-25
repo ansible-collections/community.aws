@@ -10,10 +10,9 @@ DOCUMENTATION = r'''
 ---
 module: rds_option_group_info
 short_description: rds_option_group_info module
-version_added: 2.0.0
+version_added: 2.1.0
 description:
     - Gather information about RDS option groups.
-requirements: [ botocore, boto3 ]
 author: "Alina Buzachis (@alinabuzachis)"
 options:
     option_group_name:
