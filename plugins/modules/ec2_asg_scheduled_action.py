@@ -23,10 +23,11 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: ec2_asg_scheduled_actions
-short_description: Create, modify and delete AutoScaling Scheduled Actions.
+short_description: Create, modify and delete ASG scheduled scaling actions.
 description:
-  - Read the AWS documentation for Scheduled Actions
-    U(http://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-resource-as-scheduledaction.html
+  - The module will create a new scheduled action when I(state=present) and no given action is found.
+  - The module will update a new scheduled action when I(state=present) and the given action is found.
+  - The module will delete a new scheduled action when I(state=absent) and the given action is found.
 options:
   autoscaling_group_name:
     description:
