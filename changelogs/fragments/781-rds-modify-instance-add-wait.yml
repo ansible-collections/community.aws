@@ -1,0 +1,2 @@
+bugfixes:
+  - rds - Added wait to allow resource modification to complete (https://github.com/ansible-collections/community.aws/issues/781).
