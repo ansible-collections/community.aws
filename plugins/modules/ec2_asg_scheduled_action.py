@@ -166,6 +166,8 @@ try:
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+from dateutil.parser import parse as timedate_parse
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
@@ -200,10 +202,8 @@ def format_request():
 
 
 def delete_scheduled_action(current_actions):
-    changed = False
-
     if current_actions == []:
-        return changed
+        return False
 
     if module.check_mode:
         return True
@@ -218,7 +218,7 @@ def delete_scheduled_action(current_actions):
     except botocore.exceptions.ClientError as e:
         module.fail_json(msg=str(e))
 
-    return changed
+    return True
 
 
 def get_scheduled_actions():
@@ -239,12 +239,24 @@ def get_scheduled_actions():
 
 def put_scheduled_update_group_action(current_actions):
     changed = False
+    changes = dict()
     params = format_request()
 
     if len(current_actions) < 1:
         changed = True
-    elif current_actions != params:
-        changed = True
+    else:
+        for k,v in params.items():
+            # To correctly detect changes convert the start_time & end_time to datetime object
+            if k == "StartTime":
+                v = timedate_parse(v)
+            elif k == "EndTime":
+                v = timedate_parse(v)
+
+            if current_actions[0].get(k) != v:
+                changes[k] = v
+
+        if changes:
+            changed = True
 
     if module.check_mode:
         return changed
