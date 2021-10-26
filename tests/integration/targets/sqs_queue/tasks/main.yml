@@ -19,7 +19,6 @@
       assert:
         that:
           - create_result.changed
-          - create_
           - create_result.region == "{{ aws_region }}"
 
     always:
