@@ -19,6 +19,7 @@
       assert:
         that:
           - create_result.changed
+          - create_
           - create_result.region == "{{ aws_region }}"
 
     always:
@@ -121,6 +122,7 @@
             - create_result.changed
             - create_result.default_visibility_timeout == 899
             - create_result.delivery_delay == 899
+            - create_result.kms_master_key_id == "alias/aws/sqs"
             - create_result.maximum_message_size == 9008
             - create_result.message_retention_period == 899
             - create_result.receive_message_wait_time == 9
@@ -181,6 +183,7 @@
         assert:
           that:
             - create_result.changed
+
     always:
       - name: Cleaning up queue
         sqs_queue:
