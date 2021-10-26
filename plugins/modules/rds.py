@@ -1115,10 +1115,7 @@ def modify_db_instance(module, conn):
             # before we check whether to 'wait'
             result = await_resource(conn, new_instance, 'rebooting', module)
 
-    if module.params.get('wait'):
-        resource = await_resource(conn, result, 'available', module)
-    else:
-        resource = conn.get_db_instance(instance_name)
+    resource = await_resource(conn, result, 'available', module)
 
     # guess that this changed the DB, need a way to check
     module.exit_json(changed=True, instance=resource.get_data())
