@@ -295,7 +295,7 @@ def create_or_update_sqs_queue(client, module):
     result = dict(
         name=queue_name,
         region=module.params.get('region'),
-        changed=False
+        changed=False,
     )
 
     queue_url = get_queue_url(client, queue_name)

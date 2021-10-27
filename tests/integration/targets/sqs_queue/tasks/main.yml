@@ -54,7 +54,7 @@
           name: "{{ resource_prefix }}{{ 1000 | random }}"
           default_visibility_timeout: 900
           delivery_delay: 900
-          # Test SSE encryption
+          # Test SSE
           kms_master_key_id: alias/aws/sqs
           maximum_message_size: 9009
           message_retention_period: 900
@@ -93,6 +93,7 @@
             Statement:
               Effect: Allow
               Action: "*"
+          kms_master_key_id: alias/aws/sqs
         register: create_result
 
       - name: Assert nothing changed
