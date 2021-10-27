@@ -103,6 +103,7 @@ options:
               to an IA storage class.
             - If this parameter is absent, any existing lifecycle policy will not be affected.
         choices: ['None', '7', '14', '30', '60', '90']
+        type: str
         version_added: 2.1.0
 
 extends_documentation_fragment:
@@ -727,7 +728,7 @@ def main():
         tags=dict(required=False, type="dict", default={}),
         targets=dict(required=False, type="list", default=[], elements='dict'),
         performance_mode=dict(required=False, type='str', choices=["general_purpose", "max_io"], default="general_purpose"),
-        transition_to_ia=dict(required=False, choices=["", "None", "7", "14", "30", "60", "90"], default=None),
+        transition_to_ia=dict(required=False, type='str', choices=["None", "7", "14", "30", "60", "90"], default=None),
         throughput_mode=dict(required=False, type='str', choices=["bursting", "provisioned"], default=None),
         provisioned_throughput_in_mibps=dict(required=False, type='float'),
         wait=dict(required=False, type="bool", default=False),
