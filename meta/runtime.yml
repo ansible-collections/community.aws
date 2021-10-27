@@ -190,6 +190,7 @@ action_groups:
   - rds_instance_info
   - rds_param_group
   - rds_snapshot
+  - rds_instance_snapshot
   - rds_snapshot_info
   - rds_subnet_group
   - rds_option_group
