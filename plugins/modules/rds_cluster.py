@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # Copyright (c) 2018 Ansible Project
+# Copyright (c) 2021 Alina Buzachis (@alinabuzachis)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
@@ -757,13 +758,10 @@ def backtrack_cluster(params):
 
 
 def get_cluster(db_cluster_id):
-    result = None
-    try:
-        result = _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
-        q("result", result)
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-        module.fail_json_aws(e, msg="Failed to describe DB clusters")
-    return result
+  try:
+      return _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
+  except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+      module.fail_json_aws(e, msg="Failed to describe DB clusters")
 
 
 def changing_cluster_options(modify_params, current_cluster):

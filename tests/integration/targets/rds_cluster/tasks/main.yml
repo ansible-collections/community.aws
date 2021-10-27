@@ -10,7 +10,7 @@
     - amazon.aws
 
   block:
-  #- include_tasks: create_cluster.yml
+  - include_tasks: create_cluster.yml
   
   # Failing
   # - include_tasks: restore_cluster.yml
@@ -19,8 +19,8 @@
   #- include_tasks: promote_cluster.yml
 
   - include_tasks: create_cluster_vpc_sgs.yml
-  #- include_tasks: modify_cluster.yml
-  #- include_tasks: tag_cluster.yml
+  - include_tasks: modify_cluster.yml
+  - include_tasks: tag_cluster.yml
 
 
 
