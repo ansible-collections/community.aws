@@ -132,6 +132,63 @@
           - scheduled_action is successful
           - scheduled_action is not changed
 
+    ## Update minimal basic scheduled action
+    - name: Update basic scheduled_action - check_mode
+      ec2_asg_scheduled_action:
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        scheduled_action_name: "{{ resource_prefix }}-test"
+        start_time: 2022 October 25 08:00 UTC
+        recurrence: 40 22 * * 1-5
+        desired_capacity: 3
+        min_size: 3
+        state: present
+      register: scheduled_action
+      check_mode: True
+
+    - name: Check results - Update basic scheduled_action - check_mode
+      assert:
+        that:
+          - scheduled_action is successful
+          - scheduled_action is changed
+
+    - name: Update basic scheduled_action
+      ec2_asg_scheduled_action:
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        scheduled_action_name: "{{ resource_prefix }}-test"
+        start_time: 2022 October 25 08:00 UTC
+        recurrence: 40 22 * * 1-5
+        desired_capacity: 3
+        min_size: 3
+        state: present
+      register: scheduled_action
+
+    - name: Check results - Update basic scheduled_action
+      assert:
+        that:
+          - scheduled_action is successful
+          - scheduled_action is changed
+          - scheduled_action.autoscaling_group_name == "{{ resource_prefix }}-asg"
+          - scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test"
+          - scheduled_action.desired_capacity == 3
+          - scheduled_action.min_size == 3
+
+    - name: Update basic scheduled_action - idempotent
+      ec2_asg_scheduled_action:
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        scheduled_action_name: "{{ resource_prefix }}-test"
+        start_time: 2022 October 25 08:00 UTC
+        recurrence: 40 22 * * 1-5
+        desired_capacity: 3
+        min_size: 3
+        state: present
+      register: scheduled_action
+
+    - name: Check results - Update advanced scheduled_action - idempotent
+      assert:
+        that:
+          - scheduled_action is successful
+          - scheduled_action is not changed
+
     ## Create advanced scheduled action
     - name: Create advanced scheduled_action - check_mode
       ec2_asg_scheduled_action:

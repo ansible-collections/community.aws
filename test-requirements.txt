@@ -1,6 +1,7 @@
 botocore
 boto3
 boto
+python-dateutil # Used by ec2_asg_scheduled_action
 
 coverage==4.5.4
 placebo
