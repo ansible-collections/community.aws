@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster
-version_added: "2.0.0"
+version_added: "2.1.0"
 description:
     - Create, modify, and delete RDS clusters.
 extends_documentation_fragment:
@@ -37,6 +37,24 @@ options:
         description: Set to True to promote a read replica cluster.
         type: bool
         default: False
+    purge_cloudwatch_logs_exports:
+        description:
+          - Whether or not to disable Cloudwatch logs enabled for the DB cluster that are not provided in I(enable_cloudwatch_logs_exports).
+            Set I(enable_cloudwatch_logs_exports) to an empty list to disable all.
+        type: bool
+        default: true
+    purge_tags:
+        description:
+          - Whether or not to remove tags assigned to the DB cluster if not specified in the playbook. To remove all tags
+            set I(tags) to an empty dictionary in conjunction with this.
+        type: bool
+        default: true
+    purge_security_groups:
+        description:
+          - Set to False to retain any enabled security groups that aren't specified in the task and are associated with the cluster.
+          - Can be applied to I(vpc_security_group_ids)
+        type: bool
+        default: True
     wait:
         description: Whether to wait for the cluster to be available or deleted.
         type: bool
@@ -215,18 +233,6 @@ options:
         aliases:
           - maintenance_window
         type: str
-    purge_cloudwatch_logs_exports:
-        description:
-          - Whether or not to disable Cloudwatch logs enabled for the DB cluster that are not provided in I(enable_cloudwatch_logs_exports).
-            Set I(enable_cloudwatch_logs_exports) to an empty list to disable all.
-        type: bool
-        default: true
-    purge_tags:
-        description:
-          - Whether or not to remove tags assigned to the DB cluster if not specified in the playbook. To remove all tags
-            set I(tags) to an empty dictionary in conjunction with this.
-        type: bool
-        default: true
     replication_source_identifier:
         description:
           - The Amazon Resource Name (ARN) of the source DB instance or DB cluster if this DB cluster is created as a Read Replica.
@@ -307,10 +313,57 @@ options:
 
 EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
-- name: create minimal aurora cluster in default VPC and default subnet group
-  rds_cluster:
+- name: Create minimal aurora cluster in default VPC and default subnet group
+  community.aws.rds_cluster:
+    cluster_id: "{{ cluster_id }}"
+    engine: "aurora"
+    password: "{{ password }}"
+    username: "{{ username }}"
+
+- name: Add a new security group without purge
+  community.aws.rds_cluster:
+    id: "{{ cluster_id }}"
+    state: present
+    vpc_security_group_ids:
+      - sg-0be17ba10c9286b0b
+    purge_security_groups: false
+
+- name: Modify password
+  community.aws.rds_cluster:
+    id: "{{ cluster_id }}"
+    state: present
+    password: "{{ new_password }}"
+    force_update_password: true
+    apply_immediately: true
+
+- name: Rename the cluster
+  community.aws.rds_cluster:
     engine: aurora
-    cluster_id: ansible-test-cluster
+    password: "{{ password }}"
+    username: "{{ username }}"
+    cluster_id: "cluster-{{ resource_prefix }}"
+    new_cluster_id: "cluster-{{ resource_prefix }}-renamed"
+    apply_immediately: true
+
+- name: Delete aurora cluster without creating a final snapshot
+  community.aws.rds_cluster:
+    engine: aurora
+    password: "{{ password }}"
+    username: "{{ username }}"
+    cluster_id: "{{ cluster_id }}"
+    skip_final_snapshot: True
+    tags:
+      Name: "cluster-{{ resource_prefix }}"
+      Created_By: "Ansible_rds_cluster_integration_test"
+    state: absent
+
+- name: Restore cluster from source snapshot
+  community.aws.rds_cluster:
+    engine: aurora
+    password: "{{ password }}"
+    username: "{{ username }}"
+    cluster_id: "cluster-{{ resource_prefix }}-restored"
+    snapshot_identifier: "cluster-{{ resource_prefix }}-snapshot"
 '''
 
 RETURN = r'''
@@ -537,13 +590,12 @@ vpc_security_groups:
       sample: sg-12345678
 '''
 
-import q
+
 try:
     import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
@@ -653,10 +705,12 @@ def get_restore_cluster_options(params_dict):
         'VpcSecurityGroupIds', 'DeletionProtection', 'CopyTagsToSnapshot', 'Domain',
         'DomainIAMRoleName',
     ]
-    return dict((k, v) for k, v in params_dict.items() if k in restore_time_cluster and v is not None)
+    return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
 
 
-def get_rds_method_attribute_name(cluster, state, creation_source):
+def get_rds_method_attribute_name(cluster):
+    state = module.params['state']
+    creation_source = module.params['creation_source']
     method_name = None
     method_options_name = None
 
@@ -703,13 +757,16 @@ def backtrack_cluster(params):
 
 
 def get_cluster(db_cluster_id):
+    result = None
     try:
-        return _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
+        result = _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
+        q("result", result)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to describe DB clusters")
+    return result
 
 
-def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_logs):
+def changing_cluster_options(modify_params, current_cluster):
     changing_params = {}
     apply_immediately = modify_params.pop('ApplyImmediately')
     db_cluster_id = modify_params.pop('DBClusterIdentifier')
@@ -721,7 +778,7 @@ def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_lo
         current_cloudwatch_logs_export = set(current_cluster['EnabledCloudwatchLogsExports'])
 
         desired_cloudwatch_logs_configuration['EnableLogTypes'] = list(provided_cloudwatch_logs.difference(current_cloudwatch_logs_export))
-        if purge_cloudwatch_logs:
+        if module.params['purge_cloudwatch_logs_exports']:
             desired_cloudwatch_logs_configuration['DisableLogTypes'] = list(current_cloudwatch_logs_export.difference(provided_cloudwatch_logs))
         changing_params['CloudwatchLogsExportConfiguration'] = desired_cloudwatch_logs_configuration
 
@@ -741,11 +798,18 @@ def changing_cluster_options(modify_params, current_cluster, purge_cloudwatch_lo
         changing_params['OptionGroupName'] = option_group
 
     vpc_sgs = modify_params.pop('VpcSecurityGroupIds', None)
-    if (
-        vpc_sgs and vpc_sgs not in [sg['VpcSecurityGroupId']
-        for sg in current_cluster['VpcSecurityGroups']]
-    ):
-        changing_params['VpcSecurityGroupIds'] = vpc_sgs
+    if vpc_sgs:
+        desired_vpc_sgs = []
+        provided_vpc_sgs = set(vpc_sgs)
+        current_vpc_sgs = set([sg['VpcSecurityGroupId'] for sg in current_cluster['VpcSecurityGroups']])        
+        if module.params['purge_security_groups']:
+            desired_vpc_sgs = vpc_sgs
+        else:
+          if provided_vpc_sgs - current_vpc_sgs:
+              desired_vpc_sgs = list(provided_vpc_sgs | current_vpc_sgs)
+        
+        if desired_vpc_sgs:
+            changing_params['VpcSecurityGroupIds'] = desired_vpc_sgs
 
     for param in modify_params:
         if modify_params[param] != current_cluster[param]:
@@ -774,8 +838,7 @@ def ensure_present(cluster, parameters, method_name, method_options_name):
         else:
             modifiable_options = eval(method_options_name)(parameters,
                                                            force_update_password=module.params['force_update_password'])
-            modify_options = changing_cluster_options(modifiable_options, cluster,
-                                                      module.params['purge_cloudwatch_logs_exports'])
+            modify_options = changing_cluster_options(modifiable_options, cluster)
             if modify_options:
                 call_method(client, module, method_name, modify_options)
                 changed = True
@@ -790,7 +853,7 @@ def ensure_present(cluster, parameters, method_name, method_options_name):
         changed = True
 
     if module.params['promote'] and cluster.get('ReplicationSourceIdentifier'):
-        call_method(client, module, 'promote_read_replica_db_cluster', module.params['db_cluster_identifier'])
+        call_method(client, module, 'promote_read_replica_db_cluster', parameters={'DBClusterIdentifier': module.params['db_cluster_identifier']})
         changed = True
 
     return changed
@@ -802,16 +865,18 @@ def main():
 
     arg_spec = dict(
         state=dict(choices=['present', 'absent'], default='present'),
-        creation_source=dict(choices=['snapshot', 's3', 'cluster']),
+        creation_source=dict(type='str', choices=['snapshot', 's3', 'cluster']),
         force_update_password=dict(type='bool', default=False),
         promote=dict(type='bool', default=False),
         purge_cloudwatch_logs_exports=dict(type='bool', default=True),
         purge_tags=dict(type='bool', default=True),
         wait=dict(type='bool', default=True),
+        purge_security_groups=dict(type='bool', default=True),
     )
 
     parameter_options = dict(
         apply_immediately=dict(type='bool', default=False),
+        allocated_storage=dict(type='int'),
         availability_zones=dict(type='list', aliases=['zones', 'az']),
         backtrack_to=dict(),
         backtrack_window=dict(type='int'),
@@ -859,7 +924,7 @@ def main():
         tags=dict(type='dict'),
         use_earliest_time_on_point_in_time_unavailable=dict(type='bool'),
         use_latest_restorable_time=dict(type='bool'),
-        vpc_security_group_ids=dict(type='list')
+        vpc_security_group_ids=dict(type='list'),
 
     )
     arg_spec.update(parameter_options)
@@ -907,10 +972,9 @@ def main():
     parameters = arg_spec_to_rds_params(
         dict((k, module.params[k]) for k in module.params if k in parameter_options)
     )
-    
+
     changed = False
-    method_name, method_options_name = get_rds_method_attribute_name(cluster, module.params['state'],
-                                                                     module.params['creation_source'])
+    method_name, method_options_name = get_rds_method_attribute_name(cluster)
     if method_name:
       if method_name == 'delete_db_cluster':
           call_method(client, module, method_name, eval(method_options_name)(parameters))

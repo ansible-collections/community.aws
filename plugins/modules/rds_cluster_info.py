@@ -90,7 +90,7 @@ def cluster_info(client, module):
 def main():
     argument_spec = dict(
         db_cluster_identifier=dict(aliases=['cluster_id', 'id']),
-        filters=dict(type='dict')
+        filters=dict(type='dict'),
     )
 
     module = AnsibleAWSModule(
