@@ -37,7 +37,7 @@
       name: ansible/test
     register: ecr_repo
   - name: ecr docker get-authorization-token
-    shell: "aws ecr get-authorization-token"
+    shell: "aws ecr get-authorization-token --region us-east-1"
     register: ecr_command
     no_log: yes
   - set_fact:
@@ -47,22 +47,21 @@
       ecr_credentials: "{{ (ecr_authorization_data.authorizationToken | b64decode).split(':') }}"
     no_log: yes
   - name: Log into ECR registry and force re-authorization
-    community.docker.docker_login:
-      registry_url: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
+    containers.podman.podman_login:
+      registry: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
       username: "{{ ecr_credentials[0] }}"
       password: "{{ ecr_credentials[1] }}"
-      reauthorize: yes
-    no_log: yes
-  - name: Pull image
-    community.docker.docker_image:
-      name: cirros:latest
-      source: pull
-  - name: Tag and Push
-    community.docker.docker_image:
-      name: cirros:latest
-      repository: "{{ ecr_repo.repository.repositoryUri }}:whale"
+    register: ecr_login
+  - name: Build and push test image 
+    containers.podman.podman_image:
+      name: "{{ ecr_repo.repository.repositoryUri }}:latest"
+      path: ./files
+      pull: no
       push: yes
-      source: local
+      push_args:
+        format: v2s2
+  - name: Get image digest
+    shell: aws ecr describe-images --repository-name ansible/test --image-ids imageTag=latest --query imageDetails[*].imageDigest --output text
     register: ecr_image
 
 
@@ -129,7 +128,7 @@
   - name: Create Lambda
     lambda:
       name: '{{ lambda_funciton_name }}-image'
-      image_uri: "{{ ecr_image.image.RepoDigests[0] }}"
+      image_uri: "{{ ecr_repo.repository.repositoryUri }}@{{ ecr_image.stdout }}"
       role: '{{ lambda_role_name }}'
     register: result
   - name: assert lambda was created
@@ -142,7 +141,7 @@
   - name: Create Lambda
     lambda:
       name: '{{ lambda_funciton_name }}-image'
-      image_uri: "{{ ecr_image.image.RepoDigests[0] }}"
+      image_uri: "{{ ecr_repo.repository.repositoryUri }}@{{ ecr_image.stdout }}"
       role: '{{ lambda_role_name }}'
     register: result
   - name: assert lambda was not changed
@@ -155,7 +154,7 @@
   - name: Create Lambda
     lambda:
       name: '{{ lambda_funciton_name }}-image'
-      image_uri: "{{ ecr_image.image.RepoDigests[0] }}"
+      image_uri: "{{ ecr_repo.repository.repositoryUri }}@{{ ecr_image.stdout }}"
       role: '{{ lambda_role_name }}'
       tracing_mode: Active
     register: result
@@ -467,10 +466,15 @@
       - result is not failed
 
   always:
+  - name: ensure ecr repo is empty
+    command: "aws ecr batch-delete-image --repository-name ansible/test --image-ids imageTag=latest"
   - name: ensure ecr repo is absent
     ecs_ecr:
       name: ansible/test
       state: absent
+  - name: logout of podman registry
+    containers.podman.podman_logout:
+      registry: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
   - name: ensure function is absent at end of test
     lambda:
       name: '{{lambda_function_name}}'
