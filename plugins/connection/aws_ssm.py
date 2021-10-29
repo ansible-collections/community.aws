@@ -64,6 +64,11 @@ options:
     type: integer
     vars:
     - name: ansible_aws_ssm_retries
+  s3_addressing_style:
+    description: Style of S3 URL to use.
+    default: 'auto'
+    vars:
+    - name: ansible_aws_ssm_s3_addressing_style
   ssm_timeout:
     description: Connection timeout seconds.
     default: 60
@@ -540,7 +545,10 @@ class Connection(ConnectionBase):
 
         client = session.client(
             service,
-            config=Config(signature_version="s3v4")
+            config=Config(
+                signature_version="s3v4",
+                s3={'addressing_style': self.get_option('s3_addressing_style')}
+            )
         )
         return client
 
