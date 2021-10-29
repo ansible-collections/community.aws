@@ -72,7 +72,7 @@ options:
     type: dict
   kms_master_key_id:
     description:
-      - The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK.
+      - The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. Specifying a valid `KmsMasterKeyId` will enable encryption automatically.
     type: str
   kms_data_key_reuse_period_seconds:
     description:
@@ -117,7 +117,7 @@ delay_seconds:
     returned: always
     sample: 0
 kms_master_key_id:
-    description: The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK. Specifying a valid `KmsMasterKeyId` will enable encryption automatically.
+    description: The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK.
     type: str
     returned: if value exists
     sample: alias/MyAlias
