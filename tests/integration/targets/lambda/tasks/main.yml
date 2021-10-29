@@ -7,7 +7,6 @@
       region: '{{ aws_region }}'
   collections:
     - community.general
-    - community.docker
   block:
   # Preparation
   - name: create minimal lambda role
