@@ -468,8 +468,7 @@
       name: ansible/test
       state: absent
   - name: logout of podman registry
-    containers.podman.podman_logout:
-      registry: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
+    command: podman logout "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
   - name: ensure function is absent at end of test
     lambda:
       name: '{{lambda_function_name}}'
