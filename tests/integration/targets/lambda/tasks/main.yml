@@ -44,7 +44,6 @@
       AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
       AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
       AWS_DEFAULT_REGION: "{{ aws_region }}"
-    no_log: yes
   - set_fact:
       ecr_authorization_data: "{{ (ecr_command.stdout | from_json).authorizationData[0] }}"
     no_log: yes
