@@ -37,8 +37,13 @@
       name: ansible/test
     register: ecr_repo
   - name: ecr docker get-authorization-token
-    shell: "aws ecr get-authorization-token --region us-east-1"
+    command: "aws ecr get-authorization-token --region {{ aws_region }}"
     register: ecr_command
+    environment:
+      AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+      AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      AWS_DEFAULT_REGION: "{{ aws_region }}"
     no_log: yes
   - set_fact:
       ecr_authorization_data: "{{ (ecr_command.stdout | from_json).authorizationData[0] }}"
@@ -56,8 +61,13 @@
   - name: Push Image
     command: podman push {{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}/ansible/test:latest
   - name: Get image digest
-    shell: aws ecr describe-images --repository-name ansible/test --image-ids imageTag=latest --query imageDetails[*].imageDigest --output text
+    command: aws ecr describe-images --repository-name ansible/test --image-ids imageTag=latest --query imageDetails[*].imageDigest --output text
     register: ecr_image
+    environment:
+      AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+      AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      AWS_DEFAULT_REGION: "{{ aws_region }}"
 
 
   # Parameter tests
@@ -462,7 +472,12 @@
 
   always:
   - name: ensure ecr repo is empty
-    command: "aws ecr batch-delete-image --repository-name ansible/test --image-ids imageTag=latest"
+    command: "aws ecr batch-delete-image --repository-name ansible/test --image-ids imageTag=latest --region {{ aws_region }}"
+    environment:
+      AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+      AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+      AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+      AWS_DEFAULT_REGION: "{{ aws_region }}"
   - name: ensure ecr repo is absent
     ecs_ecr:
       name: ansible/test
