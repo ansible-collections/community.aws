@@ -47,19 +47,14 @@
       ecr_credentials: "{{ (ecr_authorization_data.authorizationToken | b64decode).split(':') }}"
     no_log: yes
   - name: Log into ECR registry and force re-authorization
-    containers.podman.podman_login:
-      registry: "{{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}"
-      username: "{{ ecr_credentials[0] }}"
-      password: "{{ ecr_credentials[1] }}"
-    register: ecr_login
-  - name: Build and push test image 
-    containers.podman.podman_image:
-      name: "{{ ecr_repo.repository.repositoryUri }}:latest"
-      path: ./files
-      pull: no
-      push: yes
-      push_args:
-        format: v2s2
+    command: podman login --username {{ ecr_credentials[0] }} --password {{ ecr_credentials[1] }} {{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}
+    no_log: yes
+  - name: Build Container Image
+    command: podman build -f ./files/Dockerfile -t ansible/test:latest
+  - name: Tag Image
+    command: podman tag ansible/test:latest {{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}/ansible/test:latest
+  - name: Push Image
+    command: podman push {{ ecr_authorization_data.proxyEndpoint.rpartition('//')[2] }}/ansible/test:latest
   - name: Get image digest
     shell: aws ecr describe-images --repository-name ansible/test --image-ids imageTag=latest --query imageDetails[*].imageDigest --output text
     register: ecr_image

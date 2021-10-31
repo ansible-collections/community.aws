@@ -3,6 +3,5 @@ integration_tests_dependencies:
 - ansible.windows
 - community.crypto
 - community.general
-- containers.podman
 unit_tests_dependencies:
 - amazon.aws >= 2.0.0
