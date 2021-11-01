@@ -496,6 +496,9 @@ def create_block_device_meta(module, volume):
     if 'iops' in volume:
         return_object['Ebs']['Iops'] = volume.get('iops')
 
+    if 'throughput' in volume:
+        return_object['Ebs']['Throughput'] = volume.get('throughput')
+
     if 'encrypted' in volume:
         return_object['Ebs']['Encrypted'] = volume.get('encrypted')
 
