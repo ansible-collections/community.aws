@@ -76,7 +76,7 @@ EXAMPLES = r'''
 
 RETURN = r'''
 allocated_storage:
-  description: How much storage is allocated in GB.
+  description: Specifies the allocated storage size in gibibytes (GiB).
   returned: always
   type: int
   sample: 20
@@ -85,68 +85,58 @@ availability_zone:
   returned: always
   type: str
   sample: us-west-2a
-db_instance_identifier:
-  description: Database from which the snapshot was created.
+cluster_create_time:
+  description: Specifies the time when the DB cluster was created, in Universal Coordinated Time (UTC).
+  returned: always
+  type: str
+  sample: '2019-06-15T10:15:56.221000+00:00'
+db_cluster_identifier:
+  description: Specifies the DB cluster identifier of the DB cluster that this DB cluster snapshot was created from.
   returned: always
   type: str
   sample: ansible-test-16638696
-db_snapshot_arn:
+db_cluster_snapshot_arn:
   description: Amazon Resource Name for the snapshot.
   returned: always
   type: str
   sample: arn:aws:rds:us-west-2:123456789012:snapshot:ansible-test-16638696-test-snapshot
-db_snapshot_identifier:
-  description: Name of the snapshot.
+db_cluster_snapshot_identifier:
+  description: Specifies the identifier for the DB cluster snapshot.
   returned: always
   type: str
   sample: ansible-test-16638696-test-snapshot
-dbi_resource_id:
-  description: The identifier for the source DB instance, which can't be changed and which is unique to an AWS Region.
-  returned: always
-  type: str
-  sample: db-MM4P2U35RQRAMWD3QDOXWPZP4U
-encrypted:
-  description: Whether the snapshot is encrypted.
-  returned: always
-  type: bool
-  sample: false
 engine:
-  description: Engine of the database from which the snapshot was created.
+  description: Specifies the name of the database engine for this DB cluster snapshot.
   returned: always
   type: str
-  sample: mariadb
+  sample: "aurora"
+engine_mode:
+  description: Provides the engine mode of the database engine for this DB cluster snapshot.
+  returned: always
+  type: str
+  sample: "5.6.mysql_aurora.1.22.5"
 engine_version:
-  description: Version of the database from which the snapshot was created.
+  description: Version of the cluster from which the snapshot was created.
   returned: always
   type: str
-  sample: 10.2.21
+  sample: "5.6.mysql_aurora.1.22.5"
 iam_database_authentication_enabled:
   description: Whether IAM database authentication is enabled.
   returned: always
   type: bool
   sample: false
-instance_create_time:
-  description: Creation time of the instance from which the snapshot was created.
-  returned: always
-  type: str
-  sample: '2019-06-15T10:15:56.221000+00:00'
 license_model:
-  description: License model of the database.
+  description: Provides the license model information for this DB cluster snapshot.
   returned: always
   type: str
   sample: general-public-license
 master_username:
-  description: Master username of the database.
+  description: Provides the master username for this DB cluster snapshot.
   returned: always
   type: str
   sample: test
-option_group_name:
-  description: Option group of the database.
-  returned: always
-  type: str
-  sample: default:mariadb-10-2
 percent_progress:
-  description: How much progress has been made taking the snapshot. Will be 100 for an available snapshot.
+  description: Specifies the percentage of the estimated data that has been transferred.
   returned: always
   type: int
   sample: 100
@@ -155,13 +145,8 @@ port:
   returned: always
   type: int
   sample: 3306
-processor_features:
-  description: List of processor features of the database.
-  returned: always
-  type: list
-  sample: []
 snapshot_create_time:
-  description: Creation time of the snapshot.
+  description: Provides the time when the snapshot was taken, in Universal Coordinated Time (UTC).
   returned: always
   type: str
   sample: '2019-06-15T10:46:23.776000+00:00'
@@ -171,15 +156,20 @@ snapshot_type:
   type: str
   sample: manual
 status:
-  description: Status of the snapshot.
+  description: Specifies the status of this DB cluster snapshot.
   returned: always
   type: str
   sample: available
-storage_type:
-  description: Storage type of the database.
+storage_encrypted:
+  description: Specifies whether the DB cluster snapshot is encrypted.
   returned: always
-  type: str
-  sample: gp2
+  type: bool
+  sample: false
+tag_list:
+  description: A list of tags.
+  returned: always
+  type: list
+  sample: []
 tags:
   description: Tags applied to the snapshot.
   returned: always
@@ -274,7 +264,7 @@ def main():
     global client
     global module
 
-    argument_spec=dict(
+    argument_spec = dict(
         state=dict(choices=['present', 'absent'], default='present'),
         db_snapshot_identifier=dict(aliases=['id', 'snapshot_id'], required=True),
         db_cluster_identifier=dict(aliases=['cluster_id']),
