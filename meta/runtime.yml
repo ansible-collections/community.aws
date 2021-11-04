@@ -17,6 +17,7 @@ action_groups:
   - aws_config_delivery_channel
   - aws_config_recorder
   - aws_config_rule
+  - aws_direct_connect_confirm_connection
   - aws_direct_connect_connection
   - aws_direct_connect_gateway
   - aws_direct_connect_link_aggregation_group
@@ -127,6 +128,7 @@ action_groups:
   - efs
   - efs_facts
   - efs_info
+  - efs_tag
   - elasticache
   - elasticache_facts
   - elasticache_info
