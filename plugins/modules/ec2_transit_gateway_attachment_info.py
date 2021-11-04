@@ -166,7 +166,7 @@ class AnsibleEc2TgwAttachmentInfo(object):
         try:
             response = self._connection.describe_transit_gateway_attachments(
                 TransitGatewayAttachmentIds=transit_gateway_attachment_ids, Filters=filters)
-        except is_boto3_error_code('InvalidTransitGatewayID.NotFound'):
+        except is_boto3_error_code('InvalidTransitGatewayAttachmentID.NotFound'):
             self._results['transit_gateway_attachments'] = []
             return
 
