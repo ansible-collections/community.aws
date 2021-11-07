@@ -23,16 +23,27 @@ options:
       - Name of the S3 bucket.
     required: true
     type: str
+  abort_incomplete_multipart_upload_days:
+    description:
+      - Specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload. 
   expiration_date:
     description:
       - Indicates the lifetime of the objects that are subject to the rule by the date they will expire.
       - The value must be ISO-8601 format, the time must be midnight and a GMT timezone must be specified.
+      - This cannot be specified with C(expire_object_delete_marker)
     type: str
   expiration_days:
     description:
       - Indicates the lifetime, in days, of the objects that are subject to the rule.
       - The value must be a non-zero positive integer.
+      - This cannot be specified with C(expire_object_delete_marker)
     type: int
+  expire_object_delete_marker:
+    description:
+      - Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions. 
+      - If set to true, the delete marker will be expired; if set to false the policy takes no action. 
+      - This cannot be specified with C(expiration_days) or C(expiration_date).
+    type: bool
   prefix:
     description:
       - Prefix identifying one or more objects to which the rule applies.
@@ -250,8 +261,10 @@ def fetch_rules(client, module, name):
 
 def build_rule(client, module):
     name = module.params.get("name")
+    abort_incomplete_multipart_upload_days = module.params.get("abort_incomplete_multipart_upload_days")
     expiration_date = parse_date(module.params.get("expiration_date"))
     expiration_days = module.params.get("expiration_days")
+    expire_object_delete_marker = module.params.get("expire_object_delete_marker")
     noncurrent_version_expiration_days = module.params.get("noncurrent_version_expiration_days")
     noncurrent_version_transition_days = module.params.get("noncurrent_version_transition_days")
     noncurrent_version_transitions = module.params.get("noncurrent_version_transitions")
@@ -268,11 +281,19 @@ def build_rule(client, module):
     rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
     if rule_id is not None:
         rule['ID'] = rule_id
+        
+    if abort_incomplete_multipart_upload_days:
+        rule['AbortIncompleteMultipartUpload'] = {
+            'DaysAfterInitiation': abort_incomplete_multipart_upload_days
+        }
+        
     # Create expiration
     if expiration_days is not None:
         rule['Expiration'] = dict(Days=expiration_days)
     elif expiration_date is not None:
         rule['Expiration'] = dict(Date=expiration_date.isoformat())
+    elif expire_object_delete_marker is not None:
+        rule['Expiration'] = dict(ExpiredObjectDeleteMarker=expire_object_delete_marker)
 
     if noncurrent_version_expiration_days is not None:
         rule['NoncurrentVersionExpiration'] = dict(NoncurrentDays=noncurrent_version_expiration_days)
