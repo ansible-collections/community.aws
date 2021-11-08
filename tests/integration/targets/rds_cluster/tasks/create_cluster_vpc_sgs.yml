@@ -149,9 +149,9 @@
 
   - assert:
       that:
-        - result.changed
-        - "result.db_cluster_identifier == '{{ cluster_id }}'"
-        - "result.vpc_security_groups | selectattr('status', 'in', ['active', 'adding']) | list | length == 1"
+        - _result_create_db_cluster.changed
+        - "_result_create_db_cluster.db_cluster_identifier == '{{ cluster_id }}'"
+        - "_result_create_db_cluster.vpc_security_groups | selectattr('status', 'in', ['active', 'adding']) | list | length == 1"
 
   always:
   - name: Remove security groups
