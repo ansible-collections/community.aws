@@ -326,7 +326,7 @@
     - assert:
         that:
           - output is not changed
-          
+
   # ============================================================
     - name: Create a lifecycle policy, with abort_incomplete_multipart_upload
       s3_lifecycle:
@@ -352,7 +352,7 @@
           - output is not changed
 
   # ============================================================
-    - name: Create a lifecycle policy, with expired_object_delete_marker 
+    - name: Create a lifecycle policy, with expired_object_delete_marker
       s3_lifecycle:
         name: '{{ bucket_name }}'
         expire_object_delete_marker: True

@@ -25,7 +25,8 @@ options:
     type: str
   abort_incomplete_multipart_upload_days:
     description:
-      - Specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload. 
+      - Specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload.
+    type: int
   expiration_date:
     description:
       - Indicates the lifetime of the objects that are subject to the rule by the date they will expire.
@@ -40,8 +41,8 @@ options:
     type: int
   expire_object_delete_marker:
     description:
-      - Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions. 
-      - If set to true, the delete marker will be expired; if set to false the policy takes no action. 
+      - Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions.
+      - If set to true, the delete marker will be expired; if set to false the policy takes no action.
       - This cannot be specified with C(expiration_days) or C(expiration_date).
     type: bool
   prefix:
@@ -281,12 +282,12 @@ def build_rule(client, module):
     rule = dict(Filter=dict(Prefix=prefix), Status=status.title())
     if rule_id is not None:
         rule['ID'] = rule_id
-        
+
     if abort_incomplete_multipart_upload_days:
         rule['AbortIncompleteMultipartUpload'] = {
             'DaysAfterInitiation': abort_incomplete_multipart_upload_days
         }
-        
+
     # Create expiration
     if expiration_days is not None:
         rule['Expiration'] = dict(Days=expiration_days)
@@ -546,8 +547,10 @@ def main():
     s3_storage_class = ['glacier', 'onezone_ia', 'standard_ia', 'intelligent_tiering', 'deep_archive']
     argument_spec = dict(
         name=dict(required=True, type='str'),
+        abort_incomplete_multipart_upload_days=dict(type='int'),
         expiration_days=dict(type='int'),
         expiration_date=dict(),
+        expire_object_delete_marker=dict(type='bool'),
         noncurrent_version_expiration_days=dict(type='int'),
         noncurrent_version_storage_class=dict(default='glacier', type='str', choices=s3_storage_class),
         noncurrent_version_transition_days=dict(type='int'),
@@ -567,7 +570,7 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               mutually_exclusive=[
-                                  ['expiration_days', 'expiration_date'],
+                                  ['expiration_days', 'expiration_date', 'expire_object_delete_marker'],
                                   ['expiration_days', 'transition_date'],
                                   ['transition_days', 'transition_date'],
                                   ['transition_days', 'expiration_date'],
@@ -584,8 +587,10 @@ def main():
 
     if state == 'present' and module.params["status"] == "enabled":  # allow deleting/disabling a rule by id/prefix
 
-        required_when_present = ('expiration_date', 'expiration_days', 'transition_date',
-                                 'transition_days', 'transitions', 'noncurrent_version_expiration_days',
+        required_when_present = ('abort_incomplete_multipart_upload_days',
+                                 'expiration_date', 'expiration_days', 'expire_object_delete_marker',
+                                 'transition_date', 'transition_days', 'transitions',
+                                 'noncurrent_version_expiration_days',
                                  'noncurrent_version_transition_days',
                                  'noncurrent_version_transitions')
         for param in required_when_present:
