@@ -160,20 +160,47 @@ class AnsibleEc2TgwAttachmentInfo(object):
         transit_gateway_attachment_ids = self._module.params['transit_gateway_attachment_ids']
 
         # init empty list for return vars
-        transit_gateway_info = list()
+        transit_gateway_info = []
 
         # Get the basic transit gateway info
         try:
-            response = self._connection.describe_transit_gateway_attachments(
-                TransitGatewayAttachmentIds=transit_gateway_attachment_ids, Filters=filters)
+            response = self._connection.describe_transit_gateway_attachments(TransitGatewayAttachmentIds=transit_gateway_attachment_ids, Filters=filters)
+
         except is_boto3_error_code('InvalidTransitGatewayAttachmentID.NotFound'):
             self._results['transit_gateway_attachments'] = []
             return
 
-        for transit_gateway in response['TransitGatewayAttachments']:
-            transit_gateway_info.append(camel_dict_to_snake_dict(transit_gateway, ignore_list=['Tags']))
-            # convert tag list to ansible dict
-            transit_gateway_info[-1]['tags'] = boto3_tag_list_to_ansible_dict(transit_gateway.get('Tags', []))
+        vpc_tgw_attachments = []
+        peer_tgw_attachments = []
+
+        for tgw_attachment in response['TransitGatewayAttachments']:
+            if tgw_attachment['ResourceType'] == 'vpc':
+                vpc_tgw_attachments.append(tgw_attachment['TransitGatewayAttachmentId'])
+            elif tgw_attachment['ResourceType'] == 'peering':
+                peer_tgw_attachments.append(tgw_attachment['TransitGatewayAttachmentId'])
+            else:
+                transit_gateway_info.append(camel_dict_to_snake_dict(transit_gateway, ignore_list=['Tags']))
+                # convert tag list to ansible dict
+                transit_gateway_info[-1]['tags'] = boto3_tag_list_to_ansible_dict(transit_gateway.get('Tags', []))
+
+
+        vpc_response = self._connection.describe_transit_gateway_vpc_attachments(
+            TransitGatewayAttachmentIds=vpc_tgw_attachments)
+        peer_response = self._connection.describe_transit_gateway_peering_attachments(
+            TransitGatewayAttachmentIds=peer_tgw_attachments)
+
+        for tgw_attachment in response['TransitGatewayAttachments']:
+            for vpc_attachment in vpc_response['TransitGatewayVpcAttachments']:
+                if tgw_attachment['TransitGatewayAttachmentId'] == vpc_attachment['TransitGatewayAttachmentId']:
+                    transit_gateway_info.append(camel_dict_to_snake_dict({**vpc_attachment, **tgw_attachment}, ignore_list=['Tags']))
+                    # convert tag list to ansible dict
+                    transit_gateway_info[-1]['tags'] = boto3_tag_list_to_ansible_dict(vpc_attachment.get('Tags', []))
+
+            for peer_attachment in peer_response['TransitGatewayPeeringAttachments']:
+                if tgw_attachment['TransitGatewayAttachmentId'] == peer_attachment['TransitGatewayAttachmentId']:
+                    transit_gateway_info.append(camel_dict_to_snake_dict({**peer_attachment, **tgw_attachment}, ignore_list=['Tags']))
+                    # convert tag list to ansible dict
+                    transit_gateway_info[-1]['tags'] = boto3_tag_list_to_ansible_dict(tgw_attachment.get('Tags', []))
 
         self._results['transit_gateway_attachments'] = transit_gateway_info
         return
