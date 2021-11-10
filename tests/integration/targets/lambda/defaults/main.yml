@@ -4,3 +4,4 @@
 # we hash the resource_prefix to get a shorter, unique string
 lambda_function_name: '{{ tiny_prefix }}'
 lambda_role_name: 'ansible-test-{{ tiny_prefix }}-lambda'
+tiny_prefix: "d7er9e"

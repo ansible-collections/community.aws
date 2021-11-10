@@ -179,9 +179,9 @@ class AnsibleEc2TgwAttachmentInfo(object):
             elif tgw_attachment['ResourceType'] == 'peering':
                 peer_tgw_attachments.append(tgw_attachment['TransitGatewayAttachmentId'])
             else:
-                transit_gateway_info.append(camel_dict_to_snake_dict(transit_gateway, ignore_list=['Tags']))
+                transit_gateway_info.append(camel_dict_to_snake_dict(tgw_attachment, ignore_list=['Tags']))
                 # convert tag list to ansible dict
-                transit_gateway_info[-1]['tags'] = boto3_tag_list_to_ansible_dict(transit_gateway.get('Tags', []))
+                transit_gateway_info[-1]['tags'] = boto3_tag_list_to_ansible_dict(tgw_attachment.get('Tags', []))
 
 
         vpc_response = self._connection.describe_transit_gateway_vpc_attachments(
