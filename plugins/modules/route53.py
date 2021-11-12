@@ -596,7 +596,7 @@ def main():
 
     aws_record = get_record(route53, zone_id, record_in, type_in, identifier_in)
 
-    if command_in is not 'delete':
+    if command_in != 'delete':
         resource_record_set = scrub_none_parameters({
             'Name': record_in,
             'Type': type_in,
