@@ -413,7 +413,6 @@
     assert:
       that:
         - ttl30 is changed
-        - ttl30.diff.after == {}
 
   - name: immutable delete previous record without mention ttl and value
     community.aws.route53:
