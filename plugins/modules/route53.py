@@ -604,7 +604,7 @@ def main():
         'HealthCheckId': health_check_in,
         'SetIdentifier': identifier_in,
     })
-    if command_in == 'delete' and aws_record != None:
+    if command_in == 'delete' and aws_record is not None:
         resource_record_set['TTL'] = aws_record.get('TTL')
         resource_record_set['ResourceRecords'] = aws_record.get('ResourceRecords')
 
