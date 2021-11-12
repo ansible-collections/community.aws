@@ -374,7 +374,12 @@ def record_sets_details(client, module):
 
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
-        params['PaginationConfig']['MaxItems'] = module.params.get('max_items')
+        pagination_config = dict(
+            PaginationConfig = dict(
+                MaxItems = int(module.params.get('max_items'))
+            )
+        )
+        params['PaginationConfig'] = pagination_config
 
     paginator = client.get_paginator('list_resource_record_sets')
     record_sets = paginator.paginate(**params).build_full_result()['ResourceRecordSets']
@@ -424,7 +429,7 @@ def main():
         ], required=True),
         change_id=dict(),
         hosted_zone_id=dict(),
-        max_items=dict(),
+        max_items=dict(type='str'),
         next_marker=dict(),
         delegation_set_id=dict(),
         start_record_name=dict(),

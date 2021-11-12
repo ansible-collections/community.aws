@@ -164,6 +164,7 @@
       record_set: '{{ get_result.set }}'
       qdn_record: 'qdn_test.{{ zone_one }}'
 
+  ## test A recordset creation and order adjustments
   - name: 'Create same A record using zone non-qualified domain'
     route53:
       state: present
@@ -220,17 +221,18 @@
         - mv_a_record is not failed
         - mv_a_record is not changed
 
+  # Get resulting A record and ensure max_items is applied
   - name: 'get Route53 A record information'
     route53_info:
       type: A
       query: record_sets
       hosted_zone_id: '{{ z1.zone_id }}'
       start_record_name: 'order_test.{{ zone_one }}'
-      max_items: 50
+      max_items: 1
     register: records
   - assert:
       that:
-        - records.ResourceRecordSets|length == 3
+        - records.ResourceRecordSets|length == 1
         - records.ResourceRecordSets[0].ResourceRecords|length == 2
         - records.ResourceRecordSets[0].ResourceRecords[0].Value == '192.0.2.2'
         - records.ResourceRecordSets[0].ResourceRecords[1].Value == '192.0.2.1'
@@ -261,6 +263,7 @@
         - '192.0.2.2'
     register: del_a_record
     ignore_errors: true
+
   - name: 'This should not fail, because `overwrite` is true'
     assert:
       that:
@@ -281,6 +284,37 @@
         - records.ResourceRecordSets[0].ResourceRecords|length == 1
         - records.ResourceRecordSets[0].ResourceRecords[0].Value == '192.0.2.2'
 
+  ## Test CNAME record creation and retrive info
+  - name: "Create CNAME record"
+    route53:
+      state: present
+      zone: "{{ zone_one }}"
+      type: CNAME
+      record: "cname_test.{{ zone_one }}"
+      value: "order_test.{{ zone_one }}"
+    register: cname_record
+
+  - assert:
+      that:
+        - cname_record is not failed
+        - cname_record is not changed
+
+  - name: "Get Route53 CNAME record information"
+    route53_info:
+      type: CNAME
+      query: record_sets
+      hosted_zone_id: "{{ z1.zone_id }}"
+      start_record_name: "cname_test.{{ zone_one }}"
+      max_items: 1
+    register: cname_records
+
+  - assert:
+      that:
+        - cname_records.ResourceRecordSets|length == 3
+        - cname_records.ResourceRecordSets[0].ResourceRecords|length == 1
+        - cname_records.ResourceRecordSets[0].ResourceRecords[0].Value == "order_test.{{ zone_one }}"
+
+  ## Test CAA record creation
   - name: 'Create a LetsEncrypt CAA record'
     route53:
       state: present
@@ -604,6 +638,7 @@
       query: record_sets
       hosted_zone_id: '{{ z1.zone_id }}'
     register: z1_records
+
   - name: 'Loop over A/AAAA/CNAME Alias records and delete them'
     route53:
       state: absent
