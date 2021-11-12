@@ -596,29 +596,19 @@ def main():
 
     aws_record = get_record(route53, zone_id, record_in, type_in, identifier_in)
 
-    if command_in != 'delete':
-        resource_record_set = scrub_none_parameters({
-            'Name': record_in,
-            'Type': type_in,
-            'Weight': weight_in,
-            'Region': region_in,
-            'Failover': failover_in,
-            'TTL': ttl_in,
-            'ResourceRecords': [dict(Value=value) for value in value_in],
-            'HealthCheckId': health_check_in,
-            'SetIdentifier': identifier_in,
-        })
-    else:
-        resource_record_set = scrub_none_parameters({
-            'Name': record_in,
-            'Type': type_in,
-            'Weight': weight_in,
-            'Region': region_in,
-            'Failover': failover_in,
-            'ResourceRecords': [dict(Value=value) for value in value_in],
-            'HealthCheckId': health_check_in,
-            'TTL': aws_record.get('TTL')
-        })
+    resource_record_set = scrub_none_parameters({
+        'Name': record_in,
+        'Type': type_in,
+        'Weight': weight_in,
+        'Region': region_in,
+        'Failover': failover_in,
+        'TTL': ttl_in,
+        'ResourceRecords': [dict(Value=value) for value in value_in],
+        'HealthCheckId': health_check_in,
+        'SetIdentifier': identifier_in,
+    })
+    if command_in == 'delete':
+        resource_record_set['TTL'] = aws_record.get('TTL')
 
     if alias_in:
         resource_record_set['AliasTarget'] = dict(
