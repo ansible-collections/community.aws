@@ -249,12 +249,12 @@ def put_scheduled_update_group_action(current_actions):
     if len(current_actions) < 1:
         changed = True
     else:
+        # To correctly detect changes convert the start_time & end_time to datetime object
+        if "StartTime" in params:
+            params["StartTime"] = timedate_parse(params["StartTime"])
+        if "EndTime" in params:
+            params["EndTime"] = timedate_parse(params["EndTime"])
         for k, v in params.items():
-            # To correctly detect changes convert the start_time & end_time to datetime object
-            if k == "StartTime":
-                v = timedate_parse(v)
-            elif k == "EndTime":
-                v = timedate_parse(v)
 
             if current_actions[0].get(k) != v:
                 changes[k] = v
