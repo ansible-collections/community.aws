@@ -605,7 +605,7 @@ def main():
         'HealthCheckId': health_check_in,
         'SetIdentifier': identifier_in,
     })
-    if command_in == 'delete':
+    if command_in == 'delete' and aws_record != None:
         resource_record_set['TTL'] = aws_record.get('TTL')
         resource_record_set['ResourceRecords'] = aws_record.get('ResourceRecords')
 
@@ -693,7 +693,7 @@ def main():
         changed=True,
         diff=dict(
             before=formatted_aws,
-            after=formatted_record if command != 'delete' else {},
+            after=formatted_record if command_in != 'delete' else {},
             resource_record_sets=rr_sets,
         ),
     )

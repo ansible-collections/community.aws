@@ -399,7 +399,7 @@
   - name: check return values
     assert:
       that:
-        - ttl30.resource_record_sets[0].ttl == 30
+        - ttl30.diff.resource_record_sets[0].ttl == 30
         - ttl30 is changed
 
   - name: delete previous record without mention ttl and value
@@ -409,12 +409,11 @@
       record: 'localhost.{{ zone_one }}'
       type: A
     register: ttl30
-  - name: >
-      check if record is deleted
-      TODO: diff mode is broken when state: absent
+  - name: check if record is deleted
     assert:
       that:
         - ttl30 is changed
+        - ttl30.diff.after == {}
 
   - name: immutable delete previous record without mention ttl and value
     community.aws.route53:
