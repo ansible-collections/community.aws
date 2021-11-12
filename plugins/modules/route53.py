@@ -69,7 +69,6 @@ options:
   value:
     description:
       - The new value when creating a DNS record.  YAML lists or multiple comma-spaced values are allowed for non-alias records.
-      - When deleting a record all values for the record must be specified or Route 53 will not delete it.
     type: list
     elements: str
   overwrite:
