@@ -1,2 +1,3 @@
 bugfixes:
 - route53 - ``ttl``  and ``value`` are not required for deleting records (https://github.com/ansible-collections/community.aws/pull/801).
+- route53 -  fix diff mode when deleting records (https://github.com/ansible-collections/community.aws/pull/801).
