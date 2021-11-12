@@ -1,2 +1,2 @@
 bugfixes:
-  - route53 - fix empty result on none existing records (https://github.com/ansible-collections/community.aws/pull/799).
+  - route53 - return empty result for nonexistent records (https://github.com/ansible-collections/community.aws/pull/799).
