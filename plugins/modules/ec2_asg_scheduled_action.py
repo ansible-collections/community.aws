@@ -254,8 +254,8 @@ def put_scheduled_update_group_action(current_actions):
             params["StartTime"] = timedate_parse(params["StartTime"])
         if "EndTime" in params:
             params["EndTime"] = timedate_parse(params["EndTime"])
-        for k, v in params.items():
 
+        for k, v in params.items():
             if current_actions[0].get(k) != v:
                 changes[k] = v
 
@@ -298,6 +298,9 @@ def main():
 
     if not HAS_DATEUTIL:
         module.fail_json(msg='dateutil is required for this module')
+
+    if not module.botocore_at_least("1.20.24"):
+        module.fail_json(msg='botocore version >= 1.20.24 is required for this module')
 
     client = module.client('autoscaling', retry_decorator=AWSRetry.jittered_backoff())
     current_actions = get_scheduled_actions()
