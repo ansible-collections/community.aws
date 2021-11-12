@@ -513,8 +513,6 @@ def main():
         required_if=(
             ('state', 'present', ['value']),
             ('state', 'create', ['value']),
-            ('state', 'absent', ['value']),
-            ('state', 'delete', ['value']),
         ),
         # failover, region and weight are mutually exclusive
         mutually_exclusive=[
@@ -609,6 +607,7 @@ def main():
     })
     if command_in == 'delete':
         resource_record_set['TTL'] = aws_record.get('TTL')
+        resource_record_set['ResourceRecords'] = aws_record.get('ResourceRecords')
 
     if alias_in:
         resource_record_set['AliasTarget'] = dict(
