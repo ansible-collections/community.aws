@@ -72,7 +72,7 @@ options:
     description:
       - The type of DNS record.
     required: false
-    choices: [ 'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS' ]
+    choices: [ 'SOA', 'A', 'TXT', 'NS', 'CNAME', 'MX', 'NAPTR', 'PTR', 'SRV', 'SPF', 'AAAA', 'CAA', 'DS' ]
     type: str
   dns_name:
     description:
@@ -362,19 +362,23 @@ def record_sets_details(client, module):
     else:
         module.fail_json(msg="Hosted Zone Id is required")
 
-    if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
-
     if module.params.get('start_record_name'):
         params['StartRecordName'] = module.params.get('start_record_name')
 
+    # Check that both params are set if type is applied
     if module.params.get('type') and not module.params.get('start_record_name'):
         module.fail_json(msg="start_record_name must be specified if type is set")
-    elif module.params.get('type'):
+
+    if module.params.get('type'):
         params['StartRecordType'] = module.params.get('type')
+
+    # Set PaginationConfig with max_items
+    if module.params.get('max_items'):
+        params['PaginationConfig']['MaxItems'] = module.params.get('max_items')
 
     paginator = client.get_paginator('list_resource_record_sets')
     record_sets = paginator.paginate(**params).build_full_result()['ResourceRecordSets']
+
     return {
         "ResourceRecordSets": record_sets,
         "list": record_sets,
@@ -424,8 +428,8 @@ def main():
         next_marker=dict(),
         delegation_set_id=dict(),
         start_record_name=dict(),
-        type=dict(choices=[
-            'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS'
+        type=dict(type='str', choices=[
+            'SOA', 'A', 'TXT', 'NS', 'CNAME', 'MX', 'NAPTR', 'PTR', 'SRV', 'SPF', 'AAAA', 'CAA', 'DS'
         ]),
         dns_name=dict(),
         resource_id=dict(type='list', aliases=['resource_ids'], elements='str'),
