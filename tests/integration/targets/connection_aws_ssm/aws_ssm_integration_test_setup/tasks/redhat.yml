@@ -9,4 +9,5 @@
   yum:
     name: /tmp/session-manager-plugin.rpm
     state: present
+    disable_gpg_check: true
   tags: setup_infra
