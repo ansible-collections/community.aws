@@ -28,14 +28,14 @@
         linux_ami_id: '{{ latest_linux_ami.image_id }}'
         windows_ami_id: '{{ latest_windows_ami.image_id }}'
 
-    - name: Install Session Manager Plugin for Debian/Ubuntu
+    - name: Install Session Manager Plugin for Fedora/Debian/Ubuntu
       include_tasks: debian.yml
       when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
       register: install_plugin_debian
 
     - name: Install Session Manager Plugin for RedHat/Amazon
       include_tasks: redhat.yml
-      when: ansible_distribution == "CentOS" or ansible_distribution == "RedHat" or ansible_distribution == "Amazon"
+      when: ansible_distribution in ["CentOS", "RedHat", "Amazon", "Fedora"]
       register: install_plugin_redhat
 
     - block:
