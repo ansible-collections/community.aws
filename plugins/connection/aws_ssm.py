@@ -44,6 +44,10 @@ options:
     vars:
     - name: ansible_aws_ssm_region
     default: 'us-east-1'
+  bucket_region:
+    description: The region the S3 bucket is located.
+    vars:
+    - name: ansible_aws_ssm_bucket_region
   bucket_name:
     description: The name of the S3 bucket used for file transfers.
     vars:
@@ -92,6 +96,7 @@ EXAMPLES = r'''
   vars:
     ansible_connection: aws_ssm
     ansible_aws_ssm_bucket_name: nameofthebucket
+    ansible_aws_ssm_bucket_region: us-west-1
     ansible_aws_ssm_region: us-west-2
   tasks:
     - name: Install a Nginx Package
@@ -105,6 +110,7 @@ EXAMPLES = r'''
     ansible_connection: aws_ssm
     ansible_shell_type: powershell
     ansible_aws_ssm_bucket_name: nameofthebucket
+    ansible_aws_ssm_bucket_region: us-west-2
     ansible_aws_ssm_region: us-east-1
   tasks:
     - name: Create a Directory
@@ -130,6 +136,7 @@ EXAMPLES = r'''
   vars:
     ansible_connection: aws_ssm
     ansible_aws_ssm_bucket_name: nameofthebucket
+    ansible_aws_ssm_bucket_region: us-west-2
     ansible_aws_ssm_region: us-east-1
   tasks:
   - name: aws-cli
@@ -154,6 +161,7 @@ EXAMPLES = r'''
     ansible_connection: aws_ssm
     ansible_shell_type: powershell
     ansible_aws_ssm_bucket_name: nameofthebucket
+    ansible_aws_ssm_bucket_region: us-west-2
     ansible_aws_ssm_region: us-east-1
   tasks:
     - name: Create the directory
@@ -508,7 +516,7 @@ class Connection(ConnectionBase):
 
     def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name):
         ''' Generate URL for get_object / put_object '''
-        region_name = self.get_option('region') or 'us-east-1'
+        region_name = self.get_option('bucket_region') or self.get_option('region')
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
         return client.generate_presigned_url(client_method, Params={'Bucket': bucket_name, 'Key': out_path}, ExpiresIn=3600, HttpMethod=http_method)
 
