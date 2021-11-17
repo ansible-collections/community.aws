@@ -21,9 +21,6 @@
 #   - Matthew Davis <Matthew.Davis.2@team.telstra.com>
 #     on behalf of Telstra Corporation Limited
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
 
 DOCUMENTATION = '''
 module: aws_acm
