@@ -733,3 +733,4 @@ New Modules
 - sqs_queue - Creates or deletes AWS SQS queues.
 - sts_assume_role - Assume a role using AWS Security Token Service and obtain temporary credentials
 - sts_session_token - Obtain a session token from the AWS Security Token Service
+
