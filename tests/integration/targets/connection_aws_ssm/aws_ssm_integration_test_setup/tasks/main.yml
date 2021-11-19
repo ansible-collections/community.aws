@@ -109,10 +109,10 @@
         tags:
           ansible-test: '{{ resource_prefix }}'
 
-    - name: Create S3 bucket
-      s3_bucket:
-        name: "{{resource_prefix}}-aws-ssm-s3"
-      register: s3_output
+    # - name: Create S3 bucket
+    #   s3_bucket:
+    #     name: "{{resource_prefix}}-aws-ssm-s3"
+    #   register: s3_output
 
     - name: Create Inventory file
       template:
@@ -138,11 +138,11 @@
         src: ec2_windows_vars_to_delete.yml.j2
       ignore_errors: yes
 
-    - name: Create S3 vars_to_delete.yml
-      template:
-        dest: "{{playbook_dir}}/s3_vars_to_delete.yml"
-        src: s3_vars_to_delete.yml.j2
-      ignore_errors: yes
+    # - name: Create S3 vars_to_delete.yml
+    #   template:
+    #     dest: "{{playbook_dir}}/s3_vars_to_delete.yml"
+    #     src: s3_vars_to_delete.yml.j2
+    #   ignore_errors: yes
 
     - name: Create IAM Role vars_to_delete.yml
       template:
