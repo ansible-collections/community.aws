@@ -606,7 +606,8 @@ def main():
     })
     if command_in == 'delete' and aws_record is not None:
         resource_record_set['TTL'] = aws_record.get('TTL')
-        resource_record_set['ResourceRecords'] = aws_record.get('ResourceRecords')
+        if not resource_record_set['ResourceRecords']:
+            resource_record_set['ResourceRecords'] = aws_record.get('ResourceRecords')
 
     if alias_in:
         resource_record_set['AliasTarget'] = dict(
