@@ -33,7 +33,7 @@ options:
       - Python version being used to execute a Python shell job.
       - AWS currently supports C('2') or C('3').
     type: str
-    version_added: 2.1.0
+    version_added: 2.2.0
   command_script_location:
     description:
       - The S3 path to a script that executes a job.
@@ -83,7 +83,7 @@ options:
       - If the I(tags) parameter is not set then tags will not be modified.
     default: true
     type: bool
-    version_added: 2.1.0
+    version_added: 2.2.0
   role:
     description:
       - The name or ARN of the IAM role associated with this job.
@@ -100,7 +100,7 @@ options:
       - A hash/dictionary of tags to be applied to the job.
       - Remove completely or specify an empty dictionary to remove all tags.
     type: dict
-    version_added: 2.1.0
+    version_added: 2.2.0
   timeout:
     description:
       - The job timeout in minutes.
