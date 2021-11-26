@@ -386,6 +386,46 @@
       that:
         - wc_a_record is not failed
         - wc_a_record is changed
+        - wc_a_record.diff.after == {}
+
+  - name: create a record with different TTL
+    community.aws.route53:
+      state: present
+      zone: '{{ zone_one }}'
+      record: 'localhost.{{ zone_one }}'
+      type: A
+      value: 127.0.0.1
+      ttl: 30
+    register: ttl30
+  - name: check return values
+    assert:
+      that:
+        - ttl30.diff.resource_record_sets[0].ttl == 30
+        - ttl30 is changed
+
+  - name: delete previous record without mention ttl and value
+    community.aws.route53:
+      state: absent
+      zone: '{{ zone_one }}'
+      record: 'localhost.{{ zone_one }}'
+      type: A
+    register: ttl30
+  - name: check if record is deleted
+    assert:
+      that:
+        - ttl30 is changed
+
+  - name: immutable delete previous record without mention ttl and value
+    community.aws.route53:
+      state: absent
+      zone: '{{ zone_one }}'
+      record: 'localhost.{{ zone_one }}'
+      type: A
+    register: ttl30
+  - name: check if record was deleted
+    assert:
+      that:
+        - ttl30 is not changed
 
   # Tests on zone two (private zone)
   - name: Create A record using zone fqdn
@@ -416,6 +456,20 @@
         - get_result.set.Name == "qdn_test.{{ zone_two }}"
         - get_result.set.ResourceRecords[0].Value == "192.0.2.1"
         - get_result.set.Type == "A"
+
+  - name: Get a record that does not exist
+    route53:
+      state: get
+      zone: "{{ zone_two }}"
+      record: "notfound.{{ zone_two }}"
+      type: A
+      private_zone: true
+    register: get_result
+  - assert:
+      that:
+        - get_result.nameservers|length > 0
+        - get_result.set|length == 0
+        - get_result.resource_record_sets|length == 0
 
   - name: Create same A record using zone non-qualified domain
     route53:
