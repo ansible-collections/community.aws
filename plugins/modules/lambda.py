@@ -433,8 +433,6 @@ def main():
     # Get function configuration if present, False otherwise
     current_function = get_current_function(client, name)
 
-
-
     # Update existing Lambda function
     if state == 'present' and current_function:
 
