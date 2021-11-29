@@ -272,8 +272,14 @@ def list_hosted_zones_by_name(client, module):
     if module.params.get('dns_name'):
         params['DNSName'] = module.params.get('dns_name')
 
+    # Set PaginationConfig with max_items
     if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
+        pagination_config = dict(
+            PaginationConfig = dict(
+                MaxItems = module.params.get('max_items')
+            )
+        )
+        params['PaginationConfig'] = pagination_config
 
     return client.list_hosted_zones_by_name(**params)
 
@@ -340,11 +346,17 @@ def get_resource_tags(client, module):
 def list_health_checks(client, module):
     params = dict()
 
-    if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
-
     if module.params.get('next_marker'):
         params['Marker'] = module.params.get('next_marker')
+
+    # Set PaginationConfig with max_items
+    if module.params.get('max_items'):
+        pagination_config = dict(
+            PaginationConfig = dict(
+                MaxItems = module.params.get('max_items')
+            )
+        )
+        params['PaginationConfig'] = pagination_config
 
     paginator = client.get_paginator('list_health_checks')
     health_checks = paginator.paginate(**params).build_full_result()['HealthChecks']
@@ -376,7 +388,7 @@ def record_sets_details(client, module):
     if module.params.get('max_items'):
         pagination_config = dict(
             PaginationConfig = dict(
-                MaxItems = int(module.params.get('max_items'))
+                MaxItems = module.params.get('max_items')
             )
         )
         params['PaginationConfig'] = pagination_config
