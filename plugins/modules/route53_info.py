@@ -233,7 +233,7 @@ def reusable_delegation_set_details(client, module):
         # Set PaginationConfig with max_items
         if module.params.get('max_items'):
             params['PaginationConfig'] = dict(
-            MaxItems = module.params.get('max_items')
+                MaxItems = module.params.get('max_items')
             )
 
         if module.params.get('next_marker'):
@@ -253,7 +253,7 @@ def list_hosted_zones(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-          MaxItems = module.params.get('max_items')
+            MaxItems = module.params.get('max_items')
         )
 
     if module.params.get('next_marker'):
@@ -282,7 +282,7 @@ def list_hosted_zones_by_name(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-          MaxItems = module.params.get('max_items')
+            MaxItems = module.params.get('max_items')
         )
 
     return client.list_hosted_zones_by_name(**params)
@@ -356,7 +356,7 @@ def list_health_checks(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-          MaxItems = module.params.get('max_items')
+            MaxItems = module.params.get('max_items')
         )
 
     paginator = client.get_paginator('list_health_checks')
@@ -388,7 +388,7 @@ def record_sets_details(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-          MaxItems = module.params.get('max_items')
+            MaxItems = module.params.get('max_items')
         )
 
     paginator = client.get_paginator('list_resource_record_sets')
