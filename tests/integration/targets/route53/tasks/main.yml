@@ -230,6 +230,7 @@
       start_record_name: 'order_test.{{ zone_one }}'
       max_items: 1
     register: records
+
   - assert:
       that:
         - records.ResourceRecordSets|length == 1
@@ -278,6 +279,7 @@
       start_record_name: 'order_test.{{ zone_one }}'
       max_items: 50
     register: records
+
   - assert:
       that:
         - records.ResourceRecordSets|length == 3
@@ -297,7 +299,7 @@
   - assert:
       that:
         - cname_record is not failed
-        - cname_record is not changed
+        - cname_record is changed
 
   - name: "Get Route53 CNAME record information"
     route53_info:
@@ -310,7 +312,7 @@
 
   - assert:
       that:
-        - cname_records.ResourceRecordSets|length == 3
+        - cname_records.ResourceRecordSets|length == 1
         - cname_records.ResourceRecordSets[0].ResourceRecords|length == 1
         - cname_records.ResourceRecordSets[0].ResourceRecords[0].Value == "order_test.{{ zone_one }}"
 
@@ -423,7 +425,7 @@
         - wc_a_record.diff.after == {}
 
   - name: create a record with different TTL
-    community.aws.route53:
+    route53:
       state: present
       zone: '{{ zone_one }}'
       record: 'localhost.{{ zone_one }}'
@@ -438,7 +440,7 @@
         - ttl30 is changed
 
   - name: delete previous record without mention ttl and value
-    community.aws.route53:
+    route53:
       state: absent
       zone: '{{ zone_one }}'
       record: 'localhost.{{ zone_one }}'
@@ -450,7 +452,7 @@
         - ttl30 is changed
 
   - name: immutable delete previous record without mention ttl and value
-    community.aws.route53:
+    route53:
       state: absent
       zone: '{{ zone_one }}'
       record: 'localhost.{{ zone_one }}'
@@ -652,6 +654,7 @@
     loop: '{{ z1_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA", "CNAME", "CAA"]) | list }}'
     when:
     - '"AliasTarget" in item'
+
   - name: 'Loop over A/AAAA/CNAME records and delete them'
     route53:
       state: absent
@@ -659,6 +662,7 @@
       record: '{{ item.Name }}'
       type: '{{ item.Type }}'
       value: '{{ item.ResourceRecords | map(attribute="Value") | join(",") }}'
+      weight: '{{ item.Weight | default(omit) }}'
       identifier: '{{ item.SetIdentifier }}'
       region: '{{ omit }}'
     ignore_errors: True
@@ -666,6 +670,7 @@
     when:
     - '"ResourceRecords" in item'
     - '"SetIdentifier" in item'
+
   - name: 'Loop over A/AAAA/CNAME records and delete them'
     route53:
       state: absent
@@ -682,6 +687,7 @@
       query: record_sets
       hosted_zone_id: '{{ z2.zone_id }}'
     register: z2_records
+
   - name: 'Loop over A/AAAA/CNAME Alias records and delete them'
     route53:
       state: absent
@@ -696,6 +702,7 @@
     loop: '{{ z2_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA", "CNAME", "CAA"]) | list }}'
     when:
     - '"AliasTarget" in item'
+
   - name: 'Loop over A/AAAA/CNAME records and delete them'
     route53:
       state: absent
@@ -711,6 +718,7 @@
     when:
     - '"ResourceRecords" in item'
     - '"SetIdentifier" in item'
+
   - name: 'Loop over A/AAAA/CNAME records and delete them'
     route53:
       state: absent
@@ -732,6 +740,7 @@
     ignore_errors: yes
     retries: 10
     until: delete_one is not failed
+
   - name: 'Delete test zone two {{ zone_two }}'
     route53_zone:
       state: absent
@@ -740,7 +749,7 @@
     ignore_errors: yes
     retries: 10
     until: delete_two is not failed
-    when: false
+
   - name: destroy VPC
     ec2_vpc_net:
       cidr_block: 192.0.2.0/24
