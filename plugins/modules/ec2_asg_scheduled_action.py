@@ -12,7 +12,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: ec2_asg_scheduled_action
-version_added: 2.1.0
+version_added: 3.0.0
 short_description: Create, modify and delete ASG scheduled scaling actions.
 description:
   - The module will create a new scheduled action when I(state=present) and no given action is found.
