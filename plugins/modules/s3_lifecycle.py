@@ -32,7 +32,7 @@ options:
     description:
       - Indicates the lifetime of the objects that are subject to the rule by the date they will expire.
       - The value must be ISO-8601 format, the time must be midnight and a GMT timezone must be specified.
-      - This cannot be specified with C(expire_object_delete_marker)
+      - This cannot be specified with I(expire_object_delete_marker)
     type: str
   expiration_days:
     description:
