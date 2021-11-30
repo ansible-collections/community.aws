@@ -72,7 +72,7 @@ options:
     description:
       - The type of DNS record.
     required: false
-    choices: [ 'SOA', 'A', 'TXT', 'NS', 'CNAME', 'MX', 'NAPTR', 'PTR', 'SRV', 'SPF', 'AAAA', 'CAA', 'DS' ]
+    choices: [ 'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS', 'NAPTR', 'SOA', 'DS' ]
     type: str
   dns_name:
     description:
@@ -233,7 +233,7 @@ def reusable_delegation_set_details(client, module):
         # Set PaginationConfig with max_items
         if module.params.get('max_items'):
             params['PaginationConfig'] = dict(
-                MaxItems = module.params.get('max_items')
+                MaxItems=module.params.get('max_items')
             )
 
         if module.params.get('next_marker'):
@@ -253,7 +253,7 @@ def list_hosted_zones(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-            MaxItems = module.params.get('max_items')
+            MaxItems=module.params.get('max_items')
         )
 
     if module.params.get('next_marker'):
@@ -282,7 +282,7 @@ def list_hosted_zones_by_name(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-            MaxItems = module.params.get('max_items')
+            MaxItems=module.params.get('max_items')
         )
 
     return client.list_hosted_zones_by_name(**params)
@@ -356,7 +356,7 @@ def list_health_checks(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-            MaxItems = module.params.get('max_items')
+            MaxItems=module.params.get('max_items')
         )
 
     paginator = client.get_paginator('list_health_checks')
@@ -388,7 +388,7 @@ def record_sets_details(client, module):
     # Set PaginationConfig with max_items
     if module.params.get('max_items'):
         params['PaginationConfig'] = dict(
-            MaxItems = module.params.get('max_items')
+            MaxItems=module.params.get('max_items')
         )
 
     paginator = client.get_paginator('list_resource_record_sets')
@@ -444,7 +444,7 @@ def main():
         delegation_set_id=dict(),
         start_record_name=dict(),
         type=dict(type='str', choices=[
-            'SOA', 'A', 'TXT', 'NS', 'CNAME', 'MX', 'NAPTR', 'PTR', 'SRV', 'SPF', 'AAAA', 'CAA', 'DS'
+            'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS', 'NAPTR', 'SOA', 'DS'
         ]),
         dns_name=dict(),
         resource_id=dict(type='list', aliases=['resource_ids'], elements='str'),
