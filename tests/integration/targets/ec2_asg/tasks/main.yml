@@ -51,8 +51,7 @@
       # the 8 digit identifier at the end of resource_prefix helps determine during which test something
       # was created
       set_fact:
-        load_balancer_name: "{{ item }}-lb"
-      loop: "{{ resource_prefix | regex_findall('.{8}$') }}"
+        load_balancer_name: "{{ tiny_prefix }}-lb"
 
     # Set up the testing dependencies: VPC, subnet, security group, and two launch configurations
 
@@ -768,6 +767,8 @@
         state: present
         wait_for_instances: yes
       register: output
+
+    - debug: msg="{{ output }}"
 
     - assert:
         that:
