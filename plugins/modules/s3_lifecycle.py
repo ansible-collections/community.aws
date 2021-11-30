@@ -42,7 +42,7 @@ options:
   expire_object_delete_marker:
     description:
       - Indicates whether Amazon S3 will remove a delete marker with no noncurrent versions.
-      - If set to true, the delete marker will be expired; if set to false the policy takes no action.
+      - If set to C(true), the delete marker will be expired; if set to C(false) the policy takes no action.
       - This cannot be specified with C(expiration_days) or C(expiration_date).
     type: bool
   prefix:
