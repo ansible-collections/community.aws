@@ -637,7 +637,7 @@ def main():
     result['changed'] = False
     result['cloudfront'].update(facts)
 
-    module.exit_json(msg="Retrieved CloudFront facts.", ansible_facts=result)
+    module.exit_json(msg="Retrieved CloudFront facts.", **result)
 
 
 if __name__ == '__main__':

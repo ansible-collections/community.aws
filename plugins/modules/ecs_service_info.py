@@ -235,7 +235,7 @@ def main():
     else:
         ecs_info = task_mgr.list_services(module.params['cluster'])
 
-        module.exit_json(changed=False, **ecs_info)
+    module.exit_json(changed=False, **ecs_info)
 
 
 if __name__ == '__main__':
