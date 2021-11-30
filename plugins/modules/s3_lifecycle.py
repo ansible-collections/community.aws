@@ -38,7 +38,7 @@ options:
     description:
       - Indicates the lifetime, in days, of the objects that are subject to the rule.
       - The value must be a non-zero positive integer.
-      - This cannot be specified with C(expire_object_delete_marker)
+      - This cannot be specified with I(expire_object_delete_marker)
     type: int
   expire_object_delete_marker:
     description:
