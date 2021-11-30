@@ -768,8 +768,6 @@
         wait_for_instances: yes
       register: output
 
-    - debug: msg="{{ output }}"
-
     - assert:
         that:
           - "output.target_group_arns | length == 1"
