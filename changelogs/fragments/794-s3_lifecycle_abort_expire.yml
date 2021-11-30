@@ -1,0 +1,2 @@
+minor_changes:
+- Add I(abort_incomplete_multipart_upload_days) and I(expire_object_delete_marker) fields to I(s3_lifecycle)

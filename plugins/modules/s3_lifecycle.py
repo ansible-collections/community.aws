@@ -27,6 +27,7 @@ options:
     description:
       - Specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload.
     type: int
+    version_added: 2.2.0
   expiration_date:
     description:
       - Indicates the lifetime of the objects that are subject to the rule by the date they will expire.
@@ -45,6 +46,7 @@ options:
       - If set to C(true), the delete marker will be expired; if set to C(false) the policy takes no action.
       - This cannot be specified with C(expiration_days) or C(expiration_date).
     type: bool
+    version_added: 2.2.0
   prefix:
     description:
       - Prefix identifying one or more objects to which the rule applies.
