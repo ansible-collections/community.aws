@@ -27,7 +27,7 @@ options:
     description:
       - Specifies the days since the initiation of an incomplete multipart upload that Amazon S3 will wait before permanently removing all parts of the upload.
     type: int
-    version_added: 2.2.0
+    version_added: 3.0.0
   expiration_date:
     description:
       - Indicates the lifetime of the objects that are subject to the rule by the date they will expire.
