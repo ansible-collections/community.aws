@@ -382,9 +382,7 @@ def main():
         targets = [(item, prefix_to_attr(item)) for item in targets]
         file_systems_info = [item for item in file_systems_info if has_targets(item['mount_targets'], targets)]
 
-        module.exit_json(changed=False, ansible_facts={'efs': file_systems_info})
-    else:
-        module.exit_json(changed=False, efs=file_systems_info)
+    module.exit_json(changed=False, efs=file_systems_info)
 
 
 if __name__ == '__main__':

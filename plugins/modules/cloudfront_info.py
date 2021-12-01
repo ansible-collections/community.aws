@@ -637,7 +637,7 @@ def main():
     result['changed'] = False
     result['cloudfront'].update(facts)
 
-    module.exit_json(msg="Retrieved CloudFront facts.", **result)
+    module.exit_json(msg="Retrieved CloudFront info.", **result)
 
 
 if __name__ == '__main__':
