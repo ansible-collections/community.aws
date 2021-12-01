@@ -18,7 +18,7 @@ DEPRECATED
 ----------
 :Removed in collection release after 
 :Why: The iam module is based upon a deprecated version of the AWS SDK.
-:Alternative: Use :ref:`iam_user <iam_user_module>`, :ref:`iam_group <iam_group_module>`, :ref:`iam_role <iam_role_module>`, :ref:`iam_policy <iam_policy_module>` and :ref:`iam_managed_policy <iam_managed_policy_module>` modules.
+:Alternative: Use :ref:`community.aws.iam_user <community.aws.iam_user_module>`, :ref:`community.aws.iam_group <community.aws.iam_group_module>`, :ref:`community.aws.iam_role <community.aws.iam_role_module>`, :ref:`community.aws.iam_policy <community.aws.iam_policy_module>` and :ref:`community.aws.iam_managed_policy <community.aws.iam_managed_policy_module>` modules.
 
 
 
