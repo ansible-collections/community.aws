@@ -219,6 +219,8 @@ plugin_routing:
       redirect: amazon.aws.ec2_vpc_nat_gateway
     ec2_vpc_nat_gateway_info:
       redirect: amazon.aws.ec2_vpc_nat_gateway_info
+    elb_classic_lb:
+      redirect: amazon.aws.ec2_elb_lb
     iam:
       deprecation:
         removal_version: 3.0.0
