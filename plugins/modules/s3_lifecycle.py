@@ -46,7 +46,7 @@ options:
       - If set to C(true), the delete marker will be expired; if set to C(false) the policy takes no action.
       - This cannot be specified with I(expiration_days) or I(expiration_date).
     type: bool
-    version_added: 3.0.0
+    version_added: 2.2.0
   prefix:
     description:
       - Prefix identifying one or more objects to which the rule applies.
