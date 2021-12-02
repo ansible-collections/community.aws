@@ -1,4 +1,5 @@
 eks_cluster_name: "{{ resource_prefix }}"
+eks_cluster_short_name: "{{ lookup('community.general.random_string', length=5) }}"
 eks_subnets:
   - zone: a
     cidr: 10.0.1.0/24
