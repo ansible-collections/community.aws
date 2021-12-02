@@ -43,14 +43,14 @@ options:
     description:
       - A hash/dictionary of tags to add to the new RDS subnet group or to add/remove from an existing one.
     type: dict
-    version_added: 2.0.0
+    version_added: 2.2.0
   purge_tags:
     description:
        - Whether or not to remove tags assigned to the RDS subnet group if not specified in the playbook.
        - To remove all tags set I(tags) to an empty dictionary in conjunction with this.
     default: True
     type: bool
-    version_added: 2.0.0
+    version_added: 2.2.0
 author:
     - "Scott Anderson (@tastychutney)"
     - "Alina Buzachis (@alinabuzachis)"
@@ -323,10 +323,7 @@ def main():
     else:
         _tags = list()
 
-    try:
-        matching_groups = get_subnet_group(connection, module)
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-        module.fail_json_aws(e, 'Failed to get subnet groups description.')
+    matching_groups = get_subnet_group(connection, module)
 
     if state == 'present':
         if matching_groups:
@@ -349,7 +346,7 @@ def main():
                 if not module.check_mode:
                     # Modify existing group.
                     try:
-                        changed_group = connection.modify_db_subnet_group(
+                        connection.modify_db_subnet_group(
                             aws_retry=True,
                             DBSubnetGroupName=group_name,
                             DBSubnetGroupDescription=group_description,
@@ -361,7 +358,7 @@ def main():
         else:
             if not module.check_mode:
                 try:
-                    new_group = connection.create_db_subnet_group(
+                    connection.create_db_subnet_group(
                         aws_retry=True,
                         DBSubnetGroupName=group_name,
                         DBSubnetGroupDescription=group_description,
@@ -379,13 +376,16 @@ def main():
                 module.exit_json(**result)
             except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
                 module.fail_json_aws(e, 'Failed to delete a subnet group.')
+        else:
+            subnet_group = get_subnet_group(connection, module)
+            if subnet_group:
+                subnet_update = True
+            result = create_result(subnet_update, subnet_group)
+            module.exit_json(**result)
+
         subnet_update = True
 
-    try:
-        subnet_group = get_subnet_group(connection, module)
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-        module.fail_json_aws(e, 'Failed to get subnet groups description.')
-
+    subnet_group = get_subnet_group(connection, module)
     changed = tags_update or subnet_update
     result = create_result(changed, subnet_group)
     module.exit_json(**result)
