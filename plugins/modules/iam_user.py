@@ -26,6 +26,7 @@ options:
       - The password to apply to the user.
     required: false
     type: str
+    version_added: 2.2.0
   update_password:
     default: always
     choices: ['always', 'on_create']
@@ -34,6 +35,7 @@ options:
       - I(update_password=always) will ensure the password is set to I(password).
       - I(update_password=on_create) will only set the password for newly created users.
     type: str
+    version_added: 2.2.0
   managed_policies:
     description:
       - A list of managed policy ARNs or friendly names to attach to the user.
@@ -73,11 +75,13 @@ options:
         for IAM user creation before returning.
     default: True
     type: bool
+    version_added: 2.2.0
   wait_timeout:
     description:
       - How long (in seconds) to wait for creation / updates to complete.
     default: 120
     type: int
+    version_added: 2.2.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
