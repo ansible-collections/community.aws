@@ -12,13 +12,24 @@ module: iam_user
 version_added: 1.0.0
 short_description: Manage AWS IAM users
 description:
-  - Manage AWS IAM users.
+  - A module to manage AWS IAM users.
+  - The module does not manage groups that users belong to, groups memberships can be managed using `iam_group`.
 author: Josh Souza (@joshsouza)
 options:
   name:
     description:
       - The name of the user to create.
     required: true
+    type: str
+  password:
+    description:
+      - The password to apply to the user.
+    required: false
+    type: str
+  new_password:
+    description:
+      - The new password to update for the existing user.
+    required: false
     type: str
   managed_policies:
     description:
@@ -36,7 +47,7 @@ options:
     type: str
   purge_policies:
     description:
-      - When I(purge_policies=true) any managed policies not listed in I(managed_policies) will be detatched.
+      - When I(purge_policies=true) any managed policies not listed in I(managed_policies) will be detached.
     required: false
     default: false
     type: bool
@@ -53,6 +64,17 @@ options:
     default: true
     type: bool
     version_added: 2.1.0
+  wait:
+    description:
+      - When I(wait=True) the module will wait for up to I(wait_timeout) seconds
+        for IAM user creation before returning.
+    default: True
+    type: bool
+  wait_timeout:
+    description:
+      - How long (in seconds) to wait for creation / updates to complete.
+    default: 120
+    type: int
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -179,15 +201,67 @@ def convert_friendly_names_to_arns(connection, module, policy_names):
         module.fail_json(msg="Couldn't find policy: " + str(e))
 
 
+def wait_iam_exists(connection, module):
+    if module.check_mode:
+        return
+    if not module.params.get('wait'):
+        return
+
+    user_name = module.params.get('name')
+    wait_timeout = module.params.get('wait_timeout')
+
+    delay = min(wait_timeout, 5)
+    max_attempts = wait_timeout // delay
+
+    try:
+        waiter = connection.get_waiter('user_exists')
+        waiter.wait(
+            WaiterConfig={'Delay': delay, 'MaxAttempts': max_attempts},
+            UserName=user_name,
+        )
+    except botocore.exceptions.WaiterError as e:
+        module.fail_json_aws(e, msg='Timeout while waiting on IAM user creation')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed while waiting on IAM user creation')
+
+
+def create_or_update_login_profile(connection, module):
+
+    # Apply password / update password for the user
+
+    user_params = dict()
+    user_params['UserName'] = module.params.get('name')
+
+    if module.params.get('new_password') is not None:
+        user_params['Password'] = module.params.get('new_password')
+
+        try:
+            connection.update_login_profile(**user_params)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Unable to update user login profile")
+    else:
+        user_params['Password'] = module.params.get('password')
+
+        try:
+            connection.create_login_profile(**user_params)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Unable to create user login profile")
+
+    return True
+
+
 def create_or_update_user(connection, module):
 
     params = dict()
     params['UserName'] = module.params.get('name')
     managed_policies = module.params.get('managed_policies')
     purge_policies = module.params.get('purge_policies')
+
     if module.params.get('tags') is not None:
         params["Tags"] = ansible_dict_to_boto3_tag_list(module.params.get('tags'))
+
     changed = False
+
     if managed_policies:
         managed_policies = convert_friendly_names_to_arns(connection, module, managed_policies)
 
@@ -205,8 +279,21 @@ def create_or_update_user(connection, module):
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to create user")
+
+        # Wait for user to be fully available before continuing
+        if module.params.get('wait'):
+            wait_iam_exists(connection, module)
+
+        if module.params.get('password') is not None:
+            create_or_update_login_profile(connection, module)
     else:
-        changed = update_user_tags(connection, module, params, user)
+        login_profile_result = None
+        update_result = update_user_tags(connection, module, params, user)
+
+        if module.params.get('new_password') is not None:
+            login_profile_result = create_or_update_login_profile(connection, module)
+
+        changed = bool(update_result) or bool(login_profile_result)
 
     # Manage managed policies
     current_attached_policies = get_attached_policy_list(connection, module, params['UserName'])
@@ -388,11 +475,15 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
+        password=dict(type='str', no_log=True),
+        new_password=dict(type='str', no_log=True),
         managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
         tags=dict(type='dict'),
         purge_tags=dict(type='bool', default=True),
+        wait=dict(type='bool', default=True),
+        wait_timeout=dict(default=120, type='int'),
     )
 
     module = AnsibleAWSModule(
