@@ -240,10 +240,22 @@
         - iam_user.iam_user.user.tags | length == 0
 
   ## Test user password update
+  - name: test update IAM password with on_create only
+    iam_user:
+      name: "{{ test_user }}"
+      password: "{{ test_new_password }}"
+      update_password: "on_create"
+      state: present
+    register: iam_user_update
+
+  - assert:
+      that:
+        - iam_user_update is not changed
+
   - name: update IAM password
     iam_user:
       name: "{{ test_user }}"
-      new_password: "{{ test_new_password }}"
+      password: "{{ test_new_password }}"
       state: present
     register: iam_user_update
 

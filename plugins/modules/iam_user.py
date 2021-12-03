@@ -26,10 +26,13 @@ options:
       - The password to apply to the user.
     required: false
     type: str
-  new_password:
+  update_password:
+    default: always
+    choices: ['always', 'on_create']
     description:
-      - The new password to update for the existing user.
-    required: false
+      - When to update user passwords.
+      - I(update_password=always) will ensure the password is set to I(password).
+      - I(update_password=on_create) will only set the password for newly created users.
     type: str
   managed_policies:
     description:
@@ -227,25 +230,18 @@ def wait_iam_exists(connection, module):
 
 def create_or_update_login_profile(connection, module):
 
-    # Apply password / update password for the user
-
+    # Apply new password / update password for the user
     user_params = dict()
     user_params['UserName'] = module.params.get('name')
+    user_params['Password'] = module.params.get('password')
 
-    if module.params.get('new_password') is not None:
-        user_params['Password'] = module.params.get('new_password')
-
-        try:
-            connection.update_login_profile(**user_params)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Unable to update user login profile")
-    else:
-        user_params['Password'] = module.params.get('password')
-
+    try:
+        connection.update_login_profile(**user_params)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         try:
             connection.create_login_profile(**user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Unable to create user login profile")
+            module.fail_json_aws(e, msg="Unable to create / update user login profile")
 
     return True
 
@@ -290,7 +286,7 @@ def create_or_update_user(connection, module):
         login_profile_result = None
         update_result = update_user_tags(connection, module, params, user)
 
-        if module.params.get('new_password') is not None:
+        if module.params['update_password'] == "always" and module.params.get('password') is not None:
             login_profile_result = create_or_update_login_profile(connection, module)
 
         changed = bool(update_result) or bool(login_profile_result)
@@ -476,7 +472,7 @@ def main():
     argument_spec = dict(
         name=dict(required=True, type='str'),
         password=dict(type='str', no_log=True),
-        new_password=dict(type='str', no_log=True),
+        update_password=dict(default='always', choices=['always', 'on_create'], no_log=False),
         managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
