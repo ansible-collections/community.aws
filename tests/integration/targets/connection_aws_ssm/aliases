@@ -1,10 +1,4 @@
 # reason: slow
 # This test suite can take almost 25 minutes (on a good day)
 unstable
-
 cloud/aws
-
-destructive
-non_local
-needs/root
-needs/target/connection
