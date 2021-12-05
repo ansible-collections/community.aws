@@ -53,8 +53,64 @@
           - lc_1_create_idem is not changed
           - '"autoscaling:CreateLaunchConfiguration" not in lc_1_create_idem.resource_actions'
 
-# Delete lc 1
-    - name: Delete launch configuration
+# Create lc 2
+    - name: Create launch configuration 2
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_2_create
+
+    - assert:
+        that:
+          - lc_2_create is changed
+          - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
+
+# Create lc 2 - idempotency
+    - name: Create launch configuration 2 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_2_create_idem
+
+    - assert:
+        that:
+          - lc_2_create_idem is not changed
+          - '"autoscaling:CreateLaunchConfiguration" not in lc_2_create_idem.resource_actions'
+
+# Find aws launch configuration
+    - name: Search for the Launch Configurations that start with test resource_prefix
+      community.aws.ec2_lc_find:
+        name_regex: '{{ resource_prefix }}*'
+        sort_order: descending
+        limit: 2
+      register: lc_find_result
+
+    - assert:
+        that:
+          - lc_find_result.results | length == 2
+          - '"autoscaling:DescribeLaunchConfigurations" in lc_find_result.resource_actions'
+
+    - debug: msg="{{ lc_find_result }}"
+
+  always:
+
+    - name: Delete launch configuration 1
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc1'
         state: absent
@@ -65,8 +121,7 @@
           - lc_1_delete is changed
           - '"autoscaling:DeleteLaunchConfiguration" in lc_1_delete.resource_actions'
 
-# Delete lc 1 - Idempotency
-    - name: Delete launch configuration - Idempotency
+    - name: Delete launch configuration 1 - Idempotency
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc1'
         state: absent
@@ -77,8 +132,7 @@
           - lc_1_delete_idem is not changed
           - '"autoscaling:DeleteLaunchConfiguration" not in lc_1_delete_idem.resource_actions'
 
-# gather info about lc 1 to make sure it's deleted
-    - name: Gather information about launch configuration with name "example"
+    - name: Gather information about launch configuration 1
       community.aws.ec2_lc_info:
         name: '{{ resource_prefix }}-lc1'
       register: lc_1_info_result
@@ -88,13 +142,36 @@
           - lc_1_info_result is not changed
           - lc_1_info_result.launch_configurations | length == 0
 
-
-  always:
-
-#remove later
-    - name: Delete launch configuration
+    - name: Delete launch configuration 2
       community.aws.ec2_lc:
-        name: '{{ resource_prefix }}-lc1'
+        name: '{{ resource_prefix }}-lc2'
         state: absent
+      register: lc_2_delete
+
+    - assert:
+        that:
+          - lc_2_delete is changed
+          - '"autoscaling:DeleteLaunchConfiguration" in lc_2_delete.resource_actions'
+
+    - name: Delete launch configuration 2 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        state: absent
+      register: lc_2_delete_idem
+
+    - assert:
+        that:
+          - lc_2_delete_idem is not changed
+          - '"autoscaling:DeleteLaunchConfiguration" not in lc_2_delete_idem.resource_actions'
+
+    - name: Gather information about launch configuration 2
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc2'
+      register: lc_2_info_result
+
+    - assert:
+        that:
+          - lc_2_info_result is not changed
+          - lc_2_info_result.launch_configurations | length == 0
 
     - include_tasks: env_cleanup.yml
