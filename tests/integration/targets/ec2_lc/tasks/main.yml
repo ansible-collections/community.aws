@@ -1,0 +1,100 @@
+- name: run ec2_lc tests
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  collections:
+    - amazon.aws
+
+  block:
+
+    - name: set up environment for testing.
+      include_tasks: env_setup.yml
+
+# Create lc 1
+    - name: Create launch configuration
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_1_create
+
+    - assert:
+        that:
+          - lc_1_create is changed
+          - '"autoscaling:CreateLaunchConfiguration" in lc_1_create.resource_actions'
+
+# Create lc 1 - idempotency
+    - name: Create launch configuration - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_1_create_idem
+
+    - assert:
+        that:
+          - lc_1_create_idem is not changed
+          - '"autoscaling:CreateLaunchConfiguration" not in lc_1_create_idem.resource_actions'
+
+# Delete lc 1
+    - name: Delete launch configuration
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        state: absent
+      register: lc_1_delete
+
+    - assert:
+        that:
+          - lc_1_delete is changed
+          - '"autoscaling:DeleteLaunchConfiguration" in lc_1_delete.resource_actions'
+
+# Delete lc 1 - Idempotency
+    - name: Delete launch configuration - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        state: absent
+      register: lc_1_delete_idem
+
+    - assert:
+        that:
+          - lc_1_delete_idem is not changed
+          - '"autoscaling:DeleteLaunchConfiguration" not in lc_1_delete_idem.resource_actions'
+
+# gather info about lc 1 to make sure it's deleted
+    - name: Gather information about launch configuration with name "example"
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc1'
+      register: lc_1_info_result
+
+    - assert:
+        that:
+          - lc_1_info_result is not changed
+          - lc_1_info_result.launch_configurations | length == 0
+
+
+  always:
+
+#remove later
+    - name: Delete launch configuration
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        state: absent
+
+    - include_tasks: env_cleanup.yml
