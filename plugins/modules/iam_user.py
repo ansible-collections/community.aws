@@ -38,7 +38,7 @@ options:
     version_added: 2.2.0
   remove_password:
     description:
-      - When to update delete user login passwords.
+      - Option to delete user login passwords.
       - This field is mutually exclusive to I(password).
     type: 'bool'
     version_added: 2.2.0
