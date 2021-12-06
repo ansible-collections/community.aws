@@ -36,6 +36,12 @@ options:
       - I(update_password=on_create) will only set the password for newly created users.
     type: str
     version_added: 2.2.0
+  remove_password:
+    description:
+      - When to update delete user login passwords.
+      - This field is mutually exclusive to I(password).
+    type: 'bool'
+    version_added: 2.2.0
   managed_policies:
     description:
       - A list of managed policy ARNs or friendly names to attach to the user.
@@ -97,6 +103,12 @@ EXAMPLES = r'''
 - name: Create a user
   community.aws.iam_user:
     name: testuser1
+    state: present
+
+- name: Create a user with a password
+  community.aws.iam_user:
+    name: testuser1
+    password: SomeSecurePassword
     state: present
 
 - name: Create a user and attach a managed policy using its ARN
@@ -241,11 +253,26 @@ def create_or_update_login_profile(connection, module):
 
     try:
         connection.update_login_profile(**user_params)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except is_boto3_error_code('NoSuchEntity'):
         try:
             connection.create_login_profile(**user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Unable to create / update user login profile")
+            module.fail_json_aws(e, msg="Unable to create user login profile")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to update user login profile")
+
+    return True
+
+
+def delete_login_profile(connection, module):
+
+    user_params = dict()
+    user_params['UserName'] = module.params.get('name')
+
+    try:
+        connection.delete_login_profile(**user_params)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to delete user login profile")
 
     return True
 
@@ -292,6 +319,8 @@ def create_or_update_user(connection, module):
 
         if module.params['update_password'] == "always" and module.params.get('password') is not None:
             login_profile_result = create_or_update_login_profile(connection, module)
+        elif module.params.get('remove_password') is not None:
+            login_profile_result = delete_login_profile(connection, module)
 
         changed = bool(update_result) or bool(login_profile_result)
 
@@ -477,6 +506,7 @@ def main():
         name=dict(required=True, type='str'),
         password=dict(type='str', no_log=True),
         update_password=dict(default='always', choices=['always', 'on_create'], no_log=False),
+        remove_password=dict(type='bool'),
         managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
@@ -488,7 +518,8 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
+        mutually_exclusive=[['password', 'remove_password']]
     )
 
     connection = module.client('iam')

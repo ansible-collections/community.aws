@@ -24,7 +24,6 @@
   - name: create test user (check mode)
     iam_user:
       name: "{{ test_user }}"
-      password: "{{ test_password }}"
       state: present
     check_mode: yes
     register: iam_user
@@ -37,7 +36,6 @@
   - name: create test user
     iam_user:
       name: "{{ test_user }}"
-      password: "{{ test_password }}"
       state: present
     register: iam_user
 
@@ -95,6 +93,31 @@
         - iam_user_info.iam_users[0].user_id == test_iam_user.user_id
         - iam_user_info.iam_users[0].user_name == test_iam_user.user_name
         - iam_user_info.iam_users[0].tags | length == 0
+
+  - name: create test user with password (check mode)
+    iam_user:
+      name: "{{ test_user3 }}"
+      password: "{{ test_password }}"
+      state: present
+    check_mode: yes
+    register: iam_user
+
+  - name: assert that the second user would be created
+    assert:
+      that:
+        - iam_user is changed
+
+  - name: create second test user with password
+    iam_user:
+      name: "{{ test_user3 }}"
+      password: "{{ test_password }}"
+      state: present
+    register: iam_user
+
+  - name: assert that the second user is created
+    assert:
+      that:
+        - iam_user is changed
 
   - name: get info on IAM user(s) on path
     iam_user_info:
@@ -242,7 +265,7 @@
   ## Test user password update
   - name: test update IAM password with on_create only
     iam_user:
-      name: "{{ test_user }}"
+      name: "{{ test_user3 }}"
       password: "{{ test_new_password }}"
       update_password: "on_create"
       state: present
@@ -254,7 +277,7 @@
 
   - name: update IAM password
     iam_user:
-      name: "{{ test_user }}"
+      name: "{{ test_user3 }}"
       password: "{{ test_new_password }}"
       state: present
     register: iam_user_update
@@ -262,7 +285,7 @@
   - assert:
       that:
         - iam_user_update is changed
-        - iam_user_update.iam_user.user.user_name == test_user
+        - iam_user_update.iam_user.user.user_name == test_user3
 
   # ===========================================
   # Test Managed Policy management
@@ -598,6 +621,18 @@
     assert:
       that:
         - not iam_user.changed
+
+  ## Test user password removal
+  - name: Delete IAM password
+    iam_user:
+      name: "{{ test_user3 }}"
+      remove_password: yes
+      state: present
+    register: iam_user_password_removal
+
+  - assert:
+      that:
+        - iam_user_password_removal is changed
 
   always:
     - name: remove group
