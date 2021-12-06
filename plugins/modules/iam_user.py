@@ -258,7 +258,7 @@ def create_or_update_login_profile(connection, module):
             connection.create_login_profile(**user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to create user login profile")
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e: # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to update user login profile")
 
     return True
