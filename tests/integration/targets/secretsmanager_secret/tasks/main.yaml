@@ -12,3 +12,4 @@
   - include_tasks: 'basic.yml'
   # Permissions missing
   #- include_tasks: 'rotation.yml'
+  - include_tasks: 'replication.yml'
