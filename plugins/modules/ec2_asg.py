@@ -87,6 +87,12 @@ options:
       - 'See also U(https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-autoscaling-autoscalinggroup-mixedinstancespolicy.html)'
     required: false
     suboptions:
+      instance_requirements:
+        description:
+        - A set of params decribing the specs instances should have
+        type: dict
+        required: false
+        version_added: 3.2.0
       instance_types:
         description:
           - A list of instance_types.
@@ -431,6 +437,25 @@ EXAMPLES = r'''
     tags:
       - environment: production
         propagate_at_launch: no
+
+# Another example with Launch Template using mixed instance policy and only instance requirements (not specificing instance types)
+
+- community.aws.ec2_asg:
+    name: special_mixed
+    launch_template:
+        launch_template_name: 'lt-example'
+    mixed_instances_policy:
+        instance_requirements:
+            v_cpu_count: { min: 5, max: 16 }
+            memory_mi_b: { min: 20480, max: 112640 }
+        instances_distribution:
+            on_demand_percentage_above_base_capacity: 0
+            spot_allocation_strategy: capacity-optimized
+    min_size: 1
+    max_size: 10
+    desired_capacity: 5
+    vpc_zone_identifier: [ 'subnet-abcd1234', 'subnet-1a2b3c4d' ]
+
 '''
 
 RETURN = r'''
@@ -533,11 +558,6 @@ min_size:
     type: int
     sample: 1
 mixed_instances_policy:
-    description: Returns the list of instance types if a mixed instances policy is set.
-    returned: success
-    type: list
-    sample: ["t3.micro", "t3a.micro"]
-mixed_instances_policy_full:
     description: Returns the full dictionary representation of the mixed instances policy if a mixed instances policy is set.
     returned: success
     type: dict
@@ -864,8 +884,9 @@ def get_properties(autoscaling_group):
     properties['vpc_zone_identifier'] = autoscaling_group.get('VPCZoneIdentifier')
     raw_mixed_instance_object = autoscaling_group.get('MixedInstancesPolicy')
     if raw_mixed_instance_object:
-        properties['mixed_instances_policy_full'] = camel_dict_to_snake_dict(raw_mixed_instance_object)
-        properties['mixed_instances_policy'] = [x['InstanceType'] for x in raw_mixed_instance_object.get('LaunchTemplate').get('Overrides')]
+        properties['mixed_instances_policy'] = camel_dict_to_snake_dict(raw_mixed_instance_object)
+        # for backwards compatibility
+        properties['mixed_instances_full'] = properties['mixed_instances_policy']
 
     metrics = autoscaling_group.get('EnabledMetrics')
     if metrics:
@@ -915,17 +936,21 @@ def get_launch_object(connection, ec2_connection):
 
         if mixed_instances_policy:
             instance_types = mixed_instances_policy.get('instance_types', [])
+            instance_requirements = mixed_instances_policy.get('instance_requirements', {})
             instances_distribution = mixed_instances_policy.get('instances_distribution', {})
             policy = {
                 'LaunchTemplate': {
-                    'LaunchTemplateSpecification': launch_object['LaunchTemplate']
+                    'LaunchTemplateSpecification': launch_object['LaunchTemplate'],
+                    'Overrides': []
                 }
             }
             if instance_types:
-                policy['LaunchTemplate']['Overrides'] = []
                 for instance_type in instance_types:
                     instance_type_dict = {'InstanceType': instance_type}
                     policy['LaunchTemplate']['Overrides'].append(instance_type_dict)
+            if instance_requirements:
+                instance_requirements_dict = {'InstanceRequirements': snake_dict_to_camel_dict(instance_requirements, capitalize_first=True)}
+                policy['LaunchTemplate']['Overrides'].append(instance_requirements_dict)
             if instances_distribution:
                 instances_distribution_params = scrub_none_parameters(instances_distribution)
                 policy['InstancesDistribution'] = snake_dict_to_camel_dict(instances_distribution_params, capitalize_first=True)
@@ -1833,6 +1858,10 @@ def main():
                 instance_types=dict(
                     type='list',
                     elements='str'
+                ),
+                instance_requirements=dict(
+                    type='dict',
+                    default=None
                 ),
                 instances_distribution=dict(
                     type='dict',
