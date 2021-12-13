@@ -8,23 +8,10 @@
 
   block:
     - include_tasks: alb.yml
-      vars:
-
     - include_tasks: create_webacl.yml
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
-
     - include_tasks: rule_group.yml
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
-
     - include_tasks: test_webacl.yml
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
-
     - include_tasks: waf_resources.yml
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     ##############################
     # test delete wafv2 resources
