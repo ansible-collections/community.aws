@@ -319,7 +319,7 @@ def create_or_update_user(connection, module):
 
         if module.params['update_password'] == "always" and module.params.get('password') is not None:
             login_profile_result = create_or_update_login_profile(connection, module)
-        elif module.params.get('remove_password') is not None:
+        elif module.params.get('remove_password'):
             login_profile_result = delete_login_profile(connection, module)
 
         changed = bool(update_result) or bool(login_profile_result)
