@@ -674,6 +674,29 @@
       ecs_taskdefinition_info:
         task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
 
+    - name: create EC2 VPC-networked task definition with CPU or Memory and execution role
+      ecs_taskdefinition:
+        containers: "{{ ecs_fargate_task_containers }}"
+        family: "{{ ecs_task_name }}-vpc"
+        network_mode: awsvpc
+        launch_type: EC2
+        cpu: 512
+        memory: 1024
+        execution_role_arn: "{{ iam_execution_role.arn }}"
+        state: present
+      vars:
+        ecs_task_host_port: 8080
+      register: ecs_ec2_task_definition
+
+    - name: obtain ECS task definition facts
+      ecs_taskdefinition_info:
+        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_ec2_task_definition.taskdefinition.revision }}"
+
+    - name: check that changing task definiton launch type created a new task definition revision
+      assert:
+        that:
+          - ecs_fargate_task_definition.taskdefinition.revision != ecs_ec2_task_definition.taskdefinition.revision
+
     - name: create fargate ECS service without network config (expected to fail)
       ecs_service:
         state: present
