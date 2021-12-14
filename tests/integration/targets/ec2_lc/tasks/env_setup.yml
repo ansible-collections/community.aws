@@ -3,7 +3,7 @@
     name: "{{ resource_prefix }}-vpc"
     cidr_block: 10.22.32.0/23
     tags:
-      Name: Ansible ec2_instance Testing VPC
+      Name: Ansible ec2_lc Testing VPC
     tenancy: default
   register: testing_vpc
 
@@ -11,6 +11,8 @@
   ec2_vpc_igw:
     vpc_id: "{{ testing_vpc.vpc.id }}"
     state: present
+    tags:
+      Name: Ansible ec2_lc Testing gateway
   register: igw
 
 - name: Create default subnet in zone A
