@@ -13,8 +13,7 @@
     - name: set up environment for testing.
       include_tasks: env_setup.yml
 
-# Create lc 1
-    - name: Create launch configuration
+    - name: Create launch configuration 1
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc1'
         image_id: '{{ ec2_ami_id }}'
@@ -33,8 +32,7 @@
           - lc_1_create is changed
           - '"autoscaling:CreateLaunchConfiguration" in lc_1_create.resource_actions'
 
-# Create lc 1 - idempotency
-    - name: Create launch configuration - Idempotency
+    - name: Create launch configuration 1 - Idempotency
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc1'
         image_id: '{{ ec2_ami_id }}'
@@ -53,7 +51,6 @@
           - lc_1_create_idem is not changed
           - '"autoscaling:CreateLaunchConfiguration" not in lc_1_create_idem.resource_actions'
 
-# Create lc 2
     - name: Create launch configuration 2
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc2'
@@ -73,7 +70,6 @@
           - lc_2_create is changed
           - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
 
-# Create lc 2 - idempotency
     - name: Create launch configuration 2 - Idempotency
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc2'
@@ -93,7 +89,6 @@
           - lc_2_create_idem is not changed
           - '"autoscaling:CreateLaunchConfiguration" not in lc_2_create_idem.resource_actions'
 
-# Find aws launch configuration
     - name: Search for the Launch Configurations that start with test resource_prefix
       community.aws.ec2_lc_find:
         name_regex: '{{ resource_prefix }}*'
@@ -105,8 +100,6 @@
         that:
           - lc_find_result.results | length == 2
           - '"autoscaling:DescribeLaunchConfigurations" in lc_find_result.resource_actions'
-
-    - debug: msg="{{ lc_find_result }}"
 
   always:
 

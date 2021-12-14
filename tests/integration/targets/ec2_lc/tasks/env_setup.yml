@@ -60,16 +60,3 @@
         to_port: 80
         cidr_ip: 0.0.0.0/0
   register: sg
-
-- name: Find AMI to use
-  ec2_ami_info:
-    owners: "amazon"
-    filters:
-      name: "{{ ec2_ami_name }}"
-  register: ec2_amis
-- set_fact:
-    ec2_ami_id: "{{ ec2_amis.images[0].image_id }}"
-
-- name: Set ec2 instance type to use
-  set_fact:
-    ec2_instance_type: t2.micro
