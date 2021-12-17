@@ -1,0 +1,2 @@
+breaking_changes:
+  - Deprecated ``keys_attr`` field in aws_kms_info is now ignored (https://github.com/ansible-collections/community.aws/pull/838).
