@@ -854,8 +854,7 @@ def _update_tags(current_table):
 def update_table(current_table):
     primary_index_changes = _primary_index_changes(current_table)
     if primary_index_changes:
-        module.fail_json("DynamoDB does not support updating the Primary keys on a table. "
-                        "Changed paramters are {0}".format(primary_index_changes))
+        module.fail_json("DynamoDB does not support updating the Primary keys on a table. Changed paramters are: {0}".format(primary_index_changes))
 
     changed = False
     changed |= _update_table(current_table)
