@@ -27,9 +27,21 @@
             delete_on_termination: true
       register: lc_1_create
 
+    - name: Gather information about launch configuration 1
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc1'
+      register: lc_1_info_result
+
     - assert:
         that:
           - lc_1_create is changed
+          - '"autoscaling:CreateLaunchConfiguration" in lc_1_create.resource_actions'
+          - '"throughput" not in lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs'
+          - lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
+          - lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp2'
+          - lc_1_info_result.launch_configurations[0].instance_type == 't2.micro'
           - '"autoscaling:CreateLaunchConfiguration" in lc_1_create.resource_actions'
 
     - name: Create launch configuration 1 - Idempotency
@@ -56,7 +68,7 @@
         name: '{{ resource_prefix }}-lc2'
         image_id: '{{ ec2_ami_id }}'
         assign_public_ip: yes
-        instance_type: '{{ ec2_instance_type }}'
+        instance_type: 't3.small'
         security_groups: '{{ sg.group_id }}'
         volumes:
           - device_name: /dev/xvda
@@ -65,9 +77,21 @@
             delete_on_termination: true
       register: lc_2_create
 
+    - name: Gather information about launch configuration 2
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc2'
+      register: lc_2_info_result
+
     - assert:
         that:
           - lc_2_create is changed
+          - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
+          - '"throughput" not in lc_2_info_result.launch_configurations[0].block_device_mappings[0].ebs'
+          - lc_2_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
+          - lc_2_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp2'
+          - lc_2_info_result.launch_configurations[0].instance_type == 't3.small'
           - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
 
     - name: Create launch configuration 2 - Idempotency
@@ -116,6 +140,9 @@
           - lc_3_create is changed
           - '"throughput" in lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs'
           - lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs.throughput == 250
+          - lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
+          - lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp3'
+          - lc_3_info_result.launch_configurations[0].instance_type == 't2.micro'
           - '"autoscaling:CreateLaunchConfiguration" in lc_3_create.resource_actions'
 
     - name: Create launch configuration 3 - Idempotency
