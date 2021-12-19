@@ -47,12 +47,6 @@
     - set_fact:
         ec2_ami_image: '{{ ec2_amis.images[0].image_id }}'
 
-    - name: load balancer name has to be less than 32 characters
-      # the 8 digit identifier at the end of resource_prefix helps determine during which test something
-      # was created
-      set_fact:
-        load_balancer_name: "{{ tiny_prefix }}-lb"
-
     # Set up the testing dependencies: VPC, subnet, security group, and two launch configurations
 
     - name: Create VPC for use in testing
