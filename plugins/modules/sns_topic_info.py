@@ -10,15 +10,15 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: sns_topic_info
 short_description: sns_topic_info module
-version_added: 2.0.0
+version_added: 3.0.0
 description:
-    - The M(community.aws.sns_topic_info) module allows to get all AWS SNS topics or properties of a specific AWS SNS topic.
+  - The M(community.aws.sns_topic_info) module allows to get all AWS SNS topics or properties of a specific AWS SNS topic.
 author:
-  - "Alina Buzachis (@alinabuzachis)"
+- "Alina Buzachis (@alinabuzachis)"
 options:
   topic_arn:
     description:
-      - TThe ARN of the AWS SNS topic for which you wish to find subscriptions or list attributes.
+      - The ARN of the AWS SNS topic for which you wish to find subscriptions or list attributes.
     required: false
     type: str
 extends_documentation_fragment:
@@ -26,9 +26,16 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 '''
 
-EXAMPLES = r"""
+EXAMPLES = r'''
+- name: list all the topics
+  community.aws.sns_topic_info:
+  register: sns_topic_list
 
-"""
+- name: get info on specific topic
+  community.aws.sns_topic_info:
+    topic_arn: "{{ sns_arn }}"
+  register: sns_topic_info
+'''
 
 RETURN = r'''
 changed:
@@ -56,9 +63,10 @@ result:
                 description: Delivery policy for the SNS topic
                 returned: when topic is owned by this AWS account
                 type: str
-                sample: >
-                {"http":{"defaultHealthyRetryPolicy":{"minDelayTarget":20,"maxDelayTarget":20,"numRetries":3,"numMaxDelayRetries":0,
-                "numNoDelayRetries":0,"numMinDelayRetries":0,"backoffFunction":"linear"},"disableSubscriptionOverrides":false}}
+                sample: {
+                    "http":{"defaultHealthyRetryPolicy":{"minDelayTarget":20,"maxDelayTarget":20,"numRetries":3,"numMaxDelayRetries":0,
+                    "numNoDelayRetries":0,"numMinDelayRetries":0,"backoffFunction":"linear"},"disableSubscriptionOverrides":false}
+                }
             display_name:
                 description: Display name for SNS topic
                 returned: when topic is owned by this AWS account
@@ -73,9 +81,10 @@ result:
                 description: Policy for the SNS topic
                 returned: when topic is owned by this AWS account
                 type: str
-                sample: >
-                {"Version":"2012-10-17","Id":"SomePolicyId","Statement":[{"Sid":"ANewSid","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111111111111:root"},
-                "Action":"sns:Subscribe","Resource":"arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic","Condition":{"StringEquals":{"sns:Protocol":"email"}}}]}
+                sample: {
+                    "Version":"2012-10-17","Id":"SomePolicyId","Statement":[{"Sid":"ANewSid","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111111111111:root"},
+                    "Action":"sns:Subscribe","Resource":"arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic","Condition":{"StringEquals":{"sns:Protocol":"email"}}}]
+                }
             subscriptions:
                 description: List of subscribers to the topic in this AWS account
                 returned: always
@@ -97,10 +106,10 @@ result:
                 type: str
                 sample: '0'
             topic_arn:
-            description: ARN of the SNS topic (equivalent to sns_arn)
-            returned: when topic is owned by this AWS account
-            type: str
-            sample: arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic
+                description: ARN of the SNS topic (equivalent to sns_arn)
+                returned: when topic is owned by this AWS account
+                type: str
+                sample: arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic
 '''
 
 
@@ -136,17 +145,17 @@ def _list_subscriptions_with_backoff(connection):
 
 
 def _list_topic_subscriptions(connection, module, topic_arn):
+    try:
+        return _list_topic_subscriptions_with_backoff(connection, topic_arn)
+    except is_boto3_error_code('AuthorizationError'):
         try:
-            return _list_topic_subscriptions_with_backoff(connection, topic_arn)
-        except is_boto3_error_code('AuthorizationError'):
-            try:
-                # potentially AuthorizationError when listing subscriptions for third party topic
-                return [sub for sub in _list_subscriptions_with_backoff()
-                        if sub['TopicArn'] == topic_arn]
-            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+            # potentially AuthorizationError when listing subscriptions for third party topic
+            return [sub for sub in _list_subscriptions_with_backoff()
+                    if sub['TopicArn'] == topic_arn]
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
 
 
 def list_topics(connection, module):
@@ -154,7 +163,7 @@ def list_topics(connection, module):
         topics = _list_topics_with_backoff(connection)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't get topic list")
-    
+
     return [get_info(connection, module, t['TopicArn']) for t in topics]
 
 
@@ -183,13 +192,12 @@ def main():
                               supports_check_mode=True)
 
     topic_arn = module.params.get('topic_arn')
-    check_mode = module.check_mode
 
     try:
         connection = module.client('sns', retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS.')
-    
+
     if topic_arn:
         results = get_info(connection, module, topic_arn)
     else:

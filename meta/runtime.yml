@@ -172,6 +172,7 @@ action_groups:
   - s3_website
   - sns
   - sns_topic
+  - sns_topic_info
   - sqs_queue
   - sts_assume_role
   - sts_session_token
