@@ -1,5 +1,6 @@
 ---
-instance_id: "{{ resource_prefix }}-{{ inventory_hostname | replace('_','-') }}"
+_instance_id: "{{ resource_prefix }}-{{ inventory_hostname | replace('_','-') }}"
+instance_id: "{{ _resource_id[0:54] }}"
 modified_instance_id: "{{ resource_prefix }}-updated"
 username: test
 password: test12345678
