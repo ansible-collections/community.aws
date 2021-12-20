@@ -8,7 +8,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = '''
+DOCUMENTATION = r'''
 ---
 module: rds_instance_snapshot
 version_added: 1.0.0
@@ -64,7 +64,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 - name: Create snapshot
   community.aws.rds_instance_snapshot:
     db_instance_identifier: new-database
@@ -76,7 +76,7 @@ EXAMPLES = '''
     state: absent
 '''
 
-RETURN = '''
+RETURN = r'''
 allocated_storage:
   description: How much storage is allocated in GB.
   returned: always
@@ -277,11 +277,13 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
         return False
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, tags, purge_tags)
     changed = bool(tags_to_add or tags_to_remove)
+
     if tags_to_add:
         try:
             client.add_tags_to_resource(ResourceName=resource_arn, Tags=ansible_dict_to_boto3_tag_list(tags_to_add))
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, "Couldn't add tags to snapshot {0}".format(resource_arn))
+
     if tags_to_remove:
         try:
             client.remove_tags_from_resource(ResourceName=resource_arn, TagKeys=tags_to_remove)
