@@ -137,6 +137,20 @@
       that:
         - result.changed
 
+  - name: remove resource policy from secret (idempotency)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+
+  - name: assert no change happened
+    assert:
+      that:
+        - not result.changed
+
   - name: remove secret
     aws_secret:
       name: "{{ secret_name }}"
