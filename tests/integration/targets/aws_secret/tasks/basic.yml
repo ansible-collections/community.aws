@@ -115,7 +115,7 @@
       state: present
       secret_type: 'string'
       secret: "{{ super_secret_string }}"
-      policy: "{{ lookup('template', 'secret-policy.j2', convert_data=False) | string }}"
+      resource_policy: "{{ lookup('template', 'secret-policy.j2', convert_data=False) | string }}"
     register: result
 
   - name: assert correct keys are returned
