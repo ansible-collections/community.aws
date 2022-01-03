@@ -784,6 +784,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
 
 
 def get_rds_method_attribute_name(instance, state, creation_source, read_replica):
+    # just a test
     method_name = None
     if state == 'absent' or state == 'terminated':
         if instance and instance['DBInstanceStatus'] not in ['deleting', 'deleted']:

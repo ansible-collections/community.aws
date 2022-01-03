@@ -206,6 +206,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_li
 
 
 def get_snapshot(client, module, snapshot_id):
+    # just a test
     try:
         response = client.describe_db_snapshots(DBSnapshotIdentifier=snapshot_id)
     except client.exceptions.DBSnapshotNotFoundFault:
