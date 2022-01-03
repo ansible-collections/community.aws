@@ -158,6 +158,7 @@ action_groups:
   - rds_snapshot
   - rds_snapshot_info
   - rds_subnet_group
+  - rds_export_task
   - redshift
   - redshift_cross_region_snapshots
   - redshift_info

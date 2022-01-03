@@ -1,10 +1,9 @@
 #!/usr/bin/python
 
-# Copyright: (c) 2017, Ansible Project
+# Copyright: (c) 2022, Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
-
 __metaclass__ = type
 
 
@@ -100,35 +99,34 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-
 from ..module_utils.core import AnsibleAWSModule
 from ..module_utils.core import is_boto3_error_code
 from ..module_utils.ec2 import AWSRetry
 
 
-def list_export_tasks():
+def describe_export_task():
     result = {}
 
     try:
-        _result = client.describe_export_tasks(
+        result = client.describe_export_tasks(
             aws_retry=True, ExportTaskIdentifier=module.params.get("export_task_id")
         )
     except is_boto3_error_code("ExportTaskNotFound"):
         return {}
-    except (
-        botocore.exceptions.ClientError,
-        botocore.exceptions.BotoCoreError,
-    ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get export task")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Couldn't describe export task")
 
-    if _result:
-        result = camel_dict_to_snake_dict(_result["ExportTasks"][0])
+    return result
 
 
 def start_export_task():
     results = {}
-    params = {}
+    changed = True
+
+    if describe_export_task():
+        changed = False
+        return changed, results
+
     params = {
         "ExportTaskIdentifier": module.params.get("export_task_id"),
         "SourceArn": module.params.get("source_arn"),
@@ -146,21 +144,32 @@ def start_export_task():
     try:
         if module.check_mode:
             return changed, results
+
         results = client.start_export_task(aws_retry=True, **params)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't start export task")
 
+    return changed, results
+
 
 def cancel_export_task():
     results = {}
+    changed = False
+
     try:
         if module.check_mode:
-            return changed, results
+            return True, results
+
         results = client.cancel_export_task(
             aws_retry=True, ExportTaskIdentifier=module.params.get("export_task_id")
         )
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        changed = True
+    except is_boto3_error_code('ExportTaskNotFoundFault'):
+        return False, results
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't cancel export task")
+
+    return changed, results
 
 
 def main():
@@ -168,18 +177,23 @@ def main():
     global client
 
     argument_spec = dict(
-        state=dict(choices=["present", "absent"], required=True),
+        state=dict(choices=["present", "absent"], default='present'),
         export_task_id=dict(type="str", required=True),
-        source_arn=dict(type="str", required=True),
-        s3_bucket_name=dict(type="str", required=True),
-        iam_role_arn=dict(type="str", required=True),
-        kms_key_id=dict(type="str", required=True),
+        source_arn=dict(type="str"),
+        s3_bucket_name=dict(type="str", aliases=['s3_bucket']),
+        iam_role_arn=dict(type="str", aliases=['iam_role']),
+        kms_key_id=dict(type="str"),
         s3_prefix=dict(type="str"),
         export_only=dict(ype="list"),
     )
 
+    required_if = [
+        ('state', 'present', ['export_task_identifier', 'source_arn', 's3_bucket_name', 'iam_role_arn', 'kms_key_id']),
+    ]
+
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        required_if=required_if,
         supports_check_mode=True,
     )
 
