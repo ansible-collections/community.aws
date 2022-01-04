@@ -1,0 +1,26 @@
+---
+# defaults file for rds_export_task
+
+# Create RDS instance
+instance_id: 'ansible-test-instance-{{ resource_prefix }}'
+username: 'testrdsusername'
+password: 'test-rds_password'
+db_instance_class: db.t3.micro
+allocated_storage: 10
+engine: 'mariadb'
+mariadb_engine_version: 10.3.31
+
+# Create snapshot
+snapshot_id: 'ansible-test-instance-snapshot-{{ resource_prefix }}'
+
+# Create an IAM role
+role_name: '{{ resource_prefix }}-role'
+
+# Create kms key 
+kms_key_alias: '{{ resource_prefix }}-kms'
+
+# Create an S3 bucket
+bucket_name: '{{ resource_prefix }}-bucket'
+
+# Create export task
+export_task_id: 'ansible-test-export-{{ resource_prefix }}'

@@ -20,33 +20,35 @@ options:
     state:
         description:
             - Specifies whether the export task should be C(present) or C(absent).
-        required: true
         choices: [ 'present', 'absent' ]
+        default: present
         type: str
     export_task_id:
         description:
             - A unique identifier for the snapshot export task.
-        required: true
+        aliases:
+            - task_id
         type: str
+        required: true
     source_arn:
         description:
             - The Amazon Resource Name (ARN) of the snapshot to export to Amazon S3.
-        required: true
         type: str
     s3_bucket_name:
         description:
             - The name of the Amazon S3 bucket to export the snapshot to.
-        required: true
+        aliases:
+            - s3_bucket
         type: str
     iam_role_arn:
         description:
             - The name of the IAM role to use for writing to the Amazon S3 bucket when exporting a snapshot.
-        required: true
+        aliases:
+            - iam_role
         type: str
     kms_key_id:
         description:
             - The ID of the Amazon Web Services KMS customer master key (CMK) to use to encrypt the snapshot exported to Amazon S3.
-        required: true
         type: str
     s3_prefix:
         description:
@@ -65,22 +67,7 @@ options:
                This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.'
             - 'C(database.schema) table-name: Export a table of the database schema.
                This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.'
-        required: true
         type: list
-    wait:
-        description:
-            - Wait for the copied Snapshot to be in C(Available) state before returning.
-        type: bool
-        default: true
-    wait_timeout:
-        description:
-            - How long before wait gives up, in seconds.
-        default: 600
-        type: int
-    tags:
-        description:
-            - A dictionary of tags to be added to the new Snapshot.
-        type: dict
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -99,18 +86,16 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
-from ..module_utils.core import AnsibleAWSModule
-from ..module_utils.core import is_boto3_error_code
-from ..module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def describe_export_task():
     result = {}
 
     try:
-        result = client.describe_export_tasks(
-            aws_retry=True, ExportTaskIdentifier=module.params.get("export_task_id")
-        )
+        result = client.describe_export_tasks(ExportTaskIdentifier=module.params.get("export_task_id"), aws_retry=True)
     except is_boto3_error_code("ExportTaskNotFound"):
         return {}
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -145,7 +130,7 @@ def start_export_task():
         if module.check_mode:
             return changed, results
 
-        results = client.start_export_task(aws_retry=True, **params)
+        results = client.start_export_task(**params, aws_retry=True)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't start export task")
 
@@ -160,9 +145,7 @@ def cancel_export_task():
         if module.check_mode:
             return True, results
 
-        results = client.cancel_export_task(
-            aws_retry=True, ExportTaskIdentifier=module.params.get("export_task_id")
-        )
+        results = client.cancel_export_task(ExportTaskIdentifier=module.params.get("export_task_id"), aws_retry=True)
         changed = True
     except is_boto3_error_code('ExportTaskNotFoundFault'):
         return False, results
@@ -178,7 +161,7 @@ def main():
 
     argument_spec = dict(
         state=dict(choices=["present", "absent"], default='present'),
-        export_task_id=dict(type="str", required=True),
+        export_task_id=dict(type="str", aliases=['task_id'], required=True),
         source_arn=dict(type="str"),
         s3_bucket_name=dict(type="str", aliases=['s3_bucket']),
         iam_role_arn=dict(type="str", aliases=['iam_role']),
@@ -188,7 +171,7 @@ def main():
     )
 
     required_if = [
-        ('state', 'present', ['export_task_identifier', 'source_arn', 's3_bucket_name', 'iam_role_arn', 'kms_key_id']),
+        ('state', 'present', ['export_task_id', 'source_arn', 's3_bucket_name', 'iam_role_arn', 'kms_key_id']),
     ]
 
     module = AnsibleAWSModule(
