@@ -53,7 +53,6 @@ options:
     s3_prefix:
         description:
             - The Amazon S3 bucket prefix to use as the file name and path of the exported snapshot.
-        required: true
         type: str
     export_only:
         description:
@@ -68,6 +67,7 @@ options:
             - 'C(database.schema) table-name: Export a table of the database schema.
                This format is valid only for RDS for PostgreSQL and Aurora PostgreSQL.'
         type: list
+        elements: str
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -167,7 +167,7 @@ def main():
         iam_role_arn=dict(type="str", aliases=['iam_role']),
         kms_key_id=dict(type="str"),
         s3_prefix=dict(type="str"),
-        export_only=dict(ype="list"),
+        export_only=dict(type="list", elements="str"),
     )
 
     required_if = [
