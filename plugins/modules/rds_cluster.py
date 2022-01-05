@@ -25,9 +25,11 @@ options:
         description: Whether the snapshot should exist or not.
         choices: ['present', 'absent']
         default: 'present'
+        type: str
     creation_source:
         description: Which source to use if creating from a template (an existing cluster, S3 bucket, or snapshot).
         choices: ['snapshot', 's3', 'cluster']
+        type: str
     force_update_password:
         description:
           - Set to C(True) to update your cluster password with I(master_user_password). Since comparing passwords to determine
@@ -75,9 +77,11 @@ options:
         aliases:
           - zones
           - az
+        type: str
     backtrack_to:
         description:
           - The timestamp of the time to backtrack the DB cluster to in ISO 8601 format, such as "2017-07-08T18:00Z".
+        type: str
     backtrack_window:
         description:
           - The target backtrack window, in seconds. To disable backtracking, set this value to C(0).
@@ -176,6 +180,7 @@ options:
     final_snapshot_identifier:
         description:
           - The DB cluster snapshot identifier of the new DB cluster snapshot created when I(skip_final_snapshot) is false.
+        type: str
     force_backtrack:
         description:
           - A boolean to indicate if the DB cluster should be forced to backtrack when binary logging is enabled.
@@ -210,6 +215,7 @@ options:
             next maintenance window.
         aliases:
           - new_cluster_id
+        type: str
     option_group_name:
         description:
           - The option group to associate with the DB cluster.
@@ -244,27 +250,33 @@ options:
         description:
           - The UTC date and time to restore the DB cluster to. Must be in the format "2015-03-07T23:45:00Z". If this is not provided while
             restoring a cluster, I(use_latest_restorable_time) must be. May not be specified if I(restore_type) is copy-on-write.
+        type: str
     restore_type:
         description:
           - The type of restore to be performed. If not provided, Amazon RDS uses full-copy.
         choices:
           - full-copy
           - copy-on-write
+        type: str
     role_arn:
         description:
           - The Amazon Resource Name (ARN) of the IAM role to associate with the Aurora DB cluster, for example
             "arn:aws:iam::123456789012:role/AuroraAccessRole"
+        type: str
     s3_bucket_name:
         description:
           - The name of the Amazon S3 bucket that contains the data used to create the Amazon Aurora DB cluster.
+        type: str
     s3_ingestion_role_arn:
         description:
           - The Amazon Resource Name (ARN) of the AWS Identity and Access Management (IAM) role that authorizes Amazon RDS to access
             the Amazon S3 bucket on your behalf.
+        type: str
     s3_prefix:
         description:
           - The prefix for all of the file names that contain the data used to create the Amazon Aurora DB cluster. If you do not
             specify a SourceS3Prefix value, then the Amazon Aurora DB cluster is created by using all of the files in the Amazon S3 bucket.
+        type: str
     skip_final_snapshot:
         description:
           - Whether a final DB cluster snapshot is created before the DB cluster is deleted. If this is false I(final_snapshot_identifier)
@@ -275,20 +287,25 @@ options:
         description:
           - The identifier for the DB snapshot or DB cluster snapshot to restore from. You can use either the name or the ARN to specify
             a DB cluster snapshot. However, you can use only the ARN to specify a DB snapshot.
+        type: str
     source_db_cluster_identifier:
         description:
           - The identifier of the source DB cluster from which to restore.
+        type: str
     source_engine:
         description:
           - The identifier for the database engine that was backed up to create the files stored in the Amazon S3 bucket.
         choices:
           - mysql
+        type: str
     source_engine_version:
         description:
           - The version of the database that the backup files were created from.
+        type: str
     source_region:
         description:
           - The ID of the region that contains the source for the DB cluster.
+        type: str
     storage_encrypted:
         description:
           - Whether the DB cluster is encrypted.
@@ -296,6 +313,7 @@ options:
     tags:
         description:
           - A dictionary of key value pairs to assign the DB cluster.
+        type: dict
     use_earliest_time_on_point_in_time_unavailable:
         description:
           - If I(backtrack_to) is set to a timestamp earlier than the earliest backtrack time, this value backtracks the DB cluster to
@@ -408,7 +426,7 @@ changed:
 cluster_create_time:
   description: The time in UTC when the DB cluster was created.
   returned: always
-  type: string
+  type: str
   sample: '2018-06-29T14:08:58.491000+00:00'
 copy_tags_to_snapshot:
   description:
@@ -425,12 +443,12 @@ cross_account_clone:
 db_cluster_arn:
   description: The Amazon Resource Name (ARN) for the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: arn:aws:rds:us-east-1:123456789012:cluster:rds-cluster-demo
 db_cluster_identifier:
   description: The lowercase user-supplied DB cluster identifier.
   returned: always
-  type: string
+  type: str
   sample: rds-cluster-demo
 db_cluster_members:
   description:
@@ -443,17 +461,17 @@ db_cluster_members:
 db_cluster_parameter_group:
   description: The parameter group associated with the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: default.aurora5.6
 db_cluster_resource_id:
   description: The AWS Region-unique, immutable identifier for the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: cluster-D2MEQDN3BQNXDF74K6DQJTHASU
 db_subnet_group:
   description: The name of the subnet group associated with the DB Cluster.
   returned: always
-  type: string
+  type: str
   sample: default
 deletion_protection:
   description:
@@ -471,17 +489,17 @@ domain_memberships:
 earliest_restorable_time:
   description: The earliest time to which a database can be restored with point-in-time restore.
   returned: always
-  type: string
+  type: str
   sample: '2018-06-29T14:09:34.797000+00:00'
 endpoint:
   description: The connection endpoint for the primary instance of the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: rds-cluster-demo.cluster-cvlrtwiennww.us-east-1.rds.amazonaws.com
 engine:
   description: The database engine of the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: aurora
 engine_mode:
   description: The DB engine mode of the DB cluster.
@@ -491,12 +509,12 @@ engine_mode:
 engine_version:
   description: The database engine version.
   returned: always
-  type: string
+  type: str
   sample: 5.6.10a
 hosted_zone_id:
   description: The ID that Amazon Route 53 assigns when you create a hosted zone.
   returned: always
-  type: string
+  type: str
   sample: Z2R2ITUGPM61AM
 http_endpoint_enabled:
   description:
@@ -512,12 +530,12 @@ iam_database_authentication_enabled:
 latest_restorable_time:
   description: The latest time to which a database can be restored with point-in-time restore.
   returned: always
-  type: string
+  type: str
   sample: '2018-06-29T14:09:34.797000+00:00'
 master_username:
   description: The master username for the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: username
 multi_az:
   description: Whether the DB cluster has instances in multiple availability zones.
@@ -532,12 +550,12 @@ port:
 preferred_backup_window:
   description: The UTC weekly time range during which system maintenance can occur.
   returned: always
-  type: string
+  type: str
   sample: 10:18-10:48
 preferred_maintenance_window:
   description: The UTC weekly time range during which system maintenance can occur.
   returned: always
-  type: string
+  type: str
   sample: tue:03:23-tue:03:53
 read_replica_identifiers:
   description: A list of read replica ID strings associated with the DB cluster.
@@ -547,12 +565,12 @@ read_replica_identifiers:
 reader_endpoint:
   description: The reader endpoint for the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: rds-cluster-demo.cluster-ro-cvlrtwiennww.us-east-1.rds.amazonaws.com
 status:
   description: The status of the DB cluster.
   returned: always
-  type: string
+  type: str
   sample: available
 storage_encrypted:
   description: Whether the DB cluster is storage encrypted.
@@ -582,12 +600,12 @@ vpc_security_groups:
     status:
       description: Status of the security group.
       returned: always
-      type: string
+      type: str
       sample: active
     vpc_security_group_id:
       description: Security group of the cluster.
       returned: always
-      type: string
+      type: str
       sample: sg-12345678
 '''
 
@@ -790,10 +808,7 @@ def changing_cluster_options(modify_params, current_cluster):
 
     option_group = modify_params.pop('OptionGroupName', None)
     if (
-        option_group and option_group not in [
-            g['DBClusterOptionGroupName']
-            for g in current_cluster['DBClusterOptionGroupMemberships']
-          ]
+        option_group and option_group not in [g['DBClusterOptionGroupName'] for g in current_cluster['DBClusterOptionGroupMemberships']]
       ):
         changing_params['OptionGroupName'] = option_group
 
@@ -880,7 +895,7 @@ def main():
         availability_zones=dict(type='list', aliases=['zones', 'az']),
         backtrack_to=dict(),
         backtrack_window=dict(type='int'),
-        backup_retention_period=dict(type='int'),
+        backup_retention_period=dict(type='int', default=1),
         character_set_name=dict(),
         database_name=dict(aliases=['db_name']),
         db_cluster_identifier=dict(required=True, aliases=['cluster_id', 'id']),
@@ -967,9 +982,7 @@ def main():
       ):
         module.fail_json(msg='skip_final_snapshot is False but all of the following are missing: final_snapshot_identifier')
 
-    parameters = arg_spec_to_rds_params(
-        dict((k, module.params[k]) for k in module.params if k in parameter_options)
-    )
+    parameters = arg_spec_to_rds_params(dict((k, module.params[k]) for k in module.params if k in parameter_options))
 
     changed = False
     method_name, method_options_name = get_rds_method_attribute_name(cluster)

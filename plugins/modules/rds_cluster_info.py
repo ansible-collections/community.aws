@@ -87,7 +87,7 @@ clusters:
         sample: 1
     cluster_create_time:
         description: The time in UTC when the DB cluster was created.
-        type: string
+        type: str
         sample: '2018-06-29T14:08:58.491000+00:00'
     copy_tags_to_snapshot:
         description:
@@ -101,11 +101,11 @@ clusters:
         sample: false
     db_cluster_arn:
         description: The Amazon Resource Name (ARN) for the DB cluster.
-        type: string
+        type: str
         sample: arn:aws:rds:us-east-1:123456789012:cluster:rds-cluster-demo
     db_cluster_identifier:
         description: The lowercase user-supplied DB cluster identifier.
-        type: string
+        type: str
         sample: rds-cluster-demo
     db_cluster_members:
         description:
@@ -116,15 +116,15 @@ clusters:
         sample: []
     db_cluster_parameter_group:
         description: The parameter group associated with the DB cluster.
-        type: string
+        type: str
         sample: default.aurora5.6
     db_cluster_resource_id:
         description: The AWS Region-unique, immutable identifier for the DB cluster.
-        type: string
+        type: str
         sample: cluster-D2MEQDN3BQNXDF74K6DQJTHASU
     db_subnet_group:
         description: The name of the subnet group associated with the DB Cluster.
-        type: string
+        type: str
         sample: default
     deletion_protection:
         description:
@@ -139,15 +139,15 @@ clusters:
         sample: []
     earliest_restorable_time:
         description: The earliest time to which a database can be restored with point-in-time restore.
-        type: string
+        type: str
         sample: '2018-06-29T14:09:34.797000+00:00'
     endpoint:
         description: The connection endpoint for the primary instance of the DB cluster.
-        type: string
+        type: str
         sample: rds-cluster-demo.cluster-cvlrtwiennww.us-east-1.rds.amazonaws.com
     engine:
         description: The database engine of the DB cluster.
-        type: string
+        type: str
         sample: aurora
     engine_mode:
         description: The DB engine mode of the DB cluster.
@@ -155,11 +155,11 @@ clusters:
         sample: provisioned
     engine_version:
         description: The database engine version.
-        type: string
+        type: str
         sample: 5.6.10a
     hosted_zone_id:
         description: The ID that Amazon Route 53 assigns when you create a hosted zone.
-        type: string
+        type: str
         sample: Z2R2ITUGPM61AM
     http_endpoint_enabled:
         description:
@@ -172,11 +172,11 @@ clusters:
         sample: false
     latest_restorable_time:
         description: The latest time to which a database can be restored with point-in-time restore.
-        type: string
+        type: str
         sample: '2018-06-29T14:09:34.797000+00:00'
     master_username:
         description: The master username for the DB cluster.
-        type: string
+        type: str
         sample: username
     multi_az:
         description: Whether the DB cluster has instances in multiple availability zones.
@@ -188,11 +188,11 @@ clusters:
         sample: 3306
     preferred_backup_window:
         description: The UTC weekly time range during which system maintenance can occur.
-        type: string
+        type: str
         sample: 10:18-10:48
     preferred_maintenance_window:
         description: The UTC weekly time range during which system maintenance can occur.
-        type: string
+        type: str
         sample: tue:03:23-tue:03:53
     read_replica_identifiers:
         description: A list of read replica ID strings associated with the DB cluster.
@@ -200,11 +200,11 @@ clusters:
         sample: []
     reader_endpoint:
         description: The reader endpoint for the DB cluster.
-        type: string
+        type: str
         sample: rds-cluster-demo.cluster-ro-cvlrtwiennww.us-east-1.rds.amazonaws.com
     status:
         description: The status of the DB cluster.
-        type: string
+        type: str
         sample: available
     storage_encrypted:
         description: Whether the DB cluster is storage encrypted.
@@ -229,11 +229,11 @@ clusters:
         contains:
             status:
                 description: Status of the security group.
-                type: string
+                type: str
                 sample: active
             vpc_security_group_id:
                 description: Security group of the cluster.
-                type: string
+                type: str
                 sample: sg-12345678
 '''
 
@@ -283,7 +283,7 @@ def cluster_info(client, module):
 
 def main():
     argument_spec = dict(
-        db_cluster_identifier=dict(aliases=['cluster_id', 'id']),
+        db_cluster_identifier=dict(aliases=['cluster_id', 'id'], required=True),
         filters=dict(type='dict'),
     )
 
