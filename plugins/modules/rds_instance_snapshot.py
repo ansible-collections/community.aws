@@ -277,13 +277,13 @@ def main():
     global module
 
     argument_spec = dict(
-            state=dict(choices=['present', 'absent'], default='present'),
-            db_snapshot_identifier=dict(aliases=['id', 'snapshot_id'], required=True),
-            db_instance_identifier=dict(aliases=['instance_id']),
-            wait=dict(type='bool', default=False),
-            wait_timeout=dict(type='int', default=300),
-            tags=dict(type='dict'),
-            purge_tags=dict(type='bool', default=True),
+        state=dict(choices=['present', 'absent'], default='present'),
+        db_snapshot_identifier=dict(aliases=['id', 'snapshot_id'], required=True),
+        db_instance_identifier=dict(aliases=['instance_id']),
+        wait=dict(type='bool', default=False),
+        wait_timeout=dict(type='int', default=300),
+        tags=dict(type='dict'),
+        purge_tags=dict(type='bool', default=True),
     )
 
     module = AnsibleAWSModule(
