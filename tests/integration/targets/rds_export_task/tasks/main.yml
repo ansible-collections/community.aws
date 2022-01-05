@@ -14,7 +14,8 @@
     - name: Create an IAM role
       iam_role:
         name: "{{ role_name }}"
-        create_instance_profile: no
+        assume_role_policy_document: "{{ lookup('file','files/policy.json') }}"
+        state: present
       register: _result_create_iam_role
     
     - assert:
@@ -40,19 +41,19 @@
         - _result_create_s3_bucket is changed
         - _result_create_s3_bucket.name == '{{ bucket_name }}'
     
-    - name: Enable aws:kms encryption with KMS key
-      s3_bucket:
-        name: '{{ bucket_name }}'
-        state: present
-        encryption: "aws:kms"
-        encryption_key_id: "{{ _result_create_key.key_arn }}"
-      register: _result_s3_bucket
+    # - name: Enable aws:kms encryption with KMS key
+    #   s3_bucket:
+    #     name: '{{ bucket_name }}'
+    #     state: present
+    #     encryption: "aws:kms"
+    #     encryption_key_id: "{{ _result_create_key.key_arn }}"
+    #   register: _result_s3_bucket
 
-    - assert:
-        that:
-        - _result_s3_bucket.changed
-        - _result_s3_bucket.encryption
-        - _result_s3_bucket.encryption.SSEAlgorithm == 'aws:kms'
+    # - assert:
+    #     that:
+    #     - _result_s3_bucket.changed
+    #     - _result_s3_bucket.encryption
+    #     - _result_s3_bucket.encryption.SSEAlgorithm == 'aws:kms'
 
     - name: Create a source mariadb instance
       rds_instance:
@@ -151,7 +152,7 @@
     #   rds_export_task:
     #     export_task_id: "{{ export_task_id }}"
     #     state: absent
-    #   register: cluster_info
+    #   register: _result_delete
     
     # - name: Delete an export task - idempotence
     #   rds_export_task:
@@ -160,11 +161,16 @@
     #   register: _result_delete
 
   always:
+    - name: Delete an export task
+      rds_export_task:
+        export_task_id: "{{ export_task_id }}"
+        state: absent
+      ignore_errors: true
+
     - name: Delete the existing DB instance snapshot
       rds_instance_snapshot:
         state: absent
         db_snapshot_identifier: "{{ snapshot_id }}"
-      register: _result_delete_snapshot
       ignore_errors: true
 
     - name: Delete the existing RDS instance without creating a final snapshot
@@ -172,7 +178,6 @@
         state: absent
         instance_id: "{{ instance_id }}"
         skip_final_snapshot: True
-      register: _result_delete_instance
       ignore_errors: true
     
     - name: Delete S3 bucket

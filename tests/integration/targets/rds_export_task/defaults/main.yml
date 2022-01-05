@@ -20,7 +20,7 @@ role_name: '{{ resource_prefix }}-role'
 kms_key_alias: '{{ resource_prefix }}-kms'
 
 # Create an S3 bucket
-bucket_name: '{{ resource_prefix }}-bucket'
+bucket_name: 'ansible-test-export-task-bucket'
 
 # Create export task
 export_task_id: 'ansible-test-export-{{ resource_prefix }}'

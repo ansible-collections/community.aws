@@ -92,12 +92,12 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 def describe_export_task():
-    result = {}
+    result = None
 
     try:
         result = client.describe_export_tasks(ExportTaskIdentifier=module.params.get("export_task_id"), aws_retry=True)
     except is_boto3_error_code("ExportTaskNotFound"):
-        return {}
+        return None
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't describe export task")
 
@@ -107,10 +107,12 @@ def describe_export_task():
 def start_export_task():
     results = {}
     changed = True
+    existing = None
 
-    if describe_export_task():
+    existing = describe_export_task()
+    if existing:
         changed = False
-        return changed, results
+        return changed, existing
 
     params = {
         "ExportTaskIdentifier": module.params.get("export_task_id"),
@@ -148,6 +150,8 @@ def cancel_export_task():
         results = client.cancel_export_task(ExportTaskIdentifier=module.params.get("export_task_id"), aws_retry=True)
         changed = True
     except is_boto3_error_code('ExportTaskNotFoundFault'):
+        return False, results
+    except is_boto3_error_code('ExportTaskNotFound'): # pylint: disable=duplicate-except
         return False, results
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't cancel export task")
