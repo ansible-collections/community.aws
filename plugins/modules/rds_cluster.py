@@ -1,6 +1,6 @@
 #!/usr/bin/python
-# Copyright (c) 2018 Ansible Project
-# Copyright (c) 2021 Alina Buzachis (@alinabuzachis)
+# Copyright (c) 2022 Ansible Project
+# Copyright (c) 2022 Alina Buzachis (@alinabuzachis)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster
-version_added: "2.1.0"
+version_added: "3.0.0"
 description:
     - Create, modify, and delete RDS clusters.
 extends_documentation_fragment:
@@ -153,7 +153,7 @@ options:
         description:
           - A value that indicates whether to enable this DB cluster to forward write operations to the primary cluster of an Aurora global database.
             By default, write operations are not allowed on Aurora DB clusters that are secondary clusters in an Aurora global database.
-          - This value can be only set on Aurora DB clusters that are members of an Aurora global database. 
+          - This value can be only set on Aurora DB clusters that are members of an Aurora global database.
         type: bool
     enable_iam_database_authentication:
         description:
@@ -639,7 +639,7 @@ def get_backtrack_options(params_dict):
 
 def get_create_options(params_dict):
     options = [
-        'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow', 
+        'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'PreferredBackupWindow',
         'CharacterSetName', 'DBClusterIdentifier', 'DBClusterParameterGroupName', 'DBSubnetGroupName',
         'DatabaseName', 'EnableCloudwatchLogsExports', 'EnableIAMDatabaseAuthentication', 'KmsKeyId',
         'Engine', 'EngineVersion', 'PreferredMaintenanceWindow', 'MasterUserPassword', 'MasterUsername',
@@ -672,7 +672,7 @@ def get_delete_options(params_dict):
     return dict((k, params_dict[k]) for k in options if params_dict[k] is not None)
 
 
-def get_restore_s3_options(params_dict): 
+def get_restore_s3_options(params_dict):
     options = [
         'AvailabilityZones', 'BacktrackWindow', 'BackupRetentionPeriod', 'CharacterSetName',
         'DBClusterIdentifier', 'DBClusterParameterGroupName', 'DBSubnetGroupName', 'DatabaseName',
@@ -683,7 +683,7 @@ def get_restore_s3_options(params_dict):
         'VpcSecurityGroupIds', 'DeletionProtection', 'EnableHttpEndpoint', 'CopyTagsToSnapshot',
         'Domain', 'DomainIAMRoleName',
     ]
-    
+
     return dict((k, v) for k, v in params_dict.items() if k in options and v is not None)
 
 
@@ -758,10 +758,10 @@ def backtrack_cluster(params):
 
 
 def get_cluster(db_cluster_id):
-  try:
-      return _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
-  except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-      module.fail_json_aws(e, msg="Failed to describe DB clusters")
+    try:
+        return _describe_db_clusters(DBClusterIdentifier=db_cluster_id)
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to describe DB clusters")
 
 
 def changing_cluster_options(modify_params, current_cluster):
@@ -790,22 +790,24 @@ def changing_cluster_options(modify_params, current_cluster):
 
     option_group = modify_params.pop('OptionGroupName', None)
     if (
-        option_group and option_group not in [g['DBClusterOptionGroupName']
-        for g in current_cluster['DBClusterOptionGroupMemberships']]
-    ):
+        option_group and option_group not in [
+            g['DBClusterOptionGroupName']
+            for g in current_cluster['DBClusterOptionGroupMemberships']
+          ]
+      ):
         changing_params['OptionGroupName'] = option_group
 
     vpc_sgs = modify_params.pop('VpcSecurityGroupIds', None)
     if vpc_sgs:
         desired_vpc_sgs = []
         provided_vpc_sgs = set(vpc_sgs)
-        current_vpc_sgs = set([sg['VpcSecurityGroupId'] for sg in current_cluster['VpcSecurityGroups']])        
+        current_vpc_sgs = set([sg['VpcSecurityGroupId'] for sg in current_cluster['VpcSecurityGroups']])
         if module.params['purge_security_groups']:
             desired_vpc_sgs = vpc_sgs
         else:
-          if provided_vpc_sgs - current_vpc_sgs:
-              desired_vpc_sgs = list(provided_vpc_sgs | current_vpc_sgs)
-        
+            if provided_vpc_sgs - current_vpc_sgs:
+                desired_vpc_sgs = list(provided_vpc_sgs | current_vpc_sgs)
+
         if desired_vpc_sgs:
             changing_params['VpcSecurityGroupIds'] = desired_vpc_sgs
 
@@ -923,7 +925,6 @@ def main():
         use_earliest_time_on_point_in_time_unavailable=dict(type='bool'),
         use_latest_restorable_time=dict(type='bool'),
         vpc_security_group_ids=dict(type='list'),
-
     )
     arg_spec.update(parameter_options)
 
@@ -933,8 +934,7 @@ def main():
             ('creation_source', 'snapshot', ('snapshot_identifier', 'engine')),
             ('creation_source', 's3', (
                 's3_bucket_name', 'engine', 'master_username', 'master_user_password',
-                'source_engine', 'source_engine_version', 's3_ingestion_role_arn')
-            ),
+                'source_engine', 'source_engine_version', 's3_ingestion_role_arn')),
         ],
         mutually_exclusive=[
             ('s3_bucket_name', 'source_db_cluster_identifier', 'snapshot_identifier'),
@@ -962,9 +962,9 @@ def main():
             module.fail_json(f"A new cluster ID {module.params['new_db_cluster_identifier']} was provided but the cluster to be renamed does not exist")
 
     if (
-        module.params['state'] == 'absent' and module.params['skip_final_snapshot'] is False
-        and module.params['final_snapshot_identifier'] is None
-    ):
+        module.params['state'] == 'absent' and module.params['skip_final_snapshot'] is False and
+        module.params['final_snapshot_identifier'] is None
+      ):
         module.fail_json(msg='skip_final_snapshot is False but all of the following are missing: final_snapshot_identifier')
 
     parameters = arg_spec_to_rds_params(
@@ -974,19 +974,19 @@ def main():
     changed = False
     method_name, method_options_name = get_rds_method_attribute_name(cluster)
     if method_name:
-      if method_name == 'delete_db_cluster':
-          call_method(client, module, method_name, eval(method_options_name)(parameters))
-          changed = True
-      else:
-          changed |= ensure_present(cluster, parameters, method_name, method_options_name)
+        if method_name == 'delete_db_cluster':
+            call_method(client, module, method_name, eval(method_options_name)(parameters))
+            changed = True
+        else:
+            changed |= ensure_present(cluster, parameters, method_name, method_options_name)
 
     if not module.check_mode and module.params['new_db_cluster_identifier'] and module.params['apply_immediately']:
         cluster_id = module.params['new_db_cluster_identifier']
     else:
         cluster_id = module.params['db_cluster_identifier']
-        
+
     result = camel_dict_to_snake_dict(get_cluster(cluster_id))
-    
+
     if result:
         result['tags'] = get_tags(client, module, result['db_cluster_arn'])
 

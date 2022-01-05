@@ -1,6 +1,6 @@
 #!/usr/bin/python
-# Copyright (c) 2018 Ansible Project
-# Copyright (c) 2021 Alina Buzachis (@alinabuzachis)
+# Copyright (c) 2022 Ansible Project
+# Copyright (c) 2022 Alina Buzachis (@alinabuzachis)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
@@ -9,7 +9,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_cluster_info
-version_added: 2.1.0
+version_added: 3.0.0
 short_description: Obtain information about one or more RDS clusters
 description:
   - Obtain information about one or more RDS clusters.
@@ -244,8 +244,8 @@ except ImportError:
     pass  # handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code                                                                     
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list                                                                 
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
