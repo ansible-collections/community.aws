@@ -1,4 +1,4 @@
-disable # something is broken
+disabled # something is broken
 slow
 
 cloud/aws
