@@ -47,12 +47,12 @@
       - _result_create_source_db_cluster.status == "available"
       - "'tags' in _result_create_source_db_cluster"
       - "'vpc_security_groups' in _result_create_source_db_cluster"
-  
+
   - name: Get all RDS snapshots for the existing DB cluster
     rds_snapshot_info:
       db_cluster_identifier: "{{ cluster_id }}"
     register: _result_cluster_snapshot_info
-  
+
   - assert:
       that:
       - _result_cluster_snapshot_info is successful
@@ -69,7 +69,7 @@
   - assert:
       that:
       - _result_cluster_snapshot.changed
-  
+
   - name: Take a snapshot of the existing DB cluster
     rds_cluster_snapshot:
       state: present
@@ -104,27 +104,27 @@
       - "'storage_encrypted' in _result_cluster_snapshot"
       - "'tags' in _result_cluster_snapshot"
       - "'vpc_id' in _result_cluster_snapshot"
-  
+
   - name: Get information about the existing DB snapshot
     rds_snapshot_info:
       db_cluster_snapshot_identifier: "{{ snapshot_id }}"
     register: _result_cluster_snapshot_info
-  
+
   - assert:
       that:
       - _result_cluster_snapshot_info is successful
       - _result_cluster_snapshot_info.cluster_snapshots[0].db_cluster_identifier == "{{ cluster_id }}"
       - _result_cluster_snapshot_info.cluster_snapshots[0].db_cluster_snapshot_identifier == "{{ snapshot_id }}"
-  
+
   - name: Get info of the existing DB cluster
     rds_cluster_info:
       cluster_id: "{{ cluster_id }}"
     register: result_cluster_info
-    
+
   - assert:
       that:
       - result_cluster_info is successful
-  
+
   - name: Create another source DB cluster
     rds_cluster:
       id: "{{ cluster_id }}-b"
@@ -162,7 +162,7 @@
       - _result_create_source_db_cluster.status == "available"
       - "'tags' in _result_create_source_db_cluster"
       - "'vpc_security_groups' in _result_create_source_db_cluster"
-  
+
   - name: Take another snapshot of the existing DB cluster
     rds_cluster_snapshot:
       state: present
@@ -197,47 +197,47 @@
       - "'storage_encrypted' in _result_cluster_snapshot"
       - "'tags' in _result_cluster_snapshot"
       - "'vpc_id' in _result_cluster_snapshot"
-  
+
   - name: Get all RDS snapshots for the existing DB cluster
     rds_snapshot_info:
       db_cluster_identifier: "{{ cluster_id }}-b"
     register: _result_cluster_snapshot_info
-  
+
   - assert:
       that:
       - _result_cluster_snapshot_info is successful
       - _result_cluster_snapshot_info.cluster_snapshots | length == 1
-  
+
   - name: Delete existing DB cluster snapshot (CHECK_MODE)
     rds_cluster_snapshot:
       state: absent
       db_snapshot_identifier: "{{ snapshot_id }}-b"
     register: _result_delete_snapshot
     check_mode: yes
-  
+
   - assert:
       that:
       - _result_delete_snapshot.changed
-  
+
   - name: Delete the existing DB cluster snapshot
     rds_cluster_snapshot:
       state: absent
       db_snapshot_identifier: "{{ snapshot_id }}-b"
     register: _result_delete_snapshot
-  
+
   - assert:
       that:
       - _result_delete_snapshot.changed
-  
+
   - name: Get info of the existing DB cluster
     rds_cluster_info:
       cluster_id: "{{ cluster_id }}"
     register: _result_cluster_info
-    
+
   - assert:
       that:
       - result_cluster_info is successful
-  
+
   - name: Take another snapshot of the existing DB cluster and assign tags
     rds_cluster_snapshot:
       state: present
@@ -278,7 +278,7 @@
       - _result_cluster_snapshot.tags["tag_one"] == "{{ snapshot_id }}-b One"
       - _result_cluster_snapshot.tags["Tag Two"] == "two {{ snapshot_id }}-b"
       - "'vpc_id' in _result_cluster_snapshot"
-  
+
   - name: Attempt to take another snapshot of the existing DB cluster and assign tags (idempotence)
     rds_cluster_snapshot:
       state: present
@@ -293,7 +293,7 @@
   - assert:
       that:
       - not _result_cluster_snapshot.changed
-  
+
   - name: Take another snapshot of the existing DB cluster and update tags
     rds_cluster_snapshot:
       state: present
@@ -333,7 +333,7 @@
       - _result_cluster_snapshot.tags["tag_three"] == "{{ snapshot_id }}-b Three"
       - _result_cluster_snapshot.tags["Tag Two"] == "two {{ snapshot_id }}-b"
       - "'vpc_id' in _result_cluster_snapshot"
-  
+
   - name: Take another snapshot of the existing DB cluster and update tags without purge
     rds_cluster_snapshot:
       state: present
@@ -374,7 +374,7 @@
       - _result_cluster_snapshot.tags["Tag Two"] == "two {{ snapshot_id }}-b"
       - _result_cluster_snapshot.tags["tag_three"] == "{{ snapshot_id }}-b Three"
       - "'vpc_id' in _result_cluster_snapshot"
-  
+
   - name: Take another snapshot of the existing DB cluster and do not specify any tag to ensure previous tags are not removed
     rds_cluster_snapshot:
       state: present
@@ -385,8 +385,8 @@
   - assert:
       that:
       - not _result_cluster_snapshot.changed
-  
-  always:  
+
+  always:
   - name: Delete the existing DB cluster snapshots
     rds_cluster_snapshot:
       state: absent
