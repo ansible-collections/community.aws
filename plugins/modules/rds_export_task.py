@@ -151,7 +151,7 @@ def cancel_export_task():
         changed = True
     except is_boto3_error_code('ExportTaskNotFoundFault'):
         return False, results
-    except is_boto3_error_code('ExportTaskNotFound'): # pylint: disable=duplicate-except
+    except is_boto3_error_code('ExportTaskNotFound'):  # pylint: disable=duplicate-except
         return False, results
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't cancel export task")

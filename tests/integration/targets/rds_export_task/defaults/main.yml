@@ -14,10 +14,10 @@ mariadb_engine_version: 10.3.31
 snapshot_id: 'ansible-test-instance-snapshot-{{ resource_prefix }}'
 
 # Create an IAM role
-role_name: '{{ resource_prefix }}-role'
+role_name: 'ansible-test-{{ resource_prefix }}-role'
 
 # Create kms key 
-kms_key_alias: '{{ resource_prefix }}-kms'
+kms_key_alias: 'ansible-test-{{ resource_prefix }}-kms'
 
 # Create an S3 bucket
 bucket_name: 'ansible-test-export-task-bucket'
