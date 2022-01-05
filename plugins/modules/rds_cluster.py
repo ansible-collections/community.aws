@@ -973,6 +973,7 @@ def main():
 
     changed = False
     method_name, method_options_name = get_rds_method_attribute_name(cluster)
+
     if method_name:
         if method_name == 'delete_db_cluster':
             call_method(client, module, method_name, eval(method_options_name)(parameters))
