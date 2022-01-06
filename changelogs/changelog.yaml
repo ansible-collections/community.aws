@@ -1605,11 +1605,6 @@ releases:
       - route53 - ``ttl``  and ``value`` are not required for deleting records (https://github.com/ansible-collections/community.aws/pull/801).
       - route53_info - `max_items` and `type` are no longer ignored fixing a regression
         (https://github.com/ansible-collections/community.aws/pull/813).
-      release_summary: 'This is the minor release of the ``community.aws`` collection.
-
-        This changelog contains all changes to the modules and plugins in this collection
-
-        that have been made after the previous release.'
     fragments:
     - 14532-remove-deprecations.yml
     - 3.0.0.yml
