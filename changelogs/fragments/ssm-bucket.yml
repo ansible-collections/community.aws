@@ -1,0 +1,2 @@
+minor_changes:
+  - aws_ssm connection plugin - added support for an independent bucket region (https://github.com/ansible-collections/community.aws/pull/854).
