@@ -7,4 +7,5 @@ windows_ami_name: Windows_Server-2019-English-Full-Base-*
 # see:
 # - https://github.com/mattclay/aws-terminator/pull/181
 # - https://github.com/ansible-collections/community.aws/pull/763
-s3_bucket_name: ssm-encrypted-test-bucket
+s3_bucket_name: "{{ resource_prefix }}-ssm-encrypted-test-bucket"
+s3_bucket_region: us-west-2
