@@ -49,7 +49,7 @@ options:
     vars:
     - name: ansible_aws_ssm_bucket_name
   bucket_region:
-    description: The region of the S3 bucket used for file transfers.
+    description: The region of the S3 bucket used for file transfers. By default inherit "region" or "us-east-1" if undefined.
     vars:
     - name: ansible_aws_ssm_bucket_region
     version_added: 3.0.0
@@ -136,10 +136,14 @@ EXAMPLES = r'''
 #plugin: aws_ec2
 #regions:
 #    - us-east-1
+#    - eu-west-1
 #hostnames:
 #    - instance-id
 #filters:
 #    tag:SSMTag: ssmlinux
+#compose:
+#    ansible_aws_ssm_instance_id: instance_id
+#    ansible_aws_ssm_region: location.region
 # -----------------------
 - name: install aws-cli
   hosts: all
@@ -147,7 +151,7 @@ EXAMPLES = r'''
   vars:
     ansible_connection: aws_ssm
     ansible_aws_ssm_bucket_name: nameofthebucket
-    ansible_aws_ssm_region: us-east-1
+    ansible_aws_ssm_bucket_region: eu-west-1
   tasks:
   - name: aws-cli
     raw: yum install -y awscli
@@ -159,10 +163,14 @@ EXAMPLES = r'''
 #plugin: aws_ec2
 #regions:
 #    - us-east-1
+#    - eu-west-1
 #hostnames:
 #    - instance-id
 #filters:
 #    tag:SSMTag: ssmwindows
+#compose:
+#    ansible_aws_ssm_instance_id: instance_id
+#    ansible_aws_ssm_region: location.region
 # -----------------------
 - name: Create a dir.
   hosts: all
@@ -171,7 +179,7 @@ EXAMPLES = r'''
     ansible_connection: aws_ssm
     ansible_shell_type: powershell
     ansible_aws_ssm_bucket_name: nameofthebucket
-    ansible_aws_ssm_region: us-east-1
+    ansible_aws_ssm_bucket_region: eu-west-1
   tasks:
     - name: Create the directory
       win_file:
@@ -185,7 +193,7 @@ EXAMPLES = r'''
   vars:
     ansible_connection: aws_ssm
     ansible_aws_ssm_bucket_name: nameofthebucket
-    ansible_aws_ssm_region: us-west-2
+    ansible_aws_ssm_bucket_region: us-west-2
     ansible_aws_ssm_bucket_sse_mode: 'aws:kms'
     ansible_aws_ssm_bucket_sse_kms_key_id: alias/kms-key-alias
   tasks:
