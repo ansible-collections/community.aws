@@ -1,5 +1,19 @@
 ---
 - block:
+  - name: Ensure the resource doesn't exist
+    rds_cluster:
+      id: "{{ cluster_id }}"
+      state: present
+      engine: "{{ engine}}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+    register: _result_delete_db_cluster
+
+  - assert:
+      that:
+        - not _result_delete_db_cluster.changed
+    ignore_errors: yes
+
   - name: Create a DB cluster
     rds_cluster:
       engine: "{{ engine }}"
@@ -273,5 +287,4 @@
       state: absent
       cluster_id: "{{ cluster_id }}"
       skip_final_snapshot: True
-    register: _result_delete_cluster
     ignore_errors: true

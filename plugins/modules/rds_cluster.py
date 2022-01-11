@@ -11,6 +11,7 @@ DOCUMENTATION = r'''
 ---
 module: rds_cluster
 version_added: "3.0.0"
+short_description: rds_cluster module
 description:
     - Create, modify, and delete RDS clusters.
 extends_documentation_fragment:
@@ -77,7 +78,8 @@ options:
         aliases:
           - zones
           - az
-        type: str
+        type: list
+        elements: str
     backtrack_to:
         description:
           - The timestamp of the time to backtrack the DB cluster to in ISO 8601 format, such as "2017-07-08T18:00Z".
@@ -125,6 +127,8 @@ options:
     enable_cloudwatch_logs_exports:
         description:
           - A list of log types that need to be enabled for exporting to CloudWatch Logs.
+        type: list
+        elements: str
     deletion_protection:
         description:
           -  A value that indicates whether the DB cluster has deletion protection enabled.
@@ -310,6 +314,11 @@ options:
         description:
           - Whether the DB cluster is encrypted.
         type: bool
+    allocated_storage:
+        description:
+          - The allocated storage size in gigabytes. Since aurora storage size is not fixed this is
+            always C(1) for aurora database engines.
+        type: int
     tags:
         description:
           - A dictionary of key value pairs to assign the DB cluster.
@@ -328,6 +337,7 @@ options:
         description:
           - A list of EC2 VPC security groups to associate with the DB cluster.
         type: list
+        elements: str
 '''
 
 EXAMPLES = r'''
@@ -580,16 +590,19 @@ storage_encrypted:
 tags:
   description: A dictionary of key value pairs.
   returned: always
-  sample:
-    Name: rds-cluster-demo
   type: dict
+  sample: {
+    "Name": "rds-cluster-demo"
+  }
 tag_list:
   description: A list of tags consisting of key-value pairs.
   returned: always
-  sample: {
-       "key": "Created_By",
-       "value": "Ansible_rds_cluster_integration_test"
-  }
+  sample: [
+    {
+      "key": "Created_By",
+      "value": "Ansible_rds_cluster_integration_test"
+    }
+  ]
   type: list
   elements: dict
 vpc_security_groups:
@@ -809,7 +822,7 @@ def changing_cluster_options(modify_params, current_cluster):
     option_group = modify_params.pop('OptionGroupName', None)
     if (
         option_group and option_group not in [g['DBClusterOptionGroupName'] for g in current_cluster['DBClusterOptionGroupMemberships']]
-      ):
+    ):
         changing_params['OptionGroupName'] = option_group
 
     vpc_sgs = modify_params.pop('VpcSecurityGroupIds', None)
@@ -892,7 +905,7 @@ def main():
     parameter_options = dict(
         apply_immediately=dict(type='bool', default=False),
         allocated_storage=dict(type='int'),
-        availability_zones=dict(type='list', aliases=['zones', 'az']),
+        availability_zones=dict(type='list', elements='str', aliases=['zones', 'az']),
         backtrack_to=dict(),
         backtrack_window=dict(type='int'),
         backup_retention_period=dict(type='int', default=1),
@@ -901,7 +914,7 @@ def main():
         db_cluster_identifier=dict(required=True, aliases=['cluster_id', 'id']),
         db_cluster_parameter_group_name=dict(),
         db_subnet_group_name=dict(),
-        enable_cloudwatch_logs_exports=dict(type='list'),
+        enable_cloudwatch_logs_exports=dict(type='list', elements='str'),
         deletion_protection=dict(type='bool'),
         global_cluster_identifier=dict(),
         enable_http_endpoint=dict(type='bool'),
@@ -935,11 +948,11 @@ def main():
         source_engine=dict(choices=['mysql']),
         source_engine_version=dict(),
         source_region=dict(),
-        storage_encrypted=dict(),
+        storage_encrypted=dict(type='bool'),
         tags=dict(type='dict'),
         use_earliest_time_on_point_in_time_unavailable=dict(type='bool'),
         use_latest_restorable_time=dict(type='bool'),
-        vpc_security_group_ids=dict(type='list'),
+        vpc_security_group_ids=dict(type='list', elements='str'),
     )
     arg_spec.update(parameter_options)
 
@@ -979,7 +992,7 @@ def main():
     if (
         module.params['state'] == 'absent' and module.params['skip_final_snapshot'] is False and
         module.params['final_snapshot_identifier'] is None
-      ):
+    ):
         module.fail_json(msg='skip_final_snapshot is False but all of the following are missing: final_snapshot_identifier')
 
     parameters = arg_spec_to_rds_params(dict((k, module.params[k]) for k in module.params if k in parameter_options))

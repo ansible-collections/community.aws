@@ -9,7 +9,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_cluster_info
-version_added: 3.0.0
+version_added: 3.1.0
 short_description: Obtain information about one or more RDS clusters
 description:
   - Obtain information about one or more RDS clusters.
@@ -22,7 +22,6 @@ options:
           - cluster_id
           - id
         type: str
-        required: True
     filters:
         description:
             - A filter that specifies one or more DB clusters to describe.
@@ -212,17 +211,20 @@ clusters:
         sample: false
     tags:
         description: A dictionary of key value pairs.
-        sample:
-            Name: rds-cluster-demo
-            type: dict
+        type: dict
+        sample: {
+            "Name": "rds-cluster-demo"
+        }
     tag_list:
         description: A list of tags consisting of key-value pairs.
-        sample: {
-            "key": "Created_By",
-            "value": "Ansible_rds_cluster_integration_test"
-        }
         type: list
         elements: dict
+        sample: [
+            {
+                "key": "Created_By",
+                "value": "Ansible_rds_cluster_integration_test"
+            }
+        ]
     vpc_security_groups:
         description: A list of the DB cluster's security groups and their status.
         type: complex
@@ -283,7 +285,7 @@ def cluster_info(client, module):
 
 def main():
     argument_spec = dict(
-        db_cluster_identifier=dict(aliases=['cluster_id', 'id'], required=True),
+        db_cluster_identifier=dict(aliases=['cluster_id', 'id']),
         filters=dict(type='dict'),
     )
 

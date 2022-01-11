@@ -1,5 +1,19 @@
 ---
 - block:
+  - name: Ensure the resource doesn't exist
+    rds_cluster:
+      id: "{{ cluster_id }}"
+      state: present
+      engine: "{{ engine}}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+    register: _result_delete_db_cluster
+
+  - assert:
+      that:
+        - not _result_delete_db_cluster.changed
+    ignore_errors: yes
+
   - name: Set the two regions for the source DB and the read replica
     set_fact:
       region_src: "{{ aws_region }}"

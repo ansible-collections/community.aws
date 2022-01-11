@@ -1,5 +1,19 @@
 ---
 - block:
+  - name: Ensure the resource doesn't exist
+    rds_cluster:
+      id: "{{ cluster_id }}"
+      state: present
+      engine: "{{ engine}}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+    register: _result_delete_db_cluster
+
+  - assert:
+      that:
+        - not _result_delete_db_cluster.changed
+    ignore_errors: yes
+
   - name: Create a VPC
     ec2_vpc_net:
       name: "{{ vpc_name }}"
@@ -159,7 +173,6 @@
       name: "{{ item }}"
       description: "created by rds_cluster integration tests"
       state: absent
-    register: _result_delete_sg
     loop: "{{ security_groups }}"
 
   - name: Remove subnets
@@ -171,7 +184,6 @@
         Name: "{{ resource_prefix }}-subnet"
         Description: "Created by rds_cluster integration tests"
       state: absent
-    register: _result_remove_subnet
     ignore_errors: yes
     loop: "{{ subnets }}"
 
@@ -183,13 +195,11 @@
       tags:
         Name: "{{ vpc_name }}"
         Description: "Created by rds_cluster integration tests"
-    register: vpc_result
     ignore_errors: yes
 
-  - name: Delete DB cluster
-    rds_instance:
-      id: "{{ cluster_id }}"
+  - name: Delete DB cluster without creating a final snapshot
+    rds_cluster:
       state: absent
+      cluster_id: "{{ cluster_id }}"
       skip_final_snapshot: True
-    register: _result_delete_db_cluster
-    ignore_errors: yes
+    ignore_errors: true
