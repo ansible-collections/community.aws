@@ -1,0 +1,92 @@
+- debug:
+    msg: "Deleting resources in VPC name: {{ vpc_name }}, id: {{ vpc_id }}"
+
+- name: Get the hosted Route53 zones
+  route53_info:
+    query: hosted_zone
+    hosted_zone_method: list
+  register: route53_zone_info
+
+- name: Get Route53 zone id
+  set_fact:
+    route53_zone_ids: "{{ route53_zone_info.HostedZones | selectattr('Name', 'equalto', 'ansible-integ-test.com.') | map(attribute='Id') | list }}"
+
+- name: Delete Route53 record
+  route53:
+    record: "opensearch.ansible-integ-test.com"
+    hosted_zone_id: "{{ route53_zone_ids[0] }}"
+    private_zone: true
+    type: CNAME
+    state: absent
+    vpc_id: '{{ vpc_id }}'
+  when: route53_zone_ids | length > 0
+
+- name: Delete private Route53 zone for the VPC
+  route53_zone:
+    zone: "ansible-integ-test.com"
+    hosted_zone_id: "{{ route53_zone_ids[0] }}"
+    state: absent
+    vpc_id: '{{ vpc_id }}'
+  when: route53_zone_ids | length > 0
+
+- name: Get security groups that have been created for test purpose in the VPC
+  ec2_group_info:
+    filters:
+      vpc-id: "{{ vpc_id }}"
+  register: sg_info
+
+- name: Delete security groups
+  ec2_group:
+    group_id: "{{ sg_id }}"
+    state: absent
+  loop_control:
+    loop_var: sg_item
+  with_items: "{{ sg_info.security_groups }}"
+  vars:
+    sg_id: "{{ sg_item.group_id }}"
+    sg_name: "{{ sg_item.group_name }}"
+  when: sg_name != 'default'
+
+- name: Delete internet gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ vpc_id }}"
+    state: absent
+
+- name: Delete subnet_1
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    cidr: 10.55.77.0/24
+
+- name: Delete subnet_2
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ vpc_id }}"
+    cidr: 10.55.78.0/24
+
+- name: Collect info about routing tables
+  ec2_vpc_route_table_info:
+    filters:
+      vpc-id: "{{ vpc_id }}"
+      # Exclude the main route table, which should not be deleted explicitly.
+      # It will be deleted automatically when the VPC is deleted
+      "tag:AnsibleTest": "AnsibleTestVpc"
+  register: routing_table_info
+
+- name: Delete routing tables
+  ec2_vpc_route_table:
+    state: absent
+    lookup: id
+    route_table_id: "{{ route_table_id }}"
+  loop_control:
+    loop_var: route_item
+  with_items: "{{ routing_table_info.route_tables }}"
+  vars:
+    route_table_id: "{{ route_item.id }}"
+
+- name: Delete VPC for use in testing
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: 10.55.0.0/16
+    purge_cidrs: true
+    state: absent

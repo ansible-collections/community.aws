@@ -149,6 +149,8 @@ action_groups:
   - lightsail
   - networkfirewall_rule_group
   - networkfirewall_rule_group_info
+  - opensearch
+  - opensearch_info
   - rds_instance
   - rds_instance_info
   - rds_instance_snapshot
