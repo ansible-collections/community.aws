@@ -1,0 +1,23 @@
+---
+# tasks file for test_opensearch
+
+    # ============================================================
+
+- name: Test incomplete arguments with opensearch
+
+  block:
+
+    # ============================================================
+
+    - name: test without specifying required module options
+      ec2_asg:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        security_token: "{{ security_token | default(omit) }}"
+      ignore_errors: yes
+      register: result
+
+    - name: assert name is a required module option
+      assert:
+        that:
+          - "result.msg == 'missing required arguments: name'"

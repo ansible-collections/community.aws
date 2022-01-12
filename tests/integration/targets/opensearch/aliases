@@ -1,0 +1,5 @@
+# reason: slow
+# Tests take around 30 minutes
+#disabled
+
+cloud/aws
