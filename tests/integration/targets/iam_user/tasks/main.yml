@@ -285,6 +285,9 @@
       password: "{{ test_new_password }}"
       state: present
     register: iam_user_update
+    until: iam_user_update.failed == false
+    delay: 3
+    retries: 5
 
   - assert:
       that:

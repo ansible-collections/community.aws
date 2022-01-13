@@ -302,12 +302,10 @@ def create_or_update_user(connection, module):
 
     # Get user
     user = get_user(connection, module, params['UserName'])
-    login_profile_data = {}
 
     # If user is None, create it
-    new_user = False
+    new_login_profile = False
     if user is None:
-        new_user = True
         # Check mode means we would create the user
         if module.check_mode:
             module.exit_json(changed=True)
@@ -324,12 +322,19 @@ def create_or_update_user(connection, module):
 
         if module.params.get('password') is not None:
             login_profile_result, login_profile_data = create_or_update_login_profile(connection, module)
+
+            if login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False):
+                new_login_profile = True
     else:
         login_profile_result = None
         update_result = update_user_tags(connection, module, params, user)
 
         if module.params['update_password'] == "always" and module.params.get('password') is not None:
             login_profile_result, login_profile_data = create_or_update_login_profile(connection, module)
+
+            if login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False):
+                new_login_profile = True
+
         elif module.params.get('remove_password'):
             login_profile_result = delete_login_profile(connection, module)
 
@@ -372,7 +377,7 @@ def create_or_update_user(connection, module):
 
     # Get the user again
     user = get_user(connection, module, params['UserName'])
-    if changed and new_user:
+    if changed and new_login_profile:
         # `LoginProfile` is only returned on `create_login_profile` method
         user['user']['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
 
