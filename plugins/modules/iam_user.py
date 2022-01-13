@@ -259,6 +259,7 @@ def create_or_update_login_profile(connection, module):
     user_params['Password'] = module.params.get('password')
     user_params['PasswordResetRequired'] = module.params.get('password_reset_required')
     retval = {}
+
     try:
         retval = connection.update_login_profile(**user_params)
     except is_boto3_error_code('NoSuchEntity'):
