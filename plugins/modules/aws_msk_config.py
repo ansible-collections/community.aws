@@ -14,7 +14,6 @@ short_description: Manage Amazon MSK cluster configurations.
 version_added: "2.0.0"
 requirements:
     - botocore >= 1.17.48
-    - boto3
 description:
     - Create, delete and modify Amazon MSK (Managed Streaming for Apache Kafka) cluster configurations.
 author:
