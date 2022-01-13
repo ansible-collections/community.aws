@@ -1,14 +1,14 @@
-.. _community.aws.aws_elasticbeanstalk_app_module:
+.. _community.aws.ec2_asg_scheduled_action_module:
 
 
 **************************************
-community.aws.aws_elasticbeanstalk_app
+community.aws.ec2_asg_scheduled_action
 **************************************
 
-**Create, update, and delete an elastic beanstalk application**
+**Create, modify and delete ASG scheduled scaling actions.**
 
 
-Version added: 1.0.0
+Version added: 2.2.0
 
 .. contents::
    :local:
@@ -17,7 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Creates, updates, deletes beanstalk applications if app_name is provided.
+- The module will create a new scheduled action when *state=present* and no given action is found.
+- The module will update a new scheduled action when *state=present* and the given action is found.
+- The module will delete a new scheduled action when *state=absent* and the given action is found.
 
 
 
@@ -44,17 +46,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>app_name</b>
+                    <b>autoscaling_group_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>Name of the beanstalk application you wish to manage.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
+                        <div>The name of the autoscaling group to add a scheduled action to.</div>
                 </td>
             </tr>
             <tr>
@@ -149,16 +151,16 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>description</b>
+                    <b>desired_capacity</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">integer</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The description of the application.</div>
+                        <div>ASG desired capacity.</div>
                 </td>
             </tr>
             <tr>
@@ -175,6 +177,51 @@ Parameters
                 <td>
                         <div>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_endpoint_url, endpoint_url</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>end_time</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>End time for the action.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>max_size</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>ASG max capacity.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>min_size</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>ASG min capacity.</div>
                 </td>
             </tr>
             <tr>
@@ -197,6 +244,22 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>recurrence</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Cron style schedule to repeat the action on.</div>
+                        <div>Required when <em>state=present</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -208,6 +271,22 @@ Parameters
                 <td>
                         <div>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a href='http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region'>http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_region, ec2_region</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>scheduled_action_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the scheduled action.</div>
                 </td>
             </tr>
             <tr>
@@ -231,6 +310,21 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>start_time</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Start time for the action.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -239,31 +333,27 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>absent</li>
                                     <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
+                                    <li>absent</li>
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to ensure the application is present or absent.</div>
+                        <div>Create / update or delete scheduled action.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>terminate_by_force</b>
+                    <b>time_zone</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
                 </td>
                 <td>
-                        <div>When <em>terminate_by_force=true</em>, running environments will be terminated before deleting the application.</div>
+                        <div>Time zone to run against.</div>
                 </td>
             </tr>
             <tr>
@@ -305,15 +395,38 @@ Examples
 
 .. code-block:: yaml
 
-    # Create or update an application
-    - community.aws.aws_elasticbeanstalk_app:
-        app_name: Sample_App
-        description: "Hello World App"
+    # Create a scheduled action for a autoscaling group.
+    - name: Create a minimal scheduled action for autoscaling group
+      community.aws.ec2_asg_scheduled_action:
+        region: eu-west-1
+        autoscaling_group_name: test_asg
+        scheduled_action_name: test_scheduled_action
+        start_time: 2021 October 25 08:00 UTC
+        recurrence: 40 22 * * 1-5
+        desired_capacity: 10
         state: present
+      register: scheduled_action
 
-    # Delete application
-    - community.aws.aws_elasticbeanstalk_app:
-        app_name: Sample_App
+    - name: Create a scheduled action for autoscaling group
+      community.aws.ec2_asg_scheduled_action:
+        region: eu-west-1
+        autoscaling_group_name: test_asg
+        scheduled_action_name: test_scheduled_action
+        start_time: 2021 October 25 08:00 UTC
+        end_time: 2021 October 25 08:00 UTC
+        time_zone: Europe/London
+        recurrence: 40 22 * * 1-5
+        min_size: 10
+        max_size: 15
+        desired_capacity: 10
+        state: present
+      register: scheduled_action
+
+    - name: Delete scheduled action
+      community.aws.ec2_asg_scheduled_action:
+        region: eu-west-1
+        autoscaling_group_name: test_asg
+        scheduled_action_name: test_scheduled_action
         state: absent
 
 
@@ -333,35 +446,137 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>app</b>
+                    <b>desired_capacity</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>always</td>
+                <td>when <em>state=present</em></td>
                 <td>
-                            <div>Beanstalk application.</div>
+                            <div>ASG desired capacity.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;ApplicationName&#x27;: &#x27;app-name&#x27;, &#x27;ConfigurationTemplates&#x27;: [], &#x27;DateCreated&#x27;: &#x27;2016-12-28T14:50:03.185000+00:00&#x27;, &#x27;DateUpdated&#x27;: &#x27;2016-12-28T14:50:03.185000+00:00&#x27;, &#x27;Description&#x27;: &#x27;description&#x27;, &#x27;Versions&#x27;: [&#x27;1.0.0&#x27;, &#x27;1.0.1&#x27;]}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>output</b>
+                    <b>end_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>in check mode</td>
+                <td>when <em>state=present</em></td>
                 <td>
-                            <div>Message indicating what change will occur.</div>
+                            <div>End time for the action.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">App is up-to-date</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2021 October 25 08:00 UTC</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>max_size</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>when <em>state=present</em></td>
+                <td>
+                            <div>ASG max capacity.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>min_size</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>when <em>state=present</em></td>
+                <td>
+                            <div>ASG min capacity.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>recurrence</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when <em>state=present</em></td>
+                <td>
+                            <div>Cron style schedule to repeat the action on.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">40 22 * * 1-5</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>scheduled_action_name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when <em>state=present</em></td>
+                <td>
+                            <div>The name of the scheduled action.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">test_scheduled_action</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>start_time</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when <em>state=present</em></td>
+                <td>
+                            <div>Start time for the action.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2021 October 25 08:00 UTC</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>time_zone</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when <em>state=present</em></td>
+                <td>
+                            <div>The ID of the Amazon Machine Image used by the launch configuration.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Europe/London</div>
                 </td>
             </tr>
     </table>
@@ -375,5 +590,4 @@ Status
 Authors
 ~~~~~~~
 
-- Harpreet Singh (@hsingh)
-- Stephen Granger (@viper233)
+- Mark Woolley(@marknet15)
