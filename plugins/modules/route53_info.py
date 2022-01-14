@@ -221,6 +221,7 @@ def _paginated_result(paginator_name, **params):
     paginator = client.get_paginator(paginator_name)
     return paginator.paginate(**params).build_full_result()
 
+
 def get_hosted_zone():
     params = dict()
 
