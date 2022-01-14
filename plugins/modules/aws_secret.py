@@ -55,7 +55,7 @@ options:
     type: str
   resource_policy:
     description:
-    - Specifies JSON-formatted resource policy to attach to the secret. Useful when granting cross-account access 
+    - Specifies JSON-formatted resource policy to attach to the secret. Useful when granting cross-account access
        to secrets.
     required: false
     type: json
