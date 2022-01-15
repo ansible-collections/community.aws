@@ -239,6 +239,22 @@ EXAMPLES = '''
       Application: search
       Environment: development
     purge_tags: true
+
+- name: request a certificate issued by ACM
+  community.aws.aws_acm:
+    name_tag: my_cert # to be applied through an AWS tag as  "Name":"my_cert"
+    acm_certificate:
+      domain_name: acm.ansible.com
+      subject_alternative_names:
+      - acm-east.ansible.com
+      - acm-west.ansible.com
+      validation-method: DNS
+      idempotency-token: "91adc45q"
+      options:
+        certificate_transparency_logging_preference: ENABLED
+      certificate_authority_arn: arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012
+    tags:
+      Application: earch
 '''
 
 RETURN = '''
