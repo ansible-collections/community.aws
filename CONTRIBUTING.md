@@ -64,7 +64,7 @@ For general information on running the integration tests see the
 [Integration Tests page of the Module Development Guide](https://docs.ansible.com/ansible/devel/dev_guide/testing_integration.html#testing-integration),
 especially the section on configuration for cloud tests.  For questions about writing tests the Ansible AWS community can be found on [libera.chat](https://libera.chat/) IRC as detailed below.
 
-### Changelog Fragement
+### Changelog Fragment
 
 Once a PR has been created, make sure to create a changelog [fragment](https://github.com/ansible-collections/community.aws/tree/main/changelogs/fragments).
 
