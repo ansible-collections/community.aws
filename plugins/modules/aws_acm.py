@@ -157,6 +157,17 @@ options:
     choices: [present, absent]
     default: present
     type: str
+
+  tags:
+    description:
+      - tags dict to apply to a snapshot.
+    type: dict
+  purge_tags:
+    description:
+      - whether to remove tags not present in the C(tags) parameter.
+    default: True
+    type: bool
+
 author:
   - Matthew Davis (@matt-telstra) on behalf of Telstra Corporation Limited
 extends_documentation_fragment:
