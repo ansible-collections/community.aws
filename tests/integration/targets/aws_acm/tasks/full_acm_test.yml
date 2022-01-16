@@ -73,8 +73,7 @@
       path: '{{ item.cert }}'
       csr_path: '{{ item.csr }}'
       privatekey_path: '{{ item.priv_key }}'
-      signature_algorithms:
-      - sha256WithRSAEncryption
+      selfsigned_digest: sha256
   - name: upload certificate with check mode
     aws_acm:
       name_tag: '{{ item.name }}'
@@ -398,8 +397,7 @@
       csr_path: '{{ item.csr }}'
       ownca_path: '{{ local_certs[item.ca].cert }}'
       ownca_privatekey_path: '{{ local_certs[item.ca].priv_key }}'
-      signature_algorithms:
-      - sha256WithRSAEncryption
+      selfsigned_digest: sha256
   - name: check files exist (for next task)
     file:
       path: '{{ item }}'
