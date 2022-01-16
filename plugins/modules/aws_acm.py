@@ -160,7 +160,7 @@ options:
 
   tags:
     description:
-      - tags dict to apply to a snapshot.
+      - tags to apply to imported certificates.
     type: dict
   purge_tags:
     description:
@@ -245,11 +245,62 @@ arns:
 '''
 
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.acm import ACMServiceManager
-from ansible.module_utils._text import to_text
 import base64
 import re  # regex library
+
+try:
+    import botocore
+except ImportError:
+    pass  # handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.acm import ACMServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
+    boto3_tag_list_to_ansible_dict,
+    ansible_dict_to_boto3_tag_list,
+)
+from ansible.module_utils._text import to_text
+
+
+
+def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
+    if tags is None:
+        return False
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, tags, purge_tags)
+    changed = bool(tags_to_add or tags_to_remove)
+    if tags_to_add:
+        if module.check_mode:
+            module.exit_json(
+                changed=True, msg="Would have added tags to domain if not in check mode"
+            )
+        try:
+            client.add_tags_to_certificate(
+                ARN=resource_arn,
+                TagList=ansible_dict_to_boto3_tag_list(tags_to_add),
+            )
+        except (
+            botocore.exceptions.ClientError,
+            botocore.exceptions.BotoCoreError,
+        ) as e:
+            module.fail_json_aws(
+                e, "Couldn't add tags to domain {0}".format(resource_arn)
+            )
+    if tags_to_remove:
+        if module.check_mode:
+            module.exit_json(
+                changed=True, msg="Would have removed tags if not in check mode"
+            )
+        try:
+            client.remove_tags_from_certificate(ARN=resource_arn, TagKeys=tags_to_remove)
+        except (
+            botocore.exceptions.ClientError,
+            botocore.exceptions.BotoCoreError,
+        ) as e:
+            module.fail_json_aws(
+                e, "Couldn't remove tags from domain {0}".format(resource_arn)
+            )
+    return changed
 
 
 # Takes in two text arguments
@@ -304,6 +355,94 @@ def pem_chain_split(module, pem):
     return pem_arr
 
 
+def ensure_certificates_present(client, module, acm, certificates, tags):
+    cert_arn = None
+    changed = False
+    if len(certificates) > 1:
+        msg = "More than one certificate with Name=%s exists in ACM in this region" % module.params['name_tag']
+        module.fail_json(msg=msg, certificates=certificates)
+    elif len(certificates) == 1:
+        # update the existing certificate
+        module.debug("Existing certificate found in ACM")
+        old_cert = certificates[0]  # existing cert in ACM
+        if ('tags' not in old_cert) or ('Name' not in old_cert['tags']) or (old_cert['tags']['Name'] != module.params['name_tag']):
+            # shouldn't happen
+            module.fail_json(msg="Internal error, unsure which certificate to update", certificate=old_cert)
+
+        if 'certificate' not in old_cert:
+            # shouldn't happen
+            module.fail_json(msg="Internal error, unsure what the existing cert in ACM is", certificate=old_cert)
+
+        # Are the existing certificate in ACM and the local certificate the same?
+        same = True
+        same &= chain_compare(module, old_cert['certificate'], module.params['certificate'])
+        if module.params['certificate_chain']:
+            # Need to test this
+            # not sure if Amazon appends the cert itself to the chain when self-signed
+            same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate_chain'])
+        else:
+            # When there is no chain with a cert
+            # it seems Amazon returns the cert itself as the chain
+            same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate'])
+
+        if same:
+            module.debug("Existing certificate in ACM is the same, doing nothing")
+            cert_arn = old_cert['certificate_arn']
+            changed = False
+        else:
+            module.debug("Existing certificate in ACM is different, overwriting")
+            changed = True
+            if module.check_mode:
+                cert_arn = old_cert['certificate_arn']
+                # note: returned domain will be the domain of the previous cert
+            else:
+                # update cert in ACM
+                cert_arn = acm.import_certificate(client, module,
+                            certificate=module.params['certificate'],
+                            private_key=module.params['private_key'],
+                            certificate_chain=module.params['certificate_chain'],
+                            arn=old_cert['certificate_arn'],
+                            tags=tags,
+                )
+    else:  # len(certificates) == 0
+        module.debug("No certificate in ACM. Creating new one.")
+        changed = True
+        if module.check_mode:
+            domain = 'example.com'
+            module.exit_json(certificate=dict(domain_name=domain), changed=True)
+        else:
+            cert_arn = acm.import_certificate(client, module,
+                        certificate=module.params['certificate'],
+                        private_key=module.params['private_key'],
+                        certificate_chain=module.params['certificate_chain'],
+                        tags=tags,
+            )
+
+    # Add/remove tags to/from certificate
+    try:
+        existing_tags = boto3_tag_list_to_ansible_dict(
+            client.list_tags_for_certificate(CertificateArn=cert_arn)["Tags"]
+        )
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, "Couldn't get tags for certificate")
+
+    desired_tags = module.params["tags"]
+    purge_tags = module.params["purge_tags"]
+    changed |= ensure_tags(
+        client, module, cert_arn, existing_tags, desired_tags, purge_tags
+    )
+
+    domain = acm.get_domain_of_cert(client=client, module=module, arn=cert_arn)
+    module.exit_json(certificate=dict(domain_name=domain, arn=cert_arn), changed=changed)
+
+
+def ensure_certificates_absent(client, module, acm, certificates):
+    for cert in certificates:
+        if not module.check_mode:
+            acm.delete_certificate(client, module, cert['certificate_arn'])
+    module.exit_json(arns=[cert['certificate_arn'] for cert in certificates],
+                      changed=(len(certificates) > 0))
+
 def main():
     argument_spec = dict(
         certificate=dict(),
@@ -312,12 +451,17 @@ def main():
         domain_name=dict(aliases=['domain']),
         name_tag=dict(aliases=['name']),
         private_key=dict(no_log=True),
-        state=dict(default='present', choices=['present', 'absent'])
+        tags=dict(type="dict"),
+        purge_tags=dict(type="bool", default=True),
+        state=dict(default='present', choices=['present', 'absent']),
     )
-    required_if = [
-        ['state', 'present', ['certificate', 'name_tag', 'private_key']],
-    ]
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True, required_if=required_if)
+    module = AnsibleAWSModule(
+      argument_spec=argument_spec,
+      supports_check_mode=True,
+      required_if=[
+          ['state', 'present', ['certificate', 'name_tag', 'private_key']],
+      ],
+    )
     acm = ACMServiceManager(module)
 
     # Check argument requirements
@@ -334,6 +478,8 @@ def main():
 
     if module.params['name_tag']:
         tags = dict(Name=module.params['name_tag'])
+    elif module.params['tags']:
+        tags = module.params['tags']
     else:
         tags = None
 
@@ -349,75 +495,10 @@ def main():
     module.debug("Found %d corresponding certificates in ACM" % len(certificates))
 
     if module.params['state'] == 'present':
-        if len(certificates) > 1:
-            msg = "More than one certificate with Name=%s exists in ACM in this region" % module.params['name_tag']
-            module.fail_json(msg=msg, certificates=certificates)
-        elif len(certificates) == 1:
-            # update the existing certificate
-            module.debug("Existing certificate found in ACM")
-            old_cert = certificates[0]  # existing cert in ACM
-            if ('tags' not in old_cert) or ('Name' not in old_cert['tags']) or (old_cert['tags']['Name'] != module.params['name_tag']):
-                # shouldn't happen
-                module.fail_json(msg="Internal error, unsure which certificate to update", certificate=old_cert)
-
-            if 'certificate' not in old_cert:
-                # shouldn't happen
-                module.fail_json(msg="Internal error, unsure what the existing cert in ACM is", certificate=old_cert)
-
-            # Are the existing certificate in ACM and the local certificate the same?
-            same = True
-            same &= chain_compare(module, old_cert['certificate'], module.params['certificate'])
-            if module.params['certificate_chain']:
-                # Need to test this
-                # not sure if Amazon appends the cert itself to the chain when self-signed
-                same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate_chain'])
-            else:
-                # When there is no chain with a cert
-                # it seems Amazon returns the cert itself as the chain
-                same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate'])
-
-            if same:
-                module.debug("Existing certificate in ACM is the same, doing nothing")
-                domain = acm.get_domain_of_cert(client=client, module=module, arn=old_cert['certificate_arn'])
-                module.exit_json(certificate=dict(domain_name=domain, arn=old_cert['certificate_arn']), changed=False)
-            else:
-                module.debug("Existing certificate in ACM is different, overwriting")
-
-                if module.check_mode:
-                    arn = old_cert['certificate_arn']
-                    # note: returned domain will be the domain of the previous cert
-                else:
-                    # update cert in ACM
-                    arn = acm.import_certificate(client, module,
-                                                 certificate=module.params['certificate'],
-                                                 private_key=module.params['private_key'],
-                                                 certificate_chain=module.params['certificate_chain'],
-                                                 arn=old_cert['certificate_arn'],
-                                                 tags=tags)
-                domain = acm.get_domain_of_cert(client=client, module=module, arn=arn)
-                module.exit_json(certificate=dict(domain_name=domain, arn=arn), changed=True)
-        else:  # len(certificates) == 0
-            module.debug("No certificate in ACM. Creating new one.")
-            if module.check_mode:
-                domain = 'example.com'
-                module.exit_json(certificate=dict(domain_name=domain), changed=True)
-            else:
-                arn = acm.import_certificate(client=client,
-                                             module=module,
-                                             certificate=module.params['certificate'],
-                                             private_key=module.params['private_key'],
-                                             certificate_chain=module.params['certificate_chain'],
-                                             tags=tags)
-                domain = acm.get_domain_of_cert(client=client, module=module, arn=arn)
-
-                module.exit_json(certificate=dict(domain_name=domain, arn=arn), changed=True)
+        ensure_certificates_present(client, module, acm, certificates, tags)
 
     else:  # state == absent
-        for cert in certificates:
-            if not module.check_mode:
-                acm.delete_certificate(client, module, cert['certificate_arn'])
-        module.exit_json(arns=[cert['certificate_arn'] for cert in certificates],
-                         changed=(len(certificates) > 0))
+        ensure_certificates_absent(client, module, acm, certificates)
 
 
 if __name__ == '__main__':
