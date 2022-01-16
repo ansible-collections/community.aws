@@ -132,6 +132,9 @@ options:
         even though the ACM API allows duplicate certificates.
       - If I(state=preset), this must be specified.
       - >
+        If I(state=absent) and I(name_tag) is specified,
+        this task will delete all ACM certificates with this Name tag.
+      - >
         If I(state=absent), you must provide exactly one of
         I(certificate_arn), I(domain_name) or I(name_tag).
     type: str
@@ -160,8 +163,9 @@ options:
 
   tags:
     description:
-      - tags to apply to imported certificates.
+      - Tags to apply to certificates imported in AWS Certificate Manager.
     type: dict
+
   purge_tags:
     description:
       - whether to remove tags not present in the C(tags) parameter.
@@ -263,11 +267,11 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
 from ansible.module_utils._text import to_text
 
 
-
 def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
     if tags is None:
         return False
-    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, tags, purge_tags)
+    tags_to_add, tags_to_remove = compare_aws_tags(
+        existing_tags, tags, purge_tags)
     changed = bool(tags_to_add or tags_to_remove)
     if tags_to_add:
         if module.check_mode:
@@ -276,8 +280,8 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
             )
         try:
             client.add_tags_to_certificate(
-                ARN=resource_arn,
-                TagList=ansible_dict_to_boto3_tag_list(tags_to_add),
+                CertificateArn=resource_arn,
+                Tags=ansible_dict_to_boto3_tag_list(tags_to_add),
             )
         except (
             botocore.exceptions.ClientError,
@@ -292,7 +296,10 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
                 changed=True, msg="Would have removed tags if not in check mode"
             )
         try:
-            client.remove_tags_from_certificate(ARN=resource_arn, TagKeys=tags_to_remove)
+            client.remove_tags_from_certificate(
+                CertificateArn=resource_arn,
+                Tags=ansible_dict_to_boto3_tag_list(tags_to_remove),
+            )
         except (
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
@@ -397,12 +404,14 @@ def ensure_certificates_present(client, module, acm, certificates, tags):
                 # note: returned domain will be the domain of the previous cert
             else:
                 # update cert in ACM
-                cert_arn = acm.import_certificate(client, module,
-                            certificate=module.params['certificate'],
-                            private_key=module.params['private_key'],
-                            certificate_chain=module.params['certificate_chain'],
-                            arn=old_cert['certificate_arn'],
-                            tags=tags,
+                cert_arn = acm.import_certificate(
+                    client,
+                    module,
+                    certificate=module.params['certificate'],
+                    private_key=module.params['private_key'],
+                    certificate_chain=module.params['certificate_chain'],
+                    arn=old_cert['certificate_arn'],
+                    tags=tags,
                 )
     else:  # len(certificates) == 0
         module.debug("No certificate in ACM. Creating new one.")
@@ -411,23 +420,23 @@ def ensure_certificates_present(client, module, acm, certificates, tags):
             domain = 'example.com'
             module.exit_json(certificate=dict(domain_name=domain), changed=True)
         else:
-            cert_arn = acm.import_certificate(client, module,
-                        certificate=module.params['certificate'],
-                        private_key=module.params['private_key'],
-                        certificate_chain=module.params['certificate_chain'],
-                        tags=tags,
+            cert_arn = acm.import_certificate(
+                client,
+                module,
+                certificate=module.params['certificate'],
+                private_key=module.params['private_key'],
+                certificate_chain=module.params['certificate_chain'],
+                tags=tags,
             )
 
     # Add/remove tags to/from certificate
     try:
-        existing_tags = boto3_tag_list_to_ansible_dict(
-            client.list_tags_for_certificate(CertificateArn=cert_arn)["Tags"]
-        )
+        existing_tags = boto3_tag_list_to_ansible_dict(client.list_tags_for_certificate(CertificateArn=cert_arn)['Tags'])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't get tags for certificate")
 
-    desired_tags = module.params["tags"]
-    purge_tags = module.params["purge_tags"]
+    desired_tags = module.params['tags']
+    purge_tags = module.params['purge_tags']
     changed |= ensure_tags(
         client, module, cert_arn, existing_tags, desired_tags, purge_tags
     )
@@ -440,8 +449,8 @@ def ensure_certificates_absent(client, module, acm, certificates):
     for cert in certificates:
         if not module.check_mode:
             acm.delete_certificate(client, module, cert['certificate_arn'])
-    module.exit_json(arns=[cert['certificate_arn'] for cert in certificates],
-                      changed=(len(certificates) > 0))
+    module.exit_json(arns=[cert['certificate_arn'] for cert in certificates], changed=(len(certificates) > 0))
+
 
 def main():
     argument_spec = dict(
@@ -451,16 +460,16 @@ def main():
         domain_name=dict(aliases=['domain']),
         name_tag=dict(aliases=['name']),
         private_key=dict(no_log=True),
-        tags=dict(type="dict"),
-        purge_tags=dict(type="bool", default=True),
+        tags=dict(type='dict'),
+        purge_tags=dict(type='bool', default=True),
         state=dict(default='present', choices=['present', 'absent']),
     )
     module = AnsibleAWSModule(
-      argument_spec=argument_spec,
-      supports_check_mode=True,
-      required_if=[
-          ['state', 'present', ['certificate', 'name_tag', 'private_key']],
-      ],
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        required_if=[
+            ['state', 'present', ['certificate', 'name_tag', 'private_key']],
+        ],
     )
     acm = ACMServiceManager(module)
 
@@ -486,11 +495,13 @@ def main():
     client = module.client('acm')
 
     # fetch the list of certificates currently in ACM
-    certificates = acm.get_certificates(client=client,
-                                        module=module,
-                                        domain_name=module.params['domain_name'],
-                                        arn=module.params['certificate_arn'],
-                                        only_tags=tags)
+    certificates = acm.get_certificates(
+        client=client,
+        module=module,
+        domain_name=module.params['domain_name'],
+        arn=module.params['certificate_arn'],
+        only_tags=tags,
+    )
 
     module.debug("Found %d corresponding certificates in ACM" % len(certificates))
 
