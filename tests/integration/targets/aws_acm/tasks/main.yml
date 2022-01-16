@@ -59,12 +59,36 @@
       csr_path: '{{ item.csr }}'
       privatekey_path: '{{ item.priv_key }}'
       selfsigned_digest: sha256
+  - name: try to upload certificate, but name_tag conflicts with tags.Name
+    vars:
+      local_cert: '{{ local_certs[0] }}'
+    aws_acm:
+      name_tag: '{{ local_cert.name }}'
+      certificate: '{{ lookup(''file'', local_cert.cert ) }}'
+      private_key: '{{ lookup(''file'', local_cert.priv_key ) }}'
+      state: present
+      tags:
+        Name: '{{ local_cert.name }}-other'
+        Application: search
+        Environment: development
+    register: result
+    ignore_errors: true
+  - name: assert failure when name_tag conflicts with tags.Name
+    assert:
+      that:
+          - 'result.failed'
+          - '"conflicts with value of" in result.msg'
   - name: upload certificates first time
     aws_acm:
       name_tag: '{{ item.name }}'
       certificate: '{{ lookup(''file'', item.cert ) }}'
       private_key: '{{ lookup(''file'', item.priv_key ) }}'
       state: present
+      # Add tags
+      tags:
+        Application: search
+        Environment: development
+      purge_tags: false
     register: upload
     with_items: '{{ local_certs }}'
     until: upload is succeeded
@@ -94,7 +118,11 @@
       - fetch_after_up_result.certificates[0].domain_name == original_cert.domain
       - (fetch_after_up_result.certificates[0].certificate | replace( ' ', '' ) | replace( '\n', '')) == (lookup( 'file', original_cert.cert ) | replace( ' ', '' ) | replace( '\n', '' ))
       - '''Name'' in fetch_after_up_result.certificates[0].tags'
+      - '''Application'' in fetch_after_up_result.certificates[0].tags'
+      - '''Environment'' in fetch_after_up_result.certificates[0].tags'
       - fetch_after_up_result.certificates[0].tags['Name'] == original_cert.name
+      - fetch_after_up_result.certificates[0].tags['Application'] == 'search'
+      - fetch_after_up_result.certificates[0].tags['Environment'] == 'development'
     with_items: '{{ fetch_after_up.results }}'
     vars:
       fetch_after_up_result: '{{ item }}'
