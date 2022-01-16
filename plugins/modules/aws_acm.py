@@ -164,6 +164,12 @@ options:
   tags:
     description:
       - Tags to apply to certificates imported in AWS Certificate Manager.
+      - >
+        If both I(name_tag) and the 'Name' tag in I(tags) are set,
+        the values must be the same.
+      - >
+        If the 'Name' tag in I(tags) is not set and I(name_tag) is set,
+        the I(name_tag) value is copied to I(tags).
     type: dict
 
   purge_tags:
@@ -485,12 +491,24 @@ def main():
                 module.debug("%s is %s" % (a, module.params[a]))
             module.fail_json(msg="If 'state' is specified as 'absent' then exactly one of 'name_tag', certificate_arn' or 'domain_name' must be specified")
 
-    if module.params['name_tag']:
-        tags = dict(Name=module.params['name_tag'])
-    elif module.params['tags']:
+    filter_tags = None
+    tags = None
+    if module.params['tags']:
         tags = module.params['tags']
-    else:
-        tags = None
+    if module.params['name_tag']:
+        # The module was originally implemented to filter certificates based on the 'Name' tag.
+        # Other tags are not used to filter certificates.
+        # It would make sense to replace the existing name_tag, domain, certificate_arn attributes
+        # with a 'filter' attribute, but that would break backwards-compatibility.
+        filter_tags = dict(Name=module.params['name_tag'])
+        if tags:
+            if 'Name' in tags:
+                if tags['Name'] != module.params['name_tag']:
+                    module.fail_json(msg="Value of 'name_tag' conflicts with value of 'tags.Name'")
+            else:
+                tags['Name'] = module.params['name_tag']
+        else:
+            tags = filter_tags
 
     client = module.client('acm')
 
@@ -500,7 +518,7 @@ def main():
         module=module,
         domain_name=module.params['domain_name'],
         arn=module.params['certificate_arn'],
-        only_tags=tags,
+        only_tags=filter_tags,
     )
 
     module.debug("Found %d corresponding certificates in ACM" % len(certificates))
