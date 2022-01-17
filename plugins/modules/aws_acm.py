@@ -150,6 +150,98 @@ options:
         If your private key is in a file,
         use C(lookup('file', 'path/to/key.pem')).
     type: str
+
+    certificate_request:
+      domain_name: acm.ansible.com
+      subject_alternative_names:
+      - acm-east.ansible.com
+      - acm-west.ansible.com
+      validation-method: DNS
+      idempotency-token: "91adc45q"
+      options:
+        certificate_transparency_logging_preference: ENABLED
+      certificate_authority_arn: arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012
+
+  certificate_request:
+    description:
+      - >
+        Requests an ACM certificate for use with other Amazon Web Services services.
+        To request an ACM certificate, you must specify a fully qualified domain name (FQDN)
+        in the I(domain_name) parameter.
+        You can also specify additional FQDNs in the I(subject_alternative_names) parameter.
+      - >
+        If you are requesting a private certificate, domain validation is not required.
+      - >
+        If you are requesting a public certificate, each domain name that you specify must
+        be validated to verify that you own or control the domain.
+      - >
+        You can use DNS validation or email validation.
+        ACM issues public certificates after receiving approval from the domain owner.
+    suboptions:
+      domain_name:
+        description:
+          - >
+            Fully qualified domain name (FQDN), such as www.example.com, that you want to
+            secure with an ACM certificate.
+          - >
+            Use an asterisk (*) to create a wildcard certificate that protects several sites
+            in the same domain.
+            For example, *.example.com protects www.example.com, site.example.com
+            and images.example.com.
+          - >
+            The first domain name you enter cannot exceed 64 octets, including periods.
+            Each subsequent Subject Alternative Name (SAN), however, can be up to 253 octets
+            in length.
+        type: str
+      subject_alternative_names:
+        description:
+          - >
+            Additional FQDNs to be included in the Subject Alternative Name extension of
+            the ACM certificate.
+          - >
+            For example, add the name www.example.net to a certificate for which the
+            I(domain_name) parameter is www.example.com if users can reach your site by
+            using either name.
+        type: list
+        elements: str
+      validation_method:
+        description:
+          - >
+            The method you want to use if you are requesting a public certificate to validate
+            that you own or control domain.
+          - >
+            You can validate with DNS or validate with email.
+        choices: ['DNS', 'EMAIL']
+        type: str
+      certificate_authority_arn:
+        description:
+          - >
+            The Amazon Resource Name (ARN) of the private certificate authority (CA) that will
+            be used to issue the certificate.
+          - >
+            If you do not provide an ARN and you are trying to request a private certificate,
+            ACM will attempt to issue a public certificate.
+        type: str
+      options:
+        description:
+          - >
+            Currently, you can use this parameter to specify whether to add the certificate
+            to a certificate transparency log.
+          - >
+            Certificate transparency makes it possible to detect SSL/TLS certificates that
+            have been mistakenly or maliciously issued. Certificates that have not been logged
+            typically produce an error message in a browser.
+        suboptions:
+          certificate_transparency_logging_preference:
+            description:
+              - >
+                You can opt out of certificate transparency logging by specifying the DISABLED
+                option. Opt in by specifying ENABLED.
+            choices: ['ENABLED', 'DISABLED']
+            type: str
+        type: dict
+    type: dict
+
   state:
     description:
       - >
@@ -247,8 +339,8 @@ EXAMPLES = '''
       subject_alternative_names:
       - acm-east.ansible.com
       - acm-west.ansible.com
-      validation-method: DNS
-      idempotency-token: "91adc45q"
+      validation_method: DNS
+      idempotency_token: "91adc45q"
       options:
         certificate_transparency_logging_preference: ENABLED
       certificate_authority_arn: arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012
