@@ -29,6 +29,7 @@ options:
       - Valid only when Strategy is set to partition.
       - Must be a value between 1 and 7.
     type: int
+    version_added: 3.1.0
   state:
     description:
       - Create or delete placement group.
