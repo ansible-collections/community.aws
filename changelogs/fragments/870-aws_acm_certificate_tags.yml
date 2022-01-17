@@ -1,0 +1,2 @@
+minor_changes:
+- aws_acm - Add ``tags`` and ``purge_tags`` parameters to tag certificates in ACM (https://github.com/ansible-collections/community.aws/pull/780).
