@@ -190,7 +190,24 @@
     register: upload2
     with_items: '{{ local_certs }}'
     failed_when: upload2.changed
-  - name: change tags of existing certificate
+  - name: change tags of existing certificate, check mode
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    check_mode: true
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+      domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+  - assert:
+      that:
+      - certificate_with_tags.changed
+  - name: change tags of existing certificate, changes expected
     aws_acm:
       # When applying tags to an existing certificate, it is sufficient to specify the 'certificate_arn'.
       # Previously, the 'aws_acm' module was requiring the 'certificate', 'name_tag' and 'domain_name'
@@ -206,6 +223,64 @@
       name_tag: '{{ upload2.results[0].item.name }}'
       certificate_arn: '{{ upload2.results[0].certificate.arn }}'
       domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+  - name: assert certificate tags
+    assert:
+      that:
+      - certificate_with_tags.certificate.tags | length == 4
+      - '''Name'' in certificate_with_tags.certificate.tags'
+      - '''Application'' in certificate_with_tags.certificate.tags'
+      - '''Environment'' in certificate_with_tags.certificate.tags'
+      - '''Owner'' in certificate_with_tags.certificate.tags'
+      - certificate_with_tags.certificate.tags['Name'] == name_tag
+      - certificate_with_tags.certificate.tags['Application'] == 'search'
+      - certificate_with_tags.certificate.tags['Environment'] == 'staging'
+      - certificate_with_tags.certificate.tags['Owner'] == 'Bob'
+      - certificate_with_tags.changed
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+  - name: change tags of existing certificate, check mode again
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    check_mode: true
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+  - assert:
+      that:
+      - not certificate_with_tags.changed
+  - name: change tags of existing certificate, no change expected
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+  - name: assert certificate tags
+    assert:
+      that:
+      - certificate_with_tags.certificate.tags | length == 4
+      - '''Name'' in certificate_with_tags.certificate.tags'
+      - '''Application'' in certificate_with_tags.certificate.tags'
+      - '''Environment'' in certificate_with_tags.certificate.tags'
+      - '''Owner'' in certificate_with_tags.certificate.tags'
+      - certificate_with_tags.certificate.tags['Name'] == name_tag
+      - certificate_with_tags.certificate.tags['Application'] == 'search'
+      - certificate_with_tags.certificate.tags['Environment'] == 'staging'
+      - certificate_with_tags.certificate.tags['Owner'] == 'Bob'
+      - not certificate_with_tags.changed
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
   - name: check fetched data of cert we just uploaded
     vars:
       certificate_arn: '{{ upload2.results[0].certificate.arn }}'
