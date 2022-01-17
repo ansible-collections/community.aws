@@ -173,12 +173,14 @@ options:
         If the 'Name' tag in I(tags) is not set and I(name_tag) is set,
         the I(name_tag) value is copied to I(tags).
     type: dict
+    version_added: 3.1.0
 
   purge_tags:
     description:
       - whether to remove tags not present in the C(tags) parameter.
     default: false
     type: bool
+    version_added: 3.1.0
 
 author:
   - Matthew Davis (@matt-telstra) on behalf of Telstra Corporation Limited
