@@ -256,6 +256,7 @@ arns:
 
 
 import base64
+from copy import deepcopy
 import re  # regex library
 
 try:
@@ -275,9 +276,9 @@ from ansible.module_utils._text import to_text
 
 def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
     if tags is None:
-        return False
-    tags_to_add, tags_to_remove = compare_aws_tags(
-        existing_tags, tags, purge_tags)
+        return (False, existing_tags)
+
+    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, tags, purge_tags)
     changed = bool(tags_to_add or tags_to_remove)
     if tags_to_add:
         if module.check_mode:
@@ -294,7 +295,7 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
             botocore.exceptions.BotoCoreError,
         ) as e:
             module.fail_json_aws(
-                e, "Couldn't add tags to domain {0}".format(resource_arn)
+                e, "Couldn't add tags to certificate {0}".format(resource_arn)
             )
     if tags_to_remove:
         if module.check_mode:
@@ -302,18 +303,25 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
                 changed=True, msg="Would have removed tags if not in check mode"
             )
         try:
+            # remove_tags_from_certificate wants a list of key, value pairs, not a list of keys.
+            tags_list = [{'Key': key, 'Value': existing_tags.get(key)} for key in tags_to_remove]
             client.remove_tags_from_certificate(
                 CertificateArn=resource_arn,
-                Tags=ansible_dict_to_boto3_tag_list(tags_to_remove),
+                Tags=tags_list,
             )
         except (
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
         ) as e:
             module.fail_json_aws(
-                e, "Couldn't remove tags from domain {0}".format(resource_arn)
+                e, "Couldn't remove tags from certificate {0}".format(resource_arn)
             )
-    return changed
+    new_tags = deepcopy(existing_tags)
+    for key, value in tags_to_add.items():
+        new_tags[key] = value
+    for key in tags_to_remove:
+        new_tags.pop(key, None)
+    return (changed, new_tags)
 
 
 # Takes in two text arguments
@@ -368,7 +376,7 @@ def pem_chain_split(module, pem):
     return pem_arr
 
 
-def ensure_certificates_present(client, module, acm, certificates, tags):
+def ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags):
     cert_arn = None
     changed = False
     if len(certificates) > 1:
@@ -378,31 +386,38 @@ def ensure_certificates_present(client, module, acm, certificates, tags):
         # update the existing certificate
         module.debug("Existing certificate found in ACM")
         old_cert = certificates[0]  # existing cert in ACM
-        if ('tags' not in old_cert) or ('Name' not in old_cert['tags']) or (old_cert['tags']['Name'] != module.params['name_tag']):
+        if ('tags' not in old_cert) or ('Name' not in old_cert['tags']):
             # shouldn't happen
             module.fail_json(msg="Internal error, unsure which certificate to update", certificate=old_cert)
-
+        if module.params.get('name_tag') is not None and (old_cert['tags']['Name'] != module.params.get('name_tag')):
+            # This could happen if the user identified the certificate using 'certificate_arn' or 'domain_name',
+            # and the 'Name' tag in the AWS API does not match the ansible 'name_tag'.
+            module.fail_json(msg="Internal error, Name tag does not match", certificate=old_cert)
         if 'certificate' not in old_cert:
             # shouldn't happen
             module.fail_json(msg="Internal error, unsure what the existing cert in ACM is", certificate=old_cert)
 
         # Are the existing certificate in ACM and the local certificate the same?
         same = True
-        same &= chain_compare(module, old_cert['certificate'], module.params['certificate'])
-        if module.params['certificate_chain']:
-            # Need to test this
-            # not sure if Amazon appends the cert itself to the chain when self-signed
-            same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate_chain'])
-        else:
-            # When there is no chain with a cert
-            # it seems Amazon returns the cert itself as the chain
-            same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate'])
+        if module.params.get('certificate') is not None:
+            same &= chain_compare(module, old_cert['certificate'], module.params['certificate'])
+            if module.params['certificate_chain']:
+                # Need to test this
+                # not sure if Amazon appends the cert itself to the chain when self-signed
+                same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate_chain'])
+            else:
+                # When there is no chain with a cert
+                # it seems Amazon returns the cert itself as the chain
+                same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate'])
 
         if same:
-            module.debug("Existing certificate in ACM is the same, doing nothing")
+            module.debug("Existing certificate in ACM is the same")
             cert_arn = old_cert['certificate_arn']
             changed = False
         else:
+            absent_args = ['certificate', 'name_tag', 'private_key']
+            if sum([(module.params[a] is not None) for a in absent_args]) < 3:
+                module.fail_json(msg="When importing a certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
             module.debug("Existing certificate in ACM is different, overwriting")
             changed = True
             if module.check_mode:
@@ -417,9 +432,13 @@ def ensure_certificates_present(client, module, acm, certificates, tags):
                     private_key=module.params['private_key'],
                     certificate_chain=module.params['certificate_chain'],
                     arn=old_cert['certificate_arn'],
-                    tags=tags,
+                    tags=desired_tags,
                 )
     else:  # len(certificates) == 0
+        # Validate argument requirements
+        absent_args = ['certificate', 'name_tag', 'private_key']
+        if sum([(module.params[a] is not None) for a in absent_args]) < 3:
+            module.fail_json(msg="When importing a new certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
         module.debug("No certificate in ACM. Creating new one.")
         changed = True
         if module.check_mode:
@@ -432,7 +451,7 @@ def ensure_certificates_present(client, module, acm, certificates, tags):
                 certificate=module.params['certificate'],
                 private_key=module.params['private_key'],
                 certificate_chain=module.params['certificate_chain'],
-                tags=tags,
+                tags=desired_tags,
             )
 
     # Add/remove tags to/from certificate
@@ -441,14 +460,11 @@ def ensure_certificates_present(client, module, acm, certificates, tags):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't get tags for certificate")
 
-    desired_tags = module.params['tags']
-    purge_tags = module.params['purge_tags']
-    changed |= ensure_tags(
-        client, module, cert_arn, existing_tags, desired_tags, purge_tags
-    )
-
+    purge_tags = module.params.get('purge_tags')
+    (c, new_tags) = ensure_tags(client, module, cert_arn, existing_tags, desired_tags, purge_tags)
+    changed |= c
     domain = acm.get_domain_of_cert(client=client, module=module, arn=cert_arn)
-    module.exit_json(certificate=dict(domain_name=domain, arn=cert_arn), changed=changed)
+    module.exit_json(certificate=dict(domain_name=domain, arn=cert_arn, tags=new_tags), changed=changed)
 
 
 def ensure_certificates_absent(client, module, acm, certificates):
@@ -467,22 +483,23 @@ def main():
         name_tag=dict(aliases=['name']),
         private_key=dict(no_log=True),
         tags=dict(type='dict'),
-        purge_tags=dict(type='bool', default=True),
+        purge_tags=dict(type='bool', default=False),
         state=dict(default='present', choices=['present', 'absent']),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
-        required_if=[
-            ['state', 'present', ['certificate', 'name_tag', 'private_key']],
-        ],
     )
     acm = ACMServiceManager(module)
 
     # Check argument requirements
     if module.params['state'] == 'present':
-        if module.params['certificate_arn']:
-            module.fail_json(msg="Parameter 'certificate_arn' is only valid if parameter 'state' is specified as 'absent'")
+        # at least one of these should be specified.
+        absent_args = ['certificate_arn', 'domain_name', 'name_tag']
+        if sum([(module.params[a] is not None) for a in absent_args]) < 1:
+            for a in absent_args:
+                module.debug("%s is %s" % (a, module.params[a]))
+            module.fail_json(msg="If 'state' is specified as 'present' then at least one of 'name_tag', certificate_arn' or 'domain_name' must be specified")
     else:  # absent
         # exactly one of these should be specified
         absent_args = ['certificate_arn', 'domain_name', 'name_tag']
@@ -492,23 +509,23 @@ def main():
             module.fail_json(msg="If 'state' is specified as 'absent' then exactly one of 'name_tag', certificate_arn' or 'domain_name' must be specified")
 
     filter_tags = None
-    tags = None
-    if module.params['tags']:
-        tags = module.params['tags']
-    if module.params['name_tag']:
+    desired_tags = None
+    if module.params.get('tags') is not None:
+        desired_tags = module.params['tags']
+    if module.params.get('name_tag') is not None:
         # The module was originally implemented to filter certificates based on the 'Name' tag.
         # Other tags are not used to filter certificates.
         # It would make sense to replace the existing name_tag, domain, certificate_arn attributes
         # with a 'filter' attribute, but that would break backwards-compatibility.
         filter_tags = dict(Name=module.params['name_tag'])
-        if tags:
-            if 'Name' in tags:
-                if tags['Name'] != module.params['name_tag']:
+        if desired_tags is not None:
+            if 'Name' in desired_tags:
+                if desired_tags['Name'] != module.params['name_tag']:
                     module.fail_json(msg="Value of 'name_tag' conflicts with value of 'tags.Name'")
             else:
-                tags['Name'] = module.params['name_tag']
+                desired_tags['Name'] = module.params['name_tag']
         else:
-            tags = filter_tags
+            desired_tags = deepcopy(filter_tags)
 
     client = module.client('acm')
 
@@ -522,9 +539,8 @@ def main():
     )
 
     module.debug("Found %d corresponding certificates in ACM" % len(certificates))
-
     if module.params['state'] == 'present':
-        ensure_certificates_present(client, module, acm, certificates, tags)
+        ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags)
 
     else:  # state == absent
         ensure_certificates_absent(client, module, acm, certificates)
