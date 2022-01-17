@@ -714,7 +714,12 @@ def main():
 
     module.debug("Found %d corresponding certificates in ACM" % len(certificates))
     if module.params['state'] == 'present':
-        ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags)
+        if module.params.get('certificate_request') is not None:
+            # Request certificate from ACM.
+            request_certificate(client, module, acm, desired_tags)
+        else:
+            # Import certificate to ACM.
+            ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags)
 
     else:  # state == absent
         ensure_certificates_absent(client, module, acm, certificates)
