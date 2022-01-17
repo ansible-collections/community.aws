@@ -33,7 +33,7 @@ options:
     required: false
     type: bool
     default: false
-    version_added: 2.3.0
+    version_added: 3.1.0
   update_password:
     default: always
     choices: ['always', 'on_create']
