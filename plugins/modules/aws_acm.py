@@ -29,15 +29,12 @@ DOCUMENTATION = r'''
 ---
 module: aws_acm
 short_description: >
-  Upload and delete certificates in the AWS Certificate Manager service
+  Request, upload and delete certificates in the AWS Certificate Manager service.
 version_added: 1.0.0
 description:
   - >
-    Import and delete certificates in Amazon Web Service's Certificate
-    Manager (AWS ACM).
-  - >
-    This module does not currently interact with AWS-provided certificates.
-    It currently only manages certificates provided to AWS by the user.
+    Request, renew, import and delete certificates in Amazon Web Service's
+    Certificate Manager (AWS ACM).
   - The ACM API allows users to upload multiple certificates for the same domain
     name, and even multiple identical certificates. This module attempts to
     restrict such freedoms, to be idempotent, as per the Ansible philosophy.
@@ -119,8 +116,23 @@ options:
         Exactly one of I(domain_name), I(name_tag) and I(certificate_arn)
         must be provided.
       - >
-        If I(state=present) this must not be specified.
-        (Since the domain name is encoded within the public certificate's body.)
+        If I(state=present) and I(certificate_request) is not specified, this must not be specified.
+        In that case, a certificate is imported to ACM; the domain name is encoded within
+        the public certificate's body.
+      - >
+        If I(state=present) and I(certificate_request) is specified, this must be specified.
+        A certificate is requested from ACM. In that case, the I(domain_name) is the fully
+        qualified domain name (FQDN), such as www.example.com, that you want to secure with
+        an ACM certificate.
+      - >
+        Use an asterisk (*) to create a wildcard certificate that protects several sites
+        in the same domain.
+        For example, *.example.com protects www.example.com, site.example.com
+        and images.example.com.
+      - >
+        The first domain name you enter cannot exceed 64 octets, including periods.
+        Each subsequent Subject Alternative Name (SAN), however, can be up to 253 octets
+        in length.
     type: str
     aliases: [domain]
   name_tag:
@@ -151,17 +163,6 @@ options:
         use C(lookup('file', 'path/to/key.pem')).
     type: str
 
-    certificate_request:
-      domain_name: acm.ansible.com
-      subject_alternative_names:
-      - acm-east.ansible.com
-      - acm-west.ansible.com
-      validation-method: DNS
-      idempotency-token: "91adc45q"
-      options:
-        certificate_transparency_logging_preference: ENABLED
-      certificate_authority_arn: arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012
-
   certificate_request:
     description:
       - >
@@ -178,21 +179,6 @@ options:
         You can use DNS validation or email validation.
         ACM issues public certificates after receiving approval from the domain owner.
     suboptions:
-      domain_name:
-        description:
-          - >
-            Fully qualified domain name (FQDN), such as www.example.com, that you want to
-            secure with an ACM certificate.
-          - >
-            Use an asterisk (*) to create a wildcard certificate that protects several sites
-            in the same domain.
-            For example, *.example.com protects www.example.com, site.example.com
-            and images.example.com.
-          - >
-            The first domain name you enter cannot exceed 64 octets, including periods.
-            Each subsequent Subject Alternative Name (SAN), however, can be up to 253 octets
-            in length.
-        type: str
       subject_alternative_names:
         description:
           - >
@@ -212,6 +198,14 @@ options:
           - >
             You can validate with DNS or validate with email.
         choices: ['DNS', 'EMAIL']
+        type: str
+        default: 'DNS'
+      idempotency_token:
+        description:
+          - >
+            Customer chosen string that can be used to distinguish between calls to
+            RequestCertificate.
+            Idempotency tokens time out after one hour.
         type: str
       certificate_authority_arn:
         description:
@@ -239,6 +233,7 @@ options:
                 option. Opt in by specifying ENABLED.
             choices: ['ENABLED', 'DISABLED']
             type: str
+            default: 'ENABLED'
         type: dict
     type: dict
 
@@ -343,7 +338,7 @@ EXAMPLES = '''
       idempotency_token: "91adc45q"
       options:
         certificate_transparency_logging_preference: ENABLED
-      certificate_authority_arn: arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012
+      certificate_authority_arn: "arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012"
     tags:
       Name: my_cert
       Application: search
@@ -497,6 +492,29 @@ def pem_chain_split(module, pem):
     return pem_arr
 
 
+def request_certificate(client, module, acm, desired_tags):
+    cert_request = module.get('certificate_request')
+    domain_name = module.params.get('domain_name')
+    cert_options = cert_request.get('options')
+    options = {
+        'CertificateTransparencyLoggingPreference': 'ENABLED',
+    }
+    if cert_options is not None and cert_options.get('certificate_transparency_logging_preference') is not None:
+        options['CertificateTransparencyLoggingPreference'] = cert_options.get('certificate_transparency_logging_preference')
+
+    try:
+        response = client.request_certificate(
+            DomainName=domain_name,
+            SubjectAlternativeNames=cert_request.get('subject_alternative_names'),
+            ValidationMethod=cert_request.get('validation_method'),
+            IdempotencyToken=cert_request.get('idempotency_token'),
+            Options=options,
+            CertificateAuthorityArn=cert_request.get('certificate_authority_arn'),
+            Tags=desired_tags,
+        )
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, "Couldn't request certificate for {0}".format(domain_name))
+
 def update_imported_certificate(client, module, acm, old_cert, desired_tags):
     """
     Update the existing certificate that was previously imported in ACM.
@@ -624,6 +642,23 @@ def main():
         tags=dict(type='dict'),
         purge_tags=dict(type='bool', default=False),
         state=dict(default='present', choices=['present', 'absent']),
+        certificate_request=dict(
+            type="dict",
+            default=None,
+            options=dict(
+                subject_alternative_names=dict(type="list", elements="str"),
+                validation_method=dict(default='DNS', choices=['DNS', 'EMAIL']),
+                idempotency_token=dict(),
+                options=dict(
+                    type="dict",
+                    default=None,
+                    options=dict(
+                        certificate_transparency_logging_preference=dict(choices=['ENABLED', 'DISABLED'], default='ENABLED'),
+                    )
+                ),
+                certificate_authority_arn=dict(),
+            ),
+        ),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
