@@ -42,7 +42,6 @@
           - lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
           - lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp2'
           - lc_1_info_result.launch_configurations[0].instance_type == 't2.micro'
-          - '"autoscaling:CreateLaunchConfiguration" in lc_1_create.resource_actions'
 
     - name: Create launch configuration 1 - Idempotency
       community.aws.ec2_lc:
