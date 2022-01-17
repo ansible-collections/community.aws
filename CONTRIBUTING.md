@@ -68,7 +68,7 @@ especially the section on configuration for cloud tests.  For questions about wr
 
 Once a PR has been created, make sure to create a changelog [fragment](https://github.com/ansible-collections/community.aws/tree/main/changelogs/fragments).
 
-For more information on changelog fragemnts then refer to the guide found [here](https://docs.ansible.com/ansible/latest/community/development_process.html#changelogs).
+For more information on changelog fragments then refer to the guide found [here](https://docs.ansible.com/ansible/latest/community/development_process.html#changelogs).
 
 ### Code of Conduct
 The `community.aws` collection follows the Ansible project's 
