@@ -5,6 +5,19 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v3.0.1
+======
+
+Release Summary
+---------------
+
+This is a path release of the ``community.aws`` collection.
+
+Minor Changes
+-------------
+
+- s3_lifecycle - Add ``abort_incomplete_multipart_upload_days`` and ``expire_object_delete_marker`` parameters (https://github.com/ansible-collections/community.aws/pull/794).
+
 v3.0.0
 ======
 
