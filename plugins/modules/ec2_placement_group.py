@@ -41,7 +41,7 @@ options:
         low-latency group in a single Availability Zone, while Spread spreads
         instances across underlying hardware.
     default: cluster
-    choices: [ 'cluster', 'spread' ]
+    choices: [ 'cluster', 'spread', 'partition' ]
     type: str
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -142,14 +142,14 @@ def create_placement_group(connection, module):
     partition_count = module.params.get("partition_count")
 
     if strategy != 'partition' and partition_count:
-      module.fail_json(
-          msg="'partition_count' can only be set when strategy is set to 'partition'.")
+        module.fail_json(
+            msg="'partition_count' can only be set when strategy is set to 'partition'.")
 
     params = {}
     params['GroupName'] = name
     params['Strategy'] = strategy
     if partition_count:
-      params['PartitionCount'] = partition_count
+        params['PartitionCount'] = partition_count
     params['DryRun'] = module.check_mode
 
     try:
