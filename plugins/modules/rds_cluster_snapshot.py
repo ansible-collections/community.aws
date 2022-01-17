@@ -200,11 +200,11 @@ from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
 def get_snapshot(snapshot_id):
     try:
         response = client.describe_db_cluster_snapshots(DBClusterSnapshotIdentifier=snapshot_id)
-    except is_boto3_error_code("DBClusterSnapshotNotFoundFault"):  # pylint: disable=duplicate-except
+    except is_boto3_error_code("DBClusterSnapshotNotFoundFault"):
         return None
     except is_boto3_error_code("DBClusterSnapshotNotFound"):  # pylint: disable=duplicate-except
         return None
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't get snapshot {0}".format(snapshot_id))
     return response["DBClusterSnapshots"][0]
 
