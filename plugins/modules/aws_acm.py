@@ -79,15 +79,17 @@ options:
   certificate:
     description:
       - The body of the PEM encoded public certificate.
-      - Required when I(state) is not C(absent).
+      - Required when I(state) is not C(absent) and the certificate does not exist.
       - >
         If your certificate is in a file,
         use C(lookup('file', 'path/to/cert.pem')).
     type: str
   certificate_arn:
     description:
-      - The ARN of a certificate in ACM to delete
-      - Ignored when I(state=present).
+      - The ARN of a certificate in ACM to modify or delete.
+      - >
+        If I(state=present), the certificate with the specified ARN can be updated.
+        For example, this can be used to add/remove tags to an existing certificate.
       - >
         If I(state=absent), you must provide one of
         I(certificate_arn), I(domain_name) or I(name_tag).
@@ -142,7 +144,7 @@ options:
   private_key:
     description:
       - The body of the PEM encoded private key.
-      - Required when I(state=present).
+      - Required when I(state=present) and the certificate does not exist.
       - Ignored when I(state=absent).
       - >
         If your private key is in a file,
@@ -163,7 +165,7 @@ options:
 
   tags:
     description:
-      - Tags to apply to certificates imported in AWS Certificate Manager.
+      - Tags to apply to certificates imported in ACM.
       - >
         If both I(name_tag) and the 'Name' tag in I(tags) are set,
         the values must be the same.
