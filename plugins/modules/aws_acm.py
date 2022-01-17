@@ -175,7 +175,7 @@ options:
   purge_tags:
     description:
       - whether to remove tags not present in the C(tags) parameter.
-    default: True
+    default: false
     type: bool
 
 author:
