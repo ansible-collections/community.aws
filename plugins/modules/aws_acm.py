@@ -229,6 +229,14 @@ EXAMPLES = '''
     state: absent
     region: ap-southeast-2
 
+- name: add tags to an existing certificate with a particular ARN
+  community.aws.aws_acm:
+    certificate_arn: "arn:aws:acm:ap-southeast-2:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901"
+    tags:
+      Name: my_certificate
+      Application: search
+      Environment: development
+    purge_tags: true
 '''
 
 RETURN = '''
