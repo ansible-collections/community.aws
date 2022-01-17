@@ -243,7 +243,7 @@ EXAMPLES = '''
 - name: request a certificate issued by ACM
   community.aws.aws_acm:
     name_tag: my_cert # to be applied through an AWS tag as  "Name":"my_cert"
-    acm_certificate:
+    certificate_request:
       domain_name: acm.ansible.com
       subject_alternative_names:
       - acm-east.ansible.com
