@@ -23,6 +23,12 @@ options:
       - The name for the placement group.
     required: true
     type: str
+  partition_count:
+    description:
+      - The number of partitions.
+      - Valid only when Strategy is set to partition.
+      - Must be a value between 1 and 7.
+    type: int
   state:
     description:
       - Create or delete placement group.
@@ -57,6 +63,13 @@ EXAMPLES = '''
     name: my-cluster
     state: present
     strategy: spread
+
+- name: Create a Partition strategy placement group.
+  community.aws.ec2_placement_group:
+    name: my-cluster
+    state: present
+    strategy: partition
+    partition_count: 3
 
 - name: Delete a placement group.
   community.aws.ec2_placement_group:
@@ -126,10 +139,21 @@ def get_placement_group_details(connection, module):
 def create_placement_group(connection, module):
     name = module.params.get("name")
     strategy = module.params.get("strategy")
+    partition_count = module.params.get("partition_count")
+
+    if strategy != 'partition' and partition_count:
+      module.fail_json(
+          msg="'partition_count' can only be set when strategy is set to 'partition'.")
+
+    params = {}
+    params['GroupName'] = name
+    params['Strategy'] = strategy
+    if partition_count:
+      params['PartitionCount'] = partition_count
+    params['DryRun'] = module.check_mode
 
     try:
-        connection.create_placement_group(
-            GroupName=name, Strategy=strategy, DryRun=module.check_mode)
+        connection.create_placement_group(**params)
     except is_boto3_error_code('DryRunOperation'):
         module.exit_json(changed=True, placement_group={
             "name": name,
@@ -165,8 +189,9 @@ def delete_placement_group(connection, module):
 def main():
     argument_spec = dict(
         name=dict(required=True, type='str'),
+        partition_count=dict(type='int'),
         state=dict(default='present', choices=['present', 'absent']),
-        strategy=dict(default='cluster', choices=['cluster', 'spread'])
+        strategy=dict(default='cluster', choices=['cluster', 'spread', 'partition'])
     )
 
     module = AnsibleAWSModule(
