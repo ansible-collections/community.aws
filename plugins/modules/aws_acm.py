@@ -529,14 +529,14 @@ def main():
         if sum([(module.params[a] is not None) for a in absent_args]) < 1:
             for a in absent_args:
                 module.debug("%s is %s" % (a, module.params[a]))
-            module.fail_json(msg="If 'state' is specified as 'present' then at least one of 'name_tag', certificate_arn' or 'domain_name' must be specified")
+            module.fail_json(msg="If 'state' is specified as 'present' then at least one of 'name_tag', 'certificate_arn' or 'domain_name' must be specified")
     else:  # absent
         # exactly one of these should be specified
         absent_args = ['certificate_arn', 'domain_name', 'name_tag']
         if sum([(module.params[a] is not None) for a in absent_args]) != 1:
             for a in absent_args:
                 module.debug("%s is %s" % (a, module.params[a]))
-            module.fail_json(msg="If 'state' is specified as 'absent' then exactly one of 'name_tag', certificate_arn' or 'domain_name' must be specified")
+            module.fail_json(msg="If 'state' is specified as 'absent' then exactly one of 'name_tag', 'certificate_arn' or 'domain_name' must be specified")
 
     filter_tags = None
     desired_tags = None
