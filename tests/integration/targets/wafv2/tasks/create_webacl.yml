@@ -132,10 +132,10 @@
               rate_based_statement:
                 limit: 5000
                 aggregate_key_type: IP
-              visibility_config:
-                sampled_requests_enabled: yes
-                cloud_watch_metrics_enabled: yes
-                metric_name: waf-acl-rule-rate-limit-per-IP
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: waf-acl-rule-rate-limit-per-IP
         custom_response_bodies:
           too_many_requests:
             content_type: APPLICATION_JSON
@@ -222,8 +222,9 @@
           - out is not changed
 
   always:
+
     - name: Cleanup virtualenv dir
       file:
-      path: "{{ virtualenv }}"
-      state: absent
+        path: "{{ virtualenv }}"
+        state: absent
       ignore_errors: true
