@@ -94,7 +94,7 @@ options:
         - the key of the body dictionary element.
         - Each element must have a unique dict key and in the dict two keys for I(content_type) and I(content). Needs botocore >= 1.21.0 to work.
       type: dict
-      version_added: 3.0.0
+      version_added: 3.1.0
     purge_rules:
       description:
         - When set to C(no), keep the existing load balancer rules in place. Will modify and add, but will not delete.
