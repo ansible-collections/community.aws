@@ -1,193 +1,229 @@
 #######################
 ## Create web acl
 #######################
-- name: check_mode create web acl
-  wafv2_web_acl:
-    name: "{{ web_acl_name }}"
-    state: present
-    description: hallo eins
-    scope: REGIONAL
-    default_action: Allow
-    sampled_requests: no
-    cloudwatch_metrics: yes
-    metric_name: blub
-    rules:
-      - name: zwei
-        priority: 2
-        action: 
-          block: {}
-        visibility_config: 
-          sampled_requests_enabled: yes
-          cloud_watch_metrics_enabled: yes
-          metric_name: ddos
-        statement:
-          xss_match_statement:
-            field_to_match:
-              body: {}
-            text_transformations:
-              - type: NONE
-                priority: 0
-      - name: admin_protect
-        priority: 1
-        override_action: 
-          none: {}
-        visibility_config: 
-          sampled_requests_enabled: yes
-          cloud_watch_metrics_enabled: yes
-          metric_name: fsd
-        statement:
-          managed_rule_group_statement:
-            vendor_name: AWS
-            name: AWSManagedRulesAdminProtectionRuleSet
-    custom_response_bodies:
-      too_many_requests:
-        content_type: APPLICATION_JSON
-        content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
-    tags:
-      A: B
-      C: D
-  register: out
-  check_mode: yes
 
-- name: check_mode verify create
-  assert:
-    that:
-      - out is changed
+# Install newer botocore (then on regular CI) to support all wafv2 features used here
+# -------------------------
+- name: Install virtualenv
+  pip:
+    name: virtualenv
 
-- name: create web acl
-  wafv2_web_acl:
-    name: "{{ web_acl_name }}"
-    state: present
-    description: hallo eins
-    scope: REGIONAL
-    default_action: Allow
-    sampled_requests: no
-    cloudwatch_metrics: yes
-    metric_name: blub
-    rules:
-      - name: zwei
-        priority: 2
-        action: 
-          block: {}
-        visibility_config: 
-          sampled_requests_enabled: yes
-          cloud_watch_metrics_enabled: yes
-          metric_name: ddos
-        statement:
-          xss_match_statement:
-            field_to_match:
-              body: {}
-            text_transformations:
-              - type: NONE
-                priority: 0
-      - name: admin_protect
-        priority: 1
-        override_action: 
-          none: {}
-        visibility_config: 
-          sampled_requests_enabled: yes
-          cloud_watch_metrics_enabled: yes
-          metric_name: fsd
-        statement:
-          managed_rule_group_statement:
-            vendor_name: AWS
-            name: AWSManagedRulesAdminProtectionRuleSet
-      - name: rate-limit-per-IP
-        priority: 3
-        action:
-          block:
-            custom_response:
-              response_code: 429
-              custom_response_body_key: too_many_requests
-        statement:
-          rate_based_statement:
-            limit: 5000
-            aggregate_key_type: IP
-          visibility_config:
-            sampled_requests_enabled: yes
-            cloud_watch_metrics_enabled: yes
-            metric_name: waf-acl-rule-rate-limit-per-IP
-    custom_response_bodies:
-      too_many_requests:
-        content_type: APPLICATION_JSON
-        content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
-    tags:
-      A: B
-      C: D
-  register: ACL
+- name: Se virtualenv facts
+  set_fact:
+    virtualenv: "{{ remote_tmp_dir }}/virtualenv"
+    virtualenv_command: "{{ ansible_python_interpreter }} -m virtualenv"
+- set_fact:
+    virtualenv_interpreter: "{{ virtualenv }}/bin/python"
 
-- name: verify create
-  assert:
-    that:
-      - ACL is changed
-      - ACL.web_acl.name == web_acl_name
-      - not ACL.web_acl.visibility_config.sampled_requests_enabled
-      - ACL.web_acl.rules | count == 3
-      - ACL.web_acl.description == 'hallo eins'
+- name: Install newer boto(core) version in virtualenv
+  pip:
+    name:
+      - 'boto3>=1.18.0'
+      - 'botocore>=1.21.0'
+    virtualenv: '{{ virtualenv }}'
+    virtualenv_command: '{{ virtualenv_command }}'
+    virtualenv_site_packages: no
+# -------------------------
 
-- name: immutable create web acl
-  wafv2_web_acl:
-    name: "{{ web_acl_name }}"
-    state: present
-    description: hallo eins
-    scope: REGIONAL
-    default_action: Allow
-    sampled_requests: no
-    cloudwatch_metrics: yes
-    metric_name: blub
-    rules:
-      - name: zwei
-        priority: 2
-        action: 
-          block: {}
-        visibility_config: 
-          sampled_requests_enabled: yes
-          cloud_watch_metrics_enabled: yes
-          metric_name: ddos
-        statement:
-          xss_match_statement:
-            field_to_match:
-              body: {}
-            text_transformations:
-              - type: NONE
-                priority: 0
-      - name: admin_protect
-        priority: 1
-        override_action: 
-          none: {}
-        visibility_config: 
-          sampled_requests_enabled: yes
-          cloud_watch_metrics_enabled: yes
-          metric_name: fsd
-        statement:
-          managed_rule_group_statement:
-            vendor_name: AWS
-            name: AWSManagedRulesAdminProtectionRuleSet
-      - name: rate-limit-per-IP
-        priority: 3
-        action:
-          block:
-            custom_response:
-              response_code: 429
-              custom_response_body_key: too_many_requests
-        statement:
-          rate_based_statement:
-            limit: 5000
-            aggregate_key_type: IP
-          visibility_config:
-            sampled_requests_enabled: yes
-            cloud_watch_metrics_enabled: yes
-            metric_name: waf-acl-rule-rate-limit-per-IP
-    custom_response_bodies:
-      too_many_requests:
-        Content-Type: APPLICATION_JSON
-        Content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
-    tags:
-      A: B
-      C: D
-  register: out
+- name: Wrap test in virtualenv created above (use other python interpreter)
+  vars:
+    ansible_python_interpreter: "{{ virtualenv }}/bin/python"
+  block:
 
-- name: verify create
-  assert:
-    that:
-      - out is not changed
+    - name: check_mode create web acl
+      wafv2_web_acl:
+        name: "{{ web_acl_name }}"
+        state: present
+        description: hallo eins
+        scope: REGIONAL
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: yes
+        metric_name: blub
+        rules:
+          - name: zwei
+            priority: 2
+            action:
+              block: {}
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: ddos
+            statement:
+              xss_match_statement:
+                field_to_match:
+                  body: {}
+                text_transformations:
+                  - type: NONE
+                    priority: 0
+          - name: admin_protect
+            priority: 1
+            override_action:
+              none: {}
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: fsd
+            statement:
+              managed_rule_group_statement:
+                vendor_name: AWS
+                name: AWSManagedRulesAdminProtectionRuleSet
+        custom_response_bodies:
+          too_many_requests:
+            content_type: APPLICATION_JSON
+            content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
+        tags:
+          A: B
+          C: D
+      register: out
+      check_mode: yes
+
+    - name: check_mode verify create
+      assert:
+        that:
+          - out is changed
+
+    - name: create web acl
+      wafv2_web_acl:
+        name: "{{ web_acl_name }}"
+        state: present
+        description: hallo eins
+        scope: REGIONAL
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: yes
+        metric_name: blub
+        rules:
+          - name: zwei
+            priority: 2
+            action:
+              block: {}
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: ddos
+            statement:
+              xss_match_statement:
+                field_to_match:
+                  body: {}
+                text_transformations:
+                  - type: NONE
+                    priority: 0
+          - name: admin_protect
+            priority: 1
+            override_action:
+              none: {}
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: fsd
+            statement:
+              managed_rule_group_statement:
+                vendor_name: AWS
+                name: AWSManagedRulesAdminProtectionRuleSet
+          - name: rate-limit-per-IP
+            priority: 3
+            action:
+              block:
+                custom_response:
+                  response_code: 429
+                  custom_response_body_key: too_many_requests
+            statement:
+              rate_based_statement:
+                limit: 5000
+                aggregate_key_type: IP
+              visibility_config:
+                sampled_requests_enabled: yes
+                cloud_watch_metrics_enabled: yes
+                metric_name: waf-acl-rule-rate-limit-per-IP
+        custom_response_bodies:
+          too_many_requests:
+            content_type: APPLICATION_JSON
+            content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
+        tags:
+          A: B
+          C: D
+      register: ACL
+
+    - name: verify create
+      assert:
+        that:
+          - ACL is changed
+          - ACL.web_acl.name == web_acl_name
+          - not ACL.web_acl.visibility_config.sampled_requests_enabled
+          - ACL.web_acl.rules | count == 3
+          - ACL.web_acl.description == 'hallo eins'
+
+    - name: immutable create web acl
+      wafv2_web_acl:
+        name: "{{ web_acl_name }}"
+        state: present
+        description: hallo eins
+        scope: REGIONAL
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: yes
+        metric_name: blub
+        rules:
+          - name: zwei
+            priority: 2
+            action:
+              block: {}
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: ddos
+            statement:
+              xss_match_statement:
+                field_to_match:
+                  body: {}
+                text_transformations:
+                  - type: NONE
+                    priority: 0
+          - name: admin_protect
+            priority: 1
+            override_action:
+              none: {}
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: yes
+              metric_name: fsd
+            statement:
+              managed_rule_group_statement:
+                vendor_name: AWS
+                name: AWSManagedRulesAdminProtectionRuleSet
+          - name: rate-limit-per-IP
+            priority: 3
+            action:
+              block:
+                custom_response:
+                  response_code: 429
+                  custom_response_body_key: too_many_requests
+            statement:
+              rate_based_statement:
+                limit: 5000
+                aggregate_key_type: IP
+              visibility_config:
+                sampled_requests_enabled: yes
+                cloud_watch_metrics_enabled: yes
+                metric_name: waf-acl-rule-rate-limit-per-IP
+        custom_response_bodies:
+          too_many_requests:
+            Content-Type: APPLICATION_JSON
+            Content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
+        tags:
+          A: B
+          C: D
+      register: out
+
+    - name: verify create
+      assert:
+        that:
+          - out is not changed
+
+  always:
+    - name: Cleanup virtualenv dir
+      file:
+      path: "{{ virtualenv }}"
+      state: absent
+      ignore_errors: true

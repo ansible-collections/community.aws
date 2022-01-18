@@ -7,30 +7,6 @@
       region: "{{ aws_region }}"
 
   block:
-    # Install newer botocore (then usually on CI) to support all wafv2 features
-    # ##########################################################################
-    - pip:
-        name: virtualenv
-    - set_fact:
-        virtualenv: "{{ remote_tmp_dir }}/virtualenv"
-        virtualenv_command: "{{ ansible_python_interpreter }} -m virtualenv"
-    - set_fact:
-        virtualenv_interpreter: "{{ virtualenv }}/bin/python"
-
-    - name: Install newer boto(core) version
-      pip:
-        name:
-          - 'boto3>=1.18.0'
-          - 'botocore>=1.21.0'
-        virtualenv: '{{ virtualenv }}'
-        virtualenv_command: '{{ virtualenv_command }}'
-        virtualenv_site_packages: no
-
-    - name: Wrap test in virtualenv
-      vars:
-        ansible_python_interpreter: "{{ virtualenv }}/bin/python"
-    # ##########################################################################
-
     - include_tasks: alb.yml
     - include_tasks: create_webacl.yml
     - include_tasks: rule_group.yml
