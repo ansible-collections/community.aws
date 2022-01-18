@@ -425,7 +425,7 @@ def update_imported_certificate(client, module, acm, old_cert, desired_tags):
     else:
         absent_args = ['certificate', 'name_tag', 'private_key']
         if sum([(module.params[a] is not None) for a in absent_args]) < 3:
-            module.fail_json(msg="When importing a certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
+            module.fail_json(msg="When importing a certificate, all of 'name_tag', 'certificate' and 'private_key' must be specified")
         module.debug("Existing certificate in ACM is different, overwriting")
         changed = True
         if module.check_mode:
@@ -453,7 +453,7 @@ def import_certificate(client, module, acm, desired_tags):
     absent_args = ['certificate', 'name_tag', 'private_key']
     cert_arn = None
     if sum([(module.params[a] is not None) for a in absent_args]) < 3:
-        module.fail_json(msg="When importing a new certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
+        module.fail_json(msg="When importing a new certificate, all of 'name_tag', 'certificate' and 'private_key' must be specified")
     module.debug("No certificate in ACM. Creating new one.")
     changed = True
     if module.check_mode:
