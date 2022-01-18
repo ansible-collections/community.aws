@@ -388,6 +388,89 @@ def pem_chain_split(module, pem):
     return pem_arr
 
 
+def update_imported_certificate(client, module, acm, old_cert, desired_tags):
+    """
+    Update the existing certificate that was previously imported in ACM.
+    """
+    module.debug("Existing certificate found in ACM")
+    if ('tags' not in old_cert) or ('Name' not in old_cert['tags']):
+        # shouldn't happen
+        module.fail_json(msg="Internal error, unsure which certificate to update", certificate=old_cert)
+    if module.params.get('name_tag') is not None and (old_cert['tags']['Name'] != module.params.get('name_tag')):
+        # This could happen if the user identified the certificate using 'certificate_arn' or 'domain_name',
+        # and the 'Name' tag in the AWS API does not match the ansible 'name_tag'.
+        module.fail_json(msg="Internal error, Name tag does not match", certificate=old_cert)
+    if 'certificate' not in old_cert:
+        # shouldn't happen
+        module.fail_json(msg="Internal error, unsure what the existing cert in ACM is", certificate=old_cert)
+
+    cert_arn = None
+    # Are the existing certificate in ACM and the local certificate the same?
+    same = True
+    if module.params.get('certificate') is not None:
+        same &= chain_compare(module, old_cert['certificate'], module.params['certificate'])
+        if module.params['certificate_chain']:
+            # Need to test this
+            # not sure if Amazon appends the cert itself to the chain when self-signed
+            same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate_chain'])
+        else:
+            # When there is no chain with a cert
+            # it seems Amazon returns the cert itself as the chain
+            same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate'])
+
+    if same:
+        module.debug("Existing certificate in ACM is the same")
+        cert_arn = old_cert['certificate_arn']
+        changed = False
+    else:
+        absent_args = ['certificate', 'name_tag', 'private_key']
+        if sum([(module.params[a] is not None) for a in absent_args]) < 3:
+            module.fail_json(msg="When importing a certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
+        module.debug("Existing certificate in ACM is different, overwriting")
+        changed = True
+        if module.check_mode:
+            cert_arn = old_cert['certificate_arn']
+            # note: returned domain will be the domain of the previous cert
+        else:
+            # update cert in ACM
+            cert_arn = acm.import_certificate(
+                client,
+                module,
+                certificate=module.params['certificate'],
+                private_key=module.params['private_key'],
+                certificate_chain=module.params['certificate_chain'],
+                arn=old_cert['certificate_arn'],
+                tags=desired_tags,
+            )
+    return (changed, cert_arn)
+
+
+def import_certificate(client, module, acm, desired_tags):
+    """
+    Import a certificate to ACM.
+    """
+    # Validate argument requirements
+    absent_args = ['certificate', 'name_tag', 'private_key']
+    cert_arn = None
+    if sum([(module.params[a] is not None) for a in absent_args]) < 3:
+        module.fail_json(msg="When importing a new certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
+    module.debug("No certificate in ACM. Creating new one.")
+    changed = True
+    if module.check_mode:
+        domain = 'example.com'
+        module.exit_json(certificate=dict(domain_name=domain), changed=True)
+    else:
+        cert_arn = acm.import_certificate(
+            client,
+            module,
+            certificate=module.params['certificate'],
+            private_key=module.params['private_key'],
+            certificate_chain=module.params['certificate_chain'],
+            tags=desired_tags,
+        )
+    return (changed, cert_arn)
+
+
 def ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags):
     cert_arn = None
     changed = False
@@ -395,76 +478,11 @@ def ensure_certificates_present(client, module, acm, certificates, desired_tags,
         msg = "More than one certificate with Name=%s exists in ACM in this region" % module.params['name_tag']
         module.fail_json(msg=msg, certificates=certificates)
     elif len(certificates) == 1:
-        # update the existing certificate
-        module.debug("Existing certificate found in ACM")
-        old_cert = certificates[0]  # existing cert in ACM
-        if ('tags' not in old_cert) or ('Name' not in old_cert['tags']):
-            # shouldn't happen
-            module.fail_json(msg="Internal error, unsure which certificate to update", certificate=old_cert)
-        if module.params.get('name_tag') is not None and (old_cert['tags']['Name'] != module.params.get('name_tag')):
-            # This could happen if the user identified the certificate using 'certificate_arn' or 'domain_name',
-            # and the 'Name' tag in the AWS API does not match the ansible 'name_tag'.
-            module.fail_json(msg="Internal error, Name tag does not match", certificate=old_cert)
-        if 'certificate' not in old_cert:
-            # shouldn't happen
-            module.fail_json(msg="Internal error, unsure what the existing cert in ACM is", certificate=old_cert)
-
-        # Are the existing certificate in ACM and the local certificate the same?
-        same = True
-        if module.params.get('certificate') is not None:
-            same &= chain_compare(module, old_cert['certificate'], module.params['certificate'])
-            if module.params['certificate_chain']:
-                # Need to test this
-                # not sure if Amazon appends the cert itself to the chain when self-signed
-                same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate_chain'])
-            else:
-                # When there is no chain with a cert
-                # it seems Amazon returns the cert itself as the chain
-                same &= chain_compare(module, old_cert['certificate_chain'], module.params['certificate'])
-
-        if same:
-            module.debug("Existing certificate in ACM is the same")
-            cert_arn = old_cert['certificate_arn']
-            changed = False
-        else:
-            absent_args = ['certificate', 'name_tag', 'private_key']
-            if sum([(module.params[a] is not None) for a in absent_args]) < 3:
-                module.fail_json(msg="When importing a certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
-            module.debug("Existing certificate in ACM is different, overwriting")
-            changed = True
-            if module.check_mode:
-                cert_arn = old_cert['certificate_arn']
-                # note: returned domain will be the domain of the previous cert
-            else:
-                # update cert in ACM
-                cert_arn = acm.import_certificate(
-                    client,
-                    module,
-                    certificate=module.params['certificate'],
-                    private_key=module.params['private_key'],
-                    certificate_chain=module.params['certificate_chain'],
-                    arn=old_cert['certificate_arn'],
-                    tags=desired_tags,
-                )
+        # Update existing certificate that was previously imported to ACM.
+        (changed, cert_arn) = update_imported_certificate(client, module, acm, certificates[0], desired_tags)
     else:  # len(certificates) == 0
-        # Validate argument requirements
-        absent_args = ['certificate', 'name_tag', 'private_key']
-        if sum([(module.params[a] is not None) for a in absent_args]) < 3:
-            module.fail_json(msg="When importing a new certificate, all of 'name_tag', certificate' and 'private_key' must be specified")
-        module.debug("No certificate in ACM. Creating new one.")
-        changed = True
-        if module.check_mode:
-            domain = 'example.com'
-            module.exit_json(certificate=dict(domain_name=domain), changed=True)
-        else:
-            cert_arn = acm.import_certificate(
-                client,
-                module,
-                certificate=module.params['certificate'],
-                private_key=module.params['private_key'],
-                certificate_chain=module.params['certificate_chain'],
-                tags=desired_tags,
-            )
+        # Import new certificate to ACM.
+        (changed, cert_arn) = import_certificate(client, module, acm, desired_tags)
 
     # Add/remove tags to/from certificate
     try:
