@@ -495,6 +495,8 @@ def pem_chain_split(module, pem):
 def request_certificate(client, module, acm, desired_tags):
     cert_request = module.get('certificate_request')
     domain_name = module.params.get('domain_name')
+    if domain_name is None:
+        module.fail_json(msg="The 'domain_name' parameter must be specified when requesting a certificate from ACM")
     cert_options = cert_request.get('options')
     options = {
         'CertificateTransparencyLoggingPreference': 'ENABLED',
@@ -502,6 +504,11 @@ def request_certificate(client, module, acm, desired_tags):
     if cert_options is not None and cert_options.get('certificate_transparency_logging_preference') is not None:
         options['CertificateTransparencyLoggingPreference'] = cert_options.get('certificate_transparency_logging_preference')
 
+    if module.check_mode:
+        module.exit_json(
+            changed=True, msg="Would have requested certificate if not in check mode"
+        )
+    response = None
     try:
         response = client.request_certificate(
             DomainName=domain_name,
@@ -514,6 +521,9 @@ def request_certificate(client, module, acm, desired_tags):
         )
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't request certificate for {0}".format(domain_name))
+    cert_arn = response.get('CertificateARN')
+    domain = acm.get_domain_of_cert(client=client, module=module, arn=cert_arn)
+    module.exit_json(certificate=dict(domain_name=domain, arn=cert_arn, tags=desired_tags), changed=True)
 
 def update_imported_certificate(client, module, acm, old_cert, desired_tags):
     """
