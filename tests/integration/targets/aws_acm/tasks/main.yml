@@ -11,6 +11,10 @@
   # are from which test
   - set_fact:
       aws_acm_test_uuid: "{{ (10**9) | random }}"
+
+  # Integration tests for certificate requests
+  - include_tasks: cert_requests.yml
+
   - name: attempt to delete cert without specifying required parameter
     aws_acm:
       state: absent

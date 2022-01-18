@@ -1,0 +1,45 @@
+- name: AWS ACM integration test, request certificates
+  block:
+    - name: Missing 'domain_mame' parameter
+      community.aws.aws_acm:
+        certificate_request: null
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+            - 'result.failed'
+            - '"If ''state'' is specified as ''present'' then at least one of ''name_tag'', ''certificate_arn'' or ''domain_name'' must be specified" in result.msg'
+    - name: "'certificate_request' and 'private_key' are mutually exclusive"
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        certificate_request: null
+        private_key: "abc"
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+            - 'result.failed'
+            - '"foo" in result.msg'
+    - name: "'certificate_request' and 'certificate_chain' are mutually exclusive"
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        certificate_request: null
+        certificate_chain: "abc"
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+            - 'result.failed'
+            - '"foo" in result.msg'
+    - name: request a certificate issued by ACM
+      community.aws.aws_acm:
+        certificate_request:
+        #   domain_name: acm.ansible.com
+        #   subject_alternative_names:
+        #   - acm-east.ansible.com
+        #   - acm-west.ansible.com
+        #   validation-method: DNS
+        #   idempotency-token: "91adc45q"
+        #   options:
+        #     certificate_transparency_logging_preference: ENABLED
+        #   certificate_authority_arn: arn:aws:acm-pca:us-east-1:976779235782:certificate-authority/e0a95802-b5fb-42cb-99cc-9bebc5247a1f

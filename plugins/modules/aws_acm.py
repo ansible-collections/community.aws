@@ -696,6 +696,10 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
+        mutually_exclusive=[
+            ['certificate_request', 'private_key'],
+            ['certificate_request', 'certificate_chain'],
+        ],
     )
     acm = ACMServiceManager(module)
 
