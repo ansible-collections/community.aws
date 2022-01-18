@@ -1631,4 +1631,4 @@ releases:
     - 3.0.1.yml
     - 794-s3_lifecycle_abort_expire.yml
     - 863-requirements-doc-fix.yml
-    release_date: '2022-01-17'
+    release_date: '2022-01-18'
