@@ -492,9 +492,23 @@ def pem_chain_split(module, pem):
     return pem_arr
 
 
-def request_certificate(client, module, acm, desired_tags):
+def request_certificate(client, module, desired_tags):
+    """
+    Request a new certificate from ACM, or renew the certificate if the certificate already exists.
+    """
     cert_request = module.get('certificate_request')
     domain_name = module.params.get('domain_name')
+    ca_arn = cert_request.get('certificate_authority_arn')
+    validation_method = cert_request.get('validation_method')
+    if ca_arn is None:
+        # Public certificate. Domain ownership validation is required.
+        if validation_method is None:
+            module.fail_json(msg="The 'validation_method' parameter must be specified when requesting a public certificate from ACM")
+    else:
+        # Private certificate. No domain ownership validation is required.
+        # Ignore the 'validation_method'.
+        validation_method = None
+
     if domain_name is None:
         module.fail_json(msg="The 'domain_name' parameter must be specified when requesting a certificate from ACM")
     cert_options = cert_request.get('options')
@@ -509,6 +523,7 @@ def request_certificate(client, module, acm, desired_tags):
             changed=True, msg="Would have requested certificate if not in check mode"
         )
     response = None
+    changed = True
     try:
         response = client.request_certificate(
             DomainName=domain_name,
@@ -516,14 +531,14 @@ def request_certificate(client, module, acm, desired_tags):
             ValidationMethod=cert_request.get('validation_method'),
             IdempotencyToken=cert_request.get('idempotency_token'),
             Options=options,
-            CertificateAuthorityArn=cert_request.get('certificate_authority_arn'),
+            CertificateAuthorityArn=ca_arn,
             Tags=desired_tags,
         )
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't request certificate for {0}".format(domain_name))
     cert_arn = response.get('CertificateARN')
-    domain = acm.get_domain_of_cert(client=client, module=module, arn=cert_arn)
-    module.exit_json(certificate=dict(domain_name=domain, arn=cert_arn, tags=desired_tags), changed=True)
+    return (changed, cert_arn)
+
 
 def update_imported_certificate(client, module, acm, old_cert, desired_tags):
     """
@@ -615,11 +630,19 @@ def ensure_certificates_present(client, module, acm, certificates, desired_tags,
         msg = "More than one certificate with Name=%s exists in ACM in this region" % module.params['name_tag']
         module.fail_json(msg=msg, certificates=certificates)
     elif len(certificates) == 1:
-        # Update existing certificate that was previously imported to ACM.
-        (changed, cert_arn) = update_imported_certificate(client, module, acm, certificates[0], desired_tags)
+        if module.params.get('certificate_request') is not None:
+            # Renew existing certificate requested from ACM
+            (changed, cert_arn) = request_certificate(client, module, certificates[0], desired_tags)
+        else:
+            # Update existing certificate that was previously imported to ACM.
+            (changed, cert_arn) = update_imported_certificate(client, module, acm, certificates[0], desired_tags)
     else:  # len(certificates) == 0
-        # Import new certificate to ACM.
-        (changed, cert_arn) = import_certificate(client, module, acm, desired_tags)
+        if module.params.get('certificate_request') is not None:
+            # Request certificate from ACM.
+            (changed, cert_arn) = request_certificate(client, module, None, desired_tags)
+        else:
+            # Import new certificate to ACM.
+            (changed, cert_arn) = import_certificate(client, module, acm, desired_tags)
 
     # Add/remove tags to/from certificate
     try:
@@ -724,13 +747,7 @@ def main():
 
     module.debug("Found %d corresponding certificates in ACM" % len(certificates))
     if module.params['state'] == 'present':
-        if module.params.get('certificate_request') is not None:
-            # Request certificate from ACM.
-            request_certificate(client, module, acm, desired_tags)
-        else:
-            # Import certificate to ACM.
-            ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags)
-
+        ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags)
     else:  # state == absent
         ensure_certificates_absent(client, module, acm, certificates)
 
