@@ -2,7 +2,7 @@
   block:
     - set_fact:
         name_tag_public_cert_request: "public cert for acm.ansible.com"
-        name_tag_private_cert: "private cert for acm.ansible.com"
+        name_tag_private_cert_request: "private cert for acm.ansible.com"
     - name: delete certificate requests
       # Some of the requests may pre-exists from previous test execution.
       community.aws.aws_acm:
@@ -156,8 +156,6 @@
       aws_acm_info:
         certificate_arn: "{{ public_cert_request_arn }}"
       register: result
-    - debug:
-        var: result
     - assert:
         that:
           - result.certificates | length == 1
@@ -206,25 +204,27 @@
         state: absent
       register: result
 
-    - name: request a private certificate, expect changes
+    - name: request a private certificate, wrong CA arn
       community.aws.aws_acm:
-        domain_name: acm.ansible.com
+        domain_name: acm-private.ansible.com
         name_tag: "{{ name_tag_private_cert_request }}"
         certificate_request:
           subject_alternative_names:
-            - acm-east.ansible.com
-            - acm-west.ansible.com
-          certificate_authority_arn: arn:aws:acm-pca:us-east-1:123456789:certificate-authority/abcdef
+            - acm-private-east.ansible.com
+            - acm-private-west.ansible.com
+          certificate_authority_arn: arn:aws:acm-pca:us-east-1:wrong
         tags:
           Application: search
           Environment: development
       register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"Value ''arn:aws:acm-pca:us-east-1:wrong'' at ''certificateAuthorityArn'' failed to satisfy constraint" in result.msg'
 
-    - name: delete certificate request for private certificate
-      community.aws.aws_acm:
-        name_tag: "{{ name_tag_private_cert_request }}"
-        state: absent
-      register: result
-
-    - fail:
-        msg: foo
+    # - name: delete certificate request for private certificate
+    #   community.aws.aws_acm:
+    #     name_tag: "{{ name_tag_private_cert_request }}"
+    #     state: absent
+    #   register: result

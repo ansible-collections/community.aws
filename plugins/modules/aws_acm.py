@@ -202,13 +202,6 @@ options:
             You can validate with DNS or validate with email.
         choices: ['DNS', 'EMAIL']
         type: str
-      idempotency_token:
-        description:
-          - >
-            Customer chosen string that can be used to distinguish between calls to
-            RequestCertificate.
-            Idempotency tokens time out after one hour.
-        type: str
       certificate_authority_arn:
         description:
           - >
@@ -337,10 +330,8 @@ EXAMPLES = '''
       - acm-east.ansible.com
       - acm-west.ansible.com
       validation_method: DNS
-      idempotency_token: "91adc45q"
       options:
         certificate_transparency_logging_preference: ENABLED
-      certificate_authority_arn: "arn:aws:acm-pca:region:account:certificate-authority/12345678-1234-1234-1234-123456789012"
     tags:
       Name: my_cert
       Application: search
@@ -502,6 +493,7 @@ def renew_certificate(client, module, acm, certificate, desired_tags):
     """
     Renew an existing certificate in ACM.
     """
+    response = None
     cert_arn = certificate['certificate_arn']
     if cert_arn is None:
         module.fail_json(msg="Internal error. Certificate ARN not found", certificate=certificate)
@@ -535,7 +527,7 @@ def renew_certificate(client, module, acm, certificate, desired_tags):
                 eligible_for_renewal = True
         elif cert_status == 'PENDING_VALIDATION':
             # Do nothing. The certificate cannot be renewed since it hasn't been validated yet.
-            return (False, cert_arn)
+            return (False, cert_arn, response)
         else:
             # All other cases (inactive, expired, timeout...), send a new certificate request.
             send_new_certificate_request = True
@@ -548,12 +540,12 @@ def renew_certificate(client, module, acm, certificate, desired_tags):
         if module.check_mode:
             module.exit_json(changed=True, msg="Would have renewed certificate if not in check mode")
         try:
-            client.renew_certificate(CertificateArn=cert_arn)
+            response = client.renew_certificate(CertificateArn=cert_arn)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, "Couldn't renew certificate {0}".format(cert_arn))
-        return (True, cert_arn)
+        return (True, cert_arn, response)
     elif send_new_certificate_request:
-        return send_new_certificate_request(client, module, desired_tags)
+        return request_certificate(client, module, desired_tags)
 
 
 def request_certificate(client, module, desired_tags):
@@ -595,10 +587,11 @@ def request_certificate(client, module, desired_tags):
     tags_list = [{'Key': key, 'Value': desired_tags.get(key)} for key in desired_tags]
     parameters = {
         'DomainName': domain_name,
-        'ValidationMethod': cert_request.get('validation_method'),
         'IdempotencyToken': idempotency_token,
         'Tags': tags_list,
     }
+    if cert_request.get('validation_method') is not None:
+        parameters['ValidationMethod'] = cert_request.get('validation_method')
     if cert_request.get('subject_alternative_names') is not None:
         parameters['SubjectAlternativeNames'] = cert_request.get('subject_alternative_names')
     if options is not None:
@@ -611,8 +604,8 @@ def request_certificate(client, module, desired_tags):
         module.fail_json_aws(e, "Couldn't request certificate for {0}".format(domain_name))
     cert_arn = response.get('CertificateArn')
     if cert_arn is None:
-        module.fail_json(msg=f"Internal error. Certificate ARN not found. Result: {response}")
-    return (changed, cert_arn)
+        module.fail_json(msg="Internal error. Certificate ARN not found", certificate=response)
+    return (changed, cert_arn, response)
 
 
 def update_imported_certificate(client, module, acm, old_cert, desired_tags):
@@ -669,7 +662,7 @@ def update_imported_certificate(client, module, acm, old_cert, desired_tags):
                 arn=old_cert['certificate_arn'],
                 tags=desired_tags,
             )
-    return (changed, cert_arn)
+    return (changed, cert_arn, cert_arn)
 
 
 def import_certificate(client, module, acm, desired_tags):
@@ -695,29 +688,30 @@ def import_certificate(client, module, acm, desired_tags):
             certificate_chain=module.params['certificate_chain'],
             tags=desired_tags,
         )
-    return (changed, cert_arn)
+    return (changed, cert_arn, cert_arn)
 
 
 def ensure_certificates_present(client, module, acm, certificates, desired_tags, filter_tags):
     cert_arn = None
     changed = False
+    response = None
     if len(certificates) > 1:
         msg = "More than one certificate with Name=%s exists in ACM in this region" % module.params['name_tag']
         module.fail_json(msg=msg, certificates=certificates)
     elif len(certificates) == 1:
         if module.params.get('certificate_request') is not None:
             # Renew existing certificate requested from ACM
-            (changed, cert_arn) = renew_certificate(client, module, acm, certificates[0], desired_tags)
+            (changed, cert_arn, response) = renew_certificate(client, module, acm, certificates[0], desired_tags)
         else:
             # Update existing certificate that was previously imported to ACM.
-            (changed, cert_arn) = update_imported_certificate(client, module, acm, certificates[0], desired_tags)
+            (changed, cert_arn, response) = update_imported_certificate(client, module, acm, certificates[0], desired_tags)
     else:  # len(certificates) == 0
         if module.params.get('certificate_request') is not None:
             # Request certificate from ACM.
-            (changed, cert_arn) = request_certificate(client, module, desired_tags)
+            (changed, cert_arn, response) = request_certificate(client, module, desired_tags)
         else:
             # Import new certificate to ACM.
-            (changed, cert_arn) = import_certificate(client, module, acm, desired_tags)
+            (changed, cert_arn, response) = import_certificate(client, module, acm, desired_tags)
 
     # Add/remove tags to/from certificate
     try:
@@ -741,10 +735,8 @@ def ensure_certificates_present(client, module, acm, certificates, desired_tags,
     else:
         # The 'DomainName' attribute may not be present when describing a certificate issued by AWS.
         cert_info['domain_name'] = module.params.get("domain_name")
-    module.exit_json(
-        certificate=cert_info,
-        changed=changed,
-    )
+
+    module.exit_json(certificate=cert_info, changed=changed)
 
 
 def ensure_certificates_absent(client, module, acm, certificates):
@@ -771,7 +763,6 @@ def main():
             options=dict(
                 subject_alternative_names=dict(type="list", elements="str"),
                 validation_method=dict(default=None, choices=['DNS', 'EMAIL']),
-                idempotency_token=dict(),
                 options=dict(
                     type="dict",
                     default=None,
