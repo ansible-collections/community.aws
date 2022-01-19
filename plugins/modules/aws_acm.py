@@ -727,8 +727,8 @@ def ensure_certificates_present(client, module, acm, certificates, desired_tags,
     changed |= c
     cert = acm.describe_certificate_with_backoff(client=client, certificate_arn=cert_arn)
     cert_info = {
-      'arn': cert_arn,
-      'tags': new_tags,
+        'arn': cert_arn,
+        'tags': new_tags,
     }
     if 'DomainName' in cert:
         cert_info['domain_name'] = cert['DomainName']
