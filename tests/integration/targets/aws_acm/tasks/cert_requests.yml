@@ -141,6 +141,8 @@
         tags:
           Application: search
           Environment: development
+        # Wait until the validation resource records have been created.
+        wait: true
       register: result
     - assert:
         that:
@@ -149,6 +151,7 @@
           - result.certificate.domain_name == 'acm.ansible.com'
           - result.certificate.tags is defined
           - result.certificate.tags | length == 3
+          - result.certificate.domain_name == 'acm.ansible.com'
           - result.changed
     - set_fact:
         public_cert_request_arn: "{{ result.certificate.arn }}"
@@ -161,10 +164,38 @@
           - result.certificates | length == 1
           - result.certificates[0].certificate_arn is defined
           - result.certificates[0].domain_name is defined
+          - result.certificates[0].subject_alternative_names is defined
+          - result.certificates[0].subject_alternative_names | length == 3
           - result.certificates[0].issuer is defined
           - "result.certificates[0].certificate_arn == '{{ public_cert_request_arn }}'"
           - "result.certificates[0].domain_name == 'acm.ansible.com'"
           - "result.certificates[0].issuer == 'Amazon'"
+          - "result.certificates[0].domain_validation_options is defined"
+          - "result.certificates[0].domain_validation_options | length == 3"
+          - "result.certificates[0].domain_validation_options[0].validation_method == 'DNS'"
+          - "result.certificates[0].domain_validation_options[1].validation_method == 'DNS'"
+          - "result.certificates[0].domain_validation_options[2].validation_method == 'DNS'"
+          - "result.certificates[0].domain_validation_options[0].domain_name == 'acm.ansible.com'"
+          - "result.certificates[0].domain_validation_options[1].domain_name == 'acm-east.ansible.com'"
+          - "result.certificates[0].domain_validation_options[2].domain_name == 'acm-west.ansible.com'"
+          - "result.certificates[0].domain_validation_options[0].validation_status == 'PENDING_VALIDATION'"
+          - "result.certificates[0].domain_validation_options[1].validation_status == 'PENDING_VALIDATION'"
+          - "result.certificates[0].domain_validation_options[2].validation_status == 'PENDING_VALIDATION'"
+          # Note: it takes time for the validation records to be generated.
+          # After a certificate request has been submmitted, the AWS API responds quickly,
+          # however the validation records are not generated yet. It may take a few seconds for the AWS
+          # backend to generate the resource records.
+          # This is why above the 'wait: true' attribute has been set, such that we can reliably get
+          # to this point and assert the resource records exist.
+          - "result.certificates[0].domain_validation_options[0].resource_record is defined"
+          - "result.certificates[0].domain_validation_options[1].resource_record is defined"
+          - "result.certificates[0].domain_validation_options[2].resource_record is defined"
+          - "result.certificates[0].domain_validation_options[0].resource_record.name is defined"
+          - "result.certificates[0].domain_validation_options[1].resource_record.name is defined"
+          - "result.certificates[0].domain_validation_options[2].resource_record.name is defined"
+          - "result.certificates[0].domain_validation_options[0].resource_record.value is defined"
+          - "result.certificates[0].domain_validation_options[1].resource_record.value is defined"
+          - "result.certificates[0].domain_validation_options[2].resource_record.value is defined"
 
     - name: request a public certificate, check mode again
       community.aws.aws_acm:

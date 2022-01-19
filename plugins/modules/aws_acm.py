@@ -394,6 +394,7 @@ import datetime
 import random
 import string
 import re  # regex library
+import time
 
 try:
     import botocore
@@ -408,6 +409,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
     ansible_dict_to_boto3_tag_list,
 )
 from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.six.moves import xrange
 
 
@@ -572,7 +574,34 @@ def renew_certificate(client, module, acm, certificate, desired_tags):
         return request_certificate(client, module, desired_tags)
 
 
-def request_certificate(client, module, desired_tags):
+def wait_for_validation_records(client, module, acm, cert_arn):
+    """
+    Wait until the validation records of a certificate request are present.
+    When requesting a public certificate, it may take several seconds for the DNS|EMAIL validation records
+    to be generated.
+    """
+    if not module.params.get('wait'):
+        return
+    timeout = module.params["wait_timeout"]
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        cert_data = acm.describe_certificate_with_backoff(client=client, certificate_arn=cert_arn)
+        cert_data = camel_dict_to_snake_dict(cert_data)
+        has_validation_records = True
+        if 'domain_validation_options' not in cert_data or len(cert_data['domain_validation_options']) == 0:
+            has_validation_records = False
+        else:
+            for dvo in cert_data['domain_validation_options']:
+                if dvo['validation_status'] == 'PENDING_VALIDATION' and 'resource_record' not in dvo:
+                    has_validation_records = False
+                    break
+        if has_validation_records:
+            return
+        time.sleep(5)
+    # Timeout occured
+    module.fail_json(msg=f"Timeout waiting for validation records")
+
+def request_certificate(client, module, acm, desired_tags):
     """
     Request a new certificate from ACM.
     """
@@ -627,8 +656,9 @@ def request_certificate(client, module, desired_tags):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't request certificate for {0}".format(domain_name))
     cert_arn = response.get('CertificateArn')
-    if cert_arn is None:
-        module.fail_json(msg="Internal error. Certificate ARN not found", certificate=response)
+    if ca_arn is None and module.params.get('wait'):
+        # Public certificate. Wait for the validation records to be present.
+        wait_for_validation_records(client, module, acm, cert_arn)
     return (changed, cert_arn, response)
 
 
@@ -732,10 +762,13 @@ def ensure_certificates_present(client, module, acm, certificates, desired_tags,
     else:  # len(certificates) == 0
         if module.params.get('certificate_request') is not None:
             # Request certificate from ACM.
-            (changed, cert_arn, response) = request_certificate(client, module, desired_tags)
+            (changed, cert_arn, response) = request_certificate(client, module, acm, desired_tags)
         else:
             # Import new certificate to ACM.
             (changed, cert_arn, response) = import_certificate(client, module, acm, desired_tags)
+
+    if cert_arn is None:
+        module.fail_json(msg="Internal error. Could not identify certificate ARN")
 
     # Add/remove tags to/from certificate
     try:
@@ -743,24 +776,21 @@ def ensure_certificates_present(client, module, acm, certificates, desired_tags,
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, "Couldn't get tags for certificate")
 
-    if cert_arn is None:
-        module.fail_json(msg="Internal error. Could not identify certificate ARN")
-
     purge_tags = module.params.get('purge_tags')
     (c, new_tags) = ensure_tags(client, module, cert_arn, existing_tags, desired_tags, purge_tags)
     changed |= c
-    cert = acm.describe_certificate_with_backoff(client=client, certificate_arn=cert_arn)
-    cert_info = {
-        'arn': cert_arn,
-        'tags': new_tags,
-    }
-    if 'DomainName' in cert:
-        cert_info['domain_name'] = cert['DomainName']
-    else:
-        # The 'DomainName' attribute may not be present when describing a certificate issued by AWS.
-        cert_info['domain_name'] = module.params.get("domain_name")
 
-    module.exit_json(certificate=cert_info, changed=changed)
+    cert_data = acm.describe_certificate_with_backoff(client=client, certificate_arn=cert_arn)
+    cert_data = camel_dict_to_snake_dict(cert_data)
+    # The dict already contains a 'certificate_arn' attribute which is the same value as 'arn'.
+    # This 'aws_acm' module was originally written to return the 'arn' attribute.
+    cert_data['arn'] = cert_arn
+    cert_data['tags'] = new_tags
+    if 'domain_name' not in cert_data:
+        # The 'DomainName' attribute may not be present when describing a certificate issued by AWS.
+        cert_data['domain_name'] = module.params.get("domain_name")
+
+    module.exit_json(certificate=cert_data, changed=changed)
 
 
 def ensure_certificates_absent(client, module, acm, certificates):
