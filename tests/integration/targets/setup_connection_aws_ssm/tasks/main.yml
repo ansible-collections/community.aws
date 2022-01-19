@@ -101,6 +101,14 @@
       when:
         - encrypted_bucket | default(False)
 
+    - name: Create custom SSM document
+      command: "aws ssm create-document --content file://{{ role_path }}/files/ssm-document.json --name {{ ssm_document_name }} --document-type Session"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+
     - name: Create S3 bucket
       s3_bucket:
         name: "{{ s3_bucket_name }}"
@@ -140,4 +148,10 @@
         src: s3_vars_to_delete.yml.j2
       when:
         - s3_output is successful
+      ignore_errors: yes
+
+    - name: Create SSM vars_to_delete.yml
+      template:
+        dest: "{{ playbook_dir }}/ssm_vars_to_delete.yml"
+        src: ssm_vars_to_delete.yml.j2
       ignore_errors: yes
