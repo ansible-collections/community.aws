@@ -599,7 +599,8 @@ def wait_for_validation_records(client, module, acm, cert_arn):
             return
         time.sleep(5)
     # Timeout occured
-    module.fail_json(msg=f"Timeout waiting for validation records")
+    module.fail_json(msg="Timeout waiting for validation records")
+
 
 def request_certificate(client, module, acm, desired_tags):
     """
