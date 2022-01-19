@@ -180,7 +180,7 @@ options:
         ACM issues public certificates after receiving approval from the domain owner.
       - >
         At this time, only exported private certificates can be renewed.
-
+    version_added: 3.1.0
     suboptions:
       subject_alternative_names:
         description:
@@ -193,6 +193,7 @@ options:
             using either name.
         type: list
         elements: str
+        version_added: 3.1.0
       validation_method:
         description:
           - >
@@ -202,6 +203,7 @@ options:
             You can validate with DNS or validate with email.
         choices: ['DNS', 'EMAIL']
         type: str
+        version_added: 3.1.0
       certificate_authority_arn:
         description:
           - >
@@ -211,6 +213,7 @@ options:
             If you do not provide an ARN and you are trying to request a private certificate,
             ACM will attempt to issue a public certificate.
         type: str
+        version_added: 3.1.0
       options:
         description:
           - >
@@ -220,6 +223,7 @@ options:
             Certificate transparency makes it possible to detect SSL/TLS certificates that
             have been mistakenly or maliciously issued. Certificates that have not been logged
             typically produce an error message in a browser.
+        version_added: 3.1.0
         suboptions:
           certificate_transparency_logging_preference:
             description:
@@ -229,6 +233,7 @@ options:
             choices: ['ENABLED', 'DISABLED']
             type: str
             default: 'ENABLED'
+            version_added: 3.1.0
         type: dict
     type: dict
 
@@ -262,6 +267,25 @@ options:
       - whether to remove tags not present in the C(tags) parameter.
     default: false
     type: bool
+    version_added: 3.1.0
+
+  wait:
+    description:
+      - >
+        Whether or not to wait for the certificate operation to complete.
+      - >
+        When a certificate request is submitted, the certificate is created,
+        then the validation records. It may take some time for the validation
+        records to be generated.
+    type: bool
+    default: 'no'
+    version_added: 3.1.0
+
+  wait_timeout:
+    description:
+      - how long before wait gives up, in seconds.
+    default: 15
+    type: int
     version_added: 3.1.0
 
 author:
@@ -754,9 +778,6 @@ def main():
         domain_name=dict(aliases=['domain']),
         name_tag=dict(aliases=['name']),
         private_key=dict(no_log=True),
-        tags=dict(type='dict'),
-        purge_tags=dict(type='bool', default=False),
-        state=dict(default='present', choices=['present', 'absent']),
         certificate_request=dict(
             type="dict",
             default=None,
@@ -773,6 +794,11 @@ def main():
                 certificate_authority_arn=dict(),
             ),
         ),
+        tags=dict(type='dict'),
+        purge_tags=dict(type='bool', default=False),
+        wait=dict(type="bool", default=False),
+        wait_timeout=dict(type="int", default=15),
+        state=dict(default='present', choices=['present', 'absent']),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
