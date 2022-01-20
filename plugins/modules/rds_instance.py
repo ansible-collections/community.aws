@@ -890,6 +890,18 @@ def get_options_with_changing_values(client, module, parameters):
     updated_parameters.update(get_changing_options_with_consistent_keys(parameters, instance))
     parameters = updated_parameters
 
+    if module.params['storage_type'] == 'io1':
+        # Bundle Iops and AllocatedStorage together while updating RDS Instance
+        if module.params.get('iops') and module.params.get('allocated_storage'):
+            parameters['Iops'] = module.params['iops']
+            parameters['AllocatedStorage'] = module.params['allocated_storage']
+        elif module.params.get('iops'):
+            parameters['Iops'] = module.params['iops']
+            parameters['AllocatedStorage'] = instance.get('AllocatedStorage')
+        elif module.params.get('allocated_storage'):
+            parameters['Iops'] = instance.get('Iops')
+            parameters['AllocatedStorage'] = module.params['allocated_storage']
+
     if parameters.get('NewDBInstanceIdentifier') and instance.get('PendingModifiedValues', {}).get('DBInstanceIdentifier'):
         if parameters['NewDBInstanceIdentifier'] == instance['PendingModifiedValues']['DBInstanceIdentifier'] and not apply_immediately:
             parameters.pop('NewDBInstanceIdentifier')
@@ -913,7 +925,7 @@ def get_current_attributes_with_inconsistent_keys(instance):
     if instance.get('PendingModifiedValues', {}).get('Port'):
         options['DBPortNumber'] = instance['PendingModifiedValues']['Port']
     else:
-        options['DBPortNumber'] = instance['Endpoint']['Port']
+        options['DBPortNumber'] = instance.get('Endpoint', {}).get('Port', None)
     if instance.get('PendingModifiedValues', {}).get('DBSubnetGroupName'):
         options['DBSubnetGroupName'] = instance['PendingModifiedValues']['DBSubnetGroupName']
     else:
