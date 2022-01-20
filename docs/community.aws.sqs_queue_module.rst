@@ -212,6 +212,7 @@ Parameters
                 </td>
                 <td>
                         <div>The ID of an AWS-managed customer master key (CMK) for Amazon SQS or a custom CMK.</div>
+                        <div>Specifying a valid <em>kms_master_key_id</em> will enable encryption automatically.</div>
                 </td>
             </tr>
             <tr>
