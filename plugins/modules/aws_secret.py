@@ -59,7 +59,7 @@ options:
        to secrets.
     required: false
     type: json
-    version_added: 2.2.0
+    version_added: 3.1.0
   tags:
     description:
     - Specifies a list of user-defined tags that are attached to the secret.
