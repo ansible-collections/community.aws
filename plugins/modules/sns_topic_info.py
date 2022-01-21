@@ -113,74 +113,15 @@ result:
 '''
 
 
-import json
-
 try:
     import botocore
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-
-
-@AWSRetry.jittered_backoff()
-def _list_topics_with_backoff(connection):
-    paginator = connection.get_paginator('list_topics')
-    return paginator.paginate().build_full_result()['Topics']
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=['NotFound'])
-def _list_topic_subscriptions_with_backoff(connection, topic_arn):
-    paginator = connection.get_paginator('list_subscriptions_by_topic')
-    return paginator.paginate(TopicArn=topic_arn).build_full_result()['Subscriptions']
-
-
-@AWSRetry.jittered_backoff(catch_extra_error_codes=['NotFound'])
-def _list_subscriptions_with_backoff(connection):
-    paginator = connection.get_paginator('list_subscriptions')
-    return paginator.paginate().build_full_result()['Subscriptions']
-
-
-def _list_topic_subscriptions(connection, module, topic_arn):
-    try:
-        return _list_topic_subscriptions_with_backoff(connection, topic_arn)
-    except is_boto3_error_code('AuthorizationError'):
-        try:
-            # potentially AuthorizationError when listing subscriptions for third party topic
-            return [sub for sub in _list_subscriptions_with_backoff()
-                    if sub['TopicArn'] == topic_arn]
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
-
-
-def list_topics(connection, module):
-    try:
-        topics = _list_topics_with_backoff(connection)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Couldn't get topic list")
-
-    return [get_info(connection, module, t['TopicArn']) for t in topics]
-
-
-def get_info(connection, module, topic_arn):
-    info = {
-        'sns_arn': topic_arn,
-    }
-    try:
-        info['sns_topic'] = camel_dict_to_snake_dict(connection.get_topic_attributes(TopicArn=topic_arn)['Attributes'])
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Couldn't get attributes for topic.")
-
-    info['sns_topic']['delivery_policy'] = json.loads(info['sns_topic'].pop('effective_delivery_policy'))
-    info['sns_topic']['policy'] = json.loads(info['sns_topic']['policy'])
-    info['sns_topic']['subscriptions'] = [camel_dict_to_snake_dict(sub) for sub in _list_topic_subscriptions(connection, module, topic_arn)]
-
-    return info
+from ansible_collections.community.aws.plugins.module_utils.sns import list_topics
+from ansible_collections.community.aws.plugins.module_utils.sns import get_info
 
 
 def main():
@@ -199,7 +140,7 @@ def main():
         module.fail_json_aws(e, msg='Failed to connect to AWS.')
 
     if topic_arn:
-        results = get_info(connection, module, topic_arn)
+        results = dict(sns_arn=topic_arn, sns_topic=get_info(connection, module, topic_arn))
     else:
         results = list_topics(connection, module)
 
