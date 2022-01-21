@@ -292,7 +292,8 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
 from ansible_collections.community.aws.plugins.module_utils.sns import list_topics
 from ansible_collections.community.aws.plugins.module_utils.sns import topic_arn_lookup
