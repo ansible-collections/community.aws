@@ -284,8 +284,6 @@ community.aws.sns_topic:
 '''
 
 import json
-import re
-import copy
 
 try:
     import botocore
