@@ -43,14 +43,14 @@ options:
     description:
       - A hash/dictionary of tags to add to the new RDS subnet group or to add/remove from an existing one.
     type: dict
-    version_added: 2.2.0
+    version_added: 3.1.0
   purge_tags:
     description:
        - Whether or not to remove tags assigned to the RDS subnet group if not specified in the playbook.
        - To remove all tags set I(tags) to an empty dictionary in conjunction with this.
     default: True
     type: bool
-    version_added: 2.2.0
+    version_added: 3.1.0
 author:
     - "Scott Anderson (@tastychutney)"
     - "Alina Buzachis (@alinabuzachis)"
@@ -181,11 +181,12 @@ subnet_group:
 '''
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
+from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
 
 
 try:
@@ -227,12 +228,7 @@ def get_subnet_group(client, module):
 
     if _result:
         result = camel_dict_to_snake_dict(_result['DBSubnetGroups'][0])
-        try:
-            tags = client.list_tags_for_resource(aws_retry=True, ResourceName=result['db_subnet_group_arn'])['TagList']
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't obtain subnet group tags.")
-
-        result['tags'] = boto3_tag_list_to_ansible_dict(tags)
+        result['tags'] = get_tags(client, module, result['db_subnet_group_arn'])
 
     return result
 
@@ -250,39 +246,6 @@ def create_subnet_list(subnets):
     for subnet in subnets:
         subnets_ids.append(subnet.get('subnet_identifier'))
     return subnets_ids
-
-
-def update_tags(client, module, subnet_group):
-    if module.params.get('tags') is None:
-        return False
-
-    try:
-        existing_tags = client.list_tags_for_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'])['TagList']
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Couldn't obtain subnet group tags.")
-
-    to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
-                                            module.params['tags'], module.params['purge_tags'])
-    changed = bool(to_update or to_delete)
-
-    if to_update:
-        try:
-            if module.check_mode:
-                return changed
-            client.add_tags_to_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'],
-                                        Tags=ansible_dict_to_boto3_tag_list(to_update))
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't add tags to subnet group.")
-    if to_delete:
-        try:
-            if module.check_mode:
-                return changed
-            client.remove_tags_from_resource(aws_retry=True, ResourceName=subnet_group['db_subnet_group_arn'],
-                                             TagKeys=to_delete)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't remove tags from subnet group.")
-
-    return changed
 
 
 def main():
@@ -330,7 +293,14 @@ def main():
             # We have one or more subnets at this point.
 
             # Check if there is any tags update
-            tags_update = update_tags(connection, module, matching_groups)
+            tags_update = ensure_tags(
+                connection,
+                module,
+                matching_groups['db_subnet_group_arn'],
+                matching_groups['tags'],
+                module.params.get("tags"),
+                module.params['purge_tags']
+            )
 
             # Sort the subnet groups before we compare them
             existing_subnets = create_subnet_list(matching_groups['subnets'])
