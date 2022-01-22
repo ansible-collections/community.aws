@@ -459,6 +459,9 @@ def get_dynamodb_table():
     table['size'] = table['table_size_bytes']
     table['tags'] = tags
 
+    if 'table_class_summary' in table:
+        table['table_class'] = table['table_class_summary']['table_class']
+
     # billing_mode_summary doesn't always seem to be set but is always set for PAY_PER_REQUEST
     # and when updating the billing_mode
     if 'billing_mode_summary' in table:
