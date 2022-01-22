@@ -585,6 +585,7 @@
       range_key_type: "{{ range_index_type }}"
       read_capacity: 3
       write_capacity: 3
+      table_class: "STANDARD_INFREQUENT_ACCESS"
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
@@ -606,6 +607,7 @@
       range_key_type: "{{ range_index_type }}"
       read_capacity: 3
       write_capacity: 3
+      table_class: "STANDARD_INFREQUENT_ACCESS"
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
@@ -633,6 +635,7 @@
         - create_complex_table.range_key_type == range_index_type
         - create_complex_table.read_capacity == 3
         - create_complex_table.table_name == table_name
+        - create_complex_table.table_class == "STANDARD_INFREQUENT_ACCESS"
         - create_complex_table.write_capacity == 3
         - create_complex_table.tags == tags_default
 
@@ -646,6 +649,7 @@
       range_key_type: "{{ range_index_type }}"
       read_capacity: 3
       write_capacity: 3
+      table_class: "STANDARD_INFREQUENT_ACCESS"
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
@@ -667,6 +671,7 @@
       range_key_type: "{{ range_index_type }}"
       read_capacity: 3
       write_capacity: 3
+      table_class: "STANDARD_INFREQUENT_ACCESS"
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
@@ -694,10 +699,44 @@
         - create_complex_table.range_key_type == range_index_type
         - create_complex_table.read_capacity == 3
         - create_complex_table.table_name == table_name
+        - create_complex_table.table_class == "STANDARD_INFREQUENT_ACCESS"
         - create_complex_table.write_capacity == 3
         - create_complex_table.tags == tags_default
 
   # ==============================================
+  # Update table class on exisiting table
+
+  - name: Update table class - check_mode
+    dynamodb_table:
+      state: present
+      name: "{{ table_name }}"
+      table_class: "STANDARD"
+    register: update_class
+    check_mode: True
+
+  - name: Check results - Update table class - check_mode
+    assert:
+      that:
+        - update_class is successful
+        - update_class is changed
+
+  - name: Update table class
+    dynamodb_table:
+      state: present
+      name: "{{ table_name }}"
+      table_class: "STANDARD"
+    register: update_class
+
+  - name: Check results - Update table class
+    assert:
+      that:
+        - update_class is successful
+        - update_class is changed
+        - update_class.table_name == table_name
+        - update_class.table_class == "STANDARD"
+
+  # ==============================================
+  # Update table index on exisiting table
 
   - name: Update table update index - check_mode
     dynamodb_table:

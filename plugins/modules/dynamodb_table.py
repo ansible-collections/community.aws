@@ -121,6 +121,13 @@ options:
     default: []
     type: list
     elements: dict
+  table_class:
+    description:
+      - The class of the table
+    choices: ['STANDARD', 'STANDARD_INFREQUENT_ACCESS']
+    default: 'STANDARD'
+    type: str
+    version_added: 3.1.0
   tags:
     description:
       - A hash/dictionary of tags to add to the new instance or for starting/stopping instance by tag.
@@ -410,6 +417,7 @@ def compatability_results(current_table):
         billing_mode=billing_mode,
         region=module.region,
         table_name=current_table.get('table_name', None),
+        table_class=current_table.get('table_class', None),
         table_status=current_table.get('table_status', None),
         tags=current_table.get('tags', {}),
     )
@@ -753,6 +761,7 @@ def _update_table(current_table):
     changes = dict()
     additional_global_index_changes = list()
 
+    # Get throughput / billing_mode changes
     throughput_changes = _throughput_changes(current_table)
     if throughput_changes:
         changes['ProvisionedThroughput'] = throughput_changes
@@ -765,6 +774,15 @@ def _update_table(current_table):
 
     if current_billing_mode != new_billing_mode:
         changes['BillingMode'] = new_billing_mode
+
+    # Update table_class use exisiting if none is defined
+    if module.params.get('table_class'):
+        table_class = module.params.get('table_class')
+    else:
+        table_class = current_table.get('table_class')
+
+    if table_class != current_table.get('billing_mode'):
+        changes['TableClass'] = table_class
 
     global_index_changes = _global_index_changes(current_table)
     if global_index_changes:
@@ -868,6 +886,7 @@ def update_table(current_table):
 
 def create_table():
     table_name = module.params.get('name')
+    table_class = module.params.get('table_class')
     hash_key_name = module.params.get('hash_key_name')
     billing_mode = module.params.get('billing_mode')
 
@@ -901,6 +920,8 @@ def create_table():
         # SSESpecification,
     )
 
+    if table_class:
+        params['TableClass'] = table_class
     if billing_mode == "PROVISIONED":
         params['ProvisionedThroughput'] = throughput
     if local_indexes:
@@ -982,6 +1003,7 @@ def main():
         read_capacity=dict(type='int'),
         write_capacity=dict(type='int'),
         indexes=dict(default=[], type='list', elements='dict', options=index_options),
+        table_class=dict(type='str', choices=['STANDARD', 'STANDARD_INFREQUENT_ACCESS']),
         tags=dict(type='dict'),
         purge_tags=dict(type='bool', default=True),
         wait=dict(type='bool', default=True),
