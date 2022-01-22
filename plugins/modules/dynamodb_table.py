@@ -125,7 +125,6 @@ options:
     description:
       - The class of the table
     choices: ['STANDARD', 'STANDARD_INFREQUENT_ACCESS']
-    default: 'STANDARD'
     type: str
     version_added: 3.1.0
   tags:
@@ -417,7 +416,7 @@ def compatability_results(current_table):
         billing_mode=billing_mode,
         region=module.region,
         table_name=current_table.get('table_name', None),
-        table_class=current_table.get('table_class', None),
+        table_class=current_table.get('table_class_summary', {}).get('table_class', None),
         table_status=current_table.get('table_status', None),
         tags=current_table.get('tags', {}),
     )
@@ -777,12 +776,8 @@ def _update_table(current_table):
 
     # Update table_class use exisiting if none is defined
     if module.params.get('table_class'):
-        table_class = module.params.get('table_class')
-    else:
-        table_class = current_table.get('table_class')
-
-    if table_class != current_table.get('billing_mode'):
-        changes['TableClass'] = table_class
+        if module.params.get('table_class') != current_table.get('table_class'):
+            changes['TableClass'] = module.params.get('table_class')
 
     global_index_changes = _global_index_changes(current_table)
     if global_index_changes:
@@ -1020,6 +1015,10 @@ def main():
         catch_extra_error_codes=['LimitExceededException', 'ResourceInUseException', 'ResourceNotFoundException'],
     )
     client = module.client('dynamodb', retry_decorator=retry_decorator)
+
+    if module.params.get('table_class'):
+        if not module.botocore_at_least("1.23.18"):
+            module.fail_json(msg='botocore version >= 1.23.18 is required setting table_class')
 
     current_table = get_dynamodb_table()
     changed = False
