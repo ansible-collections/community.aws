@@ -60,6 +60,7 @@
         auto_minor_version_upgrade: false
         monitoring_interval: "{{ monitoring_interval }}"
         monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
+        iops: "{{ iops }}"
         port: 1150
         max_allocated_storage: 150
         apply_immediately: True
@@ -89,6 +90,7 @@
         auto_minor_version_upgrade: false
         monitoring_interval: "{{ monitoring_interval }}"
         monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
+        iops: "{{ iops }}"
         port: 1150
         max_allocated_storage: 150
         apply_immediately: True
