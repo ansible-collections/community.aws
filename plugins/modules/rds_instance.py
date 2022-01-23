@@ -890,10 +890,10 @@ def get_options_with_changing_values(client, module, parameters):
     updated_parameters.update(get_changing_options_with_consistent_keys(parameters, instance))
     parameters = updated_parameters
 
-    if instance.get['StorageType'] == 'io1':
+    if instance.get('StorageType') == 'io1':
         # Bundle Iops and AllocatedStorage while updating io1 RDS Instance
-        current_iops = instance.get('Iops')
-        current_allocated_storage = instance.get('AllocatedStorage')
+        current_iops = instance.get('PendingModifiedValues', {}).get('Iops', instance['Iops'])
+        current_allocated_storage = instance.get('PendingModifiedValues', {}).get('AllocatedStorage', instance['AllocatedStorage'])
         new_iops = module.params.get('iops')
         new_allocated_storage = module.params.get('allocated_storage')
 

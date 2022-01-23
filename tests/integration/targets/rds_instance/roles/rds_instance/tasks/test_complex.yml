@@ -55,8 +55,6 @@
         backup_retention_period: 2
         preferred_backup_window: "05:00-06:00"
         preferred_maintenance_window: "{{ preferred_maintenance_window }}"
-        engine_version: "{{ mariadb_engine_version_2 }}"
-        allow_major_version_upgrade: true
         auto_minor_version_upgrade: false
         monitoring_interval: "{{ monitoring_interval }}"
         monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
@@ -73,7 +71,6 @@
           - '"max_allocated_storage" in result.pending_modified_values or result.max_allocated_storage == 150'
           - '"port" in result.pending_modified_values or result.endpoint.port == 1150'
           - '"db_instance_class" in result.pending_modified_values or result.db_instance_class == modified_db_instance_class'
-          - '"engine_version" in result.pending_modified_values or result.engine_version == mariadb_engine_version_2'
           - '"monitoring_interval" in result.pending_modified_values or result.monitoring_interval == monitoring_interval'
 
     - name: Idempotence modifying several pending attributes
@@ -85,8 +82,6 @@
         backup_retention_period: 2
         preferred_backup_window: "05:00-06:00"
         preferred_maintenance_window: "{{ preferred_maintenance_window }}"
-        engine_version: "{{ mariadb_engine_version_2 }}"
-        allow_major_version_upgrade: true
         auto_minor_version_upgrade: false
         monitoring_interval: "{{ monitoring_interval }}"
         monitoring_role_arn: "{{ enhanced_monitoring_role.arn }}"
@@ -95,9 +90,6 @@
         max_allocated_storage: 150
         apply_immediately: True
       register: result
-      retries: 30
-      delay: 10
-      until: result is not failed
 
     - assert:
         that:
@@ -106,7 +98,6 @@
           - '"max_allocated_storage" in result.pending_modified_values or result.max_allocated_storage == 150'
           - '"port" in result.pending_modified_values or result.endpoint.port == 1150'
           - '"db_instance_class" in result.pending_modified_values or result.db_instance_class == modified_db_instance_class'
-          - '"engine_version" in result.pending_modified_values or result.engine_version == mariadb_engine_version_2'
 
   always:
     - name: Delete the instance
