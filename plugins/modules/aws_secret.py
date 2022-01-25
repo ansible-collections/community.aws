@@ -146,6 +146,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, compare_aws_tags, ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from traceback import format_exc
 import json
 
 try:
@@ -240,7 +241,7 @@ class SecretsManagerInterface(object):
             resource_policy = self.client.get_resource_policy(SecretId=name)
         except self.client.exceptions.ResourceNotFoundException:
             resource_policy = None
-        except Exception as e:
+        except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Failed to get secret resource policy")
         return resource_policy
 
@@ -272,7 +273,7 @@ class SecretsManagerInterface(object):
         try:
             json.loads(secret.secret_resource_policy_args.get("ResourcePolicy"))
         except (TypeError, ValueError) as e:
-            self.module.fail_json_aws(e, msg="Failed to parse resource policy as JSON")
+            self.module.fail_json(msg="Failed to parse resource policy as JSON: %s" % (str(e)), exception=format_exc())
 
         try:
             response = self.client.put_resource_policy(**secret.secret_resource_policy_args)
@@ -306,7 +307,7 @@ class SecretsManagerInterface(object):
             self.module.exit_json(changed=True)
         try:
             response = self.client.delete_resource_policy(SecretId=name)
-        except Exception as e:
+        except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Failed to delete secret resource policy")
         return response
 
