@@ -19,7 +19,6 @@ Synopsis
 --------
 - Returns list of matching Launch Configurations for a given name, along with other useful information.
 - Results can be sorted and sliced.
-- It depends on boto.
 - Based on the work by Tom Bamford https://github.com/tombamford
 
 
@@ -29,8 +28,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.15.0
-- botocore >= 1.18.0
+- boto3 >= 1.16.0
+- botocore >= 1.19.0
 
 
 Parameters

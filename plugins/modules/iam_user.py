@@ -12,7 +12,8 @@ module: iam_user
 version_added: 1.0.0
 short_description: Manage AWS IAM users
 description:
-  - Manage AWS IAM users.
+  - A module to manage AWS IAM users.
+  - The module does not manage groups that users belong to, groups memberships can be managed using `iam_group`.
 author: Josh Souza (@joshsouza)
 options:
   name:
@@ -20,6 +21,34 @@ options:
       - The name of the user to create.
     required: true
     type: str
+  password:
+    description:
+      - The password to apply to the user.
+    required: false
+    type: str
+    version_added: 2.2.0
+  password_reset_required:
+    description:
+      - Defines if the user is required to set a new password after login.
+    required: false
+    type: bool
+    default: false
+    version_added: 3.1.0
+  update_password:
+    default: always
+    choices: ['always', 'on_create']
+    description:
+      - When to update user passwords.
+      - I(update_password=always) will ensure the password is set to I(password).
+      - I(update_password=on_create) will only set the password for newly created users.
+    type: str
+    version_added: 2.2.0
+  remove_password:
+    description:
+      - Option to delete user login passwords.
+      - This field is mutually exclusive to I(password).
+    type: 'bool'
+    version_added: 2.2.0
   managed_policies:
     description:
       - A list of managed policy ARNs or friendly names to attach to the user.
@@ -36,7 +65,7 @@ options:
     type: str
   purge_policies:
     description:
-      - When I(purge_policies=true) any managed policies not listed in I(managed_policies) will be detatched.
+      - When I(purge_policies=true) any managed policies not listed in I(managed_policies) will be detached.
     required: false
     default: false
     type: bool
@@ -53,6 +82,19 @@ options:
     default: true
     type: bool
     version_added: 2.1.0
+  wait:
+    description:
+      - When I(wait=True) the module will wait for up to I(wait_timeout) seconds
+        for IAM user creation before returning.
+    default: True
+    type: bool
+    version_added: 2.2.0
+  wait_timeout:
+    description:
+      - How long (in seconds) to wait for creation / updates to complete.
+    default: 120
+    type: int
+    version_added: 2.2.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -68,6 +110,12 @@ EXAMPLES = r'''
 - name: Create a user
   community.aws.iam_user:
     name: testuser1
+    state: present
+
+- name: Create a user with a password
+  community.aws.iam_user:
+    name: testuser1
+    password: SomeSecurePassword
     state: present
 
 - name: Create a user and attach a managed policy using its ARN
@@ -179,15 +227,77 @@ def convert_friendly_names_to_arns(connection, module, policy_names):
         module.fail_json(msg="Couldn't find policy: " + str(e))
 
 
+def wait_iam_exists(connection, module):
+    if module.check_mode:
+        return
+    if not module.params.get('wait'):
+        return
+
+    user_name = module.params.get('name')
+    wait_timeout = module.params.get('wait_timeout')
+
+    delay = min(wait_timeout, 5)
+    max_attempts = wait_timeout // delay
+
+    try:
+        waiter = connection.get_waiter('user_exists')
+        waiter.wait(
+            WaiterConfig={'Delay': delay, 'MaxAttempts': max_attempts},
+            UserName=user_name,
+        )
+    except botocore.exceptions.WaiterError as e:
+        module.fail_json_aws(e, msg='Timeout while waiting on IAM user creation')
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed while waiting on IAM user creation')
+
+
+def create_or_update_login_profile(connection, module):
+
+    # Apply new password / update password for the user
+    user_params = dict()
+    user_params['UserName'] = module.params.get('name')
+    user_params['Password'] = module.params.get('password')
+    user_params['PasswordResetRequired'] = module.params.get('password_reset_required')
+    retval = {}
+
+    try:
+        retval = connection.update_login_profile(**user_params)
+    except is_boto3_error_code('NoSuchEntity'):
+        try:
+            retval = connection.create_login_profile(**user_params)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Unable to create user login profile")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Unable to update user login profile")
+
+    return True, retval
+
+
+def delete_login_profile(connection, module):
+
+    user_params = dict()
+    user_params['UserName'] = module.params.get('name')
+
+    try:
+        connection.delete_login_profile(**user_params)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Unable to delete user login profile")
+
+    return True
+
+
 def create_or_update_user(connection, module):
 
     params = dict()
     params['UserName'] = module.params.get('name')
     managed_policies = module.params.get('managed_policies')
     purge_policies = module.params.get('purge_policies')
+
     if module.params.get('tags') is not None:
         params["Tags"] = ansible_dict_to_boto3_tag_list(module.params.get('tags'))
+
     changed = False
+
     if managed_policies:
         managed_policies = convert_friendly_names_to_arns(connection, module, managed_policies)
 
@@ -195,6 +305,7 @@ def create_or_update_user(connection, module):
     user = get_user(connection, module, params['UserName'])
 
     # If user is None, create it
+    new_login_profile = False
     if user is None:
         # Check mode means we would create the user
         if module.check_mode:
@@ -205,8 +316,30 @@ def create_or_update_user(connection, module):
             changed = True
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to create user")
+
+        # Wait for user to be fully available before continuing
+        if module.params.get('wait'):
+            wait_iam_exists(connection, module)
+
+        if module.params.get('password') is not None:
+            login_profile_result, login_profile_data = create_or_update_login_profile(connection, module)
+
+            if login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False):
+                new_login_profile = True
     else:
-        changed = update_user_tags(connection, module, params, user)
+        login_profile_result = None
+        update_result = update_user_tags(connection, module, params, user)
+
+        if module.params['update_password'] == "always" and module.params.get('password') is not None:
+            login_profile_result, login_profile_data = create_or_update_login_profile(connection, module)
+
+            if login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False):
+                new_login_profile = True
+
+        elif module.params.get('remove_password'):
+            login_profile_result = delete_login_profile(connection, module)
+
+        changed = bool(update_result) or bool(login_profile_result)
 
     # Manage managed policies
     current_attached_policies = get_attached_policy_list(connection, module, params['UserName'])
@@ -245,6 +378,9 @@ def create_or_update_user(connection, module):
 
     # Get the user again
     user = get_user(connection, module, params['UserName'])
+    if changed and new_login_profile:
+        # `LoginProfile` is only returned on `create_login_profile` method
+        user['user']['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
 
     module.exit_json(changed=changed, iam_user=user)
 
@@ -388,16 +524,23 @@ def main():
 
     argument_spec = dict(
         name=dict(required=True, type='str'),
+        password=dict(type='str', no_log=True),
+        password_reset_required=dict(type='bool', default=False, no_log=False),
+        update_password=dict(default='always', choices=['always', 'on_create'], no_log=False),
+        remove_password=dict(type='bool', no_log=False),
         managed_policies=dict(default=[], type='list', aliases=['managed_policy'], elements='str'),
         state=dict(choices=['present', 'absent'], required=True),
         purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
         tags=dict(type='dict'),
         purge_tags=dict(type='bool', default=True),
+        wait=dict(type='bool', default=True),
+        wait_timeout=dict(default=120, type='int'),
     )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
+        mutually_exclusive=[['password', 'remove_password']],
     )
 
     connection = module.client('iam')

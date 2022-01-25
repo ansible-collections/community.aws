@@ -13,7 +13,6 @@ version_added: 1.0.0
 short_description: Gather information about AWS KMS keys
 description:
     - Gather information about AWS KMS keys including tags and grants
-    - This module was called C(aws_kms_facts) before Ansible 2.9. The usage did not change.
 author: "Will Thames (@willthames)"
 options:
   alias:
@@ -48,14 +47,11 @@ options:
     type: bool
   keys_attr:
     description:
-      - Whether to return the results in the C(keys) attribute as well as the
-        C(kms_keys) attribute.
-      - Returning the C(keys) attribute conflicts with the builtin keys()
-        method on dictionaries and as such has been deprecated.
-      - After version C(3.0.0) this parameter will do nothing, and after
-        version C(4.0.0) this parameter will be removed.
+      - Returning the C(keys) attribute conflicted with the builtin keys()
+        method on dictionaries and as such was deprecated.
+      - This parameter now does nothing, and after version C(4.0.0) this
+        parameter will be removed.
     type: bool
-    default: True
     version_added: 2.0.0
 extends_documentation_fragment:
 - amazon.aws.aws
@@ -452,14 +448,12 @@ def main():
         key_id=dict(aliases=['key_arn']),
         filters=dict(type='dict'),
         pending_deletion=dict(type='bool', default=False),
-        keys_attr=dict(type='bool', default=True),
+        keys_attr=dict(type='bool'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               mutually_exclusive=[['alias', 'filters', 'key_id']],
                               supports_check_mode=True)
-    if module._name == 'aws_kms_facts':
-        module.deprecate("The 'aws_kms_facts' module has been renamed to 'aws_kms_info'", date='2021-12-01', collection_name='community.aws')
 
     try:
         connection = module.client('kms')
@@ -471,12 +465,11 @@ def main():
     ret_params = dict(kms_keys=filtered_keys)
 
     # We originally returned "keys"
-    if module.params['keys_attr']:
+    if module.params.get('keys_attr') is not None:
         module.deprecate("Returning results in the 'keys' attribute conflicts with the builtin keys() method on "
-                         "dicts and as such is deprecated.  Please use the kms_keys attribute.  This warning can be "
-                         "silenced by setting keys_attr to False.",
-                         version='3.0.0', collection_name='community.aws')
-        ret_params.update(dict(keys=filtered_keys))
+                         "dicts and as such was removed in version 3.0.0.  Please use the kms_keys attribute. "
+                         "This parameter is now ignored and will be removed in version 4.0.0.",
+                         version='4.0.0', collection_name='community.aws')
     module.exit_json(**ret_params)
 
 

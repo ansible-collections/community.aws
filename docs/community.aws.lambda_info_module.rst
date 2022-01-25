@@ -27,8 +27,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.15.0
-- botocore >= 1.18.0
+- boto3 >= 1.16.0
+- botocore >= 1.19.0
 
 
 Parameters
@@ -212,6 +212,7 @@ Parameters
                                     <li>mappings</li>
                                     <li>policy</li>
                                     <li>versions</li>
+                                    <li>tags</li>
                         </ul>
                 </td>
                 <td>
@@ -308,7 +309,6 @@ Examples
     - name: List all function
       community.aws.lambda_info:
         query: all
-        max_items: 20
       register: output
     - name: show Lambda information
       ansible.builtin.debug:

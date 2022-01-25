@@ -13,8 +13,6 @@ version_added: 1.0.0
 short_description: Obtain facts about an AWS CloudFront distribution
 description:
   - Gets information about an AWS CloudFront distribution.
-  - This module was called C(cloudfront_facts) before Ansible 2.9, returning C(ansible_facts).
-    Note that the M(community.aws.cloudfront_info) module no longer returns C(ansible_facts)!
 author: Willem van Ketwich (@wilvk)
 options:
     distribution_id:
@@ -171,22 +169,6 @@ EXAMPLES = '''
 - ansible.builtin.debug:
     msg: "{{ result_website['cloudfront']['www.my-website.com'] }}"
 
-# When the module is called as cloudfront_facts, return values are published
-# in ansible_facts['cloudfront'][<id>] and can be used as follows.
-# Note that this is deprecated and will stop working in a release after 2021-12-01.
-- name: Gather facts
-  community.aws.cloudfront_facts:
-    distribution: true
-    distribution_id: my-cloudfront-distribution-id
-- ansible.builtin.debug:
-    msg: "{{ ansible_facts['cloudfront']['my-cloudfront-distribution-id'] }}"
-
-- community.aws.cloudfront_facts:
-    distribution: true
-    domain_name_alias: www.my-website.com
-- ansible.builtin.debug:
-    msg: "{{ ansible_facts['cloudfront']['www.my-website.com'] }}"
-
 - name: Get all information about an invalidation for a distribution.
   community.aws.cloudfront_info:
     invalidation: true
@@ -269,6 +251,7 @@ except ImportError:
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
 class CloudFrontServiceManager:
@@ -278,64 +261,72 @@ class CloudFrontServiceManager:
         self.module = module
 
         try:
-            self.client = module.client('cloudfront')
+            self.client = module.client('cloudfront', retry_decorator=AWSRetry.jittered_backoff())
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg='Failed to connect to AWS')
 
     def get_distribution(self, distribution_id):
         try:
-            func = partial(self.client.get_distribution, Id=distribution_id)
-            return self.paginated_response(func)
+            distribution = self.client.get_distribution(aws_retry=True, Id=distribution_id)
+            return distribution
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing distribution")
 
     def get_distribution_config(self, distribution_id):
         try:
-            func = partial(self.client.get_distribution_config, Id=distribution_id)
-            return self.paginated_response(func)
+            distribution = self.client.get_distribution_config(aws_retry=True, Id=distribution_id)
+            return distribution
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing distribution configuration")
 
     def get_origin_access_identity(self, origin_access_identity_id):
         try:
-            func = partial(self.client.get_cloud_front_origin_access_identity, Id=origin_access_identity_id)
-            return self.paginated_response(func)
+            origin_access_identity = self.client.get_cloud_front_origin_access_identity(aws_retry=True, Id=origin_access_identity_id)
+            return origin_access_identity
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing origin access identity")
 
     def get_origin_access_identity_config(self, origin_access_identity_id):
         try:
-            func = partial(self.client.get_cloud_front_origin_access_identity_config, Id=origin_access_identity_id)
-            return self.paginated_response(func)
+            origin_access_identity = self.client.get_cloud_front_origin_access_identity_config(aws_retry=True, Id=origin_access_identity_id)
+            return origin_access_identity
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing origin access identity configuration")
 
     def get_invalidation(self, distribution_id, invalidation_id):
         try:
-            func = partial(self.client.get_invalidation, DistributionId=distribution_id, Id=invalidation_id)
-            return self.paginated_response(func)
+            invalidation = self.client.get_invalidation(aws_retry=True, DistributionId=distribution_id, Id=invalidation_id)
+            return invalidation
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing invalidation")
 
     def get_streaming_distribution(self, distribution_id):
         try:
-            func = partial(self.client.get_streaming_distribution, Id=distribution_id)
-            return self.paginated_response(func)
+            streaming_distribution = self.client.get_streaming_distribution(aws_retry=True, Id=distribution_id)
+            return streaming_distribution
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing streaming distribution")
 
     def get_streaming_distribution_config(self, distribution_id):
         try:
-            func = partial(self.client.get_streaming_distribution_config, Id=distribution_id)
-            return self.paginated_response(func)
+            streaming_distribution = self.client.get_streaming_distribution_config(aws_retry=True, Id=distribution_id)
+            return streaming_distribution
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error describing streaming distribution")
 
+    # Split out paginator to allow for the backoff decorator to function
+    @AWSRetry.jittered_backoff()
+    def _paginated_result(self, paginator_name, **params):
+        paginator = self.client.get_paginator(paginator_name)
+        results = paginator.paginate(**params).build_full_result()
+        return results
+
     def list_origin_access_identities(self):
         try:
-            func = partial(self.client.list_cloud_front_origin_access_identities)
-            origin_access_identity_list = self.paginated_response(func, 'CloudFrontOriginAccessIdentityList')
-            if origin_access_identity_list['Quantity'] > 0:
+            results = self._paginated_result('list_cloud_front_origin_access_identities')
+            origin_access_identity_list = results.get('CloudFrontOriginAccessIdentityList', {'Items': []})
+
+            if len(origin_access_identity_list['Items']) > 0:
                 return origin_access_identity_list['Items']
             return {}
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -343,12 +334,14 @@ class CloudFrontServiceManager:
 
     def list_distributions(self, keyed=True):
         try:
-            func = partial(self.client.list_distributions)
-            distribution_list = self.paginated_response(func, 'DistributionList')
-            if distribution_list['Quantity'] == 0:
-                return {}
-            else:
+            results = self._paginated_result('list_distributions')
+            distribution_list = results.get('DistributionList', {'Items': []})
+
+            if len(distribution_list['Items']) > 0:
                 distribution_list = distribution_list['Items']
+            else:
+                return {}
+
             if not keyed:
                 return distribution_list
             return self.keyed_list_helper(distribution_list)
@@ -357,21 +350,23 @@ class CloudFrontServiceManager:
 
     def list_distributions_by_web_acl_id(self, web_acl_id):
         try:
-            func = partial(self.client.list_distributions_by_web_acl_id, WebAclId=web_acl_id)
-            distribution_list = self.paginated_response(func, 'DistributionList')
-            if distribution_list['Quantity'] == 0:
-                return {}
-            else:
+            results = self._paginated_result('list_cloud_front_origin_access_identities', WebAclId=web_acl_id)
+            distribution_list = results.get('DistributionList', {'Items': []})
+
+            if len(distribution_list['Items']) > 0:
                 distribution_list = distribution_list['Items']
+            else:
+                return {}
             return self.keyed_list_helper(distribution_list)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing distributions by web acl id")
 
     def list_invalidations(self, distribution_id):
         try:
-            func = partial(self.client.list_invalidations, DistributionId=distribution_id)
-            invalidation_list = self.paginated_response(func, 'InvalidationList')
-            if invalidation_list['Quantity'] > 0:
+            results = self._paginated_result('list_invalidations', DistributionId=distribution_id)
+            invalidation_list = results.get('InvalidationList', {'Items': []})
+
+            if len(invalidation_list['Items']) > 0:
                 return invalidation_list['Items']
             return {}
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -379,12 +374,14 @@ class CloudFrontServiceManager:
 
     def list_streaming_distributions(self, keyed=True):
         try:
-            func = partial(self.client.list_streaming_distributions)
-            streaming_distribution_list = self.paginated_response(func, 'StreamingDistributionList')
-            if streaming_distribution_list['Quantity'] == 0:
-                return {}
-            else:
+            results = self._paginated_result('list_streaming_distributions')
+            streaming_distribution_list = results.get('StreamingDistributionList', {'Items': []})
+
+            if len(streaming_distribution_list['Items']) > 0:
                 streaming_distribution_list = streaming_distribution_list['Items']
+            else:
+                return {}
+
             if not keyed:
                 return streaming_distribution_list
             return self.keyed_list_helper(streaming_distribution_list)
@@ -484,30 +481,6 @@ class CloudFrontServiceManager:
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error getting list of aliases from distribution_id")
 
-    def paginated_response(self, func, result_key=""):
-        '''
-        Returns expanded response for paginated operations.
-        The 'result_key' is used to define the concatenated results that are combined from each paginated response.
-        '''
-        args = dict()
-        results = dict()
-        loop = True
-        while loop:
-            response = func(**args)
-            if result_key == "":
-                result = response
-                result.pop('ResponseMetadata', None)
-            else:
-                result = response.get(result_key)
-            results.update(result)
-            args['Marker'] = response.get('NextMarker')
-            for key in response.keys():
-                if key.endswith('List'):
-                    args['Marker'] = response[key].get('NextMarker')
-                    break
-            loop = args['Marker'] is not None
-        return results
-
     def keyed_list_helper(self, list_to_key):
         keyed_list = dict()
         for item in list_to_key:
@@ -554,10 +527,6 @@ def main():
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
-    is_old_facts = module._name == 'cloudfront_facts'
-    if is_old_facts:
-        module.deprecate("The 'cloudfront_facts' module has been renamed to 'cloudfront_info', "
-                         "and the renamed one no longer returns ansible_facts", date='2021-12-01', collection_name='community.aws')
 
     service_mgr = CloudFrontServiceManager(module)
 
@@ -667,10 +636,8 @@ def main():
 
     result['changed'] = False
     result['cloudfront'].update(facts)
-    if is_old_facts:
-        module.exit_json(msg="Retrieved CloudFront facts.", ansible_facts=result)
-    else:
-        module.exit_json(msg="Retrieved CloudFront info.", **result)
+
+    module.exit_json(msg="Retrieved CloudFront info.", **result)
 
 
 if __name__ == '__main__':
