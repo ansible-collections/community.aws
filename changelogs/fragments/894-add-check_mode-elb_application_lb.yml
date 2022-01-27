@@ -1,0 +1,2 @@
+minor_changes:
+  - elb_application_lb - add check_mode support and refactor integration tests (https://github.com/ansible-collections/community.aws/pull/894)
