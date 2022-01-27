@@ -102,7 +102,7 @@ options:
             type: list
             elements: dict
             description:
-              - A list of ALB Listener Rules.
+              - A list of ELB Listener Rules.
               - 'For the complete documentation of possible Conditions and Actions please see the boto3 documentation:'
               - 'https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/elbv2.html#ElasticLoadBalancingv2.Client.create_rule'
             suboptions:
@@ -240,9 +240,9 @@ EXAMPLES = r'''
             TargetGroupName: # Required. The name of the target group
     state: present
 
-# Create an ALB with listeners and rules
+# Create an ELB with listeners and rules
 - community.aws.elb_application_lb:
-    name: test-alb
+    name: test-elb
     subnets:
       - subnet-12345678
       - subnet-87654321
@@ -466,8 +466,9 @@ vpc_id:
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, boto3_tag_list_to_ansible_dict, compare_aws_tags
-
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.elbv2 import (
     ApplicationLoadBalancer,
     ELBListener,
@@ -482,21 +483,29 @@ def create_or_update_elb(elb_obj):
     """Create ELB or modify main attributes. json_exit here"""
     if elb_obj.elb:
         # ELB exists so check subnets, security groups and tags match what has been passed
-
         # Subnets
         if not elb_obj.compare_subnets():
+            if elb_obj.module.check_mode:
+                elb_obj.module.exit_json(changed=True, msg='Would have updated ELB if not in check mode.')
             elb_obj.modify_subnets()
 
         # Security Groups
         if not elb_obj.compare_security_groups():
+            if elb_obj.module.check_mode:
+                elb_obj.module.exit_json(changed=True, msg='Would have updated ELB if not in check mode.')
             elb_obj.modify_security_groups()
 
         # Tags - only need to play with tags if tags parameter has been set to something
         if elb_obj.tags is not None:
 
-            # Delete necessary tags
             tags_need_modify, tags_to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(elb_obj.elb['tags']),
                                                                 boto3_tag_list_to_ansible_dict(elb_obj.tags), elb_obj.purge_tags)
+
+            # Exit on check_mode
+            if elb_obj.module.check_mode and (tags_need_modify or tags_to_delete):
+                elb_obj.module.exit_json(changed=True, msg='Would have updated ELB if not in check mode.')
+
+            # Delete necessary tags
             if tags_to_delete:
                 elb_obj.delete_tags(tags_to_delete)
 
@@ -506,6 +515,8 @@ def create_or_update_elb(elb_obj):
 
     else:
         # Create load balancer
+        if elb_obj.module.check_mode:
+            elb_obj.module.exit_json(changed=True, msg='Would have created ELB if not in check mode.')
         elb_obj.create_elb()
 
     # ELB attributes
@@ -514,8 +525,11 @@ def create_or_update_elb(elb_obj):
 
     # Listeners
     listeners_obj = ELBListeners(elb_obj.connection, elb_obj.module, elb_obj.elb['LoadBalancerArn'])
-
     listeners_to_add, listeners_to_modify, listeners_to_delete = listeners_obj.compare_listeners()
+
+    # Exit on check_mode
+    if elb_obj.module.check_mode and (listeners_to_add or listeners_to_modify or listeners_to_delete):
+        elb_obj.module.exit_json(changed=True, msg='Would have updated ELB if not in check mode.')
 
     # Delete listeners
     for listener_to_delete in listeners_to_delete:
@@ -543,8 +557,11 @@ def create_or_update_elb(elb_obj):
     for listener in listeners_obj.listeners:
         if 'Rules' in listener:
             rules_obj = ELBListenerRules(elb_obj.connection, elb_obj.module, elb_obj.elb['LoadBalancerArn'], listener['Rules'], listener['Port'])
-
             rules_to_add, rules_to_modify, rules_to_delete = rules_obj.compare_rules()
+
+            # Exit on check_mode
+            if elb_obj.module.check_mode and (rules_to_add or rules_to_modify or rules_to_delete):
+                elb_obj.module.exit_json(changed=True, msg='Would have updated ELB if not in check mode.')
 
             # Delete rules
             if elb_obj.module.params['purge_rules']:
@@ -566,8 +583,17 @@ def create_or_update_elb(elb_obj):
                 elb_obj.changed = True
 
     # Update ELB ip address type only if option has been provided
-    if elb_obj.module.params.get('ip_address_type') is not None:
+    if elb_obj.module.params.get('ip_address_type') and elb_obj.elb_ip_addr_type != elb_obj.module.params.get('ip_address_type'):
+        # Exit on check_mode
+        if elb_obj.module.check_mode:
+            elb_obj.module.exit_json(changed=True, msg='Would have updated ELB if not in check mode.')
+
         elb_obj.modify_ip_address_type(elb_obj.module.params.get('ip_address_type'))
+
+    # Exit on check_mode - no changes
+    if elb_obj.module.check_mode:
+        elb_obj.module.exit_json(changed=False, msg='IN CHECK MODE - no changes to make to ELB specified.')
+
     # Get the ELB again
     elb_obj.update()
 
@@ -598,12 +624,23 @@ def create_or_update_elb(elb_obj):
 def delete_elb(elb_obj):
 
     if elb_obj.elb:
+
+        # Exit on check_mode
+        if elb_obj.module.check_mode:
+            elb_obj.module.exit_json(changed=True, msg='Would have deleted ELB if not in check mode.')
+
         listeners_obj = ELBListeners(elb_obj.connection, elb_obj.module, elb_obj.elb['LoadBalancerArn'])
         for listener_to_delete in [i['ListenerArn'] for i in listeners_obj.current_listeners]:
             listener_obj = ELBListener(elb_obj.connection, elb_obj.module, listener_to_delete, elb_obj.elb['LoadBalancerArn'])
             listener_obj.delete()
 
         elb_obj.delete()
+
+    else:
+
+        # Exit on check_mode - no changes
+        if elb_obj.module.check_mode:
+            elb_obj.module.exit_json(changed=False, msg='IN CHECK MODE - ELB already absent.')
 
     elb_obj.module.exit_json(changed=elb_obj.changed)
 
@@ -648,7 +685,8 @@ def main():
                               ],
                               required_together=[
                                   ['access_logs_enabled', 'access_logs_s3_bucket']
-                              ]
+                              ],
+                              supports_check_mode=True,
                               )
 
     # Quick check of listeners parameters
@@ -672,7 +710,7 @@ def main():
 
     if state == 'present':
         create_or_update_elb(elb)
-    else:
+    elif state == 'absent':
         delete_elb(elb)
 
 
