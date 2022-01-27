@@ -181,8 +181,7 @@ def get_or_create_policy_version(policy, policy_document):
 
     for v in versions:
         try:
-            document = client.get_policy_version(PolicyArn=policy['Arn'],
-                                              VersionId=v['VersionId'])['PolicyVersion']['Document']
+            document = client.get_policy_version(PolicyArn=policy['Arn'], VersionId=v['VersionId'])['PolicyVersion']['Document']
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't get policy version {0}".format(v['VersionId']))
 
@@ -281,8 +280,7 @@ def create_or_update_policy(existing_policy):
 
         # Create policy when none already exists
         try:
-            rvalue = client.create_policy(PolicyName=name, Path='/',
-                                        PolicyDocument=policy, Description=description)
+            rvalue = client.create_policy(PolicyName=name, Path='/', PolicyDocument=policy, Description=description)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't create policy {0}".format(name))
 
