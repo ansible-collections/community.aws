@@ -26,8 +26,8 @@ options:
   partition_count:
     description:
       - The number of partitions.
-      - Valid only when Strategy is set to partition.
-      - Must be a value between 1 and 7.
+      - Valid only when I(Strategy) is set to C(partition).
+      - Must be a value between C(1) and C(7).
     type: int
     version_added: 3.1.0
   state:
