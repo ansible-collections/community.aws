@@ -190,7 +190,7 @@ def main():
         # Short names can't contain ':' so we'll assume this is the full ARN
         sns_kwargs['TopicArn'] = topic
     else:
-        sns_kwargs['TopicArn'] = topic_arn_lookup(module, client, topic)
+        sns_kwargs['TopicArn'] = topic_arn_lookup(client, module, topic)
 
     if not sns_kwargs['TopicArn']:
         module.fail_json(msg='Could not find topic: {0}'.format(topic))
