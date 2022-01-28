@@ -47,6 +47,7 @@
           az: a
         - cidr: "{{ private_subnet_cidr_2 }}"
           az: b
+      register: private_subnets
 
     - name: Create public subnets with ipv6
       ec2_vpc_subnet:
@@ -74,8 +75,8 @@
 
     - name: Create list of subnet ids
       set_fact:
-        public_subnets: '{{ vpc_subnets|community.general.json_query(''subnets[?tags.Public == `True`].id'') }}'
-        private_subnets: '{{ vpc_subnets|community.general.json_query(''subnets[?tags.Public != `True`].id'') }}'
+        public_subnets: "{{ public_subnets.results | map(attribute='subnet') | map(attribute='id') }}"
+        private_subnets: "{{ private_subnets.results | map(attribute='subnet') | map(attribute='id') }}"
 
     - name: Create a route table
       ec2_vpc_route_table:
@@ -429,7 +430,7 @@
         that:
           - elb is changed
           - elb.listeners[0].rules | length == 2
-          - "'1' in {{ elb.listeners[0] | community.general.json_query('rules[*].priority') }}"
+          - "'1' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
 
     - name: Update an ELB with different listener by adding rule (idempotence) - check_mode
       elb_application_lb:
@@ -487,7 +488,7 @@
         that:
           - elb is not changed
           - elb.listeners[0].rules | length == 2
-          - "'1' in {{ elb.listeners[0] | community.general.json_query('rules[*].priority') }}"
+          - "'1' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
 
     # ------------------------------------------------------------------------------------------
 
@@ -547,7 +548,7 @@
         that:
           - elb is changed
           - elb.listeners[0].rules | length == 2
-          - "'2' in {{ elb.listeners[0] | community.general.json_query('rules[*].priority') }}"
+          - "'2' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
 
     - name: Update an ELB with different listener by modifying rule (idempotence) - check_mode
       elb_application_lb:
@@ -605,7 +606,7 @@
         that:
           - elb is not changed
           - elb.listeners[0].rules | length == 2
-          - "'2' in {{ elb.listeners[0] | community.general.json_query('rules[*].priority') }}"
+          - "'2' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
 
     # ------------------------------------------------------------------------------------------
 
@@ -649,7 +650,7 @@
         that:
           - elb is changed
           - elb.listeners[0].rules | length == 1
-          - "'2' not in {{ elb.listeners[0] | community.general.json_query('rules[*].priority') }}"
+          - "'2' not in {{ elb.listeners[0].rules | map(attribute='priority') }}"
 
     - name: Update an ELB with different listener by deleting rule (idempotence) - check_mode
       elb_application_lb:
@@ -691,7 +692,7 @@
         that:
           - elb is not changed
           - elb.listeners[0].rules | length == 1
-          - "'2' not in {{ elb.listeners[0] | community.general.json_query('rules[*].priority') }}"
+          - "'2' not in {{ elb.listeners[0].rules | map(attribute='priority') }}"
 
     # ------------------------------------------------------------------------------------------
 
