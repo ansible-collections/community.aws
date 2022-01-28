@@ -51,6 +51,7 @@
         id: "{{ instance_id }}"
         state: present
         allocated_storage: "{{ io1_modified_allocated_storage }}"
+        storage_type: "{{ storage_type }}"
         db_instance_class: "{{ modified_db_instance_class }}"
         backup_retention_period: 2
         preferred_backup_window: "05:00-06:00"
@@ -67,7 +68,7 @@
     - assert:
         that:
           - result.changed
-          - '"allocated_storage" in result.pending_modified_values or result.allocated_storage == io1_allocated_storage'
+          - '"allocated_storage" in result.pending_modified_values or result.allocated_storage == io1_modified_allocated_storage'
           - '"max_allocated_storage" in result.pending_modified_values or result.max_allocated_storage == 150'
           - '"port" in result.pending_modified_values or result.endpoint.port == 1150'
           - '"db_instance_class" in result.pending_modified_values or result.db_instance_class == modified_db_instance_class'
@@ -78,6 +79,7 @@
         id: "{{ instance_id }}"
         state: present
         allocated_storage: "{{ io1_modified_allocated_storage }}"
+        storage_type: "{{ storage_type }}"
         db_instance_class: "{{ modified_db_instance_class }}"
         backup_retention_period: 2
         preferred_backup_window: "05:00-06:00"

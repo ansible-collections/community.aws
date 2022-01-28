@@ -22,9 +22,7 @@
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
-        allocated_storage: "{{ io1_allocated_storage }}"
-        storage_type: "{{ storage_type }}"
-        iops: "{{ iops }}"
+        allocated_storage: "{{ allocated_storage }}"
       register: result
 
     - assert:
@@ -44,9 +42,7 @@
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
-        allocated_storage: "{{ io1_allocated_storage }}"
-        storage_type: "{{ storage_type }}"
-        iops: "{{ iops }}"
+        allocated_storage: "{{ allocated_storage }}"
         apply_immediately: True
       register: result
 
@@ -65,9 +61,7 @@
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
-        allocated_storage: "{{ io1_allocated_storage }}"
-        storage_type: "{{ storage_type }}"
-        iops: "{{ iops }}"
+        allocated_storage: "{{ allocated_storage }}"
         apply_immediately: True
       register: result
 

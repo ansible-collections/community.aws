@@ -924,7 +924,7 @@ def get_current_attributes_with_inconsistent_keys(instance):
     if instance.get('PendingModifiedValues', {}).get('Port'):
         options['DBPortNumber'] = instance['PendingModifiedValues']['Port']
     else:
-        options['DBPortNumber'] = instance.get('Endpoint', {}).get('Port', None)
+        options['DBPortNumber'] = instance['Endpoint']['Port']
     if instance.get('PendingModifiedValues', {}).get('DBSubnetGroupName'):
         options['DBSubnetGroupName'] = instance['PendingModifiedValues']['DBSubnetGroupName']
     else:
