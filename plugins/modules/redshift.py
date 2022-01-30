@@ -180,8 +180,8 @@ options:
     default: 'yes'
     version_added: "1.3.0"
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 '''
 
 EXAMPLES = r'''

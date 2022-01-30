@@ -160,9 +160,8 @@ options:
 author:
   - Matthew Davis (@matt-telstra) on behalf of Telstra Corporation Limited
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-
+- amazon.aws.aws
+- amazon.aws.ec2
 '''
 
 EXAMPLES = '''

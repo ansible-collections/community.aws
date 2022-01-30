@@ -207,8 +207,8 @@ options:
         default: true
         type: bool
 extends_documentation_fragment:
-    - amazon.aws.aws
-    - amazon.aws.ec2
+- amazon.aws.aws
+- amazon.aws.ec2
 notes:
     - All operations are time consuming, for example create takes 20-30 minutes,
       update kafka version -- more than one hour, update configuration -- 10-15 minutes;
