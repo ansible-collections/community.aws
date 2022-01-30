@@ -143,11 +143,6 @@
       community.aws.ec2_placement_group_info:
       register: all_ec2_placement_groups
 
-    # - assert:
-    #     that:
-    #       - all_ec2_placement_groups.placement_groups | length == 3
-    #       - '"ec2:DescribePlacementGroups" in all_ec2_placement_groups.resource_actions'
-
     - name: Delete a placement group 1
       community.aws.ec2_placement_group:
         name: '{{ resource_prefix }}-pg1'
@@ -217,11 +212,6 @@
     - name: List all placement groups.
       community.aws.ec2_placement_group_info:
       register: all_ec2_placement_groups
-
-    # - assert:
-    #     that:
-    #       - all_ec2_placement_groups.placement_groups | length == 0
-    #       - '"ec2:DescribePlacementGroups" in all_ec2_placement_groups.resource_actions'
 
   always:
 
