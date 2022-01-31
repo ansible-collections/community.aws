@@ -68,11 +68,6 @@
           vpc_ipv6_cidr: "{{ vpc.vpc.ipv6_cidr_block_association_set[0].ipv6_cidr_block | replace('0::/56','1::/64') }}"
       register: public_subnets
 
-    - ec2_vpc_subnet_info:
-        filters:
-          vpc-id: '{{ vpc_id }}'
-      register: vpc_subnets
-
     - name: Create list of subnet ids
       set_fact:
         public_subnets: "{{ public_subnets.results | map(attribute='subnet') | map(attribute='id') }}"
@@ -125,7 +120,7 @@
         state: present
       register: tg
 
-    # ================ elb_application_lb tests ===================================================
+    # ---------------- elb_application_lb tests ---------------------------------------------------
 
     - name: Create an ELB (invalid - SslPolicy is required when Protocol == HTTPS)
       elb_application_lb:

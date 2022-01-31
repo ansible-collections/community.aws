@@ -37,27 +37,27 @@ extends_documentation_fragment:
 EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- name: Gather information about all target groups
+- name: Gather information about all ELBs
   community.aws.elb_application_lb_info:
 
-- name: Gather information about the target group attached to a particular ELB
+- name: Gather information about a particular ELB given its ARN
   community.aws.elb_application_lb_info:
     load_balancer_arns:
       - "arn:aws:elasticloadbalancing:ap-southeast-2:001122334455:loadbalancer/app/my-elb/aabbccddeeff"
 
-- name: Gather information about a target groups named 'tg1' and 'tg2'
+- name: Gather information about ELBs named 'elb1' and 'elb2'
   community.aws.elb_application_lb_info:
     names:
       - elb1
       - elb2
 
-- name: Gather information about specific ALB
+- name: Gather information about specific ELB
   community.aws.elb_application_lb_info:
-    names: "alb-name"
+    names: "elb-name"
     region: "aws-region"
-  register: alb_info
+  register: elb_info
 - ansible.builtin.debug:
-    var: alb_info
+    var: elb_info
 '''
 
 RETURN = r'''
@@ -244,8 +244,8 @@ def list_load_balancers(connection, module):
 def main():
 
     argument_spec = dict(
-        load_balancer_arns=dict(type='list', elements='str'),
-        names=dict(type='list', elements='str')
+        load_balancer_arns=dict(type='list', elements='str', required='no'),
+        names=dict(type='list', elements='str', required='no')
     )
 
     module = AnsibleAWSModule(
