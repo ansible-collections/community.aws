@@ -244,8 +244,8 @@ def list_load_balancers(connection, module):
 def main():
 
     argument_spec = dict(
-        load_balancer_arns=dict(type='list', elements='str', required='no'),
-        names=dict(type='list', elements='str', required='no')
+        load_balancer_arns=dict(type='list', elements='str'),
+        names=dict(type='list', elements='str')
     )
 
     module = AnsibleAWSModule(

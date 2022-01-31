@@ -132,7 +132,7 @@
           - elb.ip_address_type == 'dualstack'
 
     - name: Get ELB application info using no args
-      elb_application_lb:
+      elb_application_lb_info:
       register: elb_app_lb_info
 
     - assert:
