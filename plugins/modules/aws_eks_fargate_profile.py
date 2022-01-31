@@ -161,7 +161,8 @@ def create_fargate_profile(client, module):
     clusterName = module.params['cluster_name']
     selectors = module.params['selectors']
     wait = module.params.get('wait')
-    fargateProfile = get_fargate_profile(client, module)
+    fargateProfile = get_fargate_profile(client, module, name, clusterName)
+    
     try:
         ec2 = module.client('ec2')
         vpc_id = ec2.describe_subnets(SubnetIds=[subnets[0]])['Subnets'][0]['VpcId']
@@ -169,23 +170,23 @@ def create_fargate_profile(client, module):
         module.fail_json_aws(e, msg="Couldn't not find subnets")
 
     if fargateProfile:
-        if set(fargateProfile['clusterName']) != set(clusterName):
-            module.fail_json(msg="Cannot modify cluster")
         if set(fargateProfile['podExecutionRoleArn']) != set(roleArn):
             module.fail_json(msg="Cannot modify Execution Role")
         if set(fargateProfile['subnets']) != set(subnets):
             module.fail_json(msg="Cannot modify Subnets")
         if set(fargateProfile['selectors']) != set(selectors):
-            module.fail_json(msg="Cannot modify Selectors")      
-
+            module.fail_json(msg="Cannot modify Selectors")
         if wait:
-            wait_until(client, module, 'fargate_profile_active')
-            fargateProfile = get_fargate_profile(client, module)
+            wait_until(client, module, 'fargate_profile_active', name, clusterName)
+            fargateProfile = get_fargate_profile(client, module, name, clusterName)
 
         module.exit_json(changed=False, **camel_dict_to_snake_dict(fargateProfile))
 
     if module.check_mode:
         module.exit_json(changed=True)
+    
+    check_profiles_status(client, module, clusterName)
+    
     try:
         params = dict(fargateProfileName=name,
                       podExecutionRoleArn=roleArn,
@@ -194,12 +195,14 @@ def create_fargate_profile(client, module):
                       selectors=selectors
                       )
         fargateProfile = client.create_fargate_profile(**params)
+    except botocore.exceptions.ClientError as e:
+        module.fail_json(msg="Region %s is not supported by EKS" % client.meta.region_name)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Couldn't create fargate profile %s" % name)
 
     if wait:
-        wait_until(client, module, 'fargate_profile_active')
-        fargateProfile = get_fargate_profile(client, module)
+        wait_until(client, module, 'fargate_profile_active', name, clusterName)
+        fargateProfile = get_fargate_profile(client, module, name, clusterName)
 
     module.exit_json(changed=True, **camel_dict_to_snake_dict(fargateProfile))
 
@@ -207,46 +210,55 @@ def create_fargate_profile(client, module):
 def delete_fargate_profile(client, module):
     name = module.params.get('name')
     clusterName = module.params['cluster_name']
-    existing = get_fargate_profile(client, module)
+    existing = get_fargate_profile(client, module, name, clusterName)
     wait = module.params.get('wait')
     if not existing:
         module.exit_json(changed=False)
     if not module.check_mode:
+
+        check_profiles_status(client, module, clusterName)
+        
         try:
-            client.delete_fargate_profile(clusterName=clusterName,fargateProfuleName=name)
+            client.delete_fargate_profile(clusterName=clusterName,fargateProfileName=name)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Couldn't delete fargate profile %s" % name)
 
     if wait:
-        wait_until(client, module, 'fargate_profile_deleted')
+        wait_until(client, module, 'fargate_profile_deleted', name, clusterName)
 
     module.exit_json(changed=True)
 
-def get_fargate_profile(client, module):
-    name = module.params.get('name')
-    cluster_name = module.params.get('cluster_name')
+def get_fargate_profile(client, module, name, cluster_name):    
     try:
-        return client.describe_fargate_profile(clusterName=cluster_name, fargateProfileName=name)
+        return client.describe_fargate_profile(clusterName=cluster_name, fargateProfileName=name)['fargateProfile']
     except is_boto3_error_code('ResourceNotFoundException'):
         return None
-
-def wait_until(client, module, waiter_name='fargate_profile_active'):
-    name = module.params.get('name')
-    clusterName = module.params.get('clusterName')
+      
+def check_profiles_status(client, module, clusterName):
+    
+    list_profiles = client.list_fargate_profiles(clusterName=clusterName)
+    
+    for name in list_profiles["fargateProfileNames"] :
+        fargate_profile = get_fargate_profile(client, module, name, clusterName)
+        if fargate_profile["status"] == 'CREATING' :
+            wait_until(client, module, 'fargate_profile_active', fargate_profile["fargateProfileName"], clusterName)
+        elif fargate_profile["status"] == 'DELETING' :
+           wait_until(client, module, 'fargate_profile_deleted', fargate_profile["fargateProfileName"], clusterName)
+  
+def wait_until(client, module, waiter_name, name, clusterName):    
     wait_timeout = module.params.get('wait_timeout')
-
+    
     waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
     waiter.wait(clusterName=clusterName, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
-
-
+    
 def main():
     argument_spec = dict(
         name=dict(required=True),
         cluster_name=dict(required=True),
-        role_arn=dict(required=True),
-        subnets=dict(type='list', elements='str', required=True),   
-        selectors=dict(type='list', required=True),     
+        role_arn=dict(),
+        subnets=dict(type='list', elements='str'),   
+        selectors=dict(type='list'),     
         state=dict(choices=['absent', 'present'], default='present'),
         wait=dict(default=False, type='bool'),
         wait_timeout=dict(default=1200, type='int')
@@ -264,7 +276,6 @@ def main():
         create_fargate_profile(client, module)
     else:
         delete_fargate_profile(client, module)
-
 
 if __name__ == '__main__':
     main()
