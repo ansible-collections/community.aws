@@ -498,7 +498,7 @@ def create_or_update_target_group(connection, module):
     tags = module.params.get("tags")
     purge_tags = module.params.get("purge_tags")
     deregistration_delay_timeout = module.params.get("deregistration_delay_timeout")
-    deregistration_connection_termination  = module.params.get("deregistration_connection_termination")
+    deregistration_connection_termination = module.params.get("deregistration_connection_termination")
     stickiness_enabled = module.params.get("stickiness_enabled")
     stickiness_lb_cookie_duration = module.params.get("stickiness_lb_cookie_duration")
     stickiness_type = module.params.get("stickiness_type")
