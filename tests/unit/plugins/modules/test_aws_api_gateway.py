@@ -11,8 +11,8 @@ __metaclass__ = type
 import sys
 import pytest
 
-from ansible_collections.amazon.aws.plugins.module_utils import core
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import HAS_BOTO3
+from ansible_collections.amazon.aws.plugins.module_utils import modules as aws_modules
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import set_module_args
 
 import ansible_collections.community.aws.plugins.modules.aws_api_gateway as agw
@@ -41,8 +41,10 @@ def test_upload_api(monkeypatch):
     def return_fake_connection(*args, **kwargs):
         return FakeConnection()
 
-    monkeypatch.setattr(core, "boto3_conn", return_fake_connection)
-    monkeypatch.setattr(core.AnsibleAWSModule, "exit_json", fake_exit_json)
+    # Because it's imported into the aws_modules namespace we need to override
+    # it there, even though the function itself lives in module_utils.botocore
+    monkeypatch.setattr(aws_modules, "boto3_conn", return_fake_connection)
+    monkeypatch.setattr(aws_modules.AnsibleAWSModule, "exit_json", fake_exit_json)
 
     set_module_args({
         "api_id": "fred",
