@@ -12,7 +12,7 @@
         state: present
       register: metadata_options_launch_template
       ignore_errors: yes
-    - name: instance with metadata_options created with the right options
+    - name: verify fail with usefull error message
       assert:
         that:
           - metadata_options_launch_template.failed
