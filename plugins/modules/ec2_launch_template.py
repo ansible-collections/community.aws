@@ -533,10 +533,11 @@ def create_or_update(module, template_options):
     lt_data = params_to_launch_data(module, dict((k, v) for k, v in module.params.items() if k in template_options))
     lt_data = scrub_none_parameters(lt_data, descend_into_lists=True)
 
-    if not module.boto3_at_least('1.20.30'):
-        lt_data['MetadataOptions'].pop('InstanceMetadataTags')
-    if not module.boto3_at_least('1.18.29'):
-        lt_data['MetadataOptions'].pop('HttpProtocolIpv6')
+    if lt_data.get('MetadataOptions'):
+        if not module.boto3_at_least('1.20.30'):
+            lt_data['MetadataOptions'].pop('InstanceMetadataTags')
+        if not module.boto3_at_least('1.18.29'):
+            lt_data['MetadataOptions'].pop('HttpProtocolIpv6')
 
     if not (template or template_versions):
         # create a full new one
