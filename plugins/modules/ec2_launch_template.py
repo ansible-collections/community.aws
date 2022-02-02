@@ -353,6 +353,21 @@ options:
           The state of token usage for your instance metadata requests.
         choices: [optional, required]
         default: 'optional'
+      http_protocol_ipv6:
+        version_added: 3.1.0
+        type: str
+        description: >
+          - Wether the instance metadata endpoint is available via IPv6 (C(enabled)) or not (C(disabled)).
+        choices: [enabled, disabled]
+        default: 'disabled'
+      instance_metadata_tags:
+        version_added: 3.1.0
+        type: str
+        description:
+          - Wether the instance tags are availble (C(enabled)) via metadata endpoint or not (C(disabled)).
+          - Requires boto3 >= 1.20.46
+        choices: [enabled, disabled]
+        default: 'disabled'
 '''
 
 EXAMPLES = '''
@@ -671,7 +686,9 @@ def main():
             options=dict(
                 http_endpoint=dict(choices=['enabled', 'disabled'], default='enabled'),
                 http_put_response_hop_limit=dict(type='int', default=1),
-                http_tokens=dict(choices=['optional', 'required'], default='optional')
+                http_tokens=dict(choices=['optional', 'required'], default='optional'),
+                http_protocol_ipv6=dict(choices=['disabled', 'enabled'], default='disabled'),
+                instance_metadata_tags=dict(choices=['disabled', 'enabled'], default='disabled'),
             )
         ),
         network_interfaces=dict(
