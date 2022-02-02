@@ -535,8 +535,15 @@ def create_or_update(module, template_options):
 
     if lt_data.get('MetadataOptions'):
         if not module.boto3_at_least('1.20.30'):
+            # warning if enabled is requested, because disabled is the API default value.
+            if lt_data['MetadataOptions'].get('InstanceMetadataTags') == 'enabled':
+                module.warn('Metadata option "instance_metadata_tags" is ignored, because it requires boto3 >= 1.20.30.')
             lt_data['MetadataOptions'].pop('InstanceMetadataTags')
+
         if not module.boto3_at_least('1.18.29'):
+            # warning if enabled is requested, because disabled is the API default value.
+            if lt_data['MetadataOptions'].get('HttpProtocolIpv6') == 'enabled':
+                module.warn('Metadata option "http_protocol_ipv6" is ignored, because it requires boto3 >= 1.18.29.')
             lt_data['MetadataOptions'].pop('HttpProtocolIpv6')
 
     if not (template or template_versions):
