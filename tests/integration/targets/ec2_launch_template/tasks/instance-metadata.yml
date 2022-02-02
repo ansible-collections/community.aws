@@ -30,48 +30,33 @@
       ignore_errors: true
 
 - name: test with boto3 version that supports instance_metadata_tags
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   block:
-    - pip:
-        name: virtualenv
-    - set_fact:
-        virtualenv: "{{ remote_tmp_dir }}/virtualenv"
-        virtualenv_command: "{{ ansible_python_interpreter }} -m virtualenv"
-    - set_fact:
-        virtualenv_interpreter: "{{ virtualenv }}/bin/python"
-    - pip:
-        name:
-          - 'boto3>=1.20.30'
-        virtualenv: '{{ virtualenv }}'
-        virtualenv_command: '{{ virtualenv_command }}'
-        virtualenv_site_packages: no
-    - name: Wrap test in virtualenv
-      vars:
-        ansible_python_interpreter: "{{ virtualenv }}/bin/python"
-      block:
-        - name: metadata_options
-          ec2_launch_template:
-            name: "{{ resource_prefix }}-test-metadata"
-            metadata_options:
-              http_put_response_hop_limit: 1
-              http_tokens: required
-              http_protocol_ipv6: enabled
-              instance_metadata_tags: enabled
-            state: present
-          register: metadata_options_launch_template
-        - name: instance with metadata_options created with the right options
-          assert:
-            that:
-              - metadata_options_launch_template is changed
-              - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_put_response_hop_limit == 1"
-              - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_tokens == 'required'"
-              - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_protocol_ipv6 == 'enabled'"
-              - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.instance_metadata_tags == 'enabled'"
-      always:
-        - name: delete the template
-          ec2_launch_template:
-            name: "{{ resource_prefix }}-test-metadata"
-            state: absent
-          register: del_lt
-          retries: 10
-          until: del_lt is not failed
-          ignore_errors: true
+    - name: metadata_options
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        metadata_options:
+          http_put_response_hop_limit: 1
+          http_tokens: required
+          http_protocol_ipv6: enabled
+          instance_metadata_tags: enabled
+        state: present
+      register: metadata_options_launch_template
+    - name: instance with metadata_options created with the right options
+      assert:
+        that:
+          - metadata_options_launch_template is changed
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_put_response_hop_limit == 1"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_tokens == 'required'"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_protocol_ipv6 == 'enabled'"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.instance_metadata_tags == 'enabled'"
+  always:
+    - name: delete the template
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        state: absent
+      register: del_lt
+      retries: 10
+      until: del_lt is not failed
+      ignore_errors: true
