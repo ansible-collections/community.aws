@@ -463,6 +463,11 @@ vpc_id:
     returned: when state is present
     type: str
     sample: vpc-0011223344
+waf_fail_open_enabled:
+    description: Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
+    returned: when state is present
+    type: bool
+    sample: false
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
