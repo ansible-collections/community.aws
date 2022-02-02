@@ -17,7 +17,7 @@
           - metadata_options_launch_template is changed
           - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_put_response_hop_limit == 1"
           - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_tokens == 'required'"
-          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_protocol_ipv6 == 'enabled'"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_protocol_ipv6 is not defined"
           - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.instance_metadata_tags is not defined"
   always:
     - name: delete the template
@@ -40,7 +40,7 @@
         virtualenv_interpreter: "{{ virtualenv }}/bin/python"
     - pip:
         name:
-          - 'boto3>=1.20.46'
+          - 'boto3>=1.20.30'
         virtualenv: '{{ virtualenv }}'
         virtualenv_command: '{{ virtualenv_command }}'
         virtualenv_site_packages: no

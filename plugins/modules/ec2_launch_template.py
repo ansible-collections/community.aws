@@ -358,6 +358,7 @@ options:
         type: str
         description: >
           - Wether the instance metadata endpoint is available via IPv6 (C(enabled)) or not (C(disabled)).
+          - Requires boto3 >= 1.18.29
         choices: [enabled, disabled]
         default: 'disabled'
       instance_metadata_tags:
@@ -365,7 +366,7 @@ options:
         type: str
         description:
           - Wether the instance tags are availble (C(enabled)) via metadata endpoint or not (C(disabled)).
-          - Requires boto3 >= 1.20.46
+          - Requires boto3 >= 1.20.30
         choices: [enabled, disabled]
         default: 'disabled'
 '''
@@ -526,14 +527,17 @@ def delete_template(module):
 
 
 def create_or_update(module, template_options):
-    if not module.boto3_at_least('1.20.46'):
-        template_options['metadata_options']['options'].pop('instance_metadata_tags')
-
     ec2 = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff(catch_extra_error_codes=['InvalidLaunchTemplateId.NotFound']))
     template, template_versions = existing_templates(module)
     out = {}
     lt_data = params_to_launch_data(module, dict((k, v) for k, v in module.params.items() if k in template_options))
     lt_data = scrub_none_parameters(lt_data, descend_into_lists=True)
+
+    if not module.boto3_at_least('1.20.30'):
+        lt_data['MetadataOptions'].pop('InstanceMetadataTags')
+    if not module.boto3_at_least('1.18.29'):
+        lt_data['MetadataOptions'].pop('HttpProtocolIpv6')
+
     if not (template or template_versions):
         # create a full new one
         try:
