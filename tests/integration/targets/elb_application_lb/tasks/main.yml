@@ -995,6 +995,45 @@
 
     # ------------------------------------------------------------------------------------------
 
+    - name: Ensure elb_application_lb_info supports check_mode
+      elb_application_lb_info:
+      register: elb_info
+      check_mode: yes
+
+    - assert:
+        that:
+          - elb_info.load_balancers | length > 0
+
+    - name: Get ELB application info using no args
+      elb_application_lb_info:
+      register: elb_info
+
+    - assert:
+        that:
+          - elb_info.load_balancers | length > 0
+
+    - name: Get ELB application info using load balancer arn
+      elb_application_lb_info:
+        load_balancer_arns:
+          - "{{ elb.load_balancer_arn }}"
+      register: elb_info
+
+    - assert:
+        that:
+          - elb_info.load_balancers[0].security_groups[0] == sec_group2.group_id
+
+    - name: Get ELB application info using load balancer name
+      elb_application_lb_info:
+        names:
+          - "{{ elb.load_balancer_name }}"
+      register: elb_info
+
+    - assert:
+        that:
+          - elb_info.load_balancers[0].security_groups[0] == sec_group2.group_id
+
+    # ------------------------------------------------------------------------------------------
+
     - name: Delete an ELB - check_mode
       elb_application_lb:
         name: "{{ elb_name }}"
