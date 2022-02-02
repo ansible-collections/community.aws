@@ -1,7 +1,7 @@
 ---
 - name: test with older boto3 version that does not support instance_metadata_tags
   block:
-    - name: metadata_options
+    - name: fail metadata_options
       ec2_launch_template:
         name: "{{ resource_prefix }}-test-metadata"
         metadata_options:
@@ -9,6 +9,22 @@
           http_tokens: required
           http_protocol_ipv6: enabled
           instance_metadata_tags: enabled
+        state: present
+      register: metadata_options_launch_template
+      ignore_errors: yes
+    - name: instance with metadata_options created with the right options
+      assert:
+        that:
+          - metadata_options_launch_template.failed
+          - metadata_options_launch_template is not changed
+          - "'This is required to set instance_metadata_tags' in metadata_options_launch_template.msg"
+
+    - name: success metadata_options
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        metadata_options:
+          http_put_response_hop_limit: 1
+          http_tokens: required
         state: present
       register: metadata_options_launch_template
     - name: instance with metadata_options created with the right options
