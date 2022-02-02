@@ -526,6 +526,9 @@ def delete_template(module):
 
 
 def create_or_update(module, template_options):
+    if not module.boto3_at_least('1.20.46'):
+        template_options['metadata_options']['options'].pop('instance_metadata_tags')
+
     ec2 = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff(catch_extra_error_codes=['InvalidLaunchTemplateId.NotFound']))
     template, template_versions = existing_templates(module)
     out = {}
