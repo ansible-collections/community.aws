@@ -1,24 +1,78 @@
-- block:
-  - name: metadata_options
-    ec2_launch_template:
-      name: "{{ resource_prefix }}-test-metadata"
-      metadata_options:
-        http_put_response_hop_limit: 1
-        http_tokens: required
-      state: present
-    register: metadata_options_launch_template
-  - name: instance with metadata_options created with the right options
-    assert:
-      that:
-        - metadata_options_launch_template is changed
-        - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_put_response_hop_limit == 1"
-        - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_tokens == 'required'"
+---
+- name: test with older boto3 version that does not support instance_metadata_tags
+  block:
+    - name: fail metadata_options
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        metadata_options:
+          http_put_response_hop_limit: 1
+          http_tokens: required
+          http_protocol_ipv6: enabled
+          instance_metadata_tags: enabled
+        state: present
+      register: metadata_options_launch_template
+      ignore_errors: yes
+    - name: verify fail with usefull error message
+      assert:
+        that:
+          - metadata_options_launch_template.failed
+          - metadata_options_launch_template is not changed
+          - "'This is required to set instance_metadata_tags' in metadata_options_launch_template.msg"
+
+    - name: success metadata_options
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        metadata_options:
+          http_put_response_hop_limit: 1
+          http_tokens: required
+        state: present
+      register: metadata_options_launch_template
+    - name: instance with metadata_options created with the right options
+      assert:
+        that:
+          - metadata_options_launch_template is changed
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_put_response_hop_limit == 1"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_tokens == 'required'"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_protocol_ipv6 is not defined"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.instance_metadata_tags is not defined"
   always:
-  - name: delete the template
-    ec2_launch_template:
-      name: "{{ resource_prefix }}-test-metadata"
-      state: absent
-    register: del_lt
-    retries: 10
-    until: del_lt is not failed
-    ignore_errors: true
+    - name: delete the template
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        state: absent
+      register: del_lt
+      retries: 10
+      until: del_lt is not failed
+      ignore_errors: true
+
+- name: test with boto3 version that supports instance_metadata_tags
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+  block:
+    - name: metadata_options
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        metadata_options:
+          http_put_response_hop_limit: 1
+          http_tokens: required
+          http_protocol_ipv6: enabled
+          instance_metadata_tags: enabled
+        state: present
+      register: metadata_options_launch_template
+    - name: instance with metadata_options created with the right options
+      assert:
+        that:
+          - metadata_options_launch_template is changed
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_put_response_hop_limit == 1"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_tokens == 'required'"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.http_protocol_ipv6 == 'enabled'"
+          - "metadata_options_launch_template.latest_template.launch_template_data.metadata_options.instance_metadata_tags == 'enabled'"
+  always:
+    - name: delete the template
+      ec2_launch_template:
+        name: "{{ resource_prefix }}-test-metadata"
+        state: absent
+      register: del_lt
+      retries: 10
+      until: del_lt is not failed
+      ignore_errors: true
