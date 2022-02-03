@@ -69,55 +69,131 @@ load_balancers:
         access_logs_s3_bucket:
             description: The name of the S3 bucket for the access logs.
             type: str
-            sample: mys3bucket
+            sample: "mys3bucket"
         access_logs_s3_enabled:
             description: Indicates whether access logs stored in Amazon S3 are enabled.
-            type: str
+            type: bool
             sample: true
         access_logs_s3_prefix:
             description: The prefix for the location in the S3 bucket.
             type: str
-            sample: /my/logs
+            sample: "my/logs"
         availability_zones:
             description: The Availability Zones for the load balancer.
             type: list
-            sample: "[{'subnet_id': 'subnet-aabbccddff', 'zone_name': 'ap-southeast-2a'}]"
+            sample: [{ "load_balancer_addresses": [], "subnet_id": "subnet-aabbccddff", "zone_name": "ap-southeast-2a" }]
         canonical_hosted_zone_id:
             description: The ID of the Amazon Route 53 hosted zone associated with the load balancer.
             type: str
-            sample: ABCDEF12345678
+            sample: "ABCDEF12345678"
+        changed:
+            description: Whether an ELB was created/updated/deleted
+            type: bool
+            sample: true
         created_time:
             description: The date and time the load balancer was created.
             type: str
             sample: "2015-02-12T02:14:02+00:00"
         deletion_protection_enabled:
             description: Indicates whether deletion protection is enabled.
-            type: str
+            type: bool
             sample: true
         dns_name:
             description: The public DNS name of the load balancer.
             type: str
-            sample: internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com
+            sample: "internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com"
+        failed:
+            description: Indicates whether or not the action has failed.
+            type: bool
+            sample: false
         idle_timeout_timeout_seconds:
             description: The idle timeout value, in seconds.
-            type: str
+            type: int
             sample: 60
         ip_address_type:
-            description:  The type of IP addresses used by the subnets for the load balancer.
+            description: The type of IP addresses used by the subnets for the load balancer.
             type: str
-            sample: ipv4
+            sample: "ipv4"
+        listeners:
+            description: Information about the listeners.
+            type: complex
+            contains:
+                listener_arn:
+                    description: The Amazon Resource Name (ARN) of the listener.
+                    type: str
+                    sample: ""
+                load_balancer_arn:
+                    description: The Amazon Resource Name (ARN) of the load balancer.
+                    type: str
+                    sample: ""
+                port:
+                    description: The port on which the load balancer is listening.
+                    type: int
+                    sample: 80
+                protocol:
+                    description: The protocol for connections from clients to the load balancer.
+                    type: str
+                    sample: "HTTPS"
+                certificates:
+                    description: The SSL server certificate.
+                    type: complex
+                    contains:
+                        certificate_arn:
+                            description: The Amazon Resource Name (ARN) of the certificate.
+                            type: str
+                            sample: ""
+                ssl_policy:
+                    description: The security policy that defines which ciphers and protocols are supported.
+                    type: str
+                    sample: ""
+                default_actions:
+                    description: The default actions for the listener.
+                    type: str
+                    contains:
+                        type:
+                            description: The type of action.
+                            type: str
+                            sample: ""
+                        target_group_arn:
+                            description: The Amazon Resource Name (ARN) of the target group.
+                            type: str
+                            sample: ""
         load_balancer_arn:
             description: The Amazon Resource Name (ARN) of the load balancer.
             type: str
-            sample: arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455
+            sample: "arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455"
         load_balancer_name:
             description: The name of the load balancer.
             type: str
-            sample: my-elb
+            sample: "my-elb"
+        resource_actions:
+            description: List of AWS actions performed.
+            type: list
+            sample: ["elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeLoadBalancers"]
+        routing_http2_enabled:
+            description: Indicates whether HTTP/2 is enabled.
+            type: bool
+            sample: true
+        routing_http_desync_mitigation_mode:
+            description: Determines how the load balancer handles requests that might pose a security risk to an application.
+            type: str
+            sample: "defensive"
+        routing_http_drop_invalid_header_fields_enabled:
+            description: Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).
+            type: bool
+            sample: false
+        routing_http_x_amzn_tls_version_and_cipher_suite_enabled:
+            description: Indicates whether the two headers are added to the client request before sending it to the target.
+            type: bool
+            sample: false
+        routing_http_xff_client_port_enabled:
+            description: Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.
+            type: bool
+            sample: false
         scheme:
             description: Internet-facing or internal load balancer.
             type: str
-            sample: internal
+            sample: "internal"
         security_groups:
             description: The IDs of the security groups for the load balancer.
             type: list
@@ -125,21 +201,25 @@ load_balancers:
         state:
             description: The state of the load balancer.
             type: dict
-            sample: "{'code': 'active'}"
+            sample: {'code': 'active'}
         tags:
             description: The tags attached to the load balancer.
             type: dict
-            sample: "{
+            sample: {
                 'Tag': 'Example'
-            }"
+            }
         type:
             description: The type of load balancer.
             type: str
-            sample: application
+            sample: "application"
         vpc_id:
             description: The ID of the VPC for the load balancer.
             type: str
-            sample: vpc-0011223344
+            sample: "vpc-0011223344"
+        waf_fail_open_enabled:
+            description: Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
+            type: bool
+            sample: false
 '''
 
 try:

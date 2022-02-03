@@ -315,27 +315,32 @@ access_logs_s3_bucket:
     description: The name of the S3 bucket for the access logs.
     returned: when state is present
     type: str
-    sample: mys3bucket
+    sample: "mys3bucket"
 access_logs_s3_enabled:
     description: Indicates whether access logs stored in Amazon S3 are enabled.
     returned: when state is present
-    type: str
+    type: bool
     sample: true
 access_logs_s3_prefix:
     description: The prefix for the location in the S3 bucket.
     returned: when state is present
     type: str
-    sample: my/logs
+    sample: "my/logs"
 availability_zones:
     description: The Availability Zones for the load balancer.
     returned: when state is present
     type: list
-    sample: "[{'subnet_id': 'subnet-aabbccddff', 'zone_name': 'ap-southeast-2a'}]"
+    sample: [{ "load_balancer_addresses": [], "subnet_id": "subnet-aabbccddff", "zone_name": "ap-southeast-2a" }]
 canonical_hosted_zone_id:
     description: The ID of the Amazon Route 53 hosted zone associated with the load balancer.
     returned: when state is present
     type: str
-    sample: ABCDEF12345678
+    sample: "ABCDEF12345678"
+changed:
+    description: Whether an ELB was created/updated/deleted
+    returned: always
+    type: bool
+    sample: true
 created_time:
     description: The date and time the load balancer was created.
     returned: when state is present
@@ -344,23 +349,28 @@ created_time:
 deletion_protection_enabled:
     description: Indicates whether deletion protection is enabled.
     returned: when state is present
-    type: str
+    type: bool
     sample: true
 dns_name:
     description: The public DNS name of the load balancer.
     returned: when state is present
     type: str
-    sample: internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com
+    sample: "internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com"
+failed:
+    description: Indicates whether or not the action has failed.
+    returned: always
+    type: bool
+    sample: false
 idle_timeout_timeout_seconds:
     description: The idle timeout value, in seconds.
     returned: when state is present
     type: int
     sample: 60
 ip_address_type:
-    description:  The type of IP addresses used by the subnets for the load balancer.
+    description: The type of IP addresses used by the subnets for the load balancer.
     returned: when state is present
     type: str
-    sample: ipv4
+    sample: "ipv4"
 listeners:
     description: Information about the listeners.
     returned: when state is present
@@ -385,7 +395,7 @@ listeners:
             description: The protocol for connections from clients to the load balancer.
             returned: when state is present
             type: str
-            sample: HTTPS
+            sample: "HTTPS"
         certificates:
             description: The SSL server certificate.
             returned: when state is present
@@ -420,22 +430,47 @@ load_balancer_arn:
     description: The Amazon Resource Name (ARN) of the load balancer.
     returned: when state is present
     type: str
-    sample: arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455
+    sample: "arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455"
 load_balancer_name:
     description: The name of the load balancer.
     returned: when state is present
     type: str
-    sample: my-elb
+    sample: "my-elb"
+resource_actions:
+    description: List of AWS actions performed.
+    returned: always
+    type: list
+    sample: ["elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeLoadBalancers"]
 routing_http2_enabled:
     description: Indicates whether HTTP/2 is enabled.
     returned: when state is present
-    type: str
+    type: bool
     sample: true
+routing_http_desync_mitigation_mode:
+    description: Determines how the load balancer handles requests that might pose a security risk to an application.
+    returned: when state is present
+    type: str
+    sample: "defensive"
+routing_http_drop_invalid_header_fields_enabled:
+    description: Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).
+    returned: when state is present
+    type: bool
+    sample: false
+routing_http_x_amzn_tls_version_and_cipher_suite_enabled:
+    description: Indicates whether the two headers are added to the client request before sending it to the target.
+    returned: when state is present
+    type: bool
+    sample: false
+routing_http_xff_client_port_enabled:
+    description: Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.
+    returned: when state is present
+    type: bool
+    sample: false
 scheme:
     description: Internet-facing or internal load balancer.
     returned: when state is present
     type: str
-    sample: internal
+    sample: "internal"
 security_groups:
     description: The IDs of the security groups for the load balancer.
     returned: when state is present
@@ -445,24 +480,24 @@ state:
     description: The state of the load balancer.
     returned: when state is present
     type: dict
-    sample: "{'code': 'active'}"
+    sample: {'code': 'active'}
 tags:
     description: The tags attached to the load balancer.
     returned: when state is present
     type: dict
-    sample: "{
+    sample: {
         'Tag': 'Example'
-    }"
+    }
 type:
     description: The type of load balancer.
     returned: when state is present
     type: str
-    sample: application
+    sample: "application"
 vpc_id:
     description: The ID of the VPC for the load balancer.
     returned: when state is present
     type: str
-    sample: vpc-0011223344
+    sample: "vpc-0011223344"
 waf_fail_open_enabled:
     description: Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
     returned: when state is present
