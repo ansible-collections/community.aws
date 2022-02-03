@@ -217,7 +217,8 @@ load_balancers:
             type: str
             sample: "vpc-0011223344"
         waf_fail_open_enabled:
-            description: Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
+            description: Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets
+                if it is unable to forward the request to AWS WAF.
             type: bool
             sample: false
 '''
