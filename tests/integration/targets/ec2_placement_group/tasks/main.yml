@@ -1,4 +1,4 @@
-- name: run ec2_lc tests
+- name: run ec2_placement_group tests
   module_defaults:
     group/aws:
       aws_access_key: "{{ aws_access_key }}"
