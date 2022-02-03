@@ -62,8 +62,10 @@
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
-        apply_immediately: True
       register: result
+      retries: 30
+      delay: 10
+      until: result is not failed
 
     - assert:
         that:

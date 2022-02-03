@@ -90,8 +90,10 @@
         iops: "{{ iops }}"
         port: 1150
         max_allocated_storage: 150
-        apply_immediately: True
       register: result
+      retries: 30
+      delay: 10
+      until: result is not failed
 
     - assert:
         that:
@@ -101,11 +103,11 @@
           - '"port" in result.pending_modified_values or result.endpoint.port == 1150'
           - '"db_instance_class" in result.pending_modified_values or result.db_instance_class == modified_db_instance_class'
 
-  always:
-    - name: Delete the instance
-      rds_instance:
-        id: "{{ instance_id }}"
-        state: absent
-        skip_final_snapshot: True
-        wait: false
-      ignore_errors: yes
+  # always:
+  #   - name: Delete the instance
+  #     rds_instance:
+  #       id: "{{ instance_id }}"
+  #       state: absent
+  #       skip_final_snapshot: True
+  #       wait: false
+  #     ignore_errors: yes
