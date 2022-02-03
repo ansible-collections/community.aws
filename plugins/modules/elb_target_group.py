@@ -914,8 +914,8 @@ def main():
     connection = module.client('elbv2', retry_decorator=AWSRetry.jittered_backoff(retries=10))
 
     if module.params.get('state') == 'present':
-        if module.params.get('protocol') == "http" and module.params.get('deregistration_connection_termination', None):
-            module.fail_json(msg="A target group with HTTP protocol does not support setting deregistration_connection_termination")
+        if module.params.get('protocol') in ['http', 'https', 'HTTP', 'HTTPS'] and module.params.get('deregistration_connection_termination', None):
+            module.fail_json(msg="A target group with HTTP/S protocol does not support setting deregistration_connection_termination")
 
         create_or_update_target_group(connection, module)
     else:
