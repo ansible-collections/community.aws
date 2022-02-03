@@ -1,0 +1,2 @@
+bugfixes:
+  - cloudfront_distribution - Dont pass ``s3_origin_access_identity_enabled`` to API request (https://github.com/ansible-collections/community.aws/pull/881).
