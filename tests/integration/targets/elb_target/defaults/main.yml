@@ -4,12 +4,13 @@ unique_id: "ansible-test-{{ tiny_prefix }}"
 
 lambda_role_name: '{{ unique_id }}-elb-target'
 lambda_name: '{{ unique_id }}-elb-target'
-elb_target_group_name: "{{ unique_id }}-elb-tg"
+elb_target_group_name: "{{ unique_id }}-elb"
 
 # Defaults used by the EC2 based test
 ec2_ami_name: 'amzn2-ami-hvm-2.0.20190612-x86_64-gp2'
 tg_name: "{{ unique_id }}-tg"
-tg_tcpudp_name: "{{ unique_id }}-tgtcpudp"
+tg_used_name: "{{ unique_id }}-tgu"
+tg_tcpudp_name: "{{ unique_id }}-udp"
 lb_name: "{{ unique_id }}-lb"
 healthy_state:
    state: 'healthy'
