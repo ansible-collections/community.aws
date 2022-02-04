@@ -111,7 +111,8 @@ RETURN = r'''
 policy:
   description: Returns the policy json structure, when state == absent this will return the value of the removed policy.
   returned: success
-  type: str
+  type: complex
+  contains: {}
   sample: '{
         "arn": "arn:aws:iam::aws:policy/AdministratorAccess "
         "attachment_count": 0,
@@ -299,7 +300,7 @@ def create_or_update_policy(existing_policy):
 
             module.exit_json(changed=changed, policy=camel_dict_to_snake_dict(updated_policy))
         else:
-            module.exit_json(changed=changed)
+            module.exit_json(changed=changed, policy=camel_dict_to_snake_dict(existing_policy))
 
 
 def delete_policy(existing_policy):
