@@ -123,7 +123,8 @@ options:
     elements: dict
   table_class:
     description:
-      - The class of the table
+      - The class of the table.
+      - Requires at least botocore version 1.23.18.
     choices: ['STANDARD', 'STANDARD_INFREQUENT_ACCESS']
     type: str
     version_added: 3.1.0
@@ -212,6 +213,11 @@ table_status:
     returned: success
     type: str
     sample: ACTIVE
+table_class:
+    description: The current table class.
+    returned: when state present
+    type: str
+    sample: STANDARD_INFREQUENT_ACCESS
 '''
 
 try:
@@ -1020,8 +1026,7 @@ def main():
     client = module.client('dynamodb', retry_decorator=retry_decorator)
 
     if module.params.get('table_class'):
-        if not module.botocore_at_least("1.23.18"):
-            module.fail_json(msg='botocore version >= 1.23.18 is required setting table_class')
+        module.require_botocore_at_least('1.23.18', reason='to set table_class')
 
     current_table = get_dynamodb_table()
     changed = False
