@@ -1,7 +1,6 @@
 ---
-  - name: set up ec2 based test prerequisites
-    block:
-
+- name: set up ec2 based test prerequisites
+  block:
     # ============================================================
 
     - name:
@@ -10,12 +9,12 @@
     # ============================================================
     - name: Find AMI to use
       ec2_ami_info:
-        owners: 'amazon'
+        owners: "amazon"
         filters:
-          name: '{{ ec2_ami_name }}'
+          name: "{{ ec2_ami_name }}"
       register: ec2_amis
     - set_fact:
-        ec2_ami_image: '{{ ec2_amis.images[0].image_id }}'
+        ec2_ami_image: "{{ ec2_amis.images[0].image_id }}"
 
     - name: set up testing VPC
       ec2_vpc_net:
@@ -88,7 +87,7 @@
         health_check_port: 80
         protocol: http
         port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
         tags:
@@ -99,7 +98,7 @@
         name: "{{ tg_tcpudp_name }}"
         protocol: udp
         port: 53
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
         tags:
@@ -108,15 +107,27 @@
 
     - name: set up testing target group for ALB (type=instance)
       elb_target_group:
-        name: "{{ tg_name }}-used"
+        name: "{{ tg_used_name }}"
         health_check_port: 80
         protocol: http
         port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
         tags:
           Description: "Created by {{ resource_prefix }}"
+      register: result
+
+    - name: set up testing target group for ALB (type=instance)
+      assert:
+        that:
+          - result.changed
+          - result.target_group_name == tg_used_name
+          - result.target_type == 'instance'
+          - result.vpc_id == vpc.vpc.id
+          - result.port == 80
+          - '"health_check_port" in result'
+          - '"tags" in result'
 
     - name: set up testing target group for NLB (type=instance)
       elb_target_group:
@@ -124,9 +135,11 @@
         health_check_port: 80
         protocol: tcp
         port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
+        deregistration_delay_timeout: 60
+        deregistration_connection_termination: yes
         tags:
           Description: "Created by {{ resource_prefix }}"
       register: result
@@ -143,7 +156,9 @@
           - '"target_group_arn" in result'
           - result.target_group_name == "{{ tg_name }}-nlb"
           - result.target_type == 'instance'
-          - result.vpc_id == '{{ vpc.vpc.id }}'
+          - result.deregistration_delay_timeout_seconds == '60'
+          - result.deregistration_delay_connection_termination_enabled
+          - result.vpc_id == vpc.vpc.id
 
     - name: set up ec2 instance to use as a target
       ec2_instance:
@@ -157,6 +172,8 @@
         volumes: []
         wait: true
         ebs_optimized: false
+        tags:
+          Name: "{{ resource_prefix }}-inst"
         user_data: |
           #cloud-config
           package_upgrade: true
@@ -184,7 +201,7 @@
             Port: 80
             DefaultActions:
               - Type: forward
-                TargetGroupName: "{{ tg_name }}-used"
+                TargetGroupName: "{{ tg_used_name }}"
         state: present
 
     - name: create a network load balancer
@@ -194,9 +211,9 @@
           - "{{ subnet_1.subnet.id }}"
           - "{{ subnet_2.subnet.id }}"
         listeners:
-           - Protocol: TCP
-             Port: 80
-             DefaultActions:
+          - Protocol: TCP
+            Port: 80
+            DefaultActions:
               - Type: forward
                 TargetGroupName: "{{ tg_name }}-nlb"
         state: present
@@ -218,7 +235,7 @@
         health_check_port: 80
         protocol: tcp
         port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
         modify_targets: true
@@ -240,7 +257,7 @@
         health_check_port: 80
         protocol: tcp
         port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
         modify_targets: true
@@ -262,7 +279,7 @@
         health_check_port: 80
         protocol: tcp
         port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
+        vpc_id: "{{ vpc.vpc.id }}"
         state: present
         target_type: instance
         modify_targets: true
@@ -334,7 +351,7 @@
 
     - name: register an instance to used target group and wait until healthy
       elb_target:
-        target_group_name: "{{ tg_name }}-used"
+        target_group_name: "{{ tg_used_name }}"
         target_id: "{{ instance_id }}"
         state: present
         target_status: healthy
@@ -353,7 +370,7 @@
 
     - name: remove a target from used target group
       elb_target:
-        target_group_name: "{{ tg_name }}-used"
+        target_group_name: "{{ tg_used_name }}"
         target_id: "{{ instance_id }}"
         state: absent
         target_status: unused
@@ -369,7 +386,7 @@
 
     - name: test idempotence
       elb_target:
-        target_group_name: "{{ tg_name }}-used"
+        target_group_name: "{{ tg_used_name }}"
         target_id: "{{ instance_id }}"
         state: absent
       register: result
@@ -383,7 +400,7 @@
 
     - name: register an instance to used target group and wait until healthy again to test deregistering differently
       elb_target:
-        target_group_name: "{{ tg_name }}-used"
+        target_group_name: "{{ tg_used_name }}"
         target_id: "{{ instance_id }}"
         state: present
         target_status: healthy
@@ -400,7 +417,7 @@
 
     - name: start deregisteration but don't wait
       elb_target:
-        target_group_name: "{{ tg_name }}-used"
+        target_group_name: "{{ tg_used_name }}"
         target_id: "{{ instance_id }}"
         state: absent
       register: result
@@ -413,7 +430,7 @@
 
     - name: now wait for target to finish deregistering
       elb_target:
-        target_group_name: "{{ tg_name }}-used"
+        target_group_name: "{{ tg_used_name }}"
         target_id: "{{ instance_id }}"
         state: absent
         target_status: unused
@@ -426,98 +443,29 @@
           - not result.changed
           - not result.target_health_descriptions
 
-    # ============================================================
+  # ============================================================
 
-    always:
-
+  always:
     - name:
       debug: msg="********** Tearing down elb_target test dependencies **********"
 
     - name: remove ec2 instance
       ec2_instance:
-        name: "{{ resource_prefix }}-inst"
+        instance_ids:
+          - "{{ instance_id }}"
         state: absent
         wait: True
-      ignore_errors: true
-
-    - name: remove testing target groups
-      elb_target_group:
-        name: "{{ item }}"
-        health_check_port: 80
-        protocol: http
-        port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
-        state: absent
-        target_type: instance
-        tags:
-          Description: "Created by {{ resource_prefix }}"
-        wait: true
-        wait_timeout: 400
       register: removed
       retries: 10
       until: removed is not failed
-      with_items:
-        - "{{ tg_name }}"
-        - "{{ tg_name }}-used"
-      ignore_errors: true
-
-    - name: remove udp testing target groups
-      elb_target_group:
-        name: "{{ item }}"
-        protocol: udp
-        port: 53
-        vpc_id: '{{ vpc.vpc.id }}'
-        state: absent
-        target_type: instance
-        tags:
-          Description: "Created by {{ resource_prefix }}"
-          Protocol: "UDP"
-        wait: true
-        wait_timeout: 400
-      register: removed
-      retries: 10
-      until: removed is not failed
-      with_items:
-        - "{{ tg_tcpudp_name }}"
-      ignore_errors: true
-
-    - name: remove tcp testing target groups
-      elb_target_group:
-        name: "{{ item }}"
-        protocol: tcp
-        port: 80
-        vpc_id: '{{ vpc.vpc.id }}'
-        state: absent
-        target_type: instance
-        tags:
-          Description: "Created by {{ resource_prefix }}"
-          Protocol: "UDP"
-        wait: true
-        wait_timeout: 400
-      register: removed
-      retries: 10
-      until: removed is not failed
-      with_items:
-        - "{{ tg_name }}-nlb"
       ignore_errors: true
 
     - name: remove application load balancer
       elb_application_lb:
         name: "{{ lb_name }}"
-        security_groups:
-          - "{{ sg.group_id }}"
-        subnets:
-          - "{{ subnet_1.subnet.id }}"
-          - "{{ subnet_2.subnet.id }}"
-        listeners:
-          - Protocol: HTTP
-            Port: 80
-            DefaultActions:
-              - Type: forward
-                TargetGroupName: "{{ tg_name }}-used"
         state: absent
         wait: true
-        wait_timeout: 400
+        wait_timeout: 600
       register: removed
       retries: 10
       until: removed is not failed
@@ -526,41 +474,28 @@
     - name: remove network load balancer
       elb_network_lb:
         name: "{{ lb_name }}-nlb"
-        subnets:
-          - "{{ subnet_1.subnet.id }}"
-          - "{{ subnet_2.subnet.id }}"
-        listeners:
-          - Protocol: TCP
-            Port: 80
-            DefaultActions:
-              - Type: forward
-                TargetGroupName: "{{ tg_name }}-nlb"
         state: absent
         wait: true
-        wait_timeout: 400
+        wait_timeout: 600
       register: removed
       retries: 10
       until: removed is not failed
       ignore_errors: true
 
-    - name: remove testing security group
-      ec2_group:
+    - name: remove testing target groups
+      elb_target_group:
+        name: "{{ item }}"
         state: absent
-        name: "{{ resource_prefix }}-sg"
-        description: a security group for ansible tests
-        vpc_id: "{{ vpc.vpc.id }}"
-        rules:
-          - proto: tcp
-            from_port: 80
-            to_port: 80
-            cidr_ip: 0.0.0.0/0
-          - proto: tcp
-            from_port: 22
-            to_port: 22
-            cidr_ip: 0.0.0.0/0
+        wait: true
+        wait_timeout: 600
       register: removed
       retries: 10
       until: removed is not failed
+      with_items:
+        - "{{ tg_name }}"
+        - "{{ tg_used_name }}"
+        - "{{ tg_tcpudp_name }}"
+        - "{{ tg_name }}-nlb"
       ignore_errors: true
 
     - name: remove routing rules
@@ -579,10 +514,8 @@
         vpc_id: "{{ vpc.vpc.id }}"
         cidr: 20.0.0.0/18
         az: "{{ aws_region }}a"
-        resource_tags:
-          Name: "{{ resource_prefix }}-subnet"
       register: removed
-      retries: 10
+      retries: 15
       until: removed is not failed
       ignore_errors: true
 
@@ -592,10 +525,17 @@
         vpc_id: "{{ vpc.vpc.id }}"
         cidr: 20.0.64.0/18
         az: "{{ aws_region }}b"
-        resource_tags:
-          Name: "{{ resource_prefix }}-subnet"
       register: removed
-      retries: 10
+      retries: 15
+      until: removed is not failed
+      ignore_errors: true
+
+    - name: remove testing security group
+      ec2_group:
+        state: absent
+        name: "{{ resource_prefix }}-sg"
+      register: removed
+      retries: 15
       until: removed is not failed
       ignore_errors: true
 
@@ -611,14 +551,11 @@
     - name: remove testing VPC
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
-        state: absent
         cidr_block: 20.0.0.0/16
-        tags:
-          Name: "{{ resource_prefix }}-vpc"
-          Description: "Created by ansible-test"
+        state: absent
       register: removed
       retries: 10
       until: removed is not failed
       ignore_errors: true
 
-    # ============================================================
+  # ============================================================

@@ -7,7 +7,8 @@
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
   collections:
+    - community.general
     - amazon.aws
   block:
-  - include_tasks: lambda_target.yml
-  - include_tasks: ec2_target.yml
+    - include_tasks: ec2_target.yml
+    - include_tasks: lambda_target.yml
