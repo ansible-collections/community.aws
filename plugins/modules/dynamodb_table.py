@@ -208,16 +208,49 @@ EXAMPLES = r'''
 '''
 
 RETURN = r'''
+table:
+  description: The returned table params from the describe API call.
+  returned: success
+  type: complex
+  contains: {}
+  sample: {
+    "arn": "arn:aws:dynamodb:us-east-1:721066863947:table/ansible-test-table",
+    "attribute_definitions": [
+        {
+            "attribute_name": "id",
+            "attribute_type": "N"
+        }
+    ],
+    "billing_mode": "PROVISIONED",
+    "creation_date_time": "2022-02-04T13:36:01.578000+00:00",
+    "id": "533b45fe-0870-4b66-9b00-d2afcfe96f19",
+    "item_count": 0,
+    "key_schema": [
+        {
+            "attribute_name": "id",
+            "key_type": "HASH"
+        }
+    ],
+    "name": "ansible-test-14482047-alinas-mbp",
+    "provisioned_throughput": {
+        "number_of_decreases_today": 0,
+        "read_capacity_units": 1,
+        "write_capacity_units": 1
+    },
+    "size": 0,
+    "status": "ACTIVE",
+    "table_arn": "arn:aws:dynamodb:us-east-1:721066863947:table/ansible-test-table",
+    "table_id": "533b45fe-0870-4b66-9b00-d2afcfe96f19",
+    "table_name": "ansible-test-table",
+    "table_size_bytes": 0,
+    "table_status": "ACTIVE",
+    "tags": {}
+  }
 table_status:
-    description: The current status of the table.
-    returned: success
-    type: str
-    sample: ACTIVE
-table_class:
-    description: The current table class.
-    returned: when state present
-    type: str
-    sample: STANDARD_INFREQUENT_ACCESS
+  description: The current status of the table.
+  returned: success
+  type: str
+  sample: ACTIVE
 '''
 
 try:
