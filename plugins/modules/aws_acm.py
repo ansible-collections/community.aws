@@ -292,11 +292,7 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
 
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, tags, purge_tags)
     changed = bool(tags_to_add or tags_to_remove)
-    if tags_to_add:
-        if module.check_mode:
-            module.exit_json(
-                changed=True, msg="Would have added tags to domain if not in check mode"
-            )
+    if tags_to_add and not module.check_mode:
         try:
             client.add_tags_to_certificate(
                 CertificateArn=resource_arn,
@@ -309,14 +305,10 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
             module.fail_json_aws(
                 e, "Couldn't add tags to certificate {0}".format(resource_arn)
             )
-    if tags_to_remove:
-        if module.check_mode:
-            module.exit_json(
-                changed=True, msg="Would have removed tags if not in check mode"
-            )
+    if tags_to_remove and not module.check_mode:
+        # remove_tags_from_certificate wants a list of key, value pairs, not a list of keys.
+        tags_list = [{'Key': key, 'Value': existing_tags.get(key)} for key in tags_to_remove]
         try:
-            # remove_tags_from_certificate wants a list of key, value pairs, not a list of keys.
-            tags_list = [{'Key': key, 'Value': existing_tags.get(key)} for key in tags_to_remove]
             client.remove_tags_from_certificate(
                 CertificateArn=resource_arn,
                 Tags=tags_list,
