@@ -931,7 +931,7 @@ def main():
                 if requested_task_role_arn != td.get('taskRoleArn', ""):
                     return None
 
-                if requested_launch_type not in td.get('requiresCompatibilities', []):
+                if requested_launch_type != None and requested_launch_type not in td.get('compatibilities', []):
                     return None
 
                 existing_volumes = td.get('volumes', []) or []
