@@ -1,0 +1,3 @@
+bugfixes:
+  - Add backoff retry logic to route53_zone (https://github.com/ansible-collections/community.aws/pull/865).
+  - Add backoff retry logic to route53_info (https://github.com/ansible-collections/community.aws/pull/865).
