@@ -356,11 +356,6 @@ dns_name:
     returned: when state is present
     type: str
     sample: "internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com"
-failed:
-    description: Indicates whether or not the action has failed.
-    returned: always
-    type: bool
-    sample: false
 idle_timeout_timeout_seconds:
     description: The idle timeout value, in seconds.
     returned: when state is present

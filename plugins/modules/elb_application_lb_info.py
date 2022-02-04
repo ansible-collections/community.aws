@@ -86,10 +86,6 @@ load_balancers:
             description: The ID of the Amazon Route 53 hosted zone associated with the load balancer.
             type: str
             sample: "ABCDEF12345678"
-        changed:
-            description: Whether an ELB was created/updated/deleted
-            type: bool
-            sample: true
         created_time:
             description: The date and time the load balancer was created.
             type: str
@@ -102,10 +98,6 @@ load_balancers:
             description: The public DNS name of the load balancer.
             type: str
             sample: "internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com"
-        failed:
-            description: Indicates whether or not the action has failed.
-            type: bool
-            sample: false
         idle_timeout_timeout_seconds:
             description: The idle timeout value, in seconds.
             type: int
