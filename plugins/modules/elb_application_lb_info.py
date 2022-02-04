@@ -166,10 +166,6 @@ load_balancers:
             description: The name of the load balancer.
             type: str
             sample: "my-elb"
-        resource_actions:
-            description: List of AWS actions performed.
-            type: list
-            sample: ["elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeLoadBalancers"]
         routing_http2_enabled:
             description: Indicates whether HTTP/2 is enabled.
             type: bool

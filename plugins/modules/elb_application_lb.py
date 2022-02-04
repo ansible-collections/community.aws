@@ -436,11 +436,6 @@ load_balancer_name:
     returned: when state is present
     type: str
     sample: "my-elb"
-resource_actions:
-    description: List of AWS actions performed.
-    returned: always
-    type: list
-    sample: ["elasticloadbalancing:DescribeListeners", "elasticloadbalancing:DescribeLoadBalancers"]
 routing_http2_enabled:
     description: Indicates whether HTTP/2 is enabled.
     returned: when state is present
