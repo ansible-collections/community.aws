@@ -467,10 +467,15 @@ EXAMPLES = r'''
 
 RETURN = r'''
 allocated_storage:
-  description: The allocated storage size in gibibytes. This is always 1 for aurora database engines.
+  description: The allocated storage size in gigabytes. This is always 1 for aurora database engines.
   returned: always
   type: int
   sample: 20
+associated_roles:
+  description: The list of currently associated roles.
+  returned: always
+  type: list
+  sample: []
 auto_minor_version_upgrade:
   description: Whether minor engine upgrades are applied automatically to the DB instance during the maintenance window.
   returned: always
