@@ -195,7 +195,7 @@ class CloudfrontResponseHeadersPolicyService(object):
 
         changed = False
 
-        if matching_policy == None:
+        if matching_policy is None:
             try:
                 result = self.client.create_response_headers_policy(ResponseHeadersPolicyConfig=config)
                 changed = True
@@ -225,7 +225,7 @@ class CloudfrontResponseHeadersPolicyService(object):
     def delete_response_header_policy(self, name):
         matching_policy = self.find_response_headers_policy(name)
 
-        if matching_policy == None:
+        if matching_policy is None:
             self.module.exit_json(msg="Didn't find a matching policy by that name, not deleting")
         else:
             policy_id = matching_policy['ResponseHeadersPolicy']['Id']
