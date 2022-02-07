@@ -92,7 +92,8 @@ options:
       description:
         - A map of custom response keys and content bodies. Define response bodies here and reference them in the rules by providing
         - the key of the body dictionary element.
-        - Each element must have a unique dict key and in the dict two keys for I(content_type) and I(content). Needs botocore >= 1.21.0 to work.
+        - Each element must have a unique dict key and in the dict two keys for I(content_type) and I(content).
+        - Requires botocore >= 1.21.0
       type: dict
       version_added: 3.1.0
     purge_rules:
@@ -350,7 +351,7 @@ class WebACL:
             'LockToken': self.locktoken
         }
 
-        if len(custom_response_bodies) > 0:
+        if custom_response_bodies:
             req_obj['CustomResponseBodies'] = custom_response_bodies
 
         try:
@@ -413,11 +414,10 @@ class WebACL:
                 'SampledRequestsEnabled': sampled_requests,
                 'CloudWatchMetricsEnabled': cloudwatch_metrics,
                 'MetricName': metric_name
-            },
-            'CustomResponseBodies': custom_response_bodies
+            }
         }
 
-        if len(custom_response_bodies) > 0:
+        if custom_response_bodies:
             req_obj['CustomResponseBodies'] = custom_response_bodies
         if description:
             req_obj['Description'] = description
@@ -446,7 +446,7 @@ def main():
         cloudwatch_metrics=dict(type='bool', default=True),
         metric_name=dict(type='str'),
         tags=dict(type='dict'),
-        custom_response_bodies=dict(type='dict', default=dict()),
+        custom_response_bodies=dict(type='dict'),
         purge_rules=dict(default=True, type='bool')
     )
 
@@ -469,12 +469,13 @@ def main():
     purge_rules = module.params.get("purge_rules")
     check_mode = module.check_mode
 
-    custom_response_bodies = {}
-    for name, body in module.params.get("custom_response_bodies").items():
-        custom_response_bodies[name] = snake_dict_to_camel_dict(body, capitalize_first=True)
-
+    custom_response_bodies = module.params.get("custom_response_bodies")
     if custom_response_bodies:
         module.require_botocore_at_least('1.21.0', reason='to set custom response bodies')
+        custom_response_bodies = {}
+
+        for custom_name, body in module.params.get("custom_response_bodies").items():
+             custom_response_bodies[custom_name] = snake_dict_to_camel_dict(body, capitalize_first=True)
 
     if default_action == 'Block':
         default_action = {'Block': {}}

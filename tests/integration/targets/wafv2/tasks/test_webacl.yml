@@ -10,7 +10,7 @@
 - name: verify rules
   assert:
     that:
-      - out.rules | count == 2
+      - out.rules | count == 3
 
 - name: change web acl description
   wafv2_web_acl:
