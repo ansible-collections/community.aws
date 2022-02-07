@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-version_added: 1.0.0
+version_added: 3.0.1
 module: cloudfront_response_headers_policy
 
 short_description: Create, update and delete response headers policies to be used in a Cloudfront distribution
@@ -147,6 +147,7 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+import datetime
 
 class CloudfrontResponseHeadersPolicyService(object):
 
@@ -192,9 +193,12 @@ class CloudfrontResponseHeadersPolicyService(object):
 
         matching_policy = self.find_response_headers_policy(name)
 
+        changed = False
+
         if matching_policy == None:
             try:
                 result = self.client.create_response_headers_policy(ResponseHeadersPolicyConfig=config)
+                changed = True
             except (ParamValidationError, ClientError) as e:
                 self.module.fail_json_aws(e, msg="Error creating policy")
         else:
@@ -202,9 +206,18 @@ class CloudfrontResponseHeadersPolicyService(object):
             etag = matching_policy['ETag']
             try:
                 result = self.client.update_response_headers_policy(Id=policy_id, IfMatch=etag, ResponseHeadersPolicyConfig=config)
+
+                changed_time = result['ResponseHeadersPolicy']['LastModifiedTime']
+                seconds = 3 # threshhold for returned timestamp age
+                seconds_ago = (datetime.datetime.now(changed_time.tzinfo) - datetime.timedelta(0,seconds))
+
+                # consider change made by this execution of the module if returned timestamp was very recent
+                if changed_time > seconds_ago:
+                    changed = True
             except (ParamValidationError, ClientError) as e:
                 self.module.fail_json_aws(e, msg="Error creating policy")
 
+        self.module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
         return result
 
 
@@ -219,6 +232,7 @@ class CloudfrontResponseHeadersPolicyService(object):
             etag = matching_policy['ETag']
             result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
 
+            self.module.exit_json(changed=True, **camel_dict_to_snake_dict(result))
         return result
 
 
@@ -258,16 +272,10 @@ def main():
 
     service = CloudfrontResponseHeadersPolicyService(module)
 
-    result = {}
-    changed = False
-    client = module.client('cloudfront')
-
     if state == 'absent':
-        resutl = service.delete_response_header_policy(name)
+        service.delete_response_header_policy(name)
     else:
-        result = service.create_response_header_policy(name, comment, cors_config, security_headers_config, custom_headers_config)
-
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
+        service.create_response_header_policy(name, comment, cors_config, security_headers_config, custom_headers_config)
 
 
 if __name__ == '__main__':
