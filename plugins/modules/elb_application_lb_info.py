@@ -10,9 +10,9 @@ DOCUMENTATION = r'''
 ---
 module: elb_application_lb_info
 version_added: 1.0.0
-short_description: Gather information about application ELBs in AWS
+short_description: Gather information about Application Load Balancers in AWS
 description:
-    - Gather information about application ELBs in AWS
+    - Gather information about Application Load Balancers in AWS
 author: Rob White (@wimnat)
 options:
   load_balancer_arns:
@@ -37,27 +37,27 @@ extends_documentation_fragment:
 EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- name: Gather information about all ELBs
+- name: Gather information about all ALBs
   community.aws.elb_application_lb_info:
 
-- name: Gather information about a particular ELB given its ARN
+- name: Gather information about a particular ALB given its ARN
   community.aws.elb_application_lb_info:
     load_balancer_arns:
-      - "arn:aws:elasticloadbalancing:ap-southeast-2:001122334455:loadbalancer/app/my-elb/aabbccddeeff"
+      - "arn:aws:elasticloadbalancing:ap-southeast-2:001122334455:loadbalancer/app/my-alb/aabbccddeeff"
 
-- name: Gather information about ELBs named 'elb1' and 'elb2'
+- name: Gather information about ALBs named 'alb1' and 'alb2'
   community.aws.elb_application_lb_info:
     names:
-      - elb1
-      - elb2
+      - alb1
+      - alb2
 
-- name: Gather information about specific ELB
+- name: Gather information about specific ALB
   community.aws.elb_application_lb_info:
-    names: "elb-name"
+    names: "alb-name"
     region: "aws-region"
-  register: elb_info
+  register: alb_info
 - ansible.builtin.debug:
-    var: elb_info
+    var: alb_info
 '''
 
 RETURN = r'''
@@ -97,7 +97,7 @@ load_balancers:
         dns_name:
             description: The public DNS name of the load balancer.
             type: str
-            sample: "internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com"
+            sample: "internal-my-alb-123456789.ap-southeast-2.elb.amazonaws.com"
         idle_timeout_timeout_seconds:
             description: The idle timeout value, in seconds.
             type: int
@@ -153,11 +153,11 @@ load_balancers:
         load_balancer_arn:
             description: The Amazon Resource Name (ARN) of the load balancer.
             type: str
-            sample: "arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455"
+            sample: "arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-alb/001122334455"
         load_balancer_name:
             description: The name of the load balancer.
             type: str
-            sample: "my-elb"
+            sample: "my-alb"
         routing_http2_enabled:
             description: Indicates whether HTTP/2 is enabled.
             type: bool
@@ -223,12 +223,12 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_er
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 
 
-def get_elb_listeners(connection, module, elb_arn):
+def get_alb_listeners(connection, module, alb_arn):
 
     try:
-        return connection.describe_listeners(LoadBalancerArn=elb_arn)['Listeners']
+        return connection.describe_listeners(LoadBalancerArn=alb_arn)['Listeners']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to describe elb listeners")
+        module.fail_json_aws(e, msg="Failed to describe alb listeners")
 
 
 def get_listener_rules(connection, module, listener_arn):
@@ -287,17 +287,17 @@ def list_load_balancers(connection, module):
         module.fail_json_aws(e, msg="Failed to list load balancers")
 
     for load_balancer in load_balancers['LoadBalancers']:
-        # Get the attributes for each elb
+        # Get the attributes for each alb
         load_balancer.update(get_load_balancer_attributes(connection, module, load_balancer['LoadBalancerArn']))
 
-        # Get the listeners for each elb
-        load_balancer['listeners'] = get_elb_listeners(connection, module, load_balancer['LoadBalancerArn'])
+        # Get the listeners for each alb
+        load_balancer['listeners'] = get_alb_listeners(connection, module, load_balancer['LoadBalancerArn'])
 
         # For each listener, get listener rules
         for listener in load_balancer['listeners']:
             listener['rules'] = get_listener_rules(connection, module, listener['ListenerArn'])
 
-        # Get ELB ip address type
+        # Get ALB ip address type
         load_balancer['IpAddressType'] = get_load_balancer_ipaddresstype(connection, module, load_balancer['LoadBalancerArn'])
 
     # Turn the boto3 result in to ansible_friendly_snaked_names

@@ -85,10 +85,10 @@
             gateway_id: '{{ igw.gateway_id }}'
       register: route_table
 
-    - name: Create a security group for Ansible ELB integration tests
+    - name: Create a security group for Ansible ALB integration tests
       ec2_group:
         name: '{{ resource_prefix }}'
-        description: security group for Ansible ELB integration tests
+        description: security group for Ansible ALB integration tests
         state: present
         vpc_id: '{{ vpc_id }}'
         rules:
@@ -98,10 +98,10 @@
             cidr_ip: 0.0.0.0/0
       register: sec_group
 
-    - name: Create another security group for Ansible ELB integration tests
+    - name: Create another security group for Ansible ALB integration tests
       ec2_group:
         name: '{{ resource_prefix }}-2'
-        description: security group for Ansible ELB integration tests
+        description: security group for Ansible ALB integration tests
         state: present
         vpc_id: '{{ vpc_id }}'
         rules:
@@ -122,9 +122,9 @@
 
     # ---------------- elb_application_lb tests ---------------------------------------------------
 
-    - name: Create an ELB (invalid - SslPolicy is required when Protocol == HTTPS)
+    - name: Create an ALB (invalid - SslPolicy is required when Protocol == HTTPS)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -135,32 +135,32 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
       ignore_errors: yes
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is failed
-          - elb.msg is match("'SslPolicy' is a required listener dict key when Protocol = HTTPS")
+          - alb is failed
+          - alb.msg is match("'SslPolicy' is a required listener dict key when Protocol = HTTPS")
 
-    - name: Create an ELB (invalid - didn't provide required listener options)
+    - name: Create an ALB (invalid - didn't provide required listener options)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         listeners:
           - Port: 80
       ignore_errors: yes
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is failed
-          - elb.msg is match("missing required arguments:\ DefaultActions, Protocol found in listeners")
+          - alb is failed
+          - alb.msg is match("missing required arguments:\ DefaultActions, Protocol found in listeners")
 
-    - name: Create an ELB (invalid - providing an invalid listener option type)
+    - name: Create an ALB (invalid - invalid listener option type)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -171,16 +171,16 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
       ignore_errors: yes
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is failed
-          - "'unable to convert to int' in elb.msg"
+          - alb is failed
+          - "'unable to convert to int' in alb.msg"
 
-    - name: test creating an ELB with invalid ip address type
+    - name: Create an ALB (invalid - invalid ip address type)
       elb_application_lb:
-        name: "{{ elb_name_ipv6 }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -192,17 +192,17 @@
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: "ip_addr_v4_v6"
       ignore_errors: yes
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is failed
+          - alb is failed
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Create an ELB with ip address type - check_mode
+    - name: Create an ALB with ip address type - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -213,17 +213,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'dualstack'
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have created ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have created ALB if not in check mode.')
 
-    - name: Create an ELB with ip address type
+    - name: Create an ALB with ip address type
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -234,17 +234,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'dualstack'
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - elb.ip_address_type == 'dualstack'
-          - elb.listeners[0].rules | length == 1
+          - alb is changed
+          - alb.ip_address_type == 'dualstack'
+          - alb.listeners[0].rules | length == 1
 
-    - name: Create an ELB with ip address type (idempotence) - check_mode
+    - name: Create an ALB with ip address type (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -255,17 +255,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'dualstack'
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Create an ELB with ip address type (idempotence)
+    - name: Create an ALB with ip address type (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -276,18 +276,18 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'dualstack'
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - elb.ip_address_type == 'dualstack'
+          - alb is not changed
+          - alb.ip_address_type == 'dualstack'
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB with different ip address type - check_mode
+    - name: Update an ALB with different ip address type - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -298,17 +298,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'ipv4'
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB with different ip address type
+    - name: Update an ALB with different ip address type
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -319,16 +319,16 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'ipv4'
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - elb.ip_address_type == 'ipv4'
+          - alb is changed
+          - alb.ip_address_type == 'ipv4'
 
-    - name: Update an ELB with different ip address type (idempotence) - check_mode
+    - name: Update an ALB with different ip address type (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -339,17 +339,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'ipv4'
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB with different ip address type (idempotence)
+    - name: Update an ALB with different ip address type (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -360,18 +360,18 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
         ip_address_type: 'ipv4'
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - elb.ip_address_type == 'ipv4'
+          - alb is not changed
+          - alb.ip_address_type == 'ipv4'
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB with different listener by adding rule - check_mode
+    - name: Update an ALB with different listener by adding rule - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -390,17 +390,17 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB with different listener by adding rule
+    - name: Update an ALB with different listener by adding rule
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -419,17 +419,17 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - elb.listeners[0].rules | length == 2
-          - "'1' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
+          - alb is changed
+          - alb.listeners[0].rules | length == 2
+          - "'1' in {{ alb.listeners[0].rules | map(attribute='priority') }}"
 
-    - name: Update an ELB with different listener by adding rule (idempotence) - check_mode
+    - name: Update an ALB with different listener by adding rule (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -448,17 +448,17 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB with different listener by adding rule (idempotence)
+    - name: Update an ALB with different listener by adding rule (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -477,19 +477,19 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - elb.listeners[0].rules | length == 2
-          - "'1' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
+          - alb is not changed
+          - alb.listeners[0].rules | length == 2
+          - "'1' in {{ alb.listeners[0].rules | map(attribute='priority') }}"
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB with different listener by modifying rule - check_mode
+    - name: Update an ALB with different listener by modifying rule - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -508,17 +508,17 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB with different listener by modifying rule
+    - name: Update an ALB with different listener by modifying rule
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -537,17 +537,17 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - elb.listeners[0].rules | length == 2
-          - "'2' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
+          - alb is changed
+          - alb.listeners[0].rules | length == 2
+          - "'2' in {{ alb.listeners[0].rules | map(attribute='priority') }}"
 
-    - name: Update an ELB with different listener by modifying rule (idempotence) - check_mode
+    - name: Update an ALB with different listener by modifying rule (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -566,17 +566,17 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB with different listener by modifying rule (idempotence)
+    - name: Update an ALB with different listener by modifying rule (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -595,19 +595,19 @@
                 Actions:
                   - TargetGroupName: "{{ tg_name }}"
                     Type: forward
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - elb.listeners[0].rules | length == 2
-          - "'2' in {{ elb.listeners[0].rules | map(attribute='priority') }}"
+          - alb is not changed
+          - alb.listeners[0].rules | length == 2
+          - "'2' in {{ alb.listeners[0].rules | map(attribute='priority') }}"
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB with different listener by deleting rule - check_mode
+    - name: Update an ALB with different listener by deleting rule - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -618,17 +618,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
             Rules: []
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB with different listener by deleting rule
+    - name: Update an ALB with different listener by deleting rule
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -639,17 +639,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
             Rules: []
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - elb.listeners[0].rules | length == 1
-          - "'2' not in {{ elb.listeners[0].rules | map(attribute='priority') }}"
+          - alb is changed
+          - alb.listeners[0].rules | length == 1
+          - "'2' not in {{ alb.listeners[0].rules | map(attribute='priority') }}"
 
-    - name: Update an ELB with different listener by deleting rule (idempotence) - check_mode
+    - name: Update an ALB with different listener by deleting rule (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -660,17 +660,17 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
             Rules: []
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB with different listener by deleting rule (idempotence)
+    - name: Update an ALB with different listener by deleting rule (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
@@ -681,409 +681,409 @@
               - Type: forward
                 TargetGroupName: "{{ tg_name }}"
             Rules: []
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - elb.listeners[0].rules | length == 1
-          - "'2' not in {{ elb.listeners[0].rules | map(attribute='priority') }}"
+          - alb is not changed
+          - alb.listeners[0].rules | length == 1
+          - "'2' not in {{ alb.listeners[0].rules | map(attribute='priority') }}"
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB by deleting listener - check_mode
+    - name: Update an ALB by deleting listener - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         listeners: []
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB by deleting listener
+    - name: Update an ALB by deleting listener
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         listeners: []
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - not elb.listeners
+          - alb is changed
+          - not alb.listeners
 
-    - name: Update an ELB by deleting listener (idempotence) - check_mode
+    - name: Update an ALB by deleting listener (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         listeners: []
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB by deleting listener (idempotence)
+    - name: Update an ALB by deleting listener (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         listeners: []
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - not elb.listeners
+          - alb is not changed
+          - not alb.listeners
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB by adding tags - check_mode
+    - name: Update an ALB by adding tags - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}"
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB by adding tags
+    - name: Update an ALB by adding tags
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}"
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - 'elb.tags == {"created_by": "ELB test {{ resource_prefix }}"}'
+          - alb is changed
+          - 'alb.tags == {"created_by": "ALB test {{ resource_prefix }}"}'
 
-    - name: Update an ELB by adding tags (idempotence) - check_mode
+    - name: Update an ALB by adding tags (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}"
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB by adding tags (idempotence)
+    - name: Update an ALB by adding tags (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}"
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - 'elb.tags == {"created_by": "ELB test {{ resource_prefix }}"}'
+          - alb is not changed
+          - 'alb.tags == {"created_by": "ALB test {{ resource_prefix }}"}'
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB by modifying tags - check_mode
+    - name: Update an ALB by modifying tags - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}-2"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}-2"
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB by modifying tags
+    - name: Update an ALB by modifying tags
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}-2"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}-2"
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - 'elb.tags == {"created_by": "ELB test {{ resource_prefix }}-2"}'
+          - alb is changed
+          - 'alb.tags == {"created_by": "ALB test {{ resource_prefix }}-2"}'
 
-    - name: Update an ELB by modifying tags (idempotence) - check_mode
+    - name: Update an ALB by modifying tags (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}-2"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}-2"
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB by modifying tags (idempotence)
+    - name: Update an ALB by modifying tags (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags:
-          created_by: "ELB test {{ resource_prefix }}-2"
-      register: elb
+          created_by: "ALB test {{ resource_prefix }}-2"
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - 'elb.tags == {"created_by": "ELB test {{ resource_prefix }}-2"}'
+          - alb is not changed
+          - 'alb.tags == {"created_by": "ALB test {{ resource_prefix }}-2"}'
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB by removing tags - check_mode
+    - name: Update an ALB by removing tags - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags: {}
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB by removing tags
+    - name: Update an ALB by removing tags
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags: {}
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - not elb.tags
+          - alb is changed
+          - not alb.tags
 
-    - name: Update an ELB by removing tags (idempotence) - check_mode
+    - name: Update an ALB by removing tags (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags: {}
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB by removing tags (idempotence)
+    - name: Update an ALB by removing tags (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group.group_id }}"
         state: present
         tags: {}
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - not elb.tags
+          - alb is not changed
+          - not alb.tags
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Update an ELB by changing security group - check_mode
+    - name: Update an ALB by changing security group - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group2.group_id }}"
         state: present
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have updated ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have updated ALB if not in check mode.')
 
-    - name: Update an ELB by changing security group
+    - name: Update an ALB by changing security group
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group2.group_id }}"
         state: present
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
-          - elb.security_groups[0] == sec_group2.group_id
+          - alb is changed
+          - alb.security_groups[0] == sec_group2.group_id
 
-    - name: Update an ELB by changing security group (idempotence) - check_mode
+    - name: Update an ALB by changing security group (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group2.group_id }}"
         state: present
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - no changes to make to ELB specified.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - no changes to make to ALB specified.')
 
-    - name: Update an ELB by changing security group (idempotence)
+    - name: Update an ALB by changing security group (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         subnets: "{{ public_subnets }}"
         security_groups: "{{ sec_group2.group_id }}"
         state: present
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
-          - elb.security_groups[0] == sec_group2.group_id
+          - alb is not changed
+          - alb.security_groups[0] == sec_group2.group_id
 
     # ------------------------------------------------------------------------------------------
 
     - name: Ensure elb_application_lb_info supports check_mode
       elb_application_lb_info:
-      register: elb_info
+      register: alb_info
       check_mode: yes
 
     - assert:
         that:
-          - elb_info.load_balancers | length > 0
+          - alb_info.load_balancers | length > 0
 
-    - name: Get ELB application info using no args
+    - name: Get ALB application info using no args
       elb_application_lb_info:
-      register: elb_info
+      register: alb_info
 
     - assert:
         that:
-          - elb_info.load_balancers | length > 0
+          - alb_info.load_balancers | length > 0
 
-    - name: Get ELB application info using load balancer arn
+    - name: Get ALB application info using load balancer arn
       elb_application_lb_info:
         load_balancer_arns:
-          - "{{ elb.load_balancer_arn }}"
-      register: elb_info
+          - "{{ alb.load_balancer_arn }}"
+      register: alb_info
 
     - assert:
         that:
-          - elb_info.load_balancers[0].security_groups[0] == sec_group2.group_id
+          - alb_info.load_balancers[0].security_groups[0] == sec_group2.group_id
 
-    - name: Get ELB application info using load balancer name
+    - name: Get ALB application info using load balancer name
       elb_application_lb_info:
         names:
-          - "{{ elb.load_balancer_name }}"
-      register: elb_info
+          - "{{ alb.load_balancer_name }}"
+      register: alb_info
 
     - assert:
         that:
-          - elb_info.load_balancers[0].security_groups[0] == sec_group2.group_id
+          - alb_info.load_balancers[0].security_groups[0] == sec_group2.group_id
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Delete an ELB - check_mode
+    - name: Delete an ALB - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         state: absent
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is changed
-          - elb.msg is match('Would have deleted ELB if not in check mode.')
+          - alb is changed
+          - alb.msg is match('Would have deleted ALB if not in check mode.')
 
-    - name: Delete an ELB
+    - name: Delete an ALB
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         state: absent
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is changed
+          - alb is changed
 
-    - name: Delete an ELB (idempotence) - check_mode
+    - name: Delete an ALB (idempotence) - check_mode
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         state: absent
-      register: elb
+      register: alb
       check_mode: yes
 
     - assert:
         that:
-          - elb is not changed
-          - elb.msg is match('IN CHECK MODE - ELB already absent.')
+          - alb is not changed
+          - alb.msg is match('IN CHECK MODE - ALB already absent.')
 
-    - name: Delete an ELB (idempotence)
+    - name: Delete an ALB (idempotence)
       elb_application_lb:
-        name: "{{ elb_name }}"
+        name: "{{ alb_name }}"
         state: absent
-      register: elb
+      register: alb
 
     - assert:
         that:
-          - elb is not changed
+          - alb is not changed
 
   # ----- Cleanup ------------------------------------------------------------------------------
 
   always:
-    - name: Destroy ELB
+    - name: Destroy ALB
       elb_application_lb:
-        name: '{{ elb_name }}'
+        name: '{{ alb_name }}'
         state: absent
         wait: true
         wait_timeout: 600
@@ -1108,7 +1108,7 @@
     - name: Destroy sec groups
       ec2_group:
         name: "{{ item }}"
-        description: security group for Ansible ELB integration tests
+        description: security group for Ansible ALB integration tests
         state: absent
         vpc_id: '{{ vpc_id }}'
       register: remove_sg
