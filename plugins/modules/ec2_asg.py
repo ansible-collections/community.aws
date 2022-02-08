@@ -182,6 +182,19 @@ options:
         matching the current launch configuration.
     type: list
     elements: str
+  detach_instances:
+    description:
+      - Removes one or more instances from the specified AutoScalingGroup.
+      - If I(decrement_desired_capacity) flag is not set, new instance(s) are lauched to replace the detached instance(s).
+      - If a Classic Load Balancer attached to the AutoScalingGroup, the instances are also deregistered from the load balancer.
+      - If there are target groups attached to the AutoScalingGroup, the instances are also deregistered from the target groups.
+    type: list
+    elements: str
+  decrement_desired_capacity:
+    description:
+      - Indicates whether the AutoScalingGroup decrements the desired capacity value by the number of instances detached.
+    default: false
+    type: bool
   lc_check:
     description:
       - Check to make sure instances that are being replaced with I(replace_instances) do not already have the current I(launch_config).
@@ -754,6 +767,12 @@ def delete_asg(connection, asg_name, force_delete):
 def terminate_asg_instance(connection, instance_id, decrement_capacity):
     connection.terminate_instance_in_auto_scaling_group(InstanceId=instance_id,
                                                         ShouldDecrementDesiredCapacity=decrement_capacity)
+
+
+@AWSRetry.jittered_backoff(**backoff_params)
+def detach_asg_instances(connection, instance_ids, as_group_name, decrement_capacity):
+    connection.detach_instances(InstanceIds=instance_ids, AutoScalingGroupName=as_group_name,
+                                ShouldDecrementDesiredCapacity=decrement_capacity)
 
 
 def enforce_required_arguments_for_create():
@@ -1523,6 +1542,37 @@ def replace(connection):
     return changed, asg_properties
 
 
+def detach(connection):
+    group_name = module.params.get('name')
+    detach_instances = module.params.get('detach_instances')
+    as_group = describe_autoscaling_groups(connection, group_name)[0]
+    decrement_desired_capacity = module.params.get('decrement_desired_capacity')
+    min_size = module.params.get('min_size')
+    props = get_properties(as_group)
+    instances = props['instances']
+
+    # check if provided instance exists in asg
+    for instance_id in detach_instances:
+        if instance_id not in instances:
+            module.fail_json(msg="Provided instance ID: {0} does not belong to the AutoScalingGroup: {1}".format(
+                instance_id, group_name))
+
+    # check if minimum size is greater than what setting decrement_desired_capacity would make it
+    if min_size and min_size > len(instances) - len(detach_instances) and decrement_desired_capacity:
+        module.fail_json(
+            msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances below min_size, \
+                  please update AutoScalingGroup Sizes properly.")
+
+    if detach_instances:
+        try:
+            detach_asg_instances(connection, detach_instances, group_name, decrement_desired_capacity)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to describe launch configurations")
+
+    asg_properties = get_properties(as_group)
+    return True, asg_properties
+
+
 def get_instances_by_launch_config(props, lc_check, initial_instances):
     new_instances = []
     old_instances = []
@@ -1776,6 +1826,8 @@ def main():
         replace_batch_size=dict(type='int', default=1),
         replace_all_instances=dict(type='bool', default=False),
         replace_instances=dict(type='list', default=[], elements='str'),
+        detach_instances=dict(type='list', default=[], elements='str'),
+        decrement_desired_capacity=dict(type='bool', default=False),
         lc_check=dict(type='bool', default=True),
         lt_check=dict(type='bool', default=True),
         wait_timeout=dict(type='int', default=300),
@@ -1821,16 +1873,18 @@ def main():
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['replace_all_instances', 'replace_instances'],
-            ['launch_config_name', 'launch_template']
+            ['replace_all_instances', 'detach_instances'],
+            ['launch_config_name', 'launch_template'],
         ]
     )
 
     state = module.params.get('state')
     replace_instances = module.params.get('replace_instances')
     replace_all_instances = module.params.get('replace_all_instances')
+    detach_instances = module.params.get('detach_instances')
 
     connection = module.client('autoscaling')
-    changed = create_changed = replace_changed = False
+    changed = create_changed = replace_changed = detach_changed = False
     exists = asg_exists(connection)
 
     if state == 'present':
@@ -1847,7 +1901,15 @@ def main():
     ):
         replace_changed, asg_properties = replace(connection)
 
-    if create_changed or replace_changed:
+    # Only detach instances if asg existed at start of call
+    if (
+        exists
+        and (detach_instances)
+        and (module.params.get('launch_config_name') or module.params.get('launch_template'))
+    ):
+        detach_changed, asg_properties = detach(connection)
+
+    if create_changed or replace_changed or detach_changed:
         changed = True
 
     module.exit_json(changed=changed, **asg_properties)
