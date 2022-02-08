@@ -475,7 +475,7 @@ def main():
         custom_response_bodies = {}
 
         for custom_name, body in module.params.get("custom_response_bodies").items():
-             custom_response_bodies[custom_name] = snake_dict_to_camel_dict(body, capitalize_first=True)
+            custom_response_bodies[custom_name] = snake_dict_to_camel_dict(body, capitalize_first=True)
 
     if default_action == 'Block':
         default_action = {'Block': {}}

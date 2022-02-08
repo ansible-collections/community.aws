@@ -60,6 +60,74 @@
         that:
           - out is changed
 
+    - name: Create web acl with custom response bodies
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-acl-with-response-body"
+        state: present
+        description: foo
+        scope: REGIONAL
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: no
+        rules:
+          - name: rate-limit-per-IP
+            priority: 1
+            action:
+              block:
+                custom_response:
+                  response_code: 429
+                  custom_response_body_key: too_many_requests
+            statement:
+              rate_based_statement:
+                limit: 1000
+                aggregate_key_type: IP
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: no
+              metric_name: unused
+        custom_response_bodies:
+          too_many_requests:
+            content_type: APPLICATION_JSON
+            content: '{ message: "Your request has been blocked due to too many HTTP requests coming from your IP" }'
+      register: acl_with_response_body
+
+    - name: Web acl with custom response bodies verify create
+      assert:
+        that:
+          - acl_with_response_body is changed
+          - acl_with_response_body.web_acl.rules | count == 1
+          - acl_with_response_body.web_acl.custom_response_bodies.too_many_requests is defined
+
+    - name: Update web acl with custom response bodies to remove custom response
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-acl-with-response-body"
+        state: present
+        scope: REGIONAL
+        description: foo
+        default_action: Allow
+        sampled_requests: no
+        cloudwatch_metrics: no
+        rules:
+          - name: rate-limit-per-IP
+            priority: 1
+            action:
+              block: {}
+            statement:
+              rate_based_statement:
+                limit: 1000
+                aggregate_key_type: IP
+            visibility_config:
+              sampled_requests_enabled: yes
+              cloud_watch_metrics_enabled: no
+              metric_name: unused
+        custom_response_bodies: {}
+      register: acl_without_response_bodies
+
+    - name: Web acl with custom response bodies verify removal of custom response
+      assert:
+        that:
+          - acl_without_response_bodies is changed
+
     - name: create web acl
       wafv2_web_acl:
         name: "{{ web_acl_name }}"
