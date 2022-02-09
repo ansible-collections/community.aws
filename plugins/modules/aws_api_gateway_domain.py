@@ -110,16 +110,14 @@ response:
 '''
 
 try:
-    import botocore
+    from botocore.exceptions import ClientError, EndpointConnectionError
 except ImportError:
-    # HAS_BOTOCORE taken care of in AnsibleAWSModule
-    pass
+    pass  # caught by imported AnsibleAWSModule
 
 import copy
-import traceback
 
-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule, is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (AWSRetry, camel_dict_to_snake_dict, snake_dict_to_camel_dict)
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, AWSRetry, is_boto3_error_code
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 
 
 def get_domain(module, client):
