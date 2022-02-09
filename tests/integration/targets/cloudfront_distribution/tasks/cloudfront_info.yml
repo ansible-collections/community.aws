@@ -1,0 +1,35 @@
+---
+
+block:
+  - name: Create a Cloudfront distribution for testing cloudfront_info module against
+    cloudfront_distribution:
+      origins:
+      - domain_name: "{{ cloudfront_hostname }}-origin.info.example.com"
+        id: "{{ cloudfront_hostname }}-origin.info.example.com"
+      default_cache_behavior:
+        target_origin_id: "{{ cloudfront_hostname }}-origin.info.example.com"
+      state: present
+      wait: yes
+      purge_origins: yes
+    register: cloudfront_test_distribution
+
+  - name: Use cloudfront_info module to retrieve CF distribution details
+    cloudfront_info:
+      distribution: true
+      distribution_id: "{{ cloudfront_test_distribution.id }}"
+    register: cloudfront_info_results
+
+  - name: Ensure cloudfront_info returned results
+    assert:
+      that:
+        - cloudfront_info_results.result is defined
+        - cloudfront_info_results.distribution is defined
+        - cloudfront_info_results.result.id == cloudfront_test_distribution.id
+
+always:
+
+  - name: clean up cloudfront distribution
+    cloudfront_distribution:
+      distribution_id: "{{ cloudfront_test_distribution.id }}"
+      enabled: no
+      state: absent

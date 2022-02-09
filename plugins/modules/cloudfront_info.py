@@ -327,7 +327,9 @@ class CloudFrontServiceManager:
 
             if len(origin_access_identity_list['Items']) > 0:
                 return origin_access_identity_list['Items']
-            return {}
+            else:
+                return []
+
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing cloud front origin access identities")
 
@@ -339,7 +341,7 @@ class CloudFrontServiceManager:
             if len(distribution_list['Items']) > 0:
                 distribution_list = distribution_list['Items']
             else:
-                return {}
+                return []
 
             if not keyed:
                 return distribution_list
@@ -355,7 +357,8 @@ class CloudFrontServiceManager:
             if len(distribution_list['Items']) > 0:
                 distribution_list = distribution_list['Items']
             else:
-                return {}
+                return []
+
             return self.keyed_list_helper(distribution_list)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing distributions by web acl id")
@@ -367,7 +370,9 @@ class CloudFrontServiceManager:
 
             if len(invalidation_list['Items']) > 0:
                 return invalidation_list['Items']
-            return {}
+            else:
+                return []
+
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing invalidations")
 
@@ -379,7 +384,7 @@ class CloudFrontServiceManager:
             if len(streaming_distribution_list['Items']) > 0:
                 streaming_distribution_list = streaming_distribution_list['Items']
             else:
-                return {}
+                return []
 
             if not keyed:
                 return streaming_distribution_list
