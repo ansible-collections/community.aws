@@ -50,6 +50,7 @@ options:
       - if you want base path to be just I(/) omit the param completely or set it to empty string.
     required: true
     type: list
+    elements: dict
   state:
     description:
       - Create or delete custom domain setup.
