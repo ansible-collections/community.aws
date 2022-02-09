@@ -28,6 +28,7 @@ options:
     description:
       - AWS Certificate Manger (ACM) TLS certificate ARN.
     type: str
+    required: true
   security_policy:
     description:
       - Set allowed TLS versions through AWS defined policies. Currently only TLS_1_0 and TLS_1_2 are available.
@@ -312,7 +313,7 @@ def main():
         certificate_arn=dict(type='str', required=True),
         security_policy=dict(type='str', default='TLS_1_2', choices=['TLS_1_0', 'TLS_1_2']),
         endpoint_type=dict(type='str', default='EDGE', choices=['EDGE', 'REGIONAL', 'PRIVATE']),
-        domain_mappings=dict(type='list', required=True),
+        domain_mappings=dict(type='list', required=True, elements='dict'),
         state=dict(type='str', default='present', choices=['present', 'absent'])
     )
 
