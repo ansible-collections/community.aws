@@ -58,8 +58,8 @@ options:
     choices: [ 'present', 'absent' ]
     type: str
 extends_documentation_fragment:
-    - aws
-    - ec2
+    - amazon.aws.aws
+    - amazon.aws.ec2
 notes:
    - Does not create a DNS entry on Route53, for that use the route53 module.
    - Only supports TLS certificates from AWS ACM that can just be referenced by the ARN, while the AWS API still offers (deprecated)
