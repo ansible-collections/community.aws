@@ -116,7 +116,8 @@ except ImportError:
 
 import copy
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, AWSRetry, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 
 
@@ -128,7 +129,7 @@ def get_domain(module, client):
         result['path_mappings'] = get_domain_mappings(client, domain_name)
     except is_boto3_error_code('NotFoundException'):
         return None
-    except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:  # pylint: disable=duplicate-except
+    except (ClientError, EndpointConnectionError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="getting API GW domain")
     return camel_dict_to_snake_dict(result)
 
@@ -157,7 +158,7 @@ def create_domain(module, client):
 
             result['path_mappings'].append(add_domain_mapping(client, domain_name, base_path, rest_api_id, stage))
 
-    except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
+    except (ClientError, EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="creating API GW domain")
     return camel_dict_to_snake_dict(result)
 
@@ -186,7 +187,7 @@ def update_domain(module, client, existing_domain):
         try:
             result['domain'] = update_domain_name(client, domain_name, **snake_dict_to_camel_dict(specified_domain_settings))
             result['updated'] = True
-        except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
+        except (ClientError, EndpointConnectionError) as e:
             module.fail_json_aws(e, msg="updating API GW domain")
 
     existing_mappings = copy.deepcopy(existing_domain.get('path_mappings', []))
@@ -211,7 +212,7 @@ def update_domain(module, client, existing_domain):
                     client, domain_name, mapping.get('base_path', ''), mapping.get('rest_api_id'), mapping.get('stage')
                 )
                 result['updated'] = True
-        except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
+        except (ClientError, EndpointConnectionError) as e:
             module.fail_json_aws(e, msg="updating API GW domain mapping")
 
     return camel_dict_to_snake_dict(result)
@@ -221,7 +222,7 @@ def delete_domain(module, client):
     domain_name = module.params.get('domain_name')
     try:
         result = delete_domain_name(client, domain_name)
-    except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
+    except (ClientError, EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="deleting API GW domain")
     return camel_dict_to_snake_dict(result)
 
