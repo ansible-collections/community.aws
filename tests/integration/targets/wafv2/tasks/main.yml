@@ -91,6 +91,13 @@
         scope: REGIONAL
       ignore_errors: true
 
+    - name: Ensure ACL with response body is removed
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-acl-with-response-body"
+        state: absent
+        scope: REGIONAL
+      ignore_errors: true
+
     #########################
     # remove alb and its deps
     #########################

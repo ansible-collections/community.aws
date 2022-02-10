@@ -121,12 +121,20 @@
               cloud_watch_metrics_enabled: no
               metric_name: unused
         custom_response_bodies: {}
+
+    # unfortunately the wafv2_web_acl does not return the ACL structure after an update
+    # hence we have to do another task here using the info module to retrieve the latest state
+    # of the ACL and then to check it
+    - name: check if custom response body was really removed
+      wafv2_web_acl_info:
+        name: "{{ resource_prefix }}-acl-with-response-body"
+        scope: REGIONAL
       register: acl_without_response_bodies
 
     - name: Web acl with custom response bodies verify removal of custom response
       assert:
         that:
-          - acl_without_response_bodies is changed
+          - acl_without_response_bodies.custom_response_bodies is undefined
 
     - name: create web acl
       wafv2_web_acl:
