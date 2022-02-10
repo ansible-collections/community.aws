@@ -64,7 +64,7 @@
       assert:
         that:
           - out is not changed
-    
+
   always:
     ###################################
     # always delete wafv2 components
@@ -87,6 +87,13 @@
     - name: take care rule group is removed
       wafv2_rule_group:
         name: "{{ rule_group_name }}"
+        state: absent
+        scope: REGIONAL
+      ignore_errors: true
+
+    - name: Ensure ACL with response body is removed
+      wafv2_web_acl:
+        name: "{{ resource_prefix }}-acl-with-response-body"
         state: absent
         scope: REGIONAL
       ignore_errors: true
