@@ -5,8 +5,7 @@
 community.aws.aws_acm
 *********************
 
-**Upload and delete certificates in the AWS Certificate Manager service
-**
+**Upload and delete certificates in the AWS Certificate Manager service**
 
 
 Version added: 1.0.0
