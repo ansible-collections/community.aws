@@ -325,10 +325,7 @@ class CloudFrontServiceManager:
             results = self._paginated_result('list_cloud_front_origin_access_identities')
             origin_access_identity_list = results.get('CloudFrontOriginAccessIdentityList', {'Items': []})
 
-            if len(origin_access_identity_list['Items']) > 0:
-                return origin_access_identity_list['Items']
-            else:
-                return []
+            return origin_access_identity_list['Items']
 
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error listing cloud front origin access identities")
