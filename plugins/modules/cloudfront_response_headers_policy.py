@@ -159,7 +159,6 @@ class CloudfrontResponseHeadersPolicyService(object):
         self.client = module.client('cloudfront')
         self.check_mode = module.check_mode
 
-
     def find_response_headers_policy(self, name):
         policies = self.client.list_response_headers_policies()['ResponseHeadersPolicyList']['Items']
 
@@ -173,7 +172,6 @@ class CloudfrontResponseHeadersPolicyService(object):
                 matching_policy = None
 
         return matching_policy
-
 
     def create_response_header_policy(self, name, comment, cors_config, security_headers_config, custom_headers_config):
         cors_config = snake_dict_to_camel_dict(cors_config, capitalize_first=True)
@@ -226,7 +224,6 @@ class CloudfrontResponseHeadersPolicyService(object):
 
         self.module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
 
-
     def delete_response_header_policy(self, name):
         matching_policy = self.find_response_headers_policy(name)
 
@@ -241,7 +238,6 @@ class CloudfrontResponseHeadersPolicyService(object):
                 result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
 
             self.module.exit_json(changed=True, **camel_dict_to_snake_dict(result))
-
 
     # Inserts a Quantity field into dicts with a list ('Items')
     @staticmethod
