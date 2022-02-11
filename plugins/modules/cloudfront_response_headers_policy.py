@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-version_added: 3.0.1
+version_added: 3.1.0
 module: cloudfront_response_headers_policy
 
 short_description: Create, update and delete response headers policies to be used in a Cloudfront distribution
@@ -56,13 +56,10 @@ options:
       default: {}
       type: dict
 
-notes:
-  - Does not support check mode.
-
 '''
 
 EXAMPLES = '''
-- name: Creationg a Cloudfront header policy using all predefined header features and a custom header to demonstration
+- name: Creationg a Cloudfront header policy using all predefined header features and a custom header for demonstration
   community.aws.cloudfront_response_headers_policy:
     name: my-header-policy
     comment: My header policy for all the headers
@@ -110,6 +107,11 @@ EXAMPLES = '''
       items:
         - { header: 'X-Test-Header', value: 'Foo', override: true }
     state: present
+
+- name: Delete header policy
+  community.aws.cloudfront_response_headers_policy:
+    name: my-header-policy
+    state: absent
 '''
 
 RETURN = '''
@@ -154,6 +156,7 @@ class CloudfrontResponseHeadersPolicyService(object):
     def __init__(self, module):
         self.module = module
         self.client = module.client('cloudfront')
+        self.check_mode = module.check_mode
 
 
     def find_response_headers_policy(self, name):
@@ -195,6 +198,9 @@ class CloudfrontResponseHeadersPolicyService(object):
 
         changed = False
 
+        if self.check_mode:
+            self.module.exit_json(changed=True, response_headers_policy=camel_dict_to_snake_dict(config))
+
         if matching_policy is None:
             try:
                 result = self.client.create_response_headers_policy(ResponseHeadersPolicyConfig=config)
@@ -218,7 +224,6 @@ class CloudfrontResponseHeadersPolicyService(object):
                 self.module.fail_json_aws(e, msg="Error creating policy")
 
         self.module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
-        return result
 
 
 
@@ -230,10 +235,12 @@ class CloudfrontResponseHeadersPolicyService(object):
         else:
             policy_id = matching_policy['ResponseHeadersPolicy']['Id']
             etag = matching_policy['ETag']
-            result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
+            if self.check_mode:
+                result = {}
+            else:
+                result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
 
             self.module.exit_json(changed=True, **camel_dict_to_snake_dict(result))
-        return result
 
 
     # Inserts a Quantity field into dicts with a list ('Items')
@@ -261,7 +268,7 @@ def main():
         state=dict(choices=['present', 'absent'], type='str', default='present'),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
     name = module.params.get('name')
     comment = module.params.get('comment')
