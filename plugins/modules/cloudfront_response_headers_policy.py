@@ -77,9 +77,9 @@ EXAMPLES = '''
           - OPTIONS
           - HEAD
       access_control_allow_credentials: true
-        access_control_expose_headers:
-          items:
-            - 'X-Session-Id'
+      access_control_expose_headers:
+        items:
+          - 'X-Session-Id'
       access_control_max_age_sec: 1800
       origin_override: true
     security_headers_config:
