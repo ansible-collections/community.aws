@@ -368,14 +368,14 @@ Examples
         state: present
 
     # Update a policy with a new default version
-    - name: Create IAM Managed Policy
+    - name: Update an IAM Managed Policy with new default version
       community.aws.iam_managed_policy:
         policy_name: "ManagedPolicy"
         policy: "{{ lookup('file', 'managed_policy_update.json') }}"
         state: present
 
     # Update a policy with a new non default version
-    - name: Create IAM Managed Policy
+    - name: Update an IAM Managed Policy with a non default version
       community.aws.iam_managed_policy:
         policy_name: "ManagedPolicy"
         policy:
@@ -388,7 +388,7 @@ Examples
         state: present
 
     # Update a policy and make it the only version and the default version
-    - name: Create IAM Managed Policy
+    - name: Update an IAM Managed Policy with default version as the only version
       community.aws.iam_managed_policy:
         policy_name: "ManagedPolicy"
         policy: |
@@ -404,7 +404,7 @@ Examples
         state: present
 
     # Remove a policy
-    - name: Create IAM Managed Policy
+    - name: Remove an existing IAM Managed Policy
       community.aws.iam_managed_policy:
         policy_name: "ManagedPolicy"
         state: absent
@@ -429,7 +429,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>policy</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">complex</span>
                     </div>
                 </td>
                 <td>success</td>

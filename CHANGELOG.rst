@@ -5,6 +5,42 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v3.1.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+This changelog contains all changes to the modules and plugins in this collection
+that have been made after the previous release.
+
+Minor Changes
+-------------
+
+- aws_secret - Add ``resource_policy`` parameter (https://github.com/ansible-collections/community.aws/pull/843).
+- aws_ssm connection plugin - add parameters to explicitly specify SSE mode and KMS key id for uploads on the file transfer bucket. (https://github.com/ansible-collections/community.aws/pull/763)
+- dynamodb_table - the ``table_class`` parameter has been added (https://github.com/ansible-collections/community.aws/pull/880).
+- ec2_launch_template - Add metadata options parameter ``http_protocol_ipv6`` and ``instance_metadata_tags`` (https://github.com/ansible-collections/community.aws/pull/917).
+- ec2_lc - add support for throughput parameter (https://github.com/ansible-collections/community.aws/pull/790).
+- ec2_placement_group - add support for partition strategy and partition count (https://github.com/ansible-collections/community.aws/pull/872).
+- elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
+- elb_target_group - add support for parameter ``deregistration_connection_termination`` (https://github.com/ansible-collections/community.aws/pull/913).
+- iam_managed_policy - refactor module adding ``check_mode`` and better AWSRetry backoff logic (https://github.com/ansible-collections/community.aws/pull/893).
+- iam_user - add parameter ``password_reset_required`` (https://github.com/ansible-collections/community.aws/pull/860).
+- wafv2_web_acl - Documentation updates wafv2_web_acl and aws_waf_web_acl (https://github.com/ansible-collections/community.aws/pull/721).
+- wafv2_web_acl - Extended the wafv2_web_acl module to also take the ``custom_response_bodies`` argument (https://github.com/ansible-collections/community.aws/pull/721).
+
+Bugfixes
+--------
+
+- Add backoff retry logic to route53_info (https://github.com/ansible-collections/community.aws/pull/865).
+- Add backoff retry logic to route53_zone (https://github.com/ansible-collections/community.aws/pull/865).
+- cloudfront_distribution - Dont pass ``s3_origin_access_identity_enabled`` to API request (https://github.com/ansible-collections/community.aws/pull/881).
+- execute_lambda - Wait for Lambda function State = Active before executing (https://github.com/ansible-collections/community.aws/pull/857)
+- lambda - Wait for Lambda function State = Active & LastUpdateStatus = Successful before updating (https://github.com/ansible-collections/community.aws/pull/857)
+- rds_instance - Fix updates of ``iops`` or ``allocated_storage`` for ``io1`` DB instances when only one value is changing (https://github.com/ansible-collections/community.aws/pull/878).
+
 v3.0.1
 ======
 
