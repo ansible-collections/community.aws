@@ -14,8 +14,8 @@ module: cloudfront_response_headers_policy
 short_description: Create, update and delete response headers policies to be used in a Cloudfront distribution
 
 description:
-    - Create, update and delete response headers policies to be used in a Cloudfront distribution
-          for inserting custom headers. See docs at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront.html#CloudFront.Client.create_response_headers_policy
+    - Create, update and delete response headers policies to be used in a Cloudfront distribution for inserting custom headers
+    - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront.html#CloudFront.Client.create_response_headers_policy)
 
 author: Stefan Horning (@stefanhorning)
 
@@ -151,6 +151,7 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 import datetime
 
+
 class CloudfrontResponseHeadersPolicyService(object):
 
     def __init__(self, module):
@@ -214,8 +215,8 @@ class CloudfrontResponseHeadersPolicyService(object):
                 result = self.client.update_response_headers_policy(Id=policy_id, IfMatch=etag, ResponseHeadersPolicyConfig=config)
 
                 changed_time = result['ResponseHeadersPolicy']['LastModifiedTime']
-                seconds = 3 # threshhold for returned timestamp age
-                seconds_ago = (datetime.datetime.now(changed_time.tzinfo) - datetime.timedelta(0,seconds))
+                seconds = 3  # threshhold for returned timestamp age
+                seconds_ago = (datetime.datetime.now(changed_time.tzinfo) - datetime.timedelta(0, seconds))
 
                 # consider change made by this execution of the module if returned timestamp was very recent
                 if changed_time > seconds_ago:
@@ -224,7 +225,6 @@ class CloudfrontResponseHeadersPolicyService(object):
                 self.module.fail_json_aws(e, msg="Error creating policy")
 
         self.module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
-
 
 
     def delete_response_header_policy(self, name):
