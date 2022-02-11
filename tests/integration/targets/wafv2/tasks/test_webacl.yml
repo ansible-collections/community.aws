@@ -10,7 +10,7 @@
 - name: verify rules
   assert:
     that:
-      - out.rules | count == 2
+      - out.rules | count == 3
 
 - name: change web acl description
   wafv2_web_acl:
@@ -116,6 +116,7 @@
     sampled_requests: no
     cloudwatch_metrics: yes
     metric_name: blub
+    purge_rules: yes
     rules:
       - name: admin_protect
         priority: 1
