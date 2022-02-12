@@ -178,20 +178,14 @@ class AmazonBucket:
 
             # Handle different event targets
             if config_lookup.get('QueueConfigurations'):
-                #self._full_config_cache['QueueConfigurations'] = []
-
                 for queue_config in config_lookup.get('QueueConfigurations'):
                     self._full_config_cache['QueueConfigurations'].append(Config.from_api(queue_config))
 
             if config_lookup.get('TopicConfigurations'):
-                #self._full_config_cache['TopicConfigurations'] = []
-
                 for topic_config in config_lookup.get('TopicConfigurations'):
                     self._full_config_cache['TopicConfigurations'].append(Config.from_api(topic_config))
 
             if config_lookup.get('LambdaFunctionConfigurations'):
-                #self._full_config_cache['LambdaFunctionConfigurations'] = []
-
                 for function_config in config_lookup.get('LambdaFunctionConfigurations'):
                     self._full_config_cache['LambdaFunctionConfigurations'].append(Config.from_api(function_config))
 
@@ -252,27 +246,19 @@ class AmazonBucket:
         # Iterate through available configs
         for target_configs in configs:
             if len(configs[target_configs]) > 0:
-                 api_params['NotificationConfiguration'][target_configs] = configs[target_configs]
+                api_params['NotificationConfiguration'][target_configs] = configs[target_configs]
 
         if not self.check_mode:
-          try:
-              self.client.put_bucket_notification_configuration(**api_params)
-          except (ClientError, BotoCoreError) as e:
-              self.module.fail_json(msg='{0}'.format(e))
+            try:
+                self.client.put_bucket_notification_configuration(**api_params)
+            except (ClientError, BotoCoreError) as e:
+                self.module.fail_json(msg='{0}'.format(e))
 
 
 class Config:
     def __init__(self, content):
         self._content = content
         self.name = content.get('Id')
-        self.type = None
-
-        if content.get('QueueArn'):
-            self.type = 'queue'
-        elif content.get('TopicArn'):
-            self.type = 'topic'
-        elif content.get('LambdaFunctionArn'):
-            self.type = 'function'
 
     @property
     def raw(self):
@@ -352,7 +338,7 @@ def main():
         lambda_version=dict(type='int', default=0),
     )
 
-    mutually_exclusive=[
+    mutually_exclusive = [
         ['queue_arn', 'topic_arn', 'lambda_function_arn'],
         ['lambda_alias', 'lambda_version']
     ]
