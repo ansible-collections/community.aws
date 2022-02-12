@@ -127,9 +127,22 @@ EXAMPLES = r'''
 
 RETURN = r'''
 notification_configuration:
-    description: list of currently applied notifications
-    returned: success
-    type: list
+  description: dictionary of currently applied notifications
+  returned: success
+  type: complex
+  contains:
+    lambda_function_configurations:
+      description:
+      - List of current Lambda function notification configurations applied to the bucket.
+      type: list
+    queue_configurations:
+      description:
+      - List of current SQS notification configurations applied to the bucket.
+      type: list
+    topic_configurations:
+      description:
+      - List of current SNS notification configurations applied to the bucket.
+      type: list
 '''
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
@@ -151,9 +164,11 @@ class AmazonBucket:
 
     def full_config(self):
         if self._full_config_cache is None:
-
-            self._full_config_cache = []
-            _config = dict()
+            self._full_config_cache = dict(
+                QueueConfigurations=[],
+                TopicConfigurations=[],
+                LambdaFunctionConfigurations=[]
+            )
 
             try:
                 config_lookup = self.client.get_bucket_notification_configuration(
@@ -163,46 +178,81 @@ class AmazonBucket:
 
             # Handle different event targets
             if config_lookup.get('QueueConfigurations'):
-                _config = config_lookup.get('QueueConfigurations', list())
+                #self._full_config_cache['QueueConfigurations'] = []
+
+                for queue_config in config_lookup.get('QueueConfigurations'):
+                    self._full_config_cache['QueueConfigurations'].append(Config.from_api(queue_config))
+
             if config_lookup.get('TopicConfigurations'):
-                _config = config_lookup.get('TopicConfigurations', list())
+                #self._full_config_cache['TopicConfigurations'] = []
+
+                for topic_config in config_lookup.get('TopicConfigurations'):
+                    self._full_config_cache['TopicConfigurations'].append(Config.from_api(topic_config))
+
             if config_lookup.get('LambdaFunctionConfigurations'):
-                _config = config_lookup.get('LambdaFunctionConfigurations', list())
+                #self._full_config_cache['LambdaFunctionConfigurations'] = []
 
-            self._full_config_cache = [Config.from_api(cfg) for cfg in _config]
-
+                for function_config in config_lookup.get('LambdaFunctionConfigurations'):
+                    self._full_config_cache['LambdaFunctionConfigurations'].append(Config.from_api(function_config))
 
         return self._full_config_cache
 
     def current_config(self, config_name):
-        for config in self.full_config():
-            if config.raw['Id'] == config_name:
-                return config
+        # Iterate through available notification targets and get current event config
+        for target_configs in self.full_config():
+            for config in self.full_config()[target_configs]:
+                if config.raw['Id'] == config_name:
+                    return config
 
     def apply_config(self, desired):
-        configs = [cfg.raw for cfg in self.full_config() if cfg.name != desired.raw['Id']]
-        configs.append(desired.raw)
+        configs = dict(
+            QueueConfigurations=[],
+            TopicConfigurations=[],
+            LambdaFunctionConfigurations=[]
+        )
+
+        # Iterate through available notification targets update configs with desired
+        for target_configs in self.full_config():
+            for config in self.full_config()[target_configs]:
+                if config.name != desired.raw['Id']:
+                    configs[target_configs].append(config.raw)
+
+        if self.module.params.get('queue_arn'):
+            configs['QueueConfigurations'].append(desired.raw)
+        if self.module.params.get('topic_arn'):
+            configs['TopicConfigurations'].append(desired.raw)
+        if self.module.params.get('lambda_function_arn'):
+            configs['LambdaFunctionConfigurations'].append(desired.raw)
+
         self._upload_bucket_config(configs)
         return configs
 
     def delete_config(self, desired):
-        configs = [cfg.raw for cfg in self.full_config() if cfg.name != desired.raw['Id']]
+        configs = dict(
+            QueueConfigurations=[],
+            TopicConfigurations=[],
+            LambdaFunctionConfigurations=[]
+        )
+
+        # Iterate through available notification targets removing config specified
+        for target_configs in self.full_config():
+            for config in self.full_config()[target_configs]:
+                if config.name != desired.raw['Id']:
+                    configs[target_configs].append(config.raw)
+
         self._upload_bucket_config(configs)
         return configs
 
-    def _upload_bucket_config(self, config):
+    def _upload_bucket_config(self, configs):
         api_params = dict(
             Bucket=self.bucket_name,
             NotificationConfiguration=dict()
         )
 
-        # Handle different event targets
-        if self.module.params.get('queue_arn'):
-            api_params['NotificationConfiguration']['QueueConfigurations'] = config
-        if self.module.params.get('topic_arn'):
-            api_params['NotificationConfiguration']['TopicConfigurations'] = config
-        if self.module.params.get('lambda_function_arn'):
-            api_params['NotificationConfiguration']['LambdaFunctionConfigurations'] = config
+        # Iterate through available configs
+        for target_configs in configs:
+            if len(configs[target_configs]) > 0:
+                 api_params['NotificationConfiguration'][target_configs] = configs[target_configs]
 
         if not self.check_mode:
           try:
@@ -215,6 +265,14 @@ class Config:
     def __init__(self, content):
         self._content = content
         self.name = content.get('Id')
+        self.type = None
+
+        if content.get('QueueArn'):
+            self.type = 'queue'
+        elif content.get('TopicArn'):
+            self.type = 'topic'
+        elif content.get('LambdaFunctionArn'):
+            self.type = 'function'
 
     @property
     def raw(self):
@@ -310,27 +368,41 @@ def main():
     bucket = AmazonBucket(module, client)
     current = bucket.current_config(module.params['event_name'])
     desired = Config.from_params(**module.params)
-    notification_configuration = [cfg.raw for cfg in bucket.full_config()]
+
+    notification_configs = dict(
+        QueueConfigurations=[],
+        TopicConfigurations=[],
+        LambdaFunctionConfigurations=[]
+    )
+
+    for target_configs in bucket.full_config():
+        for cfg in bucket.full_config()[target_configs]:
+            notification_configs[target_configs].append(camel_dict_to_snake_dict(cfg.raw))
 
     state = module.params['state']
+    updated_configuration = dict()
     changed = False
 
     if state == 'present':
         if current != desired:
-            notification_configuration = bucket.apply_config(desired)
+            updated_configuration = bucket.apply_config(desired)
             changed = True
         if module.check_mode:
             changed = True
     elif state == 'absent':
-        if current and not module.check_mode:
-            notification_configuration = bucket.delete_config(desired)
+        if current:
+            updated_configuration = bucket.delete_config(desired)
             changed = True
         if module.check_mode:
             changed = True
 
-    module.exit_json(**dict(changed=changed,
-                            notification_configuration=[camel_dict_to_snake_dict(cfg) for cfg in
-                                                        notification_configuration]))
+    for target_configs in updated_configuration:
+        notification_configs[target_configs] = []
+        for cfg in updated_configuration.get(target_configs, list()):
+            notification_configs[target_configs].append(camel_dict_to_snake_dict(cfg))
+
+    module.exit_json(changed=changed, notification_configuration=camel_dict_to_snake_dict(
+        notification_configs))
 
 
 if __name__ == '__main__':
