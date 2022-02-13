@@ -34,7 +34,7 @@
       lambda:
         name: '{{ lambda_name }}'
         state: present
-        role: '{{ lambda_role_name }}'
+        role: "{{ iam_role.arn }}"
         runtime: python3.7
         zip_file: '{{function_res.dest}}'
         handler: lambda_function.lambda_handler
