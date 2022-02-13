@@ -192,7 +192,7 @@ class AmazonBucket:
         return self._full_config_cache
 
     def current_config(self, config_name):
-        # Iterate through available notification targets and get current event config
+        # Iterate through configs and get current event config
         for target_configs in self.full_config():
             for config in self.full_config()[target_configs]:
                 if config.raw['Id'] == config_name:
@@ -205,7 +205,7 @@ class AmazonBucket:
             LambdaFunctionConfigurations=[]
         )
 
-        # Iterate through available notification targets update configs with desired
+        # Iterate through existing configs then add the desired config
         for target_configs in self.full_config():
             for config in self.full_config()[target_configs]:
                 if config.name != desired.raw['Id']:
@@ -228,7 +228,7 @@ class AmazonBucket:
             LambdaFunctionConfigurations=[]
         )
 
-        # Iterate through available notification targets removing config specified
+        # Iterate through existing configs omitting specified config
         for target_configs in self.full_config():
             for config in self.full_config()[target_configs]:
                 if config.name != desired.raw['Id']:

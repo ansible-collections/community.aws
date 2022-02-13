@@ -71,25 +71,7 @@
         principal: s3.amazonaws.com
         source_arn: arn:aws:s3:::{{ bucket_info.name }}
 
-    - name: register s3 bucket notification
-      s3_bucket_notification:
-        state: present
-        event_name: "{{ event_name }}"
-        bucket_name: "{{ bucket_name }}"
-        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
-        events:
-          - s3:ObjectCreated:*
-          - s3:ObjectRemoved:*
-        prefix: images/
-        suffix: .jpg
-      register: result
-
-    - name: assert result.changed == True
-      assert:
-        that:
-          - result is changed
-
-    - name: test check_mode without change
+    - name: create s3 bucket notification - check_mode
       s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
@@ -103,30 +85,12 @@
       register: result
       check_mode: true
 
-    - name: assert result.changed == False
-      assert:
-        that:
-          - result is not changed
-
-    - name: test check_mode change events
-      s3_bucket_notification:
-        state: present
-        event_name: "{{ event_name }}"
-        bucket_name: "{{ bucket_name }}"
-        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
-        events:
-          - s3:ObjectCreated:*
-        prefix: images/
-        suffix: .jpg
-      register: result
-      check_mode: true
-
-    - name: assert result.changed == True
+    - name: create s3 bucket notification - check_mode
       assert:
         that:
           - result is changed
 
-    - name: test that check_mode didn't change events
+    - name: create s3 bucket notification
       s3_bucket_notification:
         state: present
         event_name: "{{ event_name }}"
@@ -139,7 +103,29 @@
         suffix: .jpg
       register: result
 
-    - name: assert result.changed == False
+    - name: create s3 bucket notification
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.lambda_function_configurations | length == 1
+          - result.notification_configuration.lambda_function_configurations[0].id == event_name
+          - result.notification_configuration.lambda_function_configurations[0].events | length == 2
+          - result.notification_configuration.lambda_function_configurations[0].lambda_function_arn == lambda_info.configuration.function_arn
+
+    - name: create s3 bucket notification - idempotency
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
+        events:
+          - s3:ObjectCreated:*
+          - s3:ObjectRemoved:*
+        prefix: images/
+        suffix: .jpg
+      register: result
+
+    - name: create s3 bucket notification - idempotency
       assert:
         that:
           - result is not changed
@@ -159,7 +145,7 @@
       register: result
       ignore_errors: true
 
-    - name: assert task failed
+    - name: test mutually exclusive parameters
       assert:
         that:
           - result is failed
@@ -178,7 +164,7 @@
         suffix: .gif
       register: result
 
-    - name: assert result.changed == True
+    - name: test configuration change on suffix
       assert:
         that:
           - result is changed
@@ -196,7 +182,7 @@
         suffix: .gif
       register: result
 
-    - name: assert result.changed == True
+    - name: test configuration change on prefix
       assert:
         that:
           - result is changed
@@ -215,10 +201,30 @@
         suffix: .gif
       register: result
 
-    - name: assert result.changed == True
+    - name: test configuration change on new events added
       assert:
         that:
           - result is changed
+          - result.notification_configuration.lambda_function_configurations[0].events | length == 3
+
+    - name: test that event order does not result in change
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
+        events:
+          - s3:ObjectRestore:Post
+          - s3:ObjectRemoved:*
+          - s3:ObjectCreated:*
+        prefix: photos/
+        suffix: .gif
+      register: result
+
+    - name: test that event order does not matter
+      assert:
+        that:
+          - result is not changed
 
     - name: test configuration change on events removed
       s3_bucket_notification:
@@ -232,62 +238,11 @@
         suffix: .gif
       register: result
 
-    - name: assert result.changed == True
+    - name: test configuration change on events removed
       assert:
         that:
           - result is changed
-
-    - name: change events
-      s3_bucket_notification:
-        state: present
-        event_name: "{{ event_name }}"
-        bucket_name: "{{ bucket_name }}"
-        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
-        events:
-          - s3:ObjectCreated:*
-          - s3:ObjectRemoved:*
-          - s3:ObjectRestore:Post
-        prefix: photos/
-        suffix: .gif
-      register: result
-
-    - name: test that event order does not matter
-      s3_bucket_notification:
-        state: present
-        event_name: "{{ event_name }}"
-        bucket_name: "{{ bucket_name }}"
-        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
-        events:
-          - s3:ObjectRestore:Post
-          - s3:ObjectRemoved:*
-          - s3:ObjectCreated:*
-        prefix: photos/
-        suffix: .gif
-      register: result
-
-    - name: assert result.changed == False
-      assert:
-        that:
-          - result is not changed
-
-    - name: test that configuration is the same as previous task
-      s3_bucket_notification:
-        state: present
-        event_name: "{{ event_name }}"
-        bucket_name: "{{ bucket_name }}"
-        lambda_function_arn: "{{ lambda_info.configuration.function_arn }}"
-        events:
-          - s3:ObjectCreated:*
-          - s3:ObjectRemoved:*
-          - s3:ObjectRestore:Post
-        prefix: photos/
-        suffix: .gif
-      register: result
-
-    - name: assert result.changed == False
-      assert:
-        that:
-          - result is not changed
+          - result.notification_configuration.lambda_function_configurations[0].events | length == 1
 
     ## Test removal of event notification
     - name: test remove notification
@@ -297,7 +252,7 @@
         bucket_name: "{{ bucket_name }}"
       register: result
 
-    - name: assert result.changed == True
+    - name: test remove notification
       assert:
         that:
           - result is changed
@@ -309,7 +264,7 @@
         bucket_name: "{{ bucket_name }}"
       register: result
 
-    - name: assert result.changed == False
+    - name: test that events is already removed
       assert:
         that:
           - result is not changed

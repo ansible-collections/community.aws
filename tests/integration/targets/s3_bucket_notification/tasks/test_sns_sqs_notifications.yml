@@ -111,6 +111,9 @@
         that:
           - result is successful
           - result is changed
+          - result.notification_configuration.topic_configurations | length == 1
+          - result.notification_configuration.topic_configurations[0].id == event_name
+          - result.notification_configuration.topic_configurations[0].topic_arn == topic_creation.sns_arn
 
     - name: create bucket notification - idempotency
       s3_bucket_notification:
@@ -166,6 +169,7 @@
       assert:
         that:
           - result is changed
+          - result.notification_configuration.topic_configurations[0].filter.key.filter_rules[1].value == '.gif'
 
     - name: test configuration change on prefix
       s3_bucket_notification:
@@ -184,6 +188,7 @@
       assert:
         that:
           - result is changed
+          - result.notification_configuration.topic_configurations[0].filter.key.filter_rules[0].value == 'photos/'
 
     - name: test configuration change on new events added
       s3_bucket_notification:
@@ -199,10 +204,11 @@
         suffix: .gif
       register: result
 
-    - name: assert result.changed == True
+    - name: test configuration change on new events added
       assert:
         that:
           - result is changed
+          - result.notification_configuration.topic_configurations[0].events | length == 3
 
     - name: test configuration change on events removed
       s3_bucket_notification:
@@ -216,10 +222,11 @@
         suffix: .gif
       register: result
 
-    - name: assert result.changed == True
+    - name: test configuration change on events removed
       assert:
         that:
           - result is changed
+          - result.notification_configuration.topic_configurations[0].events | length == 1
 
     ## Test change of event notification target
     - name: test changing from sns to sqs target - check_mode
@@ -256,6 +263,8 @@
       assert:
         that:
           - result is changed
+          - result.notification_configuration.queue_configurations | length == 1
+          - result.notification_configuration.queue_configurations[0].queue_arn == queue_creation.queue_arn
 
     - name: test changing from sns to sqs target - idempotency
       s3_bucket_notification:
@@ -299,6 +308,7 @@
       assert:
         that:
           - result is changed
+          - result.notification_configuration.queue_configurations | length < 1
 
     - name: remove notification - idempotency
       s3_bucket_notification:
