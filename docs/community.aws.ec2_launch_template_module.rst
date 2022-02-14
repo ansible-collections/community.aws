@@ -788,6 +788,27 @@ Parameters
                     <td class="elbow-placeholder"></td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>http_protocol_ipv6</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>enabled</li>
+                                    <li><div style="color: blue"><b>disabled</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>- Wether the instance metadata endpoint is available via IPv6 (<code>enabled</code>) or not (<code>disabled</code>). - Requires boto3 &gt;= 1.18.29</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>http_put_response_hop_limit</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -819,6 +840,28 @@ Parameters
                 </td>
                 <td>
                         <div>The state of token usage for your instance metadata requests.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>instance_metadata_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>enabled</li>
+                                    <li><div style="color: blue"><b>disabled</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Wether the instance tags are availble (<code>enabled</code>) via metadata endpoint or not (<code>disabled</code>).</div>
+                        <div>Requires boto3 &gt;= 1.20.30</div>
                 </td>
             </tr>
 
@@ -1305,6 +1348,9 @@ Parameters
                 </td>
                 <td>
                         <div>The template name. This must be unique in the region-account combination you are using.</div>
+                        <div>If no launch template exists with the specified name, a new launch template is created.</div>
+                        <div>If a launch template with the specified name already exists and the configuration has not changed, nothing happens.</div>
+                        <div>If a launch template with the specified name already exists and the configuration has changed, a new version of the launch template is created.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
                 </td>
             </tr>

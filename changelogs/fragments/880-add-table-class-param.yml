@@ -1,2 +1,0 @@
-minor_changes:
-  - dynamodb_table - the ``table_class`` parameter has been added (https://github.com/ansible-collections/community.aws/pull/880).

@@ -246,6 +246,22 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>resource_policy</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">json</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specifies JSON-formatted resource policy to attach to the secret. Useful when granting cross-account access to secrets.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>rotation_interval</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -406,6 +422,14 @@ Examples
         state: present
         secret_type: 'string'
         secret: "{{ super_secret_string }}"
+
+    - name: Add a secret with resource policy attached
+      community.aws.aws_secret:
+        name: 'test_secret_string'
+        state: present
+        secret_type: 'string'
+        secret: "{{ super_secret_string }}"
+        resource_policy: "{{ lookup('template', 'templates/resource_policy.json.j2', convert_data=False) | string }}"
 
     - name: remove string from AWS Secrets Manager
       community.aws.aws_secret:

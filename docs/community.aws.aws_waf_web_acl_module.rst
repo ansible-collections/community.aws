@@ -5,7 +5,7 @@
 community.aws.aws_waf_web_acl
 *****************************
 
-**Create and delete WAF Web ACLs.**
+**Create and delete WAF Web ACLs**
 
 
 Version added: 1.0.0
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Read the AWS documentation for WAF https://aws.amazon.com/documentation/waf/.
+- Module for WAF classic, for WAF v2 use the *wafv2_** modules.
+- Read the AWS documentation for WAF https://docs.aws.amazon.com/waf/latest/developerguide/classic-waf-chapter.html.
 
 
 

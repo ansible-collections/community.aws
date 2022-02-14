@@ -556,6 +556,27 @@ Parameters
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>table_class</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>STANDARD</li>
+                                    <li>STANDARD_INFREQUENT_ACCESS</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The class of the table.</div>
+                        <div>Requires at least botocore version 1.23.18.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>tags</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -723,6 +744,23 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>table</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The returned table params from the describe API call.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;arn&#x27;: &#x27;arn:aws:dynamodb:us-east-1:721066863947:table/ansible-test-table&#x27;, &#x27;attribute_definitions&#x27;: [{&#x27;attribute_name&#x27;: &#x27;id&#x27;, &#x27;attribute_type&#x27;: &#x27;N&#x27;}], &#x27;billing_mode&#x27;: &#x27;PROVISIONED&#x27;, &#x27;creation_date_time&#x27;: &#x27;2022-02-04T13:36:01.578000+00:00&#x27;, &#x27;id&#x27;: &#x27;533b45fe-0870-4b66-9b00-d2afcfe96f19&#x27;, &#x27;item_count&#x27;: 0, &#x27;key_schema&#x27;: [{&#x27;attribute_name&#x27;: &#x27;id&#x27;, &#x27;key_type&#x27;: &#x27;HASH&#x27;}], &#x27;name&#x27;: &#x27;ansible-test-14482047-alinas-mbp&#x27;, &#x27;provisioned_throughput&#x27;: {&#x27;number_of_decreases_today&#x27;: 0, &#x27;read_capacity_units&#x27;: 1, &#x27;write_capacity_units&#x27;: 1}, &#x27;size&#x27;: 0, &#x27;status&#x27;: &#x27;ACTIVE&#x27;, &#x27;table_arn&#x27;: &#x27;arn:aws:dynamodb:us-east-1:721066863947:table/ansible-test-table&#x27;, &#x27;table_id&#x27;: &#x27;533b45fe-0870-4b66-9b00-d2afcfe96f19&#x27;, &#x27;table_name&#x27;: &#x27;ansible-test-table&#x27;, &#x27;table_size_bytes&#x27;: 0, &#x27;table_status&#x27;: &#x27;ACTIVE&#x27;, &#x27;tags&#x27;: {}}</div>
+                </td>
+            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>

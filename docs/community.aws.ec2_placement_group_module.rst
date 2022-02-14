@@ -165,6 +165,24 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>partition_count</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The number of partitions.</div>
+                        <div>Valid only when <em>Strategy</em> is set to <code>partition</code>.</div>
+                        <div>Must be a value between <code>1</code> and <code>7</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -245,6 +263,7 @@ Parameters
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li><div style="color: blue"><b>cluster</b>&nbsp;&larr;</div></li>
                                     <li>spread</li>
+                                    <li>partition</li>
                         </ul>
                 </td>
                 <td>
@@ -303,6 +322,13 @@ Examples
         name: my-cluster
         state: present
         strategy: spread
+
+    - name: Create a Partition strategy placement group.
+      community.aws.ec2_placement_group:
+        name: my-cluster
+        state: present
+        strategy: partition
+        partition_count: 3
 
     - name: Delete a placement group.
       community.aws.ec2_placement_group:

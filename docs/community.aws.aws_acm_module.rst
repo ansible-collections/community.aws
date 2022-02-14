@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Import and delete certificates in Amazon Web Service's Certificate Manager (AWS ACM).
+
 - This module does not currently interact with AWS-provided certificates. It currently only manages certificates provided to AWS by the user.
 
 - The ACM API allows users to upload multiple certificates for the same domain name, and even multiple identical certificates. This module attempts to restrict such freedoms, to be idempotent, as per the Ansible philosophy. It does this through applying AWS resource "Name" tags to ACM certificates.
@@ -34,6 +35,7 @@ Synopsis
 - When *state=absent* and *certificate_arn* is not defined, and *domain_name* is not defined, this module will delete all ACM resources in this AWS region with a corresponding *Name* tag. If there are none, it will succeed without effect.
 
 - Note that this may not work properly with keys of size 4096 bits, due to a limitation of the ACM API.
+
 
 
 
@@ -214,7 +216,7 @@ Parameters
                 <td>
                         <div>The domain name of the certificate.</div>
                         <div>If <em>state=absent</em> and <em>domain_name</em> is specified, this task will delete all ACM certificates with this domain.</div>
-                        <div>Exactly one of <em>domain_name</em>, <em>name_tag</em>  and <em>certificate_arn</em> must be provided.</div>
+                        <div>Exactly one of <em>domain_name</em>, <em>name_tag</em> and <em>certificate_arn</em> must be provided.</div>
                         <div>If <em>state=present</em> this must not be specified. (Since the domain name is encoded within the public certificate&#x27;s body.)</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: domain</div>
                 </td>
