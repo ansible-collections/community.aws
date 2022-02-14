@@ -1527,3 +1527,25 @@ releases:
       name: ec2_asg_scheduled_action
       namespace: ''
     release_date: '2022-01-13'
+  2.3.0:
+    changes:
+      bugfixes:
+      - cloudfront_distribution - Dont pass ``s3_origin_access_identity_enabled``
+        to API request (https://github.com/ansible-collections/community.aws/pull/881).
+      - execute_lambda - Wait for Lambda function State = Active before executing
+        (https://github.com/ansible-collections/community.aws/pull/857)
+      - lambda - Wait for Lambda function State = Active & LastUpdateStatus = Successful
+        before updating (https://github.com/ansible-collections/community.aws/pull/857)
+      minor_changes:
+      - elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
+      release_summary: 'This is the minor release of the ``community.aws`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 2.3.0.yml
+    - 825-fix-elb-wait.yml
+    - 857-lambda-wait-before.yml
+    - 881-cloudfront-bug.yml
+    release_date: '2022-02-14'
