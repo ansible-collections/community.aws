@@ -1548,4 +1548,4 @@ releases:
     - 825-fix-elb-wait.yml
     - 857-lambda-wait-before.yml
     - 881-cloudfront-bug.yml
-    release_date: '2022-02-11'
+    release_date: '2022-02-14'
