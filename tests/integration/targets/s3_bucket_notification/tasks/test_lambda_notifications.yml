@@ -11,6 +11,12 @@
           - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
       register: iam_role
 
+    - name: wait 10 seconds for role to become available
+      pause:
+        seconds: 10
+      when:
+        - iam_role is changed
+
     - name: move lambda into place for archive module
       copy:
         src: mini_lambda.py
@@ -34,7 +40,7 @@
       lambda:
         name: '{{ lambda_name }}'
         state: present
-        role: "{{ iam_role.arn }}"
+        role: "{{ lambda_role_name }}"
         runtime: python3.7
         zip_file: '{{function_res.dest}}'
         handler: lambda_function.lambda_handler
