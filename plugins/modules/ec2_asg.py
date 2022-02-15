@@ -190,11 +190,13 @@ options:
       - If there are target groups attached to the AutoScalingGroup, the instances are also deregistered from the target groups.
     type: list
     elements: str
+    version_added: 3.2.0
   decrement_desired_capacity:
     description:
       - Indicates whether the AutoScalingGroup decrements the desired capacity value by the number of instances detached.
     default: false
     type: bool
+    version_added: 3.2.0
   lc_check:
     description:
       - Check to make sure instances that are being replaced with I(replace_instances) do not already have the current I(launch_config).
@@ -1557,11 +1559,14 @@ def detach(connection):
             module.fail_json(msg="Provided instance ID: {0} does not belong to the AutoScalingGroup: {1}".format(
                 instance_id, group_name))
 
-    # check if minimum size is greater than what setting decrement_desired_capacity would make it
-    if min_size and min_size > len(instances) - len(detach_instances) and decrement_desired_capacity:
-        module.fail_json(
-            msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances below min_size, \
-                  please update AutoScalingGroup Sizes properly.")
+    # check if setting decrement_desired_capacity will make desired_capacity smaller
+    # than the currently set minimum size in ASG configuration
+    if decrement_desired_capacity:
+        decremented_desired_capacity = len(instances) - len(detach_instances)
+        if min_size and min_size > decremented_desired_capacity:
+            module.fail_json(
+                msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances below min_size,\
+                        please update AutoScalingGroup Sizes properly.")
 
     if detach_instances:
         try:
