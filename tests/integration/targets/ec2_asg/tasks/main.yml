@@ -48,7 +48,6 @@
         ec2_ami_image: '{{ ec2_amis.images[0].image_id }}'
 
     # Set up the testing dependencies: VPC, subnet, security group, and two launch configurations
-
     - name: Create VPC for use in testing
       ec2_vpc_net:
         name: "{{ resource_prefix }}-vpc"
@@ -232,8 +231,6 @@
         that:
           - output is not changed
 
-    # - name: pause for a bit to make sure that the group can't be trivially deleted
-    #   pause: seconds=30
     - name: kill asg
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -342,7 +339,6 @@
     # ============================================================
 
     # grow scaling group to 3
-
     - name: add 2 more instances wait for instances to be deemed healthy (ELB)
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -366,7 +362,6 @@
     # ============================================================
 
     # Test max_instance_lifetime option
-
     - name: enable asg max_instance_lifetime
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -402,8 +397,7 @@
 
     # ============================================================
 
-    # # perform rolling replace with different launch configuration
-
+    # perform rolling replace with different launch configuration
     - name: perform rolling update to new AMI
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -435,7 +429,6 @@
     # ============================================================
 
     # perform rolling replace with the original launch configuration
-
     - name: perform rolling update to new AMI while removing the load balancer
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -468,10 +461,6 @@
     # ============================================================
 
     # perform rolling replace with new launch configuration and lc_check:false
-
-    # Note - this is done async so we can query asg_facts during
-    # the execution. Issues #28087 and #35993 result in correct
-    # end result, but spin up extraneous instances during execution.
     - name: "perform rolling update to new AMI with lc_check: false"
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -489,32 +478,18 @@
         lc_check: false
         wait_timeout: 1800
         state: present
-      async: 1800
-      poll: 0
-      register: asg_job
 
-    - name: get ec2_asg info for 3 minutes
+    # Collect ec2_asg_info
+    - name: get ec2_asg info
       ec2_asg_info:
         name: "{{ resource_prefix }}-asg"
       register: output
-      loop_control:
-          pause: 15
-      loop: "{{ range(12) | list }}"
 
-    # Since we started with 3 servers and replace all of them.
-    # We should see 6 servers total.
+    # Since we started with 3 instances and replace all of them.
+    # We should see only 3 instances total.
     - assert:
         that:
-          - output | community.general.json_query(inst_id_json_query) | unique | length == 6
-      vars:
-        inst_id_json_query: results[].results[].instances[].instance_id
-
-    - name: Ensure ec2_asg task completes
-      async_status: jid="{{ asg_job.ansible_job_id }}"
-      register: status
-      until: status is finished
-      retries: 200
-      delay: 15
+          - output.results[0].instances | length == 3
 
     # ============================================================
 
@@ -526,10 +501,6 @@
       async: 400
 
     # Create new asg with replace_all_instances and lc_check:false
-
-    # Note - this is done async so we can query asg_facts during
-    # the execution. Issues #28087 results in correct
-    # end result, but spin up extraneous instances during execution.
     - name: "new asg with lc_check: false"
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -547,33 +518,18 @@
         lc_check: false
         wait_timeout: 1800
         state: present
-      async: 1800
-      poll: 0
-      register: asg_job
 
-    # Collect ec2_asg_info for 3 minutes
+    # Collect ec2_asg_info
     - name: get ec2_asg information
       ec2_asg_info:
         name: "{{ resource_prefix }}-asg"
       register: output
-      loop_control:
-          pause: 15
-      loop: "{{ range(12) | list }}"
 
     # Get all instance_ids we saw and assert we saw number expected
     # Should only see 3 (don't replace instances we just created)
     - assert:
         that:
-          - output | community.general.json_query(inst_id_json_query) | unique | length == 3
-      vars:
-        inst_id_json_query: results[].results[].instances[].instance_id
-
-    - name: Ensure ec2_asg task completes
-      async_status: jid="{{ asg_job.ansible_job_id }}"
-      register: status
-      until: status is finished
-      retries: 200
-      delay: 15
+          - output.results[0].instances | length == 3
 
     # we need a launch template, otherwise we cannot test the mixed instance policy
     - name: create launch template for autoscaling group to test its mixed instances policy
@@ -676,7 +632,7 @@
     - name: update autoscaling group with tg1
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
-        launch_template: 
+        launch_template:
           launch_template_name: "{{ resource_prefix }}-lt"
         target_group_arns:
           - "{{ out_tg1.target_group_arn }}"
@@ -694,7 +650,7 @@
     - name: update autoscaling group add tg2
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
-        launch_template: 
+        launch_template:
           launch_template_name: "{{ resource_prefix }}-lt"
         target_group_arns:
           - "{{ out_tg1.target_group_arn }}"
@@ -713,7 +669,7 @@
     - name: update autoscaling group remove tg1
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
-        launch_template: 
+        launch_template:
           launch_template_name: "{{ resource_prefix }}-lt"
         target_group_arns:
           - "{{ out_tg2.target_group_arn }}"
@@ -732,7 +688,7 @@
     - name: update autoscaling group remove tg2 and add tg1
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
-        launch_template: 
+        launch_template:
           launch_template_name: "{{ resource_prefix }}-lt"
         target_group_arns:
           - "{{ out_tg1.target_group_arn }}"
@@ -751,7 +707,7 @@
     - name: target group no change
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
-        launch_template: 
+        launch_template:
           launch_template_name: "{{ resource_prefix }}-lt"
         target_group_arns:
           - "{{ out_tg1.target_group_arn }}"
@@ -782,7 +738,6 @@
       retries: 10
 
     # Remove the testing dependencies
-
     - name: remove target group
       elb_target_group:
         name: "{{ item }}"
