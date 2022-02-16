@@ -1,0 +1,206 @@
+- name: Running instance detach tests
+  block:
+    #------------------------------------------------------------------------------------------------------------
+    - name: create a launch configuration
+      ec2_lc:
+        name: "{{ resource_prefix }}-lc-detach-test"
+        image_id: "{{ ec2_ami_image }}"
+        region: "{{ aws_region }}"
+        instance_type: t2.micro
+        assign_public_ip: yes
+
+    #------------------------------------------------------------------------------------------------------------
+    - name: create a AutoScalingGroup
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-detach-test"
+        launch_config_name: "{{ resource_prefix }}-lc-detach-test"
+        health_check_period: 60
+        health_check_type: ELB
+        replace_all_instances: yes
+        min_size: 3
+        max_size: 6
+        desired_capacity: 3
+        region: "{{ aws_region }}"
+
+    # gather info about asg and get instance ids and instance count
+    - ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-detach-test"
+      register: asg_info
+    # create a list of instance ids from info result
+    - set_fact:
+        instances: "{{ asg_info.results[0].instances | map(attribute='instance_id') | list }}"
+    - set_fact:
+        instance_0: "{{ instances[0] }}"
+        instance_1: "{{ instances[1] }}"
+        instance_2: "{{ instances[2] }}"
+
+    - name: Gather information about instance 0
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_0 }}"
+      register: instance_0_info
+    - name: Gather information about instance 1
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_1 }}"
+      register: instance_1_info
+    - name: Gather information about instance 2
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_2 }}"
+      register: instance_2_info
+
+    # assert that there are 3 instances in the AutoScalingGroup
+    - assert:
+        that:
+          - "{{ instances | length }} == 3"
+          - "'{{ instance_0_info.instances[0].state.name }}' == 'running'"
+          - "'{{ instance_1_info.instances[0].state.name }}' == 'running'"
+          - "'{{ instance_2_info.instances[0].state.name }}' == 'running'"
+
+    #------------------------------------------------------------------------------------------------------------
+
+    - name: detach 2 instance from the asg and replace with other instances
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-detach-test"
+        launch_config_name: "{{ resource_prefix }}-lc-detach-test"
+        health_check_period: 60
+        health_check_type: ELB
+        min_size: 3
+        max_size: 3
+        desired_capacity: 3
+        region: "{{ aws_region }}"
+        detach_instances:
+          - '{{ instances[0] }}'
+          - '{{ instances[1] }}'
+
+    # pause to allow completion of instance replacement
+    - name: Pause for 1 minute
+      pause:
+        minutes: 1
+
+    # gather info about asg and make sure the instances are detached
+    # also make sure the instances are replaced and the count is maintained
+    - ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-detach-test"
+      register: asg_info
+    # create a list of instance ids from info result
+    - set_fact:
+        instances_detach_replace: "{{ asg_info.results[0].instances | map(attribute='instance_id') | list }}"
+    - set_fact:
+        instance_4: "{{ instances_detach_replace[0] }}"
+        instance_5: "{{ instances_detach_replace[1] }}"
+        instance_6: "{{ instances_detach_replace[2] }}"
+
+    - name: Gather information about instance 0
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_0 }}"
+      register: instance_0_info
+    - name: Gather information about instance 1
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_1 }}"
+      register: instance_1_info
+
+    # assert that there are 3 still instances in the AutoScalingGroup
+    # assert that two specified instances are detached and still running (not terminated)
+    - assert:
+        that:
+          - "{{ instances_detach_replace | length }} == 3"
+          - "'{{ instance_0 }}' not in {{ instances_detach_replace }}"
+          - "'{{ instance_1 }}' not in {{ instances_detach_replace }}"
+          - "'{{ instance_0_info.instances[0].state.name }}' == 'running'"
+          - "'{{ instance_1_info.instances[0].state.name }}' == 'running'"
+
+    #------------------------------------------------------------------------------------------------------------
+
+    # detach 2 instances from the asg and reduce the desired capacity from 3 to 1
+    - name: detach 2 instance from the asg and reduce the desired capacity from 3 to 1
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-detach-test"
+        launch_config_name: "{{ resource_prefix }}-lc-detach-test"
+        health_check_period: 60
+        health_check_type: ELB
+        min_size: 1
+        max_size: 5
+        desired_capacity: 3
+        region: "{{ aws_region }}"
+        decrement_desired_capacity: true
+        detach_instances:
+          - '{{ instances_detach_replace[0] }}'
+          - '{{ instances_detach_replace[1] }}'
+
+    # pause to allow completion of instance detach and decrement desired capacity
+    - name: Pause for 1 minute
+      pause:
+        minutes: 1
+
+    # gather info about asg and make sure the instances are detached
+    # also make sure the instances are not replaced and the count and desired_capacity is reduced
+    - ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-detach-test"
+      register: asg_info_decrement
+    # create a list of instance ids from info result
+    - set_fact:
+        instances_detach_no_replace: "{{ asg_info_decrement.results[0].instances | map(attribute='instance_id') | list }}"
+    - set_fact:
+        instance_7: "{{ instances_detach_no_replace[0] }}"
+
+    - name: Gather information about instance 4
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_4 }}"
+      register: instance_4_info
+    - name: Gather information about instance 5
+      amazon.aws.ec2_instance_info:
+        instance_ids:
+          - "{{ instance_5 }}"
+      register: instance_5_info
+
+    # assert that there are 3 instances in the AutoScalingGroup
+    - assert:
+        that:
+          - "{{ instances_detach_no_replace | length }} == 1"
+          - "'{{ instance_4 }}' not in {{ instances_detach_no_replace }}"
+          - "'{{ instance_5 }}' not in {{ instances_detach_no_replace }}"
+          - "'{{ instance_4_info.instances[0].state.name }}' == 'running'"
+          - "'{{ instance_5_info.instances[0].state.name }}' == 'running'"
+          - "'{{ instance_6 }}' in {{ instances_detach_no_replace }}"
+
+    #------------------------------------------------------------------------------------------------------------
+
+  always:
+
+  - name: terminate any instances created during this test
+    amazon.aws.ec2_instance:
+      instance_ids:
+        - "{{ instance_0 }}"
+        - "{{ instance_1 }}"
+        - "{{ instance_2 }}"
+        - "{{ instance_4 }}"
+        - "{{ instance_5 }}"
+        - "{{ instance_6 }}"
+        - "{{ instance_7 }}"
+      state: absent
+    register: terminate_instances
+
+  # - debug: msg="{{ terminate_instances }}"
+
+  - name: kill asg created in this test
+    ec2_asg:
+      name: "{{ resource_prefix }}-asg-detach-test"
+      state: absent
+    register: removed
+    until: removed is not failed
+    ignore_errors: yes
+    retries: 10
+
+  - name: remove launch config created in this test
+    ec2_lc:
+      name: "{{ resource_prefix }}-lc-detach-test"
+      state: absent
+    register: removed
+    until: removed is not failed
+    ignore_errors: yes
+    retries: 10
