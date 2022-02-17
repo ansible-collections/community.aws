@@ -1,10 +1,22 @@
+# Creating dependencies
+- name: create IAM instance role 
+  iam_role:
+    name: 'eksctl-{{ eks_cluster_name }}-cluster-FargatePodExecutionRole'
+    assume_role_policy_document: '{{ lookup(''file'',''eks-fargate-profile-trust-policy.json'') }}'
+    state: present
+    create_instance_profile: 'no'
+    wait: true
+    managed_policies:
+      - AmazonEKSFargatePodExecutionRolePolicy
+  register: iam_role_fargate
+
 # Test - Try Create Fargate profile in non existent EKS
 - name: attempt to create fargate profile in non existent eks
   aws_eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: fake_cluster
-    role_arn: '{{ role }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -16,7 +28,6 @@
   assert:
     that:
       - aws_eks_non_existent_eks is failed
-      - '"msg" in aws_eks_non_existent_eks'
 
 # Test - Try deleting a non-existent fargate profile
 - name: delete an as yet non-existent fargate profile
@@ -24,7 +35,7 @@
     name: fake_profile
     cluster_name: '{{ eks_cluster_name }}'
     state: absent
-    role_arn: '{{ role }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -43,7 +54,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ role }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -60,17 +71,42 @@
       - aws_eks_fargate_profile_create.status == "ACTIVE"
 
 # Try create same Fargate_profile
-- name: create Fargate Profile again with same name
+- name: Try create same Fargate Profile with wait
   aws_eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ role }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
     selectors: '{{ selectors }}'
+    wait: true
+    tags: '{{ tags }}'
   register: aws_eks_fargate_profile_create_again
+  ignore_errors: 'yes'
+
+- name: check that aws_eks_fargate_profile_create_again is not changed
+  assert:
+    that:
+      - not aws_eks_fargate_profile_create_again.changed
+
+# Update tags Fargate_profile
+- name: update tags in Fargate Profile a with wait
+  aws_eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags:
+      env: test
+      test: foo
+  register: aws_eks_fargate_profile_create
   ignore_errors: 'yes'
 
 - name: check that aws_eks_fargate_profile_again is not changed
@@ -84,7 +120,7 @@
     name: '{{ eks_fargate_profile_name_b }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ role }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
@@ -96,8 +132,9 @@
   assert:
     that:
       - aws_eks_fargate_profile_create_b.changed
+      - aws_eks_fargate_profile_create_b.fargate_profile.status == "CREATING"
 
-# Delete Fargate Profile A with wait
+# Delete Fargate Profile A with wait (test check_profiles_status function)
 - name: delete a fargate profile
   aws_eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
@@ -117,7 +154,7 @@
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
-    role_arn: '{{ role }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'public') | map(attribute='subnet.id') }}
@@ -130,52 +167,17 @@
   assert:
     that:
       - not aws_eks_fargate_profile_create.changed
+      - aws_eks_fargate_profile_create.msg.endswith("provided in Fargate Profile is not a private subnet")
 
-# Try Remove a EKS Cluster with a fargate profile active
-- name: remove EKS cluster
-  aws_eks_cluster:
-    name: '{{ eks_cluster_name }}'
-    state: absent
-    wait: 'yes'
-  register: eks_delete
-  ignore_errors: 'yes'
-
-- name: check that EKS cluster was not removed
-  assert:
-    that:
-      - not eks_delete.changed
 - name: delete a fargate profile
   aws_eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_b }}'
     cluster_name: '{{ eks_cluster_name }}'
     state: absent
+    wait: true
   register: aws_eks_fargate_profile_b_delete
 
 - name: check that aws_eks_fargate_profile  is deleted
   assert:
     that:
       - aws_eks_fargate_profile_b_delete.changed
-
-# Delete Fargate Profile B
-- name: delete a fargate profile
-  aws_eks_fargate_profile:
-    name: '{{ eks_fargate_profile_name_b }}'
-    cluster_name: '{{ eks_cluster_name }}'
-    state: absent
-  register: aws_eks_fargate_profile_b_delete
-
-- name: check that aws_eks_fargate_profile  is deleted
-  assert:
-    that:
-      - aws_eks_fargate_profile_b_delete.changed
-
-
-
-
-
-
-
-
-
-
-
