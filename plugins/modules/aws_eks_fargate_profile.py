@@ -32,11 +32,18 @@ options:
     required: True
     type: list
     elements: str
-  namespace:
-    description: Name of Namespace 
+  selectors:
+    description: A list of selectors to use in fargate profile 
     required: True
     type: list
-    elements: str
+    suboptions:
+      namespace:
+        description: A namespace used in fargate profile
+        type: str
+      labels:
+        description: A dictionary of labels used in fargate profile
+        type: dict
+        elements: str
   state:
     description: Create or delete the Fargate Profile
     choices:
@@ -44,6 +51,10 @@ options:
       - present
     default: present
     type: str
+  tags:
+    description: A dictionary of resource tags
+    type: dict
+    elements: str
   wait:
     description: >-
       Specifies whether the module waits until the profile is created or deleted before moving on.
@@ -136,6 +147,13 @@ selectors:
       sample:
         - label1: test1
         - label2: test2
+tags:
+  description: A dictionary of resource tags
+  returned: when state is present
+  type: dict
+  sample:
+      foo: bar
+      env: test
 status:
   description: status of the EKS Fargate Profile
   returned: when state is present
@@ -158,7 +176,7 @@ except ImportError:
 def validate_tags(client, module, fargate_profile):
   
     changed = False
-    existing_tags = client.list_tags_for_resource(resourceArn=fargate_profile['fargateProfileArn'])
+    existing_tags = client.list_tags_for_resource(resourceArn=fargate_profile['fargateProfileArn'])['tags']
     
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
     
@@ -166,7 +184,7 @@ def validate_tags(client, module, fargate_profile):
         if not module.check_mode:
             changed = True
             try:
-                client.untag_resource(aws_retry=True, ResourceArn=fargate_profile['fargateProfileArn'], tagKeys=tags_to_remove)
+                client.untag_resource(resourceArn=fargate_profile['fargateProfileArn'], tagKeys=tags_to_remove)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Unable to set tags for Fargate Profile %s' % module.params.get('name'))
 
@@ -174,7 +192,7 @@ def validate_tags(client, module, fargate_profile):
         if not module.check_mode:
             changed = True
             try:
-                client.tag_resource(aws_retry=True, ResourceArn=fargate_profile['fargateProfileArn'], tags=tags_to_add)
+                client.tag_resource(resourceArn=fargate_profile['fargateProfileArn'], tags=tags_to_add)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Unable to set tags for Fargate Profile %s' % module.params.get('name'))
     
