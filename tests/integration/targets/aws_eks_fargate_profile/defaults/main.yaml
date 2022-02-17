@@ -2,6 +2,13 @@ eks_cluster_name: "{{ resource_prefix }}"
 eks_fargate_profile_name_a: fp-template-a
 eks_fargate_profile_name_b: fp-template-b
 
+selectors:
+  - namespace: "fp-default"
+
+tags:
+  foo: bar
+  env: test
+
 eks_subnets:
   - zone: a
     cidr: 10.0.1.0/24
@@ -10,7 +17,7 @@ eks_subnets:
   - zone: b
     cidr: 10.0.2.0/24
     type: public
-    tag: elbs
+    tag: elb
 
 eks_security_groups:
   - name: "{{ eks_cluster_name }}-control-plane-sg"
