@@ -1,0 +1,276 @@
+- name: run ec2_lc tests
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  collections:
+    - amazon.aws
+
+  block:
+
+    - name: set up environment for testing.
+      include_tasks: env_setup.yml
+
+    - name: Create launch configuration 1
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_1_create
+
+    - name: Gather information about launch configuration 1
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc1'
+      register: lc_1_info_result
+
+    - assert:
+        that:
+          - lc_1_create is changed
+          - '"autoscaling:CreateLaunchConfiguration" in lc_1_create.resource_actions'
+          - '"throughput" not in lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs'
+          - lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
+          - lc_1_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp2'
+          - lc_1_info_result.launch_configurations[0].instance_type == 't2.micro'
+
+    - name: Create launch configuration 1 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_1_create_idem
+
+    - assert:
+        that:
+          - lc_1_create_idem is not changed
+          - '"autoscaling:CreateLaunchConfiguration" not in lc_1_create_idem.resource_actions'
+
+    - name: Create launch configuration 2
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: 't3.small'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_2_create
+
+    - name: Gather information about launch configuration 2
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc2'
+      register: lc_2_info_result
+
+    - assert:
+        that:
+          - lc_2_create is changed
+          - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
+          - '"throughput" not in lc_2_info_result.launch_configurations[0].block_device_mappings[0].ebs'
+          - lc_2_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
+          - lc_2_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp2'
+          - lc_2_info_result.launch_configurations[0].instance_type == 't3.small'
+          - '"autoscaling:CreateLaunchConfiguration" in lc_2_create.resource_actions'
+
+    - name: Create launch configuration 2 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        image_id: '{{ ec2_ami_id }}'
+        assign_public_ip: yes
+        instance_type: '{{ ec2_instance_type }}'
+        security_groups: '{{ sg.group_id }}'
+        volumes:
+          - device_name: /dev/xvda
+            volume_size: 10
+            volume_type: gp2
+            delete_on_termination: true
+      register: lc_2_create_idem
+
+    - assert:
+        that:
+          - lc_2_create_idem is not changed
+          - '"autoscaling:CreateLaunchConfiguration" not in lc_2_create_idem.resource_actions'
+
+    - name: Create launch configuration 3 - test throughput parameter
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc3'
+        image_id: '{{ ec2_ami_id }}'
+        instance_type: '{{ ec2_instance_type }}'
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 10
+            volume_type: gp3
+            throughput: 250
+            delete_on_termination: true
+      register: lc_3_create
+
+    - name: Gather information about launch configuration 3
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc3'
+      register: lc_3_info_result
+
+    - assert:
+        that:
+          - lc_3_create is changed
+          - '"throughput" in lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs'
+          - lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs.throughput == 250
+          - lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_size == 10
+          - lc_3_info_result.launch_configurations[0].block_device_mappings[0].ebs.volume_type == 'gp3'
+          - lc_3_info_result.launch_configurations[0].instance_type == 't2.micro'
+          - '"autoscaling:CreateLaunchConfiguration" in lc_3_create.resource_actions'
+
+    - name: Create launch configuration 3 - Idempotency
+      vars:
+          ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc3'
+        image_id: '{{ ec2_ami_id }}'
+        instance_type: '{{ ec2_instance_type }}'
+        volumes:
+          - device_name: /dev/sda1
+            volume_size: 10
+            volume_type: gp3
+            throughput: 250
+            delete_on_termination: true
+      register: lc_3_create_idem
+
+    - assert:
+        that:
+          - lc_3_create_idem is not changed
+          - '"autoscaling:CreateLaunchConfiguration" not in lc_3_create_idem.resource_actions'
+
+    - name: Search for the Launch Configurations that start with test resource_prefix
+      community.aws.ec2_lc_find:
+        name_regex: '{{ resource_prefix }}*'
+        sort_order: descending
+      register: lc_find_result
+
+    - assert:
+        that:
+          - lc_find_result.results | length == 3
+          - '"autoscaling:DescribeLaunchConfigurations" in lc_find_result.resource_actions'
+
+    - name: Delete launch configuration 1
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        state: absent
+      register: lc_1_delete
+
+    - assert:
+        that:
+          - lc_1_delete is changed
+          - '"autoscaling:DeleteLaunchConfiguration" in lc_1_delete.resource_actions'
+
+    - name: Delete launch configuration 1 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc1'
+        state: absent
+      register: lc_1_delete_idem
+
+    - assert:
+        that:
+          - lc_1_delete_idem is not changed
+          - '"autoscaling:DeleteLaunchConfiguration" not in lc_1_delete_idem.resource_actions'
+
+    - name: Gather information about launch configuration 1
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc1'
+      register: lc_1_info_result
+
+    - assert:
+        that:
+          - lc_1_info_result is not changed
+          - lc_1_info_result.launch_configurations | length == 0
+
+    - name: Delete launch configuration 2
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        state: absent
+      register: lc_2_delete
+
+    - assert:
+        that:
+          - lc_2_delete is changed
+          - '"autoscaling:DeleteLaunchConfiguration" in lc_2_delete.resource_actions'
+
+    - name: Delete launch configuration 2 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc2'
+        state: absent
+      register: lc_2_delete_idem
+
+    - assert:
+        that:
+          - lc_2_delete_idem is not changed
+          - '"autoscaling:DeleteLaunchConfiguration" not in lc_2_delete_idem.resource_actions'
+
+    - name: Gather information about launch configuration 2
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc2'
+      register: lc_2_info_result
+
+    - assert:
+        that:
+          - lc_2_info_result is not changed
+          - lc_2_info_result.launch_configurations | length == 0
+
+    - name: Delete launch configuration 3
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc3'
+        state: absent
+      register: lc_3_delete
+
+    - assert:
+        that:
+          - lc_3_delete is changed
+          - '"autoscaling:DeleteLaunchConfiguration" in lc_3_delete.resource_actions'
+
+    - name: Delete launch configuration 3 - Idempotency
+      community.aws.ec2_lc:
+        name: '{{ resource_prefix }}-lc3'
+        state: absent
+      register: lc_3_delete_idem
+
+    - assert:
+        that:
+          - lc_3_delete_idem is not changed
+          - '"autoscaling:DeleteLaunchConfiguration" not in lc_3_delete_idem.resource_actions'
+
+    - name: Gather information about launch configuration 3
+      community.aws.ec2_lc_info:
+        name: '{{ resource_prefix }}-lc2'
+      register: lc_3_info_result
+
+    - assert:
+        that:
+          - lc_3_info_result is not changed
+          - lc_3_info_result.launch_configurations | length == 0
+
+  always:
+
+    - include_tasks: env_cleanup.yml
