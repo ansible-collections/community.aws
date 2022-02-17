@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: aws_eks_fargate_profile
-version_added: 0.1.0
+version_added: 1.0.0
 short_description: Manage EKS Fargate Profile
 description:
     - Manage EKS Fargate Profile
@@ -19,7 +19,7 @@ options:
     description: Name of EKS Fargate Profile
     required: True
     type: str
-  clusterName:
+  cluster_name:
     description: Name of EKS Cluster
     required: True
     type: str
@@ -155,10 +155,10 @@ try:
 except ImportError:
     pass  
 
-def validate_tags(client, module, fargateProfile):
+def validate_tags(client, module, fargate_profile):
   
     changed = False
-    existing_tags = client.list_tags_for_resource(resourceArn=fargateProfile['fargateProfileArn'])
+    existing_tags = client.list_tags_for_resource(resourceArn=fargate_profile['fargateProfileArn'])
     
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
     
@@ -166,7 +166,7 @@ def validate_tags(client, module, fargateProfile):
         if not module.check_mode:
             changed = True
             try:
-                client.untag_resource(aws_retry=True, ResourceArn=fargateProfile['fargateProfileArn'], tagKeys=tags_to_remove)
+                client.untag_resource(aws_retry=True, ResourceArn=fargate_profile['fargateProfileArn'], tagKeys=tags_to_remove)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Unable to set tags for Fargate Profile %s' % module.params.get('name'))
 
@@ -174,7 +174,7 @@ def validate_tags(client, module, fargateProfile):
         if not module.check_mode:
             changed = True
             try:
-                client.tag_resource(aws_retry=True, ResourceArn=fargateProfile['fargateProfileArn'], tags=tags_to_add)
+                client.tag_resource(aws_retry=True, ResourceArn=fargate_profile['fargateProfileArn'], tags=tags_to_add)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Unable to set tags for Fargate Profile %s' % module.params.get('name'))
     
@@ -183,46 +183,40 @@ def validate_tags(client, module, fargateProfile):
 def create_or_update_fargate_profile(client, module):
     name = module.params.get('name')
     subnets = module.params['subnets']
-    roleArn = module.params['role_arn']
-    clusterName = module.params['cluster_name']
+    role_arn = module.params['role_arn']
+    cluster_name = module.params['cluster_name']
     selectors = module.params['selectors']
     tags = module.params['tags']
     wait = module.params.get('wait')
-    fargateProfile = get_fargate_profile(client, module, name, clusterName)
+    fargate_profile = get_fargate_profile(client, module, name, cluster_name)
     
-    try:
-        ec2 = module.client('ec2')
-        vpc_id = ec2.describe_subnets(SubnetIds=[subnets[0]])['Subnets'][0]['VpcId']        
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-        module.fail_json_aws(e, msg="Couldn't not find subnets")
-
-    if fargateProfile:
+    if fargate_profile:
         changed = False
-        if set(fargateProfile['podExecutionRoleArn']) != set(roleArn):
+        if set(fargate_profile['podExecutionRoleArn']) != set(role_arn):
             module.fail_json(msg="Cannot modify Execution Role")
-        if set(fargateProfile['subnets']) != set(subnets):
+        if set(fargate_profile['subnets']) != set(subnets):
             module.fail_json(msg="Cannot modify Subnets")
-        if fargateProfile['selectors'] != selectors:
+        if fargate_profile['selectors'] != selectors:
             module.fail_json(msg="Cannot modify Selectors")        
         
-        changed = validate_tags(client, module, fargateProfile)
+        changed = validate_tags(client, module, fargate_profile)
                               
         if wait:
-            wait_until(client, module, 'fargate_profile_active', name, clusterName)
-            fargateProfile = get_fargate_profile(client, module, name, clusterName)
+            wait_until(client, module, 'fargate_profile_active', name, cluster_name)
+            fargateProfile = get_fargate_profile(client, module, name, cluster_name)
 
         module.exit_json(changed=changed, **camel_dict_to_snake_dict(fargateProfile))
 
     if module.check_mode:
         module.exit_json(changed=True)
     
-    check_profiles_status(client, module, clusterName)
+    check_profiles_status(client, module, cluster_name)
     
     try:
         params = dict(fargateProfileName=name,
-                      podExecutionRoleArn=roleArn,
+                      podExecutionRoleArn=role_arn,
                       subnets=subnets,
-                      clusterName=clusterName,
+                      clusterName=cluster_name,
                       selectors=selectors,
                       tags=tags
                       )
@@ -231,30 +225,30 @@ def create_or_update_fargate_profile(client, module):
         module.fail_json_aws(e, msg="Couldn't create fargate profile %s" % name)
 
     if wait:
-        wait_until(client, module, 'fargate_profile_active', name, clusterName)
-        fargateProfile = get_fargate_profile(client, module, name, clusterName)
+        wait_until(client, module, 'fargate_profile_active', name, cluster_name)
+        fargateProfile = get_fargate_profile(client, module, name, cluster_name)
 
     module.exit_json(changed=True, **camel_dict_to_snake_dict(fargateProfile))
 
 
 def delete_fargate_profile(client, module):
     name = module.params.get('name')
-    clusterName = module.params['cluster_name']
-    existing = get_fargate_profile(client, module, name, clusterName)
+    cluster_name = module.params['cluster_name']
+    existing = get_fargate_profile(client, module, name, cluster_name)
     wait = module.params.get('wait')
     if not existing:
         module.exit_json(changed=False)
     if not module.check_mode:
 
-        check_profiles_status(client, module, clusterName)
+        check_profiles_status(client, module, cluster_name)
         
         try:
-            client.delete_fargate_profile(clusterName=clusterName,fargateProfileName=name)
+            client.delete_fargate_profile(clusterName=cluster_name,fargateProfileName=name)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Couldn't delete fargate profile %s" % name)
 
     if wait:
-        wait_until(client, module, 'fargate_profile_deleted', name, clusterName)
+        wait_until(client, module, 'fargate_profile_deleted', name, cluster_name)
 
     module.exit_json(changed=True)
 
@@ -264,27 +258,27 @@ def get_fargate_profile(client, module, name, cluster_name):
     except is_boto3_error_code('ResourceNotFoundException'):
         return None
 
-# Check if any fargate profiles is changing states, if so, wait for the end
-def check_profiles_status(client, module, clusterName):
+# Check if any fargate profiles is in changing states, if so, wait for the end
+def check_profiles_status(client, module, cluster_name):
   
     try:    
-        list_profiles = client.list_fargate_profiles(clusterName=clusterName)     
+        list_profiles = client.list_fargate_profiles(clusterName=cluster_name)     
         
         for name in list_profiles["fargateProfileNames"] :
-            fargate_profile = get_fargate_profile(client, module, name, clusterName)
+            fargate_profile = get_fargate_profile(client, module, name, cluster_name)
             if fargate_profile["status"] == 'CREATING' :
-                wait_until(client, module, 'fargate_profile_active', fargate_profile["fargateProfileName"], clusterName)
+                wait_until(client, module, 'fargate_profile_active', fargate_profile["fargateProfileName"], cluster_name)
             elif fargate_profile["status"] == 'DELETING' :
-                wait_until(client, module, 'fargate_profile_deleted', fargate_profile["fargateProfileName"], clusterName)
+                wait_until(client, module, 'fargate_profile_deleted', fargate_profile["fargateProfileName"], cluster_name)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Couldn't not find EKS cluster")
   
-def wait_until(client, module, waiter_name, name, clusterName):    
+def wait_until(client, module, waiter_name, name, cluster_name):    
     wait_timeout = module.params.get('wait_timeout')
     
     waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
-    waiter.wait(clusterName=clusterName, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
+    waiter.wait(clusterName=cluster_name, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
     
 def main():
     argument_spec = dict(
