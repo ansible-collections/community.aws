@@ -229,7 +229,7 @@ def create_or_update_fargate_profile(client, module):
 
     if module.check_mode:
         module.exit_json(changed=True)
-    
+
     check_profiles_status(client, module, cluster_name)
 
     try:
@@ -293,7 +293,7 @@ def check_profiles_status(client, module, cluster_name):
         module.fail_json_aws(e, msg="Couldn't not find EKS cluster")
 
 
-def wait_until(client, module, waiter_name, name, cluster_name):    
+def wait_until(client, module, waiter_name, name, cluster_name):
     wait_timeout = module.params.get('wait_timeout')
     waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
@@ -305,7 +305,7 @@ def main():
         name=dict(required=True),
         cluster_name=dict(required=True),
         role_arn=dict(),
-        subnets=dict(type='list', elements='str'), 
+        subnets=dict(type='list', elements='str'),
         selectors=dict(type='list', elements='dict'),
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=True),
