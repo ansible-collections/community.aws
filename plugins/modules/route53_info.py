@@ -212,17 +212,9 @@ except ImportError:
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
-# Split out paginator to allow for the backoff decorator to function
-@AWSRetry.jittered_backoff()
-def _paginated_result(paginator_name, **params):
-    paginator = client.get_paginator(paginator_name)
-    return paginator.paginate(**params).build_full_result()
-
-
-def get_hosted_zone():
+def get_hosted_zone(client, module):
     params = dict()
 
     if module.params.get('hosted_zone_id'):
@@ -233,7 +225,7 @@ def get_hosted_zone():
     return client.get_hosted_zone(**params)
 
 
-def reusable_delegation_set_details():
+def reusable_delegation_set_details(client, module):
     params = dict()
 
     if not module.params.get('delegation_set_id'):
@@ -254,7 +246,7 @@ def reusable_delegation_set_details():
     return results
 
 
-def list_hosted_zones():
+def list_hosted_zones(client, module):
     params = dict()
 
     # Set PaginationConfig with max_items
@@ -269,15 +261,15 @@ def list_hosted_zones():
     if module.params.get('delegation_set_id'):
         params['DelegationSetId'] = module.params.get('delegation_set_id')
 
-    zones = _paginated_result('list_hosted_zones', **params)['HostedZones']
-
+    paginator = client.get_paginator('list_hosted_zones')
+    zones = paginator.paginate(**params).build_full_result()['HostedZones']
     return {
         "HostedZones": zones,
         "list": zones,
     }
 
 
-def list_hosted_zones_by_name():
+def list_hosted_zones_by_name(client, module):
     params = dict()
 
     if module.params.get('hosted_zone_id'):
@@ -295,7 +287,7 @@ def list_hosted_zones_by_name():
     return client.list_hosted_zones_by_name(**params)
 
 
-def change_details():
+def change_details(client, module):
     params = dict()
 
     if module.params.get('change_id'):
@@ -307,11 +299,11 @@ def change_details():
     return results
 
 
-def checker_ip_range_details():
+def checker_ip_range_details(client, module):
     return client.get_checker_ip_ranges()
 
 
-def get_count():
+def get_count(client, module):
     if module.params.get('query') == 'health_check':
         results = client.get_health_check_count()
     else:
@@ -320,7 +312,7 @@ def get_count():
     return results
 
 
-def get_health_check():
+def get_health_check(client, module):
     params = dict()
 
     if not module.params.get('health_check_id'):
@@ -338,7 +330,7 @@ def get_health_check():
     return results
 
 
-def get_resource_tags():
+def get_resource_tags(client, module):
     params = dict()
 
     if module.params.get('resource_id'):
@@ -354,7 +346,7 @@ def get_resource_tags():
     return client.list_tags_for_resources(**params)
 
 
-def list_health_checks():
+def list_health_checks(client, module):
     params = dict()
 
     if module.params.get('next_marker'):
@@ -366,15 +358,15 @@ def list_health_checks():
             MaxItems=module.params.get('max_items')
         )
 
-    health_checks = _paginated_result('list_health_checks', **params)['HealthChecks']
-
+    paginator = client.get_paginator('list_health_checks')
+    health_checks = paginator.paginate(**params).build_full_result()['HealthChecks']
     return {
         "HealthChecks": health_checks,
         "list": health_checks,
     }
 
 
-def record_sets_details():
+def record_sets_details(client, module):
     params = dict()
 
     if module.params.get('hosted_zone_id'):
@@ -398,7 +390,8 @@ def record_sets_details():
             MaxItems=module.params.get('max_items')
         )
 
-    record_sets = _paginated_result('list_resource_record_sets', **params)['ResourceRecordSets']
+    paginator = client.get_paginator('list_resource_record_sets')
+    record_sets = paginator.paginate(**params).build_full_result()['ResourceRecordSets']
 
     return {
         "ResourceRecordSets": record_sets,
@@ -406,7 +399,7 @@ def record_sets_details():
     }
 
 
-def health_check_details():
+def health_check_details(client, module):
     health_check_invocations = {
         'list': list_health_checks,
         'details': get_health_check,
@@ -416,11 +409,11 @@ def health_check_details():
         'tags': get_resource_tags,
     }
 
-    results = health_check_invocations[module.params.get('health_check_method')]()
+    results = health_check_invocations[module.params.get('health_check_method')](client, module)
     return results
 
 
-def hosted_zone_details():
+def hosted_zone_details(client, module):
     hosted_zone_invocations = {
         'details': get_hosted_zone,
         'list': list_hosted_zones,
@@ -429,14 +422,11 @@ def hosted_zone_details():
         'tags': get_resource_tags,
     }
 
-    results = hosted_zone_invocations[module.params.get('hosted_zone_method')]()
+    results = hosted_zone_invocations[module.params.get('hosted_zone_method')](client, module)
     return results
 
 
 def main():
-    global module
-    global client
-
     argument_spec = dict(
         query=dict(choices=[
             'change',
@@ -485,7 +475,7 @@ def main():
     )
 
     try:
-        client = module.client('route53', retry_decorator=AWSRetry.jittered_backoff())
+        route53 = module.client('route53')
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
@@ -500,7 +490,7 @@ def main():
 
     results = dict(changed=False)
     try:
-        results = invocations[module.params.get('query')]()
+        results = invocations[module.params.get('query')](route53, module)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json(msg=to_native(e))
 

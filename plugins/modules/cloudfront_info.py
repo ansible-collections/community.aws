@@ -241,6 +241,7 @@ result:
     type: dict
 '''
 
+from functools import partial
 import traceback
 
 try:

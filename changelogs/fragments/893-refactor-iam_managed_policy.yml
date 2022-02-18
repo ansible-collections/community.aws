@@ -1,2 +1,0 @@
-minor_changes:
-  - iam_managed_policy - refactor module adding ``check_mode`` and better AWSRetry backoff logic (https://github.com/ansible-collections/community.aws/pull/893).

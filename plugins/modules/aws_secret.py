@@ -6,6 +6,7 @@
 from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
+
 DOCUMENTATION = r'''
 ---
 module: aws_secret
@@ -53,13 +54,6 @@ options:
     - Specifies string or binary data that you want to encrypt and store in the new version of the secret.
     default: ""
     type: str
-  resource_policy:
-    description:
-    - Specifies JSON-formatted resource policy to attach to the secret. Useful when granting cross-account access
-       to secrets.
-    required: false
-    type: json
-    version_added: 3.1.0
   tags:
     description:
     - Specifies a list of user-defined tags that are attached to the secret.
@@ -79,6 +73,7 @@ extends_documentation_fragment:
 
 '''
 
+
 EXAMPLES = r'''
 - name: Add string to AWS Secrets Manager
   community.aws.aws_secret:
@@ -87,14 +82,6 @@ EXAMPLES = r'''
     secret_type: 'string'
     secret: "{{ super_secret_string }}"
 
-- name: Add a secret with resource policy attached
-  community.aws.aws_secret:
-    name: 'test_secret_string'
-    state: present
-    secret_type: 'string'
-    secret: "{{ super_secret_string }}"
-    resource_policy: "{{ lookup('template', 'templates/resource_policy.json.j2', convert_data=False) | string }}"
-
 - name: remove string from AWS Secrets Manager
   community.aws.aws_secret:
     name: 'test_secret_string'
@@ -102,6 +89,7 @@ EXAMPLES = r'''
     secret_type: 'string'
     secret: "{{ super_secret_string }}"
 '''
+
 
 RETURN = r'''
 secret:
@@ -145,9 +133,6 @@ from ansible.module_utils._text import to_bytes
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict, camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, compare_aws_tags, ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
-from traceback import format_exc
-import json
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError
@@ -157,7 +142,7 @@ except ImportError:
 
 class Secret(object):
     """An object representation of the Secret described by the self.module args"""
-    def __init__(self, name, secret_type, secret, resource_policy=None, description="", kms_key_id=None,
+    def __init__(self, name, secret_type, secret, description="", kms_key_id=None,
                  tags=None, lambda_arn=None, rotation_interval=None):
         self.name = name
         self.description = description
@@ -167,7 +152,6 @@ class Secret(object):
         else:
             self.secret_type = "SecretString"
         self.secret = secret
-        self.resource_policy = resource_policy
         self.tags = tags or {}
         self.rotation_enabled = False
         if lambda_arn:
@@ -202,15 +186,6 @@ class Secret(object):
         return args
 
     @property
-    def secret_resource_policy_args(self):
-        args = {
-            "SecretId": self.name
-        }
-        if self.resource_policy:
-            args["ResourcePolicy"] = self.resource_policy
-        return args
-
-    @property
     def boto3_tags(self):
         return ansible_dict_to_boto3_tag_list(self.Tags)
 
@@ -236,15 +211,6 @@ class SecretsManagerInterface(object):
             self.module.fail_json_aws(e, msg="Failed to describe secret")
         return secret
 
-    def get_resource_policy(self, name):
-        try:
-            resource_policy = self.client.get_resource_policy(SecretId=name)
-        except self.client.exceptions.ResourceNotFoundException:
-            resource_policy = None
-        except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e, msg="Failed to get secret resource policy")
-        return resource_policy
-
     def create_secret(self, secret):
         if self.module.check_mode:
             self.module.exit_json(changed=True)
@@ -261,24 +227,11 @@ class SecretsManagerInterface(object):
     def update_secret(self, secret):
         if self.module.check_mode:
             self.module.exit_json(changed=True)
+
         try:
             response = self.client.update_secret(**secret.update_args)
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Failed to update secret")
-        return response
-
-    def put_resource_policy(self, secret):
-        if self.module.check_mode:
-            self.module.exit_json(changed=True)
-        try:
-            json.loads(secret.secret_resource_policy_args.get("ResourcePolicy"))
-        except (TypeError, ValueError) as e:
-            self.module.fail_json(msg="Failed to parse resource policy as JSON: %s" % (str(e)), exception=format_exc())
-
-        try:
-            response = self.client.put_resource_policy(**secret.secret_resource_policy_args)
-        except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e, msg="Failed to update secret resource policy")
         return response
 
     def restore_secret(self, name):
@@ -300,15 +253,6 @@ class SecretsManagerInterface(object):
                 response = self.client.delete_secret(SecretId=name, RecoveryWindowInDays=recovery_window)
         except (BotoCoreError, ClientError) as e:
             self.module.fail_json_aws(e, msg="Failed to delete secret")
-        return response
-
-    def delete_resource_policy(self, name):
-        if self.module.check_mode:
-            self.module.exit_json(changed=True)
-        try:
-            response = self.client.delete_resource_policy(SecretId=name)
-        except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e, msg="Failed to delete secret resource policy")
         return response
 
     def update_rotation(self, secret):
@@ -390,7 +334,6 @@ def main():
             'kms_key_id': dict(),
             'secret_type': dict(choices=['binary', 'string'], default="string"),
             'secret': dict(default="", no_log=True),
-            'resource_policy': dict(type='json', default=None),
             'tags': dict(type='dict', default={}),
             'rotation_lambda': dict(),
             'rotation_interval': dict(type='int', default=30),
@@ -409,7 +352,6 @@ def main():
         module.params.get('secret'),
         description=module.params.get('description'),
         kms_key_id=module.params.get('kms_key_id'),
-        resource_policy=module.params.get('resource_policy'),
         tags=module.params.get('tags'),
         lambda_arn=module.params.get('rotation_lambda'),
         rotation_interval=module.params.get('rotation_interval')
@@ -432,8 +374,6 @@ def main():
     if state == 'present':
         if current_secret is None:
             result = secrets_mgr.create_secret(secret)
-            if secret.resource_policy and result.get("ARN"):
-                result = secrets_mgr.put_resource_policy(secret)
             changed = True
         else:
             if current_secret.get("DeletedDate"):
@@ -444,14 +384,6 @@ def main():
                 changed = True
             if not rotation_match(secret, current_secret):
                 result = secrets_mgr.update_rotation(secret)
-                changed = True
-            current_resource_policy_response = secrets_mgr.get_resource_policy(secret.name)
-            current_resource_policy = current_resource_policy_response.get("ResourcePolicy")
-            if compare_policies(secret.resource_policy, current_resource_policy):
-                if secret.resource_policy is None and current_resource_policy:
-                    result = secrets_mgr.delete_resource_policy(secret.name)
-                else:
-                    result = secrets_mgr.put_resource_policy(secret)
                 changed = True
             current_tags = boto3_tag_list_to_ansible_dict(current_secret.get('Tags', []))
             tags_to_add, tags_to_remove = compare_aws_tags(current_tags, secret.tags)

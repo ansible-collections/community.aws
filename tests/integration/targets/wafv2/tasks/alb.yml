@@ -101,5 +101,6 @@
 
 - assert:
     that:
+      - alb.changed
       - alb.listeners|length == 1
       - alb.listeners[0].rules|length == 1

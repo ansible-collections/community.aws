@@ -1,2 +1,0 @@
-minor_changes:
-- ec2_placement_group - add support for partition strategy and partition count (https://github.com/ansible-collections/community.aws/pull/872).

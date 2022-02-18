@@ -4,3 +4,5 @@
 # - tests/integration/targets/setup_botocore_pip
 botocore>=1.19.0
 boto3>=1.16.0
+# Final released version
+boto>=2.49.0
