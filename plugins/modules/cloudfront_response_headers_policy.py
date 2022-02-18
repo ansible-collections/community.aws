@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-version_added: 3.1.0
+version_added: 3.2.0
 module: cloudfront_response_headers_policy
 
 short_description: Create, update and delete response headers policies to be used in a Cloudfront distribution
@@ -143,7 +143,7 @@ response_headers_policy:
 '''
 
 try:
-    from botocore.exceptions import ClientError, ParamValidationError
+    from botocore.exceptions import ClientError, ParamValidationError, BotoCoreError
 except ImportError:
     pass  # caught by imported AnsibleAWSModule
 
@@ -160,18 +160,21 @@ class CloudfrontResponseHeadersPolicyService(object):
         self.check_mode = module.check_mode
 
     def find_response_headers_policy(self, name):
-        policies = self.client.list_response_headers_policies()['ResponseHeadersPolicyList']['Items']
+        try:
+            policies = self.client.list_response_headers_policies()['ResponseHeadersPolicyList']['Items']
 
-        for policy in policies:
-            if policy['ResponseHeadersPolicy']['ResponseHeadersPolicyConfig']['Name'] == name:
-                policy_id = policy['ResponseHeadersPolicy']['Id']
-                # as the list_ request does not contain the Etag (which we need), we need to do another get_ request here
-                matching_policy = self.client.get_response_headers_policy(Id=policy['ResponseHeadersPolicy']['Id'])
-                break
-            else:
-                matching_policy = None
+            for policy in policies:
+                if policy['ResponseHeadersPolicy']['ResponseHeadersPolicyConfig']['Name'] == name:
+                    policy_id = policy['ResponseHeadersPolicy']['Id']
+                    # as the list_ request does not contain the Etag (which we need), we need to do another get_ request here
+                    matching_policy = self.client.get_response_headers_policy(Id=policy['ResponseHeadersPolicy']['Id'])
+                    break
+                else:
+                    matching_policy = None
 
-        return matching_policy
+            return matching_policy
+        except (ParamValidationError, ClientError, BotoCoreError) as e:
+            self.module.fail_json_aws(e, msg="Error fetching policy information")
 
     def create_response_header_policy(self, name, comment, cors_config, security_headers_config, custom_headers_config):
         cors_config = snake_dict_to_camel_dict(cors_config, capitalize_first=True)
@@ -204,7 +207,7 @@ class CloudfrontResponseHeadersPolicyService(object):
             try:
                 result = self.client.create_response_headers_policy(ResponseHeadersPolicyConfig=config)
                 changed = True
-            except (ParamValidationError, ClientError) as e:
+            except (ParamValidationError, ClientError, BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Error creating policy")
         else:
             policy_id = matching_policy['ResponseHeadersPolicy']['Id']
@@ -219,8 +222,8 @@ class CloudfrontResponseHeadersPolicyService(object):
                 # consider change made by this execution of the module if returned timestamp was very recent
                 if changed_time > seconds_ago:
                     changed = True
-            except (ParamValidationError, ClientError) as e:
-                self.module.fail_json_aws(e, msg="Error creating policy")
+            except (ParamValidationError, ClientError, BotoCoreError) as e:
+                self.module.fail_json_aws(e, msg="Updating creating policy")
 
         self.module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
 
@@ -235,7 +238,10 @@ class CloudfrontResponseHeadersPolicyService(object):
             if self.check_mode:
                 result = {}
             else:
-                result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
+                try:
+                    result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
+                except (ParamValidationError, ClientError, BotoCoreError) as e:
+                    self.module.fail_json_aws(e, msg="Error deleting policy")
 
             self.module.exit_json(changed=True, **camel_dict_to_snake_dict(result))
 
