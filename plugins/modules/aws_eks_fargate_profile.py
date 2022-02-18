@@ -33,7 +33,7 @@ options:
     type: list
     elements: str
   selectors:
-    description: A list of selectors to use in fargate profile 
+    description: A list of selectors to use in fargate profile
     required: True
     type: list
     suboptions:
@@ -109,7 +109,7 @@ fargateProfileArn:
   type: str
   sample: arn:aws:eks:us-east-1:1231231123:safd
 clusterName:
-  description: Name of EKS Cluster 
+  description: Name of EKS Cluster
   returned: when state is present
   type: str
   sample: test-cluster
@@ -171,15 +171,14 @@ from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_wait
 try:
     import botocore.exceptions
 except ImportError:
-    pass  
+    pass
+
 
 def validate_tags(client, module, fargate_profile):
-  
     changed = False
     existing_tags = client.list_tags_for_resource(resourceArn=fargate_profile['fargateProfileArn'])['tags']
-    
     tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
-    
+
     if tags_to_remove:
         if not module.check_mode:
             changed = True
@@ -195,8 +194,9 @@ def validate_tags(client, module, fargate_profile):
                 client.tag_resource(resourceArn=fargate_profile['fargateProfileArn'], tags=tags_to_add)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg='Unable to set tags for Fargate Profile %s' % module.params.get('name'))
-    
+
     return changed
+
 
 def create_or_update_fargate_profile(client, module):
     name = module.params.get('name')
@@ -207,7 +207,7 @@ def create_or_update_fargate_profile(client, module):
     tags = module.params['tags']
     wait = module.params.get('wait')
     fargate_profile = get_fargate_profile(client, module, name, cluster_name)
-    
+
     if fargate_profile:
         changed = False
         if set(fargate_profile['podExecutionRoleArn']) != set(role_arn):
@@ -215,10 +215,10 @@ def create_or_update_fargate_profile(client, module):
         if set(fargate_profile['subnets']) != set(subnets):
             module.fail_json(msg="Cannot modify Subnets")
         if fargate_profile['selectors'] != selectors:
-            module.fail_json(msg="Cannot modify Selectors")        
-        
+            module.fail_json(msg="Cannot modify Selectors")
+
         changed = validate_tags(client, module, fargate_profile)
-                              
+
         if wait:
             wait_until(client, module, 'fargate_profile_active', name, cluster_name)
             fargateProfile = get_fargate_profile(client, module, name, cluster_name)
@@ -227,9 +227,9 @@ def create_or_update_fargate_profile(client, module):
 
     if module.check_mode:
         module.exit_json(changed=True)
-    
+
     check_profiles_status(client, module, cluster_name)
-    
+
     try:
         params = dict(fargateProfileName=name,
                       podExecutionRoleArn=role_arn,
@@ -257,11 +257,10 @@ def delete_fargate_profile(client, module):
     if not existing:
         module.exit_json(changed=False)
     if not module.check_mode:
-
         check_profiles_status(client, module, cluster_name)
-        
+
         try:
-            client.delete_fargate_profile(clusterName=cluster_name,fargateProfileName=name)
+            client.delete_fargate_profile(clusterName=cluster_name, fargateProfileName=name)
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Couldn't delete fargate profile %s" % name)
 
@@ -270,41 +269,42 @@ def delete_fargate_profile(client, module):
 
     module.exit_json(changed=True)
 
-def get_fargate_profile(client, module, name, cluster_name):    
+
+def get_fargate_profile(client, module, name, cluster_name):
     try:
         return client.describe_fargate_profile(clusterName=cluster_name, fargateProfileName=name)['fargateProfile']
     except is_boto3_error_code('ResourceNotFoundException'):
         return None
 
+
 # Check if any fargate profiles is in changing states, if so, wait for the end
 def check_profiles_status(client, module, cluster_name):
-  
-    try:    
-        list_profiles = client.list_fargate_profiles(clusterName=cluster_name)     
-        
-        for name in list_profiles["fargateProfileNames"] :
+    try:
+        list_profiles = client.list_fargate_profiles(clusterName=cluster_name)
+        for name in list_profiles["fargateProfileNames"]:
             fargate_profile = get_fargate_profile(client, module, name, cluster_name)
-            if fargate_profile["status"] == 'CREATING' :
+            if fargate_profile["status"] == 'CREATING':
                 wait_until(client, module, 'fargate_profile_active', fargate_profile["fargateProfileName"], cluster_name)
-            elif fargate_profile["status"] == 'DELETING' :
+            elif fargate_profile["status"] == 'DELETING':
                 wait_until(client, module, 'fargate_profile_deleted', fargate_profile["fargateProfileName"], cluster_name)
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Couldn't not find EKS cluster")
-  
-def wait_until(client, module, waiter_name, name, cluster_name):    
+
+
+def wait_until(client, module, waiter_name, name, cluster_name):
     wait_timeout = module.params.get('wait_timeout')
-    
     waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
     waiter.wait(clusterName=cluster_name, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
-    
+
+
 def main():
     argument_spec = dict(
         name=dict(required=True),
         cluster_name=dict(required=True),
         role_arn=dict(),
-        subnets=dict(type='list', elements='str'),   
-        selectors=dict(type='list'),     
+        subnets=dict(type='list', elements='str'),
+        selectors=dict(type='list'),
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=True),
         state=dict(choices=['absent', 'present'], default='present'),
@@ -324,6 +324,7 @@ def main():
         create_or_update_fargate_profile(client, module)
     else:
         delete_fargate_profile(client, module)
+
 
 if __name__ == '__main__':
     main()
