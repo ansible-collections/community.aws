@@ -1,6 +1,6 @@
 - name: Running instance detach tests
   block:
-    #------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------
     - name: create a launch configuration
       ec2_lc:
         name: "{{ resource_prefix }}-lc-detach-test"
@@ -17,8 +17,8 @@
           - create_lc.failed is false
           - '"autoscaling:CreateLaunchConfiguration" in create_lc.resource_actions'
 
-    #------------------------------------------------------------------------------------------------------------
-    - name: create a AutoScalingGroup
+    #----------------------------------------------------------------------
+    - name: create a AutoScalingGroup to be used for instance_detach test
       ec2_asg:
         name: "{{ resource_prefix }}-asg-detach-test"
         launch_config_name: "{{ resource_prefix }}-lc-detach-test"
@@ -38,42 +38,35 @@
           - create_asg.failed is false
           - create_asg.instances | length == 3
           - create_asg.desired_capacity == 3
+          - create_asg.in_service_instances == 3
           - '"autoscaling:CreateAutoScalingGroup" in create_asg.resource_actions'
 
-    # gather info about asg, get instance ids
-    - ec2_asg_info:
+    - name: gather info about asg, get instance ids
+      ec2_asg_info:
         name: "{{ resource_prefix }}-asg-detach-test"
       register: asg_info
     - set_fact:
-        instance_0: "{{ asg_info.results[0].instances[0].instance_id }}"
-        instance_1: "{{ asg_info.results[0].instances[1].instance_id }}"
-        instance_2: "{{ asg_info.results[0].instances[2].instance_id }}"
+        init_instance_1: "{{ asg_info.results[0].instances[0].instance_id }}"
+        init_instance_2: "{{ asg_info.results[0].instances[1].instance_id }}"
+        init_instance_3: "{{ asg_info.results[0].instances[2].instance_id }}"
 
-    - name: Gather information about instance 0
+    - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
         instance_ids:
-          - "{{ instance_0 }}"
-      register: instance_0_info
-    - name: Gather information about instance 1
-      amazon.aws.ec2_instance_info:
-        instance_ids:
-          - "{{ instance_1 }}"
-      register: instance_1_info
-    - name: Gather information about instance 2
-      amazon.aws.ec2_instance_info:
-        instance_ids:
-          - "{{ instance_2 }}"
-      register: instance_2_info
+          - "{{ init_instance_1 }}"
+          - "{{ init_instance_2 }}"
+          - "{{ init_instance_3 }}"
+      register: instances_info
 
-    # assert that there are 3 instances in the AutoScalingGroup
+    # assert that there are 3 instances running in the AutoScalingGroup
     - assert:
         that:
-          - "{{ asg_info.results[0].instances | length }} == 3"
-          - "'{{ instance_0_info.instances[0].state.name }}' == 'running'"
-          - "'{{ instance_1_info.instances[0].state.name }}' == 'running'"
-          - "'{{ instance_2_info.instances[0].state.name }}' == 'running'"
+          - asg_info.results[0].instances | length == 3
+          - "'{{ instances_info.instances[0].state.name }}' == 'running'"
+          - "'{{ instances_info.instances[1].state.name }}' == 'running'"
+          - "'{{ instances_info.instances[2].state.name }}' == 'running'"
 
-    #------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------
 
     - name: detach 2 instance from the asg and replace with other instances
       ec2_asg:
@@ -86,47 +79,47 @@
         desired_capacity: 3
         region: "{{ aws_region }}"
         detach_instances:
-          - '{{ instance_0 }}'
-          - '{{ instance_1 }}'
+          - '{{ init_instance_1 }}'
+          - '{{ init_instance_2 }}'
 
     # pause to allow completion of instance replacement
     - name: Pause for 1 minute
       pause:
         minutes: 1
 
-    # gather info about asg and make sure the instances are detached
-    # also make sure the instances are replaced and the count is maintained
+    # gather info about asg and get instance ids
     - ec2_asg_info:
         name: "{{ resource_prefix }}-asg-detach-test"
       register: asg_info_replaced
-    # create a list of instance ids from info result
     - set_fact:
-        instances_detach_replace: "{{ asg_info_replaced.results[0].instances | map(attribute='instance_id') | list }}"
+        instance_replace_1: "{{ asg_info_replaced.results[0].instances[0].instance_id }}"
+        instance_replace_2: "{{ asg_info_replaced.results[0].instances[1].instance_id }}"
+        instance_replace_3: "{{ asg_info_replaced.results[0].instances[2].instance_id }}"
+
+    # create a list of instance currently attached to asg
     - set_fact:
-        instance_4: "{{ instances_detach_replace[0] }}"
-        instance_5: "{{ instances_detach_replace[1] }}"
-        instance_6: "{{ instances_detach_replace[2] }}"
+        asg_instance_detach_replace: "{{ asg_info_replaced.results[0].instances | map(attribute='instance_id') | list }}"
 
     - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
         instance_ids:
-          - "{{ instance_0 }}"
-          - "{{ instance_1 }}"
+          - "{{ init_instance_1 }}"
+          - "{{ init_instance_2 }}"
       register: detached_instances_info
 
-    # assert that there are 3 still instances in the AutoScalingGroup
-    # assert that two specified instances are detached and still running (not terminated)
+    # assert that
+    #   there are 3 still instances in the AutoScalingGroup
+    #   two specified instances are detached and still running independently(not terminated)
     - assert:
         that:
-          # - asg_info_replaced.desired_capacity == 1
-          # - asg_info_replaced.instances | length == 1
-          - "{{ instances_detach_replace | length }} == 3"
-          - "'{{ instance_0 }}' not in {{ instances_detach_replace }}"
-          - "'{{ instance_1 }}' not in {{ instances_detach_replace }}"
+          - asg_info_replaced.results[0].desired_capacity == 3
+          - asg_info_replaced.results[0].instances | length == 3
+          - "'{{ init_instance_1 }}' not in {{ asg_instance_detach_replace }}"
+          - "'{{ init_instance_2 }}' not in {{ asg_instance_detach_replace }}"
           - "'{{ detached_instances_info.instances[0].state.name }}' == 'running'"
           - "'{{ detached_instances_info.instances[1].state.name }}' == 'running'"
 
-    #------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------
 
     # detach 2 instances from the asg and reduce the desired capacity from 3 to 1
     - name: detach 2 instance from the asg and reduce the desired capacity from 3 to 1
@@ -141,44 +134,45 @@
         region: "{{ aws_region }}"
         decrement_desired_capacity: true
         detach_instances:
-          - '{{ instances_detach_replace[0] }}'
-          - '{{ instances_detach_replace[1] }}'
+          - '{{ instance_replace_1 }}'
+          - '{{ instance_replace_2 }}'
 
     - name: Pause for 1 minute to allow completion of above task
       pause:
         minutes: 1
 
-    # gather information about asg
+    # gather information about asg and get instance id
     - ec2_asg_info:
         name: "{{ resource_prefix }}-asg-detach-test"
       register: asg_info_decrement
+    - set_fact:
+        instance_detach_decrement: "{{ asg_info_decrement.results[0].instances[0].instance_id }}"
     # create a list of instance ids from info result and set variable value to instance ID
     - set_fact:
-        instances_detach_no_replace: "{{ asg_info_decrement.results[0].instances | map(attribute='instance_id') | list }}"
-    - set_fact:
-        instance_7: "{{ instances_detach_no_replace[0] }}"
+        asg_instance_detach_decrement: "{{ asg_info_decrement.results[0].instances | map(attribute='instance_id') | list }}"
 
     - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
         instance_ids:
-          - "{{ instance_4 }}"
-          - "{{ instance_5 }}"
+          - "{{ instance_replace_1 }}"
+          - "{{ instance_replace_2 }}"
       register: detached_instances_info
 
     # assert that
-    # detached instances are not replaced and there is only 1 instance in the AutoScalingGroup
-    # desired capacity is reduced to 1
+    #   detached instances are not replaced and there is only 1 instance in the AutoScalingGroup
+    #   desired capacity is reduced to 1
+    #   detached instances are not terminated
     - assert:
         that:
-          - asg_info_decrement.results[0].desired_capacity == 1
           - asg_info_decrement.results[0].instances | length == 1
-          - "'{{ instance_4 }}' not in {{ instances_detach_no_replace }}"
-          - "'{{ instance_5 }}' not in {{ instances_detach_no_replace }}"
+          - asg_info_decrement.results[0].desired_capacity == 1
+          - "'{{ instance_replace_1 }}' not in {{ asg_instance_detach_decrement }}"
+          - "'{{ instance_replace_2 }}' not in {{ asg_instance_detach_decrement }}"
           - "'{{ detached_instances_info.instances[0].state.name }}' == 'running'"
           - "'{{ detached_instances_info.instances[1].state.name }}' == 'running'"
-          - "'{{ instance_6 }}' in {{ instances_detach_no_replace }}"
+          - "'{{ instance_replace_3 }}' == '{{ instance_detach_decrement }}'"
 
-    #------------------------------------------------------------------------------------------------------------
+    #----------------------------------------------------------------------
 
   always:
 
@@ -188,13 +182,12 @@
         - "{{ item }}"
       state: absent
     loop:
-      - "{{ instance_0 }}"
-      - "{{ instance_1 }}"
-      - "{{ instance_2 }}"
-      - "{{ instance_4 }}"
-      - "{{ instance_5 }}"
-      - "{{ instance_6 }}"
-      - "{{ instance_7 }}"
+      - "{{ init_instance_1 }}"
+      - "{{ init_instance_2 }}"
+      - "{{ init_instance_3 }}"
+      - "{{ instance_replace_1 }}"
+      - "{{ instance_replace_2 }}"
+      - "{{ instance_replace_3 }}"
 
   - name: kill asg created in this test
     ec2_asg:
