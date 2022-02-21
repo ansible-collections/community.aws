@@ -48,6 +48,8 @@
         instance_0: "{{ asg_info.results[0].instances[0].instance_id }}"
         instance_1: "{{ asg_info.results[0].instances[1].instance_id }}"
         instance_2: "{{ asg_info.results[0].instances[2].instance_id }}"
+    - set_fact:
+        instance_ids_list: "{{ instance_ids_list + [instance_0, instance_1, instance_2] }}"
 
     - name: Gather information about instance 0
       amazon.aws.ec2_instance_info:
@@ -68,7 +70,7 @@
     # assert that there are 3 instances in the AutoScalingGroup
     - assert:
         that:
-          - "{{ instances | length }} == 3"
+          - "{{ asg_info.results[0].instances | length }} == 3"
           - "'{{ instance_0_info.instances[0].state.name }}' == 'running'"
           - "'{{ instance_1_info.instances[0].state.name }}' == 'running'"
           - "'{{ instance_2_info.instances[0].state.name }}' == 'running'"
@@ -86,8 +88,8 @@
         desired_capacity: 3
         region: "{{ aws_region }}"
         detach_instances:
-          - '{{ instances[0] }}'
-          - '{{ instances[1] }}'
+          - '{{ instance_0 }}'
+          - '{{ instance_1 }}'
 
     # pause to allow completion of instance replacement
     - name: Pause for 1 minute
@@ -106,6 +108,8 @@
         instance_4: "{{ instances_detach_replace[0] }}"
         instance_5: "{{ instances_detach_replace[1] }}"
         instance_6: "{{ instances_detach_replace[2] }}"
+    - set_fact:
+        instance_ids_list: "{{ instance_ids_list + [instance_4, instance_5, instance_6] }}"
 
     - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
@@ -157,6 +161,8 @@
         instances_detach_no_replace: "{{ asg_info_decrement.results[0].instances | map(attribute='instance_id') | list }}"
     - set_fact:
         instance_7: "{{ instances_detach_no_replace[0] }}"
+    - set_fact:
+        instance_ids_list: "{{ instance_ids_list + [instance_7] }}"
 
     - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
@@ -185,16 +191,10 @@
   - name: terminate any instances created during this test
     amazon.aws.ec2_instance:
       instance_ids:
-        -"{{ item }}"
+        - "{{ item }}"
       state: absent
     loop:
-      - "{{ instance_0 }}"
-      - "{{ instance_1 }}"
-      - "{{ instance_2 }}"
-      - "{{ instance_4 }}"
-      - "{{ instance_5 }}"
-      - "{{ instance_6 }}"
-      - "{{ instance_7 }}"
+      - "{{ instance_ids_list }}"
 
   - name: kill asg created in this test
     ec2_asg:

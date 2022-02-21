@@ -33,7 +33,7 @@
   collections:
     - amazon.aws
   vars:
-    instance_ids: []
+    instance_ids_list: []
 
   block:
 
