@@ -10,9 +10,9 @@ DOCUMENTATION = r'''
 ---
 module: eventbridge_rule
 version_added: 1.0.0
-short_description: Manage CloudWatch Event rules and targets
+short_description: Manage EventBridge Event rules and targets
 description:
-  - This module creates and manages CloudWatch event rules and targets.
+  - This module creates and manages EventBridge event rules and targets.
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -130,7 +130,7 @@ EXAMPLES = r'''
 
 RETURN = r'''
 rule:
-    description: CloudWatch Event rule data.
+    description: EventBridge Event rule data.
     returned: success
     type: dict
     sample:
@@ -140,7 +140,7 @@ rule:
       schedule_expression: 'cron(0 20 * * ? *)'
       state: 'ENABLED'
 targets:
-    description: CloudWatch Event target(s) assigned to the rule.
+    description: EventBridge Event target(s) assigned to the rule.
     returned: success
     type: list
     sample: "[{ 'arn': 'arn:aws:lambda:us-east-1:123456789012:function:MyFunction', 'id': 'MyTargetId' }]"
@@ -157,7 +157,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
-class CloudWatchEventRule(object):
+class EventBridgeEventRule(object):
     def __init__(self, module, name, client, schedule_expression=None,
                  event_pattern=None, description=None, role_arn=None):
         self.name = name
@@ -303,7 +303,7 @@ class CloudWatchEventRule(object):
         return camel_dict_to_snake_dict(dict)
 
 
-class CloudWatchEventRuleManager(object):
+class EventBridgeEventRuleManager(object):
     RULE_FIELDS = ['name', 'event_pattern', 'schedule_expression', 'description', 'role_arn']
 
     def __init__(self, rule, targets):
@@ -428,14 +428,14 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec)
 
     rule_data = dict(
-        [(rf, module.params.get(rf)) for rf in CloudWatchEventRuleManager.RULE_FIELDS]
+        [(rf, module.params.get(rf)) for rf in EventBridgeEventRuleManager.RULE_FIELDS]
     )
     targets = module.params.get('targets')
     state = module.params.get('state')
     client = module.client('events')
 
-    cwe_rule = CloudWatchEventRule(module, client=client, **rule_data)
-    cwe_rule_manager = CloudWatchEventRuleManager(cwe_rule, targets)
+    cwe_rule = EventBridgeEventRule(module, client=client, **rule_data)
+    cwe_rule_manager = EventBridgeEventRuleManager(cwe_rule, targets)
 
     if state == 'present':
         cwe_rule_manager.ensure_present()
