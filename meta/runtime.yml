@@ -52,7 +52,6 @@ action_groups:
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
   - cloudtrail
-  - cloudwatchevent_rule
   - cloudwatchlogs_log_group
   - cloudwatchlogs_log_group_info
   - cloudwatchlogs_log_group_metric_filter
@@ -123,6 +122,7 @@ action_groups:
   - elb_target_group
   - elb_target_group_info
   - elb_target_info
+  - eventbridge_rule
   - execute_lambda
   - iam_access_key
   - iam_access_key_info
