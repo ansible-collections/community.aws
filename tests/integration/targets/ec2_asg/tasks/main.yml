@@ -32,8 +32,6 @@
       region: "{{ aws_region }}"
   collections:
     - amazon.aws
-  vars:
-    instance_ids_list: []
 
   block:
 

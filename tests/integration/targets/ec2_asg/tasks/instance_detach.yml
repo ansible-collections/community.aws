@@ -48,8 +48,6 @@
         instance_0: "{{ asg_info.results[0].instances[0].instance_id }}"
         instance_1: "{{ asg_info.results[0].instances[1].instance_id }}"
         instance_2: "{{ asg_info.results[0].instances[2].instance_id }}"
-    - set_fact:
-        instance_ids_list: "{{ instance_ids_list + [instance_0, instance_1, instance_2] }}"
 
     - name: Gather information about instance 0
       amazon.aws.ec2_instance_info:
@@ -108,8 +106,6 @@
         instance_4: "{{ instances_detach_replace[0] }}"
         instance_5: "{{ instances_detach_replace[1] }}"
         instance_6: "{{ instances_detach_replace[2] }}"
-    - set_fact:
-        instance_ids_list: "{{ instance_ids_list + [instance_4, instance_5, instance_6] }}"
 
     - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
@@ -161,8 +157,6 @@
         instances_detach_no_replace: "{{ asg_info_decrement.results[0].instances | map(attribute='instance_id') | list }}"
     - set_fact:
         instance_7: "{{ instances_detach_no_replace[0] }}"
-    - set_fact:
-        instance_ids_list: "{{ instance_ids_list + [instance_7] }}"
 
     - name: Gather information about recently detached instances
       amazon.aws.ec2_instance_info:
@@ -194,7 +188,13 @@
         - "{{ item }}"
       state: absent
     loop:
-      - "{{ instance_ids_list }}"
+      - "{{ instance_0 }}"
+      - "{{ instance_1 }}"
+      - "{{ instance_2 }}"
+      - "{{ instance_4 }}"
+      - "{{ instance_5 }}"
+      - "{{ instance_6 }}"
+      - "{{ instance_7 }}"
 
   - name: kill asg created in this test
     ec2_asg:
