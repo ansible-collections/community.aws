@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: cloudwatchevent_rule
+module: eventbridge_rule
 version_added: 1.0.0
 short_description: Manage CloudWatch Event rules and targets
 description:
@@ -105,7 +105,7 @@ options:
 '''
 
 EXAMPLES = r'''
-- community.aws.cloudwatchevent_rule:
+- community.aws.eventbridge_rule:
     name: MyCronTask
     schedule_expression: "cron(0 20 * * ? *)"
     description: Run my scheduled task
@@ -113,7 +113,7 @@ EXAMPLES = r'''
       - id: MyTargetId
         arn: arn:aws:lambda:us-east-1:123456789012:function:MyFunction
 
-- community.aws.cloudwatchevent_rule:
+- community.aws.eventbridge_rule:
     name: MyDisabledCronTask
     schedule_expression: "rate(5 minutes)"
     description: Run my disabled scheduled task
@@ -123,7 +123,7 @@ EXAMPLES = r'''
         arn: arn:aws:lambda:us-east-1:123456789012:function:MyFunction
         input: '{"foo": "bar"}'
 
-- community.aws.cloudwatchevent_rule:
+- community.aws.eventbridge_rule:
     name: MyCronTask
     state: absent
 '''
