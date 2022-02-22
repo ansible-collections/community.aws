@@ -1553,24 +1553,24 @@ def detach(connection):
     props = get_properties(as_group)
     instances = props['instances']
 
-    # check if provided instance exists in asg
+    # check if provided instance exists in asg, create list of instances to detach which exist in asg
+    instances_to_detach = []
     for instance_id in detach_instances:
-        if instance_id not in instances:
-            module.fail_json(msg="Provided instance ID: {0} does not belong to the AutoScalingGroup: {1}".format(
-                instance_id, group_name))
+        if instance_id in instances:
+            instances_to_detach.append(instance_id)
 
     # check if setting decrement_desired_capacity will make desired_capacity smaller
     # than the currently set minimum size in ASG configuration
     if decrement_desired_capacity:
-        decremented_desired_capacity = len(instances) - len(detach_instances)
+        decremented_desired_capacity = len(instances) - len(instances_to_detach)
         if min_size and min_size > decremented_desired_capacity:
             module.fail_json(
                 msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances below min_size,\
                         please update AutoScalingGroup Sizes properly.")
 
-    if detach_instances:
+    if instances_to_detach:
         try:
-            detach_asg_instances(connection, detach_instances, group_name, decrement_desired_capacity)
+            detach_asg_instances(connection, instances_to_detach, group_name, decrement_desired_capacity)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Failed to describe launch configurations")
 
