@@ -1565,14 +1565,14 @@ def detach(connection):
         decremented_desired_capacity = len(instances) - len(instances_to_detach)
         if min_size and min_size > decremented_desired_capacity:
             module.fail_json(
-                msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances below min_size,\
-                        please update AutoScalingGroup Sizes properly.")
+                msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances to {0}\
+                        which is below current min_size {1}, please update AutoScalingGroup Sizes properly.".format(decremented_desired_capacity, min_size))
 
     if instances_to_detach:
         try:
             detach_asg_instances(connection, instances_to_detach, group_name, decrement_desired_capacity)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Failed to describe launch configurations")
+            module.fail_json_aws(e, msg="Failed to detach instances from AutoScaling Group")
 
     asg_properties = get_properties(as_group)
     return True, asg_properties
