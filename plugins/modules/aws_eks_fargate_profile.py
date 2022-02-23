@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: aws_eks_fargate_profile
-version_added: 1.0.0
+version_added: 3.2.0
 short_description: Manage EKS Fargate Profile
 description:
     - Manage EKS Fargate Profile
@@ -24,14 +24,20 @@ options:
     required: True
     type: str
   role_arn:
-    description: ARN of IAM role used by the EKS cluster
+    description:
+      - ARN of IAM role used by the EKS cluster.
+      - Required when I(state=present).
     type: str
   subnets:
-    description: list of subnet IDs for the Kubernetes cluster
+    description:
+      - list of subnet IDs for the Kubernetes cluster.
+      - Required when I(state=present).
     type: list
     elements: str
   selectors:
-    description: A list of selectors to use in fargate profile
+    description:
+      - A list of selectors to use in fargate profile
+      - Required when I(state=present).
     type: list
     elements: dict
     suboptions:
@@ -41,7 +47,6 @@ options:
       labels:
         description: A dictionary of labels used in fargate profile
         type: dict
-        elements: str
   state:
     description: Create or delete the Fargate Profile
     choices:
@@ -91,8 +96,8 @@ EXAMPLES = r'''
     state: present
     wait: yes
 
-- name: Remove an EKS cluster
-  community.aws.aws_eks_cluster:
+- name: Remove an EKS Fargate Profile
+  community.aws.aws_eks_fargate_profile:
     name: test_fargate
     clusterName: test_cluster
     wait: yes
@@ -178,8 +183,12 @@ except ImportError:
 
 def validate_tags(client, module, fargate_profile):
     changed = False
-    existing_tags = client.list_tags_for_resource(resourceArn=fargate_profile['fargateProfileArn'])['tags']
-    tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
+
+    try:
+        existing_tags = client.list_tags_for_resource(resourceArn=fargate_profile['fargateProfileArn'])['tags']
+        tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, module.params.get('tags'), module.params.get('purge_tags'))
+    except(botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Unable to list or compare tags for Fargate Profile %s' % module.params.get('name'))
 
     if tags_to_remove:
         if not module.check_mode:
@@ -306,7 +315,10 @@ def main():
         cluster_name=dict(required=True),
         role_arn=dict(),
         subnets=dict(type='list', elements='str'),
-        selectors=dict(type='list', elements='dict'),
+        selectors=dict(type='list', elements='dict', options=dict(
+            namespace=dict(type='str'),
+            labels=dict(type='dict', default={})
+        )),
         tags=dict(type='dict', default={}),
         purge_tags=dict(type='bool', default=True),
         state=dict(choices=['absent', 'present'], default='present'),
@@ -316,7 +328,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        required_if=[['state', 'present', ['cluster_name', 'role_arn', 'subnets', 'selectors']]],
+        required_if=[['state', 'present', ['role_arn', 'subnets', 'selectors']]],
         supports_check_mode=True,
     )
 
