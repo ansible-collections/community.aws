@@ -1,0 +1,2 @@
+minor_changes:
+  - iam_user - add parameter ``password_reset_required`` (https://github.com/ansible-collections/community.aws/pull/860).

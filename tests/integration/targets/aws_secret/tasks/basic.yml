@@ -1,6 +1,13 @@
 ---
 - block:
   # ============================================================
+  #   Preparation
+  # ============================================================
+  - name: 'Retrieve caller facts'
+    aws_caller_info:
+    register: aws_caller_info
+
+  # ============================================================
   # Module parameter testing
   # ============================================================
   - name: test with no parameters
@@ -100,6 +107,49 @@
     assert:
       that:
         - result.changed
+
+  - name: add resource policy to secret
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      resource_policy: "{{ lookup('template', 'secret-policy.j2', convert_data=False) | string }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result.changed
+
+  - name: remove existing resource policy from secret
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result.changed
+
+  - name: remove resource policy from secret (idempotency)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+
+  - name: assert no change happened
+    assert:
+      that:
+        - not result.changed
 
   - name: remove secret
     aws_secret:

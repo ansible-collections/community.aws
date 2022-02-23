@@ -69,7 +69,6 @@ options:
   value:
     description:
       - The new value when creating a DNS record.  YAML lists or multiple comma-spaced values are allowed for non-alias records.
-      - When deleting a record all values for the record must be specified or Route 53 will not delete it.
     type: list
     elements: str
   overwrite:
@@ -414,7 +413,7 @@ def get_zone_id_by_name(route53, module, zone_name, want_private, want_vpc_id):
 
         if private_zone == want_private and zone['Name'] == zone_name:
             if want_vpc_id:
-                # NOTE: These details aren't available in other boto methods, hence the necessary
+                # NOTE: These details aren't available in other boto3 methods, hence the necessary
                 # extra API call
                 hosted_zone = route53.get_hosted_zone(aws_retry=True, Id=zone_id)
                 if want_vpc_id in [v['VPCId'] for v in hosted_zone['VPCs']]:
@@ -513,8 +512,6 @@ def main():
         required_if=(
             ('state', 'present', ['value']),
             ('state', 'create', ['value']),
-            ('state', 'absent', ['value']),
-            ('state', 'delete', ['value']),
         ),
         # failover, region and weight are mutually exclusive
         mutually_exclusive=[
@@ -607,6 +604,10 @@ def main():
         'HealthCheckId': health_check_in,
         'SetIdentifier': identifier_in,
     })
+    if command_in == 'delete' and aws_record is not None:
+        resource_record_set['TTL'] = aws_record.get('TTL')
+        if not resource_record_set['ResourceRecords']:
+            resource_record_set['ResourceRecords'] = aws_record.get('ResourceRecords')
 
     if alias_in:
         resource_record_set['AliasTarget'] = dict(
@@ -637,6 +638,11 @@ def main():
             ns = get_hosted_zone_nameservers(route53, zone_id)
 
         formatted_aws = format_record(aws_record, zone_in, zone_id)
+
+        if formatted_aws is None:
+            # record does not exist
+            module.exit_json(changed=False, set=[], nameservers=ns, resource_record_sets=[])
+
         rr_sets = [camel_dict_to_snake_dict(aws_record)]
         module.exit_json(changed=False, set=formatted_aws, nameservers=ns, resource_record_sets=rr_sets)
 
@@ -692,7 +698,7 @@ def main():
         changed=True,
         diff=dict(
             before=formatted_aws,
-            after=formatted_record if command != 'delete' else {},
+            after=formatted_record if command_in != 'delete' else {},
             resource_record_sets=rr_sets,
         ),
     )

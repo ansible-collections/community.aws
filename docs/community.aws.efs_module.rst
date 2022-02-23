@@ -26,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.15.0
-- botocore >= 1.18.0
+- boto3 >= 1.16.0
+- botocore >= 1.19.0
 
 
 Parameters
@@ -437,6 +437,32 @@ Parameters
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>transition_to_ia</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>None</li>
+                                    <li>7</li>
+                                    <li>14</li>
+                                    <li>30</li>
+                                    <li>60</li>
+                                    <li>90</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>How many days before objects transition to the lower-cost EFS Infrequent Access (IA) storage class.</div>
+                        <div>If set to the string <code>None</code>, any existing lifecyle policy will be removed, and objects will not transition to an IA storage class.</div>
+                        <div>If this parameter is absent, any existing lifecycle policy will not be affected.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -525,6 +551,24 @@ Examples
         name: myTestEFS
         tags:
             name: myAnotherTestTag
+        targets:
+            - subnet_id: subnet-7654fdca
+              security_groups: [ "sg-4c5d6f7a" ]
+
+    - name: Set a lifecycle policy
+      community.aws.efs:
+        state: present
+        name: myTestEFS
+        transition_to_ia: 7
+        targets:
+            - subnet_id: subnet-7654fdca
+              security_groups: [ "sg-4c5d6f7a" ]
+
+    - name: Remove a lifecycle policy
+      community.aws.efs:
+        state: present
+        name: myTestEFS
+        transition_to_ia: None
         targets:
             - subnet_id: subnet-7654fdca
               security_groups: [ "sg-4c5d6f7a" ]

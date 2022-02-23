@@ -12,7 +12,6 @@ short_description: Retrieves route53 details using AWS methods
 version_added: 1.0.0
 description:
     - Gets various details related to Route53 zone, record set or health check details.
-    - This module was called C(route53_facts) before Ansible 2.9. The usage did not change.
 options:
   query:
     description:
@@ -47,7 +46,7 @@ options:
     description:
       - Maximum number of items to return for various get/list requests.
     required: false
-    type: str
+    type: int
   next_marker:
     description:
       - "Some requests such as list_command: hosted_zones will return a maximum
@@ -72,7 +71,7 @@ options:
     description:
       - The type of DNS record.
     required: false
-    choices: [ 'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS' ]
+    choices: [ 'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS', 'NAPTR', 'SOA', 'DS' ]
     type: str
   dns_name:
     description:
@@ -213,9 +212,17 @@ except ImportError:
 from ansible.module_utils._text import to_native
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
-def get_hosted_zone(client, module):
+# Split out paginator to allow for the backoff decorator to function
+@AWSRetry.jittered_backoff()
+def _paginated_result(paginator_name, **params):
+    paginator = client.get_paginator(paginator_name)
+    return paginator.paginate(**params).build_full_result()
+
+
+def get_hosted_zone():
     params = dict()
 
     if module.params.get('hosted_zone_id'):
@@ -226,11 +233,15 @@ def get_hosted_zone(client, module):
     return client.get_hosted_zone(**params)
 
 
-def reusable_delegation_set_details(client, module):
+def reusable_delegation_set_details():
     params = dict()
+
     if not module.params.get('delegation_set_id'):
+        # Set PaginationConfig with max_items
         if module.params.get('max_items'):
-            params['MaxItems'] = module.params.get('max_items')
+            params['PaginationConfig'] = dict(
+                MaxItems=module.params.get('max_items')
+            )
 
         if module.params.get('next_marker'):
             params['Marker'] = module.params.get('next_marker')
@@ -243,11 +254,14 @@ def reusable_delegation_set_details(client, module):
     return results
 
 
-def list_hosted_zones(client, module):
+def list_hosted_zones():
     params = dict()
 
+    # Set PaginationConfig with max_items
     if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
+        params['PaginationConfig'] = dict(
+            MaxItems=module.params.get('max_items')
+        )
 
     if module.params.get('next_marker'):
         params['Marker'] = module.params.get('next_marker')
@@ -255,15 +269,15 @@ def list_hosted_zones(client, module):
     if module.params.get('delegation_set_id'):
         params['DelegationSetId'] = module.params.get('delegation_set_id')
 
-    paginator = client.get_paginator('list_hosted_zones')
-    zones = paginator.paginate(**params).build_full_result()['HostedZones']
+    zones = _paginated_result('list_hosted_zones', **params)['HostedZones']
+
     return {
         "HostedZones": zones,
         "list": zones,
     }
 
 
-def list_hosted_zones_by_name(client, module):
+def list_hosted_zones_by_name():
     params = dict()
 
     if module.params.get('hosted_zone_id'):
@@ -272,13 +286,16 @@ def list_hosted_zones_by_name(client, module):
     if module.params.get('dns_name'):
         params['DNSName'] = module.params.get('dns_name')
 
+    # Set PaginationConfig with max_items
     if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
+        params['PaginationConfig'] = dict(
+            MaxItems=module.params.get('max_items')
+        )
 
     return client.list_hosted_zones_by_name(**params)
 
 
-def change_details(client, module):
+def change_details():
     params = dict()
 
     if module.params.get('change_id'):
@@ -290,11 +307,11 @@ def change_details(client, module):
     return results
 
 
-def checker_ip_range_details(client, module):
+def checker_ip_range_details():
     return client.get_checker_ip_ranges()
 
 
-def get_count(client, module):
+def get_count():
     if module.params.get('query') == 'health_check':
         results = client.get_health_check_count()
     else:
@@ -303,7 +320,7 @@ def get_count(client, module):
     return results
 
 
-def get_health_check(client, module):
+def get_health_check():
     params = dict()
 
     if not module.params.get('health_check_id'):
@@ -321,7 +338,7 @@ def get_health_check(client, module):
     return results
 
 
-def get_resource_tags(client, module):
+def get_resource_tags():
     params = dict()
 
     if module.params.get('resource_id'):
@@ -337,24 +354,27 @@ def get_resource_tags(client, module):
     return client.list_tags_for_resources(**params)
 
 
-def list_health_checks(client, module):
+def list_health_checks():
     params = dict()
-
-    if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
 
     if module.params.get('next_marker'):
         params['Marker'] = module.params.get('next_marker')
 
-    paginator = client.get_paginator('list_health_checks')
-    health_checks = paginator.paginate(**params).build_full_result()['HealthChecks']
+    # Set PaginationConfig with max_items
+    if module.params.get('max_items'):
+        params['PaginationConfig'] = dict(
+            MaxItems=module.params.get('max_items')
+        )
+
+    health_checks = _paginated_result('list_health_checks', **params)['HealthChecks']
+
     return {
         "HealthChecks": health_checks,
         "list": health_checks,
     }
 
 
-def record_sets_details(client, module):
+def record_sets_details():
     params = dict()
 
     if module.params.get('hosted_zone_id'):
@@ -362,26 +382,31 @@ def record_sets_details(client, module):
     else:
         module.fail_json(msg="Hosted Zone Id is required")
 
-    if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
-
     if module.params.get('start_record_name'):
         params['StartRecordName'] = module.params.get('start_record_name')
 
+    # Check that both params are set if type is applied
     if module.params.get('type') and not module.params.get('start_record_name'):
         module.fail_json(msg="start_record_name must be specified if type is set")
-    elif module.params.get('type'):
+
+    if module.params.get('type'):
         params['StartRecordType'] = module.params.get('type')
 
-    paginator = client.get_paginator('list_resource_record_sets')
-    record_sets = paginator.paginate(**params).build_full_result()['ResourceRecordSets']
+    # Set PaginationConfig with max_items
+    if module.params.get('max_items'):
+        params['PaginationConfig'] = dict(
+            MaxItems=module.params.get('max_items')
+        )
+
+    record_sets = _paginated_result('list_resource_record_sets', **params)['ResourceRecordSets']
+
     return {
         "ResourceRecordSets": record_sets,
         "list": record_sets,
     }
 
 
-def health_check_details(client, module):
+def health_check_details():
     health_check_invocations = {
         'list': list_health_checks,
         'details': get_health_check,
@@ -391,11 +416,11 @@ def health_check_details(client, module):
         'tags': get_resource_tags,
     }
 
-    results = health_check_invocations[module.params.get('health_check_method')](client, module)
+    results = health_check_invocations[module.params.get('health_check_method')]()
     return results
 
 
-def hosted_zone_details(client, module):
+def hosted_zone_details():
     hosted_zone_invocations = {
         'details': get_hosted_zone,
         'list': list_hosted_zones,
@@ -404,11 +429,14 @@ def hosted_zone_details(client, module):
         'tags': get_resource_tags,
     }
 
-    results = hosted_zone_invocations[module.params.get('hosted_zone_method')](client, module)
+    results = hosted_zone_invocations[module.params.get('hosted_zone_method')]()
     return results
 
 
 def main():
+    global module
+    global client
+
     argument_spec = dict(
         query=dict(choices=[
             'change',
@@ -420,12 +448,12 @@ def main():
         ], required=True),
         change_id=dict(),
         hosted_zone_id=dict(),
-        max_items=dict(),
+        max_items=dict(type='int'),
         next_marker=dict(),
         delegation_set_id=dict(),
         start_record_name=dict(),
-        type=dict(choices=[
-            'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS'
+        type=dict(type='str', choices=[
+            'A', 'CNAME', 'MX', 'AAAA', 'TXT', 'PTR', 'SRV', 'SPF', 'CAA', 'NS', 'NAPTR', 'SOA', 'DS'
         ]),
         dns_name=dict(),
         resource_id=dict(type='list', aliases=['resource_ids'], elements='str'),
@@ -455,11 +483,9 @@ def main():
         ],
         check_boto3=False,
     )
-    if module._name == 'route53_facts':
-        module.deprecate("The 'route53_facts' module has been renamed to 'route53_info'", date='2021-12-01', collection_name='community.aws')
 
     try:
-        route53 = module.client('route53')
+        client = module.client('route53', retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
@@ -474,7 +500,7 @@ def main():
 
     results = dict(changed=False)
     try:
-        results = invocations[module.params.get('query')](route53, module)
+        results = invocations[module.params.get('query')]()
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json(msg=to_native(e))
 

@@ -61,7 +61,7 @@
       that:
       - sns_fifo_topic.changed
       - sns_fifo_topic.sns_topic.topic_type == 'fifo'
-      - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo.fifo'
+      - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo'
 
   - name: Run create a FIFO topic again for idempotence test
     sns_topic:
@@ -214,7 +214,7 @@
       name: '{{ sns_topic_lambda_name }}'
       state: present
       zip_file: '{{ tempdir.path }}/{{ sns_topic_lambda_function }}.zip'
-      runtime: python2.7
+      runtime: python3.9
       role: '{{ sns_topic_lambda_role }}'
       handler: '{{ sns_topic_lambda_function }}.handler'
     register: lambda_result

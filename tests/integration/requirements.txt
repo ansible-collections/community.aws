@@ -1,12 +1,13 @@
 # Our code is based on the AWS SDKs
-boto
 boto3
 botocore
 
-# netaddr is needed for ansible.netcommon.ipv6
+# netaddr is needed for ansible.utils.ipv6
 netaddr
 virtualenv
 # Sometimes needed where we don't have features we need in modules
 awscli
 # Used for comparing SSH Public keys to the Amazon fingerprints
 pycrypto
+# Used by ec2_asg_scheduled_action
+python-dateutil

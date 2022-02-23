@@ -18,7 +18,6 @@ Version added: 1.0.0
 Synopsis
 --------
 - Gather information about AWS KMS keys including tags and grants
-- This module was called ``aws_kms_facts`` before Ansible 2.9. The usage did not change.
 
 
 
@@ -27,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.15.0
-- botocore >= 1.18.0
+- boto3 >= 1.16.0
+- botocore >= 1.19.0
 
 
 Parameters
@@ -212,13 +211,12 @@ Parameters
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to return the results in the <code>keys</code> attribute as well as the <code>kms_keys</code> attribute.</div>
-                        <div>Returning the <code>keys</code> attribute conflicts with the builtin keys() method on dictionaries and as such has been deprecated.</div>
-                        <div>After version <code>3.0.0</code> this parameter will do nothing, and after version <code>4.0.0</code> this parameter will be removed.</div>
+                        <div>Returning the <code>keys</code> attribute conflicted with the builtin keys() method on dictionaries and as such was deprecated.</div>
+                        <div>This parameter now does nothing, and after version <code>4.0.0</code> this parameter will be removed.</div>
                 </td>
             </tr>
             <tr>
