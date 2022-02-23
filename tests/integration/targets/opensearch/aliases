@@ -19,6 +19,6 @@
 #    3 minutes to enable auto-tune option.
 #   45 minutes to delete cluster.
 
-#disabled
+disabled
 
 cloud/aws
