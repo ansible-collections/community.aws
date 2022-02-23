@@ -240,6 +240,17 @@
       state: present
     register: cf_update_default_root_object
 
+  - name: update default_root_object of existing distribution with retries
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ resource_prefix }}2.example.com"
+      default_root_object: index.php
+      state: present
+    retries: 3
+    delay: 3  
+    register: cf_update_default_root_object    
+
   - name: ensure origin was updated
     assert:
       that:
