@@ -97,6 +97,8 @@
             cidr_ip: 0.0.0.0/0
       register: sg
 
+    - include_tasks: instance_detach.yml
+
     - name: ensure launch configs exist
       ec2_lc:
         name: "{{ item }}"
@@ -115,8 +117,6 @@
       loop:
         - "{{ resource_prefix }}-lc"
         - "{{ resource_prefix }}-lc-2"
-
-    - include_tasks: instance_detach.yml
 
     # ============================================================
 
@@ -724,7 +724,6 @@
           - "output.target_group_arns | length == 1"
           - "output.target_group_arns[0] == out_tg1.target_group_arn"
           - "output.changed == false"
-
 
 # ============================================================
 

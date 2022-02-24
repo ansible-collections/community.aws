@@ -85,7 +85,7 @@
     # pause to allow completion of instance replacement
     - name: Pause for 1 minute
       pause:
-        minutes: 1
+        seconds: 30
 
     # gather info about asg and get instance ids
     - ec2_asg_info:
@@ -139,7 +139,7 @@
 
     - name: Pause for 1 minute to allow completion of above task
       pause:
-        minutes: 1
+        seconds: 30
 
     # gather information about asg and get instance id
     - ec2_asg_info:
