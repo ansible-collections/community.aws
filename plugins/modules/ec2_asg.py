@@ -645,6 +645,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
 ASG_ATTRIBUTES = ('AvailabilityZones', 'DefaultCooldown', 'DesiredCapacity',
                   'HealthCheckGracePeriod', 'HealthCheckType', 'LaunchConfigurationName',
@@ -711,6 +712,23 @@ def describe_launch_templates(connection, launch_template):
             return lt
         except is_boto3_error_code('InvalidLaunchTemplateName.NotFoundException'):
             module.fail_json(msg="No launch template found matching: %s" % launch_template)
+
+
+@AWSRetry.jittered_backoff(**backoff_params)
+def describe_autoscaling_tags(connection, asg_name):
+    pg = connection.get_paginator('describe_tags')
+    filters = ansible_dict_to_boto3_filter_list({'auto-scaling-group': asg_name})
+
+    try:
+        response = pg.paginate(Filters=filters).build_full_result().get('Tags', [])
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to describe AutoScalingGroup tags.")
+
+    asg_tags_dict = {}
+    for item in response:
+        asg_tags_dict[item['Key']] = item['Value']
+
+    return False, asg_tags_dict
 
 
 @AWSRetry.jittered_backoff(**backoff_params)
@@ -1790,6 +1808,7 @@ def main():
         load_balancers=dict(type='list', elements='str'),
         target_group_arns=dict(type='list', elements='str'),
         availability_zones=dict(type='list', elements='str'),
+        describe_tags=dict(type='bool', required=False),
         launch_config_name=dict(type='str'),
         launch_template=dict(
             type='dict',
@@ -1891,6 +1910,10 @@ def main():
     connection = module.client('autoscaling')
     changed = create_changed = replace_changed = detach_changed = False
     exists = asg_exists(connection)
+
+    if exists and module.params.get('describe_tags'):
+        changed, asg_tags_list = describe_autoscaling_tags(connection, module.params.get('name'))
+        module.exit_json(changed=changed, ASG_TAGS=asg_tags_list)
 
     if state == 'present':
         create_changed, asg_properties = create_autoscaling_group(connection)
