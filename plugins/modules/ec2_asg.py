@@ -185,8 +185,8 @@ options:
   detach_instances:
     description:
       - Removes one or more instances from the specified AutoScalingGroup.
-      - If I(decrement_desired_capacity) flag is not set, new instance(s) are lauched to replace the detached instance(s).
-      - If a Classic Load Balancer attached to the AutoScalingGroup, the instances are also deregistered from the load balancer.
+      - If I(decrement_desired_capacity) flag is not set, new instance(s) are launched to replace the detached instance(s).
+      - If a Classic Load Balancer is attached to the AutoScalingGroup, the instances are also deregistered from the load balancer.
       - If there are target groups attached to the AutoScalingGroup, the instances are also deregistered from the target groups.
     type: list
     elements: str
