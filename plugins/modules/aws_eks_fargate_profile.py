@@ -99,33 +99,33 @@ EXAMPLES = r'''
 - name: Remove an EKS Fargate Profile
   community.aws.aws_eks_fargate_profile:
     name: test_fargate
-    clusterName: test_cluster
+    cluster_name: test_cluster
     wait: yes
     state: absent
 '''
 
 RETURN = r'''
-fargateProfileName:
+fargate_profile_name:
   description: Name of Fargate Profile
   returned: when state is present
   type: str
   sample: test_profile
-fargateProfileArn:
+fargate_profile_arn:
   description: ARN of the Fargate Profile
   returned: when state is present
   type: str
   sample: arn:aws:eks:us-east-1:1231231123:safd
-clusterName:
+cluster_name:
   description: Name of EKS Cluster
   returned: when state is present
   type: str
   sample: test-cluster
 created_at:
-  description: Fargate Profule creation date and time
+  description: Fargate Profile creation date and time
   returned: when state is present
   type: str
   sample: '2022-01-18T20:00:00.111000+00:00'
-podExecutionRoleArn:
+pod_execution_role_arn:
   description: ARN of the IAM Role used by Fargate Profile
   returned: when state is present
   type: str
