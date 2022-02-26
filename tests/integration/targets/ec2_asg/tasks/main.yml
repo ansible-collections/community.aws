@@ -30,7 +30,6 @@
       aws_secret_key: "{{ aws_secret_key }}"
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
-
   collections:
     - amazon.aws
 
@@ -97,6 +96,8 @@
             to_port: 80
             cidr_ip: 0.0.0.0/0
       register: sg
+
+    - include_tasks: instance_detach.yml
 
     - name: ensure launch configs exist
       ec2_lc:
