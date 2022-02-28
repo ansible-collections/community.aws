@@ -71,7 +71,7 @@ EXAMPLES = '''
   aws_api_gateway_domain:
     domain_name: myapi.foobar.com
     certificate_arn: 'arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx'
-    security_policy: TLS_1_0
+    security_policy: TLS_1_2
     endpoint_type: EDGE
     domain_mappings:
         - { rest_api_id: abc123, stage: production }
