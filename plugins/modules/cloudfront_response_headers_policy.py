@@ -263,7 +263,7 @@ class CloudfrontResponseHeadersPolicyService(object):
 def main():
     argument_spec = dict(
         name=dict(required=True, type='str'),
-        comment=dict(type='str', default=''),
+        comment=dict(type='str'),
         cors_config=dict(type='dict', default=dict()),
         security_headers_config=dict(type='dict', default=dict()),
         custom_headers_config=dict(type='dict', default=dict()),
@@ -273,7 +273,7 @@ def main():
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
     name = module.params.get('name')
-    comment = module.params.get('comment')
+    comment = module.params.get('comment', '')
     cors_config = module.params.get('cors_config')
     security_headers_config = module.params.get('security_headers_config')
     custom_headers_config = module.params.get('custom_headers_config')
