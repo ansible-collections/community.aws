@@ -715,7 +715,8 @@ def describe_launch_templates(connection, launch_template):
 
 
 @AWSRetry.jittered_backoff(**backoff_params)
-def describe_autoscaling_tags(connection, asg_name):
+def describe_autoscaling_tags(connection):
+    asg_name = module.params.get('name')
     pg = connection.get_paginator('describe_tags')
     filters = ansible_dict_to_boto3_filter_list({'auto-scaling-group': asg_name})
 
@@ -729,24 +730,6 @@ def describe_autoscaling_tags(connection, asg_name):
         asg_tags_dict[item['Key']] = item['Value']
 
     return [asg_tags_dict]
-
-
-@AWSRetry.jittered_backoff(**backoff_params)
-def update_autoscaling_tags(connection, new_tags):
-    try:
-        response = connection.create_or_update_tags(Tags=new_tags)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to describe AutoScalingGroup tags.")
-
-    return True
-
-@AWSRetry.jittered_backoff(**backoff_params)
-def delete_autoscaling_tags(connection, new_tags):
-    try:
-        response = connection.delete_tags(Tags=new_tags)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to describe AutoScalingGroup tags.")
-    return True, new_tags
 
 
 @AWSRetry.jittered_backoff(**backoff_params)
@@ -1133,6 +1116,8 @@ def create_autoscaling_group(connection):
     desired_capacity = module.params.get('desired_capacity')
     vpc_zone_identifier = module.params.get('vpc_zone_identifier')
     set_tags = module.params.get('tags')
+    purge_tags = module.params.get('purge_tags')
+    remove_tags = module.params.get('remove_tags')
     health_check_period = module.params.get('health_check_period')
     health_check_type = module.params.get('health_check_type')
     default_cooldown = module.params.get('default_cooldown')
@@ -1254,9 +1239,16 @@ def create_autoscaling_group(connection):
 
             for dead_tag in set(have_tag_keyvals).difference(want_tag_keyvals):
                 changed = True
-                dead_tags.append(dict(ResourceId=as_group['AutoScalingGroupName'],
-                                      ResourceType='auto-scaling-group', Key=dead_tag))
+                if purge_tags:
+                    dead_tags.append(dict(ResourceId=as_group['AutoScalingGroupName'],
+                                            ResourceType='auto-scaling-group', Key=dead_tag))
                 have_tags = [have_tag for have_tag in have_tags if have_tag['Key'] != dead_tag]
+
+            if remove_tags:
+                dead_tags = []
+                for dead_tag in want_tag_keyvals:
+                    dead_tags.append(dict(ResourceId=as_group['AutoScalingGroupName'],
+                                            ResourceType='auto-scaling-group', Key=dead_tag))
             if dead_tags:
                 connection.delete_tags(Tags=dead_tags)
 
@@ -1820,20 +1812,6 @@ def asg_exists(connection):
     return bool(len(as_group))
 
 
-def to_boto3_asg_tag_list(tags, group_name):
-    tag_list = []
-    for tag in tags:
-        for k, v in tag.items():
-            if k == 'propagate_at_launch':
-                continue
-            tag_list.append(dict(Key=k,
-                                 Value=to_native(v) if v else v,
-                                 PropagateAtLaunch=bool(tag.get('propagate_at_launch', True)),
-                                 ResourceType='auto-scaling-group',
-                                 ResourceId=group_name))
-    return tag_list
-
-
 def main():
     argument_spec = dict(
         name=dict(required=True, type='str'),
@@ -1888,8 +1866,9 @@ def main():
         wait_timeout=dict(type='int', default=300),
         state=dict(default='present', choices=['present', 'absent']),
         tags=dict(type='list', default=[], elements='dict'),
-        tags_operation=dict(type='str', choices=['list', 'add', 'remove', 'purge']), #only do tag operations if this set
-        purge_tags=dict(type='bool', default=False), #replace existing tags or not
+        list_tags=dict(type='bool', default=False),
+        purge_tags=dict(type='bool', default=True),
+        remove_tags=dict(type='bool', default=False),
         health_check_period=dict(type='int', default=300),
         health_check_type=dict(default='EC2', choices=['EC2', 'ELB']),
         default_cooldown=dict(type='int', default=300),
@@ -1932,6 +1911,7 @@ def main():
             ['replace_all_instances', 'replace_instances'],
             ['replace_all_instances', 'detach_instances'],
             ['launch_config_name', 'launch_template'],
+            ['purge_tags', 'remove_tags']
         ]
     )
 
@@ -1944,32 +1924,9 @@ def main():
     changed = create_changed = replace_changed = detach_changed = False
     exists = asg_exists(connection)
 
-    tags_operation = module.params.get('tags_operation')
-
-    if tags_operation:
-        group_name = module.params.get('name')
-        tags = module.params.get('tags')
-        purge_tags = module.params.get('purge_tags')
-        existing_tags_list = describe_autoscaling_tags(connection, group_name)
-        # convert to a dict keyed by the tag Key to simplify existence checks
-        existing_tags_list = to_boto3_asg_tag_list(existing_tags_list, group_name)
-        new_tags = to_boto3_asg_tag_list(tags, group_name)
-
-        if tags_operation == 'list':
-            module.exit_json(changed=changed, ASG_TAGS=existing_tags_list)
-
-        if tags_operation == 'add':
-            changed = update_autoscaling_tags(connection, new_tags)
-            updated_tags = describe_autoscaling_tags(connection, group_name)
-            module.exit_json(changed=changed, updated_tags=updated_tags)
-
-        if tags_operation == 'remove':
-            tags_to_remove = []
-            for tag in existing_tags_list:
-                if tag not in new_tags:
-                    tags_to_remove.append(tag)
-            changed, removed_tags = delete_autoscaling_tags(connection, new_tags)
-            module.exit_json(changed=changed, removed_tags=removed_tags)
+    if module.params.get('list_tags'):
+       existing_tags_list = describe_autoscaling_tags(connection)
+       module.exit_json(changed=False, AutoScalingGroup_Tags=existing_tags_list)
 
     if state == 'present':
         create_changed, asg_properties = create_autoscaling_group(connection)
