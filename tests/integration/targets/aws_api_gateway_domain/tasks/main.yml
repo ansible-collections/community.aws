@@ -2,6 +2,13 @@
 # tasks file for aws_api_gateway_domain
 
 - name: Run aws_api_gateway_domain module integration tests
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+
   # NOTE: To make tests work set TLS ARN in defaults/main.yml to an existing and
   # validated TLS cert on ACM that matches given domain.
 
@@ -9,21 +16,11 @@
 
     # ==================== preparations ========================================
 
-    - name: Preperaation - Set connection information for all tasks
-      set_fact:
-        aws_connection_info: &aws_connection_info
-          aws_access_key: "{{ aws_access_key }}"
-          aws_secret_key: "{{ aws_secret_key }}"
-          security_token: "{{ security_token }}"
-          region: "{{ aws_region }}"
-      no_log: yes
-
     - name: Preperations - Create REST API Gateway on AWS API Gateway service to reference from domain tests
       aws_api_gateway:
         swagger_file: files/api_gw_swagger.yml
         stage: test
         state: present
-        <<: *aws_connection_info
       register: api_gateway_result
 
     # ================== integration tests ==========================================
@@ -37,7 +34,6 @@
         domain_mappings:
           - { rest_api_id: "{{ api_gateway_result.api_id }}", stage: test }
         state: present
-        <<: *aws_connection_info
       register: create_result
 
     - assert:
@@ -57,7 +53,6 @@
         domain_mappings:
           - { rest_api_id: "{{ api_gateway_result.api_id }}", stage: test }
         state: present
-        <<: *aws_connection_info
       register: repeat_result
 
     - assert:
@@ -75,7 +70,6 @@
         domain_mappings:
           - { base_path: v1, rest_api_id: "{{ api_gateway_result.api_id }}", stage: test }
         state: present
-        <<: *aws_connection_info
       register: update_result
 
     - assert:
@@ -95,7 +89,6 @@
         domain_mappings:
           - { base_path: v1, rest_api_id: "{{ api_gateway_result.api_id }}", stage: test }
         state: absent
-        <<: *aws_connection_info
       register: delete_result
 
     - assert:
@@ -113,7 +106,6 @@
         certificate_arn: "{{ api_gateway_domain_tls_arn }}"
         domain_mappings: []
         state: absent
-        <<: *aws_connection_info
       ignore_errors: true
 
     - name: Cleanup - remove REST API Gateway on AWS API Gateway service
@@ -121,4 +113,3 @@
         api_id: "{{ api_gateway_result.api_id }}"
         swagger_file: files/api_gw_swagger.yml
         state: absent
-        <<: *aws_connection_info

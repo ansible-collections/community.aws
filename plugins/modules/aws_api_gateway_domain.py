@@ -15,7 +15,6 @@ description:
      - AWS API Gateway custom domain setups use CloudFront behind the scenes.
        So you will get a CloudFront distribution as a result, configured to be aliased with your domain.
 version_added: '3.2.0'
-requirements: [ boto3 ]
 author:
     - 'Stefan Horning (@stefanhorning)'
 options:
@@ -31,14 +30,13 @@ options:
     required: true
   security_policy:
     description:
-      - Set allowed TLS versions through AWS defined policies. Currently only TLS_1_0 and TLS_1_2 are available.
-      - Can only be set with botocore 1.12.175 or newer. On older boto versions this flag will automatically be ignored.
+      - Set allowed TLS versions through AWS defined policies. Currently only C(TLS_1_0) and C(TLS_1_2) are available.
     default: TLS_1_2
     choices: ['TLS_1_0', 'TLS_1_2']
     type: str
   endpoint_type:
     description:
-      - API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use REGIONAL or PRIVATE.
+      - API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use C(REGIONAL) or C(PRIVATE).
     default: EDGE
     choices: ['EDGE', 'REGIONAL', 'PRIVATE']
     type: str
@@ -68,7 +66,7 @@ notes:
 
 EXAMPLES = '''
 - name: Setup endpoint for a custom domain for your API Gateway HTTP API
-  aws_api_gateway_domain:
+  community.aws.aws_api_gateway_domain:
     domain_name: myapi.foobar.com
     certificate_arn: 'arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx'
     security_policy: TLS_1_2
@@ -79,7 +77,7 @@ EXAMPLES = '''
   register: api_gw_domain_result
 
 - name: Create a DNS record for your custom domain on route 53 (using route53 module)
-  route53:
+  community.aws.route53:
     record: myapi.foobar.com
     value: "{{ api_gw_domain_result.response.domain.distribution_domain_name }}"
     type: A
@@ -112,7 +110,7 @@ response:
 '''
 
 try:
-    from botocore.exceptions import ClientError, EndpointConnectionError
+    from botocore.exceptions import ClientError, BotoCoreError, EndpointConnectionError
 except ImportError:
     pass  # caught by imported AnsibleAWSModule
 
@@ -131,7 +129,7 @@ def get_domain(module, client):
         result['path_mappings'] = get_domain_mappings(client, domain_name)
     except is_boto3_error_code('NotFoundException'):
         return None
-    except (ClientError, EndpointConnectionError) as e:  # pylint: disable=duplicate-except
+    except (ClientError, BotoCoreError, EndpointConnectionError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="getting API GW domain")
     return camel_dict_to_snake_dict(result)
 
@@ -160,7 +158,7 @@ def create_domain(module, client):
 
             result['path_mappings'].append(add_domain_mapping(client, domain_name, base_path, rest_api_id, stage))
 
-    except (ClientError, EndpointConnectionError) as e:
+    except (ClientError, BotoCoreError, EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="creating API GW domain")
     return camel_dict_to_snake_dict(result)
 
@@ -189,7 +187,7 @@ def update_domain(module, client, existing_domain):
         try:
             result['domain'] = update_domain_name(client, domain_name, **snake_dict_to_camel_dict(specified_domain_settings))
             result['updated'] = True
-        except (ClientError, EndpointConnectionError) as e:
+        except (ClientError, BotoCoreError, EndpointConnectionError) as e:
             module.fail_json_aws(e, msg="updating API GW domain")
 
     existing_mappings = copy.deepcopy(existing_domain.get('path_mappings', []))
@@ -214,7 +212,7 @@ def update_domain(module, client, existing_domain):
                     client, domain_name, mapping.get('base_path', ''), mapping.get('rest_api_id'), mapping.get('stage')
                 )
                 result['updated'] = True
-        except (ClientError, EndpointConnectionError) as e:
+        except (ClientError, BotoCoreError, EndpointConnectionError) as e:
             module.fail_json_aws(e, msg="updating API GW domain mapping")
 
     return camel_dict_to_snake_dict(result)
@@ -224,7 +222,7 @@ def delete_domain(module, client):
     domain_name = module.params.get('domain_name')
     try:
         result = delete_domain_name(client, domain_name)
-    except (ClientError, EndpointConnectionError) as e:
+    except (ClientError, BotoCoreError, EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="deleting API GW domain")
     return camel_dict_to_snake_dict(result)
 
@@ -246,38 +244,21 @@ def get_domain_mappings(client, domain_name):
 def create_domain_name(module, client, domain_name, certificate_arn, endpoint_type, security_policy):
     endpoint_configuration = {'types': [endpoint_type]}
 
-    # The securityPolicy param was only added in botocore 1.12.175, hence we don't set it if older version is installed.
-    # See diff at https://github.com/boto/botocore/compare/1.12.174...1.12.175
-    if module.botocore_at_least('1.12.175'):
-        if endpoint_type == 'EDGE':
-            return client.create_domain_name(
-                domainName=domain_name,
-                certificateArn=certificate_arn,
-                endpointConfiguration=endpoint_configuration,
-                securityPolicy=security_policy
-            )
-        else:
-            # Use regionalCertificateArn for regional domain deploys
-            return client.create_domain_name(
-                domainName=domain_name,
-                regionalCertificateArn=certificate_arn,
-                endpointConfiguration=endpoint_configuration,
-                securityPolicy=security_policy
-            )
+    if endpoint_type == 'EDGE':
+        return client.create_domain_name(
+            domainName=domain_name,
+            certificateArn=certificate_arn,
+            endpointConfiguration=endpoint_configuration,
+            securityPolicy=security_policy
+        )
     else:
-        if endpoint_type == 'EDGE':
-            return client.create_domain_name(
-                domainName=domain_name,
-                certificateArn=certificate_arn,
-                endpointConfiguration=endpoint_configuration
-            )
-        else:
-            # Use regionalCertificateArn for regional domain deploys
-            return client.create_domain_name(
-                domainName=domain_name,
-                regionalCertificateArn=certificate_arn,
-                endpointConfiguration=endpoint_configuration
-            )
+        # Use regionalCertificateArn for regional domain deploys
+        return client.create_domain_name(
+            domainName=domain_name,
+            regionalCertificateArn=certificate_arn,
+            endpointConfiguration=endpoint_configuration,
+            securityPolicy=security_policy
+        )
 
 
 @AWSRetry.backoff(**retry_params)
