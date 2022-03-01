@@ -729,7 +729,7 @@ def describe_autoscaling_tags(connection):
     for item in response:
         asg_tags_dict[item['Key']] = item['Value']
 
-    return [asg_tags_dict]
+    return asg_tags_dict
 
 
 @AWSRetry.jittered_backoff(**backoff_params)

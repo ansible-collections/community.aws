@@ -97,6 +97,8 @@
             cidr_ip: 0.0.0.0/0
       register: sg
 
+    - include_tasks: tag_operations.yml
+
     - include_tasks: instance_detach.yml
 
     - name: ensure launch configs exist

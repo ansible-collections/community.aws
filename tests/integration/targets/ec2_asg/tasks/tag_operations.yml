@@ -1,0 +1,182 @@
+- name: Running AutoScalingGroup Tag operations test
+  block:
+    #----------------------------------------------------------------------
+    - name: create a launch configuration
+      ec2_lc:
+        name: "{{ resource_prefix }}-lc-tag-test"
+        image_id: "{{ ec2_ami_image }}"
+        region: "{{ aws_region }}"
+        instance_type: t2.micro
+        assign_public_ip: yes
+      register: create_lc
+
+    - name: ensure that lc is created
+      assert:
+        that:
+          - create_lc is changed
+          - create_lc.failed is false
+          - '"autoscaling:CreateLaunchConfiguration" in create_lc.resource_actions'
+
+    #----------------------------------------------------------------------
+    - name: create a AutoScalingGroup to be used for tag_operations test
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        launch_config_name: "{{ resource_prefix }}-lc-tag-test"
+        health_check_period: 60
+        health_check_type: ELB
+        replace_all_instances: yes
+        min_size: 1
+        max_size: 1
+        desired_capacity: 1
+        region: "{{ aws_region }}"
+      register: create_asg
+
+    - name: ensure that AutoScalingGroup is created
+      assert:
+        that:
+          - create_asg is changed
+          - create_asg.failed is false
+          - '"autoscaling:CreateAutoScalingGroup" in create_asg.resource_actions'
+
+    #----------------------------------------------------------------------
+
+    - name: get asg tags existing
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        list_tags: true
+      register: info_result
+
+    - assert:
+        that:
+          - info_result.AutoScalingGroup_Tags | length == 0
+          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+
+    - name: Add 2 new tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - key1: 'val1'
+            propagate_at_launch: no
+          - key2: 'val2'
+            propagate_at_launch: yes
+        purge_tags: false
+      register: add_result
+
+    - name: get asg tags existing
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        list_tags: true
+      register: info_result
+
+    - assert:
+        that:
+          - add_result is changed
+          - info_result.AutoScalingGroup_Tags | length == 2
+          - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
+          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+
+    - name: Add 2 new tags - purge existing tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - key3: 'val3'
+            propagate_at_launch: no
+          - key4: 'val4'
+            propagate_at_launch: yes
+        purge_tags: true
+      register: add_purge_result
+
+    - name: get updated asg tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        list_tags: true
+      register: info_result
+
+    - assert:
+        that:
+          - add_purge_result is changed
+          - info_result.AutoScalingGroup_Tags | length == 2
+          - '"key1" not in info_result.AutoScalingGroup_Tags'
+          - '"key2" not in info_result.AutoScalingGroup_Tags'
+          - '"key3" in info_result.AutoScalingGroup_Tags'
+          - '"key4" in info_result.AutoScalingGroup_Tags'
+          - '"autoscaling:CreateOrUpdateTags" in add_purge_result.resource_actions'
+          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+
+    - name: Add 2 new tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - key1: 'val1'
+            propagate_at_launch: no
+          - key2: 'val2'
+            propagate_at_launch: yes
+        purge_tags: false
+      register: add_result
+
+    - name: get asg tags existing
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        list_tags: true
+      register: info_result
+
+    - assert:
+        that:
+          - add_result is changed
+          - info_result.AutoScalingGroup_Tags | length == 4
+          - '"key1" in info_result.AutoScalingGroup_Tags'
+          - '"key2" in info_result.AutoScalingGroup_Tags'
+          - '"key3" in info_result.AutoScalingGroup_Tags'
+          - '"key4" in info_result.AutoScalingGroup_Tags'
+          - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
+          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+
+
+    - name: Remove 2 tags - key2, key4
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - key2: 'val2'
+          - key4: 'val4'
+        remove_tags: true
+      register: remove_result
+
+    - name: get asg tags existing
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        list_tags: true
+      register: info_result
+
+    - assert:
+        that:
+          - remove_result is changed
+          - info_result.AutoScalingGroup_Tags | length == 2
+          - '"key1" in info_result.AutoScalingGroup_Tags'
+          - '"key2" not in info_result.AutoScalingGroup_Tags'
+          - '"key3" in info_result.AutoScalingGroup_Tags'
+          - '"key4" not in info_result.AutoScalingGroup_Tags'
+          - '"autoscaling:DeleteTags" in remove_result.resource_actions'
+          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+
+
+    #----------------------------------------------------------------------
+
+  always:
+
+  - name: kill asg created in this test
+    ec2_asg:
+      name: "{{ resource_prefix }}-asg-tag-test"
+      state: absent
+    register: removed
+    until: removed is not failed
+    ignore_errors: yes
+    retries: 10
+
+  - name: remove launch config created in this test
+    ec2_lc:
+      name: "{{ resource_prefix }}-lc-tag-test"
+      state: absent
+    register: removed
+    until: removed is not failed
+    ignore_errors: yes
+    retries: 10
