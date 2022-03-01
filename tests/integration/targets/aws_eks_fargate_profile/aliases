@@ -1,5 +1,1 @@
-# reason: slow
-# Tests take around 25 minutes to run
-unsupported
-
 cloud/aws
