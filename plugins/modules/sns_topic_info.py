@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 module: sns_topic_info
 short_description: sns_topic_info module
-version_added: 3.1.0
+version_added: 3.2.0
 description:
   - The M(community.aws.sns_topic_info) module allows to get all AWS SNS topics or properties of a specific AWS SNS topic.
 author:
