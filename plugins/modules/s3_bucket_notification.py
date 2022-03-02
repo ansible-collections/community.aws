@@ -317,7 +317,7 @@ class Config:
         return cls(config)
 
 
-def main():
+def setup_module_object():
     event_types = ['s3:ObjectCreated:*', 's3:ObjectCreated:Put', 's3:ObjectCreated:Post',
                    's3:ObjectCreated:Copy', 's3:ObjectCreated:CompleteMultipartUpload',
                    's3:ObjectRemoved:*', 's3:ObjectRemoved:Delete',
@@ -343,12 +343,16 @@ def main():
         ['lambda_alias', 'lambda_version']
     ]
 
-    module = AnsibleAWSModule(
+    return AnsibleAWSModule(
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=mutually_exclusive,
         required_if=[['state', 'present', ['events']]]
     )
+
+
+def main():
+    module = setup_module_object()
 
     client = module.client('s3')
     bucket = AmazonBucket(module, client)
