@@ -46,9 +46,11 @@
         list_tags: true
       register: info_result
 
+    - debug: msg="{{ info_result }}"
+
     - assert:
         that:
-          - info_result.AutoScalingGroup_Tags | length == 0
+          - info_result.asg_tags | length == 0
           - '"autoscaling:DescribeTags" in info_result.resource_actions'
 
     - name: Add 2 new tags
@@ -71,7 +73,7 @@
     - assert:
         that:
           - add_result is changed
-          - info_result.AutoScalingGroup_Tags | length == 2
+          - info_result.asg_tags | length == 2
           - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
           - '"autoscaling:DescribeTags" in info_result.resource_actions'
 
@@ -95,11 +97,11 @@
     - assert:
         that:
           - add_purge_result is changed
-          - info_result.AutoScalingGroup_Tags | length == 2
-          - '"key1" not in info_result.AutoScalingGroup_Tags'
-          - '"key2" not in info_result.AutoScalingGroup_Tags'
-          - '"key3" in info_result.AutoScalingGroup_Tags'
-          - '"key4" in info_result.AutoScalingGroup_Tags'
+          - info_result.asg_tags | length == 2
+          - '"key1" not in info_result.asg_tags'
+          - '"key2" not in info_result.asg_tags'
+          - '"key3" in info_result.asg_tags'
+          - '"key4" in info_result.asg_tags'
           - '"autoscaling:CreateOrUpdateTags" in add_purge_result.resource_actions'
           - '"autoscaling:DescribeTags" in info_result.resource_actions'
 
@@ -123,21 +125,43 @@
     - assert:
         that:
           - add_result is changed
-          - info_result.AutoScalingGroup_Tags | length == 4
-          - '"key1" in info_result.AutoScalingGroup_Tags'
-          - '"key2" in info_result.AutoScalingGroup_Tags'
-          - '"key3" in info_result.AutoScalingGroup_Tags'
-          - '"key4" in info_result.AutoScalingGroup_Tags'
+          - info_result.asg_tags | length == 4
+          - '"key1" in info_result.asg_tags'
+          - '"key2" in info_result.asg_tags'
+          - '"key3" in info_result.asg_tags'
+          - '"key4" in info_result.asg_tags'
           - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
           - '"autoscaling:DescribeTags" in info_result.resource_actions'
 
+    - name: Remove Non-existing tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - key10: 'val_a'
+          - key20: 'val_b'
+        remove_tags: true
+      register: remove_result
 
+    - name: get asg tags existing
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        list_tags: true
+      register: info_result
+
+    - assert:
+        that:
+          - remove_result is not changed
+          - info_result.asg_tags | length == 4
+          - '"autoscaling:DeleteTags" not in remove_result.resource_actions'
+          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+
+    # can provide a key-val pair or just the tag key of the tag to be delete
     - name: Remove 2 tags - key2, key4
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:
           - key2: 'val2'
-          - key4: 'val4'
+          - key4:
         remove_tags: true
       register: remove_result
 
@@ -150,11 +174,11 @@
     - assert:
         that:
           - remove_result is changed
-          - info_result.AutoScalingGroup_Tags | length == 2
-          - '"key1" in info_result.AutoScalingGroup_Tags'
-          - '"key2" not in info_result.AutoScalingGroup_Tags'
-          - '"key3" in info_result.AutoScalingGroup_Tags'
-          - '"key4" not in info_result.AutoScalingGroup_Tags'
+          - info_result.asg_tags | length == 2
+          - '"key1" in info_result.asg_tags'
+          - '"key2" not in info_result.asg_tags'
+          - '"key3" in info_result.asg_tags'
+          - '"key4" not in info_result.asg_tags'
           - '"autoscaling:DeleteTags" in remove_result.resource_actions'
           - '"autoscaling:DescribeTags" in info_result.resource_actions'
 

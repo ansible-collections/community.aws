@@ -752,6 +752,15 @@ def describe_autoscaling_tags(connection):
 
 
 @AWSRetry.jittered_backoff(**backoff_params)
+def delete_asg_tags(connection, tags_to_remove):
+    try:
+        connection.delete_tags(Tags=tags_to_remove)
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Failed to delete AutoScalingGroup tags.")
+    return True
+
+
+@AWSRetry.jittered_backoff(**backoff_params)
 def create_asg(connection, **params):
     connection.create_auto_scaling_group(**params)
 
@@ -1264,17 +1273,25 @@ def create_autoscaling_group(connection):
                 have_tags = [have_tag for have_tag in have_tags if have_tag['Key'] != dead_tag]
 
             if remove_tags:
-                dead_tags = []
+                changed = False
+                existing_tags = describe_autoscaling_tags(connection)
+                tags_to_remove = []
                 for dead_tag in want_tag_keyvals:
-                    dead_tags.append(dict(
-                        ResourceId=as_group['AutoScalingGroupName'], ResourceType='auto-scaling-group', Key=dead_tag))
+                    if dead_tag in existing_tags:
+                        tags_to_remove.append(dict(
+                            ResourceId=as_group['AutoScalingGroupName'], ResourceType='auto-scaling-group', Key=dead_tag, Value=existing_tags[dead_tag]))
+                if len(tags_to_remove) != 0:
+                    changed = delete_asg_tags(connection, tags_to_remove)
+                module.exit_json(changed=changed, asg_tags_removed=tags_to_remove)
+
             if dead_tags:
-                connection.delete_tags(Tags=dead_tags)
+                delete_asg_tags(connection, dead_tags)
 
             zipped = zip(have_tags, want_tags)
             if len(have_tags) != len(want_tags) or not all(x == y for x, y in zipped):
-                changed = True
-                connection.create_or_update_tags(Tags=asg_tags)
+                if not remove_tags:
+                    changed = True
+                    connection.create_or_update_tags(Tags=asg_tags)
 
         # Handle load balancer attachments/detachments
         # Attach load balancers if they are specified but none currently exist
@@ -1945,7 +1962,7 @@ def main():
 
     if module.params.get('list_tags'):
         existing_tags_list = describe_autoscaling_tags(connection)
-        module.exit_json(changed=False, AutoScalingGroup_Tags=existing_tags_list)
+        module.exit_json(changed=False, asg_tags=existing_tags_list)
 
     if state == 'present':
         create_changed, asg_properties = create_autoscaling_group(connection)
