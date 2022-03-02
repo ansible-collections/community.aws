@@ -220,6 +220,25 @@ options:
       - When I(propagate_at_launch) is true the tags will be propagated to the Instances created.
     type: list
     elements: dict
+  list_tags:
+    description:
+      - If C(true), returns a list of key-value pairs of existing tags on a AutoScalingGroup.
+    type: bool
+    required: false
+    version_added: 3.2.0
+  purge_tags:
+    description:
+      - If C(true), existing tags will be purged from the resource to match exactly what is defined by I(tags) parameter.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    default: true
+    type: bool
+    version_added: 3.2.0
+  remove_tags:
+    description:
+      - If C(true), the tags specified by I(tags) parameter will be removed/deleted from AutoScalingGroup.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    type: bool
+    version_added: 3.2.0
   health_check_period:
     description:
       - Length of time in seconds after a new EC2 instance comes into service that Auto Scaling starts checking its health.
@@ -1240,15 +1259,15 @@ def create_autoscaling_group(connection):
             for dead_tag in set(have_tag_keyvals).difference(want_tag_keyvals):
                 changed = True
                 if purge_tags:
-                    dead_tags.append(dict(ResourceId=as_group['AutoScalingGroupName'],
-                                            ResourceType='auto-scaling-group', Key=dead_tag))
+                    dead_tags.append(dict(
+                        ResourceId=as_group['AutoScalingGroupName'], ResourceType='auto-scaling-group', Key=dead_tag))
                 have_tags = [have_tag for have_tag in have_tags if have_tag['Key'] != dead_tag]
 
             if remove_tags:
                 dead_tags = []
                 for dead_tag in want_tag_keyvals:
-                    dead_tags.append(dict(ResourceId=as_group['AutoScalingGroupName'],
-                                            ResourceType='auto-scaling-group', Key=dead_tag))
+                    dead_tags.append(dict(
+                        ResourceId=as_group['AutoScalingGroupName'], ResourceType='auto-scaling-group', Key=dead_tag))
             if dead_tags:
                 connection.delete_tags(Tags=dead_tags)
 
@@ -1866,9 +1885,9 @@ def main():
         wait_timeout=dict(type='int', default=300),
         state=dict(default='present', choices=['present', 'absent']),
         tags=dict(type='list', default=[], elements='dict'),
-        list_tags=dict(type='bool', default=False),
+        list_tags=dict(type='bool', required=False),
         purge_tags=dict(type='bool', default=True),
-        remove_tags=dict(type='bool', default=False),
+        remove_tags=dict(type='bool', required=False),
         health_check_period=dict(type='int', default=300),
         health_check_type=dict(default='EC2', choices=['EC2', 'ELB']),
         default_cooldown=dict(type='int', default=300),
@@ -1925,8 +1944,8 @@ def main():
     exists = asg_exists(connection)
 
     if module.params.get('list_tags'):
-       existing_tags_list = describe_autoscaling_tags(connection)
-       module.exit_json(changed=False, AutoScalingGroup_Tags=existing_tags_list)
+        existing_tags_list = describe_autoscaling_tags(connection)
+        module.exit_json(changed=False, AutoScalingGroup_Tags=existing_tags_list)
 
     if state == 'present':
         create_changed, asg_properties = create_autoscaling_group(connection)
