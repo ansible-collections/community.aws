@@ -54,8 +54,33 @@ options:
   http2:
     description:
       - Indicates whether to enable HTTP2 routing.
-      - Defaults to C(false).
+      - Defaults to C(true)
     type: bool
+  http_desync_mitigation_mode:
+    description:
+      - Determines how the load balancer handles requests that might pose a security risk to an application.
+      - Defaults to C('defensive')
+    type: str
+    choices: ['monitor', 'defensive', 'strictest']
+    version_added: 4.0.0
+  http_drop_invalid_header_fields:
+    description:
+      - Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).
+      - Defaults to C(false)
+    type: bool
+    version_added: 4.0.0
+  http_x_amzn_tls_version_and_cipher_suite:
+    description:
+      - Indicates whether the two headers are added to the client request before sending it to the target.
+      - Defaults to C(false)
+    type: bool
+    version_added: 4.0.0
+  http_xff_client_port:
+    description:
+      - Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.
+      - Defaults to C(false)
+    type: bool
+    version_added: 4.0.0
   idle_timeout:
     description:
       - The number of seconds to wait before an idle connection is closed.
@@ -183,6 +208,12 @@ options:
       - Sets the type of IP addresses used by the subnets of the specified Application Load Balancer.
     choices: [ 'ipv4', 'dualstack' ]
     type: str
+  waf_fail_open:
+    description:
+      - Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
+      - Defaults to C(false)
+    type: bool
+    version_added: 4.0.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -683,6 +714,10 @@ def main():
         access_logs_s3_prefix=dict(type='str'),
         deletion_protection=dict(type='bool'),
         http2=dict(type='bool'),
+        http_desync_mitigation_mode=dict(type='str', choices=['monitor', 'defensive', 'strictest']),
+        http_drop_invalid_header_fields=dict(type='bool'),
+        http_x_amzn_tls_version_and_cipher_suite=dict(type='bool'),
+        http_xff_client_port=dict(type='bool'),
         idle_timeout=dict(type='int'),
         listeners=dict(type='list',
                        elements='dict',
@@ -703,6 +738,7 @@ def main():
         scheme=dict(default='internet-facing', choices=['internet-facing', 'internal']),
         state=dict(choices=['present', 'absent'], default='present'),
         tags=dict(type='dict'),
+        waf_fail_open=dict(type='bool'),
         wait_timeout=dict(type='int'),
         wait=dict(default=False, type='bool'),
         purge_rules=dict(default=True, type='bool'),
