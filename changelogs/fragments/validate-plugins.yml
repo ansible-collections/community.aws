@@ -1,0 +1,2 @@
+bugfixes:
+  - "aws_ssm connection plugin - fix linting errors in documentation data (https://github.com/ansible-collections/community.aws/pull/965)."
