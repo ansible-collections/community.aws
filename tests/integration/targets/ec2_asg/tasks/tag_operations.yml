@@ -40,20 +40,18 @@
 
     #----------------------------------------------------------------------
 
-    - name: get asg tags existing
-      ec2_asg:
+    - name: Get asg info
+      ec2_asg_info:
         name: "{{ resource_prefix }}-asg-tag-test"
-        list_tags: true
       register: info_result
 
     - debug: msg="{{ info_result }}"
 
     - assert:
         that:
-          - info_result.asg_tags | length == 0
-          - '"autoscaling:DescribeTags" in info_result.resource_actions'
+          - info_result.results[0].tags | length == 0
 
-    - name: Add 2 new tags
+    - name: Add 4 new tags - do not purge existing tags
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:
@@ -61,51 +59,46 @@
             propagate_at_launch: no
           - key2: 'val2'
             propagate_at_launch: yes
+          - key3: 'val3'
+            propagate_at_launch: yes
+          - key4: 'val4'
+            propagate_at_launch: no
         purge_tags: false
       register: add_result
 
-    - name: get asg tags existing
-      ec2_asg:
+    - name: Get asg info
+      ec2_asg_info:
         name: "{{ resource_prefix }}-asg-tag-test"
-        list_tags: true
       register: info_result
 
     - assert:
         that:
           - add_result is changed
-          - info_result.asg_tags | length == 2
+          - info_result.results[0].tags | length == 4
           - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
-          - '"autoscaling:DescribeTags" in info_result.resource_actions'
 
     - name: Add 2 new tags - purge existing tags
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:
-          - key3: 'val3'
+          - tag_a: 'val_a'
             propagate_at_launch: no
-          - key4: 'val4'
+          - tag_b: 'val_b'
             propagate_at_launch: yes
-        purge_tags: true
       register: add_purge_result
 
-    - name: get updated asg tags
-      ec2_asg:
+    - name: Get asg info
+      ec2_asg_info:
         name: "{{ resource_prefix }}-asg-tag-test"
-        list_tags: true
       register: info_result
 
     - assert:
         that:
           - add_purge_result is changed
-          - info_result.asg_tags | length == 2
-          - '"key1" not in info_result.asg_tags'
-          - '"key2" not in info_result.asg_tags'
-          - '"key3" in info_result.asg_tags'
-          - '"key4" in info_result.asg_tags'
+          - info_result.results[0].tags | length == 2
           - '"autoscaling:CreateOrUpdateTags" in add_purge_result.resource_actions'
-          - '"autoscaling:DescribeTags" in info_result.resource_actions'
 
-    - name: Add 2 new tags
+    - name: Add 2 more tags - do not purge existing tags
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:
@@ -116,72 +109,16 @@
         purge_tags: false
       register: add_result
 
-    - name: get asg tags existing
-      ec2_asg:
+    - name: Get asg info
+      ec2_asg_info:
         name: "{{ resource_prefix }}-asg-tag-test"
-        list_tags: true
       register: info_result
 
     - assert:
         that:
           - add_result is changed
-          - info_result.asg_tags | length == 4
-          - '"key1" in info_result.asg_tags'
-          - '"key2" in info_result.asg_tags'
-          - '"key3" in info_result.asg_tags'
-          - '"key4" in info_result.asg_tags'
+          - info_result.results[0].tags | length == 4
           - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
-          - '"autoscaling:DescribeTags" in info_result.resource_actions'
-
-    - name: Remove Non-existing tags
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg-tag-test"
-        tags:
-          - key10: 'val_a'
-          - key20: 'val_b'
-        remove_tags: true
-      register: remove_result
-
-    - name: get asg tags existing
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg-tag-test"
-        list_tags: true
-      register: info_result
-
-    - assert:
-        that:
-          - remove_result is not changed
-          - info_result.asg_tags | length == 4
-          - '"autoscaling:DeleteTags" not in remove_result.resource_actions'
-          - '"autoscaling:DescribeTags" in info_result.resource_actions'
-
-    # can provide a key-val pair or just the tag key of the tag to be delete
-    - name: Remove 2 tags - key2, key4
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg-tag-test"
-        tags:
-          - key2: 'val2'
-          - key4:
-        remove_tags: true
-      register: remove_result
-
-    - name: get asg tags existing
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg-tag-test"
-        list_tags: true
-      register: info_result
-
-    - assert:
-        that:
-          - remove_result is changed
-          - info_result.asg_tags | length == 2
-          - '"key1" in info_result.asg_tags'
-          - '"key2" not in info_result.asg_tags'
-          - '"key3" in info_result.asg_tags'
-          - '"key4" not in info_result.asg_tags'
-          - '"autoscaling:DeleteTags" in remove_result.resource_actions'
-          - '"autoscaling:DescribeTags" in info_result.resource_actions'
-
 
     #----------------------------------------------------------------------
 
