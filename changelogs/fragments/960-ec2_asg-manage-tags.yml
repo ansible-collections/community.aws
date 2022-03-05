@@ -1,2 +1,0 @@
-minor_changes:
-- ec2_asg - add support for managing tags on AutoScalingGroups (https://github.com/ansible-collections/community.aws/pull/960).
