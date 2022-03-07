@@ -45,8 +45,6 @@
         name: "{{ resource_prefix }}-asg-tag-test"
       register: info_result
 
-    - debug: msg="{{ info_result }}"
-
     - assert:
         that:
           - info_result.results[0].tags | length == 0
@@ -55,13 +53,46 @@
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:
-          - key1: 'val1'
+          - lowercase spaced: "hello cruel world"
             propagate_at_launch: no
-          - key2: 'val2'
+          - Title Case: "Hello Cruel World"
             propagate_at_launch: yes
-          - key3: 'val3'
+          - CamelCase: "SimpleCamelCase"
             propagate_at_launch: yes
-          - key4: 'val4'
+          - snake_case: "simple_snake_case"
+            propagate_at_launch: no
+        purge_tags: false
+      register: add_result
+
+    - name: Get asg info
+      ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-tag-test"
+      register: info_result
+    # create a list of tag_keys from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
+
+    - assert:
+        that:
+          - add_result is changed
+          - info_result.results[0].tags | length == 4
+          - '"lowercase spaced" in tag_keys'
+          - '"Title Case" in tag_keys'
+          - '"CamelCase" in tag_keys'
+          - '"snake_case" in tag_keys'
+          - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
+
+    - name: Add 4 new tags - do not purge existing tags - idempotency
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - lowercase spaced: "hello cruel world"
+            propagate_at_launch: no
+          - Title Case: "Hello Cruel World"
+            propagate_at_launch: yes
+          - CamelCase: "SimpleCamelCase"
+            propagate_at_launch: yes
+          - snake_case: "simple_snake_case"
             propagate_at_launch: no
         purge_tags: false
       register: add_result
@@ -73,9 +104,9 @@
 
     - assert:
         that:
-          - add_result is changed
+          - add_result is not changed
           - info_result.results[0].tags | length == 4
-          - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
+          - '"autoscaling:CreateOrUpdateTags" not in add_result.resource_actions'
 
     - name: Add 2 new tags - purge existing tags
       ec2_asg:
@@ -91,20 +122,29 @@
       ec2_asg_info:
         name: "{{ resource_prefix }}-asg-tag-test"
       register: info_result
+    # create a list of tag_keys from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
 
     - assert:
         that:
           - add_purge_result is changed
           - info_result.results[0].tags | length == 2
+          - '"tag_a" in tag_keys'
+          - '"tag_b" in tag_keys'
+          - '"lowercase spaced" not in tag_keys'
+          - '"Title Case" not in tag_keys'
+          - '"CamelCase" not in tag_keys'
+          - '"snake_case" not in tag_keys'
           - '"autoscaling:CreateOrUpdateTags" in add_purge_result.resource_actions'
 
     - name: Add 2 more tags - do not purge existing tags
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:
-          - key1: 'val1'
+          - lowercase spaced: "hello cruel world"
             propagate_at_launch: no
-          - key2: 'val2'
+          - Title Case: "Hello Cruel World"
             propagate_at_launch: yes
         purge_tags: false
       register: add_result
@@ -113,11 +153,18 @@
       ec2_asg_info:
         name: "{{ resource_prefix }}-asg-tag-test"
       register: info_result
+    # create a list of tag_keys from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
 
     - assert:
         that:
           - add_result is changed
           - info_result.results[0].tags | length == 4
+          - '"tag_a" in tag_keys'
+          - '"tag_b" in tag_keys'
+          - '"lowercase spaced" in tag_keys'
+          - '"Title Case" in tag_keys'
           - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
 
     #----------------------------------------------------------------------
