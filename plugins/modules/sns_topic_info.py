@@ -46,7 +46,7 @@ changed:
 result:
   description:
     - The result contaning the details of one or all AWS SNS topics.
-  returned: suceess
+  returned: success
   type: list
   contains:
     sns_arn:
@@ -63,10 +63,9 @@ result:
                 description: Delivery policy for the SNS topic
                 returned: when topic is owned by this AWS account
                 type: str
-                sample: {
-                    "http":{"defaultHealthyRetryPolicy":{"minDelayTarget":20,"maxDelayTarget":20,"numRetries":3,"numMaxDelayRetries":0,
-                    "numNoDelayRetries":0,"numMinDelayRetries":0,"backoffFunction":"linear"},"disableSubscriptionOverrides":false}
-                }
+                sample: >
+                    {"http":{"defaultHealthyRetryPolicy":{"minDelayTarget":20,"maxDelayTarget":20,"numRetries":3,"numMaxDelayRetries":0,
+                    "numNoDelayRetries":0,"numMinDelayRetries":0,"backoffFunction":"linear"},"disableSubscriptionOverrides":false}}
             display_name:
                 description: Display name for SNS topic
                 returned: when topic is owned by this AWS account
@@ -81,12 +80,16 @@ result:
                 description: Policy for the SNS topic
                 returned: when topic is owned by this AWS account
                 type: str
-                sample: {
-                    "Version":"2012-10-17","Id":"SomePolicyId","Statement":[{"Sid":"ANewSid","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111111111111:root"},
-                    "Action":"sns:Subscribe","Resource":"arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic","Condition":{"StringEquals":{"sns:Protocol":"email"}}}]
-                }
+                sample: >
+                    {"Version":"2012-10-17","Id":"SomePolicyId","Statement":[{"Sid":"ANewSid","Effect":"Allow","Principal":{"AWS":"arn:aws:iam::111111111111:root"},
+                    "Action":"sns:Subscribe","Resource":"arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic","Condition":{"StringEquals":{"sns:Protocol":"email"}}}]}
             subscriptions:
                 description: List of subscribers to the topic in this AWS account
+                returned: always
+                type: list
+                sample: []
+            subscriptions_added:
+                description: List of subscribers added in this run
                 returned: always
                 type: list
                 sample: []
@@ -100,16 +103,35 @@ result:
                 returned: when topic is owned by this AWS account
                 type: str
                 sample: '0'
+            subscriptions_existing:
+                description: List of existing subscriptions
+                returned: always
+                type: list
+                sample: []
+            subscriptions_new:
+                description: List of new subscriptions
+                returned: always
+                type: list
+                sample: []
             subscriptions_pending:
                 description: Count of pending subscriptions
                 returned: when topic is owned by this AWS account
                 type: str
                 sample: '0'
+            subscriptions_purge:
+                description: Whether or not purge_subscriptions was set
+                returned: always
+                type: bool
+                sample: true
             topic_arn:
                 description: ARN of the SNS topic (equivalent to sns_arn)
                 returned: when topic is owned by this AWS account
                 type: str
                 sample: arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic
+              topic_type:
+                description: The type of topic.
+                type: str
+                sample: "standard"
 '''
 
 
