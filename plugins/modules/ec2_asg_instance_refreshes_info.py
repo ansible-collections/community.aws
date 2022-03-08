@@ -11,7 +11,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: ec2_asg_instance_refreshes_info
-version_added: 1.0.0
+version_added: 3.2.0
 short_description: Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 description:
   - Describes one or more instance refreshes.
@@ -201,6 +201,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        supports_check_mode=True,
     )
 
     autoscaling = module.client(

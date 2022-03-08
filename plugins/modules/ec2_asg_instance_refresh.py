@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: ec2_asg_instance_refresh
-version_added: 1.0.0
+version_added: 3.2.0
 short_description: Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
 description:
   - Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
@@ -140,6 +140,11 @@ def start_or_cancel_instance_refresh(conn, module):
         'started': conn.start_instance_refresh,
     }
     try:
+        if module.check_mode:
+            if asg_state == 'started':
+                module.exit_json(changed=True, msg='Would have started instance refresh if not in check mode.')
+            elif asg_state == 'cancelled':
+                module.exit_json(changed=True, msg='Would have cencelled instance refresh if not in check mode.')
         result = cmd_invocations[asg_state](aws_retry=True, **args)
         result = dict(
             instance_refresh_id=result['InstanceRefreshId']
@@ -178,7 +183,10 @@ def main():
         ),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
     autoscaling = module.client(
         'autoscaling',
         retry_decorator=AWSRetry.jittered_backoff(
