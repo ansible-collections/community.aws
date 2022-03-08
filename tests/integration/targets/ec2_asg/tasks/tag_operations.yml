@@ -138,6 +138,41 @@
           - '"snake_case" not in tag_keys'
           - '"autoscaling:CreateOrUpdateTags" in add_purge_result.resource_actions'
 
+    - name: Re-tag ASG - modify values
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+          - tag_a: 'new_val_a'
+            propagate_at_launch: no
+          - tag_b: 'new_val_b'
+            propagate_at_launch: yes
+      register: add_purge_result
+
+    - name: Get asg info
+      ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-tag-test"
+      register: info_result
+    # create a list of tag_keys and tag_values from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
+    - set_fact:
+        tag_values: "{{ info_result.results[0].tags | map(attribute='value') | list }}"
+
+
+    - assert:
+        that:
+          - add_purge_result is changed
+          - info_result.results[0].tags | length == 2
+          - '"tag_a" in tag_keys'
+          - '"tag_b" in tag_keys'
+          - '"new_val_a" in tag_values'
+          - '"new_val_b" in tag_values'
+          - '"lowercase spaced" not in tag_keys'
+          - '"Title Case" not in tag_keys'
+          - '"CamelCase" not in tag_keys'
+          - '"snake_case" not in tag_keys'
+          - '"autoscaling:CreateOrUpdateTags" in add_purge_result.resource_actions'
+
     - name: Add 2 more tags - do not purge existing tags
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
@@ -166,6 +201,31 @@
           - '"lowercase spaced" in tag_keys'
           - '"Title Case" in tag_keys'
           - '"autoscaling:CreateOrUpdateTags" in add_result.resource_actions'
+
+    - name: Add empty tags with purge set to false to assert that existing tags are retained
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags: []
+        purge_tags: false
+      register: add_empty
+
+    - name: Get asg info
+      ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-tag-test"
+      register: info_result
+    # create a list of tag_keys from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
+
+    - assert:
+        that:
+          - add_empty is not changed
+          - info_result.results[0].tags | length == 4
+          - '"tag_a" in tag_keys'
+          - '"tag_b" in tag_keys'
+          - '"lowercase spaced" in tag_keys'
+          - '"Title Case" in tag_keys'
+          - '"autoscaling:CreateOrUpdateTags" not in add_empty.resource_actions'
 
     #----------------------------------------------------------------------
 
