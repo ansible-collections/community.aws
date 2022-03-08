@@ -12,6 +12,10 @@ except ImportError:
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
 
 @AWSRetry.jittered_backoff()
@@ -123,3 +127,36 @@ def get_info(connection, module, topic_arn):
         info['subscriptions'] = [camel_dict_to_snake_dict(sub) for sub in list_topic_subscriptions(connection, module, topic_arn)]
 
     return info
+
+
+def update_tags(client, module, topic_arn):
+    if module.params.get('tags') is None:
+        return False
+
+    try:
+        existing_tags = client.list_tags_for_resource(aws_retry=True, ResourceArn=topic_arn)['Tags']
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Couldn't obtain topic tags")
+
+    to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
+                                            module.params['tags'], module.params['purge_tags'])
+    changed = bool(to_update or to_delete)
+
+    if to_update:
+        try:
+            if module.check_mode:
+                return changed
+            client.tag_resource(aws_retry=True, ResourceArn=topic_arn,
+                                        Tags=ansible_dict_to_boto3_tag_list(to_update))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't add tags to topic")
+    if to_delete:
+        try:
+            if module.check_mode:
+                return changed
+            client.untag_resource(aws_retry=True, ResourceArn=topic_arn,
+                                             TagKeys=to_delete)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't remove tags from topic")
+
+    return changed
