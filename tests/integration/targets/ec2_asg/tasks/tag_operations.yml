@@ -49,6 +49,83 @@
         that:
           - info_result.results[0].tags | length == 0
 
+    - name: Tag asg
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+        - tag_a: 'value 1'
+          propagate_at_launch: no
+        - tag_b: 'value 2'
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - "output.tags | length == 2"
+          - output is changed
+
+    - name: Re-Tag asg (different order)
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+        - tag_b: 'value 2'
+          propagate_at_launch: yes
+        - tag_a: 'value 1'
+          propagate_at_launch: no
+      register: output
+
+    - assert:
+        that:
+          - "output.tags | length == 2"
+          - output is not changed
+
+    - name: Re-Tag asg new tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+        - tag_c: 'value 3'
+          propagate_at_launch: no
+      register: output
+
+    - assert:
+        that:
+          - "output.tags | length == 1"
+          - output is changed
+
+    - name: Re-Tag asg update propagate_at_launch
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+        - tag_c: 'value 3'
+          propagate_at_launch: yes
+      register: output
+
+    - assert:
+        that:
+          - "output.tags | length == 1"
+          - output is changed
+
+    - name: Remove all tags
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags: []
+      register: add_empty
+
+    - name: Get asg info
+      ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-tag-test"
+      register: info_result
+    # create a list of tag_keys from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
+
+    - assert:
+        that:
+          - add_empty is changed
+          - info_result.results[0].tags | length == 0
+          - '"autoscaling:CreateOrUpdateTags" not in add_empty.resource_actions'
+          - '"autoscaling:DeleteTags" in add_empty.resource_actions'
+
     - name: Add 4 new tags - do not purge existing tags
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
@@ -226,6 +303,31 @@
           - '"lowercase spaced" in tag_keys'
           - '"Title Case" in tag_keys'
           - '"autoscaling:CreateOrUpdateTags" not in add_empty.resource_actions'
+
+    - name: Add empty tags with purge set to true to assert that existing tags are removed
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags: []
+      register: add_empty
+
+    - name: Get asg info
+      ec2_asg_info:
+        name: "{{ resource_prefix }}-asg-tag-test"
+      register: info_result
+    # create a list of tag_keys from info result
+    - set_fact:
+        tag_keys: "{{ info_result.results[0].tags | map(attribute='key') | list }}"
+
+    - assert:
+        that:
+          - add_empty is changed
+          - info_result.results[0].tags | length == 0
+          - '"tag_a" not in tag_keys'
+          - '"tag_b" not in tag_keys'
+          - '"lowercase spaced" not in tag_keys'
+          - '"Title Case" not in tag_keys'
+          - '"autoscaling:CreateOrUpdateTags" not in add_empty.resource_actions'
+          - '"autoscaling:DeleteTags" in add_empty.resource_actions'
 
     #----------------------------------------------------------------------
 

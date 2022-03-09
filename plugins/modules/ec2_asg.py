@@ -1214,9 +1214,12 @@ def create_autoscaling_group(connection):
             changed = True
 
         # process tag changes
+        have_tags = as_group.get('Tags')
+        want_tags = asg_tags
+        if purge_tags and not want_tags and have_tags:
+            connection.delete_tags(Tags=list(have_tags))
+
         if len(set_tags) > 0:
-            have_tags = as_group.get('Tags')
-            want_tags = asg_tags
             if have_tags:
                 have_tags.sort(key=lambda x: x["Key"])
             if want_tags:
