@@ -1,2 +1,2 @@
 minor_changes:
-  - elb_application_lb - Add support for alb specific attributes (https://github.com/ansible-collections/community.aws/pull/963).
+  - elb_application_lb - Add support for alb specific attributes and check_mode support for modifying them (https://github.com/ansible-collections/community.aws/pull/963).

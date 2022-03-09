@@ -556,6 +556,13 @@ def create_or_update_alb(alb_obj):
                 alb_obj.module.exit_json(changed=True, msg='Would have updated ALB if not in check mode.')
             alb_obj.modify_security_groups()
 
+        # ALB attributes
+        if not alb_obj.compare_elb_attributes():
+            if alb_obj.module.check_mode:
+                alb_obj.module.exit_json(changed=True, msg='Would have updated ALB if not in check mode.')
+            alb_obj.update_elb_attributes()
+            alb_obj.modify_elb_attributes()
+
         # Tags - only need to play with tags if tags parameter has been set to something
         if alb_obj.tags is not None:
 
@@ -579,10 +586,6 @@ def create_or_update_alb(alb_obj):
         if alb_obj.module.check_mode:
             alb_obj.module.exit_json(changed=True, msg='Would have created ALB if not in check mode.')
         alb_obj.create_elb()
-
-    # ALB attributes
-    alb_obj.update_elb_attributes()
-    alb_obj.modify_elb_attributes()
 
     # Listeners
     listeners_obj = ELBListeners(alb_obj.connection, alb_obj.module, alb_obj.elb['LoadBalancerArn'])
