@@ -98,7 +98,7 @@ options:
         If I(state=absent) and the corresponding resource exists in a different
         region, this task may report success without deleting that resource.
     type: str
-    aliases: [arn]
+    aliases: ['arn']
   certificate_chain:
     description:
       - The body of the PEM encoded chain for your certificate.
@@ -120,7 +120,7 @@ options:
         If I(state=present) this must not be specified.
         (Since the domain name is encoded within the public certificate's body.)
     type: str
-    aliases: [domain]
+    aliases: ['domain']
   name_tag:
     description:
       - >
@@ -135,7 +135,7 @@ options:
         If I(state=absent), you must provide exactly one of
         I(certificate_arn), I(domain_name) or I(name_tag).
     type: str
-    aliases: [name]
+    aliases: ['name']
   private_key:
     description:
       - The body of the PEM encoded private key.
@@ -154,7 +154,7 @@ options:
         If I(state=absent), any certificates in this region
         with a corresponding I(domain_name), I(name_tag) or I(certificate_arn)
         will be deleted.
-    choices: [present, absent]
+    choices: ['present', 'absent']
     default: present
     type: str
 author:
@@ -165,7 +165,7 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = '''
+EXAMPLES = r'''
 
 - name: upload a self-signed certificate
   community.aws.aws_acm:
@@ -208,7 +208,7 @@ EXAMPLES = '''
 
 '''
 
-RETURN = '''
+RETURN = r'''
 certificate:
   description: Information about the certificate which was uploaded
   type: complex
@@ -230,7 +230,7 @@ arns:
   elements: str
   returned: when I(state=absent)
   sample:
-   - "arn:aws:acm:ap-southeast-2:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901"
+    - "arn:aws:acm:ap-southeast-2:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901"
 '''
 
 
