@@ -77,6 +77,10 @@
         principal: s3.amazonaws.com
         source_arn: arn:aws:s3:::{{ bucket_info.name }}
 
+    - name: wait 10 seconds for policy update
+      pause:
+        seconds: 10
+
     - name: create s3 bucket notification - check_mode
       s3_bucket_notification:
         state: present
