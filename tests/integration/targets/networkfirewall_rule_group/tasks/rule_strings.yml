@@ -1,0 +1,480 @@
+---
+#
+# Basic manipulation of Suricata String based rule groups
+# - Minimal Creation
+# - Deletion
+# - Updating Rules
+#
+- vars:
+    strings_group_name: '{{ group_name_prefix }}-SuricataGroup'
+    rule_one: 'pass tcp any any -> any any (sid:1000001;)'
+    rule_two: 'drop tcp any any -> any any (sid:1000002;)'
+    rule_three: 'alert tcp any any -> any any (sid:1000003;)'
+    all_rules: |-
+        {{ rule_one }}
+        {{ rule_two }}
+        {{ rule_three }}
+    last_rules: |-
+        {{ rule_two }}
+        {{ rule_three }}
+  block:
+    ###################################################################
+    # Creation
+
+    - name: '(CHECK) Create a rule_strings Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings: '{{ rule_one }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == rule_one
+
+    - name: 'Create a rule_strings Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings: '{{ rule_one }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn.startswith(account_arn)
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn.endswith(strings_group_name)
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == rule_one
+
+    - name: Save RuleGroup ID/ARN for later
+      set_fact:
+        minimal_rule_group_id: '{{ strings_group.rule_group.rule_group_metadata.rule_group_id }}'
+        minimal_rule_group_arn: '{{ strings_group.rule_group.rule_group_metadata.rule_group_arn }}'
+
+    - name: '(CHECK) Create a rule_strings Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings: '{{ rule_one }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == rule_one
+
+    - name: 'Create a rule_strings Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings: '{{ rule_one }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == rule_one
+
+    #####
+
+    - name: '(CHECK) Test that rule_strings as a list with one element behaves the same as a single string'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+          - '{{ rule_one }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == rule_one
+
+    - name: 'Test that rule_strings as a list with one element behaves the same as a single string'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+          - '{{ rule_one }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == rule_one
+
+    ###################################################################
+    # Update
+
+    - name: '(CHECK) Update a rule_strings Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_one }}'
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == all_rules
+
+    - name: 'Update a rule_strings Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_one }}'
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == all_rules
+
+    - name: '(CHECK) Update a rule_strings Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_one }}'
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == all_rules
+
+    - name: 'Update a rule_strings Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_one }}'
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == all_rules
+
+    #####
+
+    - name: '(CHECK) Update(2) a rule_strings Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == last_rules
+
+    - name: 'Update(2) a rule_strings Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == last_rules
+
+    - name: '(CHECK) Update(2) a rule_strings Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == last_rules
+
+    - name: 'Update(2) a rule_strings Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        rule_strings:
+        - '{{ rule_two }}'
+        - '{{ rule_three }}'
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is not changed
+          - '"rule_group" in strings_group'
+          - '"rule_group" in strings_group.rule_group'
+          - '"rule_group_metadata" in strings_group.rule_group'
+          - '"capacity" in strings_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strings_group.rule_group.rule_group_metadata'
+          - '"type" in strings_group.rule_group.rule_group_metadata'
+          - strings_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strings_group.rule_group.rule_group_metadata.capacity == 100
+          - strings_group.rule_group.rule_group_metadata.rule_group_name == strings_group_name
+          - strings_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - strings_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in strings_group.rule_group.rule_group'
+          - '"rules_string" in strings_group.rule_group.rule_group.rules_source'
+          - strings_group.rule_group.rule_group.rules_source.rules_string == last_rules
+
+    ###################################################################
+    # Deletion
+
+    - name: '(CHECK) Delete rule_strings rule group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is changed
+
+    - name: 'Delete rule_strings rule group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is changed
+
+    # The Rule Group may still exist in a "DELETING" state, we should still
+    # return not changed
+    - name: 'Delete rule_strings rule group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: strings_group
+      check_mode: true
+
+    - assert:
+        that:
+          - strings_group is not changed
+
+    - name: '(CHECK) Delete rule_strings rule group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: strings_group
+
+    - assert:
+        that:
+          - strings_group is not changed
+
+  always:
+    - name: '(always) Delete rule_strings rule group'
+      networkfirewall_rule_group:
+        name: '{{ strings_group_name }}'
+        type: 'stateful'
+        state: absent
+      ignore_errors: true

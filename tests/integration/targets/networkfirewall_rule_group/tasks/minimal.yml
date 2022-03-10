@@ -1,0 +1,771 @@
+---
+#
+# Basic manipulation of a Firewall Group
+# - Minimal Creation
+# - Deletion
+# - Updating Metadata
+# -- description
+# -- tags
+#
+# Uses an 'allow all' string based rule, but doesn't attempt to manipulate the
+# rule itself
+#
+- vars:
+    minimal_group_name: '{{ group_name_prefix }}-MinimalGroup'
+    missing_group_name: '{{ group_name_prefix }}-MissingGroup'
+    first_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      'New Key with Spaces': Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+    final_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+  block:
+    # Test basic functionality of the modules
+    - name: 'Fetch all account rule groups'
+      networkfirewall_rule_group_info: {}
+      register: account_rules_info
+
+    - assert:
+        that:
+          - '"rule_list" in account_rules_info'
+          - '"rule_groups" in account_rules_info'
+          # We've not created anything yet, so there's no guarantee anything will be here
+
+    ###################################################################
+    # Creation
+
+    # The simplest form of rule group
+    - name: '(CHECK) Create a Rule Group with minimal settings'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        # Needed for creation
+        capacity: 100
+        # Needed for creation - We'll test manipulating them later
+        rule_strings:
+          - 'pass tcp any any -> any any (sid:1000001;)'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+
+    # The simplest form of rule group
+    - name: 'Create a Rule Group with minimal settings'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        # Needed for creation
+        capacity: 100
+        # Needed for creation - We'll test manipulating them later
+        rule_strings:
+          - 'pass tcp any any -> any any (sid:1000001;)'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn.startswith(account_arn)
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn.endswith(minimal_group_name)
+
+    - name: Save RuleGroup ID/ARN for later
+      set_fact:
+        minimal_rule_group_id: '{{ minimal_group.rule_group.rule_group_metadata.rule_group_id }}'
+        minimal_rule_group_arn: '{{ minimal_group.rule_group.rule_group_metadata.rule_group_arn }}'
+
+    - name: '(CHECK) Create a Rule Group with minimal settings (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        capacity: 100
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+
+    - name: 'Create a Rule Group with minimal settings (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        capacity: 100
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+
+    ###################################################################
+    # Capacity
+
+    # Capacity can't be changed after creation
+    - name: '(CHECK) Attempt to change capacity'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        capacity: 200
+      register: minimal_group
+      ignore_errors: true
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is failed
+
+    - name: 'Attempt to change capacity'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        capacity: 200
+      register: minimal_group
+      ignore_errors: true
+
+    - assert:
+        that:
+          - minimal_group is failed
+
+    ###################################################################
+    # Description
+
+    - name: '(CHECK) Add a description'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Example Description'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Example Description'
+
+    - name: 'Add a description'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Example Description'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Example Description'
+
+    - name: '(CHECK) Add a description (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Example Description'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Example Description'
+
+    - name: 'Add a description (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Example Description'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Example Description'
+
+    #####
+
+    - name: '(CHECK) Update a description'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Updated description'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+
+    - name: 'Update a description'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Updated description'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+
+    - name: '(CHECK) Update a description (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Updated description'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+
+    - name: 'Update a description (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        description: 'Updated description'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+
+    ###################################################################
+    # Tags
+
+    - name: '(CHECK) Tag Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ first_tags }}'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - '"tags" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == first_tags
+
+    - name: 'Tag Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ first_tags }}'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == first_tags
+
+    - name: '(CHECK) Tag Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ first_tags }}'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == first_tags
+
+    - name: 'Tag Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ first_tags }}'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == first_tags
+
+    #####
+
+    - name: '(CHECK) Update tags with purge'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ second_tags }}'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - '"tags" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == second_tags
+
+    - name: 'Update tags with purge'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ second_tags }}'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == second_tags
+
+    - name: '(CHECK) Update tags with purge (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ second_tags }}'
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == second_tags
+
+    - name: 'Update tags with purge (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ second_tags }}'
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == second_tags
+
+    #####
+
+    - name: '(CHECK) Update tags with no purge'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ third_tags }}'
+        purge_tags: false
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - '"tags" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == final_tags
+
+    - name: 'Update tags with no purge'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ third_tags }}'
+        purge_tags: false
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == final_tags
+
+    - name: '(CHECK) Update tags with no purge (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ third_tags }}'
+        purge_tags: false
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == final_tags
+
+    - name: 'Update tags with no purge (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        tags: '{{ third_tags }}'
+        purge_tags: false
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+          - '"rule_group" in minimal_group'
+          - '"rule_group" in minimal_group.rule_group'
+          - '"rule_group_metadata" in minimal_group.rule_group'
+          - '"capacity" in minimal_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in minimal_group.rule_group.rule_group_metadata'
+          - '"type" in minimal_group.rule_group.rule_group_metadata'
+          - minimal_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - minimal_group.rule_group.rule_group_metadata.capacity == 100
+          - minimal_group.rule_group.rule_group_metadata.rule_group_name == minimal_group_name
+          - minimal_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - minimal_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - minimal_group.rule_group.rule_group_metadata.description == 'Updated description'
+          - minimal_group.rule_group.rule_group_metadata.tags == final_tags
+
+    ###################################################################
+    # Deletion
+
+    - name: '(CHECK) Delete minimal rule group'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is changed
+
+    - name: 'Delete minimal rule group'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is changed
+
+    # The Rule Group may still exist in a "DELETING" state, we should still
+    # return not changed
+    - name: 'Delete minimal rule group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: minimal_group
+      check_mode: true
+
+    - assert:
+        that:
+          - minimal_group is not changed
+
+    - name: '(CHECK) Delete minimal rule group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: minimal_group
+
+    - assert:
+        that:
+          - minimal_group is not changed
+
+    #####
+    - name: '(CHECK) Delete missing rule group'
+      networkfirewall_rule_group:
+        name: '{{ missing_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: missing_group
+      check_mode: true
+
+    - assert:
+        that:
+          - missing_group is not changed
+
+    - name: 'Delete missing rule group'
+      networkfirewall_rule_group:
+        name: '{{ missing_group_name }}'
+        type: 'stateful'
+        state: absent
+
+    - assert:
+        that:
+          - missing_group is not changed
+
+  always:
+    - name: '(always) Delete minimal rule group'
+      networkfirewall_rule_group:
+        name: '{{ minimal_group_name }}'
+        type: 'stateful'
+        state: absent
+      ignore_errors: true

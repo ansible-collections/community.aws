@@ -1,0 +1,2 @@
+---
+group_name_prefix: 'AnsibleTest-{{ tiny_prefix }}'

@@ -1,0 +1,579 @@
+---
+#
+# Basic manipulation of 5-Tuple based rule groups
+# - Creation
+# - Deletion
+# - Updating Rules
+- vars:
+    tuple_group_name: '{{ group_name_prefix }}-5TupleGroup'
+    rule_one:
+      source: '192.0.2.74'
+      destination: '198.51.100.0/24'
+      source_port: 'any'
+      destination_port: 22
+      action: 'pass'
+      protocol: 'TCP'
+      sid: '10001'
+    rule_two:
+      action: 'pass'
+      direction: 'any'
+      source: 'any'
+      destination: 'any'
+      source_port: 'any'
+      destination_port: 'any'
+      protocol: 'icmp'
+      sid: '10002'
+      rule_options:
+        itype: [3]
+    rule_three:
+      action: 'drop'
+      direction: 'forward'
+      source: '$EXAMPLE_SOURCE'
+      destination: '$EXAMPLE_DEST'
+      source_port: 'any'
+      destination_port: '$HTTPS_PORT'
+      protocol: 'http'
+      sid: '10003'
+      rule_options:
+        # Raw strings need the extra quotes
+        content: '"index.php"'
+        # Empty == no 'setting' (is valid)
+        http_uri:
+    ip_variables:
+      EXAMPLE_SOURCE: '203.0.113.0/24'
+      EXAMPLE_DEST: '192.0.2.117'
+    port_variables:
+      HTTPS_PORT: '8443'
+    # Formatted version of the options
+    rule_one_options:
+      - keyword: 'sid:10001'
+    rule_two_options:
+      - keyword: 'sid:10002'
+      - keyword: 'itype'
+        settings: ['3']
+    rule_three_options:
+      - keyword: 'sid:10003'
+      - keyword: 'content'
+        # Ẽxtra quotes are deliberate
+        settings: ['"index.php"']
+      - keyword: 'http_uri'
+  block:
+    ###################################################################
+    # Creation
+
+    # Bare minimum rule, wouldn't actually check anything since neither HTTP not
+    # HTTPS traffic is being inspected
+    - name: '(CHECK) Create a 5-Tuple Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        capacity: 50
+        rule_list:
+          - '{{ rule_one }}'
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+          - '"stateful_rules" in tuple_group.rule_group.rule_group.rules_source'
+          - tuple_group.rule_group.rule_group.rules_source.stateful_rules | length == 1
+          - '"action" in first_rule'
+          - '"header" in first_rule'
+          - '"rule_options" in first_rule'
+          - first_rule.action == 'PASS'
+          - '"destination" in first_rule.header'
+          - '"destination_port" in first_rule.header'
+          - '"direction" in first_rule.header'
+          - '"protocol" in first_rule.header'
+          - '"source" in first_rule.header'
+          - '"source_port" in first_rule.header'
+          - first_rule.header.destination == '198.51.100.0/24'
+          - first_rule.header.destination_port == '22'
+          - first_rule.header.source == '192.0.2.74'
+          - first_rule.header.source_port == 'any'
+          - first_rule.header.protocol == 'TCP'
+          - first_rule.header.direction == 'FORWARD'
+          - first_rule.rule_options == rule_one_options
+      vars:
+        first_rule: '{{ tuple_group.rule_group.rule_group.rules_source.stateful_rules[0] }}'
+
+    - name: 'Create a 5-Tuple Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        capacity: 50
+        rule_list:
+          - '{{ rule_one }}'
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn.startswith(account_arn)
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn.endswith(tuple_group_name)
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    - name: Save RuleGroup ID/ARN for later
+      set_fact:
+        minimal_rule_group_id: '{{ tuple_group.rule_group.rule_group_metadata.rule_group_id }}'
+        minimal_rule_group_arn: '{{ tuple_group.rule_group.rule_group_metadata.rule_group_arn }}'
+
+    - name: '(CHECK) Create a 5-Tuple Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        capacity: 50
+        rule_list:
+          - '{{ rule_one }}'
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is not changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    - name: 'Create a 5-Tuple Rule Group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        capacity: 50
+        rule_list:
+          - '{{ rule_one }}'
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is not changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    ###################################################################
+    # Add some extra variables, properly tested in stateful.yml
+
+    - name: 'Set IP and Port variables'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variables }}'
+        port_variables: '{{ port_variables }}'
+      register: port_variables
+
+    - assert:
+        that:
+          - port_variables is changed
+
+    ###################################################################
+    # Update
+
+    - name: '(CHECK) Update a 5-Tuple Rule Group with new rules'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_one }}'
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+          - '"stateful_rules" in tuple_group.rule_group.rule_group.rules_source'
+          - tuple_group.rule_group.rule_group.rules_source.stateful_rules | length == 3
+          - '"action" in first_rule'
+          - '"header" in first_rule'
+          - '"rule_options" in first_rule'
+          - first_rule.action == 'PASS'
+          - '"destination" in first_rule.header'
+          - '"destination_port" in first_rule.header'
+          - '"direction" in first_rule.header'
+          - '"protocol" in first_rule.header'
+          - '"source" in first_rule.header'
+          - '"source_port" in first_rule.header'
+          - first_rule.header.destination == '198.51.100.0/24'
+          - first_rule.header.destination_port == '22'
+          - first_rule.header.source == '192.0.2.74'
+          - first_rule.header.source_port == 'any'
+          - first_rule.header.protocol == 'TCP'
+          - first_rule.header.direction == 'FORWARD'
+          - first_rule.rule_options == rule_one_options
+          - '"action" in second_rule'
+          - '"header" in second_rule'
+          - '"rule_options" in second_rule'
+          - second_rule.action == 'PASS'
+          - '"destination" in second_rule.header'
+          - '"destination_port" in second_rule.header'
+          - '"direction" in second_rule.header'
+          - '"protocol" in second_rule.header'
+          - '"source" in second_rule.header'
+          - '"source_port" in second_rule.header'
+          - second_rule.header.destination == 'any'
+          - second_rule.header.destination_port == 'any'
+          - second_rule.header.source == 'any'
+          - second_rule.header.source_port == 'any'
+          - second_rule.header.protocol == 'ICMP'
+          - second_rule.header.direction == 'ANY'
+          - second_rule.rule_options == rule_two_options
+          - '"action" in third_rule'
+          - '"header" in third_rule'
+          - '"rule_options" in third_rule'
+          - third_rule.action == 'DROP'
+          - '"destination" in third_rule.header'
+          - '"destination_port" in third_rule.header'
+          - '"direction" in third_rule.header'
+          - '"protocol" in third_rule.header'
+          - '"source" in third_rule.header'
+          - '"source_port" in third_rule.header'
+          - third_rule.header.destination == '$EXAMPLE_DEST'
+          - third_rule.header.destination_port == '$HTTPS_PORT'
+          - third_rule.header.source == '$EXAMPLE_SOURCE'
+          - third_rule.header.source_port == 'any'
+          - third_rule.header.protocol == 'HTTP'
+          - third_rule.header.direction == 'FORWARD'
+          - third_rule.rule_options == rule_three_options
+      vars:
+        first_rule: '{{ tuple_group.rule_group.rule_group.rules_source.stateful_rules[0] }}'
+        second_rule: '{{ tuple_group.rule_group.rule_group.rules_source.stateful_rules[1] }}'
+        third_rule: '{{ tuple_group.rule_group.rule_group.rules_source.stateful_rules[2] }}'
+
+    - name: 'Update a 5-Tuple Rule Group with new rules'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_one }}'
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    - name: '(CHECK) Update a 5-Tuple Rule Group with new rules (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_one }}'
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is not changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    - name: 'Update a 5-Tuple Rule Group with new rules (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_one }}'
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is not changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    #####
+
+    - name: '(CHECK) Update a 5-Tuple Rule Group by removing first rule'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+          - '"stateful_rules" in tuple_group.rule_group.rule_group.rules_source'
+          - tuple_group.rule_group.rule_group.rules_source.stateful_rules | length == 2
+          - '"action" in first_rule'
+          - '"header" in first_rule'
+          - '"rule_options" in first_rule'
+          - first_rule.action == 'PASS'
+          - '"destination" in first_rule.header'
+          - '"destination_port" in first_rule.header'
+          - '"direction" in first_rule.header'
+          - '"protocol" in first_rule.header'
+          - '"source" in first_rule.header'
+          - '"source_port" in first_rule.header'
+          - first_rule.header.destination == 'any'
+          - first_rule.header.destination_port == 'any'
+          - first_rule.header.source == 'any'
+          - first_rule.header.source_port == 'any'
+          - first_rule.header.protocol == 'ICMP'
+          - first_rule.header.direction == 'ANY'
+          - first_rule.rule_options == rule_two_options
+          - '"action" in second_rule'
+          - '"header" in second_rule'
+          - '"rule_options" in second_rule'
+          - second_rule.action == 'DROP'
+          - '"destination" in second_rule.header'
+          - '"destination_port" in second_rule.header'
+          - '"direction" in second_rule.header'
+          - '"protocol" in second_rule.header'
+          - '"source" in second_rule.header'
+          - '"source_port" in second_rule.header'
+          - second_rule.header.destination == '$EXAMPLE_DEST'
+          - second_rule.header.destination_port == '$HTTPS_PORT'
+          - second_rule.header.source == '$EXAMPLE_SOURCE'
+          - second_rule.header.source_port == 'any'
+          - second_rule.header.protocol == 'HTTP'
+          - second_rule.header.direction == 'FORWARD'
+          - second_rule.rule_options == rule_three_options
+      vars:
+        first_rule: '{{ tuple_group.rule_group.rule_group.rules_source.stateful_rules[0] }}'
+        second_rule: '{{ tuple_group.rule_group.rule_group.rules_source.stateful_rules[1] }}'
+
+    - name: 'Update a 5-Tuple Rule Group by removing first rule'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    - name: '(CHECK) Update a 5-Tuple Rule Group by removing first rule (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is not changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    - name: 'Update a 5-Tuple Rule Group by removing first rule (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        rule_list:
+          - '{{ rule_two }}'
+          - '{{ rule_three }}'
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is not changed
+          - '"rule_group" in tuple_group'
+          - '"rule_group" in tuple_group.rule_group'
+          - '"rule_group_metadata" in tuple_group.rule_group'
+          - '"capacity" in tuple_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in tuple_group.rule_group.rule_group_metadata'
+          - '"type" in tuple_group.rule_group.rule_group_metadata'
+          - tuple_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - tuple_group.rule_group.rule_group_metadata.capacity == 50
+          - tuple_group.rule_group.rule_group_metadata.rule_group_name == tuple_group_name
+          - tuple_group.rule_group.rule_group_metadata.rule_group_arn == minimal_rule_group_arn
+          - tuple_group.rule_group.rule_group_metadata.rule_group_id == minimal_rule_group_id
+          - '"rules_source" in tuple_group.rule_group.rule_group'
+
+    ###################################################################
+    # Deletion
+
+    - name: '(CHECK) Delete Domain List rule group'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is changed
+
+    - name: 'Delete Domain List rule group'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is changed
+
+    # The Rule Group may still exist in a "DELETING" state, we should still
+    # return not changed
+    - name: 'Delete Domain List rule group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: tuple_group
+      check_mode: true
+
+    - assert:
+        that:
+          - tuple_group is not changed
+
+    - name: '(CHECK) Delete Domain List rule group (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: tuple_group
+
+    - assert:
+        that:
+          - tuple_group is not changed
+
+  always:
+    - name: '(always) Delete Domain List rule group'
+      networkfirewall_rule_group:
+        name: '{{ tuple_group_name }}'
+        type: 'stateful'
+        state: absent
+      ignore_errors: true
