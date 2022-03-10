@@ -377,13 +377,9 @@ def main():
         if current != desired:
             updated_configuration = bucket.apply_config(desired)
             changed = True
-        if module.check_mode:
-            changed = True
     elif state == 'absent':
         if current:
             updated_configuration = bucket.delete_config(desired)
-            changed = True
-        if module.check_mode:
             changed = True
 
     for target_configs in updated_configuration:
