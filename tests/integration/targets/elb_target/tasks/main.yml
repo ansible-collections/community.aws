@@ -12,3 +12,4 @@
   block:
     - include_tasks: ec2_target.yml
     - include_tasks: lambda_target.yml
+    - include_tasks: alb_target.yml

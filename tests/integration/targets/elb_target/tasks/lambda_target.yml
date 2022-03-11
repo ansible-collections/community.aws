@@ -91,7 +91,7 @@
       targets: []
     register: elb_target_group
 
-  - name: target is still the same, state must not be changed (idempotency)
+  - name: remove lambda target from target group
     assert:
       that:
         - elb_target_group.changed
