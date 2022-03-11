@@ -83,7 +83,7 @@
           - '{{ init_instance_2 }}'
 
     # pause to allow completion of instance replacement
-    - name: Pause for 1 minute
+    - name: Pause for 30 seconds
       pause:
         seconds: 30
 
@@ -137,7 +137,7 @@
           - '{{ instance_replace_1 }}'
           - '{{ instance_replace_2 }}'
 
-    - name: Pause for 1 minute to allow completion of above task
+    - name: Pause for 30 seconds to allow completion of above task
       pause:
         seconds: 30
 

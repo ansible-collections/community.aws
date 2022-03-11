@@ -105,6 +105,8 @@
             cidr_ip: 0.0.0.0/0
       register: sg
 
+    - include_tasks: tag_operations.yml
+
     - include_tasks: instance_detach.yml
 
     - name: ensure launch configs exist
@@ -143,62 +145,6 @@
     - assert:
         that:
           - "output.viable_instances == 1"
-
-    - name: Tag asg
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg"
-        tags:
-        - tag_a: 'value 1'
-          propagate_at_launch: no
-        - tag_b: 'value 2'
-          propagate_at_launch: yes
-      register: output
-
-    - assert:
-        that:
-          - "output.tags | length == 2"
-          - output is changed
-
-    - name: Re-Tag asg (different order)
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg"
-        tags:
-        - tag_b: 'value 2'
-          propagate_at_launch: yes
-        - tag_a: 'value 1'
-          propagate_at_launch: no
-      register: output
-
-    - assert:
-        that:
-          - "output.tags | length == 2"
-          - output is not changed
-
-    - name: Re-Tag asg new tags
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg"
-        tags:
-        - tag_c: 'value 3'
-          propagate_at_launch: no
-      register: output
-
-    - assert:
-        that:
-          - "output.tags | length == 1"
-          - output is changed
-
-    - name: Re-Tag asg update propagate_at_launch
-      ec2_asg:
-        name: "{{ resource_prefix }}-asg"
-        tags:
-        - tag_c: 'value 3'
-          propagate_at_launch: yes
-      register: output
-
-    - assert:
-        that:
-          - "output.tags | length == 1"
-          - output is changed
 
     - name: Enable metrics collection
       ec2_asg:
