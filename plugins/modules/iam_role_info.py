@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: iam_role_info
-version_added: 1.0.0
+version_added: 1.0.1
 short_description: Gather information on IAM roles
 description:
     - Gathers information about IAM roles.
@@ -28,6 +28,11 @@ options:
             - Prefix of role to restrict IAM role search for.
             - Mutually exclusive with I(name).
         type: str
+    preserve_case:
+        description:
+            - Return information about the role with default case (Pascal Case).
+        type: bool
+        required: false
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -46,6 +51,11 @@ EXAMPLES = '''
 - name: describe all roles matching a path prefix
   community.aws.iam_role_info:
     path_prefix: /application/path
+
+- name: describe a single role with default case
+  community.aws.iam_role_info:
+    name: MyIAMRole
+    preserve_case: True
 '''
 
 RETURN = '''
@@ -207,6 +217,9 @@ def describe_iam_role(module, client, role):
 def describe_iam_roles(module, client):
     name = module.params['name']
     path_prefix = module.params['path_prefix']
+    preserve_case = module.params['preserve_case']
+    roles = list()
+
     if name:
         try:
             roles = [client.get_role(RoleName=name, aws_retry=True)['Role']]
@@ -226,7 +239,11 @@ def describe_iam_roles(module, client):
             roles = list_iam_roles_with_backoff(client, **params)['Roles']
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't list IAM roles")
-    return [camel_dict_to_snake_dict(describe_iam_role(module, client, role), ignore_list=['tags']) for role in roles]
+
+    if not preserve_case:
+        return [camel_dict_to_snake_dict(describe_iam_role(module, client, role), ignore_list=('tags')) for role in roles]
+    else:
+        return [describe_iam_role(module, client, role) for role in roles]
 
 
 def main():
@@ -236,6 +253,7 @@ def main():
     argument_spec = dict(
         name=dict(aliases=['role_name']),
         path_prefix=dict(),
+        preserve_case=dict(type='bool', required=False, default=False)
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,

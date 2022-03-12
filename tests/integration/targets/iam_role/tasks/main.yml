@@ -5,6 +5,7 @@
 # - Minimal Role creation
 # - Role deletion
 # - Fetching a specific role
+# - Fetching a specific role with original case
 # - Creating roles w/ and w/o instance profiles
 # - Creating roles w/ a path
 # - Updating Max Session Duration

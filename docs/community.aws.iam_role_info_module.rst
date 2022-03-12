@@ -182,6 +182,21 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>preserve_case</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                  <div>Return AWS role(s) with their default case (PascalCase) instead of snake case.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -271,6 +286,11 @@ Examples
 
     - name: find all existing IAM roles
       community.aws.iam_role_info:
+      register: result
+
+    - name: find all existing IAM roles and preserve casing
+      community.aws.iam_role_info:
+        preserve_case: true
       register: result
 
     - name: describe a single role
@@ -647,3 +667,4 @@ Authors
 ~~~~~~~
 
 - Will Thames (@willthames)
+- Razique Mahroua (@razique)
