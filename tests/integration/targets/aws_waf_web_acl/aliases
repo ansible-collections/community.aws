@@ -8,3 +8,5 @@ aws_waf_info
 aws_waf_web_acl
 aws_waf_web_match
 aws_waf_web_rule
+aws_waf_condition
+aws_waf_rule
