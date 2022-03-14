@@ -89,8 +89,6 @@ action_groups:
   - ec2_vpc_nacl_info
   - ec2_vpc_peer
   - ec2_vpc_peering_info
-  - ec2_vpc_route_table
-  - ec2_vpc_route_table_info
   - ec2_vpc_vgw
   - ec2_vpc_vgw_info
   - ec2_vpc_vpn
@@ -205,6 +203,10 @@ plugin_routing:
       redirect: amazon.aws.ec2_vpc_nat_gateway
     ec2_vpc_nat_gateway_info:
       redirect: amazon.aws.ec2_vpc_nat_gateway_info
+    ec2_vpc_route_table:
+      redirect: amazon.aws.ec2_vpc_route_table
+    ec2_vpc_route_table_info:
+       redirect: amazon.aws.ec2_vpc_route_table_info
     elb_classic_lb:
       redirect: amazon.aws.ec2_elb_lb
     iam_cert:
