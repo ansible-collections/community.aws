@@ -1,0 +1,2 @@
+bugfixes:
+  - redshift_info - fix invalid import path for botocore exceptions (https://github.com/ansible-collections/community.aws/issues/968).
