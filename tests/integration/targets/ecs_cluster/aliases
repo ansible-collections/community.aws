@@ -4,6 +4,7 @@ unsupported
 
 cloud/aws
 
+ecs_service
 ecs_service_info
 ecs_task
 ecs_taskdefinition
