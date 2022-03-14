@@ -120,6 +120,13 @@
           - "result.tags.Name == '{{ instance_id }}-new'"
 
   always:
+    - name: remove final snapshot
+      rds_instance_snapshot:
+        db_snapshot_identifier: "{{ instance_id }}"
+        state: absent
+        wait: false
+      ignore_errors: yes
+
     - name: Remove DB instance
       rds_instance:
         id: "{{ instance_id }}"
