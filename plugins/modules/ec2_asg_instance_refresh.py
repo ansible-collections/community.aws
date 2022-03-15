@@ -13,13 +13,12 @@ version_added: 3.2.0
 short_description: Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
 description:
   - Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
-  - Can be used with ec2_asg_instance_refreshes_info to track the subsequent progress
-requirements: [ boto3 ]
+  - Can be used with M(community.aws.ec2_asg_instance_refreshes_info) to track the subsequent progress.
 author: "Dan Khersonsky (@danquixote)"
 options:
   state:
     description:
-      - Desired state of the ASG
+      - Desired state of the ASG.
     type: str
     required: true
     choices: [ 'started', 'cancelled' ]
@@ -46,10 +45,10 @@ options:
     suboptions:
       min_healthy_percentage:
         description:
-          - The amount of capacity in the Auto Scaling group that must remain healthy during an instance refresh to allow the operation to continue,
-          - as a percentage of the desired capacity of the Auto Scaling group (rounded up to the nearest integer).
-          - The default is 90.
+          - Total percent of capacity in ASG that must remain healthy during instance refresh to allow operation to continue.
+          - It is rounded up to the nearest integer).
         type: int
+        default: 90
       instance_warmup:
         description:
           - The number of seconds until a newly launched instance is configured and ready to use.
@@ -177,7 +176,7 @@ def main():
             type='dict',
             required=False,
             options=dict(
-                min_healthy_percentage=dict(type='int'),
+                min_healthy_percentage=dict(type='int', default=90),
                 instance_warmup=dict(type='int'),
             )
         ),

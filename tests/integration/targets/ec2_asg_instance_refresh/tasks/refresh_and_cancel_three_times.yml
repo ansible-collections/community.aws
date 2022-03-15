@@ -18,7 +18,6 @@
   delay: 5
   register: refreshout
   until: refreshout is not failed
-- debug: var=refreshout
 
 - name: test cancelling a refresh with an ASG name
   ec2_asg_instance_refresh:

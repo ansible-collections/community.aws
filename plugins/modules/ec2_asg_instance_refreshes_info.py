@@ -16,7 +16,6 @@ short_description: Gather information about ec2 Auto Scaling Group (ASG) Instanc
 description:
   - Describes one or more instance refreshes.
   - You can determine the status of a request by looking at the I(status) parameter.
-requirements: [ boto3 ]
 author: "Dan Khersonsky (@danquixote)"
 options:
   name:
