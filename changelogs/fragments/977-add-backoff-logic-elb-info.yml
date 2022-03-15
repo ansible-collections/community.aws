@@ -1,0 +1,2 @@
+bugfixes:
+  - Add backoff retry logic to elb_application_lb_info (https://github.com/ansible-collections/community.aws/pull/977)
