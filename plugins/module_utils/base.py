@@ -347,3 +347,21 @@ class BaseResourceManager(Boto3Mixin):
         self._resource_updates[key] = value
         self.changed = True
         return True
+
+    def set_wait(self, wait):
+        if wait is None:
+            return False
+        if wait == self._wait:
+            return False
+
+        self._wait = wait
+        return True
+
+    def set_wait_timeout(self, timeout):
+        if timeout is None:
+            return False
+        if timeout == self._wait_timeout:
+            return False
+
+        self._wait_timeout = timeout
+        return True
