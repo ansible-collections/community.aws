@@ -1,0 +1,49 @@
+---
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+  collections:
+    - amazon.aws
+    - community.aws
+  # We have a base need of botocore >= 1.19.20 which should be fulfilled by the
+  # time we release 4.0.0, this has been locally tested against 1.20.0 only
+  # bumping the requirements for specific tests to 1.23.23
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+  block:
+    # Fetch some info about the account so we can build ARNs
+    - aws_caller_info: {}
+      register: caller_info
+    - name: 'Generate the ARN pattern to search for'
+      vars:
+        _caller_info: '{{ caller_info.arn.split(":") }}'
+        _base_arn: 'arn:{{_caller_info[1]}}:network-firewall:{{aws_region}}'
+      set_fact:
+        account_arn: '{{_base_arn}}:{{_caller_info[4]}}:stateful-rulegroup/'
+        managed_arn: '{{_base_arn}}:aws-managed:stateful-rulegroup/'
+
+    # List the Managed Rule Groups (there's no access to the rules themselves)
+    - include_tasks: 'managed.yml'
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    # Minimal tests and manipulation of common metadata
+    - include_tasks: 'minimal.yml'
+
+    # Tests Manipulation of common Stateful settings
+    - include_tasks: 'stateful.yml'
+
+    # Tests Manipulation of Suricata formatted rule strings
+    - include_tasks: 'rule_strings.yml'
+
+    # Tests Manipulation of DomainList rule groups
+    - include_tasks: 'domain_list.yml'
+
+    # Tests Manipulation of 5-Tuple rule groups
+    - include_tasks: '5-tuple.yml'
+
+  always:
+    - include_tasks: 'cleanup.yml'

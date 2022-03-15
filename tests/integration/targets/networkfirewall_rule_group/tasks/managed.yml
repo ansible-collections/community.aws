@@ -1,0 +1,10 @@
+---
+# Tests related to the Managed Firewall rules
+- networkfirewall_rule_group_info:
+    scope: managed
+  register: managed_rules_info
+
+- assert:
+    that:
+      - '"rule_list" in managed_rules_info'
+      - managed_rules_info.rule_list | length > 0

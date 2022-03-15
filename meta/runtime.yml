@@ -147,6 +147,8 @@ action_groups:
   - lambda_info
   - lambda_policy
   - lightsail
+  - networkfirewall_rule_group
+  - networkfirewall_rule_group_info
   - rds_instance
   - rds_instance_info
   - rds_instance_snapshot
