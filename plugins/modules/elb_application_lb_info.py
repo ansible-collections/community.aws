@@ -152,7 +152,13 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, boto3_tag_list_to_ansible_dict
+
+
+@AWSRetry.jittered_backoff()
+def get_paginator(connection, **kwargs):
+    paginator = connection.get_paginator('describe_load_balancers')
+    return paginator.paginate(**kwargs).build_full_result()
 
 
 def get_elb_listeners(connection, module, elb_arn):
@@ -206,13 +212,12 @@ def list_load_balancers(connection, module):
     names = module.params.get("names")
 
     try:
-        load_balancer_paginator = connection.get_paginator('describe_load_balancers')
         if not load_balancer_arns and not names:
-            load_balancers = load_balancer_paginator.paginate().build_full_result()
+            load_balancers = get_paginator(connection)
         if load_balancer_arns:
-            load_balancers = load_balancer_paginator.paginate(LoadBalancerArns=load_balancer_arns).build_full_result()
+            load_balancers = get_paginator(connection, LoadBalancerArns=load_balancer_arns)
         if names:
-            load_balancers = load_balancer_paginator.paginate(Names=names).build_full_result()
+            load_balancers = get_paginator(connection, Names=names)
     except is_boto3_error_code('LoadBalancerNotFound'):
         module.exit_json(load_balancers=[])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -259,7 +264,7 @@ def main():
                          date='2021-12-01', collection_name='community.aws')
 
     try:
-        connection = module.client('elbv2')
+        connection = module.client('elbv2', retry_decorator=AWSRetry.jittered_backoff(retries=10))
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
