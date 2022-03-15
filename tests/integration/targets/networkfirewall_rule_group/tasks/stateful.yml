@@ -1,0 +1,1362 @@
+---
+#
+# Manipulation of options common to stateful rules
+# - Minimal Creation
+# - Updating IP Variables
+# - Updating Port Variables
+# - Setting RuleOrder
+#
+- vars:
+    strict_ro_group_name: '{{ group_name_prefix }}-StrictROGroup'
+    default_ro_group_name: '{{ group_name_prefix }}-DefaultROGroup'
+    stateful_group_name: '{{ group_name_prefix }}-StatefulGroup'
+    rule_one: 'pass tcp any any -> any any (sid:1000001;)'
+    ip_variable_one:
+        EXAMPLE_IP: '192.0.2.5'
+    ip_variable_one_list:
+        EXAMPLE_IP: ['192.0.2.5']
+    ip_variable_two:
+        ANOTHER_EXAMPLE: ['198.51.100.13', '198.51.100.235', '203.0.113.0/24']
+    ip_variable_both:
+        EXAMPLE_IP: ['192.0.2.5']
+        ANOTHER_EXAMPLE: ['198.51.100.13', '198.51.100.235', '203.0.113.0/24']
+    port_variable_one:
+        EXAMPLE_PORT: '22'
+    port_variable_one_list:
+        EXAMPLE_PORT: ['22']
+    port_variable_two:
+        ANOTHER_PORT: ['443', '8443']
+    port_variable_both:
+        EXAMPLE_PORT: ['22']
+        ANOTHER_PORT: ['443', '8443']
+  block:
+    ###################################################################
+    # Creation
+
+    - name: 'Create a Stateful Rule Group'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings: '{{ rule_one }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn.startswith(account_arn)
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn.endswith(stateful_group_name)
+          # Check that we've defaulted to the DEFAULT rule order
+
+    - name: Save RuleGroup ID/ARN for later
+      set_fact:
+        stateful_rule_group_id: '{{ stateful_group.rule_group.rule_group_metadata.rule_group_id }}'
+        stateful_rule_group_arn: '{{ stateful_group.rule_group.rule_group_metadata.rule_group_arn }}'
+
+    ###################################################################
+    # Update IP Variables
+
+    - name: '(CHECK) Add IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one }}'
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_one_list
+
+    - name: 'Add IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_one_list
+
+    - name: '(CHECK) Add IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one }}'
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_one_list
+
+    - name: 'Add IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_one_list
+
+    #####
+
+    - name: '(CHECK) Ensure IP Variable string/list equivalence (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one_list }}'
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_one_list
+
+    - name: 'Ensure IP Variable string/list equivalence (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one_list }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_one_list
+
+    #####
+
+    - name: '(CHECK) Replace IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_two }}'
+        purge_ip_variables: true
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_two
+
+    - name: 'Replace IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_two }}'
+        purge_ip_variables: true
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_two
+
+    - name: '(CHECK) Replace IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_two }}'
+        purge_ip_variables: true
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_two
+
+    - name: 'Replace IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_two }}'
+        purge_ip_variables: true
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_two
+
+    #####
+
+    - name: '(CHECK) Add extra IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one_list }}'
+        purge_ip_variables: false
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    - name: 'Add extra IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one_list }}'
+        purge_ip_variables: false
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    - name: '(CHECK) Add extra IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one_list }}'
+        purge_ip_variables: false
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    - name: 'Add extra IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: '{{ ip_variable_one_list }}'
+        purge_ip_variables: false
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    ###################################################################
+    # Update Port Variables
+
+    - name: '(CHECK) Add IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one }}'
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_one_list
+
+    - name: 'Add IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_one_list
+
+    - name: '(CHECK) Add IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one }}'
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_one_list
+
+    - name: 'Add IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_one_list
+
+    #####
+
+    - name: '(CHECK) Ensure IP Variable string/list equivalence (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one_list }}'
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_one_list
+
+    - name: 'Ensure IP Variable string/list equivalence (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one_list }}'
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_one_list
+
+    #####
+
+    - name: '(CHECK) Replace IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_two }}'
+        purge_port_variables: true
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_two
+
+    - name: 'Replace IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_two }}'
+        purge_port_variables: true
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_two
+
+    - name: '(CHECK) Replace IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_two }}'
+        purge_port_variables: true
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_two
+
+    - name: 'Replace IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_two }}'
+        purge_port_variables: true
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_two
+
+    #####
+
+    - name: '(CHECK) Add extra IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one_list }}'
+        purge_port_variables: false
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_both
+
+    - name: 'Add extra IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one_list }}'
+        purge_port_variables: false
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_both
+
+    - name: '(CHECK) Add extra IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one_list }}'
+        purge_port_variables: false
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_both
+
+    - name: 'Add extra IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: '{{ port_variable_one_list }}'
+        purge_port_variables: false
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+          - stateful_group.rule_group.rule_group.rule_variables.port_sets == port_variable_both
+
+    #####
+
+    - name: '(CHECK) Remove Port Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: {}
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    - name: 'Remove Port Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: {}
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    - name: '(CHECK) Remove Port Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: {}
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    - name: 'Remove Port Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        port_variables: {}
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" in stateful_group.rule_group.rule_group.rule_variables'
+          - stateful_group.rule_group.rule_group.rule_variables.ip_sets == ip_variable_both
+
+    #####
+
+    - name: '(CHECK) Remove IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: {}
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+
+    - name: 'Remove IP Variable'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: {}
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+
+    - name: '(CHECK) Remove IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: {}
+      register: stateful_group
+      check_mode: true
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+
+    - name: 'Remove IP Variable (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        ip_variables: {}
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is not changed
+          - '"rule_group" in stateful_group'
+          - '"rule_group" in stateful_group.rule_group'
+          - '"rule_group_metadata" in stateful_group.rule_group'
+          - '"capacity" in stateful_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in stateful_group.rule_group.rule_group_metadata'
+          - '"type" in stateful_group.rule_group.rule_group_metadata'
+          - stateful_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - stateful_group.rule_group.rule_group_metadata.capacity == 100
+          - stateful_group.rule_group.rule_group_metadata.rule_group_name == stateful_group_name
+          - stateful_group.rule_group.rule_group_metadata.rule_group_arn == stateful_rule_group_arn
+          - stateful_group.rule_group.rule_group_metadata.rule_group_id == stateful_rule_group_id
+          - '"rule_variables" in stateful_group.rule_group.rule_group'
+          - '"port_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+          - '"ip_sets" not in stateful_group.rule_group.rule_group.rule_variables'
+
+    ###################################################################
+    # Rule Order
+
+    - name: '(CHECK) Attempt to update the Default Rule Order'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        rule_order: 'strict'
+      register: stateful_group
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - stateful_group is failed
+
+    - name: 'Attempt to update the Default Rule Order'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        rule_order: 'strict'
+      register: stateful_group
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - stateful_group is failed
+
+    #####
+
+    - name: '(CHECK) Attempt to update the Default Rule Order (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        rule_order: 'default'
+      register: stateful_group
+      ignore_errors: True
+
+    # Because the default rule order doesn't necessitate the setting of
+    # RuleOptions, for 'default' the existence of statefule_rule_options (and specifically rule_order)
+    # isn't guaranteed, so we don't explicitly test for it here, instead we rely
+    # on 'changed' doing the right thing.
+    - assert:
+        that:
+          - stateful_group is not changed
+
+    - name: 'Attempt to update the Default Rule Order (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        rule_order: 'default'
+      register: stateful_group
+      ignore_errors: True
+
+    - assert:
+        that:
+          - stateful_group is not changed
+
+    ###################################################################
+    # Creation with 'strict' rule ordering
+
+    - name: '(CHECK) Create a Rule Group with strict order'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings:
+          - 'pass tcp any any -> any any (sid:1000001;)'
+        rule_order: strict
+      register: strict_group
+      check_mode: true
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is changed
+          - '"rule_group" in strict_group'
+          - '"rule_group" in strict_group.rule_group'
+          - '"rule_group_metadata" in strict_group.rule_group'
+          - '"capacity" in strict_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strict_group.rule_group.rule_group_metadata'
+          - '"type" in strict_group.rule_group.rule_group_metadata'
+          - strict_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strict_group.rule_group.rule_group_metadata.capacity == 100
+          - strict_group.rule_group.rule_group_metadata.rule_group_name == strict_ro_group_name
+          - '"stateful_rule_options" in strict_group.rule_group.rule_group'
+          - '"rule_order" in strict_group.rule_group.rule_group.stateful_rule_options'
+          - strict_group.rule_group.rule_group.stateful_rule_options.rule_order == 'STRICT_ORDER'
+
+    - name: 'Create a Rule Group with strict order'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings:
+          - 'pass tcp any any -> any any (sid:1000001;)'
+        rule_order: strict
+      register: strict_group
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is changed
+          - '"rule_group" in strict_group'
+          - '"rule_group" in strict_group.rule_group'
+          - '"rule_group_metadata" in strict_group.rule_group'
+          - '"capacity" in strict_group.rule_group.rule_group_metadata'
+          - '"rule_group_arn" in strict_group.rule_group.rule_group_metadata'
+          - '"rule_group_id" in strict_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strict_group.rule_group.rule_group_metadata'
+          - '"type" in strict_group.rule_group.rule_group_metadata'
+          - strict_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strict_group.rule_group.rule_group_metadata.capacity == 100
+          - strict_group.rule_group.rule_group_metadata.rule_group_name == strict_ro_group_name
+          - strict_group.rule_group.rule_group_metadata.rule_group_arn.startswith(account_arn)
+          - strict_group.rule_group.rule_group_metadata.rule_group_arn.endswith(strict_ro_group_name)
+          - '"stateful_rule_options" in strict_group.rule_group.rule_group'
+          - '"rule_order" in strict_group.rule_group.rule_group.stateful_rule_options'
+          - strict_group.rule_group.rule_group.stateful_rule_options.rule_order == 'STRICT_ORDER'
+
+    - name: Save RuleGroup ID/ARN for later
+      set_fact:
+        strict_rule_group_id: '{{ strict_group.rule_group.rule_group_metadata.rule_group_id }}'
+        strict_rule_group_arn: '{{ strict_group.rule_group.rule_group_metadata.rule_group_arn }}'
+
+    - name: '(CHECK) Create a Rule Group with strict order (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings:
+          - 'pass tcp any any -> any any (sid:1000001;)'
+        rule_order: strict
+      register: strict_group
+      check_mode: true
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is not changed
+          - '"rule_group" in strict_group'
+          - '"rule_group" in strict_group.rule_group'
+          - '"rule_group_metadata" in strict_group.rule_group'
+          - '"capacity" in strict_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strict_group.rule_group.rule_group_metadata'
+          - '"type" in strict_group.rule_group.rule_group_metadata'
+          - strict_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strict_group.rule_group.rule_group_metadata.capacity == 100
+          - strict_group.rule_group.rule_group_metadata.rule_group_name == strict_ro_group_name
+          - strict_group.rule_group.rule_group_metadata.rule_group_arn == strict_rule_group_arn
+          - strict_group.rule_group.rule_group_metadata.rule_group_id == strict_rule_group_id
+          - '"stateful_rule_options" in strict_group.rule_group.rule_group'
+          - '"rule_order" in strict_group.rule_group.rule_group.stateful_rule_options'
+          - strict_group.rule_group.rule_group.stateful_rule_options.rule_order == 'STRICT_ORDER'
+
+    - name: 'Create a Rule Group with strict order (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        capacity: 100
+        rule_strings:
+          - 'pass tcp any any -> any any (sid:1000001;)'
+        rule_order: strict
+      register: strict_group
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is not changed
+          - '"rule_group" in strict_group'
+          - '"rule_group" in strict_group.rule_group'
+          - '"rule_group_metadata" in strict_group.rule_group'
+          - '"capacity" in strict_group.rule_group.rule_group_metadata'
+          - '"rule_group_name" in strict_group.rule_group.rule_group_metadata'
+          - '"type" in strict_group.rule_group.rule_group_metadata'
+          - strict_group.rule_group.rule_group_metadata.type == 'STATEFUL'
+          - strict_group.rule_group.rule_group_metadata.capacity == 100
+          - strict_group.rule_group.rule_group_metadata.rule_group_name == strict_ro_group_name
+          - strict_group.rule_group.rule_group_metadata.rule_group_arn == strict_rule_group_arn
+          - strict_group.rule_group.rule_group_metadata.rule_group_id == strict_rule_group_id
+          - '"stateful_rule_options" in strict_group.rule_group.rule_group'
+          - '"rule_order" in strict_group.rule_group.rule_group.stateful_rule_options'
+          - strict_group.rule_group.rule_group.stateful_rule_options.rule_order == 'STRICT_ORDER'
+
+    ###################################################################
+    # Rule Order
+
+    - name: '(CHECK) Attempt to update the Default Rule Order from strict'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        rule_order: 'default'
+      register: strict_group
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is failed
+
+    - name: 'Attempt to update the Default Rule Order from strict'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        rule_order: 'default'
+      register: strict_group
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is failed
+
+    #####
+
+    - name: '(CHECK) Attempt to update the Default Rule Order from strict (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        rule_order: 'strict'
+      register: strict_group
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is not changed
+
+    - name: 'Attempt to update the Default Rule Order from strict (idempotency)'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        rule_order: 'strict'
+      register: strict_group
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - strict_group is not changed
+
+
+    ###################################################################
+    # Deletion
+
+    - name: 'Delete Stateful rule group'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: stateful_group
+
+    - assert:
+        that:
+          - stateful_group is changed
+
+    - name: 'Delete Strict rule group'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        state: absent
+      register: strict_group
+
+    - assert:
+        that:
+          - strict_group is changed
+
+  always:
+    - name: '(always) Delete Stateful rule group'
+      networkfirewall_rule_group:
+        name: '{{ stateful_group_name }}'
+        type: 'stateful'
+        state: absent
+      ignore_errors: true
+
+    - name: '(always) Delete Strict rule group'
+      networkfirewall_rule_group:
+        name: '{{ strict_ro_group_name }}'
+        type: 'stateful'
+        state: absent
+      ignore_errors: true
