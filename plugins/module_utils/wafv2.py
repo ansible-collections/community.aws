@@ -46,6 +46,9 @@ def wafv2_list_rule_groups(wafv2, scope, fail_json_aws, nextmarker=None):
 
 
 def wafv2_snake_dict_to_camel_dict(a):
+    if not isinstance(a, dict):
+        return a
+
     retval = {}
     for item in a.keys():
         if isinstance(a.get(item), dict):

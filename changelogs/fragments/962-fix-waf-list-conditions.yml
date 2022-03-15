@@ -1,0 +1,2 @@
+bugfixes:
+  - wafv2_web_acl - fix exception when a rule contains lists values (https://github.com/ansible-collections/community.aws/pull/962).
