@@ -106,13 +106,23 @@ extends_documentation_fragment:
 
 EXAMPLES = r'''
 ---
-# Example that creates a lambda event notification for a bucket
-- name: Process jpg image
+# Examples adding notification target configs to a S3 bucket
+- name: Setup bucket event notification to a Lambda function
   community.aws.s3_bucket_notification:
     state: present
     event_name: on_file_add_or_remove
     bucket_name: test-bucket
     lambda_function_arn: arn:aws:lambda:us-east-2:526810320200:function:test-lambda
+    events: ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
+    prefix: images/
+    suffix: .jpg
+
+- name: Setup bucket event notification to SQS
+  community.aws.s3_bucket_notification:
+    state: present
+    event_name: on_file_add_or_remove
+    bucket_name: test-bucket
+    queue_arn: arn:aws:sqs:us-east-2:526810320200:test-queue
     events: ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
     prefix: images/
     suffix: .jpg
