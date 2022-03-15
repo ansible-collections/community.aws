@@ -86,6 +86,8 @@ action_groups:
   - ec2_snapshot_copy
   - ec2_transit_gateway
   - ec2_transit_gateway_info
+  - ec2_transit_gateway_vpc_attachment
+  - ec2_transit_gateway_vpc_attachment_info
   - ec2_vpc_egress_igw
   - ec2_vpc_nacl
   - ec2_vpc_nacl_info
