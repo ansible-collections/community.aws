@@ -1,0 +1,96 @@
+---
+
+- name: Integration testing for the cloudfront_response_headers_policy module
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+
+    - name: Create a simple header policy
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-my-header-policy"
+        comment: Created by Ansible test
+        security_headers_config:
+          content_type_options:
+            override: true
+        state: present
+      register: create_result
+
+    - name: Assert creation withouth errors and return values
+      assert:
+        that:
+          - create_result is changed
+          - create_result is not failed
+          - create_result.response_headers_policy.response_headers_policy_config.name == "{{ resource_prefix }}-my-header-policy"
+
+    - name: Rerun same task to ensure idempotence
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-my-header-policy"
+        comment: Created by Ansible test
+        security_headers_config:
+          content_type_options:
+            override: true
+        state: present
+      register: rerun_result
+
+    - name: Assert no change and no errors
+      assert:
+        that:
+          - rerun_result is not changed
+          - rerun_result is not failed
+
+    - name: Update existing policy with more header configs
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-my-header-policy"
+        comment: Created by Ansible test
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://foo.com/bar'
+              - 'https://bar.com/foo'
+          access_control_allow_methods:
+            items:
+              - OPTIONS
+              - HEAD
+              - GET
+          access_control_max_age_sec: 1800
+          origin_override: true
+        security_headers_config:
+          content_type_options:
+            override: true
+        custom_headers_config:
+          items:
+            - { header: 'X-Test-Header', value: 'Foo', override: true }
+        state: present
+      register: update_result
+
+    - name: Assert update and updated return values
+      assert:
+        that:
+          - update_result is changed
+          - update_result.response_headers_policy.response_headers_policy_config.cors_config.access_control_max_age_sec == 1800
+
+    - name: Ensure policy is deleted
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-my-header-policy"
+        comment: Created by Ansible test
+        state: absent
+      register: delete_result
+
+    - name: Assert deletion without errors
+      assert:
+        that:
+          - delete_result is changed
+          - delete_result is not failed
+          - update_result.response_headers_policy is undefined
+
+  always:
+
+    - name: Ensure policy is deleted
+      cloudfront_response_headers_policy:
+        name: "{{ resource_prefix }}-my-header-policy"
+        state: absent
+        ignore_errors: true
