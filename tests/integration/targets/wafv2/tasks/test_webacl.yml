@@ -183,3 +183,48 @@
   assert:
     that:
       - out is not changed
+
+- name: test geo match statement
+  wafv2_web_acl:
+    name: "{{ web_acl_name }}"
+    state: present
+    description: hallo eins drei
+    scope: REGIONAL
+    default_action: Allow
+    sampled_requests: no
+    cloudwatch_metrics: yes
+    metric_name: blub
+    purge_rules: yes
+    rules:
+      - name: block-germany
+        priority: 1
+        action:
+          block: {}
+        visibility_config:
+          sampled_requests_enabled: yes
+          cloud_watch_metrics_enabled: yes
+          metric_name: block-germany
+        statement:
+          geo_match_statement:
+            country_codes:
+                - DE
+    tags:
+      A: B
+      C: D
+  register: out
+
+- name: verify change
+  assert:
+    that:
+      - out is changed
+
+- name: re-read webacl
+  wafv2_web_acl_info:
+    name: "{{ web_acl_name }}"
+    scope: REGIONAL
+  register: out
+
+- name: verify geo match statement
+  assert:
+    that:
+      - out.rules[0].statement.geo_match_statement.country_codes[0] == 'DE'
