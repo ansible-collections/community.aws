@@ -148,6 +148,18 @@
         that:
         - "'instance_refresh_id' in output"
 
+    - name: test starting a refresh with a valid ASG name - Idempotent
+      ec2_asg_instance_refresh:
+        name: "{{ resource_prefix }}-asg"
+        state: "started"
+      ignore_errors: true
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+          - '"Failed to start InstanceRefresh: An error occurred (InstanceRefreshInProgress) when calling the StartInstanceRefresh operation: An Instance Refresh is already in progress and blocks the execution of this Instance Refresh." in output.msg'
+
     - name: test starting a refresh with a nonexistent ASG name
       ec2_asg_instance_refresh:
         name: "nonexistentname-asg"
@@ -181,6 +193,19 @@
     - assert:
         that:
         - "'instance_refresh_id' in output"
+
+    - name: test canceling a refresh with a ASG name - Idempotent
+      ec2_asg_instance_refresh:
+        name: "{{ resource_prefix }}-asg"
+        state: "cancelled"
+      ignore_errors: yes
+      register: output
+
+    - assert:
+        that:
+        - output is not changed
+        - "'Failed to cancell InstanceRefresh: An error occurred (ActiveInstanceRefreshNotFound) when calling the CancelInstanceRefresh operation' in output.msg"
+
 
     - name: test starting a refresh with an ASG name and preferences dict
       ec2_asg_instance_refresh:
