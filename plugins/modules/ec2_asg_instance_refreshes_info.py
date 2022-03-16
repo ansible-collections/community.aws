@@ -178,13 +178,23 @@ def find_asg_instance_refreshes(conn, module):
         args['MaxRecords'] = asg_max_records
 
     try:
-        asgs = conn.describe_instance_refreshes(aws_retry=True, **args)
-        asgs = camel_dict_to_snake_dict(asgs)
-        result = dict(
-            instance_refreshes=asgs['instance_refreshes'],
-            next_token=asgs.get('next_token', ''),
-        )
-        return module.exit_json(**result)
+        instance_refreshes_result = {}
+        response = conn.describe_instance_refreshes(aws_retry=True, **args)
+        if 'InstanceRefreshes' in response:
+            instance_refreshes_dict = dict(
+                instance_refreshes=response['InstanceRefreshes'], next_token=response.get('next_token', ''))
+            instance_refreshes_result = camel_dict_to_snake_dict(
+                instance_refreshes_dict)
+
+        while 'NextToken' in response:
+            args['NextToken'] = response['NextToken']
+            response = conn.describe_instance_refreshes(aws_retry=True, **args)
+            if 'InstanceRefreshes' in response:
+                instance_refreshes_dict = camel_dict_to_snake_dict(dict(
+                    instance_refreshes=response['InstanceRefreshes'], next_token=response.get('next_token', '')))
+                instance_refreshes_result.update(instance_refreshes_dict)
+
+        return module.exit_json(**instance_refreshes_result)
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to describe InstanceRefreshes')
 

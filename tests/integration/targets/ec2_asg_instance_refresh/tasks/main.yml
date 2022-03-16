@@ -276,7 +276,7 @@
 
     - assert:
         that:
-          - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 7 
+          - output | community.general.json_query(inst_refresh_id_json_query) | unique | length == 7
       vars:
         inst_refresh_id_json_query: instance_refreshes[].instance_refresh_id
 
@@ -353,7 +353,7 @@
 
     - assert:
         that:
-          - "{{ output.instance_refreshes|length }} == 6 "
+          - "{{ output.instance_refreshes|length }} == 7"
 
     - name: test using both real nextToken and max_records=1
       ec2_asg_instance_refreshes_info:
