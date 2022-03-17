@@ -205,6 +205,23 @@ options:
         description:
           - Set to true to conduct the reboot through a MultiAZ failover.
         type: bool
+    iam_roles:
+        description:
+          - List of Amazon Web Services Identity and Access Management (IAM) roles to associate with DB instance.
+        type: list
+        elements: dict
+        suboptions:
+          feature_name:
+            description:
+              - The name of the feature associated with the IAM role.
+            type: str
+            required: yes
+          role_arn:
+            description:
+              - The ARN of the IAM role to associate with the DB instance.
+            type: str
+            required: yes
+        version_added: 4.0.0
     iops:
         description:
           - The Provisioned IOPS (I/O operations per second) value. Is only set when using I(storage_type) is set to io1.
@@ -316,6 +333,12 @@ options:
             a publicly resolvable DNS name, which resolves to a public IP address. A value of false specifies an internal
             instance with a DNS name that resolves to a private IP address.
         type: bool
+    purge_iam_roles:
+        description:
+          - Set to C(True) to remove any IAM roles that aren't specified in the task and are associated with the instance.
+        type: bool
+        default: False
+        version_added: 4.0.0
     restore_time:
         description:
           - If using I(creation_source=instance) this indicates the UTC date and time to restore from the source instance.
@@ -462,7 +485,49 @@ EXAMPLES = r'''
     vpc_security_group_ids:
       - sg-0be17ba10c9286b0b
     purge_security_groups: false
-    register: result
+  register: result
+
+# Add IAM role to db instance
+- name: Create IAM policy
+  community.aws.iam_managed_policy:
+    policy_name: "my-policy"
+    policy: "{{ lookup('file','files/policy.json') }}"
+    state: present
+  register: iam_policy
+
+- name: Create IAM role
+  community.aws.iam_role:
+    assume_role_policy_document: "{{ lookup('file','files/assume_policy.json') }}"
+    name: "my-role"
+    state: present
+    managed_policy: "{{ iam_policy.policy.arn }}"
+  register: iam_role
+
+- name: Create DB instance with added IAM role
+  community.aws.rds_instance:
+    id: "my-instance-id"
+    state: present
+    engine: postgres
+    engine_version: 14.2
+    username: "{{ username }}"
+    password: "{{ password }}"
+    db_instance_class: db.m6g.large
+    allocated_storage: "{{ allocated_storage }}"
+    iam_roles:
+      - role_arn: "{{ iam_role.arn }}"
+        feature_name: 's3Export'
+
+- name: Remove IAM role from DB instance
+  community.aws.rds_instance:
+    id: "my-instance-id"
+    state: present
+    engine: postgres
+    engine_version: 14.2
+    username: "{{ username }}"
+    password: "{{ password }}"
+    db_instance_class: db.m6g.large
+    allocated_storage: "{{ allocated_storage }}"
+    purge_iam_roles: yes
 '''
 
 RETURN = r'''
@@ -782,6 +847,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.rds import arg_spec_to_rds_params
 from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
+from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_iam_roles
 from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_final_identifier
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_rds_method_attribute
@@ -1121,6 +1187,7 @@ def main():
         creation_source=dict(choices=['snapshot', 's3', 'instance']),
         force_update_password=dict(type='bool', default=False, no_log=False),
         purge_cloudwatch_logs_exports=dict(type='bool', default=True),
+        purge_iam_roles=dict(type='bool', default=False),
         purge_tags=dict(type='bool', default=True),
         read_replica=dict(type='bool'),
         wait=dict(type='bool', default=True),
@@ -1154,6 +1221,7 @@ def main():
         engine_version=dict(),
         final_db_snapshot_identifier=dict(aliases=['final_snapshot_identifier']),
         force_failover=dict(type='bool'),
+        iam_roles=dict(type='list', elements='dict'),
         iops=dict(type='int'),
         kms_key_id=dict(),
         license_model=dict(),
@@ -1246,6 +1314,13 @@ def main():
             result, changed = call_method(client, module, method_name, parameters)
 
         instance_id = get_final_identifier(method_name, module)
+
+        # Check IAM roles
+        if state != 'absent':
+            iam_roles = module.params.get('iam_roles')
+            purge_iam_roles = module.params.get('purge_iam_roles')
+            if iam_roles or purge_iam_roles:
+                changed |= ensure_iam_roles(client, module, get_instance(client, module, instance_id), instance_id, iam_roles, purge_iam_roles)
 
         # Check tagging/promoting/rebooting/starting/stopping instance
         if state != 'absent' and (not module.check_mode or instance):

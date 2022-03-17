@@ -14,6 +14,7 @@ modify
 tagging
 replica
 upgrade
+iam_roles
 
 # TODO: uncomment after adding rds_cluster module
 # aurora
