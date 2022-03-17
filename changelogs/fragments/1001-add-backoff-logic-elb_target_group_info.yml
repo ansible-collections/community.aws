@@ -1,2 +1,2 @@
 bugfixes:
-  - Add backoff retry logic to elb_target_group_info (https://github.com/ansible-collections/community.aws/pull/1001)
+  - elb_target_group_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/1001)
