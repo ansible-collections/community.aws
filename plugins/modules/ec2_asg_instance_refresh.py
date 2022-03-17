@@ -13,7 +13,7 @@ version_added: 3.2.0
 short_description: Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
 description:
   - Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
-  - Can be used with M(community.aws.ec2_asg_instance_refreshes_info) to track the subsequent progress.
+  - Can be used with M(community.aws.ec2_asg_instance_refresh_info) to track the subsequent progress.
 author: "Dan Khersonsky (@danquixote)"
 options:
   state:

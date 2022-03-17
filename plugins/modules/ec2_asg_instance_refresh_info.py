@@ -10,7 +10,7 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: ec2_asg_instance_refreshes_info
+module: ec2_asg_instance_refresh_info
 version_added: 3.2.0
 short_description: Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 description:
@@ -48,23 +48,23 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Find an refresh by ASG name
-  community.aws.ec2_asg_instance_refreshes_info:
+  community.aws.ec2_asg_instance_refresh_info:
     name: somename-asg
 
 - name: Find an refresh by ASG name and one or more refresh-IDs
-  community.aws.ec2_asg_instance_refreshes_info:
+  community.aws.ec2_asg_instance_refresh_info:
     name: somename-asg
     ids: ['some-id-123']
   register: asgs
 
 - name: Find an refresh by ASG name and set max_records
-  community.aws.ec2_asg_instance_refreshes_info:
+  community.aws.ec2_asg_instance_refresh_info:
     name: somename-asg
     max_records: 4
   register: asgs
 
 - name: Find an refresh by ASG name and NextToken, if received from a previous call
-  community.aws.ec2_asg_instance_refreshes_info:
+  community.aws.ec2_asg_instance_refresh_info:
     name: somename-asg
     next_token: 'some-token-123'
   register: asgs
@@ -179,7 +179,7 @@ def find_asg_instance_refreshes(conn, module):
 
     try:
         instance_refreshes_result = {}
-        response = conn.describe_instance_refreshes(aws_retry=True, **args)
+        response = conn.describe_instance_refreshes(**args)
         if 'InstanceRefreshes' in response:
             instance_refreshes_dict = dict(
                 instance_refreshes=response['InstanceRefreshes'], next_token=response.get('next_token', ''))
@@ -188,7 +188,7 @@ def find_asg_instance_refreshes(conn, module):
 
         while 'NextToken' in response:
             args['NextToken'] = response['NextToken']
-            response = conn.describe_instance_refreshes(aws_retry=True, **args)
+            response = conn.describe_instance_refreshes(**args)
             if 'InstanceRefreshes' in response:
                 instance_refreshes_dict = camel_dict_to_snake_dict(dict(
                     instance_refreshes=response['InstanceRefreshes'], next_token=response.get('next_token', '')))
