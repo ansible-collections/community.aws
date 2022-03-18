@@ -29,7 +29,7 @@ options:
     required: true
   strategy:
     description:
-      - The strategy to use for the instance refresh. The only valid value is Rolling.
+      - The strategy to use for the instance refresh. The only valid value is C(Rolling).
       - A rolling update is an update that is applied to all instances in an Auto Scaling group until all instances have been updated.
       - A rolling update can fail due to failed health checks or if instances are on standby or are protected from scale in.
       - If the rolling update process fails, any instances that were already replaced are not rolled back to their previous configuration.
@@ -40,13 +40,13 @@ options:
       - Set of preferences associated with the instance refresh request.
       - If not provided, the default values are used.
       - For I(min_healthy_percentage), the default value is C(90).
-      - For InstanceWarmup, the default is to use the value specified for the health check grace period for the Auto Scaling group.
+      - For I(instance_warmup), the default is to use the value specified for the health check grace period for the Auto Scaling group.
     required: false
     suboptions:
       min_healthy_percentage:
         description:
           - Total percent of capacity in ASG that must remain healthy during instance refresh to allow operation to continue.
-          - It is rounded up to the nearest integer).
+          - It is rounded up to the nearest integer.
         type: int
         default: 90
       instance_warmup:
@@ -92,6 +92,47 @@ instance_refresh_id:
     returned: success
     type: str
     sample: "08b91cf7-8fa6-48af-b6a6-d227f40f1b9b"
+auto_scaling_group_name:
+    description: Name of autoscaling group
+    returned: success
+    type: str
+    sample: "public-webapp-production-1"
+status:
+    description:
+      -  The current state of the group when DeleteAutoScalingGroup is in progress.
+      -  The following are the possible statuses
+      -    Pending --  The request was created, but the operation has not started.
+      -    InProgress --  The operation is in progress.
+      -    Successful --  The operation completed successfully.
+      -    Failed --  The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.
+      -    Cancelling --
+      -        An ongoing operation is being cancelled.
+      -        Cancellation does not roll back any replacements that have already been completed,
+      -        but it prevents new replacements from being started.
+      -    Cancelled --  The operation is cancelled.
+    returned: success
+    type: str
+    sample: "Pending"
+start_time:
+    description: The date and time this ASG was created, in ISO 8601 format.
+    returned: success
+    type: str
+    sample: "2015-11-25T00:05:36.309Z"
+end_time:
+    description: The date and time this ASG was created, in ISO 8601 format.
+    returned: success
+    type: str
+    sample: "2015-11-25T00:05:36.309Z"
+percentage_complete:
+    description: the % of completeness
+    returned: success
+    type: int
+    sample: 100
+instances_to_update:
+    description: num. of instance to update
+    returned: success
+    type: int
+    sample: 5
 '''
 
 try:
@@ -117,7 +158,16 @@ def start_or_cancel_instance_refresh(conn, module):
     Returns:
         Dict
         {
-            'instance_refresh_id': 'string'
+          'instance_refreshes': {
+                      'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
+                      'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
+                      'status': 'Cancelled',
+                      'status_reason': 'Cancelled due to user request.',
+                      'start_time': '2021-02-04T03:39:40+00:00',
+                      'end_time': '2021-02-04T03:41:18+00:00',
+                      'percentage_complete': 0,
+                      'instances_to_update': 1
+            }
         }
     """
 
@@ -145,8 +195,9 @@ def start_or_cancel_instance_refresh(conn, module):
             elif asg_state == 'cancelled':
                 module.exit_json(changed=True, msg='Would have cencelled instance refresh if not in check mode.')
         result = cmd_invocations[asg_state](aws_retry=True, **args)
+        instance_refreshes = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name ,InstanceRefreshIds=[result['InstanceRefreshId']])
         result = dict(
-            instance_refresh_id=result['InstanceRefreshId']
+            instance_refreshes=camel_dict_to_snake_dict(instance_refreshes['InstanceRefreshes'][0])
         )
         return module.exit_json(**result)
     except (BotoCoreError, ClientError) as e:
