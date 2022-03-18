@@ -146,7 +146,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: test starting a refresh with a valid ASG name - Idempotent
       ec2_asg_instance_refresh:
@@ -192,7 +192,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: test canceling a refresh with a ASG name - Idempotent
       ec2_asg_instance_refresh:
@@ -220,7 +220,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: re-test canceling a refresh with an ASG name
       ec2_asg_instance_refresh:
@@ -230,7 +230,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: test valid start - V1 - (with preferences missing instance_warmup)
       ec2_asg_instance_refresh:
@@ -245,7 +245,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: re-test canceling a refresh with an ASG name
       ec2_asg_instance_refresh:
@@ -255,7 +255,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: test valid start - V2 - (with preferences missing min_healthy_percentage)
       ec2_asg_instance_refresh:
@@ -270,7 +270,7 @@
 
     - assert:
         that:
-        - "'instance_refresh_id' in output"
+        - "'instance_refresh_id' in output.instance_refreshes"
 
     - name: test invalid cancelation - V2 - (with preferences)
       ec2_asg_instance_refresh:
@@ -314,18 +314,18 @@
 
     - assert:
         that:
-          - "{{ output.instance_refreshes|length }} == 0 "
+          - "{{ output.instance_refreshes|length }} == 0"
 
     - name: test using a real refresh ID
       ec2_asg_instance_refresh_info:
         name: "{{ resource_prefix }}-asg"
-        ids: [ '{{ refreshout.instance_refresh_id }}' ]
+        ids: [ '{{ refreshout.instance_refreshes.instance_refresh_id }}' ]
       ignore_errors: yes
       register: output
 
     - assert:
         that:
-          - "{{ output.instance_refreshes|length }} == 1 "
+          - "{{ output.instance_refreshes |length }} == 1"
 
     - name: test getting info for an ASG name which doesn't exist
       ec2_asg_instance_refresh_info:

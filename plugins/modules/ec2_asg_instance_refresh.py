@@ -152,22 +152,30 @@ def start_or_cancel_instance_refresh(conn, module):
     """
     Args:
         conn (boto3.AutoScaling.Client): Valid Boto3 ASG client.
-        name (str): Mandatory name of the ASG you are looking for.
-        state (str): Start or Cancel a refresh
+        module: AnsibleAWSModule object
 
     Returns:
         Dict
         {
-          'instance_refreshes': {
-                      'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
-                      'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
-                      'status': 'Cancelled',
-                      'status_reason': 'Cancelled due to user request.',
-                      'start_time': '2021-02-04T03:39:40+00:00',
-                      'end_time': '2021-02-04T03:41:18+00:00',
-                      'percentage_complete': 0,
-                      'instances_to_update': 1
-            }
+          info_result: {
+              "changed": false,
+              "failed": false,
+              "instance_refreshes": [
+                      {
+                          'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
+                          'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
+                          'instances_to_update': 1,
+                          'percentage_complete': 0,
+                          "preferences": {
+                              "instance_warmup": 60,
+                              "min_healthy_percentage": 90,
+                              "skip_matching": false
+                          },
+                          'start_time': '2021-02-04T03:39:40+00:00',
+                          'status': 'Cancelling',
+                          'status_reason': 'Replacing instances before cancelling.',
+                      }
+              }
         }
     """
 
@@ -195,7 +203,7 @@ def start_or_cancel_instance_refresh(conn, module):
             elif asg_state == 'cancelled':
                 module.exit_json(changed=True, msg='Would have cencelled instance refresh if not in check mode.')
         result = cmd_invocations[asg_state](aws_retry=True, **args)
-        instance_refreshes = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name ,InstanceRefreshIds=[result['InstanceRefreshId']])
+        instance_refreshes = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name, InstanceRefreshIds=[result['InstanceRefreshId']])
         result = dict(
             instance_refreshes=camel_dict_to_snake_dict(instance_refreshes['InstanceRefreshes'][0])
         )

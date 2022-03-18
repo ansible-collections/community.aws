@@ -134,32 +134,32 @@ def find_asg_instance_refreshes(conn, module):
     """
     Args:
         conn (boto3.AutoScaling.Client): Valid Boto3 ASG client.
-        name (str): Mandatory name of the ASG you are looking for.
-        ids (dict): Optional list of ASG Instace Refresh IDs
-        max_records (int): Optional number of max records to return
-        next_token (str): Optional NextToken from previous call
-
-    Basic Usage:
-        >>> name = 'some-asg'
-        >>> conn = boto3.client('autoscaling', region_name='us-west-2')
-        >>> results = find_asg_instance_refreshes(name, conn)
+        module: AnsibleAWSModule object
 
     Returns:
         Dict
         {
-            'instance_refreshes': [
-                    {
-                        'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
-                        'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
-                        'status': 'Cancelled',
-                        'status_reason': 'Cancelled due to user request.',
-                        'start_time': '2021-02-04T03:39:40+00:00',
-                        'end_time': '2021-02-04T03:41:18+00:00',
-                        'percentage_complete': 0,
-                        'instances_to_update': 1
-                    }
-            ],
-            'next_token': 'string'
+          info_result: {
+              "changed": false,
+              "failed": false,
+              "instance_refreshes": [
+                      {
+                          'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
+                          'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
+                          'instances_to_update': 1,
+                          'percentage_complete': 0,
+                          "preferences": {
+                              "instance_warmup": 60,
+                              "min_healthy_percentage": 90,
+                              "skip_matching": false
+                          },
+                          'start_time': '2021-02-04T03:39:40+00:00',
+                          'status': 'Cancelled',
+                          'status_reason': 'Cancelled due to user request.',
+                      }
+              ],
+              'next_token': 'string'
+              }
         }
         """
 
