@@ -2,7 +2,7 @@
 # This space was a copy by aws_eks_cluster integration test
 - name: ensure IAM instance role exists
   iam_role:
-    name: aws_eks_cluster_role
+    name: ansible-test-aws_eks_cluster_role
     assume_role_policy_document: '{{ lookup(''file'',''eks-trust-policy.json'') }}'
     state: present
     create_instance_profile: 'no'

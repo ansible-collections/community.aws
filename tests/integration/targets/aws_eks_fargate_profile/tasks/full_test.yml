@@ -1,7 +1,7 @@
 # Creating dependencies
 - name: create IAM instance role 
   iam_role:
-    name: 'eksctl-{{ eks_cluster_name }}-cluster-FargatePodExecutionRole'
+    name: 'ansible-test-aws_eks_fargate_profile'
     assume_role_policy_document: '{{ lookup(''file'',''eks-fargate-profile-trust-policy.json'') }}'
     state: present
     create_instance_profile: 'no'
