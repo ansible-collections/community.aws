@@ -1315,16 +1315,19 @@ def main():
 
         instance_id = get_final_identifier(method_name, module)
 
-        # Check IAM roles
         if state != 'absent':
-            iam_roles = module.params.get('iam_roles')
-            purge_iam_roles = module.params.get('purge_iam_roles')
-            if iam_roles or purge_iam_roles:
-                changed |= ensure_iam_roles(client, module, get_instance(client, module, instance_id), instance_id, iam_roles, purge_iam_roles)
+            # Check tagging/promoting/rebooting/starting/stopping instance
+            if not module.check_mode or instance:
+                changed |= update_instance(client, module, instance, instance_id)
 
-        # Check tagging/promoting/rebooting/starting/stopping instance
-        if state != 'absent' and (not module.check_mode or instance):
-            changed |= update_instance(client, module, instance, instance_id)
+            # Check IAM roles
+            if module.params.get('iam_roles') or module.params.get('purge_iam_roles'):
+                instance = get_instance(client, module, instance_id)
+                instance = camel_dict_to_snake_dict(instance, ignore_list=['Tags', 'ProcessorFeatures'])
+                purge_iam_roles = module.params.get('purge_iam_roles')
+                target_roles = module.params.get('iam_roles')
+                existing_roles = instance.get('associated_roles', [])
+                changed |= ensure_iam_roles(client, module, instance_id, existing_roles, target_roles, purge_iam_roles)
 
         if changed:
             instance = get_instance(client, module, instance_id)
