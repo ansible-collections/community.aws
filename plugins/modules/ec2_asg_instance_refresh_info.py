@@ -137,29 +137,24 @@ def find_asg_instance_refreshes(conn, module):
         module: AnsibleAWSModule object
 
     Returns:
-        Dict
         {
-          info_result: {
-              "changed": false,
-              "failed": false,
-              "instance_refreshes": [
-                      {
-                          'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
-                          'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
-                          'instances_to_update': 1,
-                          'percentage_complete': 0,
-                          "preferences": {
-                              "instance_warmup": 60,
-                              "min_healthy_percentage": 90,
-                              "skip_matching": false
-                          },
-                          'start_time': '2021-02-04T03:39:40+00:00',
-                          'status': 'Cancelled',
-                          'status_reason': 'Cancelled due to user request.',
-                      }
-              ],
-              'next_token': 'string'
-              }
+            "instance_refreshes": [
+                    {
+                        'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
+                        'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
+                        'instances_to_update': 1,
+                        'percentage_complete': 0,
+                        "preferences": {
+                            "instance_warmup": 60,
+                            "min_healthy_percentage": 90,
+                            "skip_matching": false
+                        },
+                        'start_time': '2021-02-04T03:39:40+00:00',
+                        'status': 'Cancelled',
+                        'status_reason': 'Cancelled due to user request.',
+                    }
+            ],
+            'next_token': 'string'
         }
         """
 
@@ -217,12 +212,7 @@ def main():
         'autoscaling',
         retry_decorator=AWSRetry.jittered_backoff(retries=10)
     )
-    results = find_asg_instance_refreshes(
-        autoscaling,
-        module,
-    )
-
-    return results
+    find_asg_instance_refreshes(autoscaling, module)
 
 
 if __name__ == '__main__':

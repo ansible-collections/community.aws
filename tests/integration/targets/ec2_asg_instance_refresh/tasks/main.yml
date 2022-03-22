@@ -204,8 +204,6 @@
     - assert:
         that:
         - output is not changed
-        - "'Failed to cancell InstanceRefresh: An error occurred (ActiveInstanceRefreshNotFound) when calling the CancelInstanceRefresh operation' in output.msg"
-
 
     - name: test starting a refresh with an ASG name and preferences dict
       ec2_asg_instance_refresh:

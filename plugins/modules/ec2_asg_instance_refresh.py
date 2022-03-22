@@ -41,6 +41,7 @@ options:
       - If not provided, the default values are used.
       - For I(min_healthy_percentage), the default value is C(90).
       - For I(instance_warmup), the default is to use the value specified for the health check grace period for the Auto Scaling group.
+      - Can not be specified when I(state) is set to 'cancelled'.
     required: false
     suboptions:
       min_healthy_percentage:
@@ -155,27 +156,23 @@ def start_or_cancel_instance_refresh(conn, module):
         module: AnsibleAWSModule object
 
     Returns:
-        Dict
         {
-          info_result: {
-              "changed": false,
-              "failed": false,
-              "instance_refreshes": [
-                      {
-                          'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
-                          'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
-                          'instances_to_update': 1,
-                          'percentage_complete': 0,
-                          "preferences": {
-                              "instance_warmup": 60,
-                              "min_healthy_percentage": 90,
-                              "skip_matching": false
-                          },
-                          'start_time': '2021-02-04T03:39:40+00:00',
-                          'status': 'Cancelling',
-                          'status_reason': 'Replacing instances before cancelling.',
-                      }
-              }
+            "instance_refreshes": [
+                    {
+                        'auto_scaling_group_name': 'ansible-test-hermes-63642726-asg',
+                        'instance_refresh_id': '6507a3e5-4950-4503-8978-e9f2636efc09',
+                        'instances_to_update': 1,
+                        'percentage_complete': 0,
+                        "preferences": {
+                            "instance_warmup": 60,
+                            "min_healthy_percentage": 90,
+                            "skip_matching": false
+                        },
+                        'start_time': '2021-02-04T03:39:40+00:00',
+                        'status': 'Cancelling',
+                        'status_reason': 'Replacing instances before cancelling.',
+                    }
+              ]
         }
     """
 
@@ -186,7 +183,7 @@ def start_or_cancel_instance_refresh(conn, module):
     args = {}
     args['AutoScalingGroupName'] = asg_name
     if asg_state == 'started':
-        args['Strategy'] = 'Rolling'
+        args['Strategy'] = module.params.get('strategy')
     if preferences:
         if asg_state == 'cancelled':
             module.fail_json(msg='can not pass preferences dict when canceling a refresh')
@@ -201,7 +198,7 @@ def start_or_cancel_instance_refresh(conn, module):
             if asg_state == 'started':
                 module.exit_json(changed=True, msg='Would have started instance refresh if not in check mode.')
             elif asg_state == 'cancelled':
-                module.exit_json(changed=True, msg='Would have cencelled instance refresh if not in check mode.')
+                module.exit_json(changed=True, msg='Would have cancelled instance refresh if not in check mode.')
         result = cmd_invocations[asg_state](aws_retry=True, **args)
         instance_refreshes = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name, InstanceRefreshIds=[result['InstanceRefreshId']])
         result = dict(
@@ -252,11 +249,8 @@ def main():
             catch_extra_error_codes=['InstanceRefreshInProgress']
         )
     )
-    results = start_or_cancel_instance_refresh(
-        autoscaling,
-        module,
-    )
-    return results
+
+    start_or_cancel_instance_refresh(autoscaling, module)
 
 
 if __name__ == '__main__':
