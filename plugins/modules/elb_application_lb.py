@@ -62,25 +62,25 @@ options:
       - Defaults to C('defensive')
     type: str
     choices: ['monitor', 'defensive', 'strictest']
-    version_added: 4.0.0
+    version_added: 3.2.0
   http_drop_invalid_header_fields:
     description:
       - Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).
       - Defaults to C(false)
     type: bool
-    version_added: 4.0.0
+    version_added: 3.2.0
   http_x_amzn_tls_version_and_cipher_suite:
     description:
       - Indicates whether the two headers are added to the client request before sending it to the target.
       - Defaults to C(false)
     type: bool
-    version_added: 4.0.0
+    version_added: 3.2.0
   http_xff_client_port:
     description:
       - Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.
       - Defaults to C(false)
     type: bool
-    version_added: 4.0.0
+    version_added: 3.2.0
   idle_timeout:
     description:
       - The number of seconds to wait before an idle connection is closed.
@@ -213,7 +213,7 @@ options:
       - Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
       - Defaults to C(false)
     type: bool
-    version_added: 4.0.0
+    version_added: 3.2.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
