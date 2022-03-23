@@ -2,7 +2,6 @@
 - name: 'eks_cluster integration tests'
   collections:
     - amazon.aws
-    - amazon.community
   module_defaults:
     group/aws:
       aws_access_key: '{{ aws_access_key }}'
