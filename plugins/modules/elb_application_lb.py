@@ -49,12 +49,12 @@ options:
   deletion_protection:
     description:
       - Indicates whether deletion protection for the ALB is enabled.
-      - Defaults to C(false).
+      - Defaults to C(False).
     type: bool
   http2:
     description:
       - Indicates whether to enable HTTP2 routing.
-      - Defaults to C(true)
+      - Defaults to C(True).
     type: bool
   http_desync_mitigation_mode:
     description:
@@ -65,20 +65,20 @@ options:
     version_added: 3.2.0
   http_drop_invalid_header_fields:
     description:
-      - Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).
-      - Defaults to C(false)
+      - Indicates whether HTTP headers with invalid header fields are removed by the load balancer C(True) or routed to targets C(False).
+      - Defaults to C(False).
     type: bool
     version_added: 3.2.0
   http_x_amzn_tls_version_and_cipher_suite:
     description:
       - Indicates whether the two headers are added to the client request before sending it to the target.
-      - Defaults to C(false)
+      - Defaults to C(False).
     type: bool
     version_added: 3.2.0
   http_xff_client_port:
     description:
       - Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.
-      - Defaults to C(false)
+      - Defaults to C(False).
     type: bool
     version_added: 3.2.0
   idle_timeout:
@@ -211,7 +211,7 @@ options:
   waf_fail_open:
     description:
       - Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.
-      - Defaults to C(false)
+      - Defaults to C(False).
     type: bool
     version_added: 3.2.0
 extends_documentation_fragment:
