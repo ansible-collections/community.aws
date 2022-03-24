@@ -337,6 +337,7 @@ from ansible_collections.community.aws.plugins.module_utils.sns import compare_d
 from ansible_collections.community.aws.plugins.module_utils.sns import list_topic_subscriptions
 from ansible_collections.community.aws.plugins.module_utils.sns import canonicalize_endpoint
 from ansible_collections.community.aws.plugins.module_utils.sns import get_info
+from ansible_collections.community.aws.plugins.module_utils.sns import update_tags
 
 
 class SnsTopicManager(object):

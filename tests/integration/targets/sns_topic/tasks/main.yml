@@ -427,6 +427,170 @@
       that:
       - third_party_deletion is failed
       - third_party_topic.sns_topic.subscriptions|length == third_party_deletion_facts.sns_topic.subscriptions|length
+  
+  # Test tags
+  - name: create standard SNS topic
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      display_name: My topic name
+    register: sns_topic_create
+
+  - name: assert that creation worked
+    assert:
+      that:
+      - sns_topic_create.changed
+
+  - name: set sns_arn fact
+    set_fact:
+      sns_arn: '{{ sns_topic_create.sns_arn }}'
+
+  - name: Add tags to topic - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    check_mode: true
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Add tags to topic
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Add tags to topic to verify idempotency - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    check_mode: true
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is not changed
+  
+  - name: Add tags to topic to verify idempotency
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is not changed
+  
+  - name: Update (add/remove) tags - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_three: '{{ tiny_prefix }} Three'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    check_mode: true
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Update tags to verify idempotency
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_three: '{{ tiny_prefix }} Three'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Update tags without purge - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+    check_mode: true
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Update tags without purge
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Remove all the tags - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags: {}
+    check_mode: true
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Remove all the tags
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags: {}
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Update with CamelCase tags
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags:
+        "lowercase spaced": 'hello cruel world'
+        "Title Case": 'Hello Cruel World'
+        CamelCase: 'SimpleCamelCase'
+        snake_case: 'simple_snake_case'
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is changed
+  
+  - name: Do not specify any tag to ensure previous tags are not removed
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+    register: sns_topic_tags
+  
+  - assert:
+      that:
+      - sns_topic_tags is not changed
 
   always:
 
