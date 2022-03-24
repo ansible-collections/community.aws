@@ -4,8 +4,7 @@
     name: 'ansible-test-aws_eks_fargate_profile'
     assume_role_policy_document: '{{ lookup(''file'',''eks-fargate-profile-trust-policy.json'') }}'
     state: present
-    create_instance_profile: 'no'
-    wait: true
+    create_instance_profile: no
     managed_policies:
       - AmazonEKSFargatePodExecutionRolePolicy
   register: iam_role_fargate

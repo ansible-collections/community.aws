@@ -1,6 +1,6 @@
 - name: Delete IAM role
   iam_role:
-    name: "{{ iam_role_fargate.name }}"
+    name: "{{ iam_role_fargate.role_name }}"
     state: absent
   ignore_errors: true
 
