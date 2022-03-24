@@ -43,17 +43,44 @@
         managed_policy: "{{ s3_integration_policy.policy.arn }}"
       register: s3_integration_role_3
 
+    # ------------------------------------------------------------------------------------------
+
+    - name: Create DB instance with IAM roles - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        engine: postgres
+        engine_version: "{{ postgres_db_engine_version }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        db_instance_class: "{{ postgres_db_instance_class }}"
+        allocated_storage: "{{ allocated_storage }}"
+        allow_major_version_upgrade: yes
+        iam_roles:
+          - role_arn: "{{ s3_integration_role_1.arn }}"
+            feature_name: 's3Export'
+          - role_arn: "{{ s3_integration_role_2.arn }}"
+            feature_name: 'Lambda'
+          - role_arn: "{{ s3_integration_role_3.arn }}"
+            feature_name: 's3Import'
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - result.changed
+
     - name: Create DB instance with IAM roles
       rds_instance:
         id: "{{ instance_id }}"
         state: present
         engine: postgres
         engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ postgres_db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
+        allow_major_version_upgrade: yes
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
@@ -72,13 +99,36 @@
           - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 's3Import' in result.associated_roles | map(attribute='feature_name') }}"
 
+    - name: Create DB instance with IAM roles (idempotence) - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        engine: postgres
+        engine_version: "{{ postgres_db_engine_version }}"
+        username: "{{ username }}"
+        password: "{{ password }}"
+        db_instance_class: "{{ postgres_db_instance_class }}"
+        allocated_storage: "{{ allocated_storage }}"
+        iam_roles:
+          - role_arn: "{{ s3_integration_role_1.arn }}"
+            feature_name: 's3Export'
+          - role_arn: "{{ s3_integration_role_2.arn }}"
+            feature_name: 'Lambda'
+          - role_arn: "{{ s3_integration_role_3.arn }}"
+            feature_name: 's3Import'
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - not result.changed
+
     - name: Create DB instance with IAM roles (idempotence)
       rds_instance:
         id: "{{ instance_id }}"
         state: present
         engine: postgres
         engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ postgres_db_instance_class }}"
@@ -107,7 +157,6 @@
         state: present
         engine: postgres
         engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ postgres_db_instance_class }}"
@@ -130,18 +179,30 @@
           - "{{ 's3Export' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 's3Import' in result.associated_roles | map(attribute='feature_name') }}"
+
+    # ------------------------------------------------------------------------------------------
+
+    - name: Remove s3Import IAM role from db instance - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        iam_roles:
+          - role_arn: "{{ s3_integration_role_1.arn }}"
+            feature_name: 's3Export'
+          - role_arn: "{{ s3_integration_role_2.arn }}"
+            feature_name: 'Lambda'
+        purge_iam_roles: yes
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - result.changed
 
     - name: Remove s3Import IAM role from db instance
       rds_instance:
         id: "{{ instance_id }}"
         state: present
-        engine: postgres
-        engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: "{{ postgres_db_instance_class }}"
-        allocated_storage: "{{ allocated_storage }}"
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
@@ -158,18 +219,28 @@
           - "{{ 's3Export' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 's3Import' not in result.associated_roles | map(attribute='feature_name') }}"
+
+    - name: Remove s3Import IAM role from db instance (idempotence) - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        iam_roles:
+          - role_arn: "{{ s3_integration_role_1.arn }}"
+            feature_name: 's3Export'
+          - role_arn: "{{ s3_integration_role_2.arn }}"
+            feature_name: 'Lambda'
+        purge_iam_roles: yes
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - not result.changed
 
     - name: Remove s3Import IAM role from db instance (idempotence)
       rds_instance:
         id: "{{ instance_id }}"
         state: present
-        engine: postgres
-        engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: "{{ postgres_db_instance_class }}"
-        allocated_storage: "{{ allocated_storage }}"
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
@@ -187,17 +258,24 @@
           - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 's3Import' not in result.associated_roles | map(attribute='feature_name') }}"
 
+    # ------------------------------------------------------------------------------------------
+
+    - name: Remove IAM roles from db instance - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        purge_iam_roles: yes
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - result.changed
+
     - name: Remove IAM roles from db instance
       rds_instance:
         id: "{{ instance_id }}"
         state: present
-        engine: postgres
-        engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: "{{ postgres_db_instance_class }}"
-        allocated_storage: "{{ allocated_storage }}"
         purge_iam_roles: yes
       register: result
 
@@ -207,17 +285,22 @@
           - "result.db_instance_identifier == '{{ instance_id }}'"
           - result.associated_roles | length == 0
 
+    - name: Remove IAM roles from db instance (idempotence) - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        purge_iam_roles: yes
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - not result.changed
+
     - name: Remove IAM roles from db instance (idempotence)
       rds_instance:
         id: "{{ instance_id }}"
         state: present
-        engine: postgres
-        engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: "{{ postgres_db_instance_class }}"
-        allocated_storage: "{{ allocated_storage }}"
         purge_iam_roles: yes
       register: result
 
@@ -227,17 +310,30 @@
           - "result.db_instance_identifier == '{{ instance_id }}'"
           - result.associated_roles | length == 0
 
+    # ------------------------------------------------------------------------------------------
+
+    - name: Add IAM roles to existing db instance - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        iam_roles:
+          - role_arn: "{{ s3_integration_role_1.arn }}"
+            feature_name: 's3Export'
+          - role_arn: "{{ s3_integration_role_2.arn }}"
+            feature_name: 'Lambda'
+          - role_arn: "{{ s3_integration_role_3.arn }}"
+            feature_name: 's3Import'
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - result.changed
+
     - name: Add IAM roles to existing db instance
       rds_instance:
         id: "{{ instance_id }}"
         state: present
-        engine: postgres
-        engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: "{{ postgres_db_instance_class }}"
-        allocated_storage: "{{ allocated_storage }}"
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
@@ -256,17 +352,29 @@
           - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
           - "{{ 's3Import' in result.associated_roles | map(attribute='feature_name') }}"
 
+    - name: Add IAM roles to existing db instance (idempotence) - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        iam_roles:
+          - role_arn: "{{ s3_integration_role_1.arn }}"
+            feature_name: 's3Export'
+          - role_arn: "{{ s3_integration_role_2.arn }}"
+            feature_name: 'Lambda'
+          - role_arn: "{{ s3_integration_role_3.arn }}"
+            feature_name: 's3Import'
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - not result.changed
+
     - name: Add IAM roles to existing db instance (idempotence)
       rds_instance:
         id: "{{ instance_id }}"
         state: present
-        engine: postgres
-        engine_version: "{{ postgres_db_engine_version }}"
-        allow_major_version_upgrade: true
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: "{{ postgres_db_instance_class }}"
-        allocated_storage: "{{ allocated_storage }}"
+
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
