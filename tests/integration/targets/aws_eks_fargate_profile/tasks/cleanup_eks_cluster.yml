@@ -1,3 +1,9 @@
+- name: Delete IAM role
+  iam_role:
+    name: "{{ iam_role_fargate.name }}"
+    state: absent
+  ignore_errors: true
+
 - name: remove EKS cluster
   aws_eks_cluster:
     name: '{{ eks_cluster_name }}'
