@@ -9,6 +9,10 @@
       - AmazonEKSFargatePodExecutionRolePolicy
   register: iam_role_fargate
 
+- name: Pause a few seconds to ensure IAM role is available to next task
+  pause:
+    seconds: 10
+
 # Test - Try Create Fargate profile in non existent EKS
 - name: attempt to create fargate profile in non existent eks
   aws_eks_fargate_profile:
