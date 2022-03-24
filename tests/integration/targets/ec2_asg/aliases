@@ -4,3 +4,5 @@
 disabled
 
 cloud/aws
+
+ec2_asg_info
