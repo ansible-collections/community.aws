@@ -196,19 +196,19 @@ def start_or_cancel_instance_refresh(conn, module):
     try:
         if module.check_mode:
             if asg_state == 'started':
-              ongoing_refresh=conn.describe_instance_refreshes(AutoScalingGroupName=asg_name).get('InstanceRefreshes','[]')
-              if ongoing_refresh:
-                module.exit_json(changed=False, msg='In check_mode - Instance Refresh is already in progress, can not start new instance refresh.')
-              else:
-                module.exit_json(changed=True, msg='Would have started instance refresh if not in check mode.')
+                ongoing_refresh = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name).get('InstanceRefreshes', '[]')
+                if ongoing_refresh:
+                    module.exit_json(changed=False, msg='In check_mode - Instance Refresh is already in progress, can not start new instance refresh.')
+                else:
+                    module.exit_json(changed=True, msg='Would have started instance refresh if not in check mode.')
             elif asg_state == 'cancelled':
-              ongoing_refresh=conn.describe_instance_refreshes(AutoScalingGroupName=asg_name).get('InstanceRefreshes','[]')[0]
-              if ongoing_refresh.get('Status','') in ['Cancelling', 'Cancelled']:
-                module.exit_json(changed=False, msg='In check_mode - Instance Refresh already cancelled or is pending cancellation.')
-              elif not ongoing_refresh:
-                module.exit_json(chaned=False, msg='In check_mode - No active referesh found, nothing to cancel.')
-              else:
-                module.exit_json(changed=True, msg='Would have cancelled instance refresh if not in check mode.')
+                ongoing_refresh = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name).get('InstanceRefreshes', '[]')[0]
+                if ongoing_refresh.get('Status', '') in ['Cancelling', 'Cancelled']:
+                    module.exit_json(changed=False, msg='In check_mode - Instance Refresh already cancelled or is pending cancellation.')
+                elif not ongoing_refresh:
+                    module.exit_json(chaned=False, msg='In check_mode - No active referesh found, nothing to cancel.')
+                else:
+                    module.exit_json(changed=True, msg='Would have cancelled instance refresh if not in check mode.')
         result = cmd_invocations[asg_state](aws_retry=True, **args)
         instance_refreshes = conn.describe_instance_refreshes(AutoScalingGroupName=asg_name, InstanceRefreshIds=[result['InstanceRefreshId']])
         result = dict(
