@@ -15,7 +15,7 @@
 
 # Test - Try Create Fargate profile in non existent EKS
 - name: attempt to create fargate profile in non existent eks
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: fake_cluster
@@ -27,14 +27,14 @@
   register: aws_eks_non_existent_eks
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile did nothing
+- name: check that eks_fargate_profile did nothing
   assert:
     that:
       - aws_eks_non_existent_eks is failed
 
 # Test - Try deleting a non-existent fargate profile
 - name: delete an as yet non-existent fargate profile
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: fake_profile
     cluster_name: '{{ eks_cluster_name }}'
     state: absent
@@ -43,17 +43,17 @@
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
     selectors: '{{ selectors }}'
-  register: aws_eks_fargate_profile_delete_non_existent
+  register: eks_fargate_profile_delete_non_existent
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile did nothing
+- name: check that eks_fargate_profile did nothing
   assert:
     that:
-      - aws_eks_fargate_profile_delete_non_existent is not changed
+      - eks_fargate_profile_delete_non_existent is not changed
 
 # Create Fargate Profile with wait
 - name: create Fargate Profile with wait
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
@@ -64,18 +64,18 @@
     selectors: '{{ selectors }}'
     wait: true
     tags: '{{ tags }}'
-  register: aws_eks_fargate_profile_create
+  register: eks_fargate_profile_create
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile is created
+- name: check that eks_fargate_profile is created
   assert:
     that:
-      - aws_eks_fargate_profile_create.changed
-      - aws_eks_fargate_profile_create.status == "ACTIVE"
+      - eks_fargate_profile_create.changed
+      - eks_fargate_profile_create.status == "ACTIVE"
 
 # Try create same Fargate_profile
 - name: Try create same Fargate Profile with wait
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
@@ -86,17 +86,17 @@
     selectors: '{{ selectors }}'
     wait: true
     tags: '{{ tags }}'
-  register: aws_eks_fargate_profile_create_again
+  register: eks_fargate_profile_create_again
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile_create_again is not changed
+- name: check that eks_fargate_profile_create_again is not changed
   assert:
     that:
-      - not aws_eks_fargate_profile_create_again.changed
+      - not eks_fargate_profile_create_again.changed
 
 # Update tags Fargate_profile
 - name: update tags in Fargate Profile a with wait
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
@@ -109,17 +109,17 @@
     tags:
       env: test
       test: foo
-  register: aws_eks_fargate_profile_create
+  register: eks_fargate_profile_create
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile_again is not changed
+- name: check that eks_fargate_profile_again is not changed
   assert:
     that:
-      - not aws_eks_fargate_profile_create_again.changed
+      - not eks_fargate_profile_create_again.changed
 
 # Create Fargate Profile b without wait
 - name: create Fargate Profile without wait
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_b }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
@@ -128,32 +128,32 @@
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
       'private') | map(attribute='subnet.id') }}
     selectors: '{{ selectors }}'
-  register: aws_eks_fargate_profile_create_b
+  register: eks_fargate_profile_create_b
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile is created
+- name: check that eks_fargate_profile is created
   assert:
     that:
-      - aws_eks_fargate_profile_create_b.changed
-      - aws_eks_fargate_profile_create_b.fargate_profile.status == "CREATING"
+      - eks_fargate_profile_create_b.changed
+      - eks_fargate_profile_create_b.fargate_profile.status == "CREATING"
 
 # Delete Fargate Profile A with wait (test check_profiles_status function)
 - name: delete a fargate profile
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     cluster_name: '{{ eks_cluster_name }}'
     state: absent
     wait: true
-  register: aws_eks_fargate_profile_delete
+  register: eks_fargate_profile_delete
 
-- name: check that aws_eks_fargate_profile did nothing
+- name: check that eks_fargate_profile did nothing
   assert:
     that:
-      - aws_eks_fargate_profile_delete.changed
+      - eks_fargate_profile_delete.changed
 
 # Try Create Fargate Profile A with wait and public subnet
 - name: Try create Fargate Profile with public subnets
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
     cluster_name: '{{ eks_cluster_name }}'
@@ -163,24 +163,24 @@
       'public') | map(attribute='subnet.id') }}
     selectors: '{{ selectors }}'
     wait: true
-  register: aws_eks_fargate_profile_create
+  register: eks_fargate_profile_create
   ignore_errors: 'yes'
 
-- name: check that aws_eks_fargate_profile is not created
+- name: check that eks_fargate_profile is not created
   assert:
     that:
-      - not aws_eks_fargate_profile_create.changed
-      - aws_eks_fargate_profile_create.msg.endswith("provided in Fargate Profile is not a private subnet")
+      - not eks_fargate_profile_create.changed
+      - eks_fargate_profile_create.msg.endswith("provided in Fargate Profile is not a private subnet")
 
 - name: delete a fargate profile
-  aws_eks_fargate_profile:
+  eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_b }}'
     cluster_name: '{{ eks_cluster_name }}'
     state: absent
     wait: true
-  register: aws_eks_fargate_profile_b_delete
+  register: eks_fargate_profile_b_delete
 
-- name: check that aws_eks_fargate_profile  is deleted
+- name: check that eks_fargate_profile  is deleted
   assert:
     that:
-      - aws_eks_fargate_profile_b_delete.changed
+      - eks_fargate_profile_b_delete.changed

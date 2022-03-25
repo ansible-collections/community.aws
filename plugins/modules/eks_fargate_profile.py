@@ -8,7 +8,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: aws_eks_fargate_profile
+module: eks_fargate_profile
 version_added: 3.2.0
 short_description: Manage EKS Fargate Profile
 description:
@@ -83,7 +83,7 @@ EXAMPLES = r'''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create an EKS Fargate Profile
-  community.aws.aws_eks_fargate_profile:
+  community.aws.eks_fargate_profile:
     name: test_fargate
     cluster_name: test_cluster
     role_arn: my_eks_role
@@ -97,7 +97,7 @@ EXAMPLES = r'''
     wait: yes
 
 - name: Remove an EKS Fargate Profile
-  community.aws.aws_eks_fargate_profile:
+  community.aws.eks_fargate_profile:
     name: test_fargate
     cluster_name: test_cluster
     wait: yes

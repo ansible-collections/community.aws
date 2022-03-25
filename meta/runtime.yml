@@ -22,7 +22,6 @@ action_groups:
   - aws_direct_connect_link_aggregation_group
   - aws_direct_connect_virtual_interface
   - aws_eks_cluster
-  - aws_eks_fargate_profile
   - aws_elasticbeanstalk_app
   - aws_glue_connection
   - aws_glue_job
@@ -109,6 +108,7 @@ action_groups:
   - efs
   - efs_info
   - efs_tag
+  - eks_fargate_profile
   - elasticache
   - elasticache_info
   - elasticache_parameter_group
