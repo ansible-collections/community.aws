@@ -721,9 +721,11 @@ def create_or_update_target_group(connection, module):
                             module.fail_json_aws(e, msg="Couldn't register targets")
 
                         if module.params.get("wait"):
-                            status_achieved, registered_instances = wait_for_status(connection, module, target_group['TargetGroupArn'], instances_to_add, 'healthy')
+                            status_achieved, registered_instances = wait_for_status(
+                                connection, module, target_group['TargetGroupArn'], instances_to_add, 'healthy')
                             if not status_achieved:
-                                module.fail_json(msg='Error waiting for target registration to be healthy - please check the AWS console')
+                                module.fail_json(
+                                    msg='Error waiting for target registration to be healthy - please check the AWS console')
 
                     remove_instances = set(current_instance_ids) - set(new_instance_ids)
 
@@ -740,9 +742,11 @@ def create_or_update_target_group(connection, module):
                             module.fail_json_aws(e, msg="Couldn't remove targets")
 
                         if module.params.get("wait"):
-                            status_achieved, registered_instances = wait_for_status(connection, module, target_group['TargetGroupArn'], instances_to_remove, 'unused')
+                            status_achieved, registered_instances = wait_for_status(
+                                connection, module, target_group['TargetGroupArn'], instances_to_remove, 'unused')
                             if not status_achieved:
-                                module.fail_json(msg='Error waiting for target deregistration - please check the AWS console')
+                                module.fail_json(
+                                    msg='Error waiting for target deregistration - please check the AWS console')
 
                 # register lambda target
                 else:
@@ -789,9 +793,11 @@ def create_or_update_target_group(connection, module):
                             module.fail_json_aws(e, msg="Couldn't remove targets")
 
                         if module.params.get("wait"):
-                            status_achieved, registered_instances = wait_for_status(connection, module, target_group['TargetGroupArn'], instances_to_remove, 'unused')
+                            status_achieved, registered_instances = wait_for_status(
+                                connection, module, target_group['TargetGroupArn'], instances_to_remove, 'unused')
                             if not status_achieved:
-                                module.fail_json(msg='Error waiting for target deregistration - please check the AWS console')
+                                module.fail_json(
+                                    msg='Error waiting for target deregistration - please check the AWS console')
 
                 # remove lambda targets
                 else:
