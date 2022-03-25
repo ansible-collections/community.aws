@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster_snapshot
-version_added: 3.0.0
+version_added: 3.2.0
 short_description: Manage Amazon RDS snapshots of DB clusters.
 description:
      - Creates or deletes RDS snapshots of DB clusters.
