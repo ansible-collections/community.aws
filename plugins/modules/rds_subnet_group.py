@@ -139,22 +139,26 @@ subnet_group:
                     description: Contains Availability Zone information.
                     returned: I(state=present)
                     type: dict
+                    version_added: 3.2.0
                     sample:
                         name: "eu-north-1b"
                 subnet_identifier:
                     description: The identifier of the subnet.
                     returned: I(state=present)
                     type: str
+                    version_added: 3.2.0
                     sample: "subnet-08c94870f4480797e"
                 subnet_outpost:
                     description: This value specifies the Outpost.
                     returned: I(state=present)
                     type: dict
+                    version_added: 3.2.0
                     sample: {}
                 subnet_status:
                     description: The status of the subnet.
                     returned: I(state=present)
                     type: str
+                    version_added: 3.2.0
                     sample: "Active"
         status:
             description: The status of the DB subnet group (maintained for backward compatibility)
@@ -175,6 +179,7 @@ subnet_group:
             description: The tags associated with the subnet group
             returned: I(state=present)
             type: dict
+            version_added: 3.2.0
             sample:
                 tag1: Tag1
                 tag2: Tag2
@@ -215,12 +220,18 @@ def create_result(changed, subnet_group=None):
     )
 
 
+@AWSRetry.jittered_backoff()
+def _describe_db_subnet_groups_with_backoff(client, **kwargs):
+    paginator = client.get_paginator('describe_db_subnet_groups')
+    return paginator.paginate(**kwargs).build_full_result()
+
+
 def get_subnet_group(client, module):
     params = dict()
     params['DBSubnetGroupName'] = module.params.get('name').lower()
 
     try:
-        _result = client.describe_db_subnet_groups(aws_retry=True, **params)
+        _result = _describe_db_subnet_groups_with_backoff(client, **params)
     except is_boto3_error_code('DBSubnetGroupNotFoundFault'):
         return None
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -234,8 +245,8 @@ def get_subnet_group(client, module):
 
 
 def create_subnet_list(subnets):
-    '''
-    Construct a list of subnet ids from a list of subnets dicts returned by boto3.
+    r'''
+    Construct a list of subnet ids from a list of subnets dicts returned by boto.
     Parameters:
         subnets (list): A list of subnets definitions.
         @see https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_db_subnet_groups
