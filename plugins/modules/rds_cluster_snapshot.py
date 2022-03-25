@@ -28,6 +28,7 @@ options:
     aliases:
       - snapshot_id
       - id
+      - snapshot_name
     type: str
   db_cluster_identifier:
     description:
@@ -35,12 +36,13 @@ options:
       - Required when state is present.
     aliases:
       - cluster_id
+      - cluster_name
     type: str
   wait:
     description:
       - Whether or not to wait for snapshot creation or deletion.
     type: bool
-    default: 'no'
+    default: false
   wait_timeout:
     description:
       - How long before wait gives up, in seconds.
@@ -266,8 +268,8 @@ def main():
 
     argument_spec = dict(
         state=dict(choices=['present', 'absent'], default='present'),
-        db_snapshot_identifier=dict(aliases=['id', 'snapshot_id'], required=True),
-        db_cluster_identifier=dict(aliases=['cluster_id']),
+        db_snapshot_identifier=dict(aliases=['id', 'snapshot_id', 'snapshot_name'], required=True),
+        db_cluster_identifier=dict(aliases=['cluster_id', 'cluster_name']),
         wait=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=300),
         tags=dict(type='dict'),
