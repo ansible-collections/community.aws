@@ -431,6 +431,30 @@
             - t2.nano
         wait_for_instances: yes
       register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:CreateOrUpdateTags" not in output.resource_actions'
+
+    - name: update autoscaling group with mixed-instances policy with mixed instances types
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg"
+        launch_template:
+          launch_template_name: "{{ resource_prefix }}-lt"
+        desired_capacity: 1
+        min_size: 1
+        max_size: 1
+        vpc_zone_identifier: "{{ testing_subnet.subnet.id }}"
+        state: present
+        mixed_instances_policy:
+          instance_types:
+            - t3.micro
+            - t2.nano
+        wait_for_instances: yes
+      register: output
 
     - assert:
         that:

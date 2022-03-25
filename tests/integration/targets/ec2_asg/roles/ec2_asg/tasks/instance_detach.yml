@@ -18,6 +18,27 @@
           - '"autoscaling:CreateLaunchConfiguration" in create_lc.resource_actions'
 
     #----------------------------------------------------------------------
+
+    - name: create a AutoScalingGroup to be used for instance_detach test
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-detach-test"
+        launch_config_name: "{{ resource_prefix }}-lc-detach-test"
+        health_check_period: 60
+        health_check_type: ELB
+        replace_all_instances: yes
+        min_size: 3
+        max_size: 6
+        desired_capacity: 3
+        region: "{{ aws_region }}"
+      register: create_asg
+      check_mode: true
+
+    - assert:
+        that:
+          - create_asg is changed
+          - create_asg is not failed
+          - '"autoscaling:CreateAutoScalingGroup" not in create_asg.resource_actions'
+
     - name: create a AutoScalingGroup to be used for instance_detach test
       ec2_asg:
         name: "{{ resource_prefix }}-asg-detach-test"
@@ -67,6 +88,28 @@
           - "'{{ instances_info.instances[2].state.name }}' == 'running'"
 
     #----------------------------------------------------------------------
+
+    - name: detach 2 instance from the asg and replace with other instances
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-detach-test"
+        launch_config_name: "{{ resource_prefix }}-lc-detach-test"
+        health_check_period: 60
+        health_check_type: ELB
+        min_size: 3
+        max_size: 3
+        desired_capacity: 3
+        region: "{{ aws_region }}"
+        detach_instances:
+          - '{{ init_instance_1 }}'
+          - '{{ init_instance_2 }}'
+      register: detach_result
+      check_mode: true
+
+    - assert:
+        that:
+          - detach_result is changed
+          - detach_result is not failed
+          - '"autoscaling:DetachInstances" not in detach_result.resource_actions'
 
     - name: detach 2 instance from the asg and replace with other instances
       ec2_asg:
@@ -189,6 +232,19 @@
       - "{{ instance_replace_2 }}"
       - "{{ instance_replace_3 }}"
 
+  - name: kill asg created in this test - check_mode
+    ec2_asg:
+      name: "{{ resource_prefix }}-asg-detach-test"
+      state: absent
+    register: removed
+    check_mode: true
+
+  - assert:
+      that:
+        - removed is changed
+        - removed is not failed
+        - '"autoscaling:DeleteAutoScalingGroup" not in removed.resource_actions'
+
   - name: kill asg created in this test
     ec2_asg:
       name: "{{ resource_prefix }}-asg-detach-test"
@@ -197,6 +253,19 @@
     until: removed is not failed
     ignore_errors: yes
     retries: 10
+
+  - name: kill asg created in this test - check_mode (idempotent)
+    ec2_asg:
+      name: "{{ resource_prefix }}-asg-detach-test"
+      state: absent
+    register: removed
+    check_mode: true
+
+  - assert:
+      that:
+        - removed is not changed
+        - removed is not failed
+        - '"autoscaling:DeleteAutoScalingGroup" not in removed.resource_actions'
 
   - name: remove launch config created in this test
     ec2_lc:
