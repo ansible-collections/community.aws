@@ -25,6 +25,7 @@ options:
   deregistration_connection_termination:
     description:
       - Indicates whether the load balancer terminates connections at the end of the deregistration timeout.
+      - Using this option is only supported when attaching to a Network Load Balancer (NLB)
     type: bool
     default: false
     required: false
@@ -130,6 +131,7 @@ options:
   load_balancing_algorithm_type:
     description:
       - The type of load balancing algorithm to use.
+      - Changing the load balancing algorithm is only supported when used with Application Load Balancers (ALB)
       - If not set AWS will default to C(round_robin).
     choices: ['round_robin', 'least_outstanding_requests']
     type: str
