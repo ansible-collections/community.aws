@@ -41,6 +41,30 @@
           - result.changed
           - "result.db_instance_identifier == '{{ instance_id }}'"
 
+    - name: Add IAM roles to mariab (should fail - iam roles not supported for mariadb)
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: present
+        engine: mariadb
+        engine_version: "{{ mariadb_engine_version }}"
+        allow_major_version_upgrade: true
+        username: "{{ username }}"
+        password: "{{ password }}"
+        db_instance_class: "{{ db_instance_class }}"
+        allocated_storage: "{{ io1_allocated_storage }}"
+        storage_type: "{{ storage_type }}"
+        iops: "{{ iops }}"
+        iam_roles:
+          - role_arn: 'my_role'
+            feature_name: 'my_feature'
+      register: result
+      ignore_errors: True
+
+    - assert:
+        that:
+          - result.failed
+          - '"is not valid for adding IAM roles" in result.msg'
+
     # TODO: test modifying db_subnet_group_name, db_security_groups, db_parameter_group_name, option_group_name,
     # monitoring_role_arn, monitoring_interval, domain, domain_iam_role_name, cloudwatch_logs_export_configuration
 

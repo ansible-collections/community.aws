@@ -847,11 +847,19 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.rds import arg_spec_to_rds_params
 from ansible_collections.amazon.aws.plugins.module_utils.rds import call_method
-from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_iam_roles
+from ansible_collections.amazon.aws.plugins.module_utils.rds import compare_iam_roles
 from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_final_identifier
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_rds_method_attribute
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
+from ansible_collections.amazon.aws.plugins.module_utils.rds import update_iam_roles
+
+
+valid_engines = ['aurora', 'aurora-mysql', 'aurora-postgresql', 'mariadb', 'mysql', 'oracle-ee', 'oracle-ee-cdb',
+                 'oracle-se2', 'oracle-se2-cdb', 'postgres', 'sqlserver-ee', 'sqlserver-se', 'sqlserver-ex', 'sqlserver-web']
+
+valid_engines_iam_roles = ['aurora-postgresql', 'oracle-ee', 'oracle-ee-cdb', 'oracle-se2', 'oracle-se2-cdb',
+                           'postgres', 'sqlserver-ee', 'sqlserver-se', 'sqlserver-ex', 'sqlserver-web']
 
 valid_engines = ['aurora', 'aurora-mysql', 'aurora-postgresql', 'mariadb', 'mysql', 'oracle-ee', 'oracle-ee-cdb',
                  'oracle-se2', 'oracle-se2-cdb', 'postgres', 'sqlserver-ee', 'sqlserver-se', 'sqlserver-ex', 'sqlserver-web']
@@ -1150,6 +1158,27 @@ def promote_replication_instance(client, module, instance, read_replica):
     return changed
 
 
+def ensure_iam_roles(client, module, instance_id):
+    instance = camel_dict_to_snake_dict(get_instance(client, module, instance_id), ignore_list=['Tags', 'ProcessorFeatures'])
+    # Check valid engine type first - only if db instance actually exists
+    engine = instance.get('engine')
+    if engine not in valid_engines_iam_roles:
+        module.fail_json(msg='DB engine {0} is not valid for adding IAM roles. Valid engines are {1}'.format(engine, valid_engines_iam_roles))
+    changed = False
+    purge_iam_roles = module.params.get('purge_iam_roles')
+    target_roles = module.params.get('iam_roles')
+    existing_roles = instance.get('associated_roles', [])
+    roles_to_add, roles_to_remove = compare_iam_roles(existing_roles, target_roles, purge_iam_roles)
+    if bool(roles_to_add or roles_to_remove):
+        changed = True
+        # Don't update on check_mode
+        if module.check_mode:
+            module.exit_json(changed=changed, **instance)
+        else:
+            update_iam_roles(client, module, instance_id, roles_to_add, roles_to_remove)
+    return changed
+
+
 def update_instance_state(client, module, instance, state):
     changed = False
     if state in ['rebooted', 'restarted']:
@@ -1307,6 +1336,11 @@ def main():
     method_name = get_rds_method_attribute_name(instance, state, module.params['creation_source'], module.params['read_replica'])
 
     if method_name:
+
+        # Exit on create/delete if check_mode
+        if module.check_mode and method_name in ['create_db_instance', 'delete_db_instance']:
+            module.exit_json(changed=True, **camel_dict_to_snake_dict(instance, ignore_list=['Tags', 'ProcessorFeatures']))
+
         raw_parameters = arg_spec_to_rds_params(dict((k, module.params[k]) for k in module.params if k in parameter_options))
         parameters = get_parameters(client, module, raw_parameters, method_name)
 
@@ -1322,12 +1356,7 @@ def main():
 
             # Check IAM roles
             if module.params.get('iam_roles') or module.params.get('purge_iam_roles'):
-                instance = get_instance(client, module, instance_id)
-                instance = camel_dict_to_snake_dict(instance, ignore_list=['Tags', 'ProcessorFeatures'])
-                purge_iam_roles = module.params.get('purge_iam_roles')
-                target_roles = module.params.get('iam_roles')
-                existing_roles = instance.get('associated_roles', [])
-                changed |= ensure_iam_roles(client, module, instance_id, existing_roles, target_roles, purge_iam_roles)
+                changed |= ensure_iam_roles(client, module, instance_id)
 
         if changed:
             instance = get_instance(client, module, instance_id)
