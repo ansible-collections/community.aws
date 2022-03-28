@@ -2,3 +2,4 @@ cloud/aws
 
 slow
 elb_target_group
+elb_target_group_info

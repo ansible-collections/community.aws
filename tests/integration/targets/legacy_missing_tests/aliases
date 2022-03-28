@@ -30,7 +30,6 @@ ecs_attribute
 elasticache_info
 elasticache_parameter_group
 elasticache_snapshot
-elb_target_group_info
 iam_mfa_device_info
 lambda_event
 rds_instance_snapshot
