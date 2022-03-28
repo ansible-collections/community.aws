@@ -4,8 +4,7 @@
       aws_access_key: '{{ aws_access_key }}'
       security_token: '{{ security_token|default(omit) }}'
       region: '{{ aws_region }}'
-  collections:
-    - community.general
+
   block:
 
   - name: create minimal lambda role (needed for subscription test further down)
@@ -22,6 +21,25 @@
       seconds: 10
     when: iam_role is changed
 
+  - name: list all the topics (check_mode)
+    sns_topic_info:
+    check_mode: true
+    register: sns_topic_list
+
+  - name: assert success
+    assert:
+      that:
+      - sns_topic_list is successful
+
+  - name: list all the topics
+    sns_topic_info:
+    register: sns_topic_list
+
+  - name: assert success
+    assert:
+      that:
+      - sns_topic_list is successful
+
   - name: create standard SNS topic
     sns_topic:
       name: '{{ sns_topic_topic_name }}'
@@ -36,6 +54,41 @@
   - name: set sns_arn fact
     set_fact:
       sns_arn: '{{ sns_topic_create.sns_arn }}'
+
+  - name: get info on specific topic (check_mode)
+    sns_topic_info:
+      topic_arn: "{{ sns_arn }}"
+    check_mode: true
+    register: sns_topic_info
+
+  - name: assert success
+    assert:
+      that:
+      - sns_topic_info is successful
+      - "'result' in sns_topic_info"
+      - sns_topic_info.result["sns_arn"] == "{{ sns_arn }}"
+      - "'sns_topic' in sns_topic_info.result"
+      - "'display_name' in sns_topic_info.result['sns_topic']"
+      - sns_topic_info.result["sns_topic"]["display_name"] == "My topic name"
+      - "'owner' in sns_topic_info.result['sns_topic']"
+      - "'policy' in sns_topic_info.result['sns_topic']"
+
+  - name: get info on specific topic
+    sns_topic_info:
+      topic_arn: "{{ sns_arn }}"
+    register: sns_topic_info
+
+  - name: assert success
+    assert:
+      that:
+      - sns_topic_info is successful
+      - "'result' in sns_topic_info"
+      - sns_topic_info.result["sns_arn"] == "{{ sns_arn }}"
+      - "'sns_topic' in sns_topic_info.result"
+      - "'display_name' in sns_topic_info.result['sns_topic']"
+      - sns_topic_info.result["sns_topic"]["display_name"] == "My topic name"
+      - "'owner' in sns_topic_info.result['sns_topic']"
+      - "'policy' in sns_topic_info.result['sns_topic']"
 
   - name: create topic again (expect changed=False)
     sns_topic:
