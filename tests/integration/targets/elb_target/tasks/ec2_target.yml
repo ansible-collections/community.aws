@@ -159,7 +159,6 @@
           - result.target_type == 'instance'
           - result.deregistration_delay_timeout_seconds == '60'
           - result.deregistration_delay_connection_termination_enabled
-          - result.load_balancing_algorithm_type == 'round_robin'
           - result.vpc_id == vpc.vpc.id
 
     - name: set up ec2 instance to use as a target
