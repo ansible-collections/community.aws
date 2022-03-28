@@ -131,7 +131,7 @@ options:
   load_balancing_algorithm_type:
     description:
       - The type of load balancing algorithm to use.
-      - Changing the load balancing algorithm is only supported when used with Application Load Balancers (ALB)
+      - Changing the load balancing algorithm is only supported when used with Application Load Balancers (ALB).
       - If not set AWS will default to C(round_robin).
     choices: ['round_robin', 'least_outstanding_requests']
     type: str
