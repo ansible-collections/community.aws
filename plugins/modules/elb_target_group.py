@@ -25,7 +25,7 @@ options:
   deregistration_connection_termination:
     description:
       - Indicates whether the load balancer terminates connections at the end of the deregistration timeout.
-      - Using this option is only supported when attaching to a Network Load Balancer (NLB)
+      - Using this option is only supported when attaching to a Network Load Balancer (NLB).
     type: bool
     default: false
     required: false
