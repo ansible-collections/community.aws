@@ -85,6 +85,10 @@
       prefix: images/
       suffix: .jpg
     register: result
+    retries: 3
+    delay: 3
+    until:
+    - result is successful
   - name: assert result.changed == True
     assert:
       that:
