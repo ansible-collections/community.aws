@@ -1,8 +1,11 @@
 ---
 # defaults file for s3_bucket_notifications integration test
-lambda_function_name: '{{ resource_prefix }}'
+lambda_function_name: "{{ resource_prefix }}"
 # IAM role names have to be less than 64 characters
 # we hash the resource_prefix to get a shorter, unique string
-bucket_name: '{{ tiny_prefix }}-bucket'
-lambda_name: '{{ tiny_prefix }}-lambda'
-lambda_role_name: 'ansible-test-{{ tiny_prefix }}-s3-notifications'
+bucket_name: "{{ tiny_prefix }}-bucket"
+lambda_name: "{{ tiny_prefix }}-lambda"
+topic_name: "{{ tiny_prefix }}-topic"
+queue_name: "{{ tiny_prefix }}-queue"
+event_name: "{{ tiny_prefix }}-on_file_add_or_remove"
+lambda_role_name: "ansible-test-{{ tiny_prefix }}-s3-notifications"

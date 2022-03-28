@@ -1,0 +1,341 @@
+---
+- name: Run s3 notification SNS SQS target tests
+  block:
+    ## Setup required resources
+    - name: create bucket
+      s3_bucket:
+        name: "{{ bucket_name }}"
+        state: present
+      register: bucket_info
+
+    - name: create test SNS topic
+      sns_topic:
+        name: "{{ topic_name }}"
+        state: present
+        display_name: "Test SNS topic"
+        policy:
+          Id: test-policy-sns
+          Version: 2012-10-17
+          Statement:
+            - Sid: allowNotifications
+              Effect: Allow
+              Resource: "arn:aws:sns:*:*:{{ topic_name }}"
+              Principal:
+                Service: s3.amazonaws.com
+              Action: sns:Publish
+              Condition:
+                ArnLike:
+                  aws:SourceArn: "arn:aws:s3:*:*:{{ bucket_name }}"
+        delivery_policy:
+          http:
+            defaultHealthyRetryPolicy:
+              minDelayTarget: 2
+              maxDelayTarget: 4
+              numRetries: 9
+              numMaxDelayRetries: 5
+              numMinDelayRetries: 2
+              numNoDelayRetries: 2
+              backoffFunction: "linear"
+            disableSubscriptionOverrides: True
+            defaultThrottlePolicy:
+              maxReceivesPerSecond: 10
+      register: topic_creation
+
+    - name: assert SNS topic creation success
+      assert:
+        that:
+          - topic_creation is successful
+
+    - name: create test SQS queue
+      sqs_queue:
+        name: "{{ queue_name }}"
+        default_visibility_timeout: 120
+        message_retention_period: 86400
+        maximum_message_size: 1024
+        delivery_delay: 30
+        receive_message_wait_time: 20
+        policy:
+          Version: 2012-10-17
+          Id: test-policy-sqs
+          Statement:
+            - Sid: allowNotifications
+              Effect: Allow
+              Principal:
+                Service: s3.amazonaws.com
+              Action:
+                - SQS:SendMessage
+              Resource: "arn:aws:sqs:*:*:{{ queue_name }}"
+              Condition:
+                ArnLike:
+                  aws:SourceArn: "arn:aws:s3:*:*:{{ bucket_name }}"
+      register: queue_creation
+
+    - name: assert SQS queue creation success
+      assert:
+        that:
+          - queue_creation is successful
+
+    ## Start tests
+    - name: create bucket notification - check_mode
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+        prefix: images/
+        suffix: .jpg
+      register: result
+      check_mode: true
+
+    - name: create bucket notification - check_mode
+      assert:
+        that:
+          - result is changed
+
+    - name: create bucket notification
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+        prefix: images/
+        suffix: .jpg
+      register: result
+
+    - name: create bucket notification
+      assert:
+        that:
+          - result is successful
+          - result is changed
+          - result.notification_configuration.topic_configurations | length == 1
+          - result.notification_configuration.topic_configurations[0].id == event_name
+          - result.notification_configuration.topic_configurations[0].topic_arn == topic_creation.sns_arn
+
+    - name: create bucket notification - idempotency
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+        prefix: images/
+        suffix: .jpg
+      register: result
+
+    - name: create bucket notification - idempotency
+      assert:
+        that:
+          - result is not changed
+
+    - name: test mutually exclusive parameters
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        queue_arn: ""
+        events:
+          - s3:ObjectCreated:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+      ignore_errors: true
+
+    - name: assert task failed
+      assert:
+        that:
+          - result is failed
+          - "result.msg == 'parameters are mutually exclusive: queue_arn|topic_arn|lambda_function_arn'"
+
+    - name: test configuration change on suffix
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+          - s3:ObjectRemoved:*
+        prefix: images/
+        suffix: .gif
+      register: result
+
+    - name: test configuration change on suffix
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.topic_configurations[0].filter.key.filter_rules[1].value == '.gif'
+
+    - name: test configuration change on prefix
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+          - s3:ObjectRemoved:*
+        prefix: photos/
+        suffix: .gif
+      register: result
+
+    - name: test configuration change on prefix
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.topic_configurations[0].filter.key.filter_rules[0].value == 'photos/'
+
+    - name: test configuration change on new events added
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:*
+          - s3:ObjectRemoved:*
+          - s3:ObjectRestore:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+
+    - name: test configuration change on new events added
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.topic_configurations[0].events | length == 3
+
+    - name: test configuration change on events removed
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        topic_arn: "{{ topic_creation.sns_arn }}"
+        events:
+          - s3:ObjectCreated:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+
+    - name: test configuration change on events removed
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.topic_configurations[0].events | length == 1
+
+    ## Test change of event notification target
+    - name: test changing from sns to sqs target - check_mode
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        queue_arn: "{{ queue_creation.queue_arn }}"
+        events:
+          - s3:ObjectCreated:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+      check_mode: yes
+
+    - name: test changing from sns to sqs target - check_mode
+      assert:
+        that:
+          - result is changed
+
+    - name: test changing from sns to sqs target
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        queue_arn: "{{ queue_creation.queue_arn }}"
+        events:
+          - s3:ObjectCreated:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+
+    - name: test changing from sns to sqs target
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.queue_configurations | length == 1
+          - result.notification_configuration.queue_configurations[0].queue_arn == queue_creation.queue_arn
+
+    - name: test changing from sns to sqs target - idempotency
+      s3_bucket_notification:
+        state: present
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+        queue_arn: "{{ queue_creation.queue_arn }}"
+        events:
+          - s3:ObjectCreated:Post
+        prefix: photos/
+        suffix: .gif
+      register: result
+
+    - name: test changing from sns to sqs target - idempotency
+      assert:
+        that:
+          - result is not changed
+
+    ## Test removal of event notification
+    - name: remove notification - check_mode
+      s3_bucket_notification:
+        state: absent
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+      register: result
+      check_mode: yes
+
+    - name: remove notification - check_mode
+      assert:
+        that:
+          - result is changed
+
+    - name: remove notification
+      s3_bucket_notification:
+        state: absent
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+      register: result
+
+    - name: remove notification
+      assert:
+        that:
+          - result is changed
+          - result.notification_configuration.queue_configurations | length < 1
+
+    - name: remove notification - idempotency
+      s3_bucket_notification:
+        state: absent
+        event_name: "{{ event_name }}"
+        bucket_name: "{{ bucket_name }}"
+      register: result
+
+    - name: remove notification - idempotency
+      assert:
+        that:
+          - result is not changed
+  always:
+    - name: clean-up bucket
+      s3_bucket:
+        name: "{{ bucket_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: clean-up topic
+      sns_topic:
+        name: "{{ topic_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: clean-up queue
+      sqs_queue:
+        name: "{{ queue_name }}"
+        state: absent
+      ignore_errors: true
