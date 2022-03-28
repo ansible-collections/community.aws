@@ -24,7 +24,21 @@ if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("s3_bucket_notification.py requires the `boto3` and `botocore` modules")
 
 
-class TestAmazonBucketOperations:
+class TestAmazonBucketOperations(ModuleTestCase):
+    @pytest.fixture(autouse=True)
+    def setup_module(self):
+        set_module_args({
+            'region': 'us-east-2',
+            'lambda_function_arn': 'test-lambda-arn',
+            'bucket_name': 'test-bucket',
+            'event_name': 'test-id',
+            'events': ['s3:ObjectCreated:*', 's3:ObjectRemoved:*'],
+            'state': 'present',
+            'prefix': '/images',
+            'suffix': '.jpg'
+        })
+        self.module = s3_bucket_notification.setup_module_object()
+
     def test_current_config(self):
         api_config = {
             'Id': 'test-id',
@@ -46,7 +60,7 @@ class TestAmazonBucketOperations:
         client.get_bucket_notification_configuration.return_value = {
             'LambdaFunctionConfigurations': [api_config]
         }
-        bucket = AmazonBucket(client, 'test-bucket')
+        bucket = AmazonBucket(self.module, client)
         current = bucket.current_config('test-id')
         assert current.raw == api_config
         assert client.get_bucket_notification_configuration.call_count == 1
@@ -56,7 +70,7 @@ class TestAmazonBucketOperations:
         client.get_bucket_notification_configuration.return_value = {
             'LambdaFunctionConfigurations': []
         }
-        bucket = AmazonBucket(client, 'test-bucket')
+        bucket = AmazonBucket(self.module, client)
         current = bucket.current_config('test-id')
         assert current is None
         assert client.get_bucket_notification_configuration.call_count == 1
@@ -66,8 +80,8 @@ class TestAmazonBucketOperations:
         client.get_bucket_notification_configuration.return_value = {
             'LambdaFunctionConfigurations': []
         }
-        client.put_bucket_notification_configuration.side_effect = ClientError({}, '')
-        bucket = AmazonBucket(client, 'test-bucket')
+        client.put_bucket_notification_configuration.side_effect = AnsibleFailJson({}, '')
+        bucket = AmazonBucket(self.module, client)
         config = Config.from_params(**{
             'event_name': 'test_event',
             'lambda_function_arn': 'lambda_arn',
@@ -76,7 +90,7 @@ class TestAmazonBucketOperations:
             'prefix': '',
             'suffix': ''
         })
-        with pytest.raises(ClientError):
+        with pytest.raises(AnsibleFailJson):
             bucket.apply_config(config)
 
     def test_apply_config(self):
@@ -85,7 +99,7 @@ class TestAmazonBucketOperations:
             'LambdaFunctionConfigurations': []
         }
 
-        bucket = AmazonBucket(client, 'test-bucket')
+        bucket = AmazonBucket(self.module, client)
         config = Config.from_params(**{
             'event_name': 'test_event',
             'lambda_function_arn': 'lambda_arn',
@@ -120,7 +134,7 @@ class TestAmazonBucketOperations:
             'LambdaFunctionConfigurations': [api_config]
         }
 
-        bucket = AmazonBucket(client, 'test-bucket')
+        bucket = AmazonBucket(self.module, client)
         config = Config.from_params(**{
             'event_name': 'test-id',
             'lambda_function_arn': 'test-arn',
@@ -175,7 +189,7 @@ class TestAmazonBucketOperations:
         client.get_bucket_notification_configuration.return_value = {
             'LambdaFunctionConfigurations': [api_config]
         }
-        bucket = AmazonBucket(client, 'test-bucket')
+        bucket = AmazonBucket(self.module, client)
         config = Config.from_params(**{
             'event_name': 'test-id',
             'lambda_function_arn': 'lambda_arn',
@@ -189,7 +203,7 @@ class TestAmazonBucketOperations:
         assert client.put_bucket_notification_configuration.call_count == 1
         client.put_bucket_notification_configuration.assert_called_with(
             Bucket='test-bucket',
-            NotificationConfiguration={'LambdaFunctionConfigurations': []}
+            NotificationConfiguration={}
         )
 
 
