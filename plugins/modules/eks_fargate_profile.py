@@ -217,7 +217,7 @@ def create_or_update_fargate_profile(client, module):
     selectors = module.params['selectors']
     tags = module.params['tags']
     wait = module.params.get('wait')
-    fargate_profile = get_fargate_profile(client, module, name, cluster_name)
+    fargate_profile = get_fargate_profile(client, name, cluster_name)
 
     if fargate_profile:
         changed = False
@@ -232,7 +232,7 @@ def create_or_update_fargate_profile(client, module):
 
         if wait:
             wait_until(client, module, 'fargate_profile_active', name, cluster_name)
-            fargateProfile = get_fargate_profile(client, module, name, cluster_name)
+            fargateProfile = get_fargate_profile(client, name, cluster_name)
 
         module.exit_json(changed=changed, **camel_dict_to_snake_dict(fargateProfile))
 
@@ -255,7 +255,7 @@ def create_or_update_fargate_profile(client, module):
 
     if wait:
         wait_until(client, module, 'fargate_profile_active', name, cluster_name)
-        fargateProfile = get_fargate_profile(client, module, name, cluster_name)
+        fargateProfile = get_fargate_profile(client, name, cluster_name)
 
     module.exit_json(changed=True, **camel_dict_to_snake_dict(fargateProfile))
 
@@ -263,7 +263,7 @@ def create_or_update_fargate_profile(client, module):
 def delete_fargate_profile(client, module):
     name = module.params.get('name')
     cluster_name = module.params['cluster_name']
-    existing = get_fargate_profile(client, module, name, cluster_name)
+    existing = get_fargate_profile(client, name, cluster_name)
     wait = module.params.get('wait')
     if not existing:
         module.exit_json(changed=False)
@@ -280,7 +280,7 @@ def delete_fargate_profile(client, module):
     module.exit_json(changed=True)
 
 
-def get_fargate_profile(client, module, name, cluster_name):
+def get_fargate_profile(client, name, cluster_name):
     try:
         return client.describe_fargate_profile(clusterName=cluster_name, fargateProfileName=name)['fargateProfile']
     except is_boto3_error_code('ResourceNotFoundException'):
@@ -293,7 +293,7 @@ def check_profiles_status(client, module, cluster_name):
         list_profiles = client.list_fargate_profiles(clusterName=cluster_name)
 
         for name in list_profiles["fargateProfileNames"]:
-            fargate_profile = get_fargate_profile(client, module, name, cluster_name)
+            fargate_profile = get_fargate_profile(client, name, cluster_name)
             if fargate_profile["status"] == 'CREATING':
                 wait_until(client, module, 'fargate_profile_active', fargate_profile["fargateProfileName"], cluster_name)
             elif fargate_profile["status"] == 'DELETING':
@@ -306,10 +306,10 @@ def wait_until(client, module, waiter_name, name, cluster_name):
     wait_timeout = module.params.get('wait_timeout')
     waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
-try:
-    waiter.wait(clusterName=cluster_name, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
-except botocore.exceptions.WaiterError as e:
-    module.fail_json_aws(e, msg="An error occurred waiting")
+    try:
+        waiter.wait(clusterName=cluster_name, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
+    except botocore.exceptions.WaiterError as e:
+        module.fail_json_aws(e, msg="An error occurred waiting")
 
 
 def main():
@@ -335,10 +335,10 @@ def main():
         supports_check_mode=True,
     )
 
-try:
-    client = module.client('eks')
-except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-    module.fail_json_aws(e, msg="Couldn't connect to AWS")
+    try:
+        client = module.client('eks')
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+        module.fail_json_aws(e, msg="Couldn't connect to AWS")
 
     if module.params.get('state') == 'present':
         create_or_update_fargate_profile(client, module)

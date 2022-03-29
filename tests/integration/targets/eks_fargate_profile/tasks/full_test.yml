@@ -51,6 +51,28 @@
     that:
       - eks_fargate_profile_delete_non_existent is not changed
 
+# Create Fargate_profile (check mode)
+- name: create Fargate Profile (check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags: '{{ tags }}'
+  register: eks_fargate_profile_create_check_mode
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile_create_again is not changed (check mode)
+  assert:
+    that:
+      - eks_fargate_profile_create_check_mode.changed
+
 # Create Fargate Profile with wait
 - name: create Fargate Profile with wait
   eks_fargate_profile:
@@ -73,8 +95,8 @@
       - eks_fargate_profile_create.changed
       - eks_fargate_profile_create.status == "ACTIVE"
 
-# Try create same Fargate_profile
-- name: Try create same Fargate Profile with wait
+# Try create same Fargate_profile (idempotency)
+- name: Try create same Fargate Profile with wait (idempotency)
   eks_fargate_profile:
     name: '{{ eks_fargate_profile_name_a }}'
     state: present
@@ -89,7 +111,7 @@
   register: eks_fargate_profile_create_again
   ignore_errors: 'yes'
 
-- name: check that eks_fargate_profile_create_again is not changed
+- name: check that eks_fargate_profile_create_again is not changed (idempotency)
   assert:
     that:
       - not eks_fargate_profile_create_again.changed
