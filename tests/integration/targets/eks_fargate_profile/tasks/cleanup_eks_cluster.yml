@@ -43,6 +43,7 @@
     vpc_id: '{{ setup_vpc.vpc.id }}'
     route_table_id: '{{ item }}'
     lookup: id
+  ignore_errors: 'yes'
   with_items:
     - '{{ public_route_table.route_table.route_table_id }}'
     - '{{ nat_route_table.route_table.route_table_id }}'
@@ -53,6 +54,7 @@
     nat_gateway_id: '{{ setup_nat_gateway.nat_gateway_id}}'
     release_eip: 'yes'
     wait: 'yes'
+  ignore_errors: 'yes'
 
 - name: remove setup subnet
   ec2_vpc_subnet:
@@ -67,6 +69,7 @@
   amazon.aws.ec2_vpc_igw:
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id}}'
+  ignore_errors: 'yes'
     
 - name: remove setup VPC
   ec2_vpc_net:
