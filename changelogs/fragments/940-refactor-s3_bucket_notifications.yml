@@ -1,0 +1,2 @@
+major_changes:
+  - s3_bucket_notifications - refactor module to support SNS / SQS targets as well as the existing support for Lambda functions (https://github.com/ansible-collections/community.aws/issues/140).
