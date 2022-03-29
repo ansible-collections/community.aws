@@ -12,15 +12,15 @@ module: eks_fargate_profile
 version_added: 3.2.0
 short_description: Manage EKS Fargate Profile
 description:
-    - Manage EKS Fargate Profile
+    - Manage EKS Fargate Profile.
 author: Tiago Jarra (@tjarra)
 options:
   name:
-    description: Name of EKS Fargate Profile
+    description: Name of EKS Fargate Profile.
     required: True
     type: str
   cluster_name:
-    description: Name of EKS Cluster
+    description: Name of EKS Cluster.
     required: True
     type: str
   role_arn:
@@ -36,30 +36,30 @@ options:
     elements: str
   selectors:
     description:
-      - A list of selectors to use in fargate profile
+      - A list of selectors to use in fargate profile.
       - Required when I(state=present).
     type: list
     elements: dict
     suboptions:
       namespace:
-        description: A namespace used in fargate profile
+        description: A namespace used in fargate profile.
         type: str
       labels:
-        description: A dictionary of labels used in fargate profile
+        description: A dictionary of labels used in fargate profile.
         type: dict
   state:
-    description: Create or delete the Fargate Profile
+    description: Create or delete the Fargate Profile.
     choices:
       - absent
       - present
     default: present
     type: str
   tags:
-    description: A dictionary of resource tags
+    description: A dictionary of resource tags.
     type: dict
   purge_tags:
     description:
-      - Purge existing tags that are not found in the cluster
+      - Purge existing tags that are not found in the cluster.
     type: bool
     default: true
   wait:
@@ -106,63 +106,63 @@ EXAMPLES = r'''
 
 RETURN = r'''
 fargate_profile_name:
-  description: Name of Fargate Profile
+  description: Name of Fargate Profile.
   returned: when state is present
   type: str
   sample: test_profile
 fargate_profile_arn:
-  description: ARN of the Fargate Profile
+  description: ARN of the Fargate Profile.
   returned: when state is present
   type: str
   sample: arn:aws:eks:us-east-1:1231231123:safd
 cluster_name:
-  description: Name of EKS Cluster
+  description: Name of EKS Cluster.
   returned: when state is present
   type: str
   sample: test-cluster
 created_at:
-  description: Fargate Profile creation date and time
+  description: Fargate Profile creation date and time.
   returned: when state is present
   type: str
   sample: '2022-01-18T20:00:00.111000+00:00'
 pod_execution_role_arn:
-  description: ARN of the IAM Role used by Fargate Profile
+  description: ARN of the IAM Role used by Fargate Profile.
   returned: when state is present
   type: str
   sample: arn:aws:eks:us-east-1:1231231123:role/asdf
 subnets:
-  description: List of subnets used in Fargate Profile
+  description: List of subnets used in Fargate Profile.
   returned: when state is present
   type: list
   sample:
   - subnet-qwerty123
   - subnet-asdfg456
 selectors:
-  description: Selector configuration
+  description: Selector configuration.
   returned: when state is present
   type: complex
   contains:
     namespace:
-      description: Name of the kubernetes namespace used in profile
+      description: Name of the kubernetes namespace used in profile.
       returned: when state is present
       type: str
       sample: nm-test
     labels:
-      description: List of kubernetes labels used in profile
+      description: List of kubernetes labels used in profile.
       returned: when state is present
       type: list
       sample:
         - label1: test1
         - label2: test2
 tags:
-  description: A dictionary of resource tags
+  description: A dictionary of resource tags.
   returned: when state is present
   type: dict
   sample:
       foo: bar
       env: test
 status:
-  description: status of the EKS Fargate Profile
+  description: status of the EKS Fargate Profile.
   returned: when state is present
   type: str
   sample:
@@ -306,7 +306,10 @@ def wait_until(client, module, waiter_name, name, cluster_name):
     wait_timeout = module.params.get('wait_timeout')
     waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
+try:
     waiter.wait(clusterName=cluster_name, fargateProfileName=name, WaiterConfig={'MaxAttempts': attempts})
+except botocore.exceptions.WaiterError as e:
+    module.fail_json_aws(e, msg="An error occurred waiting")
 
 
 def main():
@@ -332,7 +335,10 @@ def main():
         supports_check_mode=True,
     )
 
+try:
     client = module.client('eks')
+except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    module.fail_json_aws(e, msg="Couldn't connect to AWS")
 
     if module.params.get('state') == 'present':
         create_or_update_fargate_profile(client, module)
