@@ -312,17 +312,13 @@
 
     # ------------------------------------------------------------------------------------------
 
-    - name: Add IAM roles to existing db instance - check_mode
+    - name: Add IAM role to existing db instance - check_mode
       rds_instance:
         id: "{{ instance_id }}"
         state: present
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
-          - role_arn: "{{ s3_integration_role_2.arn }}"
-            feature_name: 'Lambda'
-          - role_arn: "{{ s3_integration_role_3.arn }}"
-            feature_name: 's3Import'
       register: result
       check_mode: yes
 
@@ -330,39 +326,29 @@
         that:
           - result.changed
 
-    - name: Add IAM roles to existing db instance
+    - name: Add IAM role to existing db instance
       rds_instance:
         id: "{{ instance_id }}"
         state: present
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
-          - role_arn: "{{ s3_integration_role_2.arn }}"
-            feature_name: 'Lambda'
-          - role_arn: "{{ s3_integration_role_3.arn }}"
-            feature_name: 's3Import'
       register: result
 
     - assert:
         that:
           - result.changed
           - "result.db_instance_identifier == '{{ instance_id }}'"
-          - result.associated_roles | length == 3
+          - result.associated_roles | length == 1
           - "{{ 's3Export' in result.associated_roles | map(attribute='feature_name') }}"
-          - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
-          - "{{ 's3Import' in result.associated_roles | map(attribute='feature_name') }}"
 
-    - name: Add IAM roles to existing db instance (idempotence) - check_mode
+    - name: Add IAM role to existing db instance (idempotence) - check_mode
       rds_instance:
         id: "{{ instance_id }}"
         state: present
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
-          - role_arn: "{{ s3_integration_role_2.arn }}"
-            feature_name: 'Lambda'
-          - role_arn: "{{ s3_integration_role_3.arn }}"
-            feature_name: 's3Import'
       register: result
       check_mode: yes
 
@@ -370,7 +356,7 @@
         that:
           - not result.changed
 
-    - name: Add IAM roles to existing db instance (idempotence)
+    - name: Add IAM role to existing db instance (idempotence)
       rds_instance:
         id: "{{ instance_id }}"
         state: present
@@ -378,20 +364,14 @@
         iam_roles:
           - role_arn: "{{ s3_integration_role_1.arn }}"
             feature_name: 's3Export'
-          - role_arn: "{{ s3_integration_role_2.arn }}"
-            feature_name: 'Lambda'
-          - role_arn: "{{ s3_integration_role_3.arn }}"
-            feature_name: 's3Import'
       register: result
 
     - assert:
         that:
           - not result.changed
           - "result.db_instance_identifier == '{{ instance_id }}'"
-          - result.associated_roles | length == 3
+          - result.associated_roles | length == 1
           - "{{ 's3Export' in result.associated_roles | map(attribute='feature_name') }}"
-          - "{{ 'Lambda' in result.associated_roles | map(attribute='feature_name') }}"
-          - "{{ 's3Import' in result.associated_roles | map(attribute='feature_name') }}"
 
   always:
       - name: Delete IAM policy
