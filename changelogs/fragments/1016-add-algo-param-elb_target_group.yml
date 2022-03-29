@@ -1,0 +1,2 @@
+minor_changes:
+  - elb_target_group - add support for setting load_balancing_algorithm_type (https://github.com/ansible-collections/community.aws/pull/1016).

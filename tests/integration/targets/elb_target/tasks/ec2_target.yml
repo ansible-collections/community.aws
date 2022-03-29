@@ -126,6 +126,7 @@
           - result.target_type == 'instance'
           - result.vpc_id == vpc.vpc.id
           - result.port == 80
+          - result.load_balancing_algorithm_type == 'round_robin' # default
           - '"health_check_port" in result'
           - '"tags" in result'
 
@@ -161,7 +162,7 @@
           - result.vpc_id == vpc.vpc.id
 
     - name: set up ec2 instance to use as a target
-      ec2_instance:
+      amazon.aws.ec2_instance:
         name: "{{ resource_prefix }}-inst"
         security_group: "{{ sg.group_id }}"
         instance_type: t3.micro
@@ -295,6 +296,50 @@
           - not result.changed
           - result.proxy_protocol_v2_enabled == 'true'
           - result.preserve_client_ip_enabled == 'false'
+
+    # Modify target group atrributes =============================
+    # TODO: Add check_mode support
+
+    - name: update target group atrributes
+      elb_target_group:
+        name: "{{ tg_used_name }}"
+        health_check_port: 80
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
+        load_balancing_algorithm_type: least_outstanding_requests
+        state: present
+        target_type: instance
+        tags:
+          Description: "Created by {{ resource_prefix }}"
+      register: result
+
+    - name: update target group atrributes
+      assert:
+        that:
+          - result.changed
+          - result.target_group_name == tg_used_name
+          - result.load_balancing_algorithm_type == 'least_outstanding_requests'
+
+    - name: update target group atrributes - idempotence
+      elb_target_group:
+        name: "{{ tg_used_name }}"
+        health_check_port: 80
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
+        load_balancing_algorithm_type: least_outstanding_requests
+        state: present
+        target_type: instance
+        tags:
+          Description: "Created by {{ resource_prefix }}"
+      register: result
+
+    - name: update target group atrributes - idempotence
+      assert:
+        that:
+          - not result.changed
+          - result.load_balancing_algorithm_type == 'least_outstanding_requests'
 
     # ============================================================
 
@@ -450,7 +495,7 @@
       debug: msg="********** Tearing down elb_target test dependencies **********"
 
     - name: remove ec2 instance
-      ec2_instance:
+      amazon.aws.ec2_instance:
         instance_ids:
           - "{{ instance_id }}"
         state: absent
