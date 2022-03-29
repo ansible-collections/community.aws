@@ -246,7 +246,7 @@ def get_subnet_group(client, module):
 
 def create_subnet_list(subnets):
     r'''
-    Construct a list of subnet ids from a list of subnets dicts returned by boto.
+    Construct a list of subnet ids from a list of subnets dicts returned by boto3.
     Parameters:
         subnets (list): A list of subnets definitions.
         @see https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/rds.html#RDS.Client.describe_db_subnet_groups
