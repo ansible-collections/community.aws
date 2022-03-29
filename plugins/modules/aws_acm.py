@@ -173,7 +173,7 @@ options:
         If the 'Name' tag in I(tags) is not set and I(name_tag) is set,
         the I(name_tag) value is copied to I(tags).
     type: dict
-    version_added: 3.1.0
+    version_added: 3.2.0
 
   purge_tags:
     description:
