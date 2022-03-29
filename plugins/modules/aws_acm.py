@@ -180,7 +180,7 @@ options:
       - whether to remove tags not present in the C(tags) parameter.
     default: false
     type: bool
-    version_added: 3.1.0
+    version_added: 3.2.0
 
 author:
   - Matthew Davis (@matt-telstra) on behalf of Telstra Corporation Limited
