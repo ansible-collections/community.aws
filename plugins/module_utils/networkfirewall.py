@@ -246,7 +246,7 @@ class BaseNetworkFirewallManager(BaseResourceManager):
     def _set_metadata_value(self, key, value, description=None, immutable=False):
         if value is None:
             return False
-        if value == self._preupdate_metadata.get(key, None):
+        if value == self._get_metadata_value(key):
             return False
         if immutable and self.original_resource:
             if description is None:
@@ -256,6 +256,9 @@ class BaseNetworkFirewallManager(BaseResourceManager):
         self._metadata_updates[key] = value
         self.changed = True
         return True
+
+    def _get_metadata_value(self, key, default=None):
+        return self._metadata_updates.get(key, self._preupdate_metadata.get(key, default))
 
     def _do_tagging(self):
         changed = False
@@ -286,7 +289,7 @@ class BaseNetworkFirewallManager(BaseResourceManager):
 
         # Tags are returned as a part of the metadata, but have to be updated
         # via dedicated tagging methods
-        current_tags = boto3_tag_list_to_ansible_dict(self._preupdate_metadata.get('Tags', []))
+        current_tags = boto3_tag_list_to_ansible_dict(self._get_metadata_value('Tags', []))
 
         # So that diff works in check mode we need to know the full target state
         if purge_tags:
@@ -356,7 +359,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         return metadata
 
     def _get_preupdate_arn(self):
-        return self._preupdate_metadata.get('RuleGroupArn')
+        return self._get_metadata_value('RuleGroupArn')
 
     def _get_id_params(self, name=None, rule_type=None, arn=None):
         if arn:
@@ -393,7 +396,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         self.updated_resource = dict()
 
         # Rule Group is already in the process of being deleted (takes time)
-        rule_status = self._preupdate_metadata.get('RuleGroupStatus', '').upper()
+        rule_status = self._get_metadata_value('RuleGroupStatus', '').upper()
         if rule_status == 'DELETING':
             self._wait_for_deletion()
             return False
@@ -485,19 +488,16 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         if value is None:
             return False
 
-        rule_options = deepcopy(self._preupdate_resource.get('StatefulRuleOptions', dict()))
+        rule_options = deepcopy(self._get_resource_value('StatefulRuleOptions', dict()))
         if value == rule_options.get(option_name, default_value):
             return False
         if immutable and self.original_resource:
             self.module.fail_json(msg='{0} can not be updated after creation'
                                   .format(description))
 
-        # The first time, we grab StatefulRuleOptions from the preupdate state (above),
-        # afterwards we grab it from _resource_updates
-        rule_option_updates = self._resource_updates.get('StatefulRuleOptions', rule_options)
-        rule_option_updates[option_name] = value
+        rule_options[option_name] = value
 
-        return self._set_resource_value('StatefulRuleOptions', rule_option_updates)
+        return self._set_resource_value('StatefulRuleOptions', rule_options)
 
     def set_rule_order(self, order):
         RULE_ORDER_MAP = {
@@ -515,20 +515,17 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
 
         variables = self._transform_rule_variables(variables)
 
-        all_variables = self._preupdate_resource.get('RuleVariables', self._empty_rule_variables())
-        current_variables = all_variables.get(set_name, dict())
+        all_variables = deepcopy(self._get_resource_value('RuleVariables', self._empty_rule_variables()))
 
+        current_variables = all_variables.get(set_name, dict())
         updated_variables = _merge_dict(current_variables, variables, purge)
 
         if current_variables == updated_variables:
             return False
 
-        # The first time we grab RuleVariables from preupdate stata (above),
-        # afterwards we grab it from _resource_updates
-        current_updates = deepcopy(self._resource_updates.get('RuleVariables', all_variables))
-        current_updates[set_name] = updated_variables
+        all_variables[set_name] = updated_variables
 
-        return self._set_resource_value('RuleVariables', current_updates)
+        return self._set_resource_value('RuleVariables', all_variables)
 
     def set_ip_variables(self, variables, purge):
         return self._set_rule_variables('IPSets', variables, purge)
@@ -540,20 +537,16 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         if not rules:
             return False
         conflicting_types = self.RULE_TYPES.difference({rule_type})
-        original_source = self._preupdate_resource.get('RulesSource', dict())
-        pending_updates = self._resource_updates.get('RulesSource', dict())
-        current_keys = set(original_source.keys())
-        current_keys.union(pending_updates.keys())
+        rules_source = deepcopy(self._get_resource_value('RulesSource', dict()))
+        current_keys = set(rules_source.keys())
         conflicting_rule_type = conflicting_types.intersection(current_keys)
         if conflicting_rule_type:
             self.module.fail_json('Unable to add {0} rules, {1} rules already set'
                                   .format(rule_type, " and ".join(conflicting_rule_type)))
 
-        original_rules = original_source.get(rule_type)
+        original_rules = rules_source.get(rule_type, None)
         if rules == original_rules:
             return False
-
-        rules_source = dict()
         rules_source[rule_type] = rules
         return self._set_resource_value('RulesSource', rules_source)
 
@@ -667,7 +660,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         if 'Capacity' not in self._metadata_updates:
             self.module.fail_json('Capacity must be provided when creating a new Rule Group')
 
-        rules_source = self._resource_updates.get('RulesSource')
+        rules_source = self._get_resource_value('RulesSource', dict())
         rule_type = self.RULE_TYPES.intersection(set(rules_source.keys()))
         if len(rule_type) != 1:
             self.module.fail_json('Exactly one of rule strings, domain list or rule list'

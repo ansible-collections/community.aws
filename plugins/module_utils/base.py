@@ -293,6 +293,8 @@ class BaseResourceManager(Boto3Mixin):
         """
         return self._merge_resource_changes(filter_immutable=False)
 
+    # If you override _flush_update you're responsible for handling check_mode
+    # If you override _do_update_resource you'll only be called if check_mode == False
     def _flush_create(self):
         changed = True
 
@@ -313,6 +315,9 @@ class BaseResourceManager(Boto3Mixin):
             return True
         return False
 
+    # If you override _flush_update you're responsible for handling check_mode
+    # If you override _do_update_resource you'll only be called if there are
+    # updated pending and check_mode == False
     def _flush_update(self):
         if not self._check_updates_pending():
             self.updated_resource = self.original_resource
@@ -337,7 +342,7 @@ class BaseResourceManager(Boto3Mixin):
     def _set_resource_value(self, key, value, description=None, immutable=False):
         if value is None:
             return False
-        if value == self._preupdate_resource.get(key, None):
+        if value == self._get_resource_value(key):
             return False
         if immutable and self.original_resource:
             if description is None:
@@ -347,6 +352,10 @@ class BaseResourceManager(Boto3Mixin):
         self._resource_updates[key] = value
         self.changed = True
         return True
+
+    def _get_resource_value(self, key, default=None):
+        default_value = self._preupdate_resource.get(key, default)
+        return self._resource_updates.get(key, default_value)
 
     def set_wait(self, wait):
         if wait is None:
