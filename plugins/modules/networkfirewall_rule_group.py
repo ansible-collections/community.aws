@@ -262,6 +262,21 @@ options:
     type: bool
     required: false
     default: True
+  wait:
+    description:
+      - Whether to wait for the firewall rule group to reach the
+        C(ACTIVE) or C(DELETED) state before the module returns.
+    type: bool
+    required: false
+    default: true
+  wait_timeout:
+    description:
+      - Maximum time, in seconds, to wait for the firewall rule group
+        to reach the expected state.
+      - Defaults to 600 seconds.
+    type: int
+    required: false
+
 
 author: Mark Chappell (@tremble)
 extends_documentation_fragment:
@@ -751,6 +766,8 @@ def main():
         rule_list=dict(type='list', elements='dict', aliases=['stateful_rule_list'], options=rule_list_spec, required=False),
         tags=dict(type='dict', required=False),
         purge_tags=dict(type='bool', required=False, default=True),
+        wait=dict(type='bool', required=False, default=True),
+        wait_timeout=dict(type='int', required=False),
     )
 
     module = AnsibleAWSModule(
@@ -790,6 +807,8 @@ def main():
         module.require_botocore_at_least('1.23.23', reason='to set the rule order')
 
     manager = NetworkFirewallRuleManager(module, arn=arn, name=name, rule_type=rule_type)
+    manager.set_wait(module.params.get('wait', None))
+    manager.set_wait_timeout(module.params.get('wait_timeout', None))
 
     if state == 'absent':
         manager.delete()
