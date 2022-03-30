@@ -49,7 +49,7 @@
         that:
           - info_result.results[0].tags | length == 0
 
-    - name: Tag asg
+    - name: Tag asg - check_mode
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags:

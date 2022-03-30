@@ -415,7 +415,7 @@
             groups:
               - "{{ sg.group_id }}"
 
-    - name: update autoscaling group with mixed-instances policy with mixed instances types
+    - name: update autoscaling group with mixed-instances policy with mixed instances types - check_mode
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
         launch_template:

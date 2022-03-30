@@ -19,7 +19,7 @@
 
     #----------------------------------------------------------------------
 
-    - name: create a AutoScalingGroup to be used for instance_detach test
+    - name: create a AutoScalingGroup to be used for instance_detach test - check_mode
       ec2_asg:
         name: "{{ resource_prefix }}-asg-detach-test"
         launch_config_name: "{{ resource_prefix }}-lc-detach-test"
@@ -89,7 +89,7 @@
 
     #----------------------------------------------------------------------
 
-    - name: detach 2 instance from the asg and replace with other instances
+    - name: detach 2 instance from the asg and replace with other instances - check_mode
       ec2_asg:
         name: "{{ resource_prefix }}-asg-detach-test"
         launch_config_name: "{{ resource_prefix }}-lc-detach-test"
