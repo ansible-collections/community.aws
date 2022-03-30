@@ -262,7 +262,7 @@ class BaseNetworkFirewallManager(BaseResourceManager):
     def _get_metadata_value(self, key, default=None):
         return self._metadata_updates.get(key, self._preupdate_metadata.get(key, default))
 
-    def _do_tagging(self):
+    def _flush_tagging(self):
         changed = False
         tags_to_add = self._tagging_updates.get('add')
         tags_to_remove = self._tagging_updates.get('remove')
@@ -692,7 +692,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
 
     def _flush_update(self):
         changed = False
-        changed |= self._do_tagging()
+        changed |= self._flush_tagging()
         changed |= super(NetworkFirewallRuleManager, self)._flush_update()
         return changed
 
