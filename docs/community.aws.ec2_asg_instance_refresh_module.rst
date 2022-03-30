@@ -1,14 +1,14 @@
-.. _community.aws.ec2_eip_module:
+.. _community.aws.ec2_asg_instance_refresh_module:
 
 
-*********************
-community.aws.ec2_eip
-*********************
+**************************************
+community.aws.ec2_asg_instance_refresh
+**************************************
 
-**manages EC2 elastic IP (EIP) addresses.**
+**Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS**
 
 
-Version added: 1.0.0
+Version added: 3.2.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module can allocate or release an EIP.
-- This module can associate/disassociate an EIP with instances or network interfaces.
+- Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
+- Can be used with :ref:`community.aws.ec2_asg_instance_refresh_info <community.aws.ec2_asg_instance_refresh_info_module>` to track the subsequent progress.
 
 
 
@@ -38,31 +38,12 @@ Parameters
 
     <table  border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Parameter</th>
+            <th colspan="2">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
             <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>allow_reassociation</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Specify this option to allow an Elastic IP address that is already associated with another network interface or instance to be re-associated with the specified instance or interface.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_access_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -80,7 +61,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_ca_bundle</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -97,7 +78,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -114,7 +95,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_secret_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -132,7 +113,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -151,24 +132,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>device_id</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The id of the device for the EIP. Can be an EC2 Instance id or Elastic Network Interface (ENI) id.</div>
-                        <div>The <em>instance_id</em> alias has been deprecated and will be removed after 2022-12-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: instance_id</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -184,42 +148,79 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>in_vpc</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Allocate an EIP inside a VPC or not.</div>
-                        <div>Required if specifying an ENI with <em>device_id</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>private_ip_address</b>
+                    <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The primary or secondary private IP address to associate with the Elastic IP address.</div>
+                        <div>The name of the auto scaling group you are searching for.</div>
                 </td>
             </tr>
             <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>preferences</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Set of preferences associated with the instance refresh request.</div>
+                        <div>If not provided, the default values are used.</div>
+                        <div>For <em>min_healthy_percentage</em>, the default value is <code>90</code>.</div>
+                        <div>For <em>instance_warmup</em>, the default is to use the value specified for the health check grace period for the Auto Scaling group.</div>
+                        <div>Can not be specified when <em>state</em> is set to &#x27;cancelled&#x27;.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
                 <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>instance_warmup</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The number of seconds until a newly launched instance is configured and ready to use.</div>
+                        <div>During this time, Amazon EC2 Auto Scaling does not immediately move on to the next replacement.</div>
+                        <div>The default is to use the value for the health check grace period defined for the group.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>min_healthy_percentage</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">90</div>
+                </td>
+                <td>
+                        <div>Total percent of capacity in ASG that must remain healthy during instance refresh to allow operation to continue.</div>
+                        <div>It is rounded up to the nearest integer.</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -236,60 +237,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>public_ip</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The IP address of a previously allocated EIP.</div>
-                        <div>When <em>state=present</em> and device is specified, the EIP is associated with the device.</div>
-                        <div>When <em>state=absent</em> and device is specified, the EIP is disassociated from the device.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: ip</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>public_ipv4_pool</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Allocates the new Elastic IP from the provided public IPv4 pool (BYOIP) only applies to newly allocated Elastic IPs, isn&#x27;t validated when <em>reuse_existing_ip_allowed=true</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether the <em>tags</em> argument should cause tags not in the dictionary to be removed.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -305,45 +253,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>release_on_disassociation</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether or not to automatically release the EIP when it is disassociated.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>reuse_existing_ip_allowed</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Reuse an EIP that is not associated to a device (when available), instead of allocating a new one.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -361,73 +271,46 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                                    <li>absent</li>
+                                    <li>started</li>
+                                    <li>cancelled</li>
                         </ul>
                 </td>
                 <td>
-                        <div>When <code>state=present</code>, allocate an EIP or associate an existing EIP with a device.</div>
-                        <div>When <code>state=absent</code>, disassociate the EIP from the device and optionally release it.</div>
+                        <div>Desired state of the ASG.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tag_name</b>
+                    <b>strategy</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
+                        <b>Default:</b><br/><div style="color: blue">"Rolling"</div>
                 </td>
                 <td>
-                        <div>When <em>reuse_existing_ip_allowed=true</em>, supplement with this option to only reuse an Elastic IP if it is tagged with <em>tag_name</em>.</div>
+                        <div>The strategy to use for the instance refresh. The only valid value is <code>Rolling</code>.</div>
+                        <div>A rolling update is an update that is applied to all instances in an Auto Scaling group until all instances have been updated.</div>
+                        <div>A rolling update can fail due to failed health checks or if instances are on standby or are protected from scale in.</div>
+                        <div>If the rolling update process fails, any instances that were already replaced are not rolled back to their previous configuration.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tag_value</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Supplements <em>tag_name</em> but also checks that the value of the tag provided in <em>tag_name</em> matches <em>tag_value</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A dictionary of tags to apply to the EIP.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -445,21 +328,6 @@ Parameters
                         <div>When set to &quot;no&quot;, SSL certificates will not be validated for communication with the AWS APIs.</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>wait_timeout</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The <em>wait_timeout</em> option does nothing and will be removed after 2022-06-01</div>
-                </td>
-            </tr>
     </table>
     <br/>
 
@@ -468,8 +336,6 @@ Notes
 -----
 
 .. note::
-   - There may be a delay between the time the EIP is assigned and when the cloud instance is reachable via the new address. Use wait_for and pause to delay further playbook execution until the instance is reachable, if necessary.
-   - This module returns multiple changed statuses on disassociation or release. It returns an overall status based on any changes occurring. It also returns individual changed statuses for disassociation and release.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - Modules based on the original AWS SDK (boto) may read their default configuration from different files. See https://boto.readthedocs.io/en/latest/boto_config_tut.html for more information.
@@ -484,109 +350,23 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    - name: associate an elastic IP with an instance
-      community.aws.ec2_eip:
-        device_id: i-1212f003
-        ip: 93.184.216.119
+    - name: Start a refresh
+      community.aws.ec2_asg_instance_refresh:
+        name: some-asg
+        state: started
 
-    - name: associate an elastic IP with a device
-      community.aws.ec2_eip:
-        device_id: eni-c8ad70f3
-        ip: 93.184.216.119
+    - name: Cancel a refresh
+      community.aws.ec2_asg_instance_refresh:
+        name: some-asg
+        state: cancelled
 
-    - name: associate an elastic IP with a device and allow reassociation
-      community.aws.ec2_eip:
-        device_id: eni-c8ad70f3
-        public_ip: 93.184.216.119
-        allow_reassociation: true
-
-    - name: disassociate an elastic IP from an instance
-      community.aws.ec2_eip:
-        device_id: i-1212f003
-        ip: 93.184.216.119
-        state: absent
-
-    - name: disassociate an elastic IP with a device
-      community.aws.ec2_eip:
-        device_id: eni-c8ad70f3
-        ip: 93.184.216.119
-        state: absent
-
-    - name: allocate a new elastic IP and associate it with an instance
-      community.aws.ec2_eip:
-        device_id: i-1212f003
-
-    - name: allocate a new elastic IP without associating it to anything
-      community.aws.ec2_eip:
-        state: present
-      register: eip
-
-    - name: output the IP
-      ansible.builtin.debug:
-        msg: "Allocated IP is {{ eip.public_ip }}"
-
-    - name: provision new instances with ec2
-      amazon.aws.ec2:
-        keypair: mykey
-        instance_type: c1.medium
-        image: ami-40603AD1
-        wait: true
-        group: webserver
-        count: 3
-      register: ec2
-
-    - name: associate new elastic IPs with each of the instances
-      community.aws.ec2_eip:
-        device_id: "{{ item }}"
-      loop: "{{ ec2.instance_ids }}"
-
-    - name: allocate a new elastic IP inside a VPC in us-west-2
-      community.aws.ec2_eip:
-        region: us-west-2
-        in_vpc: true
-      register: eip
-
-    - name: output the IP
-      ansible.builtin.debug:
-        msg: "Allocated IP inside a VPC is {{ eip.public_ip }}"
-
-    - name: allocate eip - reuse unallocated ips (if found) with FREE tag
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: FREE
-
-    - name: allocate eip - reuse unallocated ips if tag reserved is nope
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: reserved
-        tag_value: nope
-
-    - name: allocate new eip - from servers given ipv4 pool
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
-
-    - name: allocate eip - from a given pool (if no free addresses where dev-servers tag is dynamic)
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: dev-servers
-        public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
-
-    - name: allocate eip from pool - check if tag reserved_for exists and value is our hostname
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: reserved_for
-        tag_value: "{{ inventory_hostname }}"
-        public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
+    - name: Start a refresh and pass preferences
+      community.aws.ec2_asg_instance_refresh:
+        name: some-asg
+        state: started
+        preferences:
+          min_healthy_percentage: 91
+          instance_warmup: 60
 
 
 
@@ -605,35 +385,130 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>allocation_id</b>
+                    <b>auto_scaling_group_name</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>on success</td>
+                <td>success</td>
                 <td>
-                            <div>allocation_id of the elastic ip</div>
+                            <div>Name of autoscaling group</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">eipalloc-51aa3a6c</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">public-webapp-production-1</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>public_ip</b>
+                    <b>end_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>on success</td>
+                <td>success</td>
                 <td>
-                            <div>an elastic ip address</div>
+                            <div>The date and time this ASG was created, in ISO 8601 format.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">52.88.159.209</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-11-25T00:05:36.309Z</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>instance_refresh_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>instance refresh id</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">08b91cf7-8fa6-48af-b6a6-d227f40f1b9b</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>instances_to_update</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>num. of instance to update</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">5</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>percentage_complete</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>the % of completeness</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">100</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>start_time</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The date and time this ASG was created, in ISO 8601 format.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-11-25T00:05:36.309Z</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The current state of the group when DeleteAutoScalingGroup is in progress.</div>
+                            <div>The following are the possible statuses</div>
+                            <div>Pending --  The request was created, but the operation has not started.</div>
+                            <div>InProgress --  The operation is in progress.</div>
+                            <div>Successful --  The operation completed successfully.</div>
+                            <div>Failed --  The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</div>
+                            <div>Cancelling --</div>
+                            <div>An ongoing operation is being cancelled.</div>
+                            <div>Cancellation does not roll back any replacements that have already been completed,</div>
+                            <div>but it prevents new replacements from being started.</div>
+                            <div>Cancelled --  The operation is cancelled.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Pending</div>
                 </td>
             </tr>
     </table>
@@ -647,4 +522,4 @@ Status
 Authors
 ~~~~~~~
 
-- Rick Mendes (@rickmendes) <rmendes@illumina.com>
+- Dan Khersonsky (@danquixote)

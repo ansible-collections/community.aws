@@ -441,6 +441,8 @@ Parameters
                 </td>
                 <td>
                         <div>Policy to apply to the SNS topic.</div>
+                        <div>Policy body can be YAML or JSON.</div>
+                        <div>This is required for certain use cases for example with S3 bucket notifications.</div>
                 </td>
             </tr>
             <tr>
@@ -651,19 +653,45 @@ Examples
         delivery_policy:
           http:
             defaultHealthyRetryPolicy:
-                minDelayTarget: 2
-                maxDelayTarget: 4
-                numRetries: 3
-                numMaxDelayRetries: 5
-                backoffFunction: "<linear|arithmetic|geometric|exponential>"
+              minDelayTarget: 2
+              maxDelayTarget: 4
+              numRetries: 9
+              numMaxDelayRetries: 5
+              numMinDelayRetries: 2
+              numNoDelayRetries: 2
+              backoffFunction: "linear"
             disableSubscriptionOverrides: True
             defaultThrottlePolicy:
-                maxReceivesPerSecond: 10
+              maxReceivesPerSecond: 10
         subscriptions:
           - endpoint: "my_email_address@example.com"
             protocol: "email"
           - endpoint: "my_mobile_number"
             protocol: "sms"
+
+    - name: Create a topic permitting S3 bucket notifications
+      community.aws.sns_topic:
+        name: "S3Notifications"
+        state: present
+        display_name: "S3 notifications SNS topic"
+        policy:
+          Id: s3-topic-policy
+          Version: 2012-10-17
+          Statement:
+            - Sid: Statement-id
+              Effect: Allow
+              Resource: "arn:aws:sns:*:*:S3Notifications"
+              Principal:
+                Service: s3.amazonaws.com
+              Action: sns:Publish
+              Condition:
+                ArnLike:
+                  aws:SourceArn: "arn:aws:s3:*:*:SomeBucket"
+
+    - name: Example deleting a topic
+      community.aws.sns_topic:
+        name: "ExampleTopic"
+        state: absent
 
 
 
@@ -682,7 +710,24 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>community.aws.sns_topic</b>
+                    <b>sns_arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The ARN of the topic you are modifying</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:sns:us-east-2:111111111111:my_topic_name</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>sns_topic</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">complex</span>
@@ -1021,23 +1066,6 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
 
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>sns_arn</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>The ARN of the topic you are modifying</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:sns:us-east-2:111111111111:my_topic_name</div>
-                </td>
-            </tr>
     </table>
     <br/><br/>
 

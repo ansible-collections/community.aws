@@ -359,7 +359,7 @@ Examples
 
 .. code-block:: yaml
 
-    # Create Policy ex nihilo
+    # Create a policy
     - name: Create IAM Managed Policy
       community.aws.iam_managed_policy:
         policy_name: "ManagedPolicy"

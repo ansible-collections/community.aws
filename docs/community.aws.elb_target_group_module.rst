@@ -148,6 +148,7 @@ Parameters
                 </td>
                 <td>
                         <div>Indicates whether the load balancer terminates connections at the end of the deregistration timeout.</div>
+                        <div>Using this option is only supported when attaching to a Network Load Balancer (NLB).</div>
                 </td>
             </tr>
             <tr>
@@ -290,6 +291,28 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>load_balancing_algorithm_type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>round_robin</li>
+                                    <li>least_outstanding_requests</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The type of load balancing algorithm to use.</div>
+                        <div>Changing the load balancing algorithm is only supported when used with Application Load Balancers (ALB).</div>
+                        <div>If not set AWS will default to <code>round_robin</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>modify_targets</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -334,7 +357,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The port on which the targets receive traffic. This port is used unless you specify a port override when registering the target. Required if <em>state</em> is <code>present</code>.</div>
+                        <div>The port on which the targets receive traffic. This port is used unless you specify a port override when registering the target.</div>
+                        <div>Required when <em>state</em> is <code>present</code> and <em>target_type</em> is <code>instance</code>, <code>ip</code>, or <code>alb</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -402,7 +426,8 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>The protocol to use for routing traffic to the targets. Required when <em>state</em> is <code>present</code>.</div>
+                        <div>The protocol to use for routing traffic to the targets.</div>
+                        <div>Required when <em>state</em> is <code>present</code> and <em>target_type</em> is <code>instance</code>, <code>ip</code>, or <code>alb</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -629,10 +654,11 @@ Parameters
                                     <li>instance</li>
                                     <li>ip</li>
                                     <li>lambda</li>
+                                    <li>alb</li>
                         </ul>
                 </td>
                 <td>
-                        <div>The type of target that you must specify when registering targets with this target group. The possible values are <code>instance</code> (targets are specified by instance ID), <code>ip</code> (targets are specified by IP address) or <code>lambda</code> (target is specified by ARN). Note that you can&#x27;t specify targets for a target group using more than one type. Target type lambda only accept one target. When more than one target is specified, only the first one is used. All additional targets are ignored. If the target type is ip, specify IP addresses from the subnets of the virtual private cloud (VPC) for the target group, the RFC 1918 range (10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16), and the RFC 6598 range (100.64.0.0/10). You can&#x27;t specify publicly routable IP addresses.</div>
+                        <div>The type of target that you must specify when registering targets with this target group. The possible values are <code>instance</code> (targets are specified by instance ID), <code>ip</code> (targets are specified by IP address), <code>lambda</code> (target is specified by ARN), or <code>alb</code> (target is specified by ARN). Note that you can&#x27;t specify targets for a target group using more than one type. Target types lambda and alb only accept one target. When more than one target is specified, only the first one is used. All additional targets are ignored. If the target type is ip, specify IP addresses from the subnets of the virtual private cloud (VPC) for the target group, the RFC 1918 range (10.0.0.0/8, 172.16.0.0/12, and 192.168.0.0/16), and the RFC 6598 range (100.64.0.0/10). You can&#x27;t specify publicly routable IP addresses.</div>
                         <div>The default behavior is <code>instance</code>.</div>
                 </td>
             </tr>
@@ -698,7 +724,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The identifier of the virtual private cloud (VPC). Required when <em>state</em> is <code>present</code>.</div>
+                        <div>The identifier of the virtual private cloud (VPC).</div>
+                        <div>Required when <em>state</em> is <code>present</code> and <em>target_type</em> is <code>instance</code>, <code>ip</code>, or <code>alb</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -1020,6 +1047,24 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 <td>
                             <div>The Amazon Resource Names (ARN) of the load balancers that route traffic to this target group.</div>
                     <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>load_balancing_algorithm_type</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>when state present</td>
+                <td>
+                            <div>The type load balancing algorithm used.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">least_outstanding_requests</div>
                 </td>
             </tr>
             <tr>

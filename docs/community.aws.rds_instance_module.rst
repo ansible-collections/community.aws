@@ -675,7 +675,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>An 8-41 character password for the master database user. The password can contain any printable ASCII character except &quot;/&quot;, &quot;&quot;&quot;, or &quot;@&quot;. To modify the password use <em>force_password_update</em>. Use <em>apply immediately</em> to change the password immediately, otherwise it is updated during the next maintenance window.</div>
+                        <div>An 8-41 character password for the master database user. The password can contain any printable ASCII character except &quot;/&quot;, &quot;&quot;&quot;, or &quot;@&quot;. To modify the password use <em>force_update_password</em>. Use <em>apply immediately</em> to change the password immediately, otherwise it is updated during the next maintenance window.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: password</div>
                 </td>
             </tr>
