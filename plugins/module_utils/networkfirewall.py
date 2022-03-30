@@ -86,16 +86,18 @@ class NetworkFirewallWaiterFactory(BaseWaiterFactory):
         return data
 
 
-class NFRuleGroupBoto3Mixin(Boto3Mixin):
+class NetworkFirewallBoto3Mixin(Boto3Mixin):
     def __init__(self, module):
         r"""
         Parameters:
             module (AnsibleAWSModule): An Ansible module.
         """
         self.nf_waiter_factory = NetworkFirewallWaiterFactory(module)
-        super(NFRuleGroupBoto3Mixin, self).__init__(module)
+        super(NetworkFirewallBoto3Mixin, self).__init__(module)
         self._update_token = None
 
+
+class NFRuleGroupBoto3Mixin(NetworkFirewallBoto3Mixin):
     # Paginators can't be (easily) wrapped, so we wrap this method with the
     # retry - retries the full fetch, but better than simply giving up.
     @AWSRetry.jittered_backoff()
@@ -104,7 +106,7 @@ class NFRuleGroupBoto3Mixin(Boto3Mixin):
         result = paginator.paginate(**params).build_full_result()
         return result.get('RuleGroups', None)
 
-    @Boto3Mixin.aws_error_handler('listing all rule groups')
+    @Boto3Mixin.aws_error_handler('list all rule groups')
     def _list_rule_groups(self, **params):
         return self._paginated_list_rule_groups(**params)
 
