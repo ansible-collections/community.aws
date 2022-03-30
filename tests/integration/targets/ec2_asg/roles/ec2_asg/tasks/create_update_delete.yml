@@ -3,11 +3,25 @@
 
     # ============================================================
 
-- name: Test incomplete arguments with ec2_asg
+- name: Test create/update/delete AutoScalingGroups with ec2_asg
 
   block:
 
     # ============================================================
+
+    - name: test without specifying required module options
+      ec2_asg:
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        security_token: "{{ security_token | default(omit) }}"
+      ignore_errors: true
+      register: result
+
+    - name: assert name is a required module option
+      assert:
+        that:
+          - "result.msg == 'missing required arguments: name'"
+
 
     - name: ensure launch configs exist
       ec2_lc:
