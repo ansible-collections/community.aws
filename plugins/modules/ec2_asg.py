@@ -182,6 +182,21 @@ options:
         matching the current launch configuration.
     type: list
     elements: str
+  detach_instances:
+    description:
+      - Removes one or more instances from the specified AutoScalingGroup.
+      - If I(decrement_desired_capacity) flag is not set, new instance(s) are launched to replace the detached instance(s).
+      - If a Classic Load Balancer is attached to the AutoScalingGroup, the instances are also deregistered from the load balancer.
+      - If there are target groups attached to the AutoScalingGroup, the instances are also deregistered from the target groups.
+    type: list
+    elements: str
+    version_added: 3.2.0
+  decrement_desired_capacity:
+    description:
+      - Indicates whether the AutoScalingGroup decrements the desired capacity value by the number of instances detached.
+    default: false
+    type: bool
+    version_added: 3.2.0
   lc_check:
     description:
       - Check to make sure instances that are being replaced with I(replace_instances) do not already have the current I(launch_config).
@@ -205,6 +220,13 @@ options:
       - When I(propagate_at_launch) is true the tags will be propagated to the Instances created.
     type: list
     elements: dict
+  purge_tags:
+    description:
+      - If C(true), existing tags will be purged from the resource to match exactly what is defined by I(tags) parameter.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    default: true
+    type: bool
+    version_added: 3.2.0
   health_check_period:
     description:
       - Length of time in seconds after a new EC2 instance comes into service that Auto Scaling starts checking its health.
@@ -630,6 +652,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 
 ASG_ATTRIBUTES = ('AvailabilityZones', 'DefaultCooldown', 'DesiredCapacity',
                   'HealthCheckGracePeriod', 'HealthCheckType', 'LaunchConfigurationName',
@@ -754,6 +777,12 @@ def delete_asg(connection, asg_name, force_delete):
 def terminate_asg_instance(connection, instance_id, decrement_capacity):
     connection.terminate_instance_in_auto_scaling_group(InstanceId=instance_id,
                                                         ShouldDecrementDesiredCapacity=decrement_capacity)
+
+
+@AWSRetry.jittered_backoff(**backoff_params)
+def detach_asg_instances(connection, instance_ids, as_group_name, decrement_capacity):
+    connection.detach_instances(InstanceIds=instance_ids, AutoScalingGroupName=as_group_name,
+                                ShouldDecrementDesiredCapacity=decrement_capacity)
 
 
 def enforce_required_arguments_for_create():
@@ -1076,6 +1105,7 @@ def create_autoscaling_group(connection):
     desired_capacity = module.params.get('desired_capacity')
     vpc_zone_identifier = module.params.get('vpc_zone_identifier')
     set_tags = module.params.get('tags')
+    purge_tags = module.params.get('purge_tags')
     health_check_period = module.params.get('health_check_period')
     health_check_type = module.params.get('health_check_type')
     default_cooldown = module.params.get('default_cooldown')
@@ -1184,9 +1214,12 @@ def create_autoscaling_group(connection):
             changed = True
 
         # process tag changes
+        have_tags = as_group.get('Tags')
+        want_tags = asg_tags
+        if purge_tags and not want_tags and have_tags:
+            connection.delete_tags(Tags=list(have_tags))
+
         if len(set_tags) > 0:
-            have_tags = as_group.get('Tags')
-            want_tags = asg_tags
             if have_tags:
                 have_tags.sort(key=lambda x: x["Key"])
             if want_tags:
@@ -1197,9 +1230,11 @@ def create_autoscaling_group(connection):
 
             for dead_tag in set(have_tag_keyvals).difference(want_tag_keyvals):
                 changed = True
-                dead_tags.append(dict(ResourceId=as_group['AutoScalingGroupName'],
-                                      ResourceType='auto-scaling-group', Key=dead_tag))
+                if purge_tags:
+                    dead_tags.append(dict(
+                        ResourceId=as_group['AutoScalingGroupName'], ResourceType='auto-scaling-group', Key=dead_tag))
                 have_tags = [have_tag for have_tag in have_tags if have_tag['Key'] != dead_tag]
+
             if dead_tags:
                 connection.delete_tags(Tags=dead_tags)
 
@@ -1523,6 +1558,40 @@ def replace(connection):
     return changed, asg_properties
 
 
+def detach(connection):
+    group_name = module.params.get('name')
+    detach_instances = module.params.get('detach_instances')
+    as_group = describe_autoscaling_groups(connection, group_name)[0]
+    decrement_desired_capacity = module.params.get('decrement_desired_capacity')
+    min_size = module.params.get('min_size')
+    props = get_properties(as_group)
+    instances = props['instances']
+
+    # check if provided instance exists in asg, create list of instances to detach which exist in asg
+    instances_to_detach = []
+    for instance_id in detach_instances:
+        if instance_id in instances:
+            instances_to_detach.append(instance_id)
+
+    # check if setting decrement_desired_capacity will make desired_capacity smaller
+    # than the currently set minimum size in ASG configuration
+    if decrement_desired_capacity:
+        decremented_desired_capacity = len(instances) - len(instances_to_detach)
+        if min_size and min_size > decremented_desired_capacity:
+            module.fail_json(
+                msg="Detaching instance(s) with 'decrement_desired_capacity' flag set reduces number of instances to {0}\
+                        which is below current min_size {1}, please update AutoScalingGroup Sizes properly.".format(decremented_desired_capacity, min_size))
+
+    if instances_to_detach:
+        try:
+            detach_asg_instances(connection, instances_to_detach, group_name, decrement_desired_capacity)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to detach instances from AutoScaling Group")
+
+    asg_properties = get_properties(as_group)
+    return True, asg_properties
+
+
 def get_instances_by_launch_config(props, lc_check, initial_instances):
     new_instances = []
     old_instances = []
@@ -1776,11 +1845,14 @@ def main():
         replace_batch_size=dict(type='int', default=1),
         replace_all_instances=dict(type='bool', default=False),
         replace_instances=dict(type='list', default=[], elements='str'),
+        detach_instances=dict(type='list', default=[], elements='str'),
+        decrement_desired_capacity=dict(type='bool', default=False),
         lc_check=dict(type='bool', default=True),
         lt_check=dict(type='bool', default=True),
         wait_timeout=dict(type='int', default=300),
         state=dict(default='present', choices=['present', 'absent']),
         tags=dict(type='list', default=[], elements='dict'),
+        purge_tags=dict(type='bool', default=True),
         health_check_period=dict(type='int', default=300),
         health_check_type=dict(default='EC2', choices=['EC2', 'ELB']),
         default_cooldown=dict(type='int', default=300),
@@ -1821,16 +1893,18 @@ def main():
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['replace_all_instances', 'replace_instances'],
-            ['launch_config_name', 'launch_template']
+            ['replace_all_instances', 'detach_instances'],
+            ['launch_config_name', 'launch_template'],
         ]
     )
 
     state = module.params.get('state')
     replace_instances = module.params.get('replace_instances')
     replace_all_instances = module.params.get('replace_all_instances')
+    detach_instances = module.params.get('detach_instances')
 
     connection = module.client('autoscaling')
-    changed = create_changed = replace_changed = False
+    changed = create_changed = replace_changed = detach_changed = False
     exists = asg_exists(connection)
 
     if state == 'present':
@@ -1847,7 +1921,15 @@ def main():
     ):
         replace_changed, asg_properties = replace(connection)
 
-    if create_changed or replace_changed:
+    # Only detach instances if asg existed at start of call
+    if (
+        exists
+        and (detach_instances)
+        and (module.params.get('launch_config_name') or module.params.get('launch_template'))
+    ):
+        detach_changed, asg_properties = detach(connection)
+
+    if create_changed or replace_changed or detach_changed:
         changed = True
 
     module.exit_json(changed=changed, **asg_properties)
