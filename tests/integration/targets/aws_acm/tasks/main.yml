@@ -11,7 +11,16 @@
   # are from which test
   - set_fact:
       aws_acm_test_uuid: "{{ (10**9) | random }}"
-
+  - name: attempt to delete cert without specifying required parameter
+    aws_acm:
+      state: absent
+    register: result
+    ignore_errors: true
+  - name: assert failure when name_tag conflicts with tags.Name
+    assert:
+      that:
+          - 'result.failed'
+          - '"If ''state'' is specified as ''absent'' then exactly one of ''name_tag''" in result.msg'
   - name: list certs
     aws_acm_info: null
     register: list_all
@@ -53,19 +62,42 @@
       common_name: '{{ item.domain }}'
   - name: Generate a Self Signed OpenSSL certificate for own certs
     with_items: '{{ local_certs }}'
-    community.crypto.openssl_certificate:
+    community.crypto.x509_certificate:
       provider: selfsigned
       path: '{{ item.cert }}'
       csr_path: '{{ item.csr }}'
       privatekey_path: '{{ item.priv_key }}'
-      signature_algorithms:
-      - sha256WithRSAEncryption
+      selfsigned_digest: sha256
+  - name: try to upload certificate, but name_tag conflicts with tags.Name
+    vars:
+      local_cert: '{{ local_certs[0] }}'
+    aws_acm:
+      name_tag: '{{ local_cert.name }}'
+      certificate: '{{ lookup(''file'', local_cert.cert ) }}'
+      private_key: '{{ lookup(''file'', local_cert.priv_key ) }}'
+      state: present
+      tags:
+        Name: '{{ local_cert.name }}-other'
+        Application: search
+        Environment: development
+    register: result
+    ignore_errors: true
+  - name: assert failure when name_tag conflicts with tags.Name
+    assert:
+      that:
+          - 'result.failed'
+          - '"conflicts with value of" in result.msg'
   - name: upload certificates first time
     aws_acm:
       name_tag: '{{ item.name }}'
       certificate: '{{ lookup(''file'', item.cert ) }}'
       private_key: '{{ lookup(''file'', item.priv_key ) }}'
       state: present
+      # Add tags
+      tags:
+        Application: search
+        Environment: development
+      purge_tags: false
     register: upload
     with_items: '{{ local_certs }}'
     until: upload is succeeded
@@ -95,7 +127,11 @@
       - fetch_after_up_result.certificates[0].domain_name == original_cert.domain
       - (fetch_after_up_result.certificates[0].certificate | replace( ' ', '' ) | replace( '\n', '')) == (lookup( 'file', original_cert.cert ) | replace( ' ', '' ) | replace( '\n', '' ))
       - '''Name'' in fetch_after_up_result.certificates[0].tags'
+      - '''Application'' in fetch_after_up_result.certificates[0].tags'
+      - '''Environment'' in fetch_after_up_result.certificates[0].tags'
       - fetch_after_up_result.certificates[0].tags['Name'] == original_cert.name
+      - fetch_after_up_result.certificates[0].tags['Application'] == 'search'
+      - fetch_after_up_result.certificates[0].tags['Environment'] == 'development'
     with_items: '{{ fetch_after_up.results }}'
     vars:
       fetch_after_up_result: '{{ item }}'
@@ -154,6 +190,143 @@
     register: upload2
     with_items: '{{ local_certs }}'
     failed_when: upload2.changed
+  - name: change tags of existing certificate, check mode
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    check_mode: true
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+      domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+  - assert:
+      that:
+      - certificate_with_tags.changed
+  - name: change tags of existing certificate, changes expected
+    aws_acm:
+      # When applying tags to an existing certificate, it is sufficient to specify the 'certificate_arn'.
+      # Previously, the 'aws_acm' module was requiring the 'certificate', 'name_tag' and 'domain_name'
+      # attributes.
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+      domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+  - name: assert certificate tags
+    assert:
+      that:
+      - certificate_with_tags.certificate.tags | length == 4
+      - '''Name'' in certificate_with_tags.certificate.tags'
+      - '''Application'' in certificate_with_tags.certificate.tags'
+      - '''Environment'' in certificate_with_tags.certificate.tags'
+      - '''Owner'' in certificate_with_tags.certificate.tags'
+      - certificate_with_tags.certificate.tags['Name'] == name_tag
+      - certificate_with_tags.certificate.tags['Application'] == 'search'
+      - certificate_with_tags.certificate.tags['Environment'] == 'staging'
+      - certificate_with_tags.certificate.tags['Owner'] == 'Bob'
+      - certificate_with_tags.changed
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+  - name: change tags of existing certificate, check mode again
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    check_mode: true
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+  - assert:
+      that:
+      - not certificate_with_tags.changed
+  - name: change tags of existing certificate, no change expected
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+        Owner: Bob
+    register: certificate_with_tags
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+  - name: assert certificate tags
+    assert:
+      that:
+      - certificate_with_tags.certificate.tags | length == 4
+      - '''Name'' in certificate_with_tags.certificate.tags'
+      - '''Application'' in certificate_with_tags.certificate.tags'
+      - '''Environment'' in certificate_with_tags.certificate.tags'
+      - '''Owner'' in certificate_with_tags.certificate.tags'
+      - certificate_with_tags.certificate.tags['Name'] == name_tag
+      - certificate_with_tags.certificate.tags['Application'] == 'search'
+      - certificate_with_tags.certificate.tags['Environment'] == 'staging'
+      - certificate_with_tags.certificate.tags['Owner'] == 'Bob'
+      - not certificate_with_tags.changed
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+  - name: check fetched data of cert we just uploaded
+    vars:
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+      domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+      name_tag: '{{ upload2.results[0].item.name }}'
+    assert:
+      that:
+      - certificate_with_tags.certificate.arn == certificate_arn
+      - certificate_with_tags.certificate.tags | length == 4
+      - '''Name'' in certificate_with_tags.certificate.tags'
+      - '''Application'' in certificate_with_tags.certificate.tags'
+      - '''Environment'' in certificate_with_tags.certificate.tags'
+      - '''Owner'' in certificate_with_tags.certificate.tags'
+      - certificate_with_tags.certificate.tags['Name'] == name_tag
+      - certificate_with_tags.certificate.tags['Application'] == 'search'
+      - certificate_with_tags.certificate.tags['Environment'] == 'staging'
+      - certificate_with_tags.certificate.tags['Owner'] == 'Bob'
+  - name: change tags of existing certificate, purge tags
+    aws_acm:
+      certificate_arn: '{{ certificate_arn }}'
+      tags:
+        Name: '{{ name_tag }}'
+        Application: search
+        Environment: staging
+      # 'Owner' tag should be removed because 'purge_tags: true'
+      purge_tags: true
+    register: certificate_with_tags
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+      domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+  - name: check fetched data of cert we just uploaded
+    vars:
+      name_tag: '{{ upload2.results[0].item.name }}'
+      certificate_arn: '{{ upload2.results[0].certificate.arn }}'
+      domain_name: '{{ upload2.results[0].certificate.domain_name }}'
+    assert:
+      that:
+      - certificate_with_tags.certificate.arn == certificate_arn
+      - certificate_with_tags.certificate.tags | length == 3
+      - '''Name'' in certificate_with_tags.certificate.tags'
+      - '''Application'' in certificate_with_tags.certificate.tags'
+      - '''Environment'' in certificate_with_tags.certificate.tags'
+      - certificate_with_tags.certificate.tags['Name'] == name_tag
+      - certificate_with_tags.certificate.tags['Application'] == 'search'
+      - certificate_with_tags.certificate.tags['Environment'] == 'staging'
   - name: update first cert with body of the second, first time
     aws_acm:
       state: present
@@ -293,14 +466,13 @@
       common_name: '{{ chained_cert.domain }}'
   - name: Sign new certs with cert 0 and 1
     with_items: '{{ chained_cert.chains }}'
-    community.crypto.openssl_certificate:
+    community.crypto.x509_certificate:
       provider: ownca
       path: '{{ item.cert }}'
       csr_path: '{{ item.csr }}'
       ownca_path: '{{ local_certs[item.ca].cert }}'
       ownca_privatekey_path: '{{ local_certs[item.ca].priv_key }}'
-      signature_algorithms:
-      - sha256WithRSAEncryption
+      selfsigned_digest: sha256
   - name: check files exist (for next task)
     file:
       path: '{{ item }}'
