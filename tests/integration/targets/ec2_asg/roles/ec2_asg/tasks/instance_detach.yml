@@ -84,8 +84,8 @@
 
     # pause to allow completion of instance replacement
     - name: Pause for 30 seconds
-      pause:
-        seconds: 30
+      wait_for:
+        timeout: 30
 
     # gather info about asg and get instance ids
     - ec2_asg_info:
@@ -138,8 +138,8 @@
           - '{{ instance_replace_2 }}'
 
     - name: Pause for 30 seconds to allow completion of above task
-      pause:
-        seconds: 30
+      wait_for:
+        timeout: 30
 
     # gather information about asg and get instance id
     - ec2_asg_info:
