@@ -9,6 +9,8 @@ AWS related modules and plugins supported by the Ansible Cloud team are in the [
 
 This collection has been tested against following Ansible versions: **>=2.9.10**.
 
+For collections that support Ansible 2.9, please ensure you update your `network_os` to use the 
+fully qualified collection name (for example, `cisco.ios.ios`). 
 Plugins and modules within a collection may be tested with only specific Ansible versions.
 A collection may contain metadata that identifies these versions.
 PEP440 is the schema used to describe the versions of Ansible.
@@ -82,6 +84,7 @@ Name | Description
 [community.aws.cloudfront_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudfront_info_module.rst)|Obtain facts about an AWS CloudFront distribution
 [community.aws.cloudfront_invalidation](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudfront_invalidation_module.rst)|create invalidations for AWS CloudFront distributions
 [community.aws.cloudfront_origin_access_identity](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudfront_origin_access_identity_module.rst)|Create, update and delete origin access identities for a CloudFront distribution
+[community.aws.cloudfront_response_headers_policy](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudfront_response_headers_policy_module.rst)|Create, update and delete response headers policies to be used in a Cloudfront distribution
 [community.aws.cloudtrail](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudtrail_module.rst)|manage CloudTrail create, delete, update
 [community.aws.cloudwatchevent_rule](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudwatchevent_rule_module.rst)|Manage CloudWatch Event rules and targets
 [community.aws.cloudwatchlogs_log_group](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.cloudwatchlogs_log_group_module.rst)|create or delete log_group in CloudWatchLogs
@@ -95,6 +98,8 @@ Name | Description
 [community.aws.ec2_ami_copy](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_ami_copy_module.rst)|copies AMI between AWS regions, return new image id
 [community.aws.ec2_asg](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_asg_module.rst)|Create or delete AWS AutoScaling Groups (ASGs)
 [community.aws.ec2_asg_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_asg_info_module.rst)|Gather information about ec2 Auto Scaling Groups (ASGs) in AWS
+[community.aws.ec2_asg_instance_refresh](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_asg_instance_refresh_module.rst)|Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
+[community.aws.ec2_asg_instance_refresh_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_asg_instance_refresh_info_module.rst)|Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 [community.aws.ec2_asg_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_asg_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks.
 [community.aws.ec2_asg_scheduled_action](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_asg_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions.
 [community.aws.ec2_customer_gateway](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.ec2_customer_gateway_module.rst)|Manage an AWS customer gateway
@@ -142,7 +147,7 @@ Name | Description
 [community.aws.elasticache_snapshot](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elasticache_snapshot_module.rst)|Manage cache snapshots in Amazon ElastiCache
 [community.aws.elasticache_subnet_group](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elasticache_subnet_group_module.rst)|manage ElastiCache subnet groups
 [community.aws.elb_application_lb](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elb_application_lb_module.rst)|Manage an Application Load Balancer
-[community.aws.elb_application_lb_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elb_application_lb_info_module.rst)|Gather information about application ELBs in AWS
+[community.aws.elb_application_lb_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elb_application_lb_info_module.rst)|Gather information about Application Load Balancers in AWS
 [community.aws.elb_classic_lb_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elb_classic_lb_info_module.rst)|Gather information about EC2 Elastic Load Balancers in AWS
 [community.aws.elb_instance](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elb_instance_module.rst)|De-registers or registers instances from EC2 ELBs
 [community.aws.elb_network_lb](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.elb_network_lb_module.rst)|Manage a Network Load Balancer
@@ -189,7 +194,7 @@ Name | Description
 [community.aws.route53_health_check](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.route53_health_check_module.rst)|Manage health-checks in Amazons Route53 DNS service
 [community.aws.route53_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.route53_info_module.rst)|Retrieves route53 details using AWS methods
 [community.aws.route53_zone](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.route53_zone_module.rst)|add or delete Route53 zones
-[community.aws.s3_bucket_notification](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.s3_bucket_notification_module.rst)|Creates, updates or deletes S3 Bucket notification for lambda
+[community.aws.s3_bucket_notification](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.s3_bucket_notification_module.rst)|Creates, updates or deletes S3 Bucket notifications targeting Lambda functions, SNS or SQS.
 [community.aws.s3_lifecycle](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.s3_lifecycle_module.rst)|Manage S3 bucket lifecycle rules in AWS
 [community.aws.s3_logging](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.s3_logging_module.rst)|Manage logging facility of an s3 bucket in AWS
 [community.aws.s3_metrics_configuration](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.s3_metrics_configuration_module.rst)|Manage s3 bucket metrics configuration in AWS
@@ -197,6 +202,7 @@ Name | Description
 [community.aws.s3_website](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.s3_website_module.rst)|Configure an s3 bucket as a website
 [community.aws.sns](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.sns_module.rst)|Send Amazon Simple Notification Service messages
 [community.aws.sns_topic](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.sns_topic_module.rst)|Manages AWS SNS topics and subscriptions
+[community.aws.sns_topic_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.sns_topic_info_module.rst)|sns_topic_info module
 [community.aws.sqs_queue](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.sqs_queue_module.rst)|Creates or deletes AWS SQS queues
 [community.aws.sts_assume_role](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.sts_assume_role_module.rst)|Assume a role using AWS Security Token Service and obtain temporary credentials
 [community.aws.sts_session_token](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.sts_session_token_module.rst)|Obtain a session token from the AWS Security Token Service

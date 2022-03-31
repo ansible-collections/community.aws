@@ -541,9 +541,25 @@ Parameters
                     </div>
                 </td>
                 <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>aurora</li>
+                                    <li>aurora-mysql</li>
+                                    <li>aurora-postgresql</li>
+                                    <li>mariadb</li>
+                                    <li>mysql</li>
+                                    <li>oracle-ee</li>
+                                    <li>oracle-ee-cdb</li>
+                                    <li>oracle-se2</li>
+                                    <li>oracle-se2-cdb</li>
+                                    <li>postgres</li>
+                                    <li>sqlserver-ee</li>
+                                    <li>sqlserver-se</li>
+                                    <li>sqlserver-ex</li>
+                                    <li>sqlserver-web</li>
+                        </ul>
                 </td>
                 <td>
-                        <div>The name of the database engine to be used for this DB instance. This is required to create an instance. Valid choices are aurora | aurora-mysql | aurora-postgresql | mariadb | mysql | oracle-ee | oracle-se | oracle-se1 | oracle-se2 | postgres | sqlserver-ee | sqlserver-ex | sqlserver-se | sqlserver-web</div>
+                        <div>The name of the database engine to be used for this DB instance. This is required to create an instance.</div>
                 </td>
             </tr>
             <tr>
@@ -675,7 +691,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>An 8-41 character password for the master database user. The password can contain any printable ASCII character except &quot;/&quot;, &quot;&quot;&quot;, or &quot;@&quot;. To modify the password use <em>force_password_update</em>. Use <em>apply immediately</em> to change the password immediately, otherwise it is updated during the next maintenance window.</div>
+                        <div>An 8-41 character password for the master database user. The password can contain any printable ASCII character except &quot;/&quot;, &quot;&quot;&quot;, or &quot;@&quot;. To modify the password use <em>force_update_password</em>. Use <em>apply immediately</em> to change the password immediately, otherwise it is updated during the next maintenance window.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: password</div>
                 </td>
             </tr>
