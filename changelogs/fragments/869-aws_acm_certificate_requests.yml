@@ -1,0 +1,2 @@
+minor_changes:
+- aws_acm - Add ``wait``, ``wait_timeout`` parameters to wait until certificate operation completes in ACM. Add ``certificate_request`` and suboptions to submit certificate requests (https://github.com/ansible-collections/community.aws/pull/869).
