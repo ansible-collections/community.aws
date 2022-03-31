@@ -1,0 +1,261 @@
+- name: AWS ACM integration test, request certificates
+  block:
+    - set_fact:
+        name_tag_public_cert_request: "public cert for acm.ansible.com"
+        name_tag_private_cert_request: "private cert for acm.ansible.com"
+    - name: delete certificate requests
+      # Some of the requests may pre-exists from previous test execution.
+      community.aws.aws_acm:
+        name_tag: "{{ name_tag_public_cert_request }}"
+        state: absent
+      register: result
+    - name: Missing 'domain_mame' parameter
+      community.aws.aws_acm:
+        certificate_request: null
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"If ''state'' is specified as ''present'' then at least one of ''name_tag'', ''certificate_arn'' or ''domain_name'' must be specified" in result.msg'
+    - name: "'certificate_request' and 'private_key' are mutually exclusive"
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        certificate_request: null
+        private_key: "abc"
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"parameters are mutually exclusive: certificate_request|private_key" in result.msg'
+    - name: "'certificate_request' and 'certificate_chain' are mutually exclusive"
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        certificate_request: null
+        certificate_chain: "abc"
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"parameters are mutually exclusive: certificate_request|certificate_chain" in result.msg'
+    - name: request a public certificate, but name_tag is missing
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          validation_method: DNS
+          options:
+            certificate_transparency_logging_preference: ENABLED
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"When requesting a certificate, all of ''name_tag'' and ''domain_name'' must be specified" in result.msg'
+    - name: request a public certificate, but validation method is missing
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          options:
+            certificate_transparency_logging_preference: ENABLED
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"The ''validation_method'' parameter must be specified when requesting a public certificate from ACM" in result.msg'
+    - name: request a public certificate, but value of validation method is wrong
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          validation_method: SMS # unsupported value. Must be DNS or EMAIL
+          options:
+            certificate_transparency_logging_preference: ENABLED
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"value of validation_method must be one of: DNS, EMAIL, got: SMS found in certificate_request" in result.msg'
+    - name: request a public certificate, but certificate_transparency_logging_preference is wrong
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          validation_method: DNS
+          options:
+            # Wrong value, must be ENABLED or DISABLED
+            certificate_transparency_logging_preference: GARBAGE
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"value of certificate_transparency_logging_preference must be one of: ENABLED, DISABLED, got: GARBAGE found in certificate_request" in result.msg'
+    - name: request a public certificate, check mode
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          validation_method: DNS
+          options:
+            certificate_transparency_logging_preference: ENABLED
+      register: result
+      check_mode: true
+    - assert:
+        that:
+          - result.changed
+    - name: request a public certificate, expect changes
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          # Don't use EMAIL validation, because:
+          # 1) AWS recommends DNS validation.
+          # 2) Email validation would be harder to automate in integration tests.
+          # 3) AWS would actually send email to webmaster@acm.ansible.com.
+          validation_method: DNS
+          options:
+            certificate_transparency_logging_preference: ENABLED
+        tags:
+          Application: search
+          Environment: development
+        # Wait until the validation resource records have been created.
+        wait: true
+      register: result
+    - assert:
+        that:
+          - result.certificate.arn is defined
+          - result.certificate.domain_name is defined
+          - result.certificate.domain_name == 'acm.ansible.com'
+          - result.certificate.tags is defined
+          - result.certificate.tags | length == 3
+          - result.certificate.domain_name == 'acm.ansible.com'
+          - result.changed
+    - set_fact:
+        public_cert_request_arn: "{{ result.certificate.arn }}"
+    - name: get the certificate request that was just created
+      aws_acm_info:
+        certificate_arn: "{{ public_cert_request_arn }}"
+      register: result
+    - assert:
+        that:
+          - result.certificates | length == 1
+          - result.certificates[0].certificate_arn is defined
+          - result.certificates[0].domain_name is defined
+          - result.certificates[0].subject_alternative_names is defined
+          - result.certificates[0].subject_alternative_names | length == 3
+          - result.certificates[0].issuer is defined
+          - "result.certificates[0].certificate_arn == '{{ public_cert_request_arn }}'"
+          - "result.certificates[0].domain_name == 'acm.ansible.com'"
+          - "result.certificates[0].issuer == 'Amazon'"
+          - "result.certificates[0].domain_validation_options is defined"
+          - "result.certificates[0].domain_validation_options | length == 3"
+          - "result.certificates[0].domain_validation_options[0].validation_method == 'DNS'"
+          - "result.certificates[0].domain_validation_options[1].validation_method == 'DNS'"
+          - "result.certificates[0].domain_validation_options[2].validation_method == 'DNS'"
+          - "result.certificates[0].domain_validation_options[0].domain_name == 'acm.ansible.com'"
+          - "result.certificates[0].domain_validation_options[1].domain_name == 'acm-east.ansible.com'"
+          - "result.certificates[0].domain_validation_options[2].domain_name == 'acm-west.ansible.com'"
+          - "result.certificates[0].domain_validation_options[0].validation_status == 'PENDING_VALIDATION'"
+          - "result.certificates[0].domain_validation_options[1].validation_status == 'PENDING_VALIDATION'"
+          - "result.certificates[0].domain_validation_options[2].validation_status == 'PENDING_VALIDATION'"
+          # Note: it takes time for the validation records to be generated.
+          # After a certificate request has been submmitted, the AWS API responds quickly,
+          # however the validation records are not generated yet. It may take a few seconds for the AWS
+          # backend to generate the resource records.
+          # This is why above the 'wait: true' attribute has been set, such that we can reliably get
+          # to this point and assert the resource records exist.
+          - "result.certificates[0].domain_validation_options[0].resource_record is defined"
+          - "result.certificates[0].domain_validation_options[1].resource_record is defined"
+          - "result.certificates[0].domain_validation_options[2].resource_record is defined"
+          - "result.certificates[0].domain_validation_options[0].resource_record.name is defined"
+          - "result.certificates[0].domain_validation_options[1].resource_record.name is defined"
+          - "result.certificates[0].domain_validation_options[2].resource_record.name is defined"
+          - "result.certificates[0].domain_validation_options[0].resource_record.value is defined"
+          - "result.certificates[0].domain_validation_options[1].resource_record.value is defined"
+          - "result.certificates[0].domain_validation_options[2].resource_record.value is defined"
+
+    - name: request a public certificate, check mode again
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          validation_method: DNS
+          options:
+            certificate_transparency_logging_preference: ENABLED
+      register: result
+      check_mode: true
+    - assert:
+        that:
+          - not result.changed
+    - name: request a public certificate, no change expected
+      community.aws.aws_acm:
+        domain_name: acm.ansible.com
+        name_tag: "{{ name_tag_public_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-east.ansible.com
+            - acm-west.ansible.com
+          validation_method: DNS
+          options:
+            certificate_transparency_logging_preference: ENABLED
+      register: result
+    - assert:
+        that:
+          - not result.changed
+
+    - name: delete certificate request for public certificate
+      community.aws.aws_acm:
+        name_tag: "{{ name_tag_public_cert_request }}"
+        state: absent
+      register: result
+
+    - name: request a private certificate, wrong CA arn
+      community.aws.aws_acm:
+        domain_name: acm-private.ansible.com
+        name_tag: "{{ name_tag_private_cert_request }}"
+        certificate_request:
+          subject_alternative_names:
+            - acm-private-east.ansible.com
+            - acm-private-west.ansible.com
+          certificate_authority_arn: arn:aws:acm-pca:us-east-1:wrong
+        tags:
+          Application: search
+          Environment: development
+      register: result
+      ignore_errors: true
+    - assert:
+        that:
+          - 'result.failed'
+          - '"Value ''arn:aws:acm-pca:us-east-1:wrong'' at ''certificateAuthorityArn'' failed to satisfy constraint" in result.msg'
+
+    # - name: delete certificate request for private certificate
+    #   community.aws.aws_acm:
+    #     name_tag: "{{ name_tag_private_cert_request }}"
+    #     state: absent
+    #   register: result
