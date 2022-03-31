@@ -1,0 +1,79 @@
+- name: Delete IAM role
+  iam_role:
+    name: "{{ iam_role_fargate.role_name }}"
+    state: absent
+  ignore_errors: true
+
+- name: remove EKS cluster
+  aws_eks_cluster:
+    name: '{{ eks_cluster_name }}'
+    state: absent
+    wait: 'yes'
+  register: eks_delete
+  ignore_errors: 'yes'
+- name: create list of all additional EKS security groups
+  set_fact:
+    additional_eks_sg:
+      - name: '{{ eks_cluster_name }}-workers-sg'
+
+- name: set all security group rule lists to empty to remove circular dependency
+  ec2_group:
+    name: '{{ item.name }}'
+    description: '{{ item.description }}'
+    state: present
+    rules: []
+    rules_egress: []
+    purge_rules: 'yes'
+    purge_rules_egress: 'yes'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  with_items: '{{ eks_security_groups }}'
+  ignore_errors: 'yes'
+
+- name: remove security groups
+  ec2_group:
+    name: '{{ item.name }}'
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  with_items: '{{ eks_security_groups|reverse|list + additional_eks_sg }}'
+  ignore_errors: 'yes'
+
+- name: remove Route Tables
+  ec2_vpc_route_table:
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    route_table_id: '{{ item }}'
+    lookup: id
+  ignore_errors: 'yes'
+  with_items:
+    - '{{ public_route_table.route_table.route_table_id }}'
+    - '{{ nat_route_table.route_table.route_table_id }}'
+
+- name: remove setup Nat Gateway
+  amazon.aws.ec2_vpc_nat_gateway:
+    state: absent
+    nat_gateway_id: '{{ setup_nat_gateway.nat_gateway_id}}'
+    release_eip: 'yes'
+    wait: 'yes'
+  ignore_errors: 'yes'
+
+- name: remove setup subnet
+  ec2_vpc_subnet:
+    az: '{{ aws_region }}{{ item.zone }}'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    cidr: '{{ item.cidr}}'
+    state: absent
+  with_items: '{{ eks_subnets }}'
+  ignore_errors: 'yes'
+
+- name: remove Internet Gateway
+  amazon.aws.ec2_vpc_igw:
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id}}'
+  ignore_errors: 'yes'
+    
+- name: remove setup VPC
+  ec2_vpc_net:
+    cidr_block: 10.0.0.0/16
+    state: absent
+    name: '{{ resource_prefix }}_aws_eks'
+  ignore_errors: 'yes'
