@@ -1,0 +1,429 @@
+# Creating dependencies
+- name: create IAM instance role 
+  iam_role:
+    name: 'ansible-test-aws_eks_fargate_profile'
+    assume_role_policy_document: '{{ lookup(''file'',''eks-fargate-profile-trust-policy.json'') }}'
+    state: present
+    create_instance_profile: no
+    managed_policies:
+      - AmazonEKSFargatePodExecutionRolePolicy
+  register: iam_role_fargate
+
+- name: Pause a few seconds to ensure IAM role is available to next task
+  pause:
+    seconds: 10
+
+# Test - Try Create Fargate profile in non existent EKS
+- name: attempt to create fargate profile in non existent eks
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: fake_cluster
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+  register: aws_eks_non_existent_eks
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile did nothing
+  assert:
+    that:
+      - aws_eks_non_existent_eks is failed
+
+# Test - Try deleting a non-existent fargate profile
+- name: delete an as yet non-existent fargate profile
+  eks_fargate_profile:
+    name: fake_profile
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+  register: eks_fargate_profile_delete_non_existent
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile did nothing
+  assert:
+    that:
+      - eks_fargate_profile_delete_non_existent is not changed
+
+# Test - Try Create Fargate Profile A with wait and public subnet
+- name: Try create Fargate Profile with public subnets
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'public') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+  register: eks_fargate_profile_create
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile is not created
+  assert:
+    that:
+      - not eks_fargate_profile_create.changed
+      - eks_fargate_profile_create.msg.endswith("provided in Fargate Profile is not a private subnet")
+
+# Create Fargate_profile with wait 
+- name: create Fargate Profile with wait (check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags: '{{ tags }}'
+  register: eks_fargate_profile_create
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile_create is changed (check mode)
+  assert:
+    that:
+      - eks_fargate_profile_create.changed
+
+- name: create Fargate Profile with wait
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags: '{{ tags }}'
+  register: eks_fargate_profile_create
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile is created
+  assert:
+    that:
+      - eks_fargate_profile_create.changed
+      - eks_fargate_profile_create.status == "ACTIVE"
+
+- name: Try create same Fargate Profile with wait (idempotency)(check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags: '{{ tags }}'
+  register: eks_fargate_profile_create
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile_create is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_fargate_profile_create.changed
+
+- name: Try create same Fargate Profile with wait (idempotency)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags: '{{ tags }}'
+  register: eks_fargate_profile_create
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile_create is not changed (idempotency)
+  assert:
+    that:
+      - not eks_fargate_profile_create.changed
+
+# Update tags Fargate_profile
+- name: update tags in Fargate Profile a with wait (check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags:
+      env: test
+      test: foo
+  register: eks_fargate_profile_update
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile_update is changed (check mode)
+  assert:
+    that:
+      - eks_fargate_profile_update.changed
+
+- name: update tags in Fargate Profile a with wait
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags:
+      env: test
+      test: foo
+  register: eks_fargate_profile_update
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile_update is changed
+  assert:
+    that:
+      - eks_fargate_profile_update.changed
+
+- name: Try update tags again in Fargate Profile a with wait (idempotency)(check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags:
+      env: test
+      test: foo
+  register: eks_fargate_profile_update
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile_update is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_fargate_profile_update.changed
+
+- name: Try update tags again in Fargate Profile a with wait (idempotency)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+    wait: true
+    tags:
+      env: test
+      test: foo
+  register: eks_fargate_profile_update
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile_update is not changed (idempotency)
+  assert:
+    that:
+      - not eks_fargate_profile_update.changed
+
+# Create Fargate Profile b without wait
+- name: create Fargate Profile b without wait (check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+  register: eks_fargate_profile_create_b
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile is created (check mode)
+  assert:
+    that:
+      - eks_fargate_profile_create_b.changed
+
+- name: create Fargate Profile b without wait
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+  register: eks_fargate_profile_create_b
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile is created
+  assert:
+    that:
+      - eks_fargate_profile_create_b.changed
+      - eks_fargate_profile_create_b.status == "CREATING"
+
+- name: create Fargate Profile b without wait (idempotency)(check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+  register: eks_fargate_profile_create_b
+  ignore_errors: 'yes'
+  check_mode: True
+
+- name: check that eks_fargate_profile_b is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_fargate_profile_create_b.changed
+
+- name: create Fargate Profile without wait (idempotency)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    role_arn: '{{ iam_role_fargate.arn }}'
+    subnets: >-
+      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
+      'private') | map(attribute='subnet.id') }}
+    selectors: '{{ selectors }}'
+  register: eks_fargate_profile_create_b
+  ignore_errors: 'yes'
+
+- name: check that eks_fargate_profile is not changed (idempotency)
+  assert:
+    that:
+      - not eks_fargate_profile_create_b.changed
+
+# Delete Fargate Profile A without wait (test check_profiles_status function)
+- name: delete a fargate profile a (check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+  register: eks_fargate_profile_delete
+  check_mode: True
+
+- name: check that eks_fargate_profile a is changed (check mode)
+  assert:
+    that:
+      - eks_fargate_profile_delete.changed
+
+- name: delete a fargate profile
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+  register: eks_fargate_profile_delete
+
+- name: check that eks_fargate_profile is deleted
+  assert:
+    that:
+      - eks_fargate_profile_delete.changed
+
+- name: delete a fargate profile a (idempotency)(check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+  register: eks_fargate_profile_delete
+  check_mode: True
+
+- name: check that eks_fargate_profile did nothing (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_fargate_profile_delete.changed
+
+- name: delete a fargate profile a (idempotency)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_a }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+  register: eks_fargate_profile_delete
+
+- name: check that eks_fargate_profile did nothing (idempotency)
+  assert:
+    that:
+      - not eks_fargate_profile_delete.changed
+
+# Delete Fargate Profile b with wait
+- name: delete a fargate profile b (check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+    wait: true
+  register: eks_fargate_profile_b_delete
+  check_mode: True
+
+- name: check that eks_fargate_profile is deleted (check mode)
+  assert:
+    that:
+      - eks_fargate_profile_b_delete.changed
+
+- name: delete a fargate profile b 
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+    wait: true
+  register: eks_fargate_profile_b_delete
+
+- name: check that eks_fargate_profile is deleted
+  assert:
+    that:
+      - eks_fargate_profile_b_delete.changed
+
+- name: delete a fargate profile b (idempotency)(check mode)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+    wait: true
+  register: eks_fargate_profile_b_delete
+
+- name: check that eks_fargate_profile did nothing (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_fargate_profile_b_delete.changed
+
+- name: delete a fargate profile b (idempotency)
+  eks_fargate_profile:
+    name: '{{ eks_fargate_profile_name_b }}'
+    cluster_name: '{{ eks_cluster_name }}'
+    state: absent
+    wait: true
+  register: eks_fargate_profile_b_delete
+
+- name: check that eks_fargate_profile did nothing (idempotency)
+  assert:
+    that:
+      - not eks_fargate_profile_b_delete.changed
