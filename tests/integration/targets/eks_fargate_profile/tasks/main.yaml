@@ -1,0 +1,15 @@
+---
+- name: 'eks_cluster integration tests'
+  collections:
+    - amazon.aws
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+    - include_tasks: create_eks_cluster.yml
+    - include_tasks: full_test.yml
+  always:
+    - include_tasks: cleanup_eks_cluster.yml
