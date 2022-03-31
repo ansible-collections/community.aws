@@ -862,9 +862,6 @@ valid_engines = ['aurora', 'aurora-mysql', 'aurora-postgresql', 'mariadb', 'mysq
 valid_engines_iam_roles = ['aurora-postgresql', 'oracle-ee', 'oracle-ee-cdb', 'oracle-se2', 'oracle-se2-cdb',
                            'postgres', 'sqlserver-ee', 'sqlserver-se', 'sqlserver-ex', 'sqlserver-web']
 
-valid_engines = ['aurora', 'aurora-mysql', 'aurora-postgresql', 'mariadb', 'mysql', 'oracle-ee', 'oracle-ee-cdb',
-                 'oracle-se2', 'oracle-se2-cdb', 'postgres', 'sqlserver-ee', 'sqlserver-se', 'sqlserver-ex', 'sqlserver-web']
-
 
 def get_rds_method_attribute_name(instance, state, creation_source, read_replica):
     method_name = None
@@ -1184,7 +1181,7 @@ def ensure_iam_roles(client, module, instance_id):
 
     changed = False
     purge_iam_roles = module.params.get('purge_iam_roles')
-    target_roles = module.params.get('iam_roles')
+    target_roles = module.params.get('iam_roles') if module.params.get('iam_roles') else []
     existing_roles = instance.get('associated_roles', [])
     roles_to_add, roles_to_remove = compare_iam_roles(existing_roles, target_roles, purge_iam_roles)
     if bool(roles_to_add or roles_to_remove):
