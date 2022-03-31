@@ -68,13 +68,12 @@
       common_name: '{{ item.domain }}'
   - name: Generate a Self Signed OpenSSL certificate for own certs
     with_items: '{{ local_certs }}'
-    community.crypto.openssl_certificate:
+    community.crypto.x509_certificate:
       provider: selfsigned
       path: '{{ item.cert }}'
       csr_path: '{{ item.csr }}'
       privatekey_path: '{{ item.priv_key }}'
-      signature_algorithms:
-      - sha256WithRSAEncryption
+      selfsigned_digest: sha256
   - name: upload certificate with check mode
     aws_acm:
       name_tag: '{{ item.name }}'
@@ -392,14 +391,13 @@
       common_name: '{{ chained_cert.domain }}'
   - name: Sign new certs with cert 0 and 1
     with_items: '{{ chained_cert.chains }}'
-    community.crypto.openssl_certificate:
+    community.crypto.x509_certificate:
       provider: ownca
       path: '{{ item.cert }}'
       csr_path: '{{ item.csr }}'
       ownca_path: '{{ local_certs[item.ca].cert }}'
       ownca_privatekey_path: '{{ local_certs[item.ca].priv_key }}'
-      signature_algorithms:
-      - sha256WithRSAEncryption
+      selfsigned_digest: sha256
   - name: check files exist (for next task)
     file:
       path: '{{ item }}'
