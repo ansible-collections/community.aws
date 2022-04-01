@@ -100,16 +100,17 @@ RETURN = '''
 
 '''
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 try:
     import botocore
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 
 def create_lifecycle_hook(connection, module):
-    changed = False
 
     lch_name = module.params.get('lifecycle_hook_name')
     asg_name = module.params.get('autoscaling_group_name')
@@ -119,6 +120,9 @@ def create_lifecycle_hook(connection, module):
     notification_meta_data = module.params.get('notification_meta_data')
     heartbeat_timeout = module.params.get('heartbeat_timeout')
     default_result = module.params.get('default_result')
+
+    return_object = {}
+    return_object['changed'] = False
 
     lch_params = {
         'LifecycleHookName': lch_name,
@@ -150,23 +154,30 @@ def create_lifecycle_hook(connection, module):
         module.fail_json_aws(e, msg="Failed to get Lifecycle Hook")
 
     if not existing_hook:
-        changed = True
-    else:
-        # GlobalTimeout is not configurable, but exists in response.
-        # Removing it helps to compare both dicts in order to understand
-        # what changes were done.
-        del(existing_hook[0]['GlobalTimeout'])
-        added, removed, modified, same = dict_compare(lch_params, existing_hook[0])
-        if added or removed or modified:
-            changed = True
-
-    if changed:
         try:
+            return_object['changed'] = True
             connection.put_lifecycle_hook(**lch_params)
+            return_object['lifecycle_hook_info'] = connection.describe_lifecycle_hooks(
+                AutoScalingGroupName=asg_name, LifecycleHookNames=[lch_name])['LifecycleHooks']
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Failed to create LifecycleHook")
 
-    return(changed)
+    else:
+        added, removed, modified, same = dict_compare(lch_params, existing_hook[0])
+        if modified:
+            # GlobalTimeout is not configurable, but exists in response.
+            # Removing it helps to compare both dicts in order to understand
+            # what changes were done.
+            del(existing_hook[0]['GlobalTimeout'])
+            try:
+                return_object['changed'] = True
+                connection.put_lifecycle_hook(**lch_params)
+                return_object['lifecycle_hook_info'] = connection.describe_lifecycle_hooks(
+                    AutoScalingGroupName=asg_name, LifecycleHookNames=[lch_name])['LifecycleHooks']
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                module.fail_json_aws(e, msg="Failed to create LifecycleHook")
+
+    module.exit_json(**camel_dict_to_snake_dict(return_object))
 
 
 def dict_compare(d1, d2):
@@ -186,10 +197,12 @@ def dict_compare(d1, d2):
 
 
 def delete_lifecycle_hook(connection, module):
-    changed = False
 
     lch_name = module.params.get('lifecycle_hook_name')
     asg_name = module.params.get('autoscaling_group_name')
+
+    return_object = {}
+    return_object['changed'] = False
 
     try:
         all_hooks = connection.describe_lifecycle_hooks(
@@ -207,13 +220,14 @@ def delete_lifecycle_hook(connection, module):
 
             try:
                 connection.delete_lifecycle_hook(**lch_params)
-                changed = True
+                return_object['changed'] = True
+                return_object['lifecycle_hook_removed'] = {'LifecycleHookName': lch_name, 'AutoScalingGroupName': asg_name}
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 module.fail_json_aws(e, msg="Failed to delete LifecycleHook")
         else:
             pass
 
-    return(changed)
+    module.exit_json(**camel_dict_to_snake_dict(return_object))
 
 
 def main():
@@ -238,11 +252,9 @@ def main():
     changed = False
 
     if state == 'present':
-        changed = create_lifecycle_hook(connection, module)
+        create_lifecycle_hook(connection, module)
     elif state == 'absent':
-        changed = delete_lifecycle_hook(connection, module)
-
-    module.exit_json(changed=changed)
+        delete_lifecycle_hook(connection, module)
 
 
 if __name__ == '__main__':
