@@ -60,6 +60,19 @@
         that:
           - "output.viable_instances == 1"
 
+    - name: Enable metrics collection - check_mode
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg"
+        metrics_collection: yes
+      register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:UpdateAutoScalingGroup" not in output.resource_actions'
+
     - name: Enable metrics collection
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -70,7 +83,7 @@
         that:
           - output is changed
 
-    - name: Enable metrics collection (check idempotency)
+    - name: Enable metrics collection (idempotency)
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
         metrics_collection: yes
@@ -79,6 +92,20 @@
     - assert:
         that:
           - output is not changed
+
+    - name: Disable metrics collection - check_mode
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg"
+        metrics_collection: no
+      register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:UpdateAutoScalingGroup" not in output.resource_actions'
+
 
     - name: Disable metrics collection
       ec2_asg:
@@ -90,7 +117,7 @@
         that:
           - output is changed
 
-    - name: Disable metrics collection (check idempotency)
+    - name: Disable metrics collection (idempotency)
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
         metrics_collection: no

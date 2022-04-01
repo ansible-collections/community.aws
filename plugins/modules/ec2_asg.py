@@ -1210,7 +1210,7 @@ def create_autoscaling_group(connection):
             module.fail_json_aws(e, msg="Failed to create Autoscaling Group.")
     else:
         if module.check_mode:
-            module.exit_json(changed=True, msg="Would have modified AutoScalingGroup if not in check_mode.")
+            module.exit_json(changed=True, msg="Would have modified AutoScalingGroup if required if not in check_mode.")
 
         as_group = as_groups[0]
         initial_asg_properties = get_properties(as_group)
