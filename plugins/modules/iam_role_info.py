@@ -15,6 +15,7 @@ description:
     - Gathers information about IAM roles.
 author:
     - "Will Thames (@willthames)"
+    - "Razique Mahroua (@razique)"
 options:
     name:
         description:
@@ -32,6 +33,7 @@ options:
         description:
             - Return information about the role with default case (Pascal Case).
         type: bool
+        default: false
         required: false
 extends_documentation_fragment:
 - amazon.aws.aws
