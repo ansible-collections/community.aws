@@ -1,4 +1,4 @@
-pip botocore
+botocore
 boto3
 
 python-dateutil # Used by ec2_asg_scheduled_action
