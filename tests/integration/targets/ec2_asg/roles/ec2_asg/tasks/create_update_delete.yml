@@ -59,6 +59,19 @@
         that:
           - "output.viable_instances == 1"
 
+    - name: Enable metrics collection - check_mode
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg"
+        metrics_collection: yes
+      register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:UpdateAutoScalingGroup" not in output.resource_actions'
+
     - name: Enable metrics collection
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
@@ -69,7 +82,7 @@
         that:
           - output is changed
 
-    - name: Enable metrics collection (check idempotency)
+    - name: Enable metrics collection (idempotency)
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
         metrics_collection: yes
@@ -78,6 +91,20 @@
     - assert:
         that:
           - output is not changed
+
+    - name: Disable metrics collection - check_mode
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg"
+        metrics_collection: no
+      register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:UpdateAutoScalingGroup" not in output.resource_actions'
+
 
     - name: Disable metrics collection
       ec2_asg:
@@ -89,7 +116,7 @@
         that:
           - output is changed
 
-    - name: Disable metrics collection (check idempotency)
+    - name: Disable metrics collection (idempotency)
       ec2_asg:
         name: "{{ resource_prefix }}-asg"
         metrics_collection: no
@@ -456,6 +483,30 @@
             device_index: 0
             groups:
               - "{{ sg.group_id }}"
+
+    - name: update autoscaling group with mixed-instances policy with mixed instances types - check_mode
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg"
+        launch_template:
+          launch_template_name: "{{ resource_prefix }}-lt"
+        desired_capacity: 1
+        min_size: 1
+        max_size: 1
+        vpc_zone_identifier: "{{ testing_subnet.subnet.id }}"
+        state: present
+        mixed_instances_policy:
+          instance_types:
+            - t3.micro
+            - t2.nano
+        wait_for_instances: yes
+      register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:CreateOrUpdateTags" not in output.resource_actions'
 
     - name: update autoscaling group with mixed-instances policy with mixed instances types
       ec2_asg:
