@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster
-version_added: "3.2.0"
+version_added: "3.3.0"
 short_description: rds_cluster module
 description:
     - Create, modify, and delete RDS clusters.

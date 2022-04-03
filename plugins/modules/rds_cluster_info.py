@@ -9,7 +9,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_cluster_info
-version_added: 3.2.0
+version_added: 3.3.0
 short_description: Obtain information about one or more RDS clusters
 description:
   - Obtain information about one or more RDS clusters.
