@@ -9,7 +9,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 module: rds_cluster_info
-version_added: 3.1.0
+version_added: 3.2.0
 short_description: Obtain information about one or more RDS clusters
 description:
   - Obtain information about one or more RDS clusters.
@@ -21,11 +21,12 @@ options:
         aliases:
           - cluster_id
           - id
+          - cluster_name
         type: str
     filters:
         description:
             - A filter that specifies one or more DB clusters to describe.
-              See U(https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBClusters.html)
+              See U(https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBClusters.html).
         type: dict
 author:
     - Alina Buzachis (@alinabuzachis)
@@ -285,7 +286,7 @@ def cluster_info(client, module):
 
 def main():
     argument_spec = dict(
-        db_cluster_identifier=dict(aliases=['cluster_id', 'id']),
+        db_cluster_identifier=dict(aliases=['cluster_id', 'id', 'cluster_name']),
         filters=dict(type='dict'),
     )
 

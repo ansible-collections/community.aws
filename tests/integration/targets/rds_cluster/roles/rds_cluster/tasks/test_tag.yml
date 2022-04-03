@@ -3,10 +3,11 @@
   - name: Ensure the resource doesn't exist
     rds_cluster:
       id: "{{ cluster_id }}"
-      state: present
+      state: absent
       engine: "{{ engine}}"
       username: "{{ username }}"
       password: "{{ password }}"
+      skip_final_snapshot: True
     register: _result_delete_db_cluster
 
   - assert:

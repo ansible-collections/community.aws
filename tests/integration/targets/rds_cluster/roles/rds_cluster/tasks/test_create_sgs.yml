@@ -3,10 +3,11 @@
   - name: Ensure the resource doesn't exist
     rds_cluster:
       id: "{{ cluster_id }}"
-      state: present
+      state: absent
       engine: "{{ engine}}"
       username: "{{ username }}"
       password: "{{ password }}"
+      skip_final_snapshot: True
     register: _result_delete_db_cluster
 
   - assert:
@@ -168,6 +169,13 @@
         - "_result_create_db_cluster.vpc_security_groups | selectattr('status', 'in', ['active', 'adding']) | list | length == 1"
 
   always:
+  - name: Delete DB cluster without creating a final snapshot
+    rds_cluster:
+      state: absent
+      cluster_id: "{{ cluster_id }}"
+      skip_final_snapshot: True
+    ignore_errors: true
+
   - name: Remove security groups
     ec2_group:
       name: "{{ item }}"
@@ -196,10 +204,3 @@
         Name: "{{ vpc_name }}"
         Description: "Created by rds_cluster integration tests"
     ignore_errors: yes
-
-  - name: Delete DB cluster without creating a final snapshot
-    rds_cluster:
-      state: absent
-      cluster_id: "{{ cluster_id }}"
-      skip_final_snapshot: True
-    ignore_errors: true

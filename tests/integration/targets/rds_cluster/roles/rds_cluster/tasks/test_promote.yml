@@ -3,10 +3,11 @@
   - name: Ensure the resource doesn't exist
     rds_cluster:
       id: "{{ cluster_id }}"
-      state: present
+      state: absent
       engine: "{{ engine}}"
       username: "{{ username }}"
       password: "{{ password }}"
+      skip_final_snapshot: True
     register: _result_delete_db_cluster
 
   - assert:
@@ -142,7 +143,7 @@
   - assert:
       that:
       - _result_cluster_info is successful
-      #- _result_cluster_info.clusters | length == 0
+      # - _result_cluster_info.clusters | length == 0
 
   - name: Promote the DB cluster read replica
     rds_cluster:

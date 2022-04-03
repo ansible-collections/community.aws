@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster
-version_added: "3.0.0"
+version_added: "3.2.0"
 short_description: rds_cluster module
 description:
     - Create, modify, and delete RDS clusters.
@@ -33,14 +33,14 @@ options:
         type: str
     force_update_password:
         description:
-          - Set to C(True) to update your cluster password with I(master_user_password). Since comparing passwords to determine
-            if it needs to be updated is not possible this is set to C(False) by default to allow idempotence.
+          - Set to C(true) to update your cluster password with I(master_user_password). Since comparing passwords to determine
+            if it needs to be updated is not possible this is set to C(false) by default to allow idempotence.
         type: bool
-        default: False
+        default: false
     promote:
-        description: Set to True to promote a read replica cluster.
+        description: Set to C(true) to promote a read replica cluster.
         type: bool
-        default: False
+        default: false
     purge_cloudwatch_logs_exports:
         description:
           - Whether or not to disable Cloudwatch logs enabled for the DB cluster that are not provided in I(enable_cloudwatch_logs_exports).
@@ -55,22 +55,22 @@ options:
         default: true
     purge_security_groups:
         description:
-          - Set to False to retain any enabled security groups that aren't specified in the task and are associated with the cluster.
+          - Set to C(false) to retain any enabled security groups that aren't specified in the task and are associated with the cluster.
           - Can be applied to I(vpc_security_group_ids)
         type: bool
-        default: True
+        default: true
     wait:
         description: Whether to wait for the cluster to be available or deleted.
         type: bool
-        default: True
+        default: true
     # Options that have a corresponding boto3 parameter
     apply_immediately:
         description:
           - A value that specifies whether modifying a cluster with I(new_db_cluster_identifier) and I(master_user_password)
-            should be applied as soon as possible, regardless of the I(preferred_maintenance_window) setting. If C(False), changes
+            should be applied as soon as possible, regardless of the I(preferred_maintenance_window) setting. If C(false), changes
             are applied during the next maintenance window.
         type: bool
-        default: False
+        default: false
     availability_zones:
         description:
           - A list of EC2 Availability Zones that instances in the DB cluster can be created in.
@@ -113,8 +113,9 @@ options:
         aliases:
           - cluster_id
           - id
+          - cluster_name
         type: str
-        required: True
+        required: true
     db_cluster_parameter_group_name:
         description:
           - The name of the DB cluster parameter group to associate with this DB cluster.
@@ -127,6 +128,8 @@ options:
     enable_cloudwatch_logs_exports:
         description:
           - A list of log types that need to be enabled for exporting to CloudWatch Logs.
+          - Engine aurora-mysql supports C(audit), C(error), C(general) and C(slowquery).
+          - Engine aurora-postgresql supports C(postgresql).
         type: list
         elements: str
     deletion_protection:
@@ -166,7 +169,7 @@ options:
     enable_iam_database_authentication:
         description:
           - Enable mapping of AWS Identity and Access Management (IAM) accounts to database accounts.
-            If this option is omitted when creating the cluster, Amazon RDS sets this to False.
+            If this option is omitted when creating the cluster, Amazon RDS sets this to C(false).
         type: bool
     engine:
         description:
@@ -178,12 +181,13 @@ options:
         type: str
     engine_version:
         description:
-          - The version number of the database engine to use. For Aurora MySQL that could be 5.6.10a , 5.7.12.
-            Aurora PostgreSQL example, 9.6.3
+          - The version number of the database engine to use.
+          - For Aurora MySQL that could be C(5.6.10a), C(5.7.12).
+          - Aurora PostgreSQL example, C(9.6.3).
         type: str
     final_snapshot_identifier:
         description:
-          - The DB cluster snapshot identifier of the new DB cluster snapshot created when I(skip_final_snapshot) is false.
+          - The DB cluster snapshot identifier of the new DB cluster snapshot created when I(skip_final_snapshot=false).
         type: str
     force_backtrack:
         description:
@@ -195,7 +199,7 @@ options:
           - The AWS KMS key identifier (the ARN, unless you are creating a cluster in the same account that owns the
             KMS key, in which case the KMS key alias may be used).
           - If I(replication_source_identifier) specifies an encrypted source Amazon RDS will use the key used toe encrypt the source.
-          - If I(storage_encrypted) is true and and I(replication_source_identifier) is not provided, the default encryption key is used.
+          - If I(storage_encrypted=true) and and I(replication_source_identifier) is not provided, the default encryption key is used.
         type: str
     master_user_password:
         description:
@@ -219,6 +223,8 @@ options:
             next maintenance window.
         aliases:
           - new_cluster_id
+          - new_id
+          - new_cluster_name
         type: str
     option_group_name:
         description:
@@ -283,8 +289,8 @@ options:
         type: str
     skip_final_snapshot:
         description:
-          - Whether a final DB cluster snapshot is created before the DB cluster is deleted. If this is false I(final_snapshot_identifier)
-            must be provided.
+          - Whether a final DB cluster snapshot is created before the DB cluster is deleted.
+          - If this is C(false), I(final_snapshot_identifier) must be provided.
         type: bool
         default: false
     snapshot_identifier:
@@ -314,11 +320,6 @@ options:
         description:
           - Whether the DB cluster is encrypted.
         type: bool
-    allocated_storage:
-        description:
-          - The allocated storage size in gigabytes. Since aurora storage size is not fixed this is
-            always C(1) for aurora database engines.
-        type: int
     tags:
         description:
           - A dictionary of key value pairs to assign the DB cluster.
@@ -904,14 +905,13 @@ def main():
 
     parameter_options = dict(
         apply_immediately=dict(type='bool', default=False),
-        allocated_storage=dict(type='int'),
         availability_zones=dict(type='list', elements='str', aliases=['zones', 'az']),
         backtrack_to=dict(),
         backtrack_window=dict(type='int'),
         backup_retention_period=dict(type='int', default=1),
         character_set_name=dict(),
         database_name=dict(aliases=['db_name']),
-        db_cluster_identifier=dict(required=True, aliases=['cluster_id', 'id']),
+        db_cluster_identifier=dict(required=True, aliases=['cluster_id', 'id', 'cluster_name']),
         db_cluster_parameter_group_name=dict(),
         db_subnet_group_name=dict(),
         enable_cloudwatch_logs_exports=dict(type='list', elements='str'),
@@ -930,7 +930,7 @@ def main():
         kms_key_id=dict(),
         master_user_password=dict(aliases=['password'], no_log=True),
         master_username=dict(aliases=['username']),
-        new_db_cluster_identifier=dict(aliases=['new_cluster_id']),
+        new_db_cluster_identifier=dict(aliases=['new_cluster_id', 'new_id', 'new_cluster_name']),
         option_group_name=dict(),
         port=dict(type='int'),
         preferred_backup_window=dict(aliases=['backup_window']),
