@@ -1,0 +1,1607 @@
+---
+# Tests the basic manipulation of Default actions (including custom actions)
+#
+# In Scope
+# - Updating custom actions for stateless flows.
+# - Updating actions for stateless flows.
+
+- vars:
+    action_policy_name: '{{ policy_name_prefix }}-Actions'
+  block:
+    ###################################################################
+    # Creation
+
+    - name: 'A - Create a simple firewall policy with `default` rule order'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+
+    - name: 'A - Save Policy ID/ARN for later'
+      set_fact:
+        action_policy_id: '{{ policy_metadata.firewall_policy_id }}'
+        action_policy_arn: '{{ policy_metadata.firewall_policy_arn }}'
+      vars:
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+
+    ###################################################################
+    # Custom action management
+
+    - name: '(CHECK) A - Add a custom action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "CustomAction"
+          - custom_action_dimensions[0] == "CustomActionExample"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Add a custom action'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "CustomAction"
+          - custom_action_dimensions[0] == "CustomActionExample"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Add a custom action (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "CustomAction"
+          - custom_action_dimensions[0] == "CustomActionExample"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Add a custom action (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "CustomAction"
+          - custom_action_dimensions[0] == "CustomActionExample"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###
+
+    - name: '(CHECK) A - Replace a custom action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "anothercustomaction"
+          - custom_action_dimensions[0] == "another_example"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Replace a custom action'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "anothercustomaction"
+          - custom_action_dimensions[0] == "another_example"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Replace a custom action (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "anothercustomaction"
+          - custom_action_dimensions[0] == "another_example"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Replace a custom action (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 1
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - custom_action_names[0] == "anothercustomaction"
+          - custom_action_dimensions[0] == "another_example"
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###
+
+    - name: '(CHECK) A - Add a second action without purge'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+        purge_stateless_custom_actions: False
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Add a second action without purge'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+        purge_stateless_custom_actions: False
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Add a second action without purge (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+        purge_stateless_custom_actions: False
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Add a second action without purge (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+        purge_stateless_custom_actions: False
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###
+
+    # The order of custom actions shouldn't matter
+    - name: '(CHECK) A - Update custom action order (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Add a second action without purge (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###
+
+    # The order of custom actions shouldn't matter
+    - name: '(CHECK) A - Update custom action order (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Add a second action without purge (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_custom_actions:
+          - name: anothercustomaction
+            publish_metric_dimension_values: 'another_example'
+          - name: CustomAction
+            publish_metric_dimension_values: 'CustomActionExample'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###################################################################
+    # Set stateless_default_actions
+
+    - name: '(CHECK) A - Set stateless flow default actions with invalid action - DENIED'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'CustomAction'
+          - 'aws:junk'
+      register: action_policy
+      ignore_errors: True
+
+    - assert:
+        that:
+          - action_policy is failed
+
+    - name: 'A - Set stateless flow default actions with invalid action - DENIED'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'CustomAction'
+          - 'aws:junk'
+      register: action_policy
+      ignore_errors: True
+
+    - assert:
+        that:
+          - action_policy is failed
+
+    ###
+
+    - name: '(CHECK) A - Set stateless flow default action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions: 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless flow default actions'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions: 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Set stateless flow default actions (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions: 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless flow default actions (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions: 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###
+
+    - name: '(CHECK) A - Set stateless flow default action with custom action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'CustomAction'
+          - 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless flow default actions with custom action'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'CustomAction'
+          - 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Set stateless flow default actions with custom action (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'CustomAction'
+          - 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless flow default actions with custom action (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'CustomAction'
+          - 'aws:drop'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+
+    ###################################################################
+    # Set stateless_fragment_default_actions
+
+    - name: '(CHECK) A - Set stateless fragmented packet default actions with invalid action - DENIED'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'CustomJunk'
+          - 'aws:drop'
+      register: action_policy
+      ignore_errors: True
+
+    - assert:
+        that:
+          - action_policy is failed
+
+    - name: 'A - Set stateless fragmented packet default actions with invalid action - DENIED'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'CustomJunk'
+          - 'aws:drop'
+      register: action_policy
+      ignore_errors: True
+
+    - assert:
+        that:
+          - action_policy is failed
+
+    ###
+
+    - name: '(CHECK) A - Set stateless fragmented packet default action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions: 'aws:pass'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless fragmented packet default actions'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions: 'aws:pass'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Set stateless fragmented packet default actions (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions: 'aws:pass'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless fragmented packet default actions (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions: 'aws:pass'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###
+
+    - name: '(CHECK) A - Set stateless flow default action with custom action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'anothercustomaction'
+          - 'aws:forward_to_sfe'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["anothercustomaction", "aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless flow default actions with custom action'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'anothercustomaction'
+          - 'aws:forward_to_sfe'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["anothercustomaction", "aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: '(CHECK) A - Set stateless flow default actions with custom action (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'anothercustomaction'
+          - 'aws:forward_to_sfe'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["anothercustomaction", "aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    - name: 'A - Set stateless flow default actions with custom action (idempotency)'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'anothercustomaction'
+          - 'aws:forward_to_sfe'
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is not changed
+          - '"policy" in action_policy'
+          - '"policy" in action_policy.policy'
+          - '"policy_metadata" in action_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == action_policy_name
+          - policy_metadata.firewall_policy_arn == action_policy_arn
+          - policy_metadata.firewall_policy_id == action_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["CustomAction", "aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["anothercustomaction", "aws:forward_to_sfe"]
+          - '"stateless_custom_actions" in policy_data'
+          - policy_data.stateless_custom_actions | length == 2
+          - '"action_name" in policy_data.stateless_custom_actions[0]'
+          - '"action_definition" in policy_data.stateless_custom_actions[0]'
+          - '"publish_metric_action" in policy_data.stateless_custom_actions[0].action_definition'
+          - '"dimensions" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action'
+          - policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions | length == 1
+          - '"value" in policy_data.stateless_custom_actions[0].action_definition.publish_metric_action.dimensions[0]'
+          - '"CustomAction" in custom_action_names'
+          - '"anothercustomaction" in custom_action_names'
+          - '"CustomActionExample" in custom_action_dimensions'
+          - '"another_example" in custom_action_dimensions'
+      vars:
+        policy_data: '{{ action_policy.policy.policy }}'
+        policy_metadata: '{{ action_policy.policy.policy_metadata }}'
+        custom_action_names: '{{ policy_data.stateless_custom_actions | map(attribute="action_name") | list }}'
+        custom_action_dimensions: '{{ policy_data.stateless_custom_actions | map(attribute="action_definition.publish_metric_action.dimensions.0.value") | list }}'
+
+    ###################################################################
+    # Delete policy
+
+    - name: 'A - Delete policy with default order'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: absent
+        wait: False
+      register: action_policy
+
+    - assert:
+        that:
+          - action_policy is changed
+
+  always:
+    - name: 'A - Cleanup firewall policy'
+      networkfirewall_policy:
+        name: '{{ action_policy_name }}'
+        state: absent
+        wait: False
+      ignore_errors: True

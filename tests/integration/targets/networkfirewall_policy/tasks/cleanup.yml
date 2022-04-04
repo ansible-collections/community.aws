@@ -1,0 +1,40 @@
+---
+- name: 'Fetch all policies'
+  networkfirewall_policy_info: {}
+  register: account_policies_info
+  ignore_errors: true
+
+- name: 'Get a list of all rules matching {{ policy_name_prefix }}'
+  set_fact:
+    matching_policies: '{{ account_policies_info.policy_list | select("search", policy_name_prefix) | list }}'
+  ignore_errors: true
+
+# These should just be "no-ops" caused by the deletion being in-progress.
+# Waiters are not supported at this time.
+- name: 'Delete matching policies'
+  networkfirewall_policy:
+    arn: '{{ item }}'
+    state: absent
+  ignore_errors: true
+  loop: '{{ matching_policies }}'
+
+###
+
+- name: 'Fetch all account rule groups'
+  networkfirewall_rule_group_info: {}
+  register: account_rules_info
+  ignore_errors: true
+
+- name: 'Get a list of all rules matching {{ group_name_prefix }}'
+  set_fact:
+    matching_rules: '{{ account_rules_info.rule_list | select("search", group_name_prefix) | list }}'
+  ignore_errors: true
+
+# These should just be "no-ops" caused by the deletion being in-progress.
+# Waiters are not supported at this time.
+- name: 'Delete matching rule groups'
+  networkfirewall_rule_group:
+    arn: '{{ item }}'
+    state: absent
+  ignore_errors: true
+  loop: '{{ matching_rules }}'

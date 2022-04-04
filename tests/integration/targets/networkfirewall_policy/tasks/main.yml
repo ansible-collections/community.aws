@@ -1,0 +1,43 @@
+---
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+  collections:
+    - amazon.aws
+    - community.aws
+  block:
+    # Fetch some info about the account so we can build ARNs
+    - aws_caller_info: {}
+      register: caller_info
+    - name: 'Generate the ARN pattern to search for'
+      vars:
+        _caller_info: '{{ caller_info.arn.split(":") }}'
+        _base_arn: 'arn:{{_caller_info[1]}}:network-firewall:{{aws_region}}'
+      set_fact:
+        account_arn: '{{_base_arn}}:{{_caller_info[4]}}:firewall-policy/'
+
+    # Prepare the resources we'll need for testing the policies
+    - include_tasks: 'setup.yml'
+
+    # Tests specifically related to policies using 'default' rule order
+    - include_tasks: 'default_order.yml'
+
+    # Tests specifically related to policies using 'strict' rule order
+    - include_tasks: 'strict_order.yml'
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - include_tasks: 'actions.yml'
+
+    # Tests related to 'common' attributes on policies (description/tagging)
+    # Note: Unlike the other tests this includes *waiting* for the deletion of
+    # policies, and as such we should do this last so that the other policies
+    # can also finish deleting while we wait for the 'common' policy to be
+    # deleted.
+    - include_tasks: 'common.yml'
+
+  always:
+    - include_tasks: 'cleanup.yml'
