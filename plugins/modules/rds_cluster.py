@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster
-version_added: "3.3.0"
+version_added: "3.2.0"
 short_description: rds_cluster module
 description:
     - Create, modify, and delete RDS clusters.
@@ -33,8 +33,8 @@ options:
         type: str
     force_update_password:
         description:
-          - Set to C(true) to update your cluster password with I(master_user_password). Since comparing passwords to determine
-            if it needs to be updated is not possible this is set to C(false) by default to allow idempotence.
+          - Set to C(true) to update your cluster password with I(master_user_password).
+          - Since comparing passwords to determine if it needs to be updated is not possible this is set to C(false) by default to allow idempotence.
         type: bool
         default: false
     promote:
@@ -108,7 +108,7 @@ options:
         type: str
     db_cluster_identifier:
         description:
-          - The DB cluster (lowercase) identifier. The identifier must contain from C(1) to C(63) letters, numbers, or
+          - The DB cluster (lowercase) identifier. The identifier must contain from 1 to 63 letters, numbers, or
             hyphens and the first character must be a letter and may not end in a hyphen or contain consecutive hyphens.
         aliases:
           - cluster_id
@@ -203,8 +203,9 @@ options:
         type: str
     master_user_password:
         description:
-          - An 8-41 character password for the master database user. The password can contain any printable ASCII character
-            except "/", """, or "@". To modify the password use I(force_password_update). Use I(apply immediately) to change
+          - An 8-41 character password for the master database user.
+          - The password can contain any printable ASCII character except "/", """, or "@".
+          - To modify the password use I(force_password_update). Use I(apply immediately) to change
             the password immediately, otherwise it is updated during the next maintenance window.
         aliases:
           - password
@@ -217,10 +218,10 @@ options:
         type: str
     new_db_cluster_identifier:
         description:
-          - The new DB cluster (lowercase) identifier for the DB cluster when renaming a DB cluster. The identifier must contain
-            from 1 to 63 letters, numbers, or hyphens and the first character must be a letter and may not end in a hyphen or
-            contain consecutive hyphens. Use I(apply_immediately) to rename immediately, otherwise it is updated during the
-            next maintenance window.
+          - The new DB cluster (lowercase) identifier for the DB cluster when renaming a DB cluster.
+          - The identifier must contain from 1 to 63 letters, numbers, or hyphens and the first character must be a
+            letter and may not end in a hyphen or contain consecutive hyphens.
+          - Use I(apply_immediately) to rename immediately, otherwise it is updated during the next maintenance window.
         aliases:
           - new_cluster_id
           - new_id
@@ -258,8 +259,9 @@ options:
         type: str
     restore_to_time:
         description:
-          - The UTC date and time to restore the DB cluster to. Must be in the format "2015-03-07T23:45:00Z". If this is not provided while
-            restoring a cluster, I(use_latest_restorable_time) must be. May not be specified if I(restore_type) is copy-on-write.
+          - The UTC date and time to restore the DB cluster to. Must be in the format "2015-03-07T23:45:00Z".
+          - If this is not provided while restoring a cluster, I(use_latest_restorable_time) must be.
+            May not be specified if I(restore_type) is copy-on-write.
         type: str
     restore_type:
         description:
@@ -284,8 +286,8 @@ options:
         type: str
     s3_prefix:
         description:
-          - The prefix for all of the file names that contain the data used to create the Amazon Aurora DB cluster. If you do not
-            specify a SourceS3Prefix value, then the Amazon Aurora DB cluster is created by using all of the files in the Amazon S3 bucket.
+          - The prefix for all of the file names that contain the data used to create the Amazon Aurora DB cluster.
+          - If you do not specify a SourceS3Prefix value, then the Amazon Aurora DB cluster is created by using all of the files in the Amazon S3 bucket.
         type: str
     skip_final_snapshot:
         description:
@@ -295,8 +297,8 @@ options:
         default: false
     snapshot_identifier:
         description:
-          - The identifier for the DB snapshot or DB cluster snapshot to restore from. You can use either the name or the ARN to specify
-            a DB cluster snapshot. However, you can use only the ARN to specify a DB snapshot.
+          - The identifier for the DB snapshot or DB cluster snapshot to restore from.
+          - You can use either the name or the ARN to specify a DB cluster snapshot. However, you can use only the ARN to specify a DB snapshot.
         type: str
     source_db_cluster_identifier:
         description:
