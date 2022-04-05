@@ -8,11 +8,6 @@
   collections:
     - amazon.aws
     - community.aws
-  # We have a base need of botocore >= 1.19.20 which should be fulfilled by the
-  # time we release 4.0.0, this has been locally tested against 1.20.0 only
-  # bumping the requirements for specific tests to 1.23.23
-  vars:
-    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   block:
     # Fetch some info about the account so we can build ARNs
     - aws_caller_info: {}
@@ -35,6 +30,11 @@
 
     # Tests Manipulation of common Stateful settings
     - include_tasks: 'stateful.yml'
+
+    # XXX Not yet supported,
+    # please also update networkfirewall_policy tests once supported.
+    # # Tests Manipulation of common Stateless rule group settings
+    # - include_tasks: 'stateless.yml'
 
     # Tests Manipulation of Suricata formatted rule strings
     - include_tasks: 'rule_strings.yml'

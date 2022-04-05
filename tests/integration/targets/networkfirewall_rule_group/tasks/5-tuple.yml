@@ -527,6 +527,7 @@
         name: '{{ tuple_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: tuple_group
       check_mode: true
 
@@ -539,6 +540,7 @@
         name: '{{ tuple_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: tuple_group
 
     - assert:
@@ -552,6 +554,7 @@
         name: '{{ tuple_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: tuple_group
       check_mode: true
 
@@ -564,6 +567,7 @@
         name: '{{ tuple_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: tuple_group
 
     - assert:
@@ -576,4 +580,5 @@
         name: '{{ tuple_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       ignore_errors: true

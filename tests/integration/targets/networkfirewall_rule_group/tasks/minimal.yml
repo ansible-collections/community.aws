@@ -696,6 +696,7 @@
         name: '{{ minimal_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: minimal_group
       check_mode: true
 
@@ -708,6 +709,7 @@
         name: '{{ minimal_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: minimal_group
 
     - assert:
@@ -721,6 +723,7 @@
         name: '{{ minimal_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: minimal_group
       check_mode: true
 
@@ -733,6 +736,7 @@
         name: '{{ minimal_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: minimal_group
 
     - assert:
@@ -768,4 +772,5 @@
         name: '{{ minimal_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       ignore_errors: true

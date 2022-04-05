@@ -1329,6 +1329,7 @@
         name: '{{ stateful_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: stateful_group
 
     - assert:
@@ -1340,6 +1341,7 @@
         name: '{{ strict_ro_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: strict_group
 
     - assert:
@@ -1352,6 +1354,7 @@
         name: '{{ stateful_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       ignore_errors: true
 
     - name: '(always) Delete Strict rule group'
@@ -1359,4 +1362,5 @@
         name: '{{ strict_ro_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       ignore_errors: true
