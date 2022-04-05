@@ -210,12 +210,6 @@ clusters:
         description: Whether the DB cluster is storage encrypted.
         type: bool
         sample: false
-    tags:
-        description: A dictionary of key value pairs.
-        type: dict
-        sample: {
-            "Name": "rds-cluster-demo"
-        }
     tag_list:
         description: A list of tags consisting of key-value pairs.
         type: list
@@ -226,6 +220,12 @@ clusters:
                 "value": "Ansible_rds_cluster_integration_test"
             }
         ]
+    tags:
+        description: A dictionary of key value pairs.
+        type: dict
+        sample: {
+            "Name": "rds-cluster-demo"
+        }
     vpc_security_groups:
         description: A list of the DB cluster's security groups and their status.
         type: complex

@@ -590,6 +590,17 @@ storage_encrypted:
   returned: always
   type: bool
   sample: false
+tag_list:
+  description: A list of tags consisting of key-value pairs.
+  returned: always
+  type: list
+  elements: dict
+  sample: [
+    {
+      "key": "Created_By",
+      "value": "Ansible_rds_cluster_integration_test"
+    }
+  ]
 tags:
   description: A dictionary of key value pairs.
   returned: always
@@ -597,17 +608,6 @@ tags:
   sample: {
     "Name": "rds-cluster-demo"
   }
-tag_list:
-  description: A list of tags consisting of key-value pairs.
-  returned: always
-  sample: [
-    {
-      "key": "Created_By",
-      "value": "Ansible_rds_cluster_integration_test"
-    }
-  ]
-  type: list
-  elements: dict
 vpc_security_groups:
   description: A list of the DB cluster's security groups and their status.
   returned: always
