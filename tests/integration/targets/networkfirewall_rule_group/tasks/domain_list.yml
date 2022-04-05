@@ -1635,6 +1635,7 @@
         name: '{{ domains_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: domain_group
       check_mode: true
 
@@ -1647,6 +1648,7 @@
         name: '{{ domains_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: domain_group
 
     - assert:
@@ -1659,4 +1661,5 @@
         name: '{{ domains_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       ignore_errors: true

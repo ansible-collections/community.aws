@@ -428,6 +428,7 @@
         name: '{{ strings_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: strings_group
       check_mode: true
 
@@ -440,6 +441,7 @@
         name: '{{ strings_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: strings_group
 
     - assert:
@@ -453,6 +455,7 @@
         name: '{{ strings_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: strings_group
       check_mode: true
 
@@ -465,6 +468,7 @@
         name: '{{ strings_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       register: strings_group
 
     - assert:
@@ -477,4 +481,5 @@
         name: '{{ strings_group_name }}'
         type: 'stateful'
         state: absent
+        wait: False
       ignore_errors: true

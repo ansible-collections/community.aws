@@ -15,5 +15,6 @@
   networkfirewall_rule_group:
     arn: '{{ item }}'
     state: absent
+    wait: True
   ignore_errors: true
   loop: '{{ matching_rules }}'
