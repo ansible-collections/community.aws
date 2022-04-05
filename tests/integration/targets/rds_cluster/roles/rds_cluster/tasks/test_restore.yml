@@ -23,7 +23,6 @@
       backup_retention_period: 1
       username: "{{ username }}"
       password: "{{ password }}"
-      allocated_storage: "{{ allocated_storage }}"
     register: _result_create_source_db_cluster
 
   - assert:
@@ -63,7 +62,6 @@
       engine: "{{ engine}}"
       username: "{{ username }}"
       password: "{{ password }}"
-      allocated_storage: "{{ allocated_storage }}"
       use_latest_restorable_time: true
       tags:
         Name: "{{ cluster_id }}"
@@ -108,7 +106,6 @@
       engine: "{{ engine}}"
       username: "{{ username }}"
       password: "{{ password }}"
-      allocated_storage: "{{ allocated_storage }}"
       restore_to_time: "{{ _result_restored_db_cluster.latest_restorable_time }}"
       tags:
         Name: "{{ cluster_id }}"

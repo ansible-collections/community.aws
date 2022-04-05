@@ -28,7 +28,6 @@
       username: "{{ username }}"
       password: "{{ password }}"
       region: "{{ region_src }}"
-      allocated_storage: "{{ allocated_storage }}"
       tags:
         Name: "{{ cluster_id }}"
         Created_by: Ansible rds_cluster tests

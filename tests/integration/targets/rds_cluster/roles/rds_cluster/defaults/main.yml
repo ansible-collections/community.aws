@@ -7,7 +7,6 @@ username: 'testrdsusername'
 password: 'test-rds_password'
 engine: 'aurora'
 port: 3306
-allocated_storage: 20
 tags_create:
   Name: 'ansible-test-cluster-{{ tiny_prefix }}'
   Created_By: "Ansible_rds_cluster_integration_test"
