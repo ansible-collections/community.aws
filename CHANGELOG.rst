@@ -23,7 +23,7 @@ Major Changes
 Minor Changes
 -------------
 
-- Added suport for retries (AWSRetry.jittered_backoff) for cloudfront_distribution (https://github.com/ansible-collections/community.aws/issues/296)
+- cloudfront_distribution - Added support for retries (AWSRetry.jittered_backoff) (https://github.com/ansible-collections/community.aws/issues/296)
 - aws_acm - Add ``tags`` and ``purge_tags`` parameters to tag certificates in ACM (https://github.com/ansible-collections/community.aws/pull/870).
 - ec2_asg - Added functionality to detach specific instances and/or decrement desired capacity from ASG without terminating instances (https://github.com/ansible-collections/community.aws/pull/933).
 - ec2_asg - Restructure integration tests to run in parallel and reduce runtime (https://github.com/ansible-collections/community.aws/pull/1036).
@@ -41,7 +41,7 @@ Minor Changes
 Bugfixes
 --------
 
-- Add backoff retry logic to elb_application_lb_info (https://github.com/ansible-collections/community.aws/pull/977)
+- elb_application_lb_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/977)
 - ecs_taskdefinition - include launch_type comparison when comparing task definitions (https://github.com/ansible-collections/community.aws/pull/840)
 - elb_application_lb - Fix empty security groups list behaves inconsistently on create/update by treating empty security group as VPC's defaault (https://github.com/ansible-collections/community.aws/pull/971).
 - elb_target_group_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/1001)
