@@ -450,6 +450,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_li
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from time import sleep
 
 
 @AWSRetry.jittered_backoff(retries=5, delay=5, backoff=2.0)
@@ -535,7 +536,7 @@ def get_kms_tags(connection, module, key_id):
 def get_kms_policies(connection, module, key_id):
     try:
         policies = list_key_policies_with_backoff(connection, key_id)['PolicyNames']
-        return [get_key_policy_with_backoff(connection, key_id, policy)['Policy'] for
+        return [json.loads(get_key_policy_with_backoff(connection, key_id, policy)['Policy']) for
                 policy in policies]
     except is_boto3_error_code('AccessDeniedException'):
         return []
@@ -817,13 +818,15 @@ def update_key_rotation(connection, module, key, enable_key_rotation):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to get current key rotation status")
 
-    try:
-        if enable_key_rotation:
-            connection.enable_key_rotation(KeyId=key_id)
-        else:
-            connection.disable_key_rotation(KeyId=key_id)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to enable/disable key rotation")
+    if not module.check_mode:
+        try:
+            if enable_key_rotation:
+                connection.enable_key_rotation(KeyId=key_id)
+            else:
+                connection.disable_key_rotation(KeyId=key_id)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Failed to enable/disable key rotation")
+
     return True
 
 
@@ -862,6 +865,10 @@ def update_key(connection, module, key):
     changed |= update_policy(connection, module, key, module.params.get('policy'))
     changed |= update_grants(connection, module, key, module.params.get('grants'), module.params.get('purge_grants'))
     changed |= update_key_rotation(connection, module, key, module.params.get('enable_key_rotation'))
+
+    # Pause to wait for updates
+    if changed and not module.check_mode:
+        sleep(5)
 
     # make results consistent with kms_facts before returning
     result = get_key_details(connection, module, key['key_arn'])
@@ -1107,7 +1114,7 @@ def main():
     key_metadata = fetch_key_metadata(kms, module, module.params.get('key_id'), module.params.get('alias'))
     # We can't create keys with a specific ID, if we can't access the key we'll have to fail
     if module.params.get('state') == 'present' and module.params.get('key_id') and not key_metadata:
-        module.fail_json(msg="Could not find key with id %s to update")
+        module.fail_json(msg="Could not find key with id {0} to update".format(module.params.get('key_id')))
 
     if module.params.get('policy_grant_types') or mode == 'deny':
         module.deprecate('Managing the KMS IAM Policy via policy_mode and policy_grant_types is fragile'

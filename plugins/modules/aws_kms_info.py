@@ -240,6 +240,7 @@ kms_keys:
           sample: arn:aws:sts::0123456789012:assumed-role/lambda_xyz/xyz
 '''
 
+import json
 
 try:
     import botocore
@@ -354,7 +355,7 @@ def get_kms_tags(connection, module, key_id):
 def get_kms_policies(connection, module, key_id):
     try:
         policies = list_key_policies_with_backoff(connection, key_id)['PolicyNames']
-        return [get_key_policy_with_backoff(connection, key_id, policy)['Policy'] for
+        return [json.loads(get_key_policy_with_backoff(connection, key_id, policy)['Policy']) for
                 policy in policies]
     except is_boto3_error_code('AccessDeniedException'):
         return []
