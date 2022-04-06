@@ -1,10 +1,8 @@
 ---
-
-- name: Test create/update/delete asg_lifecycle_hooks
+- name: Test create/update/delete AutoScalingGroups Lifecycle Hooks with ec2_asg_lifecycle_hook
 
   block:
-
-    #----------------------------------------------------------------------
+  #----------------------------------------------------------------------
     - name: create a launch configuration
       ec2_lc:
         name: "{{ resource_prefix }}-lc"

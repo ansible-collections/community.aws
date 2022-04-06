@@ -1,4 +1,4 @@
-- name: Run ec2_asg integration tests.
+- name: Run ec2_asg_lifecycle_hook integration tests.
 
   block:
 
