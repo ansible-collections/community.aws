@@ -1771,7 +1771,7 @@ releases:
   3.2.0:
     changes:
       bugfixes:
-      - Add backoff retry logic to elb_application_lb_info (https://github.com/ansible-collections/community.aws/pull/977)
+      - elb_application_lb_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/977)
       - ecs_taskdefinition - include launch_type comparison when comparing task definitions
         (https://github.com/ansible-collections/community.aws/pull/840)
       - elb_application_lb - Fix empty security groups list behaves inconsistently
@@ -1788,7 +1788,7 @@ releases:
       - s3_bucket_notifications - refactor module to support SNS / SQS targets as
         well as the existing support for Lambda functions (https://github.com/ansible-collections/community.aws/issues/140).
       minor_changes:
-      - Added suport for retries (AWSRetry.jittered_backoff) for cloudfront_distribution
+      - cloudfront_distribution - Added support for retries (AWSRetry.jittered_backoff)
         (https://github.com/ansible-collections/community.aws/issues/296)
       - aws_acm - Add ``tags`` and ``purge_tags`` parameters to tag certificates in
         ACM (https://github.com/ansible-collections/community.aws/pull/870).
