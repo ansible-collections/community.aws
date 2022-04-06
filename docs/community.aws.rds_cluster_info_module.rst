@@ -1,14 +1,14 @@
-.. _community.aws.elb_application_lb_info_module:
+.. _community.aws.rds_cluster_info_module:
 
 
-*************************************
-community.aws.elb_application_lb_info
-*************************************
+******************************
+community.aws.rds_cluster_info
+******************************
 
-**Gather information about Application Load Balancers in AWS**
+**Obtain information about one or more RDS clusters**
 
 
-Version added: 1.0.0
+Version added: 3.2.0
 
 .. contents::
    :local:
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Gather information about Application Load Balancers in AWS
+- Obtain information about one or more RDS clusters.
 
 
 
@@ -114,6 +114,23 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>db_cluster_identifier</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The user-supplied DB cluster identifier.</div>
+                        <div>If this parameter is specified, information from only the specific DB cluster is returned.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: cluster_id, id, cluster_name</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -149,33 +166,16 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>load_balancer_arns</b>
+                    <b>filters</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The Amazon Resource Names (ARN) of the load balancers. You can specify up to 20 load balancers in a single call.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>names</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The names of the load balancers.</div>
+                        <div>A filter that specifies one or more DB clusters to describe. See <a href='https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBClusters.html'>https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_DescribeDBClusters.html</a>.</div>
                 </td>
             </tr>
             <tr>
@@ -268,29 +268,19 @@ Examples
 
 .. code-block:: yaml
 
-    # Note: These examples do not set authentication details, see the AWS Guide for details.
+    - name: Get info of all existing DB clusters
+      community.aws.rds_cluster_info:
+      register: _result_cluster_info
 
-    - name: Gather information about all ALBs
-      community.aws.elb_application_lb_info:
+    - name: Get info on a specific DB cluster
+      community.aws.rds_cluster_info:
+        cluster_id: "{{ cluster_id }}"
+      register: _result_cluster_info
 
-    - name: Gather information about a particular ALB given its ARN
-      community.aws.elb_application_lb_info:
-        load_balancer_arns:
-          - "arn:aws:elasticloadbalancing:ap-southeast-2:001122334455:loadbalancer/app/my-alb/aabbccddeeff"
-
-    - name: Gather information about ALBs named 'alb1' and 'alb2'
-      community.aws.elb_application_lb_info:
-        names:
-          - alb1
-          - alb2
-
-    - name: Gather information about specific ALB
-      community.aws.elb_application_lb_info:
-        names: "alb-name"
-        region: "aws-region"
-      register: alb_info
-    - ansible.builtin.debug:
-        var: alb_info
+    - name: Get info all DB clusters with specific engine
+      community.aws.rds_cluster_info:
+        engine: "aurora"
+      register: _result_cluster_info
 
 
 
@@ -302,30 +292,30 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="4">Key</th>
+            <th colspan="3">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="4">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>load_balancers</b>
+                    <b>clusters</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">list</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>a list of load balancers</div>
+                            <div>List of RDS clusters.</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>access_logs_s3_bucket</b>
+                    <b>activity_stream_status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -333,51 +323,49 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The name of the S3 bucket for the access logs.</div>
+                            <div>The status of the database activity stream.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mys3bucket</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">stopped</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>access_logs_s3_enabled</b>
+                    <b>allocated_storage</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
                 <td></td>
                 <td>
-                            <div>Indicates whether access logs stored in Amazon S3 are enabled.</div>
+                            <div>The allocated storage size in gigabytes. Since aurora storage size is not fixed this is always 1 for aurora database engines.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>access_logs_s3_prefix</b>
+                    <b>associated_roles</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">list</span>
                     </div>
                 </td>
                 <td></td>
                 <td>
-                            <div>The prefix for the location in the S3 bucket.</div>
+                            <div>A list of dictionaries of the AWS Identity and Access Management (IAM) roles that are associated with the DB cluster. Each dictionary contains the role_arn and the status of the role.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my/logs</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>availability_zones</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -387,89 +375,17 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The Availability Zones for the load balancer.</div>
+                            <div>The list of availability zones that instances in the DB cluster can be created in.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;load_balancer_addresses&#x27;: [], &#x27;subnet_id&#x27;: &#x27;subnet-aabbccddff&#x27;, &#x27;zone_name&#x27;: &#x27;ap-southeast-2a&#x27;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;us-east-1c&#x27;, &#x27;us-east-1a&#x27;, &#x27;us-east-1e&#x27;]</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>canonical_hosted_zone_id</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The ID of the Amazon Route 53 hosted zone associated with the load balancer.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ABCDEF12345678</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>created_time</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The date and time the load balancer was created.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-02-12T02:14:02+00:00</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>deletion_protection_enabled</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Indicates whether deletion protection is enabled.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>dns_name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The public DNS name of the load balancer.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">internal-my-alb-123456789.ap-southeast-2.elb.amazonaws.com</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>idle_timeout_timeout_seconds</b>
+                    <b>backup_retention_period</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">integer</span>
@@ -477,17 +393,17 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The idle timeout value, in seconds.</div>
+                            <div>The number of days for which automatic DB snapshots are retained.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">60</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>ip_address_type</b>
+                    <b>cluster_create_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -495,124 +411,49 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The type of IP addresses used by the subnets for the load balancer.</div>
+                            <div>The time in UTC when the DB cluster was created.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ipv4</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2018-06-29T14:08:58.491000+00:00</div>
                 </td>
             </tr>
             <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>listeners</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">complex</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Information about the listeners.</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>certificates</b>
+                    <b>copy_tags_to_snapshot</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td></td>
                 <td>
-                            <div>The SSL server certificate.</div>
+                            <div>Specifies whether tags are copied from the DB cluster to snapshots of the DB cluster.</div>
                     <br/>
                 </td>
             </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>certificate_arn</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The Amazon Resource Name (ARN) of the certificate.</div>
-                    <br/>
-                </td>
-            </tr>
-
             <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>default_actions</b>
+                    <b>cross_account_clone</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td></td>
                 <td>
-                            <div>The default actions for the listener.</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>target_group_arn</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The Amazon Resource Name (ARN) of the target group.</div>
+                            <div>Specifies whether the DB cluster is a clone of a DB cluster owned by a different Amazon Web Services account.</div>
                     <br/>
                 </td>
             </tr>
             <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>type</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The type of action.</div>
-                    <br/>
-                </td>
-            </tr>
-
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>listener_arn</b>
+                    <b>db_cluster_arn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -620,16 +461,17 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The Amazon Resource Name (ARN) of the listener.</div>
+                            <div>The Amazon Resource Name (ARN) for the DB cluster.</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:rds:us-east-1:123456789012:cluster:rds-cluster-demo</div>
                 </td>
             </tr>
             <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>load_balancer_arn</b>
+                    <b>db_cluster_identifier</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -637,12 +479,307 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The Amazon Resource Name (ARN) of the load balancer.</div>
+                            <div>The lowercase user-supplied DB cluster identifier.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">rds-cluster-demo</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>db_cluster_members</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>A list of dictionaries containing information about the instances in the cluster. Each dictionary contains the <em>db_instance_identifier</em>, <em>is_cluster_writer</em> (bool), <em>db_cluster_parameter_group_status</em>, and <em>promotion_tier</em> (int).</div>
                     <br/>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>db_cluster_parameter_group</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The parameter group associated with the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">default.aurora5.6</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>db_cluster_resource_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The AWS Region-unique, immutable identifier for the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">cluster-D2MEQDN3BQNXDF74K6DQJTHASU</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>db_subnet_group</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The name of the subnet group associated with the DB Cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">default</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>deletion_protection</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>Indicates if the DB cluster has deletion protection enabled. The database can&#x27;t be deleted when deletion protection is enabled.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>domain_memberships</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The Active Directory Domain membership records associated with the DB cluster.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>earliest_restorable_time</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The earliest time to which a database can be restored with point-in-time restore.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2018-06-29T14:09:34.797000+00:00</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>endpoint</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The connection endpoint for the primary instance of the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">rds-cluster-demo.cluster-cvlrtwiennww.us-east-1.rds.amazonaws.com</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>engine</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The database engine of the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">aurora</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>engine_mode</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The DB engine mode of the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">provisioned</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>engine_version</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The database engine version.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">5.6.10a</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>hosted_zone_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The ID that Amazon Route 53 assigns when you create a hosted zone.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Z2R2ITUGPM61AM</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>http_endpoint_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>A value that indicates whether the HTTP endpoint for an Aurora Serverless DB cluster is enabled.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>iam_database_authentication_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>Whether IAM accounts may be mapped to database accounts.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>latest_restorable_time</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The latest time to which a database can be restored with point-in-time restore.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2018-06-29T14:09:34.797000+00:00</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>master_username</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The master username for the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">username</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>multi_az</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>Whether the DB cluster has instances in multiple availability zones.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -654,18 +791,17 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The port on which the load balancer is listening.</div>
+                            <div>The port that the database engine is listening on.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">80</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3306</div>
                 </td>
             </tr>
             <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>protocol</b>
+                    <b>preferred_backup_window</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -673,18 +809,17 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The protocol for connections from clients to the load balancer.</div>
+                            <div>The UTC weekly time range during which system maintenance can occur.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">HTTPS</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">10:18-10:48</div>
                 </td>
             </tr>
             <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>ssl_policy</b>
+                    <b>preferred_maintenance_window</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -692,154 +827,17 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The security policy that defines which ciphers and protocols are supported.</div>
-                    <br/>
-                </td>
-            </tr>
-
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>load_balancer_arn</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The Amazon Resource Name (ARN) of the load balancer.</div>
+                            <div>The UTC weekly time range during which system maintenance can occur.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-alb/001122334455</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">tue:03:23-tue:03:53</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>load_balancer_name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>The name of the load balancer.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-alb</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>routing_http2_enabled</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Indicates whether HTTP/2 is enabled.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>routing_http_desync_mitigation_mode</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Determines how the load balancer handles requests that might pose a security risk to an application.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">defensive</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>routing_http_drop_invalid_header_fields_enabled</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>routing_http_x_amzn_tls_version_and_cipher_suite_enabled</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Indicates whether the two headers are added to the client request before sending it to the target.</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>routing_http_xff_client_port_enabled</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>scheme</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Internet-facing or internal load balancer.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">internal</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>security_groups</b>
+                    <b>read_replica_identifiers</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
@@ -847,33 +845,84 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The IDs of the security groups for the load balancer.</div>
+                            <div>A list of read replica ID strings associated with the DB cluster.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;sg-0011223344&#x27;]</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>state</b>
+                    <b>reader_endpoint</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
+                      <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td></td>
                 <td>
-                            <div>The state of the load balancer.</div>
+                            <div>The reader endpoint for the DB cluster.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;code&#x27;: &#x27;active&#x27;}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">rds-cluster-demo.cluster-ro-cvlrtwiennww.us-east-1.rds.amazonaws.com</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>The status of the DB cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">available</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>storage_encrypted</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>Whether the DB cluster is storage encrypted.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>tag_list</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>A list of tags consisting of key-value pairs.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;key&#x27;: &#x27;Created_By&#x27;, &#x27;value&#x27;: &#x27;Ansible_rds_cluster_integration_test&#x27;}]</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>tags</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -883,17 +932,34 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The tags attached to the load balancer.</div>
+                            <div>A dictionary of key value pairs.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Tag&#x27;: &#x27;Example&#x27;}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Name&#x27;: &#x27;rds-cluster-demo&#x27;}</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>type</b>
+                    <b>vpc_security_groups</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>A list of the DB cluster&#x27;s security groups and their status.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -901,17 +967,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The type of load balancer.</div>
+                            <div>Status of the security group.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">application</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">active</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>vpc_id</b>
+                    <b>vpc_security_group_id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -919,28 +986,13 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td></td>
                 <td>
-                            <div>The ID of the VPC for the load balancer.</div>
+                            <div>Security group of the cluster.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">vpc-0011223344</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">sg-12345678</div>
                 </td>
             </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>waf_fail_open_enabled</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td></td>
-                <td>
-                            <div>Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.</div>
-                    <br/>
-                </td>
-            </tr>
+
 
     </table>
     <br/><br/>
@@ -953,4 +1005,4 @@ Status
 Authors
 ~~~~~~~
 
-- Rob White (@wimnat)
+- Alina Buzachis (@alinabuzachis)

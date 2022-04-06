@@ -151,6 +151,26 @@ Parameters
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>decrement_desired_capacity</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Indicates whether the AutoScalingGroup decrements the desired capacity value by the number of instances detached.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>default_cooldown</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -177,6 +197,26 @@ Parameters
                 </td>
                 <td>
                         <div>Desired number of instances in group, if unspecified then the current group value will be used.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>detach_instances</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Removes one or more instances from the specified AutoScalingGroup.</div>
+                        <div>If <em>decrement_desired_capacity</em> flag is not set, new instance(s) are launched to replace the detached instance(s).</div>
+                        <div>If a Classic Load Balancer is attached to the AutoScalingGroup, the instances are also deregistered from the load balancer.</div>
+                        <div>If there are target groups attached to the AutoScalingGroup, the instances are also deregistered from the target groups.</div>
                 </td>
             </tr>
             <tr>
@@ -711,6 +751,27 @@ Parameters
                         <div>Using <em>profile</em> will override <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> and support for passing them at the same time as <em>profile</em> has been deprecated.</div>
                         <div><em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> will be made mutually exclusive with <em>profile</em> after 2022-06-01.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_profile</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>If <code>true</code>, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
+                        <div>If the <em>tags</em> parameter is not set then tags will not be modified.</div>
                 </td>
             </tr>
             <tr>

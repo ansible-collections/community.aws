@@ -5,7 +5,8 @@
 community.aws.aws_acm
 *********************
 
-**Upload and delete certificates in the AWS Certificate Manager service**
+**Upload and delete certificates in the AWS Certificate Manager service
+**
 
 
 Version added: 1.0.0
@@ -142,7 +143,7 @@ Parameters
                 </td>
                 <td>
                         <div>The body of the PEM encoded public certificate.</div>
-                        <div>Required when <em>state</em> is not <code>absent</code>.</div>
+                        <div>Required when <em>state</em> is not <code>absent</code> and the certificate does not exist.</div>
                         <div>If your certificate is in a file, use <code>lookup(&#x27;file&#x27;, &#x27;path/to/cert.pem&#x27;</code>).</div>
                 </td>
             </tr>
@@ -158,8 +159,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The ARN of a certificate in ACM to delete</div>
-                        <div>Ignored when <em>state=present</em>.</div>
+                        <div>The ARN of a certificate in ACM to modify or delete.</div>
+                        <div>If <em>state=present</em>, the certificate with the specified ARN can be updated. For example, this can be used to add/remove tags to an existing certificate.</div>
                         <div>If <em>state=absent</em>, you must provide one of <em>certificate_arn</em>, <em>domain_name</em> or <em>name_tag</em>.</div>
                         <div>If <em>state=absent</em> and no resource exists with this ARN in this region, the task will succeed with no effect.</div>
                         <div>If <em>state=absent</em> and the corresponding resource exists in a different region, this task may report success without deleting that resource.</div>
@@ -253,6 +254,7 @@ Parameters
                         <div>This can be any set of characters accepted by AWS for tag values.</div>
                         <div>This is to ensure Ansible can treat certificates idempotently, even though the ACM API allows duplicate certificates.</div>
                         <div>If <em>state=preset</em>, this must be specified.</div>
+                        <div>If <em>state=absent</em> and <em>name_tag</em> is specified, this task will delete all ACM certificates with this Name tag.</div>
                         <div>If <em>state=absent</em>, you must provide exactly one of <em>certificate_arn</em>, <em>domain_name</em> or <em>name_tag</em>.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
                 </td>
@@ -270,7 +272,7 @@ Parameters
                 </td>
                 <td>
                         <div>The body of the PEM encoded private key.</div>
-                        <div>Required when <em>state=present</em>.</div>
+                        <div>Required when <em>state=present</em> and the certificate does not exist.</div>
                         <div>Ignored when <em>state=absent</em>.</div>
                         <div>If your private key is in a file, use <code>lookup(&#x27;file&#x27;, &#x27;path/to/key.pem&#x27;</code>).</div>
                 </td>
@@ -290,6 +292,26 @@ Parameters
                         <div>Using <em>profile</em> will override <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> and support for passing them at the same time as <em>profile</em> has been deprecated.</div>
                         <div><em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> will be made mutually exclusive with <em>profile</em> after 2022-06-01.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_profile</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>whether to remove tags not present in the <code>tags</code> parameter.</div>
                 </td>
             </tr>
             <tr>
@@ -344,6 +366,24 @@ Parameters
                 <td>
                         <div>If <em>state=present</em>, the specified public certificate and private key will be uploaded, with <em>Name</em> tag equal to <em>name_tag</em>.</div>
                         <div>If <em>state=absent</em>, any certificates in this region with a corresponding <em>domain_name</em>, <em>name_tag</em> or <em>certificate_arn</em> will be deleted.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Tags to apply to certificates imported in ACM.</div>
+                        <div>If both <em>name_tag</em> and the &#x27;Name&#x27; tag in <em>tags</em> are set, the values must be the same.</div>
+                        <div>If the &#x27;Name&#x27; tag in <em>tags</em> is not set and <em>name_tag</em> is set, the <em>name_tag</em> value is copied to <em>tags</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -423,6 +463,15 @@ Examples
         domain_name: acm.ansible.com
         state: absent
         region: ap-southeast-2
+
+    - name: add tags to an existing certificate with a particular ARN
+      community.aws.aws_acm:
+        certificate_arn: "arn:aws:acm:ap-southeast-2:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901"
+        tags:
+          Name: my_certificate
+          Application: search
+          Environment: development
+        purge_tags: true
 
 
 

@@ -201,8 +201,8 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Indicates whether deletion protection for the ELB is enabled.</div>
-                        <div>Defaults to <code>false</code>.</div>
+                        <div>Indicates whether deletion protection for the ALB is enabled.</div>
+                        <div>Defaults to <code>False</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -238,7 +238,92 @@ Parameters
                 </td>
                 <td>
                         <div>Indicates whether to enable HTTP2 routing.</div>
-                        <div>Defaults to <code>false</code>.</div>
+                        <div>Defaults to <code>True</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>http_desync_mitigation_mode</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>monitor</li>
+                                    <li>defensive</li>
+                                    <li>strictest</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Determines how the load balancer handles requests that might pose a security risk to an application.</div>
+                        <div>Defaults to <code>&#x27;defensive&#x27;</code></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>http_drop_invalid_header_fields</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Indicates whether HTTP headers with invalid header fields are removed by the load balancer <code>True</code> or routed to targets <code>False</code>.</div>
+                        <div>Defaults to <code>False</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>http_x_amzn_tls_version_and_cipher_suite</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Indicates whether the two headers are added to the client request before sending it to the target.</div>
+                        <div>Defaults to <code>False</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>http_xff_client_port</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.</div>
+                        <div>Defaults to <code>False</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -288,7 +373,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A list of dicts containing listeners to attach to the ELB. See examples for detail of the dict required. Note that listener keys are CamelCased.</div>
+                        <div>A list of dicts containing listeners to attach to the ALB. See examples for detail of the dict required. Note that listener keys are CamelCased.</div>
                 </td>
             </tr>
                                 <tr>
@@ -550,7 +635,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>If <code>yes</code>, existing listeners will be purged from the ELB to match exactly what is defined by <em>listeners</em> parameter.</div>
+                        <div>If <code>yes</code>, existing listeners will be purged from the ALB to match exactly what is defined by <em>listeners</em> parameter.</div>
                         <div>If the <em>listeners</em> parameter is not set then listeners will not be modified.</div>
                 </td>
             </tr>
@@ -625,7 +710,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Internet-facing or internal load balancer. An ELB scheme can not be modified after creation.</div>
+                        <div>Internet-facing or internal load balancer. An ALB scheme can not be modified after creation.</div>
                 </td>
             </tr>
             <tr>
@@ -639,11 +724,11 @@ Parameters
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">[]</div>
                 </td>
                 <td>
                         <div>A list of the names or IDs of the security groups to assign to the load balancer.</div>
                         <div>Required if <em>state=present</em>.</div>
+                        <div>If <code>[]</code>, the VPC&#x27;s default security group will be used.</div>
                 </td>
             </tr>
             <tr>
@@ -737,6 +822,27 @@ Parameters
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>waf_fail_open</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.2.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.</div>
+                        <div>Defaults to <code>False</code>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>wait</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -792,9 +898,9 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    # Create an ELB and attach a listener
+    # Create an ALB and attach a listener
     - community.aws.elb_application_lb:
-        name: myelb
+        name: myalb
         security_groups:
           - sg-12345678
           - my-sec-group
@@ -813,12 +919,12 @@ Examples
                 TargetGroupName: # Required. The name of the target group
         state: present
 
-    # Create an ELB and attach a listener with logging enabled
+    # Create an ALB and attach a listener with logging enabled
     - community.aws.elb_application_lb:
         access_logs_enabled: yes
         access_logs_s3_bucket: mybucket
         access_logs_s3_prefix: "logs"
-        name: myelb
+        name: myalb
         security_groups:
           - sg-12345678
           - my-sec-group
@@ -900,9 +1006,9 @@ Examples
                     Type: forward
         state: present
 
-    # Remove an ELB
+    # Remove an ALB
     - community.aws.elb_application_lb:
-        name: myelb
+        name: myalb
         state: absent
 
 
@@ -942,7 +1048,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>access_logs_s3_enabled</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td>when state is present</td>
@@ -984,7 +1090,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>The Availability Zones for the load balancer.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;subnet_id&#x27;: &#x27;subnet-aabbccddff&#x27;, &#x27;zone_name&#x27;: &#x27;ap-southeast-2a&#x27;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;load_balancer_addresses&#x27;: [], &#x27;subnet_id&#x27;: &#x27;subnet-aabbccddff&#x27;, &#x27;zone_name&#x27;: &#x27;ap-southeast-2a&#x27;}]</div>
                 </td>
             </tr>
             <tr>
@@ -1002,6 +1108,23 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ABCDEF12345678</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>changed</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Whether an ALB was created/updated/deleted</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
                 </td>
             </tr>
             <tr>
@@ -1027,7 +1150,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>deletion_protection_enabled</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td>when state is present</td>
@@ -1288,7 +1411,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>The Amazon Resource Name (ARN) of the load balancer.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-alb/001122334455</div>
                 </td>
             </tr>
             <tr>
@@ -1305,7 +1428,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>The name of the load balancer.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-elb</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-alb</div>
                 </td>
             </tr>
             <tr>
@@ -1314,7 +1437,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>routing_http2_enabled</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td>when state is present</td>
@@ -1323,6 +1446,68 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>routing_http_desync_mitigation_mode</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>Determines how the load balancer handles requests that might pose a security risk to an application.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">defensive</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>routing_http_drop_invalid_header_fields_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>Indicates whether HTTP headers with invalid header fields are removed by the load balancer (true) or routed to targets (false).</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>routing_http_x_amzn_tls_version_and_cipher_suite_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>Indicates whether the two headers are added to the client request before sending it to the target.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>routing_http_xff_client_port_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>Indicates whether the X-Forwarded-For header should preserve the source port that the client used to connect to the load balancer.</div>
+                    <br/>
                 </td>
             </tr>
             <tr>
@@ -1390,7 +1575,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>The tags attached to the load balancer.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{ &#x27;Tag&#x27;: &#x27;Example&#x27; }</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Tag&#x27;: &#x27;Example&#x27;}</div>
                 </td>
             </tr>
             <tr>
@@ -1425,6 +1610,21 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">vpc-0011223344</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>waf_fail_open_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>Indicates whether to allow a AWS WAF-enabled load balancer to route requests to targets if it is unable to forward the request to AWS WAF.</div>
+                    <br/>
                 </td>
             </tr>
     </table>

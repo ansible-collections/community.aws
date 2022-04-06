@@ -1,14 +1,14 @@
-.. _community.aws.ec2_eip_module:
+.. _community.aws.cloudfront_response_headers_policy_module:
 
 
-*********************
-community.aws.ec2_eip
-*********************
+************************************************
+community.aws.cloudfront_response_headers_policy
+************************************************
 
-**manages EC2 elastic IP (EIP) addresses.**
+**Create, update and delete response headers policies to be used in a Cloudfront distribution**
 
 
-Version added: 1.0.0
+Version added: 3.2.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- This module can allocate or release an EIP.
-- This module can associate/disassociate an EIP with instances or network interfaces.
+- Create, update and delete response headers policies to be used in a Cloudfront distribution for inserting custom headers
+- See docs at https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront.html#CloudFront.Client.create_response_headers_policy
 
 
 
@@ -42,25 +42,6 @@ Parameters
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>allow_reassociation</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Specify this option to allow an Elastic IP address that is already associated with another network interface or instance to be re-associated with the specified instance or interface.</div>
-                </td>
-            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -134,6 +115,53 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>comment</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Description of the policy</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>cors_config</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">{}</div>
+                </td>
+                <td>
+                        <div>CORS header config block</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>custom_headers_config</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">{}</div>
+                </td>
+                <td>
+                        <div>Custom headers config block. Define your own list of headers and values as a list</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -148,23 +176,6 @@ Parameters
                 </td>
                 <td>
                         <div>Use a botocore.endpoint logger to parse the unique (rather than total) &quot;resource:action&quot; API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>device_id</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The id of the device for the EIP. Can be an EC2 Instance id or Elastic Network Interface (ENI) id.</div>
-                        <div>The <em>instance_id</em> alias has been deprecated and will be removed after 2022-12-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: instance_id</div>
                 </td>
             </tr>
             <tr>
@@ -186,36 +197,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>in_vpc</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Allocate an EIP inside a VPC or not.</div>
-                        <div>Required if specifying an ENI with <em>device_id</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>private_ip_address</b>
+                    <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The primary or secondary private IP address to associate with the Elastic IP address.</div>
+                        <div>Name of the policy</div>
                 </td>
             </tr>
             <tr>
@@ -238,59 +230,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>public_ip</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The IP address of a previously allocated EIP.</div>
-                        <div>When <em>state=present</em> and device is specified, the EIP is associated with the device.</div>
-                        <div>When <em>state=absent</em> and device is specified, the EIP is disassociated from the device.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: ip</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>public_ipv4_pool</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Allocates the new Elastic IP from the provided public IPv4 pool (BYOIP) only applies to newly allocated Elastic IPs, isn&#x27;t validated when <em>reuse_existing_ip_allowed=true</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether the <em>tags</em> argument should cause tags not in the dictionary to be removed.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -307,39 +246,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>release_on_disassociation</b>
+                    <b>security_headers_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
+                        <b>Default:</b><br/><div style="color: blue">{}</div>
                 </td>
                 <td>
-                        <div>Whether or not to automatically release the EIP when it is disassociated.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>reuse_existing_ip_allowed</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Reuse an EIP that is not associated to a device (when available), instead of allocating a new one.</div>
+                        <div>Security headers config block. For headers suchs as XSS-Protection, Content-Security-Policy or Strict-Transport-Security</div>
                 </td>
             </tr>
             <tr>
@@ -376,54 +293,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>When <code>state=present</code>, allocate an EIP or associate an existing EIP with a device.</div>
-                        <div>When <code>state=absent</code>, disassociate the EIP from the device and optionally release it.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tag_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>When <em>reuse_existing_ip_allowed=true</em>, supplement with this option to only reuse an Elastic IP if it is tagged with <em>tag_name</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tag_value</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Supplements <em>tag_name</em> but also checks that the value of the tag provided in <em>tag_name</em> matches <em>tag_value</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A dictionary of tags to apply to the EIP.</div>
+                        <div>Decides if the named policy should be absent or present</div>
                 </td>
             </tr>
             <tr>
@@ -445,21 +315,6 @@ Parameters
                         <div>When set to &quot;no&quot;, SSL certificates will not be validated for communication with the AWS APIs.</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>wait_timeout</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The <em>wait_timeout</em> option does nothing and will be removed after 2022-06-01</div>
-                </td>
-            </tr>
     </table>
     <br/>
 
@@ -468,8 +323,6 @@ Notes
 -----
 
 .. note::
-   - There may be a delay between the time the EIP is assigned and when the cloud instance is reachable via the new address. Use wait_for and pause to delay further playbook execution until the instance is reachable, if necessary.
-   - This module returns multiple changed statuses on disassociation or release. It returns an overall status based on any changes occurring. It also returns individual changed statuses for disassociation and release.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - Modules based on the original AWS SDK (boto) may read their default configuration from different files. See https://boto.readthedocs.io/en/latest/boto_config_tut.html for more information.
@@ -482,111 +335,59 @@ Examples
 
 .. code-block:: yaml
 
-    # Note: These examples do not set authentication details, see the AWS Guide for details.
-
-    - name: associate an elastic IP with an instance
-      community.aws.ec2_eip:
-        device_id: i-1212f003
-        ip: 93.184.216.119
-
-    - name: associate an elastic IP with a device
-      community.aws.ec2_eip:
-        device_id: eni-c8ad70f3
-        ip: 93.184.216.119
-
-    - name: associate an elastic IP with a device and allow reassociation
-      community.aws.ec2_eip:
-        device_id: eni-c8ad70f3
-        public_ip: 93.184.216.119
-        allow_reassociation: true
-
-    - name: disassociate an elastic IP from an instance
-      community.aws.ec2_eip:
-        device_id: i-1212f003
-        ip: 93.184.216.119
-        state: absent
-
-    - name: disassociate an elastic IP with a device
-      community.aws.ec2_eip:
-        device_id: eni-c8ad70f3
-        ip: 93.184.216.119
-        state: absent
-
-    - name: allocate a new elastic IP and associate it with an instance
-      community.aws.ec2_eip:
-        device_id: i-1212f003
-
-    - name: allocate a new elastic IP without associating it to anything
-      community.aws.ec2_eip:
+    - name: Creationg a Cloudfront header policy using all predefined header features and a custom header for demonstration
+      community.aws.cloudfront_response_headers_policy:
+        name: my-header-policy
+        comment: My header policy for all the headers
+        cors_config:
+          access_control_allow_origins:
+            items:
+              - 'https://foo.com/bar'
+              - 'https://bar.com/foo'
+          access_control_allow_headers:
+            items:
+              - 'X-Session-Id'
+          access_control_allow_methods:
+            items:
+              - GET
+              - OPTIONS
+              - HEAD
+          access_control_allow_credentials: true
+          access_control_expose_headers:
+            items:
+              - 'X-Session-Id'
+          access_control_max_age_sec: 1800
+          origin_override: true
+        security_headers_config:
+          xss_protection:
+            protection: true
+            report_uri: 'https://my.report-uri.com/foo/bar'
+            override: true
+          frame_options:
+            frame_option: 'SAMEORIGIN'
+            override: true
+          referrer_policy:
+            referrer_policy: 'same-origin'
+            override: true
+          content_security_policy:
+            content_security_policy: "frame-ancestors 'none'; report-uri https://my.report-uri.com/r/d/csp/enforce;"
+            override: true
+          content_type_options:
+            override: true
+          strict_transport_security:
+            include_subdomains: true
+            preload: true
+            access_control_max_age_sec: 63072000
+            override: true
+        custom_headers_config:
+          items:
+            - { header: 'X-Test-Header', value: 'Foo', override: true }
         state: present
-      register: eip
 
-    - name: output the IP
-      ansible.builtin.debug:
-        msg: "Allocated IP is {{ eip.public_ip }}"
-
-    - name: provision new instances with ec2
-      amazon.aws.ec2:
-        keypair: mykey
-        instance_type: c1.medium
-        image: ami-40603AD1
-        wait: true
-        group: webserver
-        count: 3
-      register: ec2
-
-    - name: associate new elastic IPs with each of the instances
-      community.aws.ec2_eip:
-        device_id: "{{ item }}"
-      loop: "{{ ec2.instance_ids }}"
-
-    - name: allocate a new elastic IP inside a VPC in us-west-2
-      community.aws.ec2_eip:
-        region: us-west-2
-        in_vpc: true
-      register: eip
-
-    - name: output the IP
-      ansible.builtin.debug:
-        msg: "Allocated IP inside a VPC is {{ eip.public_ip }}"
-
-    - name: allocate eip - reuse unallocated ips (if found) with FREE tag
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: FREE
-
-    - name: allocate eip - reuse unallocated ips if tag reserved is nope
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: reserved
-        tag_value: nope
-
-    - name: allocate new eip - from servers given ipv4 pool
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
-
-    - name: allocate eip - from a given pool (if no free addresses where dev-servers tag is dynamic)
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: dev-servers
-        public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
-
-    - name: allocate eip from pool - check if tag reserved_for exists and value is our hostname
-      community.aws.ec2_eip:
-        region: us-east-1
-        in_vpc: true
-        reuse_existing_ip_allowed: true
-        tag_name: reserved_for
-        tag_value: "{{ inventory_hostname }}"
-        public_ipv4_pool: ipv4pool-ec2-0588c9b75a25d1a02
+    - name: Delete header policy
+      community.aws.cloudfront_response_headers_policy:
+        name: my-header-policy
+        state: absent
 
 
 
@@ -598,44 +399,98 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Key</th>
+            <th colspan="3">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>allocation_id</b>
+                    <b>response_headers_policy</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The policy&#x27;s information</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>on success</td>
+                <td>always</td>
                 <td>
-                            <div>allocation_id of the elastic ip</div>
+                            <div>ID of the policy</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">eipalloc-51aa3a6c</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">10a45b52-630e-4b7c-77c6-205f06df0462</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>public_ip</b>
+                    <b>last_modified_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>on success</td>
+                <td>always</td>
                 <td>
-                            <div>an elastic ip address</div>
+                            <div>Timestamp of last modification of policy</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">52.88.159.209</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2022-02-04T13:23:27.304000+00:00</div>
                 </td>
             </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>response_headers_policy_config</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The response headers config dict containing all the headers configured</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Name of the policy</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-header-policy</div>
+                </td>
+            </tr>
+
+
     </table>
     <br/><br/>
 
@@ -647,4 +502,4 @@ Status
 Authors
 ~~~~~~~
 
-- Rick Mendes (@rickmendes) <rmendes@illumina.com>
+- Stefan Horning (@stefanhorning)
