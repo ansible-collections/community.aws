@@ -89,7 +89,7 @@ options:
     suboptions:
       instance_requirements:
         description:
-        - A set of params decribing the specs instances should have
+        - A set of params describing the specs instances should have
         type: dict
         required: false
         version_added: 3.2.0
