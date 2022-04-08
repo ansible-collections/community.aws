@@ -111,8 +111,6 @@
           - output is not failed
           - '"lifecycle_hook_info" not in output'
 
-  always:
-
     - name: Delete lifecycle hook
       community.aws.ec2_asg_lifecycle_hook:
         region: "{{ aws_region }}"
