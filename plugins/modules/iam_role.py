@@ -218,13 +218,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
 
 
-def compare_assume_role_policy_doc(current_policy_doc, new_policy_doc):
-    if not compare_policies(current_policy_doc, json.loads(new_policy_doc)):
-        return True
-    else:
-        return False
-
-
 @AWSRetry.jittered_backoff()
 def _list_policies(client):
     paginator = client.get_paginator('list_policies')
@@ -303,21 +296,13 @@ def remove_policies(module, client, policies_to_remove, role_name):
 
 def remove_inline_policies(module, client, role_name):
     current_inline_policies = get_inline_policy_list(module, client, role_name)
-    if module.check_mode and current_inline_policies:
-        return True
-
-    changed = False
     for policy in current_inline_policies:
         try:
-            if not module.check_mode:
-                client.delete_role_policy(RoleName=role_name, PolicyName=policy, aws_retry=True)
-                changed = True
+            client.delete_role_policy(RoleName=role_name, PolicyName=policy, aws_retry=True)
         except is_boto3_error_code('NoSuchEntityException'):
             pass
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to delete policy {0} embedded in {1}".format(policy, role_name))
-
-    return changed
 
 
 def generate_create_params(module):
@@ -360,7 +345,7 @@ def create_basic_role(module, client):
 
 def update_role_assumed_policy(module, client, role_name, target_assumed_policy, current_assumed_policy):
     # Check Assumed Policy document
-    if target_assumed_policy is None or compare_assume_role_policy_doc(current_assumed_policy, target_assumed_policy):
+    if target_assumed_policy is None or not compare_policies(current_assumed_policy, json.loads(target_assumed_policy)):
         return False
 
     if module.check_mode:
@@ -369,7 +354,6 @@ def update_role_assumed_policy(module, client, role_name, target_assumed_policy,
     try:
         client.update_assume_role_policy(
             RoleName=role_name,
-            # PolicyDocument=json.dumps(json.loads(target_assumed_policy)),
             PolicyDocument=target_assumed_policy,
             aws_retry=True)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -593,15 +577,14 @@ def destroy_role(module, client):
     if role is None:
         module.exit_json(changed=False)
 
-    # Before we try to delete the role we need to remove any
-    # - attached instance profiles
-    # - attached managed policies
-    # - embedded inline policies
-    remove_instance_profiles(module, client, role_name)
-    update_managed_policies(module, client, role_name, [], True)
-    remove_inline_policies(module, client, role_name)
-
     if not module.check_mode:
+        # Before we try to delete the role we need to remove any
+        # - attached instance profiles
+        # - attached managed policies
+        # - embedded inline policies
+        remove_instance_profiles(module, client, role_name)
+        update_managed_policies(module, client, role_name, [], True)
+        remove_inline_policies(module, client, role_name)
         try:
             client.delete_role(aws_retry=True, RoleName=role_name)
         except is_boto3_error_code('NoSuchEntityException'):
