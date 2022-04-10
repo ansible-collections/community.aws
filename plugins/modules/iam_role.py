@@ -289,7 +289,7 @@ def remove_policies(module, client, policies_to_remove, role_name):
             changed = True
         except is_boto3_error_code('NoSuchEntityException'):
             pass
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Unable to detach policy {0} from {1}".format(policy, role_name))
     return changed
 
@@ -301,7 +301,7 @@ def remove_inline_policies(module, client, role_name):
             client.delete_role_policy(RoleName=role_name, PolicyName=policy, aws_retry=True)
         except is_boto3_error_code('NoSuchEntityException'):
             pass
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Unable to delete policy {0} embedded in {1}".format(policy, role_name))
 
 
@@ -563,7 +563,7 @@ def remove_instance_profiles(module, client, role_name):
                             client.delete_instance_profile(InstanceProfileName=profile_name, aws_retry=True)
                         except is_boto3_error_code('NoSuchEntityException'):
                             pass
-                        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
                             module.fail_json_aws(e, msg="Unable to remove instance profile {0}".format(profile_name))
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to remove role {0} from instance profile {1}".format(role_name, profile_name))
@@ -589,7 +589,7 @@ def destroy_role(module, client):
             client.delete_role(aws_retry=True, RoleName=role_name)
         except is_boto3_error_code('NoSuchEntityException'):
             module.exit_json(changed=False)
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Unable to delete role")
 
     module.exit_json(changed=True)
