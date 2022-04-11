@@ -221,7 +221,7 @@ options:
               - The ARN of the IAM role to associate with the DB instance.
             type: str
             required: yes
-        version_added: 4.0.0
+        version_added: 3.3.0
     iops:
         description:
           - The Provisioned IOPS (I/O operations per second) value. Is only set when using I(storage_type) is set to io1.
@@ -338,7 +338,7 @@ options:
           - Set to C(True) to remove any IAM roles that aren't specified in the task and are associated with the instance.
         type: bool
         default: False
-        version_added: 4.0.0
+        version_added: 3.3.0
     restore_time:
         description:
           - If using I(creation_source=instance) this indicates the UTC date and time to restore from the source instance.
