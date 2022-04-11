@@ -70,14 +70,13 @@
           - result.changed
           - '"engine_version" in result.pending_modified_values or result.engine_version == mariadb_engine_version_2'
 
-    ### Specifying allow_major_version_upgrade with check_mode will always result in changed=True
-    ### since it's not returned in describe_db_instances api call
     - name: Idempotence upgrading a mariadb instance - check_mode
       rds_instance:
         id: "{{ instance_id }}"
         state: present
         engine: mariadb
         engine_version: "{{ mariadb_engine_version_2 }}"
+        allow_major_version_upgrade: true
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
@@ -88,9 +87,11 @@
       until: result is not failed
       check_mode: yes
 
-    - assert:
-        that:
-          - not result.changed
+    ### Specifying allow_major_version_upgrade with check_mode will always result in changed=True
+    ### since it's not returned in describe_db_instances api call
+    # - assert:
+    #     that:
+    #       - not result.changed
 
     - name: Idempotence upgrading a mariadb instance
       rds_instance:
@@ -98,6 +99,7 @@
         state: present
         engine: mariadb
         engine_version: "{{ mariadb_engine_version_2 }}"
+        allow_major_version_upgrade: true
         username: "{{ username }}"
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"

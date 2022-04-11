@@ -1052,14 +1052,14 @@ def get_changing_options_with_inconsistent_keys(modify_params, instance, purge_c
                 if desired_option in current_option:
                     continue
 
-        if option != 'ProcessorFeatures':
-            if current_option == desired_option:
-                continue
-        else:
-            # Convert desired processor features to normal dict for proper comparison
-            if current_option == boto3_tag_list_to_ansible_dict(desired_option, 'Name', 'Value'):
-                continue
+        # Current option and desired option are the same - continue loop
+        if option != 'ProcessorFeatures' and current_option == desired_option:
+            continue
 
+        if option == 'ProcessorFeatures' and current_option == boto3_tag_list_to_ansible_dict(desired_option, 'Name', 'Value'):
+            continue
+
+        # Current option and desired option are different - add to changing_params list
         if option == 'ProcessorFeatures' and desired_option == []:
             changing_params['UseDefaultProcessorFeatures'] = True
         elif option == 'CloudwatchLogsExportConfiguration':
@@ -1341,6 +1341,13 @@ def main():
     # Ensure dates are in lowercase
     if module.params['preferred_maintenance_window']:
         module.params['preferred_maintenance_window'] = module.params['preferred_maintenance_window'].lower()
+
+    # Throw warning regarding case when allow_major_version_upgrade is specified in check_mode
+    # describe_rds_instance never returns this value, so on check_mode, it will always return changed=True
+    # In non-check mode runs, changed will return the correct value, so no need to warn there.
+    # see: amazon.aws.module_util.rds.handle_errors.
+    if module.params.get('allow_major_version_upgrade') and module.check_mode:
+        module.warn('allow_major_version_upgrade is not returned when describing db instances, so changed will always be `True` on check mode runs.')
 
     client = module.client('rds')
     changed = False
