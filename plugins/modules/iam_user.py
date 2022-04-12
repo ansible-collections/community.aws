@@ -84,8 +84,8 @@ options:
     version_added: 2.1.0
   wait:
     description:
-      - When I(wait=True) the module will wait for up to I(wait_timeout) seconds
-        for IAM user creation before returning.
+      - When I(wait=True) the module will wait for up to I(wait_timeout) seconds for
+        different IAM user actions to be reflected in AWS (user creation/deletion, login profile update, etc).
     default: True
     type: bool
     version_added: 2.2.0
@@ -161,20 +161,20 @@ user:
         user_id:
             description: the stable and unique string identifying the user
             type: str
-            sample: AGPAIDBWE12NSFINE55TM
+            sample: "AGPAIDBWE12NSFINE55TM"
         user_name:
             description: the friendly name that identifies the user
             type: str
-            sample: testuser1
+            sample: "testuser1"
         path:
             description: the path to the user
             type: str
-            sample: /
+            sample: "/"
         tags:
             description: user tags
             type: dict
             returned: always
-            sample: '{"Env": "Prod"}'
+            sample: {"Env": "Prod"}
 '''
 
 try:
@@ -189,6 +189,9 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_er
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
+from time import sleep
+from time import time
+from random import randint
 
 
 def compare_attached_policies(current_attached_policies, new_attached_policies):
@@ -251,7 +254,34 @@ def wait_iam_exists(connection, module):
         module.fail_json_aws(e, msg='Failed while waiting on IAM user creation')
 
 
-def create_or_update_login_profile(connection, module):
+def wait_iam_login_profile_updated(connection, module, user_params):
+    '''
+    Wait until IAM login profile is updated prior to returning.
+        Parameters:
+            connection: IAM client
+            module: AWSModule
+            user_params (dict): Parameters to feed into update_login_profile
+    '''
+    max_backoff = 64
+    timeout = module.params.get('wait_timeout')
+    failure_counter = 0
+    start_time = time()
+
+    while True:
+        if time() - start_time >= timeout:
+            module.fail_json(msg='Error waiting for login profile to be updated - please check the AWS console.')
+        try:
+            connection.update_login_profile(**user_params)
+            break
+        except is_boto3_error_code('EntityTemporarilyUnmodifiable'):
+            sleep_time = min(2 ** failure_counter + randint(1, 1000) / 1000, max_backoff)
+            sleep(sleep_time)
+            failure_counter += 1
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+            module.fail_json_aws(e, msg='Failure while waiting for login profile to be updated.')
+
+
+def create_or_update_login_profile(connection, module, wait):
 
     # Apply new password / update password for the user
     user_params = dict()
@@ -262,9 +292,14 @@ def create_or_update_login_profile(connection, module):
 
     try:
         retval = connection.update_login_profile(**user_params)
+        if bool(wait):
+            wait_iam_login_profile_updated(connection, module, user_params)
     except is_boto3_error_code('NoSuchEntity'):
+        # Login profile does not yet exist - create it
         try:
             retval = connection.create_login_profile(**user_params)
+            if bool(wait):
+                wait_iam_login_profile_updated(connection, module, user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to create user login profile")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -273,15 +308,34 @@ def create_or_update_login_profile(connection, module):
     return True, retval
 
 
-def delete_login_profile(connection, module):
-
-    user_params = dict()
-    user_params['UserName'] = module.params.get('name')
+def delete_login_profile(connection, module, user_name, wait):
 
     try:
-        connection.delete_login_profile(**user_params)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        connection.delete_login_profile(UserName=user_name)
+    except is_boto3_error_code('NoSuchEntity'):
+        return False
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Unable to delete user login profile")
+
+    if bool(wait):
+        max_backoff = 64
+        timeout = module.params.get('wait_timeout')
+        failure_counter = 0
+        start_time = time()
+
+        while True:
+            if time() - start_time >= timeout:
+                module.fail_json(msg='Error waiting for login profile to be deleted - please check the AWS console.')
+            try:
+                connection.get_login_profile(UserName=user_name)
+            except is_boto3_error_code('EntityTemporarilyUnmodifiable'):
+                sleep_time = min(2 ** failure_counter + randint(1, 1000) / 1000, max_backoff)
+                sleep(sleep_time)
+                failure_counter += 1
+            except is_boto3_error_code('NoSuchEntity'):
+                break
+            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+                module.fail_json_aws(e, msg='Failure while waiting for login profile to be deleted.')
 
     return True
 
@@ -292,6 +346,7 @@ def create_or_update_user(connection, module):
     params['UserName'] = module.params.get('name')
     managed_policies = module.params.get('managed_policies')
     purge_policies = module.params.get('purge_policies')
+    wait = module.params.get('wait')
 
     if module.params.get('tags') is not None:
         params["Tags"] = ansible_dict_to_boto3_tag_list(module.params.get('tags'))
@@ -318,11 +373,11 @@ def create_or_update_user(connection, module):
             module.fail_json_aws(e, msg="Unable to create user")
 
         # Wait for user to be fully available before continuing
-        if module.params.get('wait'):
+        if wait:
             wait_iam_exists(connection, module)
 
         if module.params.get('password') is not None:
-            login_profile_result, login_profile_data = create_or_update_login_profile(connection, module)
+            login_profile_result, login_profile_data = create_or_update_login_profile(connection, module, wait)
 
             if login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False):
                 new_login_profile = True
@@ -331,13 +386,19 @@ def create_or_update_user(connection, module):
         update_result = update_user_tags(connection, module, params, user)
 
         if module.params['update_password'] == "always" and module.params.get('password') is not None:
-            login_profile_result, login_profile_data = create_or_update_login_profile(connection, module)
+            # Can't compare passwords, so just return changed on check mode runs
+            if module.check_mode:
+                module.exit_json(changed=True)
+            login_profile_result, login_profile_data = create_or_update_login_profile(connection, module, wait)
 
             if login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False):
                 new_login_profile = True
 
         elif module.params.get('remove_password'):
-            login_profile_result = delete_login_profile(connection, module)
+            if user_has_login_policy(connection, module, params['UserName']):
+                if module.check_mode:
+                    module.exit_json(changed=True)
+                login_profile_result = delete_login_profile(connection, module, params['UserName'], wait)
 
         changed = bool(update_result) or bool(login_profile_result)
 
@@ -380,9 +441,9 @@ def create_or_update_user(connection, module):
     user = get_user(connection, module, params['UserName'])
     if changed and new_login_profile:
         # `LoginProfile` is only returned on `create_login_profile` method
-        user['user']['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
+        user['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
 
-    module.exit_json(changed=changed, iam_user=user)
+    module.exit_json(changed=changed, user=user)
 
 
 def destroy_user(connection, module):
@@ -412,7 +473,7 @@ def destroy_user(connection, module):
             connection.delete_access_key(UserName=user_name, AccessKeyId=access_key["AccessKeyId"])
 
         # Remove user's login profile (console password)
-        delete_user_login_profile(connection, module, user_name)
+        delete_login_profile(connection, module, user_name, module.params.get('wait'))
 
         # Remove user's ssh public keys
         ssh_public_keys = connection.list_ssh_public_keys(UserName=user_name)["SSHPublicKeys"]
@@ -472,7 +533,7 @@ def get_user(connection, module, name):
     tags = boto3_tag_list_to_ansible_dict(user['User'].pop('Tags', []))
     user = camel_dict_to_snake_dict(user)
     user['user']['tags'] = tags
-    return user
+    return user['user']
 
 
 def get_attached_policy_list(connection, module, name):
@@ -485,19 +546,28 @@ def get_attached_policy_list(connection, module, name):
         module.fail_json_aws(e, msg="Unable to get policies for user {0}".format(name))
 
 
-def delete_user_login_profile(connection, module, user_name):
-
+def user_has_login_policy(connection, module, name):
+    '''
+    Returns whether or not given user has a login policy.
+        Parameters:
+            connection: IAM client
+            module: AWSModule
+            name (str): Username of user
+        Returns:
+            (bool): True if user had login policy, False if not
+    '''
     try:
-        return connection.delete_login_profile(UserName=user_name)
+        return connection.get_login_profile(UserName=name)
     except is_boto3_error_code('NoSuchEntity'):
-        return None
+        return False
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Unable to delete login profile for user {0}".format(user_name))
+        module.fail_json_aws(e, msg="Unable to get login policy for user {0}".format(name))
+    return True
 
 
 def update_user_tags(connection, module, params, user):
     user_name = params['UserName']
-    existing_tags = user['user']['tags']
+    existing_tags = user['tags']
     new_tags = params.get('Tags')
     if new_tags is None:
         return False
