@@ -531,7 +531,6 @@
             memory_mi_b: { min: 1024, max: 4096 }
           instances_distribution:
             on_demand_percentage_above_base_capacity: 0
-            spot_allocation_strategy: capacity-optimized
         wait_for_instances: yes
       register: output
 
@@ -539,7 +538,6 @@
         that:
           - "output.mixed_instances_policy.launch_template.overrides[0].instance_requirements == { memory_mi_b: { min: 1024, max: 4096 }, v_cpu_count: { min: 2, max: 8 } }"
           - "output.mixed_instances_policy.instances_distribution.on_demand_percentage_above_base_capacity == 0"
-          - "output.mixed_instances_policy.instances_distribution.spot_allocation_strategy == 'capacity-optimized'"
 
     # ============================================================
 
