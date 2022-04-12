@@ -332,7 +332,7 @@ def delete_login_profile(connection, module, user_name, wait):
                 sleep_time = min(2 ** failure_counter + randint(1, 1000) / 1000, max_backoff)
                 sleep(sleep_time)
                 failure_counter += 1
-            except is_boto3_error_code('NoSuchEntity'):
+            except is_boto3_error_code('NoSuchEntity'):  # pylint: disable=duplicate-except
                 break
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
                 module.fail_json_aws(e, msg='Failure while waiting for login profile to be deleted.')
