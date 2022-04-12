@@ -1,0 +1,3 @@
+minor_changes:
+- ec2_asg_lifecycle_hook - add integration tests (https://github.com/ansible-collections/community.aws/pull/1048).
+- ec2_asg_lifecycle_hook - module now returns info about Life Cycle Hook (https://github.com/ansible-collections/community.aws/pull/1048).
