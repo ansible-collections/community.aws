@@ -1,0 +1,5 @@
+---
+# defaults file for ec2_asg_lifecycle_hook
+# Amazon Linux 2 AMI 2019.06.12 (HVM), GP2 Volume Type
+ec2_ami_name: 'amzn2-ami-hvm-2.0.20190612-x86_64-gp2'
+load_balancer_name: "{{ tiny_prefix }}-lb"
