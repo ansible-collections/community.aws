@@ -97,7 +97,37 @@ EXAMPLES = '''
 '''
 
 RETURN = '''
-
+---
+auto_scaling_group_name:
+    description: The unique name of the auto scaling group
+    returned: success
+    type: str
+    sample: "myasg"
+default_result:
+    description:  Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs
+    returned: success
+    type: str
+    sample: CONTINUE
+global_timeout:
+    description: The maximum time, in seconds, that an instance can remain in a Pending:Wait or Terminating:Wait state
+    returned: success
+    type: int
+    sample: 172800
+heartbeat_timeout:
+    description: The maximum time, in seconds, that can elapse before the lifecycle hook times out
+    returned: success
+    type: int
+    sample: 3600
+lifecycle_hook_name:
+    description: The name of the lifecycle hook
+    returned: success
+    type: str
+    sample: "mylifecyclehook"
+lifecycle_transition:
+    description: The instance state to which lifecycle hook should be attached
+    returned: success
+    type: str
+    sample: "autoscaling:EC2_INSTANCE_LAUNCHING"
 '''
 
 
@@ -165,10 +195,6 @@ def create_lifecycle_hook(connection, module):
     else:
         added, removed, modified, same = dict_compare(lch_params, existing_hook[0])
         if modified:
-            # GlobalTimeout is not configurable, but exists in response.
-            # Removing it helps to compare both dicts in order to understand
-            # what changes were done.
-            del(existing_hook[0]['GlobalTimeout'])
             try:
                 return_object['changed'] = True
                 connection.put_lifecycle_hook(**lch_params)
