@@ -1,2 +1,2 @@
 minor_changes:
-  - aws_kms - fix some bugs in integration tests and add check mode support for key rotation as well as a short wait after update (https://github.com/ansible-collections/community.aws/pull/1052).
+  - aws_kms - fix some bugs in integration tests and add check mode support for key rotation as well as a short wait after update for requested changes to be reflected on AWS (https://github.com/ansible-collections/community.aws/pull/1052).

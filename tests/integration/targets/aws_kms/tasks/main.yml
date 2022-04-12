@@ -691,7 +691,7 @@
 
     - name: Verify all expected attributes
       vars:
-        tagged_key: '{{ info_tag_filtered.kms_keys[0] }}'
+        key: '{{ info_tag_filtered.kms_keys[0] }}'
       assert:
         that:
           - "'kms_keys' in info_tag_filtered"
