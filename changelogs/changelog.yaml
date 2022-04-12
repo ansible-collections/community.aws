@@ -1500,6 +1500,87 @@ releases:
       name: rds_option_group_info
       namespace: ''
     release_date: '2021-11-12'
+  2.2.0:
+    changes:
+      bugfixes:
+      - aws_eks - Fix EKS cluster creation with short names (https://github.com/ansible-collections/community.aws/pull/818).
+      minor_changes:
+      - aws_msk_config - remove duplicated and unspecific requirements (https://github.com/ansible-collections/community.aws/pull/863).
+      - aws_ssm connection plugin - add parameters to explicitly specify SSE mode
+        and KMS key id for uploads on the file transfer bucket. (https://github.com/ansible-collections/community.aws/pull/763)
+      - ecs_taskdefinition - remove duplicated and unspecific requirements (https://github.com/ansible-collections/community.aws/pull/863).
+      - iam_user - add boto3 waiter for iam user creation (https://github.com/ansible-collections/community.aws/pull/822).
+      - iam_user - add password management support bringing parity with `iam` module
+        (https://github.com/ansible-collections/community.aws/pull/822).
+      - s3_lifecycle - Add ``abort_incomplete_multipart_upload_days`` and ``expire_object_delete_marker``
+        parameters (https://github.com/ansible-collections/community.aws/pull/794).
+      release_summary: This is a backport release of the ``community.aws`` collection.
+    fragments:
+    - 2.2.0.yml
+    - 763-aws_ssm_connection-add-sse-parameters.yml
+    - 794-s3_lifecycle_abort_expire.yml
+    - 818-fix-eks-short-name.yml
+    - 822-add-password-support-iam_user.yml
+    - 863-requirements-doc-fix.yml
+    modules:
+    - description: Create, modify and delete ASG scheduled scaling actions.
+      name: ec2_asg_scheduled_action
+      namespace: ''
+    release_date: '2022-01-13'
+  2.3.0:
+    changes:
+      bugfixes:
+      - cloudfront_distribution - Dont pass ``s3_origin_access_identity_enabled``
+        to API request (https://github.com/ansible-collections/community.aws/pull/881).
+      - execute_lambda - Wait for Lambda function State = Active before executing
+        (https://github.com/ansible-collections/community.aws/pull/857)
+      - lambda - Wait for Lambda function State = Active & LastUpdateStatus = Successful
+        before updating (https://github.com/ansible-collections/community.aws/pull/857)
+      minor_changes:
+      - elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
+      release_summary: 'This is the minor release of the ``community.aws`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 2.3.0.yml
+    - 825-fix-elb-wait.yml
+    - 857-lambda-wait-before.yml
+    - 881-cloudfront-bug.yml
+    release_date: '2022-02-14'
+  2.4.0:
+    changes:
+      bugfixes:
+      - Add backoff retry logic to elb_application_lb_info (https://github.com/ansible-collections/community.aws/pull/977)
+      - ecs_taskdefinition - include launch_type comparison when comparing task definitions
+        (https://github.com/ansible-collections/community.aws/pull/840)
+      - elb_target_group_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/1001)
+      - iam_role - Removes unnecessary removal of permission boundary from a role
+        when deleting a role. Unlike inline policies, permission boundaries do not
+        need to be removed from an IAM role before deleting the IAM role. This behavior
+        causes issues when a permission boundary is inherited that prevents removal
+        of the permission boundary. (https://github.com/ansible-collections/community.aws/pull/961)
+      - redshift_info - fix invalid import path for botocore exceptions (https://github.com/ansible-collections/community.aws/issues/968).
+      - wafv2_web_acl - fix exception when a rule contains lists values (https://github.com/ansible-collections/community.aws/pull/962).
+      minor_changes:
+      - Added suport for retries (AWSRetry.jittered_backoff) for cloudfront_distribution
+        (https://github.com/ansible-collections/community.aws/issues/296)
+      release_summary: 'This is the minor release of the ``community.aws`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 1001-add-backoff-logic-elb_target_group_info.yml
+    - 2.4.0.yml
+    - 297-aws-retry-cloudfront-distribution.yml
+    - 840-ecs_taskdefinition-fix-task-definition-comparison.yml
+    - 961-iam-role-should-not-remove-permission-boundary-before-deletion.yml
+    - 962-fix-waf-list-conditions.yml
+    - 970-redshift_info-boto-import.yml
+    - 977-add-backoff-logic-elb-info.yml
+    release_date: '2022-03-30'
   3.0.0:
     changes:
       breaking_changes:
@@ -1632,3 +1713,151 @@ releases:
     - 794-s3_lifecycle_abort_expire.yml
     - 863-requirements-doc-fix.yml
     release_date: '2022-01-18'
+  3.1.0:
+    changes:
+      bugfixes:
+      - Add backoff retry logic to route53_info (https://github.com/ansible-collections/community.aws/pull/865).
+      - Add backoff retry logic to route53_zone (https://github.com/ansible-collections/community.aws/pull/865).
+      - cloudfront_distribution - Dont pass ``s3_origin_access_identity_enabled``
+        to API request (https://github.com/ansible-collections/community.aws/pull/881).
+      - execute_lambda - Wait for Lambda function State = Active before executing
+        (https://github.com/ansible-collections/community.aws/pull/857)
+      - lambda - Wait for Lambda function State = Active & LastUpdateStatus = Successful
+        before updating (https://github.com/ansible-collections/community.aws/pull/857)
+      - rds_instance - Fix updates of ``iops`` or ``allocated_storage`` for ``io1``
+        DB instances when only one value is changing (https://github.com/ansible-collections/community.aws/pull/878).
+      minor_changes:
+      - aws_secret - Add ``resource_policy`` parameter (https://github.com/ansible-collections/community.aws/pull/843).
+      - aws_ssm connection plugin - add parameters to explicitly specify SSE mode
+        and KMS key id for uploads on the file transfer bucket. (https://github.com/ansible-collections/community.aws/pull/763)
+      - dynamodb_table - the ``table_class`` parameter has been added (https://github.com/ansible-collections/community.aws/pull/880).
+      - ec2_launch_template - Add metadata options parameter ``http_protocol_ipv6``
+        and ``instance_metadata_tags`` (https://github.com/ansible-collections/community.aws/pull/917).
+      - ec2_lc - add support for throughput parameter (https://github.com/ansible-collections/community.aws/pull/790).
+      - ec2_placement_group - add support for partition strategy and partition count
+        (https://github.com/ansible-collections/community.aws/pull/872).
+      - elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
+      - elb_target_group - add support for parameter ``deregistration_connection_termination``
+        (https://github.com/ansible-collections/community.aws/pull/913).
+      - iam_managed_policy - refactor module adding ``check_mode`` and better AWSRetry
+        backoff logic (https://github.com/ansible-collections/community.aws/pull/893).
+      - iam_user - add parameter ``password_reset_required`` (https://github.com/ansible-collections/community.aws/pull/860).
+      - wafv2_web_acl - Documentation updates wafv2_web_acl and aws_waf_web_acl (https://github.com/ansible-collections/community.aws/pull/721).
+      - wafv2_web_acl - Extended the wafv2_web_acl module to also take the ``custom_response_bodies``
+        argument (https://github.com/ansible-collections/community.aws/pull/721).
+      release_summary: 'This is the minor release of the ``community.aws`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 3.1.0.yml
+    - 721-wafv2_web_acl.yml
+    - 763-aws_ssm_connection-add-sse-parameters.yml
+    - 790-ec2_lc-add-throughput-param-support.yml
+    - 825-fix-elb-wait.yml
+    - 843-add_aws_secret_resource_policy_support.yml
+    - 857-lambda-wait-before.yml
+    - 860-add-missing-parameter.yml
+    - 865-add-backoff-retry-logic-route53_zone.yml
+    - 872-ec2_placement_group_partition_strategy.yml
+    - 878-fix-iops-updates-rds.yml
+    - 880-add-table-class-param.yml
+    - 881-cloudfront-bug.yml
+    - 893-refactor-iam_managed_policy.yml
+    - 913-tg-dereg-conn-param.yml
+    - 917-add-launch-template-metadata-parameters.yml
+    release_date: '2022-02-14'
+  3.2.0:
+    changes:
+      bugfixes:
+      - elb_application_lb_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/977)
+      - ecs_taskdefinition - include launch_type comparison when comparing task definitions
+        (https://github.com/ansible-collections/community.aws/pull/840)
+      - elb_application_lb - Fix empty security groups list behaves inconsistently
+        on create/update by treating empty security group as VPC's defaault (https://github.com/ansible-collections/community.aws/pull/971).
+      - elb_target_group_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/1001)
+      - iam_role - Removes unnecessary removal of permission boundary from a role
+        when deleting a role. Unlike inline policies, permission boundaries do not
+        need to be removed from an IAM role before deleting the IAM role. This behavior
+        causes issues when a permission boundary is inherited that prevents removal
+        of the permission boundary. (https://github.com/ansible-collections/community.aws/pull/961)
+      - redshift_info - fix invalid import path for botocore exceptions (https://github.com/ansible-collections/community.aws/issues/968).
+      - wafv2_web_acl - fix exception when a rule contains lists values (https://github.com/ansible-collections/community.aws/pull/962).
+      major_changes:
+      - s3_bucket_notifications - refactor module to support SNS / SQS targets as
+        well as the existing support for Lambda functions (https://github.com/ansible-collections/community.aws/issues/140).
+      minor_changes:
+      - cloudfront_distribution - Added support for retries (AWSRetry.jittered_backoff)
+        (https://github.com/ansible-collections/community.aws/issues/296)
+      - aws_acm - Add ``tags`` and ``purge_tags`` parameters to tag certificates in
+        ACM (https://github.com/ansible-collections/community.aws/pull/870).
+      - ec2_asg - Added functionality to detach specific instances and/or decrement
+        desired capacity from ASG without terminating instances (https://github.com/ansible-collections/community.aws/pull/933).
+      - ec2_asg - Restructure integration tests to run in parallel and reduce runtime
+        (https://github.com/ansible-collections/community.aws/pull/1036).
+      - ec2_asg - add support for ``purge_tags`` to ec2_asg (https://github.com/ansible-collections/community.aws/pull/960).
+      - ec2_eip - refactor module by fixing check_mode and more clear return obj.
+        added integration tests (https://github.com/ansible-collections/community.aws/pull/936)
+      - elb_application_lb - Add support for alb specific attributes and check_mode
+        support for modifying them (https://github.com/ansible-collections/community.aws/pull/963).
+      - elb_application_lb - add check_mode support and refactor integration tests
+        (https://github.com/ansible-collections/community.aws/pull/894)
+      - elb_application_lb_info - update documentation and refactor integration tests
+        (https://github.com/ansible-collections/community.aws/pull/894)
+      - elb_target_group - add support for alb target_type and update documentation
+        (https://github.com/ansible-collections/community.aws/pull/966).
+      - elb_target_group - add support for setting load_balancing_algorithm_type (https://github.com/ansible-collections/community.aws/pull/1016).
+      - rds_instance - add `choices` for valid engine value (https://github.com/ansible-collections/community.aws/pull/1034).
+      - rds_subnet_group - add ``check_mode`` (https://github.com/ansible-collections/community.aws/pull/562).
+      - rds_subnet_group - add ``tags`` feature (https://github.com/ansible-collections/community.aws/pull/562).
+      release_summary: 'This is the minor release of the ``community.aws`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 1001-add-backoff-logic-elb_target_group_info.yml
+    - 1016-add-algo-param-elb_target_group.yml
+    - 1034-rds_instance-update-valid-engine-type.yml
+    - 1036-ec2_asg-restructure-integration-tests.yml
+    - 297-aws-retry-cloudfront-distribution.yml
+    - 3.2.0.yml
+    - 562-rds_subnet_group-tags-and-check_mode.yaml
+    - 840-ecs_taskdefinition-fix-task-definition-comparison.yml
+    - 870-aws_acm_certificate_tags.yml
+    - 894-add-check_mode-elb_application_lb.yml
+    - 933-ec2_asg-detach-instances-feature.yml
+    - 936-stabilize-ec2-eip.yml
+    - 940-refactor-s3_bucket_notifications.yml
+    - 960-ec2_asg-purge-tags.yml
+    - 961-iam-role-should-not-remove-permission-boundary-before-deletion.yml
+    - 962-fix-waf-list-conditions.yml
+    - 963-elb_application_lb-support-alb-attributes.yml
+    - 966-elb_target_group-support-alb-target.yml
+    - 970-redshift_info-boto-import.yml
+    - 971-elb_application_lb-fix-empty-sg-on-update.yml
+    - 977-add-backoff-logic-elb-info.yml
+    modules:
+    - description: Create, update and delete response headers policies to be used
+        in a Cloudfront distribution
+      name: cloudfront_response_headers_policy
+      namespace: ''
+    - description: Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh
+        in AWS
+      name: ec2_asg_instance_refresh
+      namespace: ''
+    - description: Gather information about ec2 Auto Scaling Group (ASG) Instance
+        Refreshes in AWS
+      name: ec2_asg_instance_refresh_info
+      namespace: ''
+    - description: rds_cluster module
+      name: rds_cluster
+      namespace: ''
+    - description: Obtain information about one or more RDS clusters
+      name: rds_cluster_info
+      namespace: ''
+    - description: sns_topic_info module
+      name: sns_topic_info
+      namespace: ''
+    release_date: '2022-04-06'
