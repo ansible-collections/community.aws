@@ -1,0 +1,2 @@
+minor_changes:
+- ec2_asg_lifecycle_hook - Added check_mode support (https://github.com/ansible-collections/community.aws/pull/1060).
