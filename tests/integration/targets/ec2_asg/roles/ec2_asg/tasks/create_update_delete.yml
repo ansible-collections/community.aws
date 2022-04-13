@@ -431,6 +431,7 @@
       ec2_launch_template:
         template_name: "{{ resource_prefix }}-lt"
         image_id: "{{ ec2_ami_image }}"
+        instance_type: t3.micro
         credit_specification:
           cpu_credits: standard
         network_interfaces:
