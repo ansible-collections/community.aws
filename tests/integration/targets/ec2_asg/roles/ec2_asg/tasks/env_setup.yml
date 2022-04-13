@@ -1,5 +1,5 @@
 - name: Run ec2_asg integration tests.
-
+  run_once: '{{ ec2_asg_setup_run_once }}'
   block:
 
     # ============================================================

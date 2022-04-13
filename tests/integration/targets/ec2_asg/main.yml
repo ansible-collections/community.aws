@@ -14,10 +14,6 @@
         aws_secret_key: "{{ aws_secret_key }}"
         security_token: "{{ security_token | default(omit) }}"
         region: "{{ aws_region }}"
-    vars:
-      # We can't just use "run_once" because the facts don't propagate when
-      # running an 'include' that was run_once
-      setup_run_once: yes
     block:
     - include_role:
         name: 'ec2_asg'
