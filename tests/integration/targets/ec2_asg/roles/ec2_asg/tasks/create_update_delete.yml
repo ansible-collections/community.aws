@@ -431,7 +431,6 @@
       ec2_launch_template:
         template_name: "{{ resource_prefix }}-lt"
         image_id: "{{ ec2_ami_image }}"
-        instance_type: t3.micro
         credit_specification:
           cpu_credits: standard
         network_interfaces:
@@ -529,6 +528,11 @@
           instance_requirements:
             v_cpu_count: { min: 2, max: 8 }
             memory_mi_b: { min: 1024, max: 4096 }
+          instances_distribution:
+            on_demand_allocation_strategy: lowest-price
+            on_demand_percentage_above_base_capacity: 0
+            spot_allocation_strategy: lowest-price
+            spot_instance_pools: 15 # only available when spot_allocation_strategy is 'lowest-price
         wait_for_instances: yes
       register: output
 
@@ -536,6 +540,9 @@
         that:
           - output is changed
           - "output.mixed_instances_policy.launch_template.overrides[0].instance_requirements == { memory_mi_b: { min: 1024, max: 4096 }, v_cpu_count: { min: 2, max: 8 } }"
+          - "output.mixed_instances_policy.instances_distribution.on_demand_percentage_above_base_capacity == 0"
+          - "output.mixed_instances_policy.instances_distribution.spot_allocation_strategy == 'lowest-price'"
+
 
     # ============================================================
 
