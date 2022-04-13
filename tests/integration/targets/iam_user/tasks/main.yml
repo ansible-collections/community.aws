@@ -125,6 +125,7 @@
       password: "{{ test_password }}"
       password_reset_required: yes
       state: present
+      wait: False
     register: iam_user
 
   - name: assert that the second user is created
@@ -373,6 +374,7 @@
       name: "{{ test_user3 }}"
       password: "{{ test_new_password }}"
       state: present
+      wait: False
     register: iam_user_update
 
   - assert:
