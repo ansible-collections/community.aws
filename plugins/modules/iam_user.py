@@ -262,21 +262,17 @@ def create_or_update_login_profile(connection, module, wait):
     retval = {}
 
     try:
-        retval = connection.update_login_profile(**user_params)
+        retval = connection.update_login_profile(aws_retry=True, **user_params)
         if wait:
-            AWSRetry.jittered_backoff(
-                delay=1,
-                catch_extra_error_codes=['EntityTemporarilyUnmodifiable']
-            )(connection.update_login_profile)(**user_params)
+            # Wait for login profile to finish updating
+            connection.update_login_profile(aws_retry=True, **user_params)
     except is_boto3_error_code('NoSuchEntity'):
         # Login profile does not yet exist - create it
         try:
-            retval = connection.create_login_profile(**user_params)
+            retval = connection.create_login_profile(aws_retry=True, **user_params)
             if wait:
-                AWSRetry.jittered_backoff(
-                    delay=1,
-                    catch_extra_error_codes=['EntityTemporarilyUnmodifiable']
-                )(connection.update_login_profile)(**user_params)
+                # Wait for login profile to finish creating
+                connection.update_login_profile(aws_retry=True, **user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to create user login profile")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -302,10 +298,10 @@ def delete_login_profile(connection, module, user_name, wait):
 
     if not module.check_mode:
         try:
+            connection.delete_login_profile(UserName=user_name, aws_retry=True)
             if wait:
-                AWSRetry.jittered_backoff(catch_extra_error_codes=['EntityTemporarilyUnmodifiable'])(connection.delete_login_profile)(UserName=user_name)
-            else:
-                connection.delete_login_profile(UserName=user_name)
+                # Wait for login profile to be completely removed
+                connection.delete_login_profile(UserName=user_name, aws_retry=True)
         except is_boto3_error_code('NoSuchEntity'):
             pass
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -584,7 +580,9 @@ def main():
         mutually_exclusive=[['password', 'remove_password']],
     )
 
-    connection = module.client('iam')
+    # Catch EntityTemporarilyUnmodifiable exception when modifying user's login profile
+    retry_decorator = AWSRetry.jittered_backoff(delay=2, catch_extra_error_codes=['EntityTemporarilyUnmodifiable'])
+    connection = module.client('iam', retry_decorator=retry_decorator)
 
     state = module.params.get("state")
 
