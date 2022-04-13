@@ -41,6 +41,25 @@
 
     #----------------------------------------------------------------------
 
+    - name: Create lifecycle hook - check_mode
+      community.aws.ec2_asg_lifecycle_hook:
+        region: "{{ aws_region }}"
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
+        transition: autoscaling:EC2_INSTANCE_LAUNCHING
+        heartbeat_timeout: 7000
+        default_result: ABANDON
+        state: present
+      check_mode: true
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"lifecycle_hook_info" not in output'
+          - '"Would have created AutoScalingGroup Lifecycle Hook if not in check_mode" in output.msg'
+
     - name: Create lifecycle hook
       community.aws.ec2_asg_lifecycle_hook:
         region: "{{ aws_region }}"
@@ -75,6 +94,43 @@
           - output is not changed
           - output is not failed
           - '"lifecycle_hook_info" not in output'
+
+    - name: Create lifecycle hook - check_mode (Idempotency)
+      community.aws.ec2_asg_lifecycle_hook:
+        region: "{{ aws_region }}"
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
+        transition: autoscaling:EC2_INSTANCE_LAUNCHING
+        heartbeat_timeout: 7000
+        default_result: ABANDON
+        state: present
+      check_mode: true
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+          - output is not failed
+          - '"lifecycle_hook_info" not in output'
+
+    - name: Update lifecycle hook - check_mode
+      community.aws.ec2_asg_lifecycle_hook:
+        region: "{{ aws_region }}"
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
+        transition: autoscaling:EC2_INSTANCE_LAUNCHING
+        heartbeat_timeout: 6000
+        default_result: ABANDON
+        state: present
+      check_mode: true
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"lifecycle_hook_info" not in output'
+          - '"Would have modified AutoScalingGroup Lifecycle Hook if not in check_mode." in output.msg'
 
     - name: Update lifecycle hook
       community.aws.ec2_asg_lifecycle_hook:
@@ -111,6 +167,40 @@
           - output is not failed
           - '"lifecycle_hook_info" not in output'
 
+    - name: Update lifecycle hook - check_mode (Idempotency)
+      community.aws.ec2_asg_lifecycle_hook:
+        region: "{{ aws_region }}"
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
+        transition: autoscaling:EC2_INSTANCE_LAUNCHING
+        heartbeat_timeout: 6000
+        default_result: ABANDON
+        state: present
+      check_mode: true
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+          - output is not failed
+          - '"lifecycle_hook_info" not in output'
+
+    - name: Delete lifecycle hook - check_mode
+      community.aws.ec2_asg_lifecycle_hook:
+        region: "{{ aws_region }}"
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
+        state: absent
+      check_mode: true
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"lifecycle_hook_removed" not in output'
+          - '"Would have deleted AutoScalingGroup Lifecycle Hook if not in check_mode." in output.msg'
+
     - name: Delete lifecycle hook
       community.aws.ec2_asg_lifecycle_hook:
         region: "{{ aws_region }}"
@@ -131,6 +221,21 @@
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
         state: absent
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+          - output is not failed
+          - '"lifecycle_hook_removed" not in output'
+
+    - name: Delete lifecycle hook - check_mode (Idempotency)
+      community.aws.ec2_asg_lifecycle_hook:
+        region: "{{ aws_region }}"
+        autoscaling_group_name: "{{ resource_prefix }}-asg"
+        lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
+        state: absent
+      check_mode: true
       register: output
 
     - assert:
