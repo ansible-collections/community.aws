@@ -1,2 +1,0 @@
-minor_changes:
-- ec2_asg - Restructure integration tests to run in parallel and reduce runtime (https://github.com/ansible-collections/community.aws/pull/1036).

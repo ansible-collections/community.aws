@@ -1,2 +1,0 @@
-minor_changes:
-  - elb_target_group - add support for parameter ``deregistration_connection_termination`` (https://github.com/ansible-collections/community.aws/pull/913).

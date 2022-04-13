@@ -1,2 +1,0 @@
-minor_changes:
-  - ec2_eip - refactor module by fixing check_mode and more clear return obj. added integration tests (https://github.com/ansible-collections/community.aws/pull/936)

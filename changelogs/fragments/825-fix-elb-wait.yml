@@ -1,2 +1,0 @@
-minor_changes:
-  - elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)

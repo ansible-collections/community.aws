@@ -1,2 +1,0 @@
-minor_changes:
-- Added suport for retries (AWSRetry.jittered_backoff) for cloudfront_distribution (https://github.com/ansible-collections/community.aws/issues/296)

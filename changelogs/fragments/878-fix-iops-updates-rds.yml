@@ -1,2 +1,0 @@
-bugfixes:
-  - rds_instance - Fix updates of ``iops`` or ``allocated_storage`` for ``io1`` DB instances when only one value is changing (https://github.com/ansible-collections/community.aws/pull/878).

@@ -1,2 +1,0 @@
-bugfixes:
-- ecs_taskdefinition - include launch_type comparison when comparing task definitions (https://github.com/ansible-collections/community.aws/pull/840)

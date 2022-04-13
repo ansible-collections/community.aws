@@ -1,2 +1,0 @@
-minor_changes:
-- ec2_asg - add support for ``purge_tags`` to ec2_asg (https://github.com/ansible-collections/community.aws/pull/960).
