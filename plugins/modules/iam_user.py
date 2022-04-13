@@ -293,7 +293,7 @@ def delete_login_profile(connection, module, user_name, wait):
             (bool): True if login profile deleted, False if no login profile found to delete
     '''
     # User does not have login profile - nothing to delete
-    if not user_has_login_policy(connection, module, user_name):
+    if not user_has_login_profile(connection, module, user_name):
         return False
 
     if not module.check_mode:
@@ -513,22 +513,22 @@ def get_attached_policy_list(connection, module, name):
         module.fail_json_aws(e, msg="Unable to get policies for user {0}".format(name))
 
 
-def user_has_login_policy(connection, module, name):
+def user_has_login_profile(connection, module, name):
     '''
-    Returns whether or not given user has a login policy.
+    Returns whether or not given user has a login profile.
         Parameters:
             connection: IAM client
             module: AWSModule
             name (str): Username of user
         Returns:
-            (bool): True if user had login policy, False if not
+            (bool): True if user had login profile, False if not
     '''
     try:
         return connection.get_login_profile(UserName=name)
     except is_boto3_error_code('NoSuchEntity'):
         return False
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Unable to get login policy for user {0}".format(name))
+        module.fail_json_aws(e, msg="Unable to get login profile for user {0}".format(name))
     return True
 
 
