@@ -1,4 +1,0 @@
-minor_changes:
-- iam_user - add waiters for login profile actions (when wait is True), clean up return struct (https://github.com/ansible-collections/community.aws/pull/1059).
-bugfixes:
-- iam_user_info - gracefully handle when no users are found (https://github.com/ansible-collections/community.aws/pull/1059).
