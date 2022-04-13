@@ -1,0 +1,3 @@
+minor_changes:
+  - iam_role - delete inline policies prior to deleting role (https://github.com/ansible-collections/community.aws/pull/1054).
+  - iam_role - remove global vars and refactor accordingly (https://github.com/ansible-collections/community.aws/pull/1054).
