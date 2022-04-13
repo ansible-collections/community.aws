@@ -1,0 +1,2 @@
+minor_changes:
+- ec2_asg - bugfix to make test setup run once (https://github.com/ansible-collections/community.aws/pull/1061).
