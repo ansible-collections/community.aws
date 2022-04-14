@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: aws_glue_crawler
-version_added: 1.5.0
+version_added: 4.0.0
 short_description: Manage an AWS Glue crawler
 description:
     - Manage an AWS Glue crawler. See U(https://aws.amazon.com/glue/) for details.
@@ -36,7 +36,6 @@ options:
       - If the I(tags) parameter is not set then tags will not be modified.
     default: true
     type: bool
-    version_added: 1.5.0
   recrawl_policy:
     description:
       - A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.
