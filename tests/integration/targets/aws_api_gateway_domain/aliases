@@ -1,0 +1,5 @@
+# reason: missing real ACM TLS cert ARN
+disabled
+
+cloud/aws
+aws_api_gateway_domain
