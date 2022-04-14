@@ -102,6 +102,7 @@
         tags:
         - tag_c: 'value 3'
           propagate_at_launch: no
+        purge_tags: true
       register: output
 
     - assert:
@@ -126,6 +127,7 @@
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags: []
+        purge_tags: true
       register: add_empty
 
     - name: Get asg info
@@ -155,7 +157,6 @@
             propagate_at_launch: yes
           - snake_case: "simple_snake_case"
             propagate_at_launch: no
-        purge_tags: false
       register: add_result
 
     - name: Get asg info
@@ -188,7 +189,6 @@
             propagate_at_launch: yes
           - snake_case: "simple_snake_case"
             propagate_at_launch: no
-        purge_tags: false
       register: add_result
 
     - name: Get asg info
@@ -210,6 +210,7 @@
             propagate_at_launch: no
           - tag_b: 'val_b'
             propagate_at_launch: yes
+        purge_tags: true
       register: add_purge_result
 
     - name: Get asg info
@@ -275,7 +276,6 @@
             propagate_at_launch: no
           - Title Case: "Hello Cruel World"
             propagate_at_launch: yes
-        purge_tags: false
       register: add_result
 
     - name: Get asg info
@@ -325,6 +325,7 @@
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
         tags: []
+        purge_tags: true
       register: add_empty
 
     - name: Get asg info
