@@ -1149,6 +1149,9 @@ def main():
 
     kms = module.client('kms')
 
+    module.deprecate("The 'policies' return key is deprecated and will be replaced by 'policies_dict'. Both values are returned for now.",
+                     date='2022-12-01', collection_name='community.aws')
+
     key_metadata = fetch_key_metadata(kms, module, module.params.get('key_id'), module.params.get('alias'))
     # We can't create keys with a specific ID, if we can't access the key we'll have to fail
     if module.params.get('state') == 'present' and module.params.get('key_id') and not key_metadata:

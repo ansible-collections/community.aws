@@ -499,6 +499,9 @@ def main():
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
+    module.deprecate("The 'policies' return key is deprecated and will be replaced by 'policies_dict'. Both values are returned for now.",
+                     date='2022-12-01', collection_name='community.aws')
+
     all_keys = get_kms_info(connection, module)
     filtered_keys = [key for key in all_keys if key_matches_filters(key, module.params['filters'])]
     ret_params = dict(kms_keys=filtered_keys)
