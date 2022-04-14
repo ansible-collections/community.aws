@@ -408,9 +408,9 @@ def create_or_update_user(connection, module):
     user = get_user(connection, module, params['UserName'])
     if changed and new_login_profile:
         # `LoginProfile` is only returned on `create_login_profile` method
-        user['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
+        user['user']['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
 
-    module.exit_json(changed=changed, user=user)
+    module.exit_json(changed=changed, iam_user=user)
 
 
 def destroy_user(connection, module):
@@ -500,7 +500,7 @@ def get_user(connection, module, name):
     tags = boto3_tag_list_to_ansible_dict(user['User'].pop('Tags', []))
     user = camel_dict_to_snake_dict(user)
     user['user']['tags'] = tags
-    return user['user']
+    return user
 
 
 def get_attached_policy_list(connection, module, name):
@@ -534,7 +534,7 @@ def user_has_login_profile(connection, module, name):
 
 def update_user_tags(connection, module, params, user):
     user_name = params['UserName']
-    existing_tags = user['tags']
+    existing_tags = user['user']['tags']
     new_tags = params.get('Tags')
     if new_tags is None:
         return False
