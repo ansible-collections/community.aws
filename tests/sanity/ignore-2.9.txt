@@ -3,3 +3,4 @@ plugins/modules/ec2_metric_alarm.py pylint:ansible-deprecated-no-version
 plugins/modules/elb_network_lb.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_policy.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_role.py pylint:ansible-deprecated-no-version
+plugins/modules/iam_user.py pylint:ansible-deprecated-no-version
