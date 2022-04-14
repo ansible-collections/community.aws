@@ -12,16 +12,6 @@
 
   block:
 
-    #NOTE: entire ASG setup is 'borrowed' from ec2_asg
-    - name: Find AMI to use
-      ec2_ami_info:
-        owners: 'amazon'
-        filters:
-          name: '{{ ec2_ami_name }}'
-      register: ec2_amis
-    - set_fact:
-        ec2_ami_image: '{{ ec2_amis.images[0].image_id }}'
-
     - name: load balancer name has to be less than 32 characters
       set_fact:
         load_balancer_name: "{{ item }}-lb"
@@ -82,7 +72,7 @@
       ec2_lc:
         name: "{{ item }}"
         assign_public_ip: true
-        image_id: "{{ ec2_ami_image }}"
+        image_id: "{{ ec2_ami_id }}"
         user_data: |
           package_upgrade: true
           package_update: true
