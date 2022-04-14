@@ -1,3 +1,9 @@
+# Various race conditions - likely needs waiters
+# https://github.com/ansible-collections/community.aws/issues/433
+# No KMS supported waiters, and manual waiting for updates didn't fix the issue either.
+# Issue likely from AWS side - added sleep(5) on change to help.
+unstable
+
 cloud/aws
 
 aws_kms_info
