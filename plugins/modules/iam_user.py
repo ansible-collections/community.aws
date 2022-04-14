@@ -410,7 +410,7 @@ def create_or_update_user(connection, module):
         # `LoginProfile` is only returned on `create_login_profile` method
         user['user']['password_reset_required'] = login_profile_data.get('LoginProfile', {}).get('PasswordResetRequired', False)
 
-    module.exit_json(changed=changed, iam_user=user)
+    module.exit_json(changed=changed, iam_user=user, user=user['user'])
 
 
 def destroy_user(connection, module):
@@ -579,6 +579,9 @@ def main():
         supports_check_mode=True,
         mutually_exclusive=[['password', 'remove_password']],
     )
+
+    module.deprecate("The 'iam_user' return key is deprecated and will be replaced by 'user'. Both values are returned for now.",
+                     date='2022-12-01', collection_name='community.aws')
 
     # Catch EntityTemporarilyUnmodifiable exception when modifying user's login profile
     retry_decorator = AWSRetry.jittered_backoff(delay=2, catch_extra_error_codes=['EntityTemporarilyUnmodifiable'])
