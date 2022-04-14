@@ -1,2 +1,2 @@
 bugfixes:
-  - ec2_asg - Change the default value of ``purge_tages`` to ``false``. It will prevent accidental loss of tags. (https://github.com/ansible-collections/community.aws/pull/1064).
+  - ec2_asg - Change the default value of ``purge_tags`` to ``false``. Restores previous behaviour. (https://github.com/ansible-collections/community.aws/pull/1064).
