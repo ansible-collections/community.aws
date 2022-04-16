@@ -49,6 +49,23 @@
         that:
           - info_result.results[0].tags | length == 0
 
+    - name: Tag asg - check_mode
+      ec2_asg:
+        name: "{{ resource_prefix }}-asg-tag-test"
+        tags:
+        - tag_a: 'value 1'
+          propagate_at_launch: no
+        - tag_b: 'value 2'
+          propagate_at_launch: yes
+      register: output
+      check_mode: true
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+          - '"autoscaling:CreateOrUpdateTags" not in output.resource_actions'
+
     - name: Tag asg
       ec2_asg:
         name: "{{ resource_prefix }}-asg-tag-test"
