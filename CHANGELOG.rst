@@ -5,6 +5,31 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v3.2.1
+======
+
+Release Summary
+---------------
+
+This is a bugfix release of the ``community.aws`` collection.
+The new parameter ``purge_tags`` in ``ec2_asg`` module, that
+was introduced in ``community.aws 3.2.0`` with its default
+value ``true``, possibly breaks existing playbooks for users
+if they don't update their playbooks and specify
+``purge_tags: false``. However, this release restores the
+previous behaviour.
+
+Minor Changes
+-------------
+
+- iam_role - delete inline policies prior to deleting role (https://github.com/ansible-collections/community.aws/pull/1054).
+- iam_role - remove global vars and refactor accordingly (https://github.com/ansible-collections/community.aws/pull/1054).
+
+Bugfixes
+--------
+
+- ec2_asg - Change the default value of ``purge_tags`` to ``false``. Restores previous behaviour (https://github.com/ansible-collections/community.aws/pull/1064).
+
 v3.2.0
 ======
 
@@ -23,8 +48,8 @@ Major Changes
 Minor Changes
 -------------
 
-- cloudfront_distribution - Added support for retries (AWSRetry.jittered_backoff) (https://github.com/ansible-collections/community.aws/issues/296)
 - aws_acm - Add ``tags`` and ``purge_tags`` parameters to tag certificates in ACM (https://github.com/ansible-collections/community.aws/pull/870).
+- cloudfront_distribution - Added support for retries (AWSRetry.jittered_backoff) (https://github.com/ansible-collections/community.aws/issues/296)
 - ec2_asg - Added functionality to detach specific instances and/or decrement desired capacity from ASG without terminating instances (https://github.com/ansible-collections/community.aws/pull/933).
 - ec2_asg - Restructure integration tests to run in parallel and reduce runtime (https://github.com/ansible-collections/community.aws/pull/1036).
 - ec2_asg - add support for ``purge_tags`` to ec2_asg (https://github.com/ansible-collections/community.aws/pull/960).
@@ -41,9 +66,9 @@ Minor Changes
 Bugfixes
 --------
 
-- elb_application_lb_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/977)
 - ecs_taskdefinition - include launch_type comparison when comparing task definitions (https://github.com/ansible-collections/community.aws/pull/840)
 - elb_application_lb - Fix empty security groups list behaves inconsistently on create/update by treating empty security group as VPC's defaault (https://github.com/ansible-collections/community.aws/pull/971).
+- elb_application_lb_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/977)
 - elb_target_group_info - Add backoff retry logic (https://github.com/ansible-collections/community.aws/pull/1001)
 - iam_role - Removes unnecessary removal of permission boundary from a role when deleting a role. Unlike inline policies, permission boundaries do not need to be removed from an IAM role before deleting the IAM role. This behavior causes issues when a permission boundary is inherited that prevents removal of the permission boundary. (https://github.com/ansible-collections/community.aws/pull/961)
 - redshift_info - fix invalid import path for botocore exceptions (https://github.com/ansible-collections/community.aws/issues/968).
