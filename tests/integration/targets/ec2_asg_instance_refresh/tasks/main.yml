@@ -441,7 +441,7 @@
 
     - name: remove launch configs
       ec2_lc:
-        name: "{{ resource_prefix }}-lc"
+        name: "{{ item }}"
         state: absent
       register: removed
       until: removed is not failed
