@@ -125,8 +125,8 @@ def get_domain(module, client):
     domain_name = module.params.get('domain_name')
     result = {}
     try:
-        result['domain'] = get_domain_name(client, domain_name)
-        result['path_mappings'] = get_domain_mappings(client, domain_name)
+        result['domain'] = get_domain_name(client, domain_name, module)
+        result['path_mappings'] = get_domain_mappings(client, domain_name, module)
     except is_boto3_error_code('NotFoundException'):
         return None
     except (ClientError, BotoCoreError, EndpointConnectionError) as e:  # pylint: disable=duplicate-except
@@ -156,7 +156,7 @@ def create_domain(module, client):
             if rest_api_id is None or stage is None:
                 module.fail_json('Every domain mapping needs a rest_api_id and stage name')
 
-            result['path_mappings'].append(add_domain_mapping(client, domain_name, base_path, rest_api_id, stage))
+            result['path_mappings'].append(add_domain_mapping(client, domain_name, base_path, rest_api_id, stage, module))
 
     except (ClientError, BotoCoreError, EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="creating API GW domain")
@@ -185,7 +185,7 @@ def update_domain(module, client, existing_domain):
 
     if specified_domain_settings != existing_domain_settings:
         try:
-            result['domain'] = update_domain_name(client, domain_name, **snake_dict_to_camel_dict(specified_domain_settings))
+            result['domain'] = update_domain_name(client, domain_name, module, **snake_dict_to_camel_dict(specified_domain_settings))
             result['updated'] = True
         except (ClientError, BotoCoreError, EndpointConnectionError) as e:
             module.fail_json_aws(e, msg="updating API GW domain")
@@ -206,10 +206,10 @@ def update_domain(module, client, existing_domain):
         try:
             # When lists missmatch delete all existing mappings before adding new ones as specified
             for mapping in existing_domain.get('path_mappings', []):
-                delete_domain_mapping(client, domain_name, mapping['base_path'])
+                delete_domain_mapping(client, domain_name, mapping['base_path'], module)
             for mapping in module.params.get('domain_mappings', []):
                 result['path_mappings'] = add_domain_mapping(
-                    client, domain_name, mapping.get('base_path', ''), mapping.get('rest_api_id'), mapping.get('stage')
+                    client, domain_name, mapping.get('base_path', ''), mapping.get('rest_api_id'), mapping.get('stage'), module
                 )
                 result['updated'] = True
         except (ClientError, BotoCoreError, EndpointConnectionError) as e:
@@ -221,7 +221,7 @@ def update_domain(module, client, existing_domain):
 def delete_domain(module, client):
     domain_name = module.params.get('domain_name')
     try:
-        result = delete_domain_name(client, domain_name)
+        result = delete_domain_name(client, domain_name, module)
     except (ClientError, BotoCoreError, EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="deleting API GW domain")
     return camel_dict_to_snake_dict(result)
@@ -231,13 +231,19 @@ retry_params = {"tries": 10, "delay": 5, "backoff": 1.2}
 
 
 @AWSRetry.backoff(**retry_params)
-def get_domain_name(client, domain_name):
-    return client.get_domain_name(domainName=domain_name)
+def get_domain_name(client, domain_name, module):
+    try:
+        return client.get_domain_name(domainName=domain_name)
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to get api gateway domain.")
 
 
 @AWSRetry.backoff(**retry_params)
-def get_domain_mappings(client, domain_name):
-    return client.get_base_path_mappings(domainName=domain_name, limit=200).get('items', [])
+def get_domain_mappings(client, domain_name, module):
+    try:
+        return client.get_base_path_mappings(domainName=domain_name, limit=200).get('items', [])
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to get api gateway domain mappings.")
 
 
 @AWSRetry.backoff(**retry_params)
@@ -245,29 +251,38 @@ def create_domain_name(module, client, domain_name, certificate_arn, endpoint_ty
     endpoint_configuration = {'types': [endpoint_type]}
 
     if endpoint_type == 'EDGE':
-        return client.create_domain_name(
-            domainName=domain_name,
-            certificateArn=certificate_arn,
-            endpointConfiguration=endpoint_configuration,
-            securityPolicy=security_policy
-        )
+        try:
+            return client.create_domain_name(
+                domainName=domain_name,
+                certificateArn=certificate_arn,
+                endpointConfiguration=endpoint_configuration,
+                securityPolicy=security_policy
+            )
+        except (BotoCoreError, ClientError) as e:
+            module.fail_json_aws(e, msg="Failed to create edge api gateway domain.")
     else:
         # Use regionalCertificateArn for regional domain deploys
-        return client.create_domain_name(
-            domainName=domain_name,
-            regionalCertificateArn=certificate_arn,
-            endpointConfiguration=endpoint_configuration,
-            securityPolicy=security_policy
-        )
+        try:
+            return client.create_domain_name(
+                domainName=domain_name,
+                regionalCertificateArn=certificate_arn,
+                endpointConfiguration=endpoint_configuration,
+                securityPolicy=security_policy
+            )
+        except (BotoCoreError, ClientError) as e:
+            module.fail_json_aws(e, msg="Failed to create api gateway domain.")
 
 
 @AWSRetry.backoff(**retry_params)
-def add_domain_mapping(client, domain_name, base_path, rest_api_id, stage):
-    return client.create_base_path_mapping(domainName=domain_name, basePath=base_path, restApiId=rest_api_id, stage=stage)
+def add_domain_mapping(client, domain_name, base_path, rest_api_id, stage, module):
+    try:
+        return client.create_base_path_mapping(domainName=domain_name, basePath=base_path, restApiId=rest_api_id, stage=stage)
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to add api gateway domain mapping.")
 
 
 @AWSRetry.backoff(**retry_params)
-def update_domain_name(client, domain_name, **kwargs):
+def update_domain_name(client, domain_name, module, **kwargs):
     patch_operations = []
 
     for key, value in kwargs.items():
@@ -276,17 +291,26 @@ def update_domain_name(client, domain_name, **kwargs):
             continue
         patch_operations.append({"op": "replace", "path": path, "value": value})
 
-    return client.update_domain_name(domainName=domain_name, patchOperations=patch_operations)
+    try:
+        return client.update_domain_name(domainName=domain_name, patchOperations=patch_operations)
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to update api gateway domain.")
 
 
 @AWSRetry.backoff(**retry_params)
-def delete_domain_name(client, domain_name):
-    return client.delete_domain_name(domainName=domain_name)
+def delete_domain_name(client, domain_name, module):
+    try:
+        return client.delete_domain_name(domainName=domain_name)
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to delete api gateway domain.")
 
 
 @AWSRetry.backoff(**retry_params)
-def delete_domain_mapping(client, domain_name, base_path):
-    return client.delete_base_path_mapping(domainName=domain_name, basePath=base_path)
+def delete_domain_mapping(client, domain_name, base_path, module):
+    try:
+        return client.delete_base_path_mapping(domainName=domain_name, basePath=base_path)
+    except (BotoCoreError, ClientError) as e:
+        module.fail_json_aws(e, msg="Failed to delete api gateway domain mapping.")
 
 
 def main():
