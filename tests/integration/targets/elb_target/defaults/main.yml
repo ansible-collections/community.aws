@@ -7,7 +7,6 @@ lambda_name: '{{ unique_id }}-elb-target'
 elb_target_group_name: "{{ unique_id }}-elb"
 
 # Defaults used by the EC2 based test
-ec2_ami_name: 'amzn2-ami-hvm-2.0.20190612-x86_64-gp2'
 tg_name: "{{ unique_id }}-tg"
 tg_used_name: "{{ unique_id }}-tgu"
 tg_tcpudp_name: "{{ unique_id }}-udp"

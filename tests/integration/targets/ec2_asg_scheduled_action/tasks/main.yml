@@ -15,17 +15,6 @@
         ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
       block:
         ## Set up the testing dependencies: VPC, subnet, security group, and launch configuration
-        - name: Find AMI to use
-          ec2_ami_info:
-            owners: "amazon"
-            filters:
-              name: "{{ ec2_ami_name }}"
-          register: ec2_amis
-
-        - name: Set ec2_ami_image fact
-          set_fact:
-            ec2_ami_image: "{{ ec2_amis.images[0].image_id }}"
-
         - name: Create VPC for use in testing
           ec2_vpc_net:
             name: "{{ resource_prefix }}-vpc"
@@ -63,7 +52,7 @@
           ec2_lc:
             name: "{{ resource_prefix }}-lc"
             assign_public_ip: true
-            image_id: "{{ ec2_ami_image }}"
+            image_id: "{{ ec2_ami_id }}"
             security_groups: "{{ sg.group_id }}"
             instance_type: t3.micro
 

@@ -2,13 +2,13 @@
 
 - name: try to cancel pre-loop
   ec2_asg_instance_refresh:
-    name: "{{ resource_prefix }}-asg"
+    name: "{{ asg_name }}"
     state: "cancelled"
   ignore_errors: yes
 
 - name: test starting a refresh with an ASG name
   ec2_asg_instance_refresh:
-    name: "{{ resource_prefix }}-asg"
+    name: "{{ asg_name }}"
     state: "started"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
@@ -21,7 +21,7 @@
 
 - name: test cancelling a refresh with an ASG name
   ec2_asg_instance_refresh:
-    name: "{{ resource_prefix }}-asg"
+    name: "{{ asg_name }}"
     state: "cancelled"
     aws_access_key: "{{ aws_access_key }}"
     aws_secret_key: "{{ aws_secret_key }}"
