@@ -19,25 +19,12 @@
     - amazon.aws
   block:
 
-    - name: Find AMI to use
-      ec2_ami_info:
-        owners: 'amazon'
-        filters:
-          name: '{{ ec2_ami_name }}'
-      register: ec2_amis
-
-    - name: Set fact with latest AMI
-      vars:
-        latest_ami: '{{ ec2_amis.images | sort(attribute="creation_date") | last }}'
-      set_fact:
-        scaling_policy_image_id: '{{ latest_ami.image_id }}'
-
     - name: create trivial launch_configuration
       ec2_lc:
         name: "{{ scaling_policy_lc_name }}"
         state: present
         instance_type: t3.nano
-        image_id: "{{ scaling_policy_image_id }}"
+        image_id: "{{ ec2_ami_id }}"
 
     - name: create trivial ASG
       ec2_asg:
