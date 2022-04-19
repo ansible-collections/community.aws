@@ -24,19 +24,10 @@
         AWS_DEFAULT_REGION: "{{ aws_region }}"
       register: alarm_info_query
 
-    - name: Find AMI to use
-      ec2_ami_info:
-        owners: "amazon"
-        filters:
-          name: "{{ ec2_ami_name }}"
-      register: ec2_amis
-    - set_fact:
-        ec2_ami_image: "{{ ec2_amis.images[0].image_id }}"
-
     - name: Make instance in a default subnet of the VPC
       ec2_instance:
         name: "{{ resource_prefix }}-test-default-vpc"
-        image_id: "{{ec2_ami_image }}"
+        image_id: "{{ ec2_ami_id }}"
         tags:
           TestId: "{{ resource_prefix }}"
         security_groups: "{{ sg.group_id }}"
