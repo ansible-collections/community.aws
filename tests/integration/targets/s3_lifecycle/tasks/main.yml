@@ -184,6 +184,30 @@
         that:
           - output is not changed
   # ============================================================
+    - name: Create a lifecycle policy, with glacier and transition_days to 0
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        transition_days: 0
+        storage_class: glacier
+        prefix: /something
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+  # ============================================================
+    - name: Create a lifecycle policy, with glacier and transition_days to 0 (idempotency)
+      s3_lifecycle:
+        name: '{{ bucket_name }}'
+        transition_days: 0
+        storage_class: glacier
+        prefix: /something
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+  # ============================================================
     - name: Create a lifecycle policy with infrequent access
       s3_lifecycle:
         name: '{{ bucket_name }}'

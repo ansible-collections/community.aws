@@ -1,0 +1,2 @@
+bugfixes:
+  - s3_lifecycle - add support of value *0* for ``transition_days`` (https://github.com/ansible-collections/community.aws/pull/1077).
