@@ -1,18 +1,6 @@
 - block:
 
     # create instances
-
-    - ec2_ami_info:
-        filters:
-          architecture: x86_64
-          virtualization-type: hvm
-          root-device-type: ebs
-          name: "amzn-ami-hvm*"
-      register: amis
-
-    - set_fact:
-        latest_amazon_linux: "{{ amis.images | sort(attribute='creation_date') | last }}"
-
     - ec2_asg:
         state: absent
         name: "{{ resource_prefix }}-webservers"
@@ -26,7 +14,7 @@
       ec2_lc:
         name: "{{ resource_prefix }}-web-lcfg"
         assign_public_ip: true
-        image_id: "{{ latest_amazon_linux.image_id }}"
+        image_id: "{{ ec2_ami_id }}"
         security_groups: "{{ sec_group.group_id }}"
         instance_type: t2.micro
         user_data: |
