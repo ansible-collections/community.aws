@@ -24,11 +24,24 @@
           allocated_storage: "{{ allocated_storage }}"
           storage_encrypted: True
           processor_features: {}
+          wait: no
         register: result
 
       - assert:
           that:
             - result.changed
+
+      - name: Wait for instance
+        rds_instance_info:
+          db_instance_identifier: "{{ instance_id }}"
+        register: result
+        ignore_errors: yes
+        retries: 30
+        until:
+          - result is not failed
+          - result.instances | length == 1
+          - result.instances[0].db_instance_status == 'available'
+        delay: 30
 
       - name: Modify the processor features - check_mode
         rds_instance:
@@ -105,8 +118,10 @@
       - assert:
           that:
             - not result.changed
-            - 'result.pending_modified_values.processor_features.coreCount == "{{ modified_processor_features.coreCount }}"'
-            - 'result.pending_modified_values.processor_features.threadsPerCore == "{{ modified_processor_features.threadsPerCore }}"'
+            - 'result.pending_modified_values.processor_features.coreCount == "{{ modified_processor_features.coreCount }}"
+                or result.processor_features.coreCount == "{{ modified_processor_features.coreCount }}"'
+            - 'result.pending_modified_values.processor_features.threadsPerCore == "{{ modified_processor_features.threadsPerCore }}"
+                or result.processor_features.threadsPerCore == "{{ modified_processor_features.threadsPerCore }}"'
 
     always:
 

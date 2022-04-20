@@ -33,12 +33,25 @@
           tags:
             Name: "{{ instance_id }}"
             Created_by: Ansible rds_instance tests
+          wait: no
         register: source_db
 
       - assert:
           that:
             - source_db.changed
             - "source_db.db_instance_identifier == '{{ instance_id }}'"
+
+      - name: Wait for instance
+        rds_instance_info:
+          db_instance_identifier: "{{ instance_id }}"
+        register: result
+        ignore_errors: yes
+        retries: 30
+        until:
+          - result is not failed
+          - result.instances | length == 1
+          - result.instances[0].db_instance_status == 'available'
+        delay: 30
 
     # ------------------------------------------------------------------------------------------
 

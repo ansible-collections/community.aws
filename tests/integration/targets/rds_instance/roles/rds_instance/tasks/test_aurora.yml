@@ -20,6 +20,8 @@
           cluster_id: "{{ cluster_id }}"
           username: "{{ username }}"
           password: "{{ password }}"
+          tags:
+            CreatedBy: rds_instance integration tests
 
       - name: Create an Aurora instance
         rds_instance:
@@ -30,6 +32,7 @@
           db_instance_class: "{{ aurora_db_instance_class }}"
           tags:
             CreatedBy: rds_instance integration tests
+          wait: no
         register: result
 
       - assert:
@@ -38,29 +41,36 @@
             - "result.db_instance_identifier == '{{ instance_id }}'"
             - "result.tags | length == 1"
 
-      - name: Modify tags
+      - name: Create an Aurora instance with both username/password and id - invalid
         rds_instance:
-          id: "{{ instance_id }}"
+          id: "{{ instance_id }}-new"
+          cluster_id: "{{ cluster_id }}"
+          engine: aurora
           state: present
+          username: "{{ username }}"
+          password: "{{ password }}"
+          db_instance_class: "{{ aurora_db_instance_class }}"
           tags:
-            Test: rds_instance
+            CreatedBy: rds_instance integration tests
         register: result
+        ignore_errors: yes
 
       - assert:
           that:
-            - result.changed
-            - result.tags | length == 1
-            - "result.tags.Test == 'rds_instance'"
+            - result.failed
+            - "'Set master user password for the DB Cluster' in result.msg"
 
-      - name: Test idempotence
-        rds_instance:
-          id: "{{ instance_id }}"
-          state: present
+      - name: Wait for instance
+        rds_instance_info:
+          db_instance_identifier: "{{ instance_id }}"
         register: result
-
-      - assert:
-          that:
-            - not result.changed
+        ignore_errors: yes
+        retries: 30
+        until:
+          - result is not failed
+          - result.instances | length == 1
+          - result.instances[0].db_instance_status == 'available'
+        delay: 30
 
       - name: Attempt to modify password (a cluster-managed attribute)
         rds_instance:
@@ -91,20 +101,6 @@
             - not result.changed
             - "'Modify database endpoint port number for the DB Cluster using the ModifyDbCluster API' in result.msg"
             - "'Please see rds_cluster' in result.msg"
-
-      - name: Modify Aurora instance identifier
-        rds_instance:
-          id: "{{ instance_id }}"
-          state: present
-          purge_tags: False
-          new_id: "{{ modified_instance_id }}"
-          apply_immediately: True
-        register: result
-
-      - assert:
-          that:
-            - result.changed
-            - "result.db_instance_identifier == '{{ modified_instance_id }}'"
 
     always:
 
