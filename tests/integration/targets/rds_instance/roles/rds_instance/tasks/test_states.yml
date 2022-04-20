@@ -220,13 +220,6 @@
           - not result.changed
 
   always:
-    - name: Remove final snapshot
-      rds_instance_snapshot:
-        db_snapshot_identifier: "{{ instance_id }}"
-        state: absent
-        wait: false
-      ignore_errors: yes
-
     - name: Remove DB instance
       rds_instance:
         id: "{{ instance_id }}"

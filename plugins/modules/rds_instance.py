@@ -538,7 +538,7 @@ EXAMPLES = r'''
   register: snapshot
 
 - name: Restore DB from snapshot
-  rds_instance:
+  community.aws.rds_instance:
     id: 'my-restored-db'
     creation_source: snapshot
     snapshot_identifier: 'my-new-snapshot'
