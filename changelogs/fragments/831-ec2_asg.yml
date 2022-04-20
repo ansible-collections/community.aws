@@ -1,4 +1,4 @@
 minor_changes:
-  - ec2_asg - Allow defining instance requirements in the mixed instances policy for flexible instance picking by AWS
+  - ec2_asg - Allow defining instance requirements in the mixed instances policy for flexible instance picking by AWS (https://github.com/ansible-collections/community.aws/pull/831).
 breaking_changes:
-  - ec2_asg - The return value of mixed_instances_policy does now return the actual mixed instance policy instead of just a list of instance types (that might not always defined in such a policy)
+  - ec2_asg - The return value of mixed_instances_policy does now return the actual mixed instance policy instead of just a list of instance types (that might not always defined in such a policy) (https://github.com/ansible-collections/community.aws/pull/831).

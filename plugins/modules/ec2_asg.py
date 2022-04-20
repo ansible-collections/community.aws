@@ -92,7 +92,7 @@ options:
         - A set of params describing the specs instances should have
         type: dict
         required: false
-        version_added: 3.2.0
+        version_added: 4.0.0
       instance_types:
         description:
           - A list of instance_types.
