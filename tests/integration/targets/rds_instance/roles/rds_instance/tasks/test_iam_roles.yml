@@ -23,7 +23,6 @@
         db_instance_class: "{{ postgres_db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
         allow_major_version_upgrade: yes
-        wait: no
       register: result
 
     - assert:
@@ -61,18 +60,6 @@
         state: present
         managed_policy: "{{ s3_integration_policy.policy.arn }}"
       register: s3_integration_role_3
-
-    - name: Wait for instance
-      rds_instance_info:
-        db_instance_identifier: "{{ instance_id }}"
-      register: result
-      ignore_errors: yes
-      retries: 30
-      until:
-        - result is not failed
-        - result.instances | length == 1
-        - result.instances[0].db_instance_status == 'available'
-      delay: 30
 
     # ------------------------------------------------------------------------------------------
 

@@ -24,7 +24,6 @@
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
-        wait: no
         tags:
           Name: "{{ instance_id }}"
           Created_by: Ansible rds_instance tests
@@ -70,18 +69,6 @@
         - "{{ resource_prefix }}-sg-1"
         - "{{ resource_prefix }}-sg-2"
         - "{{ resource_prefix }}-sg-3"
-
-    - name: Wait for instance
-      rds_instance_info:
-        db_instance_identifier: "{{ instance_id }}"
-      register: result
-      ignore_errors: yes
-      retries: 30
-      until:
-        - result is not failed
-        - result.instances | length == 1
-        - result.instances[0].db_instance_status == 'available'
-      delay: 30
 
     - name: Create a DB instance with an invalid engine
       rds_instance:

@@ -13,6 +13,14 @@
           - not result.changed
       ignore_errors: yes
 
+    - name: Create an enhanced monitoring role
+      iam_role:
+        assume_role_policy_document: "{{ lookup('file','files/enhanced_monitoring_assume_policy.json') }}"
+        name: "{{ instance_id }}-role"
+        state: present
+        managed_policy: "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
+      register: enhanced_monitoring_role
+
     - name: Create a mariadb instance
       rds_instance:
         id: "{{ instance_id }}"
@@ -26,33 +34,12 @@
         allocated_storage: "{{ io1_allocated_storage }}"
         storage_type: "{{ storage_type }}"
         iops: "{{ iops }}"
-        wait: no
       register: result
 
     - assert:
         that:
           - result.changed
           - "result.db_instance_identifier == '{{ instance_id }}'"
-
-    - name: Create an enhanced monitoring role
-      iam_role:
-        assume_role_policy_document: "{{ lookup('file','files/enhanced_monitoring_assume_policy.json') }}"
-        name: "{{ instance_id }}-role"
-        state: present
-        managed_policy: "arn:aws:iam::aws:policy/service-role/AmazonRDSEnhancedMonitoringRole"
-      register: enhanced_monitoring_role
-
-    - name: Wait for instance
-      rds_instance_info:
-        db_instance_identifier: "{{ instance_id }}"
-      register: result
-      ignore_errors: yes
-      retries: 30
-      until:
-        - result is not failed
-        - result.instances | length == 1
-        - result.instances[0].db_instance_status == 'available'
-      delay: 30
 
     - name: Add IAM roles to mariab (should fail - iam roles not supported for mariadb)
       rds_instance:
