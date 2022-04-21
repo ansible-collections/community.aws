@@ -2,7 +2,7 @@
 [tests]
 
 # TODO: uncomment after adding iam:CreatePolicy and iam:DeletePolicy
-iam_roles
+#iam_roles
 
 # create/delete/start/stop/reboot
 states
