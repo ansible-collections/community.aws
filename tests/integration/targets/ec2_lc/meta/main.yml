@@ -1,6 +1,4 @@
 dependencies:
-  - prepare_tests
-  - setup_ec2
   - setup_ec2_facts
   - role: setup_botocore_pip
     vars:
