@@ -50,6 +50,17 @@
           - '"rule_groups" in account_rules_info'
           # We've not created anything yet, so there's no guarantee anything will be here
 
+    - name: 'Fetch non existent rule groups'
+      networkfirewall_rule_group_info:
+        name: '{{ minimal_group_name }}-Missing'
+        rule_type: 'stateful'
+      register: account_rules_info
+
+    - assert:
+        that:
+          - '"rule_groups" in account_rules_info'
+          - account_rules_info.rule_groups | length == 0
+
     ###################################################################
     # Creation
 
