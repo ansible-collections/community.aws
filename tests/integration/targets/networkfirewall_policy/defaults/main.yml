@@ -1,0 +1,6 @@
+---
+policy_name_prefix: 'AnsibleTest-{{ tiny_prefix }}'
+group_name_prefix: 'AnsibleTest-{{ tiny_prefix }}'
+strict_group_name: '{{ group_name_prefix }}-StrictOrder'
+default_group_name: '{{ group_name_prefix }}-DefaultOrder'
+rule_group_capacity: 100

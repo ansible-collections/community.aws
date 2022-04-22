@@ -1,0 +1,1223 @@
+---
+# Tests the basic manipulation of Policies with 'default' rule order
+#
+# In Scope:
+# - Creation
+# - (Denied) update of rule order
+# - Managing stateful Rule Groups
+# - Adding default actions for stateless flows (basic functionality)
+# - (Denied) Adding default actions for stateful flows
+# - Deletion
+#
+# Out of Scope
+# - Adding Stateless Rule Groups (not supported by networkfirewall_rule_group)
+# - Updating tags ('common.yaml')
+# - Updating description ('common.yaml')
+# - Updating custom actions for stateless flows ('actions.yaml')
+# - Updating actions for stateless flows ('actions.yaml')
+
+- vars:
+    default_policy_name: '{{ policy_name_prefix }}-DefaultOrder'
+    managed_group_arn: 'arn:aws:network-firewall:{{ aws_region }}:aws-managed:stateful-rulegroup/BotNetCommandAndControlDomainsActionOrder'
+  block:
+    ###################################################################
+    # Creation
+    - name: '(CHECK) D - Create a simple firewall policy with `default` rule order'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_metadata.tags == {}
+          # These are *not* available because the policy hasn't been created
+          - '"firewall_policy_arn" not in policy_metadata'
+          - '"firewall_policy_id" not in policy_metadata'
+          - '"firewall_policy_status" not in policy_metadata'
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    - name: 'D - Create a simple firewall policy with `default` rule order'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn.startswith(account_arn)
+          - policy_metadata.firewall_policy_arn.endswith(default_policy_name)
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    - name: 'D - Save Policy ID/ARN for later'
+      set_fact:
+        default_policy_id: '{{ policy_metadata.firewall_policy_id }}'
+        default_policy_arn: '{{ policy_metadata.firewall_policy_arn }}'
+      vars:
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    - name: '(CHECK) D - Create a simple firewall policy with `default` rule order (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    - name: 'D - Create a simple firewall policy with `default` rule order (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    ###
+
+    - name: '(CHECK) D - Create a simple firewall policy with `default` rule order - test reference by ARN (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        arn: '{{ default_policy_arn }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    - name: 'D - Create a simple firewall policy with `default` rule order (idempotency)'
+      networkfirewall_policy:
+        arn: '{{ default_policy_arn }}'
+        stateful_rule_order: 'default'
+        state: present
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+
+    ###################################################################
+    # Update Stateful Rule order
+
+    - name: '(CHECK) D - Update stateful rule order - DENIED'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_order: strict
+      register: default_policy
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - default_policy is failed
+
+    - name: 'D - Update stateful rule order - DENIED'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_order: strict
+      register: default_policy
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - default_policy is failed
+
+    ###################################################################
+    # Stateful Rule Group management
+
+    - name: '(CHECK) D - Add stateful rule group'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - '"stateful_rule_group_references" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 1
+          - default_group_arns[0] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Add stateful rule group'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 1
+          - default_group_arns[0] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: '(CHECK) D - Add stateful rule group (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 1
+          - default_group_arns[0] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Add stateful rule group (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 1
+          - default_group_arns[0] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###
+
+    - name: '(CHECK) D - Add managed stateful rule group'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+        - '{{ managed_group_arn }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - '"stateful_rule_group_references" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[0] in stateful_rule_arns
+          - managed_group_arn in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Add managed stateful rule group'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+        - '{{ managed_group_arn }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[0] in stateful_rule_arns
+          - managed_group_arn in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: '(CHECK) D - Add managed stateful rule group (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+        - '{{ managed_group_arn }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[0] in stateful_rule_arns
+          - managed_group_arn in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Add managed stateful rule group (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[0] }}'
+        - '{{ managed_group_arn }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[0] in stateful_rule_arns
+          - managed_group_arn in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###
+
+    - name: '(CHECK) D - Replace stateful rule groups'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[1] }}'
+        - '{{ default_group_arns[2] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - '"stateful_rule_group_references" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Replace stateful rule groups'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[1] }}'
+        - '{{ default_group_arns[2] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: '(CHECK) D - Replace stateful rule groups (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[1] }}'
+        - '{{ default_group_arns[2] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Replace stateful rule groups (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_names[1] }}'
+        - '{{ default_group_arns[2] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###
+
+    - name: '(CHECK) D - Replace stateful rule groups - ARN vs Name (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_arns[1] }}'
+        - '{{ default_group_names[2] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Replace stateful rule groups - ARN vs Name (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_arns[1] }}'
+        - '{{ default_group_names[2] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###
+
+    # When using 'default' ordering, the order of rule groups is not
+    # guaranteed and the rules are prioritised by type (pass, log, drop) not by
+    # the order they're listed.
+
+    - name: '(CHECK) D - Replace stateful rule groups - change order (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_arns[2] }}'
+        - '{{ default_group_arns[1] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Replace stateful rule groups - change order (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_rule_groups:
+        - '{{ default_group_arns[2] }}'
+        - '{{ default_group_arns[1] }}'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###################################################################
+    # Update Stateless flow default actions (basic)
+
+    - name: '(CHECK) D - Update Stateless flow default action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'aws:drop'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - '"stateful_rule_group_references" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Update Stateless flow default action'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'aws:drop'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: '(CHECK) D - Update Stateless flow default action (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'aws:drop'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Update Stateless flow default action (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_default_actions:
+          - 'aws:drop'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:forward_to_sfe"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###
+
+    - name: '(CHECK) D - Update Stateless fragmented flow default action'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'aws:pass'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - '"stateful_rule_group_references" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Update Stateless fragmented flow default action'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'aws:pass'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: '(CHECK) D - Update Stateless fragmented flow default action (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'aws:pass'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    - name: 'D - Update Stateless fragmented flow default action (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateless_fragment_default_actions:
+          - 'aws:pass'
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+          - '"policy" in default_policy'
+          - '"policy" in default_policy.policy'
+          - '"policy_metadata" in default_policy.policy'
+          - '"firewall_policy_arn" in policy_metadata'
+          - '"firewall_policy_id" in policy_metadata'
+          - '"firewall_policy_name" in policy_metadata'
+          - '"firewall_policy_status" in policy_metadata'
+          - '"tags" in policy_metadata'
+          - '"stateless_default_actions" in policy_data'
+          - '"stateless_fragment_default_actions" in policy_data'
+          - policy_metadata.firewall_policy_name == default_policy_name
+          - policy_metadata.firewall_policy_arn == default_policy_arn
+          - policy_metadata.firewall_policy_id == default_policy_id
+          - policy_metadata.tags == {}
+          - policy_data.stateless_default_actions == ["aws:drop"]
+          - policy_data.stateless_fragment_default_actions == ["aws:pass"]
+          - policy_data.stateful_rule_group_references | length == 2
+          - default_group_arns[1] in stateful_rule_arns
+          - default_group_arns[2] in stateful_rule_arns
+      vars:
+        policy_data: '{{ default_policy.policy.policy }}'
+        policy_metadata: '{{ default_policy.policy.policy_metadata }}'
+        stateful_rule_arns: '{{ policy_data.stateful_rule_group_references | map(attribute="resource_arn") | list }}'
+
+    ###
+
+    ###################################################################
+    # Update Stateful flow default actions
+
+    - name: '(CHECK) D - Set default action for stateful flows - DENIED'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_default_actions:
+          - 'aws:drop_strict'
+      register: default_policy
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - default_policy is failed
+
+    - name: 'D - Set default action for stateful flows - DENIED'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: present
+        stateful_default_actions:
+          - 'aws:drop_strict'
+      register: default_policy
+      ignore_errors: True
+      vars:
+        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+    - assert:
+        that:
+          - default_policy is failed
+
+    ###################################################################
+    # Delete policy
+
+    - name: '(CHECK) D - Delete policy with default order'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: absent
+        wait: False
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+
+    - name: 'D - Delete policy with default order'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: absent
+        wait: False
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is changed
+
+    - name: '(CHECK) D - Delete policy with default order (idempotency)'
+      check_mode: True
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: absent
+        wait: False
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+
+    - name: 'D - Delete policy with default order (idempotency)'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: absent
+        wait: False
+      register: default_policy
+
+    - assert:
+        that:
+          - default_policy is not changed
+
+  always:
+    - name: 'D - Cleanup firewall policy'
+      networkfirewall_policy:
+        name: '{{ default_policy_name }}'
+        state: absent
+        wait: False
+      ignore_errors: True
