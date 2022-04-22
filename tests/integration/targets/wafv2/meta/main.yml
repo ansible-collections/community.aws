@@ -1,5 +1,4 @@
 dependencies:
-  - setup_remote_tmp_dir
   - role: setup_botocore_pip
     vars:
       boto3_version: "1.18.0"
