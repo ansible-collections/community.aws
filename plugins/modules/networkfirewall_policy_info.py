@@ -16,11 +16,13 @@ options:
   arn:
     description:
       - The ARN of the Network Firewall policy.
+      - Mutually exclusive with I(name).
     required: false
     type: str
   name:
     description:
       - The name of the Network Firewall policy.
+      - Mutually exclusive with I(arn).
     required: false
     type: str
 
@@ -36,14 +38,12 @@ EXAMPLES = '''
 - community.aws.networkfirewall_policy_info: {}
 
 # Describe a Firewall policy by ARN
-- community.aws.networkfirewall_rule_group_info:
+- community.aws.networkfirewall_policy_info:
     arn: arn:aws:network-firewall:us-east-1:123456789012:firewall-policy/ExamplePolicy
 
 # Describe a Firewall policy by name
-- community.aws.networkfirewall_rule_group_info:
+- community.aws.networkfirewall_policy_info:
     name: ExamplePolicy
-    type: stateful
-
 '''
 
 RETURN = '''

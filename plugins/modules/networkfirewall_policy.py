@@ -163,6 +163,34 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
+# Create an AWS Network Firewall Policy with default rule order
+- community.aws.networkfirewall_policy:
+    stateful_rule_order: 'default'
+    state: present
+    name: 'ExamplePolicy'
+
+# Create an AWS Network Firewall Policy with strict rule order
+- community.aws.networkfirewall_policy:
+    stateful_rule_order: 'strict'
+    state: present
+    name: 'ExampleStrictPolicy'
+
+
+# Create an AWS Network Firewall Policy that defaults to dropping all packets
+- community.aws.networkfirewall_policy:
+    stateful_rule_order: 'strict'
+    state: present
+    name: 'ExampleDropPolicy'
+    stateful_default_actions:
+      - 'aws:drop_strict'
+    stateful_rule_groups:
+      - 'ExampleStrictRuleGroup'
+      - 'arn:aws:network-firewall:us-east-1:aws-managed:stateful-rulegroup/BotNetCommandAndControlDomainsStrictOrder'
+
+# Delete an AWS Network Firewall Policy
+- community.aws.networkfirewall_policy:
+    state: absent
+    name: 'ExampleDropPolicy'
 '''
 
 RETURN = '''
