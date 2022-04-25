@@ -21,7 +21,7 @@
     # to ensure it exists when we need it for updating the policies
     - name: create an IAM role that can do nothing
       iam_role:
-        name: '{{ kms_alias }}'
+        name: '{{ kms_key_alias }}'
         state: present
         assume_role_policy_document: '{"Version": "2012-10-17", "Statement": {"Action": "sts:AssumeRole", "Principal": {"Service": "ec2.amazonaws.com"}, "Effect": "Deny"} }'
       register: iam_role_result
@@ -30,11 +30,11 @@
     #   TESTS
     - name: See whether key exists and its current state
       aws_kms_info:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
 
     - name: create a key - check mode
       aws_kms:
-        alias: '{{ kms_alias }}-check'
+        alias: '{{ kms_key_alias }}-check'
         tags:
           Hello: World
         state: present
@@ -44,7 +44,7 @@
 
     - name: find facts about the check mode key
       aws_kms_info:
-        alias: '{{ kms_alias }}-check'
+        alias: '{{ kms_key_alias }}-check'
       register: check_key
 
     - name: ensure that check mode worked as expected
@@ -55,7 +55,7 @@
 
     - name: create a key
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -81,7 +81,7 @@
 
     - name: create a key (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -95,7 +95,7 @@
 
     - name: create a key (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -127,7 +127,7 @@
 
     - name: Enable key rotation - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -142,7 +142,7 @@
 
     - name: Enable key rotation
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -160,7 +160,7 @@
 
     - name: Enable key rotation (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -175,7 +175,7 @@
 
     - name: Enable key rotation (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         tags:
           Hello: World
         state: present
@@ -228,7 +228,7 @@
 
     - name: Update policy (idempotence) - check mode
       aws_kms:
-        alias: "alias/{{ kms_alias }}"
+        alias: "alias/{{ kms_key_alias }}"
         policy: "{{ lookup('template', 'console-policy.j2') }}"
       register: kms_policy_changed
       check_mode: yes
@@ -239,7 +239,7 @@
 
     - name: Update policy (idempotence)
       aws_kms:
-        alias: "alias/{{ kms_alias }}"
+        alias: "alias/{{ kms_key_alias }}"
         policy: "{{ lookup('template', 'console-policy.j2') }}"
       register: kms_policy_changed
 
@@ -252,8 +252,8 @@
     - name: grant user-style access to production secrets
       aws_kms:
         mode: grant
-        alias: "alias/{{ kms_alias }}"
-        role_name: '{{ kms_alias }}'
+        alias: "alias/{{ kms_key_alias }}"
+        role_name: '{{ kms_key_alias }}'
         grant_types: "role,role grant"
       register: new_key
 
@@ -264,12 +264,12 @@
     - name: remove access to production secrets from role
       aws_kms:
         mode: deny
-        alias: "alias/{{ kms_alias }}"
+        alias: "alias/{{ kms_key_alias }}"
         role_arn: "{{ iam_role_result.iam_role.arn }}"
 
     - name: Add grant - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
         purge_tags: yes
@@ -294,7 +294,7 @@
 
     - name: Add grant
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
         purge_tags: yes
@@ -319,7 +319,7 @@
 
     - name: Add grant (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
         purge_tags: yes
@@ -343,7 +343,7 @@
 
     - name: Add grant (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
         purge_tags: yes
@@ -367,7 +367,7 @@
 
     - name: Add a second grant
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         grants:
           - name: another_grant
@@ -390,7 +390,7 @@
 
     - name: Add a second grant again
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         grants:
           - name: another_grant
@@ -413,7 +413,7 @@
 
     - name: Update the grants with purge_grants set
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
         grants:
@@ -437,7 +437,7 @@
 
     - name: Update third grant to change encryption context equals to subset
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         grants:
           - name: third_grant
@@ -464,7 +464,7 @@
 
     - name: Tag encryption key
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         tags:
           tag_one: tag_one
@@ -481,7 +481,7 @@
 
     - name: Modify tags - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_tags: yes
         tags:
@@ -496,7 +496,7 @@
 
     - name: Modify tags
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_tags: yes
         tags:
@@ -516,7 +516,7 @@
 
     - name: Modify tags (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_tags: yes
         tags:
@@ -531,7 +531,7 @@
 
     - name: Modify tags (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         purge_tags: yes
         tags:
@@ -552,7 +552,7 @@
 
     - name: Update description - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
       register: key
@@ -564,7 +564,7 @@
 
     - name: Update description
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
       register: key
@@ -581,7 +581,7 @@
 
     - name: Update description (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
       register: key
@@ -593,7 +593,7 @@
 
     - name: Update description (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
       register: key
@@ -612,7 +612,7 @@
 
     - name: Disable key - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
         enabled: no
@@ -625,7 +625,7 @@
 
     - name: Disable key
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
         enabled: no
@@ -640,7 +640,7 @@
 
     - name: Disable key (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
         enabled: no
@@ -653,7 +653,7 @@
 
     - name: Disable key (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
         description: test key for testing
         enabled: no
@@ -669,13 +669,13 @@
 
     - name: update policy to remove access to key rotation status
       aws_kms:
-        alias: 'alias/{{ kms_alias }}'
+        alias: 'alias/{{ kms_key_alias }}'
         policy: "{{ lookup('template', 'console-policy-no-key-rotation.j2') }}"
       register: key
 
     - name: find facts about the key without key rotation status
       aws_kms_info:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
       register: updated_key
 
     - name: assert that key rotation status is set to None
@@ -697,7 +697,7 @@
           - "'kms_keys' in info_tag_filtered"
           - info_tag_filtered.kms_keys | length == 1
           - "'aliases' in key"
-          - kms_alias in key.aliases
+          - kms_key_alias in key.aliases
           - "'aws_account_id' in key"
           - key.aws_account_id == aws_caller_info.account
           - "'creation_date' in key"
@@ -735,7 +735,7 @@
 
     - name: Delete key - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: absent
       register: key
       check_mode: yes
@@ -746,7 +746,7 @@
 
     - name: Delete key
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: absent
       register: key
 
@@ -764,7 +764,7 @@
 
     - name: Delete key (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: absent
       register: key
       check_mode: yes
@@ -775,7 +775,7 @@
 
     - name: Delete key (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: absent
       register: key
 
@@ -788,7 +788,7 @@
 
     - name: Cancel key deletion - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
       register: key
       check_mode: yes
@@ -799,7 +799,7 @@
 
     - name: Cancel key deletion
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
       register: key
 
@@ -810,7 +810,7 @@
 
     - name: Cancel key deletion (idempotence) - check mode
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
       register: key
       check_mode: yes
@@ -821,7 +821,7 @@
 
     - name: Cancel key deletion (idempotence)
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: present
       register: key
 
@@ -834,7 +834,7 @@
 
     - name: delete the key with a specific deletion window
       aws_kms:
-        alias: '{{ kms_alias }}'
+        alias: '{{ kms_key_alias }}'
         state: absent
         pending_window: 7
       register: delete_kms
@@ -855,7 +855,7 @@
     # test different key usage and specs
     - name: create kms key with different specs
       aws_kms:
-        alias: '{{ kms_alias }}-diff-spec-usage'
+        alias: '{{ kms_key_alias }}-diff-spec-usage'
         purge_grants: yes
         key_spec: ECC_NIST_P256
         key_usage: SIGN_VERIFY
@@ -876,34 +876,19 @@
   always:
     # ============================================================
     #   CLEAN-UP
-    - name: finish off by deleting key
+    - name: finish off by deleting keys
       aws_kms:
         state: absent
-        alias: '{{ kms_alias }}'
+        alias: "{{ item }}"
         pending_window: 7
-      register: destroy_result
       ignore_errors: True
-
-    - name: delete kms key with different specs
-      aws_kms:
-        state: absent
-        alias: '{{ kms_alias }}-diff-spec-usage'
-        pending_window: 7
-      register: destroy_result
-      ignore_errors: True
-
-    # Should never exist, but just in case
-    - name: finish off by deleting key
-      aws_kms:
-        state: absent
-        alias: '{{ kms_alias }}-check'
-        pending_window: 7
-      register: destroy_result
-      ignore_errors: True
+      loop:
+        - "{{ kms_key_alias }}"
+        - "{{ kms_key_alias }}-diff-spec-usage"
+        - "{{ kms_key_alias }}-check"
 
     - name: remove the IAM role
       iam_role:
-        name: '{{ kms_alias }}'
+        name: '{{ kms_key_alias }}'
         state: absent
-      register: iam_role_result
       ignore_errors: True

@@ -1,2 +1,2 @@
 ---
-kms_alias: 'ansible-test-{{ resource_prefix }}-kms'
+kms_key_alias: 'ansible-test-{{ resource_prefix }}-kms'

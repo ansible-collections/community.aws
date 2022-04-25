@@ -318,7 +318,7 @@ aliases:
     - aws/acm
     - aws/ebs
 policies:
-  description: list of policy documents for the keys. Empty when access is denied even if there are policies.
+  description: list of policy documents for the key. Empty when access is denied even if there are policies.
   type: list
   returned: always
   elements: str
@@ -352,8 +352,8 @@ policies:
       - "kms:List*"
       - "kms:RevokeGrant"
       Resource: "*"
-policies_dict:
-  description: list of policy documents for the keys. Empty when access is denied even if there are policies.
+key_policies:
+  description: list of policy documents for the key. Empty when access is denied even if there are policies.
   type: list
   returned: always
   elements: dict
@@ -622,7 +622,7 @@ def get_key_details(connection, module, key_id):
     tags = get_kms_tags(connection, module, key_id)
     result['tags'] = boto3_tag_list_to_ansible_dict(tags, 'TagKey', 'TagValue')
     result['policies'] = get_kms_policies(connection, module, key_id)
-    result['policies_dict'] = [json.loads(policy) for policy in result['policies']]
+    result['key_policies'] = [json.loads(policy) for policy in result['policies']]
     return result
 
 
@@ -904,7 +904,7 @@ def update_key(connection, module, key):
     changed |= update_grants(connection, module, key, module.params.get('grants'), module.params.get('purge_grants'))
     changed |= update_key_rotation(connection, module, key, module.params.get('enable_key_rotation'))
 
-    # Pause to wait for updates
+    # Pause to wait for updates to propagate
     if changed and not module.check_mode:
         sleep(5)
 
@@ -1149,8 +1149,8 @@ def main():
 
     kms = module.client('kms')
 
-    module.deprecate("The 'policies' return key is deprecated and will be replaced by 'policies_dict'. Both values are returned for now.",
-                     date='2022-12-01', collection_name='community.aws')
+    module.deprecate("The 'policies' return key is deprecated and will be replaced by 'key_policies'. Both values are returned for now.",
+                     date='2024-05-01', collection_name='community.aws')
 
     key_metadata = fetch_key_metadata(kms, module, module.params.get('key_id'), module.params.get('alias'))
     # We can't create keys with a specific ID, if we can't access the key we'll have to fail
