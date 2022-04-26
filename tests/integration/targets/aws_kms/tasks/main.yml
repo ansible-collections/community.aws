@@ -28,6 +28,11 @@
 
     # ============================================================
     #   TESTS
+    # Note - there are waits placed after each action to account for inconsistencies in what
+    #        is being returned when fetching key metadata.
+    # Combinations of manual waiters, checking expecting key values to actual key value, and static sleeps
+    #        have all been tried, but none of those available options have solved the problem.
+
     - name: See whether key exists and its current state
       aws_kms_info:
         alias: '{{ kms_key_alias }}'
@@ -78,6 +83,10 @@
           - create_kms.enable_key_rotation == false
           - create_kms.key_usage == 'ENCRYPT_DECRYPT'
           - create_kms.customer_master_key_spec == 'SYMMETRIC_DEFAULT'
+
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
 
     - name: create a key (idempotence) - check mode
       aws_kms:
@@ -158,6 +167,10 @@
           - create_kms.tags['Hello'] == 'World'
           - create_kms.enable_key_rotation == true
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Enable key rotation (idempotence) - check mode
       aws_kms:
         alias: '{{ kms_key_alias }}'
@@ -226,6 +239,10 @@
         that:
           - kms_policy_changed is changed
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Update policy (idempotence) - check mode
       aws_kms:
         alias: "alias/{{ kms_key_alias }}"
@@ -267,12 +284,15 @@
         alias: "alias/{{ kms_key_alias }}"
         role_arn: "{{ iam_role_result.iam_role.arn }}"
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Add grant - check mode
       aws_kms:
         alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
-        purge_tags: yes
         grants:
           - name: test_grant
             grantee_principal: "{{ iam_role_result.iam_role.arn }}"
@@ -297,7 +317,6 @@
         alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
-        purge_tags: yes
         grants:
           - name: test_grant
             grantee_principal: "{{ iam_role_result.iam_role.arn }}"
@@ -317,12 +336,15 @@
           - grant_one.changed
           - grant_one.grants | length == 1
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Add grant (idempotence) - check mode
       aws_kms:
         alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
-        purge_tags: yes
         grants:
           - name: test_grant
             grantee_principal: "{{ iam_role_result.iam_role.arn }}"
@@ -346,7 +368,6 @@
         alias: '{{ kms_key_alias }}'
         state: present
         purge_grants: yes
-        purge_tags: yes
         grants:
           - name: test_grant
             grantee_principal: "{{ iam_role_result.iam_role.arn }}"
@@ -387,6 +408,10 @@
         that:
           - grant_two.changed
           - grant_two.grants|length == 2
+
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
 
     - name: Add a second grant again
       aws_kms:
@@ -514,6 +539,10 @@
           - "'Tag Three' in key.tags"
           - "key.tags['Tag Three'] == resource_prefix"
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Modify tags (idempotence) - check mode
       aws_kms:
         alias: '{{ kms_key_alias }}'
@@ -579,6 +608,10 @@
           - "'Tag Three' in key.tags"
           - "key.tags['Tag Three'] == resource_prefix"
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Update description (idempotence) - check mode
       aws_kms:
         alias: '{{ kms_key_alias }}'
@@ -638,6 +671,10 @@
           - key.key_state == "Disabled"
           - not key.enabled
 
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
+
     - name: Disable key (idempotence) - check mode
       aws_kms:
         alias: '{{ kms_key_alias }}'
@@ -673,15 +710,15 @@
         policy: "{{ lookup('template', 'console-policy-no-key-rotation.j2') }}"
       register: key
 
-    - name: find facts about the key without key rotation status
-      aws_kms_info:
-        alias: '{{ kms_key_alias }}'
-      register: updated_key
-
-    - name: assert that key rotation status is set to None
-      assert:
+    - assert:
         that:
+          - key.changed
+          - key.key_state == "Enabled"
           - key.enable_key_rotation is none
+
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
 
     - name: Perform a search for key by tag
       aws_kms_info:
@@ -691,45 +728,45 @@
 
     - name: Verify all expected attributes
       vars:
-        key: '{{ info_tag_filtered.kms_keys[0] }}'
+        tagged_key: '{{ info_tag_filtered.kms_keys[0] }}'
       assert:
         that:
-          - "'kms_keys' in info_tag_filtered"
           - info_tag_filtered.kms_keys | length == 1
-          - "'aliases' in key"
-          - kms_key_alias in key.aliases
-          - "'aws_account_id' in key"
-          - key.aws_account_id == aws_caller_info.account
-          - "'creation_date' in key"
-          - "'customer_master_key_spec' in key"
-          - key.customer_master_key_spec == 'SYMMETRIC_DEFAULT'
-          - "'description' in key"
-          - key.description == 'test key for testing'
-          - "'enable_key_rotation' in key"
-          - "'enabled' in key"
-          - key.enabled
-          - "'encryption_algorithms' in key"
-          - "'SYMMETRIC_DEFAULT' in key.encryption_algorithms"
-          - "'grants' in key"
-          - "'key_arn' in key"
-          - key.key_arn == kms_key_arn
-          - "'key_id' in key"
-          - key.key_id == kms_key_id
-          - "'key_manager' in key"
-          - key.key_manager == 'CUSTOMER'
-          - "'key_state' in key"
-          - key.key_state == 'Enabled'
-          - "'key_usage' in key"
-          - key.key_usage == 'ENCRYPT_DECRYPT'
-          - "'origin' in key"
-          - key.origin == "AWS_KMS"
-          - "'policies' in key"
-          - key.policies | length == 1
-          - "'tags' in key"
-          - "'Tag Three' in key.tags"
-          - key.tags['Tag Three'] == resource_prefix
-          - "'tag_two' in key.tags"
-          - key.tags['tag_two'] == 'tag_two_updated'
+          - "'aliases' in tagged_key"
+          - kms_key_alias in tagged_key.aliases
+          - "'aws_account_id' in tagged_key"
+          - tagged_key.aws_account_id == aws_caller_info.account
+          - "'creation_date' in tagged_key"
+          - "'customer_master_key_spec' in tagged_key"
+          - tagged_key.customer_master_key_spec == 'SYMMETRIC_DEFAULT'
+          - "'description' in tagged_key"
+          - tagged_key.description == 'test key for testing'
+          - "'enable_key_rotation' in tagged_key"
+          - tagged_key.enable_key_rotation is none
+          - "'enabled' in tagged_key"
+          - tagged_key.enabled
+          - "'encryption_algorithms' in tagged_key"
+          - "'SYMMETRIC_DEFAULT' in tagged_key.encryption_algorithms"
+          - "'grants' in tagged_key"
+          - "'key_arn' in tagged_key"
+          - tagged_key.key_arn == kms_key_arn
+          - "'key_id' in tagged_key"
+          - tagged_key.key_id == kms_key_id
+          - "'key_manager' in tagged_key"
+          - tagged_key.key_manager == 'CUSTOMER'
+          - "'key_state' in tagged_key"
+          - tagged_key.key_state == 'Enabled'
+          - "'key_usage' in tagged_key"
+          - tagged_key.key_usage == 'ENCRYPT_DECRYPT'
+          - "'origin' in tagged_key"
+          - tagged_key.origin == "AWS_KMS"
+          - "'policies' in tagged_key"
+          - tagged_key.policies | length == 1
+          - "'tags' in tagged_key"
+          - "'Tag Three' in tagged_key.tags"
+          - tagged_key.tags['Tag Three'] == resource_prefix
+          - "'tag_two' in tagged_key.tags"
+          - tagged_key.tags['tag_two'] == 'tag_two_updated'
 
     # ------------------------------------------------------------------------------------------
 
@@ -749,6 +786,10 @@
         alias: '{{ kms_key_alias }}'
         state: absent
       register: key
+
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
 
     - name: Assert that state is pending deletion
       vars:
@@ -807,6 +848,10 @@
         that:
           - key.changed
           - key.key_state != "PendingDeletion"
+
+    - name: Sleep to wait for updates to propagate
+      wait_for:
+        timeout: 10
 
     - name: Cancel key deletion (idempotence) - check mode
       aws_kms:

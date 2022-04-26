@@ -199,6 +199,12 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 
+
+notes:
+  - There are known inconsistencies in the amount of time required for updates of KMS keys to be fully reflected on AWS.
+    This can cause issues when running duplicate tasks in succession or using the aws_kms_info module to fetch key metadata
+    shortly after modifying keys.
+    For this reason, it is recommended to use the return data from this module (aws_kms) to fetch a key's metadata.
 '''
 
 EXAMPLES = r'''
@@ -308,6 +314,11 @@ description:
 enabled:
   description: Whether the key is enabled. True if C(KeyState) is true.
   type: str
+  returned: always
+  sample: false
+enable_key_rotation:
+  description: Whether the automatically key rotation every year is enabled. Returns None if key rotation status can't be determined.
+  type: bool
   returned: always
   sample: false
 aliases:
@@ -487,7 +498,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_li
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
-from time import sleep
 
 
 @AWSRetry.jittered_backoff(retries=5, delay=5, backoff=2.0)
@@ -904,10 +914,6 @@ def update_key(connection, module, key):
     changed |= update_grants(connection, module, key, module.params.get('grants'), module.params.get('purge_grants'))
     changed |= update_key_rotation(connection, module, key, module.params.get('enable_key_rotation'))
 
-    # Pause to wait for updates to propagate
-    if changed and not module.check_mode:
-        sleep(5)
-
     # make results consistent with kms_facts before returning
     result = get_key_details(connection, module, key['key_arn'])
     result['changed'] = changed
@@ -1075,6 +1081,11 @@ def canonicalize_alias_name(alias):
 
 
 def fetch_key_metadata(connection, module, key_id, alias):
+    # Note - fetching a key's metadata is very inconsistent shortly after any sort of update to a key has occurred.
+    # Combinations of manual waiters, checking expecting key values to actual key value, and static sleeps
+    #        have all been exhausted, but none of those available options have solved the problem.
+    # Integration tests will wait for 10 seconds to combat this issue.
+    # See https://github.com/ansible-collections/community.aws/pull/1052.
 
     alias = canonicalize_alias_name(module.params.get('alias'))
 
