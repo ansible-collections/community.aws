@@ -1,0 +1,4 @@
+minor_changes:
+  - iam_policy - update broken examples and add RETURN section to documentation; add extra integration tests for idempotency check mode runs (https://github.com/ansible-collections/community.aws/pull/1093).
+bugfixes:
+  - iam_policy - require one of `policy_document` and `policy_json` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
