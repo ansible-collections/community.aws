@@ -1,0 +1,3 @@
+minor_changes:
+  - aws_kms - fix some bugs in integration tests and add check mode support for key rotation as well as document issues with time taken for requested changes to be reflected on AWS (https://github.com/ansible-collections/community.aws/pull/1052).
+  - aws_kms - add extra key/value pair to return data (key_policies) to return each policy as a dictionary rather than json string (https://github.com/ansible-collections/community.aws/pull/1052).
