@@ -84,8 +84,8 @@ options:
     version_added: 2.1.0
   wait:
     description:
-      - When I(wait=True) the module will wait for up to I(wait_timeout) seconds for
-        different IAM user actions to be reflected in AWS (user creation/deletion, login profile update, etc).
+      - When I(wait=True) the module will wait for up to I(wait_timeout) seconds
+        for IAM user creation before returning.
     default: True
     type: bool
     version_added: 2.2.0
