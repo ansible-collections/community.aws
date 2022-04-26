@@ -317,7 +317,7 @@ enabled:
   returned: always
   sample: false
 enable_key_rotation:
-  description: Whether the automatically key rotation every year is enabled. Returns None if key rotation status can't be determined.
+  description: Whether the automatic annual key rotation is enabled. Returns None if key rotation status can't be determined.
   type: bool
   returned: always
   sample: false
