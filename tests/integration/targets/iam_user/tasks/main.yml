@@ -369,13 +369,17 @@
       that:
         - iam_user_update is changed
 
+  # flakey, there is no waiter for login profiles
+  # Login Profile for User ansible-user-c cannot be modified while login profile is being created.
   - name: update IAM password
     iam_user:
       name: "{{ test_user3 }}"
       password: "{{ test_new_password }}"
       state: present
-      wait: False
     register: iam_user_update
+    until: iam_user_update.failed == false
+    delay: 3
+    retries: 5
 
   - assert:
       that:

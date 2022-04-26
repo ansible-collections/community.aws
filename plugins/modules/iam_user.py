@@ -187,7 +187,6 @@ from ansible.module_utils.common.dict_transformations import camel_dict_to_snake
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 
@@ -258,17 +257,11 @@ def create_or_update_login_profile(connection, module):
     retval = {}
 
     try:
-        retval = connection.update_login_profile(aws_retry=True, **user_params)
-        if module.params.get('wait'):
-            # Wait for login profile to finish updating
-            connection.update_login_profile(aws_retry=True, **user_params)
+        retval = connection.update_login_profile(**user_params)
     except is_boto3_error_code('NoSuchEntity'):
         # Login profile does not yet exist - create it
         try:
-            retval = connection.create_login_profile(aws_retry=True, **user_params)
-            if module.params.get('wait'):
-                # Wait for login profile to finish creating
-                connection.update_login_profile(aws_retry=True, **user_params)
+            retval = connection.create_login_profile(**user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Unable to create user login profile")
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
@@ -295,12 +288,7 @@ def delete_login_profile(connection, module):
 
     if not module.check_mode:
         try:
-            connection.delete_login_profile(**user_params, aws_retry=True)
-            if module.params.get('wait'):
-                # Wait for login profile to be completely removed
-                connection.delete_login_profile(**user_params, aws_retry=True)
-        except is_boto3_error_code('NoSuchEntity'):
-            pass
+            connection.delete_login_profile(**user_params)
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Unable to delete user login profile")
 
@@ -587,11 +575,9 @@ def main():
     )
 
     module.deprecate("The 'iam_user' return key is deprecated and will be replaced by 'user'. Both values are returned for now.",
-                     date='2022-12-01', collection_name='community.aws')
+                     date='2024-05-01', collection_name='community.aws')
 
-    # Catch EntityTemporarilyUnmodifiable exception when modifying user's login profile
-    retry_decorator = AWSRetry.jittered_backoff(delay=2, catch_extra_error_codes=['EntityTemporarilyUnmodifiable'])
-    connection = module.client('iam', retry_decorator=retry_decorator)
+    connection = module.client('iam')
 
     state = module.params.get("state")
 
