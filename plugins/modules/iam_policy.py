@@ -313,7 +313,7 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         mutually_exclusive=mutually_exclusive,
-        required_if = required_if,
+        required_if=required_if,
         supports_check_mode=True
     )
 
