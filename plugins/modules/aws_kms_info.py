@@ -93,7 +93,9 @@ kms_keys:
       returned: always
       sample: arn:aws:kms:ap-southeast-2:123456789012:key/abcd1234-abcd-1234-5678-ef1234567890
     key_state:
-      description: The state of the key
+      description:
+        - The state of the key
+        - Will be one of ['Creating', 'Enabled', 'Disabled', 'PendingDeletion', 'PendingImport', 'PendingReplicaDeletion', 'Unavailable', 'Updating']
       type: str
       returned: always
       sample: PendingDeletion
@@ -103,8 +105,7 @@ kms_keys:
       returned: always
       sample: ENCRYPT_DECRYPT
     origin:
-      description:
-        The source of the key's key material. When this value is C(AWS_KMS),
+      description: The source of the key's key material. When this value is C(AWS_KMS),
         AWS KMS created the key material. When this value is C(EXTERNAL), the
         key material was imported or the CMK lacks key material.
       type: str
@@ -116,9 +117,14 @@ kms_keys:
       returned: always
       sample: 1234567890123
     creation_date:
-      description: Date of creation of the key
+      description: Date and time of creation of the key
       type: str
       returned: always
+      sample: "2017-04-18T15:12:08.551000+10:00"
+    deletion_date:
+      description: Date and time after which KMS deletes this KMS key
+      type: str
+      returned: when key_state is PendingDeletion
       sample: "2017-04-18T15:12:08.551000+10:00"
     description:
       description: Description of the key
@@ -126,12 +132,12 @@ kms_keys:
       returned: always
       sample: "My Key for Protecting important stuff"
     enabled:
-      description: Whether the key is enabled. True if C(KeyState) is true.
-      type: str
+      description: Whether the key is enabled. True if I(key_state) is C(Enabled).
+      type: bool
       returned: always
       sample: false
     enable_key_rotation:
-      description: Whether the automatically key rotation every year is enabled. Returns None if key rotation status can't be determined.
+      description: Whether the automatic annual key rotation is enabled. Returns None if key rotation status can't be determined.
       type: bool
       returned: always
       sample: false
@@ -222,7 +228,8 @@ kms_keys:
       version_added: 3.3.0
     grants:
       description: list of grants associated with a key
-      type: complex
+      type: list
+      elements: dict
       returned: always
       contains:
         constraints:
@@ -232,7 +239,7 @@ kms_keys:
           returned: always
           sample:
             encryption_context_equals:
-               "aws:lambda:_function_arn": "arn:aws:lambda:ap-southeast-2:012345678912:function:xyz"
+              "aws:lambda:_function_arn": "arn:aws:lambda:ap-southeast-2:012345678912:function:xyz"
         creation_date:
           description: Date of creation of the grant
           type: str

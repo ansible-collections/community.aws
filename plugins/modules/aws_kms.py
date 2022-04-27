@@ -280,7 +280,9 @@ key_arn:
   returned: always
   sample: arn:aws:kms:ap-southeast-2:123456789012:key/abcd1234-abcd-1234-5678-ef1234567890
 key_state:
-  description: The state of the key
+  description:
+    - The state of the key
+    - Will be one of ['Creating', 'Enabled', 'Disabled', 'PendingDeletion', 'PendingImport', 'PendingReplicaDeletion', 'Unavailable', 'Updating']
   type: str
   returned: always
   sample: PendingDeletion
@@ -302,9 +304,14 @@ aws_account_id:
   returned: always
   sample: 1234567890123
 creation_date:
-  description: Date of creation of the key
+  description: Date and time of creation of the key
   type: str
   returned: always
+  sample: "2017-04-18T15:12:08.551000+10:00"
+deletion_date:
+  description: Date and time after which KMS deletes this KMS key
+  type: str
+  returned: when key_state is PendingDeletion
   sample: "2017-04-18T15:12:08.551000+10:00"
 description:
   description: Description of the key
@@ -312,8 +319,8 @@ description:
   returned: always
   sample: "My Key for Protecting important stuff"
 enabled:
-  description: Whether the key is enabled. True if C(KeyState) is true.
-  type: str
+  description: Whether the key is enabled. True if I(key_state) is C(Enabled).
+  type: bool
   returned: always
   sample: false
 enable_key_rotation:
@@ -340,7 +347,7 @@ policies:
     - Sid: "Allow access through EBS for all principals in the account that are authorized to use EBS"
       Effect: "Allow"
       Principal:
-      AWS: "*"
+        AWS: "*"
       Action:
       - "kms:Encrypt"
       - "kms:Decrypt"
@@ -356,7 +363,7 @@ policies:
     - Sid: "Allow direct access to key metadata to the account"
       Effect: "Allow"
       Principal:
-      AWS: "arn:aws:iam::111111111111:root"
+        AWS: "arn:aws:iam::111111111111:root"
       Action:
       - "kms:Describe*"
       - "kms:Get*"
@@ -400,7 +407,7 @@ key_policies:
       Resource: "*"
   version_added: 3.3.0
 tags:
-  description: dictionary of tags applied to the key
+  description: dictionary of tags applied to the key. Empty when access is denied even if there are tags.
   type: dict
   returned: always
   sample:
@@ -408,7 +415,8 @@ tags:
     Purpose: protecting_stuff
 grants:
   description: list of grants associated with a key
-  type: complex
+  type: list
+  elements: dict
   returned: always
   contains:
     constraints:
