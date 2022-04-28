@@ -160,7 +160,7 @@ class NFRuleGroupBoto3Mixin(NetworkFirewallBoto3Mixin):
             self._update_token = update_token
         return result.get('RuleGroupResponse', None)
 
-    @Boto3Mixin.aws_error_handler('update rule group')
+    @Boto3Mixin.aws_error_handler('delete rule group')
     def _delete_rule_group(self, **params):
         try:
             result = self.client.delete_rule_group(aws_retry=True, **params)
@@ -227,7 +227,7 @@ class NFPolicyBoto3Mixin(NetworkFirewallBoto3Mixin):
             self._update_token = update_token
         return result.get('FirewallPolicyResponse', None)
 
-    @Boto3Mixin.aws_error_handler('update firewall policy')
+    @Boto3Mixin.aws_error_handler('delete firewall policy')
     def _delete_policy(self, **params):
         try:
             result = self.client.delete_firewall_policy(aws_retry=True, **params)
