@@ -945,9 +945,6 @@ def get_final_snapshot(client, module, snapshot_identifier):
 def get_parameters(client, module, parameters, method_name):
     if method_name == 'restore_db_instance_to_point_in_time':
         parameters['TargetDBInstanceIdentifier'] = module.params['db_instance_identifier']
-    elif method_name == 'restore_db_instance_from_db_snapshot':
-        parameters['DBInstanceIdentifier'] = module.params['db_instance_identifier']
-        parameters['DBSnapshotIdentifier'] = module.params['db_snapshot_identifier']
 
     required_options = get_boto3_client_method_parameters(client, method_name, required=True)
     if any(parameters.get(k) is None for k in required_options):
