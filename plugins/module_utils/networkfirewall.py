@@ -71,6 +71,7 @@ class NetworkFirewallWaiterFactory(BaseWaiterFactory):
                 operation='DescribeRuleGroup',
                 delay=5, maxAttempts=120,
                 acceptors=[
+                    dict(state='failure', matcher='path', expected='DELETING', argument='RuleGroupResponse.RuleGroupStatus'),
                     dict(state='success', matcher='path', expected='ACTIVE', argument='RuleGroupResponse.RuleGroupStatus'),
                 ]
             ),
@@ -86,6 +87,7 @@ class NetworkFirewallWaiterFactory(BaseWaiterFactory):
                 operation='DescribeFirewallPolicy',
                 delay=5, maxAttempts=120,
                 acceptors=[
+                    dict(state='failure', matcher='path', expected='DELETING', argument='FirewallPolicyResponse.FirewallPolicyStatus'),
                     dict(state='success', matcher='path', expected='ACTIVE', argument='FirewallPolicyResponse.FirewallPolicyStatus'),
                 ]
             ),
