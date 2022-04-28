@@ -1,2 +1,0 @@
-minor_changes:
-  - rds_instance_snapshot - add check mode support and integration tests (https://github.com/ansible-collections/community.aws/pull/1078).
