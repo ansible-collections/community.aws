@@ -282,7 +282,8 @@ key_arn:
 key_state:
   description:
     - The state of the key
-    - Will be one of ['Creating', 'Enabled', 'Disabled', 'PendingDeletion', 'PendingImport', 'PendingReplicaDeletion', 'Unavailable', 'Updating']
+    - Will be one of C('Creating'), C('Enabled'), C('Disabled'), C('PendingDeletion'), C('PendingImport'),
+      C('PendingReplicaDeletion'), C('Unavailable'), or C('Updating')
   type: str
   returned: always
   sample: PendingDeletion
