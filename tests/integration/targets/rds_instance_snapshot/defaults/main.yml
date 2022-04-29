@@ -15,6 +15,9 @@ mariadb_engine_version: 10.3.31
 snapshot_id: '{{ instance_id }}-snapshot'
 =======
 allocated_storage: 20
+<<<<<<< HEAD
 src_region: us-east-1
 dest_region: us-east-2
 >>>>>>> 1445d55 (be able to copy snapshot from a different region)
+=======
+>>>>>>> fbd8218 (copy snapshot within same region for CI runs)
