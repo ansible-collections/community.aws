@@ -49,21 +49,21 @@ options:
   delete_protection:
     description:
       - When I(delete_protection=True), the firewall is protected from deletion.
-      - Defaults to C(true) when not provided on creation.
+      - Defaults to C(false) when not provided on creation.
     type: bool
     required: false
   policy_change_protection:
     description:
       - When I(policy_change_protection=True), the firewall is protected from
         changes to which policy is attached to the firewall.
-      - Defaults to C(true) when not provided on creation.
+      - Defaults to C(false) when not provided on creation.
     type: bool
     required: false
   subnet_change_protection:
     description:
       - When I(subnet_change_protection=True), the firewall is protected from
         changes to which subnets is attached to the firewall.
-      - Defaults to C(true) when not provided on creation.
+      - Defaults to C(false) when not provided on creation.
     type: bool
     required: false
   purge_tags:
