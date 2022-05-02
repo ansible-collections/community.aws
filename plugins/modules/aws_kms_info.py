@@ -127,6 +127,7 @@ kms_keys:
       type: str
       returned: when key_state is PendingDeletion
       sample: "2017-04-18T15:12:08.551000+10:00"
+      version_added: 3.3.0
     description:
       description: Description of the key
       type: str
