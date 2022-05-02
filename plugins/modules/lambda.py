@@ -107,6 +107,11 @@ options:
     description:
       - Tag dict to apply to the function.
     type: dict
+  kms_key_arn:
+    description:
+      - The KMS key ARN used to encrypt the function's environment variables.
+    type: str
+    version_added: 3.3.0
 author:
     - 'Steyn Huizinga (@steynovich)'
 extends_documentation_fragment:
@@ -350,6 +355,7 @@ def main():
         vpc_security_group_ids=dict(type='list', elements='str'),
         environment_variables=dict(type='dict'),
         dead_letter_arn=dict(),
+        kms_key_arn=dict(type='str', no_log=False),
         tracing_mode=dict(choices=['Active', 'PassThrough']),
         tags=dict(type='dict'),
     )
@@ -387,6 +393,7 @@ def main():
     dead_letter_arn = module.params.get('dead_letter_arn')
     tracing_mode = module.params.get('tracing_mode')
     tags = module.params.get('tags')
+    kms_key_arn = module.params.get('kms_key_arn')
 
     check_mode = module.check_mode
     changed = False
@@ -442,6 +449,8 @@ def main():
                     func_kwargs.update({'DeadLetterConfig': {'TargetArn': dead_letter_arn}})
         if tracing_mode and (current_config.get('TracingConfig', {}).get('Mode', 'PassThrough') != tracing_mode):
             func_kwargs.update({'TracingConfig': {'Mode': tracing_mode}})
+        if kms_key_arn:
+            func_kwargs.update({'KMSKeyArn': kms_key_arn})
 
         # If VPC configuration is desired
         if vpc_subnet_ids:
@@ -572,6 +581,9 @@ def main():
 
         if tracing_mode:
             func_kwargs.update({'TracingConfig': {'Mode': tracing_mode}})
+
+        if kms_key_arn:
+            func_kwargs.update({'KMSKeyArn': kms_key_arn})
 
         # If VPC configuration is given
         if vpc_subnet_ids:
