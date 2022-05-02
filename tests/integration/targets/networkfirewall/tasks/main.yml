@@ -1,0 +1,35 @@
+---
+- name: 'networkfirewall integration tests'
+  collections:
+    - amazon.aws
+    - community.aws
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+
+  block:
+    # Fetch some info about the account so we can build ARNs
+    - aws_caller_info: {}
+      register: caller_info
+    - name: 'Generate the ARN pattern to search for'
+      vars:
+        _caller_info: '{{ caller_info.arn.split(":") }}'
+        _base_arn: 'arn:{{_caller_info[1]}}:network-firewall:{{aws_region}}'
+      set_fact:
+        account_arn: '{{_base_arn}}:{{_caller_info[4]}}:firewall/'
+
+    # Prepares various resources
+    - include_tasks: 'setup.yml'
+
+    # Test manipulating multiple parameters at the same time
+    - include_tasks: 'complex.yml'
+
+    # Test manipulating one parameter at a time
+    - include_tasks: 'simple.yml'
+
+  always:  # []
+    # Cleanup after ourselves
+    - include_tasks: 'cleanup.yml'
