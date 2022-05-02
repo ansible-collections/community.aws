@@ -1,0 +1,2 @@
+bugfixes:
+  - lambda - fix check mode on creation (https://github.com/ansible-collections/community.aws/pull/1108).
