@@ -578,12 +578,15 @@ def main():
             func_kwargs.update({'VpcConfig': {'SubnetIds': vpc_subnet_ids,
                                               'SecurityGroupIds': vpc_security_group_ids}})
 
+        # Function would have been created if not check mode
+        if check_mode:
+            module.exit_json(changed=True)
+
         # Finally try to create function
         current_version = None
         try:
-            if not check_mode:
-                response = client.create_function(aws_retry=True, **func_kwargs)
-                current_version = response['Version']
+            response = client.create_function(aws_retry=True, **func_kwargs)
+            current_version = response['Version']
             changed = True
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg="Trying to create function")
