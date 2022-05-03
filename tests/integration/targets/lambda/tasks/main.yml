@@ -362,6 +362,8 @@
       that:
       - result is not failed
       - result.changed == True
+      - result.configuration.environment.variables.extra_message == "I think you are great!!"
+
   - name: test lambda works
     execute_lambda:
       name: '{{lambda_function_name}}'
