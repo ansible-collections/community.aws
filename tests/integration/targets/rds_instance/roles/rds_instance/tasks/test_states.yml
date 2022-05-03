@@ -21,6 +21,7 @@
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
+        deletion_protection: True
         tags:
           Name: "{{ instance_id }}"
           Created_by: Ansible rds_instance tests
@@ -40,6 +41,7 @@
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
+        deletion_protection: True
         tags:
           Name: "{{ instance_id }}"
           Created_by: Ansible rds_instance tests
@@ -52,6 +54,7 @@
           - "result.tags | length == 2"
           - "result.tags.Name == '{{ instance_id }}'"
           - "result.tags.Created_by == 'Ansible rds_instance tests'"
+          -  result.deletion_protection == True
 
     - name: Create a mariadb instance (idempotence) - check_mode
       rds_instance:
@@ -62,6 +65,7 @@
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
+        deletion_protection: True
         tags:
           Name: "{{ instance_id }}"
           Created_by: Ansible rds_instance tests
@@ -81,6 +85,7 @@
         password: "{{ password }}"
         db_instance_class: "{{ db_instance_class }}"
         allocated_storage: "{{ allocated_storage }}"
+        deletion_protection: True
         tags:
           Name: "{{ instance_id }}"
           Created_by: Ansible rds_instance tests
@@ -93,6 +98,7 @@
           - "result.tags | length == 2"
           - "result.tags.Name == '{{ instance_id }}'"
           - "result.tags.Created_by == 'Ansible rds_instance tests'"
+          -  result.deletion_protection == True
 
     # ------------------------------------------------------------------------------------------
     # Test stopping / rebooting instances
@@ -205,6 +211,32 @@
     - assert:
         that:
           - not result.changed
+
+    # ------------------------------------------------------------------------------------------
+    # Test deletion protection
+
+    - name: Attempt to delete DB instance with deletion protection (should fail)
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: absent
+        skip_final_snapshot: True
+      register: result
+      ignore_errors: yes
+
+    - assert:
+        that:
+          - result.failed
+
+    - name: Turn off deletion protection
+      rds_instance:
+        id: "{{ instance_id }}"
+        deletion_protection: false
+      register: result
+
+    - assert:
+        that:
+          - result.changed
+          - result.deletion_protection == False
 
   always:
     - name: Remove DB instance
