@@ -10,10 +10,10 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster_snapshot
-version_added: 3.2.0
-short_description: Manage Amazon RDS snapshots of DB clusters.
+version_added: 3.3.0
+short_description: Manage Amazon RDS snapshots of DB clusters
 description:
-     - Creates or deletes RDS snapshots of DB clusters.
+  - Creates or deletes RDS snapshots of DB clusters.
 options:
   state:
     description:
@@ -33,7 +33,7 @@ options:
   db_cluster_identifier:
     description:
       - The identifier of the DB cluster to create a snapshot for.
-      - Required when state is present.
+      - Required when I(state=present).
     aliases:
       - cluster_id
       - cluster_name
@@ -192,7 +192,6 @@ except ImportError:
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.amazon.aws.plugins.module_utils.rds import get_tags
 from ansible_collections.amazon.aws.plugins.module_utils.rds import ensure_tags
@@ -211,10 +210,9 @@ def get_snapshot(snapshot_id):
     return response["DBClusterSnapshots"][0]
 
 
-def snapshot_to_facts(snapshot):
+def fetch_tags(snapshot):
     snapshot["Tags"] = get_tags(client, module, snapshot["DBClusterSnapshotArn"])
-
-    return camel_dict_to_snake_dict(snapshot, ignore_list=["Tags"])
+    return snapshot
 
 
 def ensure_snapshot_absent():
@@ -250,7 +248,7 @@ def ensure_snapshot_present():
         if module.check_mode:
             return dict(changed=changed)
 
-        return dict(changed=changed, **snapshot_to_facts(get_snapshot(snapshot_name)))
+        return dict(changed=changed, **fetch_tags(get_snapshot(snapshot_name)))
 
     existing_tags = get_tags(client, module, snapshot["DBClusterSnapshotArn"])
     changed |= ensure_tags(client, module, snapshot["DBClusterSnapshotArn"], existing_tags,
@@ -259,7 +257,7 @@ def ensure_snapshot_present():
     if module.check_mode:
         return dict(changed=changed)
 
-    return dict(changed=changed, **snapshot_to_facts(get_snapshot(snapshot_name)))
+    return dict(changed=changed, **fetch_tags(get_snapshot(snapshot_name)))
 
 
 def main():

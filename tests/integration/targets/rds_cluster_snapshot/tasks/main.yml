@@ -18,7 +18,6 @@
       backup_retention_period: 1
       username: "{{ username }}"
       password: "{{ password }}"
-      allocated_storage: "{{ allocated_storage }}"
       preferred_backup_window: "01:15-01:45"
     register: _result_create_source_db_cluster
 
