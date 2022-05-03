@@ -674,10 +674,11 @@ dbi_resource_id:
   type: str
   sample: db-UHV3QRNWX4KB6GALCIGRML6QFA
 deletion_protection:
-  description: True if the DB instance has deletion protection enabled, False if not.
+  description: C(True) if the DB instance has deletion protection enabled, C(False) if not.
   returned: always
   type: bool
   sample: False
+  version_added: 3.3.0
 domain_memberships:
   description: The Active Directory Domain membership records associated with the DB instance.
   returned: always
