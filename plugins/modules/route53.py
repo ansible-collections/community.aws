@@ -495,6 +495,7 @@ def main():
         identifier=dict(type='str'),
         weight=dict(type='int'),
         region=dict(type='str'),
+        geo_location=dict(type='dict', required=False),
         health_check=dict(type='str'),
         failover=dict(type='str', choices=['PRIMARY', 'SECONDARY']),
         vpc_id=dict(type='str'),
@@ -557,6 +558,7 @@ def main():
     vpc_id_in = module.params.get('vpc_id')
     wait_in = module.params.get('wait')
     wait_timeout_in = module.params.get('wait_timeout')
+    geo_location = module.params.get('geo_location')
 
     if zone_in[-1:] != '.':
         zone_in += "."
@@ -567,7 +569,7 @@ def main():
     if command_in == 'create' or command_in == 'delete':
         if alias_in and len(value_in) != 1:
             module.fail_json(msg="parameter 'value' must contain a single dns name for alias records")
-        if (weight_in is None and region_in is None and failover_in is None) and identifier_in is not None:
+        if (weight_in is None and region_in is None and failover_in is None and geo_location is None) and identifier_in is not None:
             module.fail_json(msg="You have specified identifier which makes sense only if you specify one of: weight, region or failover.")
 
     retry_decorator = AWSRetry.jittered_backoff(
@@ -604,6 +606,30 @@ def main():
         'HealthCheckId': health_check_in,
         'SetIdentifier': identifier_in,
     })
+
+    if geo_location:
+        continent_code = geo_location.get('continent_code')
+        country_code = geo_location.get('country_code')
+        subdivision_code = geo_location.get('subdivision_code')
+
+        if continent_code and (country_code or subdivision_code):
+            module.fail_json(changed=False, msg='While using geo_location, continent_code is mutually exclusive with country_code and subdivision_code.')
+
+        if not continent_code and not country_code and not subdivision_code:
+            module.fail_json(changed=False, msg='To use geo_location please specify either continent_code, country_code, or subdivision_code.')
+
+        if geo_location.get('subdivision_code') and geo_location.get('country_code').lower() != 'us':
+            module.fail_json(changed=False, msg='To use subdivision_code, you must specify country_code as US.')
+
+        #build geo_location suboptions specification
+        resource_record_set['GeoLocation'] = {}
+        if continent_code:
+          resource_record_set['GeoLocation']['ContinentCode'] = continent_code
+        if country_code:
+          resource_record_set['GeoLocation']['CountryCode'] = country_code
+        if subdivision_code:
+          resource_record_set['GeoLocation']['SubdivisionCode'] = subdivision_code
+
     if command_in == 'delete' and aws_record is not None:
         resource_record_set['TTL'] = aws_record.get('TTL')
         if not resource_record_set['ResourceRecords']:
@@ -658,6 +684,7 @@ def main():
             command = command_in.upper()
 
     if not module.check_mode:
+        import q; q(resource_record_set)
         try:
             change_resource_record_sets = route53.change_resource_record_sets(
                 aws_retry=True,
