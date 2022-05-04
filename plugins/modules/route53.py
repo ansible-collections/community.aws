@@ -108,6 +108,29 @@ options:
         latency-based routing
       - Mutually exclusive with I(weight) and I(failover).
     type: str
+  geo_location:
+    description:
+      - Allows to control how Amazon Route 53 responds to DNS queries based on the geographic origin of the query.
+      - Two geolocation resource record sets that specify same geographic location cannot be created.
+      - Non-geolocation resource record sets that have the same values for the Name and Type elements as geolocation
+        resource record sets cannot be created.
+    suboptions:
+      continent_code:
+        description:
+          - The two-letter code for the continent.
+          - Specifying continent_code with either country_code or subdivision_code returns an InvalidInput error.
+        type: str
+      country_code:
+        description:
+          - The two-letter code for a country.
+          - Amazon Route 53 uses the two-letter country codes that are specified in ISO standard 3166-1 alpha-2 .
+        type: str
+      subdivision_code:
+        description:
+          - The two-letter code for a state of the United States.
+          - To specify subdivision_code, country_code must be set to US.
+        type: str
+    type: dict
   health_check:
     description:
       - Health check to associate with this record
