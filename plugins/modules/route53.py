@@ -593,7 +593,7 @@ def main():
         if alias_in and len(value_in) != 1:
             module.fail_json(msg="parameter 'value' must contain a single dns name for alias records")
         if (weight_in is None and region_in is None and failover_in is None and geo_location is None) and identifier_in is not None:
-            module.fail_json(msg="You have specified identifier which makes sense only if you specify one of: weight, region or failover.")
+            module.fail_json(msg="You have specified identifier which makes sense only if you specify one of: weight, region, geo_location or failover.")
 
     retry_decorator = AWSRetry.jittered_backoff(
         retries=MAX_AWS_RETRIES,
@@ -634,6 +634,9 @@ def main():
         continent_code = geo_location.get('continent_code')
         country_code = geo_location.get('country_code')
         subdivision_code = geo_location.get('subdivision_code')
+
+        if geo_location and not module.params.get('identifier'):
+            module.fail_json(changed=False, msg='To use geo_location please specify identifier.')
 
         if continent_code and (country_code or subdivision_code):
             module.fail_json(changed=False, msg='While using geo_location, continent_code is mutually exclusive with country_code and subdivision_code.')
@@ -707,7 +710,6 @@ def main():
             command = command_in.upper()
 
     if not module.check_mode:
-        import q; q(resource_record_set)
         try:
             change_resource_record_sets = route53.change_resource_record_sets(
                 aws_retry=True,
