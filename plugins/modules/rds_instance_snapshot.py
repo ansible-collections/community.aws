@@ -12,7 +12,7 @@ DOCUMENTATION = r'''
 ---
 module: rds_instance_snapshot
 version_added: 1.0.0
-short_description: Manage Amazon RDS instance snapshots.
+short_description: Manage Amazon RDS instance snapshots
 description:
      - Creates or deletes RDS snapshots.
 options:
@@ -223,7 +223,7 @@ def get_snapshot(snapshot_id):
     return response['DBSnapshots'][0]
 
 
-def snapshot_to_facts(snapshot):
+def fetch_tags(snapshot):
     snapshot["Tags"] = get_tags(client, module, snapshot["DBSnapshotArn"])
 
     return camel_dict_to_snake_dict(snapshot, ignore_list=["Tags"])
@@ -260,7 +260,7 @@ def ensure_snapshot_present():
         if module.check_mode:
             return dict(changed=changed)
 
-        return dict(changed=changed, **snapshot_to_facts(get_snapshot(snapshot_name)))
+        return dict(changed=changed, **fetch_tags(get_snapshot(snapshot_name)))
 
     existing_tags = get_tags(client, module, snapshot["DBSnapshotArn"])
     changed |= ensure_tags(client, module, snapshot["DBSnapshotArn"], existing_tags,
@@ -269,7 +269,7 @@ def ensure_snapshot_present():
     if module.check_mode:
         return dict(changed=changed)
 
-    return dict(changed=changed, **snapshot_to_facts(get_snapshot(snapshot_name)))
+    return dict(changed=changed, **fetch_tags(get_snapshot(snapshot_name)))
 
 
 def main():

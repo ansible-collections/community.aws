@@ -61,7 +61,6 @@
   - assert:
       that:
       - _result_instance_snapshot.changed
-      - "'allocated_storage' in _result_instance_snapshot"
       - "'availability_zone' in _result_instance_snapshot"
       - "'instance_create_time' in _result_instance_snapshot"
       - "'db_instance_identifier' in _result_instance_snapshot"
@@ -113,7 +112,6 @@
   - assert:
       that:
       - _result_instance_snapshot.changed
-      - "'allocated_storage' in _result_instance_snapshot"
       - "'availability_zone' in _result_instance_snapshot"
       - "'instance_create_time' in _result_instance_snapshot"
       - "'db_instance_identifier' in _result_instance_snapshot"
@@ -188,7 +186,6 @@
   - assert:
       that:
       - _result_instance_snapshot.changed
-      - "'allocated_storage' in _result_instance_snapshot"
       - "'availability_zone' in _result_instance_snapshot"
       - "'instance_create_time' in _result_instance_snapshot"
       - "'db_instance_identifier' in _result_instance_snapshot"
@@ -249,7 +246,6 @@
   - assert:
       that:
       - _result_instance_snapshot.changed
-      - "'allocated_storage' in _result_instance_snapshot"
       - "'availability_zone' in _result_instance_snapshot"
       - "'instance_create_time' in _result_instance_snapshot"
       - "'db_instance_identifier' in _result_instance_snapshot"
@@ -295,7 +291,6 @@
   - assert:
       that:
       - _result_instance_snapshot.changed
-      - "'allocated_storage' in _result_instance_snapshot"
       - "'availability_zone' in _result_instance_snapshot"
       - "'instance_create_time' in _result_instance_snapshot"
       - "'db_instance_identifier' in _result_instance_snapshot"
