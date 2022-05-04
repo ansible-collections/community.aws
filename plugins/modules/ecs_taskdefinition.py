@@ -481,9 +481,18 @@ options:
             resourceRequirements:
                 description:
                     - The type and amount of a resource to assign to a container.
-                    - The only supported resource is a C(GPU).
+                    - The only supported resources are I(GPU) and I(InferenceAccelerator).
                 required: False
                 type: list
+                elements: dict
+                suboptions:
+                    value:
+                        description: The value for the specified resource type.
+                        type: str
+                    type:
+                        description: The type of resource to assign to a container.
+                        type: str
+                        choices: ['GPU', 'InferenceAccelerator']
     network_mode:
         description:
             - The Docker networking mode to use for the containers in the task.
