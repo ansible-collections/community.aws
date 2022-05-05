@@ -1,0 +1,5 @@
+minor_changes:
+- iam_user - add `user` value to return data structure to deprecate old `iam_user` (https://github.com/ansible-collections/community.aws/pull/1059).
+bugfixes:
+- iam_user - don't delete user login profile on check mode (https://github.com/ansible-collections/community.aws/pull/1059).
+- iam_user_info - gracefully handle when no users are found (https://github.com/ansible-collections/community.aws/pull/1059).
