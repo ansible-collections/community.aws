@@ -481,7 +481,7 @@ options:
             resourceRequirements:
                 description:
                     - The type and amount of a resource to assign to a container.
-                    - The only supported resources are I(GPU) and I(InferenceAccelerator).
+                    - The only supported resources are C(GPU) and C(InferenceAccelerator).
                 required: False
                 type: list
                 elements: dict
