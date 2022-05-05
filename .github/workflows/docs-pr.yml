@@ -9,6 +9,7 @@ on:
 jobs:
   validate-docs:
     runs-on: ubuntu-latest
+    continue-on-error: true
     permissions:
       contents: read
     name: Validate Ansible Docs
@@ -47,6 +48,7 @@ jobs:
         uses: ansible-community/github-docs-build/actions/ansible-docs-build-html@main
         with:
           artifact-upload: false
+        continue-on-error: true
 
   build-docs:
     permissions:
