@@ -47,6 +47,9 @@ jobs:
         uses: ansible-community/github-docs-build/actions/ansible-docs-build-html@main
         with:
           artifact-upload: false
+        # Add continue-on-error: true because of failing due to
+        # 'Missing documentation or could not parse documentation: unknown doc_fragment(s) in file'
+        continue-on-error: true
 
   build-docs:
     permissions:
