@@ -647,14 +647,14 @@ def main():
         if geo_location.get('subdivision_code') and geo_location.get('country_code').lower() != 'us':
             module.fail_json(changed=False, msg='To use subdivision_code, you must specify country_code as US.')
 
-        #build geo_location suboptions specification
+        # Build geo_location suboptions specification
         resource_record_set['GeoLocation'] = {}
         if continent_code:
-          resource_record_set['GeoLocation']['ContinentCode'] = continent_code
+            resource_record_set['GeoLocation']['ContinentCode'] = continent_code
         if country_code:
-          resource_record_set['GeoLocation']['CountryCode'] = country_code
+            resource_record_set['GeoLocation']['CountryCode'] = country_code
         if subdivision_code:
-          resource_record_set['GeoLocation']['SubdivisionCode'] = subdivision_code
+            resource_record_set['GeoLocation']['SubdivisionCode'] = subdivision_code
 
     if command_in == 'delete' and aws_record is not None:
         resource_record_set['TTL'] = aws_record.get('TTL')
