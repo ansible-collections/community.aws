@@ -54,7 +54,7 @@
           - "result.tags | length == 2"
           - "result.tags.Name == '{{ instance_id }}'"
           - "result.tags.Created_by == 'Ansible rds_instance tests'"
-          -  result.deletion_protection == True
+          - result.deletion_protection == True
 
     - name: Create a mariadb instance (idempotence) - check_mode
       rds_instance:
@@ -98,7 +98,7 @@
           - "result.tags | length == 2"
           - "result.tags.Name == '{{ instance_id }}'"
           - "result.tags.Created_by == 'Ansible rds_instance tests'"
-          -  result.deletion_protection == True
+          - result.deletion_protection == True
 
     # ------------------------------------------------------------------------------------------
     # Test stopping / rebooting instances
