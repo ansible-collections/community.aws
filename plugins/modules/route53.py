@@ -190,6 +190,11 @@ set:
       returned: always
       type: str
       sample: PRIMARY
+    geo_location:
+      description: geograpic location based on which Route53 resonds to DNS queries.
+      returned: when configured
+      type: dict
+      sample: { continent_code: "NA", country_code: "US", subdivision_code: "CA" }
     health_check:
       description: health_check associated with this record.
       returned: always
@@ -374,6 +379,29 @@ EXAMPLES = r'''
       - 0 issue "ca.example.net"
       - 0 issuewild ";"
       - 0 iodef "mailto:security@example.com"
+- name: Create a record with geo_location - country_code
+    route53:
+      state: present
+      zone: '{{ zone_one }}'
+      record: 'geo-test.{{ zone_one }}'
+      identifier: "geohost@www"
+      type: A
+      value: 1.1.1.1
+      ttl: 30
+      geo_location:
+        country_code: US
+- name: Create a record with geo_location - subdivision code
+    route53:
+      state: present
+      zone: '{{ zone_one }}'
+      record: 'geo-test.{{ zone_one }}'
+      identifier: "geohost@www"
+      type: A
+      value: 1.1.1.1
+      ttl: 30
+      geo_location:
+        country_code: US
+        subdivision_code: TX
 '''
 
 from operator import itemgetter
