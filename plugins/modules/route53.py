@@ -380,28 +380,28 @@ EXAMPLES = r'''
       - 0 issuewild ";"
       - 0 iodef "mailto:security@example.com"
 - name: Create a record with geo_location - country_code
-    route53:
-      state: present
-      zone: '{{ zone_one }}'
-      record: 'geo-test.{{ zone_one }}'
-      identifier: "geohost@www"
-      type: A
-      value: 1.1.1.1
-      ttl: 30
-      geo_location:
-        country_code: US
+  route53:
+    state: present
+    zone: '{{ zone_one }}'
+    record: 'geo-test.{{ zone_one }}'
+    identifier: "geohost@www"
+    type: A
+    value: 1.1.1.1
+    ttl: 30
+    geo_location:
+      country_code: US
 - name: Create a record with geo_location - subdivision code
-    route53:
-      state: present
-      zone: '{{ zone_one }}'
-      record: 'geo-test.{{ zone_one }}'
-      identifier: "geohost@www"
-      type: A
-      value: 1.1.1.1
-      ttl: 30
-      geo_location:
-        country_code: US
-        subdivision_code: TX
+  route53:
+    state: present
+    zone: '{{ zone_one }}'
+    record: 'geo-test.{{ zone_one }}'
+    identifier: "geohost@www"
+    type: A
+    value: 1.1.1.1
+    ttl: 30
+    geo_location:
+      country_code: US
+      subdivision_code: TX
 '''
 
 from operator import itemgetter
