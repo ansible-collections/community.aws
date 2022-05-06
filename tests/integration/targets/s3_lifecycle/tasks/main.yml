@@ -25,6 +25,42 @@
           - output.name == bucket_name
           - not output.requester_pays
   # ============================================================
+    - name: Create a number of policies and check if all of them are created
+      community.aws.s3_lifecycle:
+        name: "{{ bucket_name }}"
+        rule_id: "{{ item }}"
+        expiration_days: 10
+        prefix: "{{ item }}"
+        status: enabled
+        state: present
+        wait: yes
+      register: output
+      loop:
+        - rule_1
+        - rule_2
+        - rule_3
+    - assert:
+        that:
+          - (output.results | last).rules | length == 3
+  # ============================================================
+    - name: Remove previously created policies and check if all of them are removed
+      community.aws.s3_lifecycle:
+        name: "{{ bucket_name }}"
+        rule_id: "{{ item }}"
+        expiration_days: 10
+        prefix: "{{ item }}"
+        status: enabled
+        state: absent
+        wait: yes
+      register: output
+      loop:
+        - rule_1
+        - rule_2
+        - rule_3
+    - assert:
+        that:
+          - (output.results | last).rules | length == 0
+  # ============================================================
     - name: Create a lifecycle policy
       s3_lifecycle:
         name: '{{ bucket_name }}'
