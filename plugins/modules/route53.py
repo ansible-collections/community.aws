@@ -118,7 +118,7 @@ options:
       continent_code:
         description:
           - The two-letter code for the continent.
-          - Specifying continent_code with either country_code or subdivision_code returns an InvalidInput error.
+          - Specifying I(continent_code) with either I(country_code) or I(subdivision_code) returns an InvalidInput error.
         type: str
       country_code:
         description:
@@ -128,9 +128,10 @@ options:
       subdivision_code:
         description:
           - The two-letter code for a state of the United States.
-          - To specify subdivision_code, country_code must be set to US.
+          - To specify I(subdivision_code), I(country_code) must be set to C(US).
         type: str
     type: dict
+    version_added: 4.0.0
   health_check:
     description:
       - Health check to associate with this record
@@ -547,6 +548,7 @@ def main():
             failover=('identifier',),
             region=('identifier',),
             weight=('identifier',),
+            geo_location=('identifier'),
         ),
     )
 
@@ -634,9 +636,6 @@ def main():
         continent_code = geo_location.get('continent_code')
         country_code = geo_location.get('country_code')
         subdivision_code = geo_location.get('subdivision_code')
-
-        if geo_location and not module.params.get('identifier'):
-            module.fail_json(changed=False, msg='To use geo_location please specify identifier.')
 
         if continent_code and (country_code or subdivision_code):
             module.fail_json(changed=False, msg='While using geo_location, continent_code is mutually exclusive with country_code and subdivision_code.')

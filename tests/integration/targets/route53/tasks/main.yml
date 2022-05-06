@@ -667,11 +667,22 @@
       geo_location:
         continent_code: NA
     register: create_geo_continent
+  # Get resulting A record and geo_location parameters are applied
+  - name: 'get Route53 A record information'
+    route53_info:
+      type: A
+      query: record_sets
+      hosted_zone_id: '{{ z1.zone_id }}'
+      start_record_name: 'geo-test-1.{{ zone_one }}'
+      max_items: 1
+    register: result
+
   - assert:
       that:
         - create_geo_continent is changed
         - create_geo_continent is not failed
         - '"route53:ChangeResourceRecordSets" in create_geo_continent.resource_actions'
+        - result.ResourceRecordSets[0].GeoLocation.ContinentCode == "NA"
 
   - name: Create a record with geo_location - continent_code (idempotency)
     route53:
@@ -704,8 +715,7 @@
         continent_code: NA
     check_mode: true
     register: create_geo_continent_idem_check
-  - debug:
-      var: create_geo_continent_idem_check
+
   - assert:
       that:
         - create_geo_continent_idem_check is not changed
@@ -744,11 +754,21 @@
       geo_location:
         country_code: US
     register: create_geo_country
+  # Get resulting A record and geo_location parameters are applied
+  - name: 'get Route53 A record information'
+    route53_info:
+      type: A
+      query: record_sets
+      hosted_zone_id: '{{ z1.zone_id }}'
+      start_record_name: 'geo-test-2.{{ zone_one }}'
+      max_items: 1
+    register: result
   - assert:
       that:
         - create_geo_country is changed
         - create_geo_country is not failed
         - '"route53:ChangeResourceRecordSets" in create_geo_country.resource_actions'
+        - result.ResourceRecordSets[0].GeoLocation.CountryCode == "US"
 
   - name: Create a record with geo_location - country_code (idempotency)
     route53:
@@ -781,8 +801,7 @@
         country_code: US
     check_mode: true
     register: create_geo_country_idem_check
-  - debug:
-      var: create_geo_country_idem_check
+
   - assert:
       that:
         - create_geo_country_idem_check is not changed
@@ -823,11 +842,22 @@
         country_code: US
         subdivision_code: TX
     register: create_geo_subdivision
+  # Get resulting A record and geo_location parameters are applied
+  - name: 'get Route53 A record information'
+    route53_info:
+      type: A
+      query: record_sets
+      hosted_zone_id: '{{ z1.zone_id }}'
+      start_record_name: 'geo-test-3.{{ zone_one }}'
+      max_items: 1
+    register: result
   - assert:
       that:
         - create_geo_subdivision is changed
         - create_geo_subdivision is not failed
         - '"route53:ChangeResourceRecordSets" in create_geo_subdivision.resource_actions'
+        - result.ResourceRecordSets[0].GeoLocation.CountryCode == "US"
+        - result.ResourceRecordSets[0].GeoLocation.SubdivisionCode == "TX"
 
   - name: Create a record with geo_location - subdivision_code (idempotency)
     route53:
@@ -862,14 +892,12 @@
         subdivision_code: TX
     check_mode: true
     register: create_geo_subdivision_idem_check
-  - debug:
-      var: create_geo_subdivision_idem_check
+
   - assert:
       that:
         - create_geo_subdivision_idem_check is not changed
         - create_geo_subdivision_idem_check is not failed
         - '"route53:ChangeResourceRecordSets" not in create_geo_subdivision_idem_check.resource_actions'
-
 
 #Cleanup------------------------------------------------------
 
@@ -887,12 +915,6 @@
       geo_location:
         continent_code: NA
     ignore_errors: true
-    register: delete_geo_continent
-  - assert:
-      that:
-        - delete_geo_continent is changed
-        - delete_geo_continent is not failed
-        - '"route53:ChangeResourceRecordSets" in delete_geo_continent.resource_actions'
 
   - name: delete a record with geo_location - country_code
     route53:
@@ -906,12 +928,6 @@
       geo_location:
         country_code: US
     ignore_errors: true
-    register: delete_geo_country
-  - assert:
-      that:
-        - delete_geo_country is changed
-        - delete_geo_country is not failed
-        - '"route53:ChangeResourceRecordSets" in delete_geo_country.resource_actions'
 
   - name: delete a record with geo_location - subdivision_code
     route53:
@@ -926,12 +942,6 @@
         country_code: US
         subdivision_code: TX
     ignore_errors: true
-    register: delete_geo_subdivision
-  - assert:
-      that:
-        - delete_geo_subdivision is changed
-        - delete_geo_subdivision is not failed
-        - '"route53:ChangeResourceRecordSets" in delete_geo_subdivision.resource_actions'
 
   - route53_info:
       query: record_sets
