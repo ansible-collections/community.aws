@@ -543,7 +543,7 @@ def main():
             ('failover', 'region', 'weight'),
             ('alias', 'ttl'),
         ],
-        # failover, region and weight require identifier
+        # failover, region, weight and geo_location require identifier
         required_by=dict(
             failover=('identifier',),
             region=('identifier',),
