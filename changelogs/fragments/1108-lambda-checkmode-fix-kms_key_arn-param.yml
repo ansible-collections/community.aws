@@ -1,0 +1,5 @@
+minor_changes:
+  - lambda - add kms_key_arn parameter (https://github.com/ansible-collections/community.aws/pull/1108).
+bugfixes:
+  - lambda - fix check mode on creation (https://github.com/ansible-collections/community.aws/pull/1108).
+  - execute_lamba - add waiter for function_updated (https://github.com/ansible-collections/community.aws/pull/1108).
