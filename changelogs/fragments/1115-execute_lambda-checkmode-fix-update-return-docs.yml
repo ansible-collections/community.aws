@@ -1,0 +1,2 @@
+bugfixes:
+  - execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
