@@ -55,7 +55,7 @@
       name: "{{ lambda_name }}"
       state: present
       zip_file: "{{ tmp.path }}/hello_world.zip"
-      runtime: 'python2.7'
+      runtime: 'python3.9'
       role: "{{ iam_role_output.arn }}"
       handler: 'hello_world.lambda_handler'
     register: lambda_output
@@ -169,7 +169,7 @@
       name: "{{ lambda_name }}"
       state: absent
       zip_file: "{{ tmp.path }}/hello_world.zip"
-      runtime: 'python2.7'
+      runtime: 'python3.9'
       role: "{{ secret_manager_role }}"
       handler: 'hello_world.lambda_handler'
     ignore_errors: yes
