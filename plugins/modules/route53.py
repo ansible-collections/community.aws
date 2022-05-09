@@ -131,7 +131,7 @@ options:
           - To specify I(subdivision_code), I(country_code) must be set to C(US).
         type: str
     type: dict
-    version_added: 4.0.0
+    version_added: 3.3.0
   health_check:
     description:
       - Health check to associate with this record
@@ -380,7 +380,7 @@ EXAMPLES = r'''
       - 0 issuewild ";"
       - 0 iodef "mailto:security@example.com"
 - name: Create a record with geo_location - country_code
-  route53:
+  community.aws.route53:
     state: present
     zone: '{{ zone_one }}'
     record: 'geo-test.{{ zone_one }}'
@@ -391,7 +391,7 @@ EXAMPLES = r'''
     geo_location:
       country_code: US
 - name: Create a record with geo_location - subdivision code
-  route53:
+  community.aws.route53:
     state: present
     zone: '{{ zone_one }}'
     record: 'geo-test.{{ zone_one }}'
@@ -547,7 +547,12 @@ def main():
         identifier=dict(type='str'),
         weight=dict(type='int'),
         region=dict(type='str'),
-        geo_location=dict(type='dict', required=False),
+        geo_location=dict(type='dict',
+                          options=dict(
+                              continent_code=dict(type="str"),
+                              country_code=dict(type="str"),
+                              subdivision_code=dict(type="str")),
+                          required=False),
         health_check=dict(type='str'),
         failover=dict(type='str', choices=['PRIMARY', 'SECONDARY']),
         vpc_id=dict(type='str'),
@@ -622,7 +627,7 @@ def main():
     if command_in == 'create' or command_in == 'delete':
         if alias_in and len(value_in) != 1:
             module.fail_json(msg="parameter 'value' must contain a single dns name for alias records")
-        if (weight_in is None and region_in is None and failover_in is None and geo_location is None) and identifier_in is not None:
+        if not any([weight_in, region_in, failover_in, geo_location]) and identifier_in is not None:
             module.fail_json(msg="You have specified identifier which makes sense only if you specify one of: weight, region, geo_location or failover.")
 
     retry_decorator = AWSRetry.jittered_backoff(
@@ -668,7 +673,7 @@ def main():
         if continent_code and (country_code or subdivision_code):
             module.fail_json(changed=False, msg='While using geo_location, continent_code is mutually exclusive with country_code and subdivision_code.')
 
-        if not continent_code and not country_code and not subdivision_code:
+        if not any([continent_code, country_code, subdivision_code]):
             module.fail_json(changed=False, msg='To use geo_location please specify either continent_code, country_code, or subdivision_code.')
 
         if geo_location.get('subdivision_code') and geo_location.get('country_code').lower() != 'us':
