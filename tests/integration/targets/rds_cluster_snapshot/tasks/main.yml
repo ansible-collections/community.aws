@@ -62,7 +62,7 @@
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
       db_snapshot_identifier: "{{ snapshot_id }}"
-    check_mode: yes
+    check_mode: true
     register: _result_cluster_snapshot
 
   - assert:
@@ -132,7 +132,6 @@
       backup_retention_period: 1
       username: "{{ username }}"
       password: "{{ password }}"
-      allocated_storage: "{{ allocated_storage }}"
       preferred_backup_window: "01:15-01:45"
     register: _result_create_source_db_cluster
 
@@ -212,7 +211,7 @@
       state: absent
       db_snapshot_identifier: "{{ snapshot_id }}-b"
     register: _result_delete_snapshot
-    check_mode: yes
+    check_mode: true
 
   - assert:
       that:
@@ -338,7 +337,7 @@
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
       db_snapshot_identifier: "{{ snapshot_id }}-b"
-      purge_tags: no
+      purge_tags: false
       tags:
         tag_one: '{{ snapshot_id }}-b One'
     register: _result_cluster_snapshot
@@ -400,7 +399,7 @@
     rds_cluster:
       state: absent
       cluster_id: "{{ item }}"
-      skip_final_snapshot: True
+      skip_final_snapshot: true
     register: _result_delete_cluster
     ignore_errors: true
     loop:
