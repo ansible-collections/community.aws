@@ -200,6 +200,7 @@ source_db_snapshot_identifier:
   returned: when snapshot is a copy
   type: str
   sample: arn:aws:rds:us-west-2:123456789012:snapshot:ansible-test-16638696-test-snapshot-source
+  version_added: 3.3.0
 snapshot_create_time:
   description: Creation time of the snapshot.
   returned: always
@@ -257,7 +258,7 @@ def get_snapshot(snapshot_id):
         snapshot['Tags'] = get_tags(client, module, snapshot['DBSnapshotArn'])
     except is_boto3_error_code("DBSnapshotNotFound"):
         return {}
-    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't get snapshot {0}".format(snapshot_id))
     return snapshot
 
