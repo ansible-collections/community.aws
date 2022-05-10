@@ -10,7 +10,7 @@ DOCUMENTATION = r'''
 ---
 module: aws_kms
 version_added: 1.0.0
-short_description: Perform various KMS management tasks.
+short_description: Perform various KMS management tasks
 description:
      - Manage role/user access to a KMS key. Not designed for encrypting/decrypting.
 options:
@@ -106,7 +106,7 @@ options:
     default: present
     type: str
   enabled:
-    description: Whether or not a key is enabled
+    description: Whether or not a key is enabled.
     default: True
     type: bool
   description:
@@ -128,12 +128,12 @@ options:
     version_added: 1.4.0
   purge_tags:
     description: Whether the I(tags) argument should cause tags not in the list to
-      be removed
+      be removed.
     default: False
     type: bool
   purge_grants:
     description: Whether the I(grants) argument should cause grants not in the list to
-      be removed
+      be removed.
     default: False
     type: bool
   grants:
@@ -270,20 +270,20 @@ EXAMPLES = r'''
 
 RETURN = r'''
 key_id:
-  description: ID of key
+  description: ID of key.
   type: str
   returned: always
   sample: abcd1234-abcd-1234-5678-ef1234567890
 key_arn:
-  description: ARN of key
+  description: ARN of key.
   type: str
   returned: always
   sample: arn:aws:kms:ap-southeast-2:123456789012:key/abcd1234-abcd-1234-5678-ef1234567890
 key_state:
   description:
-    - The state of the key
+    - The state of the key.
     - Will be one of C('Creating'), C('Enabled'), C('Disabled'), C('PendingDeletion'), C('PendingImport'),
-      C('PendingReplicaDeletion'), C('Unavailable'), or C('Updating')
+      C('PendingReplicaDeletion'), C('Unavailable'), or C('Updating').
   type: str
   returned: always
   sample: PendingDeletion
@@ -300,23 +300,23 @@ origin:
   returned: always
   sample: AWS_KMS
 aws_account_id:
-  description: The AWS Account ID that the key belongs to
+  description: The AWS Account ID that the key belongs to.
   type: str
   returned: always
   sample: 1234567890123
 creation_date:
-  description: Date and time of creation of the key
+  description: Date and time of creation of the key.
   type: str
   returned: always
   sample: "2017-04-18T15:12:08.551000+10:00"
 deletion_date:
-  description: Date and time after which KMS deletes this KMS key
+  description: Date and time after which KMS deletes this KMS key.
   type: str
   returned: when key_state is PendingDeletion
   sample: "2017-04-18T15:12:08.551000+10:00"
   version_added: 3.3.0
 description:
-  description: Description of the key
+  description: Description of the key.
   type: str
   returned: always
   sample: "My Key for Protecting important stuff"
@@ -331,14 +331,14 @@ enable_key_rotation:
   returned: always
   sample: false
 aliases:
-  description: list of aliases associated with the key
+  description: List of aliases associated with the key.
   type: list
   returned: always
   sample:
     - aws/acm
     - aws/ebs
 policies:
-  description: list of policy documents for the key. Empty when access is denied even if there are policies.
+  description: List of policy documents for the key. Empty when access is denied even if there are policies.
   type: list
   returned: always
   elements: str
@@ -373,7 +373,7 @@ policies:
       - "kms:RevokeGrant"
       Resource: "*"
 key_policies:
-  description: list of policy documents for the key. Empty when access is denied even if there are policies.
+  description: List of policy documents for the key. Empty when access is denied even if there are policies.
   type: list
   returned: always
   elements: dict
@@ -409,14 +409,14 @@ key_policies:
       Resource: "*"
   version_added: 3.3.0
 tags:
-  description: dictionary of tags applied to the key. Empty when access is denied even if there are tags.
+  description: Dictionary of tags applied to the key. Empty when access is denied even if there are tags.
   type: dict
   returned: always
   sample:
     Name: myKey
     Purpose: protecting_stuff
 grants:
-  description: list of grants associated with a key
+  description: List of grants associated with a key.
   type: list
   elements: dict
   returned: always
@@ -430,22 +430,22 @@ grants:
         encryption_context_equals:
            "aws:lambda:_function_arn": "arn:aws:lambda:ap-southeast-2:012345678912:function:xyz"
     creation_date:
-      description: Date of creation of the grant
+      description: Date of creation of the grant.
       type: str
       returned: always
       sample: "2017-04-18T15:12:08+10:00"
     grant_id:
-      description: The unique ID for the grant
+      description: The unique ID for the grant.
       type: str
       returned: always
       sample: abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234
     grantee_principal:
-      description: The principal that receives the grant's permissions
+      description: The principal that receives the grant's permissions.
       type: str
       returned: always
       sample: arn:aws:sts::0123456789012:assumed-role/lambda_xyz/xyz
     issuing_account:
-      description: The AWS account under which the grant was issued
+      description: The AWS account under which the grant was issued.
       type: str
       returned: always
       sample: arn:aws:iam::01234567890:root
@@ -455,29 +455,29 @@ grants:
       returned: always
       sample: arn:aws:kms:ap-southeast-2:123456789012:key/abcd1234-abcd-1234-5678-ef1234567890
     name:
-      description: The friendly name that identifies the grant
+      description: The friendly name that identifies the grant.
       type: str
       returned: always
       sample: xyz
     operations:
-      description: The list of operations permitted by the grant
+      description: The list of operations permitted by the grant.
       type: list
       returned: always
       sample:
         - Decrypt
         - RetireGrant
     retiring_principal:
-      description: The principal that can retire the grant
+      description: The principal that can retire the grant.
       type: str
       returned: always
       sample: arn:aws:sts::0123456789012:assumed-role/lambda_xyz/xyz
 changes_needed:
-  description: grant types that would be changed/were changed.
+  description: Grant types that would be changed/were changed.
   type: dict
   returned: always
   sample: { "role": "add", "role grant": "add" }
 had_invalid_entries:
-  description: there are invalid (non-ARN) entries in the KMS entry. These don't count as a change, but will be removed if any changes are being made.
+  description: Whether there are invalid (non-ARN) entries in the KMS entry. These don't count as a change, but will be removed if any changes are being made.
   type: bool
   returned: always
 '''
