@@ -7,11 +7,15 @@ username: 'testrdsusername'
 password: "{{ lookup('password', '/dev/null') }}"
 db_instance_class: db.t3.micro
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> b342e43 (resolve merge conflicts)
 allocated_storage: 10
 engine: 'mariadb'
 mariadb_engine_version: 10.3.31
 
 # Create snapshot
+<<<<<<< HEAD
 snapshot_id: '{{ instance_id }}-snapshot'
 =======
 allocated_storage: 20
@@ -21,3 +25,6 @@ dest_region: us-east-2
 >>>>>>> 1445d55 (be able to copy snapshot from a different region)
 =======
 >>>>>>> fbd8218 (copy snapshot within same region for CI runs)
+=======
+snapshot_id: '{{ instance_id }}-snapshot'
+>>>>>>> b342e43 (resolve merge conflicts)
