@@ -411,7 +411,7 @@
   # ------------------------------------------------------------------------------------------
   # Test copying a snapshot
   ### Note - copying a snapshot from a different region is supported, but not in CI runs,
-  ### because the awx-terminator only terminates resources in one region.
+  ### because the aws-terminator only terminates resources in one region.
 
   - set_fact:
       _snapshot_arn: "{{ _result_instance_snapshot.db_snapshot_arn }}"
