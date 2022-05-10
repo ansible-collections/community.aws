@@ -195,6 +195,7 @@ set:
       returned: when configured
       type: dict
       sample: { continent_code: "NA", country_code: "US", subdivision_code: "CA" }
+      version_added: 3.3.0
     health_check:
       description: health_check associated with this record.
       returned: always
