@@ -813,6 +813,7 @@
 
     - name: absent task definition by arn
       ecs_taskdefinition:
+        containers: "{{ ecs_task_containers }}"
         arn: "{{ ecs_task_definition_absent_with_arn.taskdefinition.taskDefinitionArn }}"
         state: absent
 
