@@ -38,7 +38,7 @@ options:
         type: str
     force_update_password:
         description:
-          - Set to True to update your instance password with I(master_user_password). Since comparing passwords to determine
+          - Set to C(True) to update your instance password with I(master_user_password). Since comparing passwords to determine
             if it needs to be updated is not possible this is set to False by default to allow idempotence.
         type: bool
         default: False
@@ -52,12 +52,12 @@ options:
         default: True
     read_replica:
         description:
-          - Set to False to promote a read replica instance or true to create one. When creating a read replica C(creation_source) should
+          - Set to C(False) to promote a read replica instance or true to create one. When creating a read replica C(creation_source) should
             be set to 'instance' or not provided. C(source_db_instance_identifier) must be provided with this option.
         type: bool
     wait:
         description:
-          - Whether to wait for the instance to be available, stopped, or deleted. At a later time a wait_timeout option may be added.
+          - Whether to wait for the instance to be available, stopped, or deleted. At a later time a I(wait_timeout) option may be added.
             Following each API call to create/modify/delete the instance a waiter is used with a 60 second delay 30 times until the instance reaches
             the expected state (available/stopped/deleted). The total task time may also be influenced by AWSRetry which helps stabilize if the
             instance is in an invalid state to operate on to begin with (such as if you try to stop it when it is in the process of rebooting).
