@@ -1277,7 +1277,7 @@ def main():
         db_name=dict(),
         db_parameter_group_name=dict(),
         db_security_groups=dict(type='list', elements='str'),
-        db_snapshot_identifier=dict(type='str', aliases=['snapshot_identifier']),
+        db_snapshot_identifier=dict(type='str', aliases=['snapshot_identifier', 'snapshot_id']),
         db_subnet_group_name=dict(aliases=['subnet_group']),
         deletion_protection=dict(type='bool'),
         domain=dict(),
