@@ -111,7 +111,7 @@
 
     - name: set image id fact
       set_fact:
-        ecs_image_id: "{{ (ec2_ami_info.images|first).image_id }}"
+        ecs_image_id: "{{ (ec2_ami_info.images|last).image_id }}"
 
     - name: provision ec2 instance to create an image
       ec2_instance:
@@ -584,7 +584,7 @@
         state: present
         placement_constraints: "{{ ecs_taskdefinition_placement_constraints }}"
       register: ecs_task_definition_constraints
-    
+
     - name: Check that task definition has been created
       assert:
         that:
@@ -595,8 +595,7 @@
     - name: Remove ecs task definition with placement constraints
       ecs_taskdefinition:
         containers: "{{ ecs_task_containers }}"
-        family: "{{ ecs_task_name }}-constraints"
-        revision: "{{ ecs_task_definition.taskdefinition.revision }}"
+        arn: "{{ ecs_task_definition_constraints.taskdefinition.taskDefinitionArn }}"
         state: absent
       register: ecs_task_definition_constraints_delete
   
@@ -604,7 +603,6 @@
       assert:
         that:
           - ecs_task_definition_constraints_delete is changed
-
 
     # ============================================================
     # Begin tests for Fargate
@@ -670,10 +668,6 @@
         ecs_task_host_port: 8080
       register: ecs_fargate_task_definition
 
-    - name: obtain ECS task definition facts
-      ecs_taskdefinition_info:
-        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
-
     - name: create EC2 VPC-networked task definition with CPU or Memory and execution role
       ecs_taskdefinition:
         containers: "{{ ecs_fargate_task_containers }}"
@@ -687,10 +681,6 @@
       vars:
         ecs_task_host_port: 8080
       register: ecs_ec2_task_definition
-
-    - name: obtain ECS task definition facts
-      ecs_taskdefinition_info:
-        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_ec2_task_definition.taskdefinition.revision }}"
 
     - name: check that changing task definiton launch type created a new task definition revision
       assert:
@@ -749,20 +739,6 @@
           assign_public_ip: true
         started_by: ansible_user
       register: fargate_run_task_output
-
-      # aws cli not installed in docker container; make sure it's installed.
-    - name: install awscli
-      pip:
-        state: present
-        name: awscli
-
-    - name: disable taskLongArnFormat
-      command: aws ecs put-account-setting --name taskLongArnFormat --value disabled
-      environment:
-        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
-        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
-        AWS_DEFAULT_REGION: "{{ aws_region }}"
 
     - name: create fargate ECS task with run task and tags (LF disabled) (should fail)
       ecs_task:

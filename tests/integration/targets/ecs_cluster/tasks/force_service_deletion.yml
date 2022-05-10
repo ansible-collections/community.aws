@@ -115,12 +115,12 @@
 
     - name: set image id fact
       set_fact:
-        ecs_image_id: "{{ (ec2_ami_info.images|first).image_id }}"
+        ecs_image_id: "{{ (ec2_ami_info.images|last).image_id }}"
 
     - name: provision ec2 instance to create an image
       ec2_instance:
         key_name: '{{ ec2_keypair|default(setup_key.key.name) }}'
-        instance_type: t2.micro
+        instance_type: t3.micro
         state: present
         image_id: '{{ ecs_image_id }}'
         wait: yes
@@ -160,7 +160,7 @@
         state: present
         scheme: internal
         security_groups: '{{ setup_sg.group_id }}'
-        subnets: "{{ setup_subnet.results | community.general.json_query('[].subnet.id') }}"
+        subnets: "{{ setup_subnet.results | map(attribute='subnet.id') }}"
         listeners:
           - Protocol: HTTP
             Port: 80
@@ -206,131 +206,6 @@
         that:
           - ecs_service.changed
 
-# TODO
-
-#    - name: scale down ECS service
-#      ecs_service:
-#        state: present
-#        name: "{{ ecs_service_name }}"
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
-#        desired_count: 0
-#        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
-#        placement_strategy: "{{ ecs_service_placement_strategy }}"
-#        load_balancers:
-#          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
-#            containerName: "{{ ecs_task_name }}"
-#            containerPort: "{{ ecs_task_container_port }}"
-#        role: "ecsServiceRole"
-#      register: ecs_service_scale_down
-#
-#    - name: pause to allow service to scale down
-#      pause:
-#        seconds: 60
-
-    - name: delete ECS service definition even while service is scaled - Should fail
-      ecs_service:
-        state: absent
-        name: "{{ ecs_service_name }}"
-        cluster: "{{ ecs_cluster_name }}"
-      ignore_errors: yes
-      register: delete_ecs_service_fail
-
-    - name: assert that updating ECS load balancer failed with helpful message
-      assert:
-        that:
-          - delete_ecs_service_fail is failed
-
-    - name: delete ECS service definition even while service is scaled
-      ecs_service:
-        state: absent
-        name: "{{ ecs_service_name }}"
-        cluster: "{{ ecs_cluster_name }}"
-        force_deletion: yes
-      register: delete_ecs_service
-
-    - name: assert that deleting ECS service worked
-      assert:
-        that:
-          - delete_ecs_service.changed
-
-    - name: create ECS service definition
-      ecs_service:
-        state: present
-        name: "{{ ecs_service_name }}"
-        cluster: "{{ ecs_cluster_name }}"
-        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
-        desired_count: 1
-        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
-        placement_strategy: "{{ ecs_service_placement_strategy }}"
-        health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
-        load_balancers:
-          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
-            containerName: "{{ ecs_task_name }}"
-            containerPort: "{{ ecs_task_container_port }}"
-        role: "ecsServiceRole"
-      register: ecs_service
-
-    - name: remove target groups from load balancer
-      elb_application_lb:
-        name: "{{ ecs_load_balancer_name }}"
-        state: present
-        scheme: internal
-        security_groups: '{{ setup_sg.group_id }}'
-        subnets: "{{ setup_subnet.results | community.general.json_query('[].subnet.id') }}"
-        listeners:
-          - Protocol: HTTP
-            Port: 80
-            DefaultActions:
-              - Type: fixed-response
-                FixedResponseConfig:
-                  ContentType: "text/plain"
-                  MessageBody: "This is the page you're looking for"
-                  StatusCode: "200"
-          - Protocol: HTTP
-            Port: 81
-            DefaultActions:
-              - Type: fixed-response
-                FixedResponseConfig:
-                  ContentType: "text/plain"
-                  MessageBody: "This is the page you're looking for"
-                  StatusCode: "200"
-
-    - name: pause to allow target groups to refresh into no-lb state
-      pause:
-        seconds: 10
-
-    - name: delete in-use targetGroup
-      elb_target_group:
-        state: absent
-        name: "{{ ecs_target_group_name }}1"
-
-    - name: delete in-use targetGroup
-      elb_target_group:
-        state: absent
-        name: "{{ ecs_target_group_name }}2"
-
-    - name: delete ECS service definition even while service is scaled - Should fail
-      ecs_service:
-        state: absent
-        name: "{{ ecs_service_name }}"
-        cluster: "{{ ecs_cluster_name }}"
-        force_deletion: yes
-      register: delete_ecs_service_fail
-
-    - name: assert that updating ECS load balancer failed with helpful message
-      assert:
-        that:
-          - delete_ecs_service_fail is failed
-
-    - name: delete ECS service definition even while service is scaled
-      ecs_service:
-        state: absent
-        name: "{{ ecs_service_name }}"
-        cluster: "{{ ecs_cluster_name }}"
-        force_deletion: yes
-      register: delete_ecs_service
-
     - name: obtain facts for all ECS services in the cluster
       ecs_service_info:
         cluster: "{{ ecs_cluster_name }}"
@@ -372,235 +247,147 @@
         that:
           - "ecs_service_info.services_not_running[0].reason == 'MISSING'"
 
-    - name: obtain specific ECS service facts
-      ecs_service_info:
-        service: "{{ ecs_service_name }}2"
+    - name: scale down
+      ecs_service:
+        state: present
+        name: "{{ ecs_service_name }}"
         cluster: "{{ ecs_cluster_name }}"
-        details: yes
-      register: ecs_service_info
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        desired_count: 0
+        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+        placement_strategy: "{{ ecs_service_placement_strategy }}"
+        health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        role: "ecsServiceRole"
+      register: ecs_service_scale_down
+    
+    # - name: pause to allow service to scale down
+    #   pause:
+    #     seconds: 15
 
-#
-#    # ============================================================
-#    # Begin tests for Fargate
-#
-#    - name: ensure AmazonECSTaskExecutionRolePolicy exists
-#      iam_role:
-#        name: ecsTaskExecutionRole
-#        assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
-#        description: "Allows ECS containers to make calls to ECR"
-#        state: present
-#        create_instance_profile: no
-#        managed_policy:
-#        - AmazonEC2ContainerServiceRole
-#      register: iam_execution_role
-#
-#    - name: create Fargate VPC-networked task definition with host port set to 8080 and unsupported network mode (expected to fail)
-#      ecs_taskdefinition:
-#        containers: "{{ ecs_fargate_task_containers }}"
-#        family: "{{ ecs_task_name }}-vpc"
-#        network_mode: bridge
-#        launch_type: FARGATE
-#        cpu: 512
-#        memory: 1024
-#        state: present
-#      vars:
-#        ecs_task_host_port: 8080
-#      ignore_errors: yes
-#      register: ecs_fargate_task_definition_bridged_with_host_port
-#
-#    - name: check that fargate task definition with bridged networking fails gracefully
-#      assert:
-#        that:
-#          - ecs_fargate_task_definition_bridged_with_host_port is failed
-#          - 'ecs_fargate_task_definition_bridged_with_host_port.msg == "To use FARGATE launch type, network_mode must be awsvpc"'
-#
-#    - name: create Fargate VPC-networked task definition without CPU or Memory (expected to Fail)
-#      ecs_taskdefinition:
-#        containers: "{{ ecs_fargate_task_containers }}"
-#        family: "{{ ecs_task_name }}-vpc"
-#        network_mode: awsvpc
-#        launch_type: FARGATE
-#        state: present
-#      ignore_errors: yes
-#      register: ecs_fargate_task_definition_vpc_no_mem
-#
-#    - name: check that fargate task definition without memory or cpu fails gracefully
-#      assert:
-#        that:
-#          - ecs_fargate_task_definition_vpc_no_mem is failed
-#          - 'ecs_fargate_task_definition_vpc_no_mem.msg == "launch_type is FARGATE but all of the following are missing: cpu, memory"'
-#
-#    - name: create Fargate VPC-networked task definition with CPU or Memory and execution role
-#      ecs_taskdefinition:
-#        containers: "{{ ecs_fargate_task_containers }}"
-#        family: "{{ ecs_task_name }}-vpc"
-#        network_mode: awsvpc
-#        launch_type: FARGATE
-#        cpu: 512
-#        memory: 1024
-#        execution_role_arn: "{{ iam_execution_role.arn }}"
-#        state: present
-#      vars:
-#        ecs_task_host_port: 8080
-#      register: ecs_fargate_task_definition
-#
-#    - name: obtain ECS task definition facts
-#      ecs_taskdefinition_info:
-#        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
-#
-#    - name: create fargate ECS service without network config (expected to fail)
-#      ecs_service:
-#        state: present
-#        name: "{{ ecs_service_name }}4"
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
-#        desired_count: 1
-#        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
-#        launch_type: FARGATE
-#      register: ecs_fargate_service_network_without_awsvpc
-#      ignore_errors: yes
-#
-#    - name: assert that using Fargate ECS service fails
-#      assert:
-#        that:
-#          - ecs_fargate_service_network_without_awsvpc is failed
-#
-#    - name: create fargate ECS service with network config
-#      ecs_service:
-#        state: present
-#        name: "{{ ecs_service_name }}4"
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
-#        desired_count: 1
-#        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
-#        launch_type: FARGATE
-#        network_configuration:
-#          subnets: "{{ setup_subnet.results | community.general.json_query('[].subnet.id') }}"
-#          security_groups:
-#            - '{{ setup_sg.group_id }}'
-#          assign_public_ip: true
-#      register: ecs_fargate_service_network_with_awsvpc
-#
-#    - name: assert that public IP assignment is enabled
-#      assert:
-#        that:
-#          - 'ecs_fargate_service_network_with_awsvpc.service.networkConfiguration.awsvpcConfiguration.assignPublicIp == "ENABLED"'
-#
-#    - name: create fargate ECS task with run task
-#      ecs_task:
-#        operation: run
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}-vpc"
-#        launch_type: FARGATE
-#        count: 1
-#        network_configuration:
-#          subnets: "{{ setup_subnet.results | community.general.json_query('[].subnet.id') }}"
-#          security_groups:
-#            - '{{ setup_sg.group_id }}'
-#          assign_public_ip: true
-#        started_by: ansible_user
-#      register: fargate_run_task_output
-#
-#      # aws cli not installed in docker container; make sure it's installed.
-#    - name: install awscli
-#      pip:
-#        state: present
-#        name: awscli
-#
-#    - name: disable taskLongArnFormat
-#      command: aws ecs put-account-setting --name taskLongArnFormat --value disabled
-#      environment:
-#        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
-#        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
-#        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
-#        AWS_DEFAULT_REGION: "{{ aws_region }}"
-#
-#    - name: create fargate ECS task with run task and tags (LF disabled) (should fail)
-#      ecs_task:
-#        operation: run
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}-vpc"
-#        launch_type: FARGATE
-#        count: 1
-#        tags:
-#          tag_key: tag_value
-#          tag_key2: tag_value2
-#        network_configuration:
-#          subnets: "{{ setup_subnet.results | community.general.json_query('[].subnet.id') }}"
-#          security_groups:
-#            - '{{ setup_sg.group_id }}'
-#          assign_public_ip: true
-#        started_by: ansible_user
-#      register: fargate_run_task_output_with_tags_fail
-#      ignore_errors: yes
-#
-#    - name: enable taskLongArnFormat
-#      command: aws ecs put-account-setting --name taskLongArnFormat --value enabled
-#      environment:
-#        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
-#        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
-#        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
-#        AWS_DEFAULT_REGION: "{{ aws_region }}"
-#
-#    - name: create fargate ECS task with run task and tags
-#      ecs_task:
-#        operation: run
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}-vpc"
-#        launch_type: FARGATE
-#        count: 1
-#        tags:
-#          tag_key: tag_value
-#          tag_key2: tag_value2
-#        network_configuration:
-#          subnets: "{{ setup_subnet.results | community.general.json_query('[].subnet.id') }}"
-#          security_groups:
-#            - '{{ setup_sg.group_id }}'
-#          assign_public_ip: true
-#        started_by: ansible_user
-#      register: fargate_run_task_output_with_tags
+    # - name: delete ECS service definition even while service is scaled - Should fail
+    #   ecs_service:
+    #     state: absent
+    #     name: "{{ ecs_service_name }}"
+    #     cluster: "{{ ecs_cluster_name }}"
+    #   ignore_errors: yes
+    #   register: delete_ecs_service_fail
 
+    # - name: assert that updating ECS load balancer failed with helpful message
+    #   assert:
+    #     that:
+    #       - delete_ecs_service_fail is failed
 
-    # ============================================================
-    # End tests for Fargate
-#
-#
-#    - name: scale down Fargate ECS service
-#      ecs_service:
-#        state: present
-#        name: "{{ ecs_service_name }}4"
-#        cluster: "{{ ecs_cluster_name }}"
-#        task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
-#        desired_count: 0
-#        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
-#      ignore_errors: yes
-#      register: ecs_service_scale_down
-#
-#    - name: stop Fargate ECS task
-#      ecs_task:
-#        task: "{{ fargate_run_task_output.task[0].taskArn }}"
-#        task_definition: "{{ ecs_task_name }}-vpc"
-#        operation: stop
-#        cluster: "{{ ecs_cluster_name }}"
-#      ignore_errors: yes
-#
-#    - name: stop Fargate ECS task
-#      ecs_task:
-#        task: "{{ fargate_run_task_output_with_tags.task[0].taskArn }}"
-#        task_definition: "{{ ecs_task_name }}-vpc"
-#        operation: stop
-#        cluster: "{{ ecs_cluster_name }}"
-#      ignore_errors: yes
-#    - name: pause to allow services to scale down
-#      pause:
-#        seconds: 60
-#      when: ecs_service_scale_down is not failed
+    - name: delete ECS service definition even while service is scaled
+      ecs_service:
+        state: absent
+        name: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+        force_deletion: yes
+      register: delete_ecs_service
 
+    - name: assert that deleting ECS service worked
+      assert:
+        that:
+          - delete_ecs_service.changed
+
+    - name: wait until service is inactive, otherwise it cannot be re-recreated in the following task
+      ecs_service_info:
+        service: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+        details: true
+      register: this_service
+      retries: 10
+      delay: 10
+      until: "this_service.services[0].status == 'INACTIVE'"
+
+    - name: re-create ECS service definition
+      ecs_service:
+        state: present
+        name: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        desired_count: 1
+        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+        placement_strategy: "{{ ecs_service_placement_strategy }}"
+        health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        role: "ecsServiceRole"
+      register: ecs_service
+
+    - name: remove target groups from load balancer
+      elb_application_lb:
+        name: "{{ ecs_load_balancer_name }}"
+        state: present
+        scheme: internal
+        security_groups: '{{ setup_sg.group_id }}'
+        subnets: "{{ setup_subnet.results | map(attribute='subnet.id') }}"
+        listeners:
+          - Protocol: HTTP
+            Port: 80
+            DefaultActions:
+              - Type: fixed-response
+                FixedResponseConfig:
+                  ContentType: "text/plain"
+                  MessageBody: "This is the page you're looking for"
+                  StatusCode: "200"
+          - Protocol: HTTP
+            Port: 81
+            DefaultActions:
+              - Type: fixed-response
+                FixedResponseConfig:
+                  ContentType: "text/plain"
+                  MessageBody: "This is the page you're looking for"
+                  StatusCode: "200"
+
+    - name: pause to allow target groups to refresh into no-lb state
+      pause:
+        seconds: 10
+
+    - name: delete in-use targetGroup
+      elb_target_group:
+        state: absent
+        name: "{{ ecs_target_group_name }}1"
+
+    - name: delete in-use targetGroup
+      elb_target_group:
+        state: absent
+        name: "{{ ecs_target_group_name }}2"
+
+    - name: delete ECS service definition even while service is scaled - Should fail
+      ecs_service:
+        state: absent
+        name: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+        force_deletion: yes
+      register: delete_ecs_service_fail
+
+    - name: force delete should not fail
+      assert:
+        that:
+          - delete_ecs_service_fail is not failed
+
+    - name: delete ECS service definition even while service is scaled
+      ecs_service:
+        state: absent
+        name: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+        force_deletion: yes
+      register: delete_ecs_service
+
+  always:
     - name: remove ecs service
       ecs_service:
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}"
+        force_deletion: yes
       ignore_errors: yes
 
     - name: remove second ecs service
@@ -608,6 +395,7 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}2"
+        force_deletion: yes
       ignore_errors: yes
 
     - name: remove mft ecs service
@@ -615,6 +403,7 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-mft"
+        force_deletion: yes
       ignore_errors: yes
 
     - name: remove scheduling_strategy ecs service
@@ -622,6 +411,7 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-replica"
+        force_deletion: yes
       ignore_errors: yes
 
 # until ansible supports service registries, the test for it can't run and this
@@ -638,6 +428,7 @@
         state: absent
         name: "{{ ecs_service_name }}4"
         cluster: "{{ ecs_cluster_name }}"
+        force_deletion: yes
       ignore_errors: yes
       register: ecs_fargate_service_network_with_awsvpc
 
