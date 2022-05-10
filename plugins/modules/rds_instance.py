@@ -156,6 +156,7 @@ options:
         type: str
         aliases:
           - snapshot_identifier
+          - snapshot_id
     db_subnet_group_name:
         description:
           - The DB subnet group name to use for the DB instance.
