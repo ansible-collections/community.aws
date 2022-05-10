@@ -498,10 +498,8 @@
   - name: Delete the existing RDS instance without creating a final snapshot
     rds_instance:
       state: absent
-      instance_id: "{{ item }}"
+      instance_id: "{{ instance_id }}"
       skip_final_snapshot: True
       wait: false
     register: _result_delete_instance
     ignore_errors: true
-    loop:
-    - "{{ instance_id }}"

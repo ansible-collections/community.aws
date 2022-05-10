@@ -1,6 +1,0 @@
-minor_changes:
-  - rds_instance_snapshot - add check mode support, integration tests, and copy_db_snapshot functionality (https://github.com/ansible-collections/community.aws/pull/1078).
-
-bugfixes:
-  - return 'tags' in response data - previously returned 'tag_list' from RDS client (https://github.com/ansible-collections/community.aws/pull/1078).
-  - don't require `db_instance_identifier` on state = present (https://github.com/ansible-collections/community.aws/pull/1078).
