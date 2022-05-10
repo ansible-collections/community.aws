@@ -213,7 +213,7 @@
           - not result.changed
 
     # ------------------------------------------------------------------------------------------
-    # Test deletion protection
+    # Test deletion protection / deletion
 
     - name: Attempt to delete DB instance with deletion protection (should fail)
       rds_instance:
@@ -237,6 +237,56 @@
         that:
           - result.changed
           - result.deletion_protection == False
+
+    - name: Delete the instance - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: absent
+        skip_final_snapshot: True
+        wait: False
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - result.changed
+
+    - name: Delete the instance
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: absent
+        skip_final_snapshot: True
+        wait: False
+      register: result
+
+    - assert:
+        that:
+          - result.changed
+
+    - name: Delete the instance (idempotence) - check_mode
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: absent
+        skip_final_snapshot: True
+        wait: False
+      register: result
+      check_mode: yes
+
+    - assert:
+        that:
+          - not result.changed
+
+    - name: Delete the instance (idempotence)
+      rds_instance:
+        id: "{{ instance_id }}"
+        state: absent
+        skip_final_snapshot: True
+        wait: False
+      register: result
+
+    - assert:
+        that:
+          - not result.changed
 
   always:
     - name: Remove DB instance

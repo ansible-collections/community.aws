@@ -1,35 +1,20 @@
 # inventory names shortened down to fit resource name length limits
 [tests]
+processor
+restore
+sgroups
+complex
+states
+modify
+tagging
+replica
+upgrade
+snapshot
+aurora
 
 # TODO: uncomment after adding iam:CreatePolicy and iam:DeletePolicy
-#iam_roles
+# iam_roles
 
-# create/delete/start/stop/reboot
-states
-
-# complex modifications
-complex
-
-# upgrading engine version
-upgrade
-
-# modifying processor features
-processor
-
-# restoring db
-restore
-
-# modifying db - tags, security groups, etc
-modify
-
-# create/delete snapshot, restore from snapshot
-snapshot
-
-# replicating db
-replica
-
-# aurora db
-aurora
 
 [all:vars]
 ansible_connection=local
