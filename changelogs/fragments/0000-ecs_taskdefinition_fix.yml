@@ -1,0 +1,2 @@
+bugfixes:
+  - ecs_taskdefinition - fix broken change detect of ``launch_type`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
