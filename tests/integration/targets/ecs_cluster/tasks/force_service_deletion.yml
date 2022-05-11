@@ -263,23 +263,6 @@
             containerPort: "{{ ecs_task_container_port }}"
         role: "ecsServiceRole"
       register: ecs_service_scale_down
-    
-    # - name: pause to allow service to scale down
-    #   pause:
-    #     seconds: 15
-
-    # - name: delete ECS service definition even while service is scaled - Should fail
-    #   ecs_service:
-    #     state: absent
-    #     name: "{{ ecs_service_name }}"
-    #     cluster: "{{ ecs_cluster_name }}"
-    #   ignore_errors: yes
-    #   register: delete_ecs_service_fail
-
-    # - name: assert that updating ECS load balancer failed with helpful message
-    #   assert:
-    #     that:
-    #       - delete_ecs_service_fail is failed
 
     - name: delete ECS service definition even while service is scaled
       ecs_service:
@@ -294,7 +277,9 @@
         that:
           - delete_ecs_service.changed
 
-    - name: wait until service is inactive, otherwise it cannot be re-recreated in the following task
+    - name: >
+        diy waiter.
+        wait until service is inactive, otherwise it cannot be re-recreated in the following task
       ecs_service_info:
         service: "{{ ecs_service_name }}"
         cluster: "{{ ecs_cluster_name }}"
@@ -413,15 +398,6 @@
         name: "{{ ecs_service_name }}-replica"
         force_deletion: yes
       ignore_errors: yes
-
-# until ansible supports service registries, the test for it can't run and this
-# removal is not needed
-#   - name: remove service_registries ecs service
-#     ecs_service:
-#       state: absent
-#       cluster: "{{ ecs_cluster_name }}"
-#       name: "{{ ecs_service_name }}-service-registries"
-#     ignore_errors: yes
 
     - name: remove fargate ECS service
       ecs_service:

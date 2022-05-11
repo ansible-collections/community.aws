@@ -478,34 +478,6 @@
           - ecs_service_creation_hcgp2.changed
           - "{{ecs_service_creation_hcgp2.service.healthCheckGracePeriodSeconds}} == 30"
 
-# until ansible supports service registries, this test can't run.
-#   - name: update ecs_service using service_registries
-#     ecs_service:
-#       name: "{{ ecs_service_name }}-service-registries"
-#       cluster: "{{ ecs_cluster_name }}"
-#       load_balancers:
-#         - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
-#           containerName: "{{ ecs_task_name }}"
-#           containerPort: "{{ ecs_task_container_port }}"
-#       service_registries:
-#         - containerName: "{{ ecs_task_name }}"
-#           containerPort: "{{ ecs_task_container_port }}"
-#           ### TODO: Figure out how to get a service registry ARN without a service registry module.
-#           registryArn: "{{ ecs_task_service_registry_arn }}"
-#       task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
-#       desired_count: 1
-#       state: present
-#     register: ecs_service_creation_sr
-#     ignore_errors: yes
-
-#   - name: dump sr output
-#     debug: var=ecs_service_creation_sr
-
-#   - name: check that module returns success
-#     assert:
-#       that:
-#         - ecs_service_creation_sr.changed
-
     - name: update ecs_service using REPLICA scheduling_strategy
       ecs_service:
         name: "{{ ecs_service_name }}-replica"
@@ -823,6 +795,13 @@
       debug:
         msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
 
+    - name: remove setup ec2 instance
+      ec2_instance:
+        instance_ids: '{{ setup_instance.instance_ids }}'
+        state: absent
+        wait: yes
+      ignore_errors: yes
+
     - name: obtain ECS service facts
       ecs_service_info:
         service: "{{ ecs_service_name }}"
@@ -898,23 +877,6 @@
       ignore_errors: yes
       register: ecs_service_scale_down
 
-
-# until ansible supports service registries, the test for it can't run and this
-# scale down is not needed
-#   - name: scale down service_registries service
-#     ecs_service:
-#       name: "{{ ecs_service_name }}-service-registries"
-#       cluster: "{{ ecs_cluster_name }}"
-#       state: present
-#       load_balancers:
-#         - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
-#           containerName: "{{ ecs_task_name }}"
-#           containerPort: "{{ ecs_task_container_port }}"
-#       task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
-#       desired_count: 0
-#     ignore_errors: yes
-#     register: ecs_service_scale_down
-
     - name: scale down Fargate ECS service
       ecs_service:
         state: present
@@ -941,6 +903,7 @@
         operation: stop
         cluster: "{{ ecs_cluster_name }}"
       ignore_errors: yes
+
     - name: pause to allow services to scale down
       pause:
         seconds: 60
@@ -951,6 +914,7 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}"
+        force_deletion: yes
       ignore_errors: yes
 
     - name: remove second ecs service
@@ -958,6 +922,7 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}2"
+        force_deletion: yes
       ignore_errors: yes
 
     - name: remove mft ecs service
@@ -965,6 +930,7 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-mft"
+        force_deletion: yes
       ignore_errors: yes
 
     - name: remove scheduling_strategy ecs service
@@ -972,22 +938,15 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-replica"
+        force_deletion: yes
       ignore_errors: yes
-
-# until ansible supports service registries, the test for it can't run and this
-# removal is not needed
-#   - name: remove service_registries ecs service
-#     ecs_service:
-#       state: absent
-#       cluster: "{{ ecs_cluster_name }}"
-#       name: "{{ ecs_service_name }}-service-registries"
-#     ignore_errors: yes
 
     - name: remove fargate ECS service
       ecs_service:
         state: absent
         name: "{{ ecs_service_name }}4"
         cluster: "{{ ecs_cluster_name }}"
+        force_deletion: yes
       ignore_errors: yes
       register: ecs_fargate_service_network_with_awsvpc
 
@@ -1050,27 +1009,21 @@
         seconds: 30
       when: not elb_application_lb_remove is failed
 
-    - name: remove target groups
-      elb_target_group:
-        name: "{{ item }}"
-        state: absent
-      with_items:
-        - "{{ ecs_target_group_name }}1"
-        - "{{ ecs_target_group_name }}2"
-      ignore_errors: yes
-
-    - name: remove setup ec2 instance
-      ec2_instance:
-        instance_ids: '{{ setup_instance.instance_ids }}'
-        state: absent
-        wait: yes
-      ignore_errors: yes
-
     - name: remove setup keypair
       ec2_key:
         name: '{{ resource_prefix }}_ecs_cluster'
         state: absent
       ignore_errors: yes
+
+    - name: remove ECS cluster
+      ecs_cluster:
+        name: "{{ ecs_cluster_name }}"
+        state: absent
+      ignore_errors: yes
+      register: this_deletion
+      retries: 10
+      delay: 10
+      until: this_deletion is not failed
 
     - name: remove security groups
       ec2_group:
@@ -1081,6 +1034,19 @@
       with_items:
         - "{{ resource_prefix }}-ecs-vpc-test-sg"
         - '{{ resource_prefix }}_ecs_cluster-sg'
+      ignore_errors: yes
+      register: this_deletion
+      retries: 10
+      delay: 10
+      until: this_deletion is not failed
+
+    - name: remove target groups
+      elb_target_group:
+        name: "{{ item }}"
+        state: absent
+      with_items:
+        - "{{ ecs_target_group_name }}1"
+        - "{{ ecs_target_group_name }}2"
       ignore_errors: yes
 
     - name: remove IGW
@@ -1109,8 +1075,3 @@
         name: '{{ resource_prefix }}_ecs_cluster'
       ignore_errors: yes
 
-    - name: remove ECS cluster
-      ecs_cluster:
-        name: "{{ ecs_cluster_name }}"
-        state: absent
-      ignore_errors: yes
