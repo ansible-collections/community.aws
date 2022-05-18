@@ -2,7 +2,7 @@ plugins/modules/aws_kms_info.py pylint:use-a-generator # Branch accepting securi
 plugins/modules/aws_ses_rule_set.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/aws_sgw_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
 plugins/modules/cloudformation_exports_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
-plugins/modules/cloudfront_info.py pylint:unnecessary-comprehension # Should be an easy fix, but testing is a challenge - test are broken and aliases require a wildcard cert in ACM
+plugins/modules/cloudfront_info.py pylint:unnecessary-comprehension # (new test) Should be an easy fix, but testing is a challenge - test are broken and aliases require a wildcard cert in ACM
 plugins/modules/cloudfront_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
 plugins/modules/cloudwatchevent_rule.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/ec2_asg_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
@@ -13,13 +13,13 @@ plugins/modules/ec2_vpc_vpn.py pylint:arguments-renamed # Branch accepting secur
 plugins/modules/elb_target_group.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/iam_group.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/iam_mfa_device_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
-plugins/modules/iam.py pylint:unnecessary-comprehension # iam.py is boto2 so any refactoring can get complex, also it does not have tests
+plugins/modules/iam.py pylint:unnecessary-comprehension # Branch accepting security fixes only
 plugins/modules/iam.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/iam_role.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/iam_server_certificate_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
 plugins/modules/iam_user.py pylint:use-a-generator # Branch accepting security fixes only
 plugins/modules/rds_instance.py pylint:use-a-generator # Branch accepting security fixes only
-plugins/modules/route53.py validate-modules:parameter-state-invalid-choice # Branch accepting security fixes only
+plugins/modules/route53.py validate-modules:parameter-state-invalid-choice # route53_info needs improvements before we can deprecate this
 plugins/modules/wafv2_resources_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
 plugins/modules/wafv2_web_acl_info.py validate-modules:invalid-ansiblemodule-schema # Branch accepting security fixes only
 tests/unit/mock/loader.py pylint:arguments-renamed # Branch accepting security fixes only
