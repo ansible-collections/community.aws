@@ -956,7 +956,7 @@
         state: absent
       ignore_errors: yes
       register: this_deletion
-      retries: 10
+      retries: 12
       delay: 10
       until: this_deletion is not failed
 
