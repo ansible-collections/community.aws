@@ -551,9 +551,12 @@ class EcsServiceManager:
     def is_matching_service(self, expected, existing):
         # aws returns the arn of the task definition
         #   arn:aws:ecs:eu-central-1:123456789:task-definition/ansible-fargate-nginx:3
-        # but the user is just entering 
+        # but the user is just entering
         #   ansible-fargate-nginx:3
         if expected['task_definition'] != existing['taskDefinition'].split('/')[-1]:
+            return False
+
+        if expected['health_check_grace_period_seconds'] != existing['healthCheckGracePeriodSeconds']:
             return False
 
         if (expected['load_balancers'] or []) != existing['loadBalancers']:
