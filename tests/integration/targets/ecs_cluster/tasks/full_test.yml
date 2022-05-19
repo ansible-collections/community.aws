@@ -238,33 +238,6 @@
       # FIXME: service should not change, needs fixing
       ignore_errors: yes
 
-    # FIXME: attempt to update service load balancer
-    - name: update ECS service definition (expected to fail)
-      ecs_service:
-        state: present
-        name: "{{ ecs_service_name }}"
-        cluster: "{{ ecs_cluster_name }}"
-        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
-        desired_count: 1
-        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
-        placement_strategy: "{{ ecs_service_placement_strategy }}"
-        health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
-        load_balancers:
-          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
-            containerName: "{{ ecs_task_name }}"
-            containerPort: "{{ ecs_task_container_port|int + 1 }}"
-        role: "ecsServiceRole"
-      register: update_ecs_service
-      ignore_errors: yes
-
-    - name: assert that updating ECS load balancer failed with helpful message
-      assert:
-        that:
-          - update_ecs_service is failed
-          - "'error' not in update_ecs_service"
-          - "'msg' in update_ecs_service"
-
-
     - name: attempt to use ECS network configuration on task definition without awsvpc network_mode
       ecs_service:
         state: present
