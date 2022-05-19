@@ -441,7 +441,6 @@
         health_check_grace_period_seconds: 30
         state: present
       register: ecs_service_creation_hcgp2
-      ignore_errors: no
 
     - name: check that module returns success
       assert:
