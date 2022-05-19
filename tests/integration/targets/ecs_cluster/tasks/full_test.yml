@@ -967,7 +967,6 @@
         state: absent
         vpc_id: '{{ setup_vpc.vpc.id }}'
       with_items:
-        - "{{ resource_prefix }}-ecs-vpc-test-sg"
         - '{{ resource_prefix }}_ecs_cluster-sg'
       ignore_errors: yes
       register: this_deletion
