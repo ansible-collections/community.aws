@@ -1,0 +1,2 @@
+bugfixes:
+  - lambda_info - fix bug that forces query=config when getting info for all lambdas (https://github.com/ansible-collections/community.aws/pull/1152).
