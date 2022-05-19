@@ -556,7 +556,7 @@ class EcsServiceManager:
         if expected['task_definition'] != existing['taskDefinition'].split('/')[-1]:
             return False
 
-        if existing.get('healthCheckGracePeriodSeconds') and expected['health_check_grace_period_seconds'] != existing.get('healthCheckGracePeriodSeconds'):
+        if expected.get('health_check_grace_period_seconds') != existing.get('healthCheckGracePeriodSeconds'):
             return False
 
         if (expected['load_balancers'] or []) != existing['loadBalancers']:
