@@ -381,7 +381,7 @@
             containerPort: "{{ ecs_task_container_port }}"
         task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
         scheduling_strategy: "REPLICA"
-        health_check_grace_period_seconds: 10
+        health_check_grace_period_seconds: 30
         desired_count: 1
         state: present
       register: ecs_service_creation_hcgp
@@ -391,7 +391,7 @@
       assert:
         that:
           - ecs_service_creation_hcgp.changed
-          - "{{ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds}} == 10"
+          - "{{ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds}} == 30"
 
     - name: update ecs_service using health_check_grace_period_seconds
       ecs_service:
