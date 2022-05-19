@@ -154,14 +154,15 @@ def list_lambdas(client, module):
     :return dict:
     """
 
-    # Function name is specified - retrieve info on that function
     function_name = module.params.get('function_name')
     if function_name:
+        # Function name is specified - retrieve info on that function
         function_names = [function_name]
 
-    # Function name is not specified - retrieve all function names
-    all_function_info = _paginate(client, 'list_functions')['Functions']
-    function_names = [function_info['FunctionName'] for function_info in all_function_info]
+    else:
+        # Function name is not specified - retrieve all function names
+        all_function_info = _paginate(client, 'list_functions')['Functions']
+        function_names = [function_info['FunctionName'] for function_info in all_function_info]
 
     query = module.params['query']
     lambdas = dict()
@@ -194,7 +195,6 @@ def list_lambdas(client, module):
 
         elif query == 'tags':
             lambdas[function_name].update(tags_details(client, module, function_name))
-
 
     return lambdas
 
@@ -289,7 +289,7 @@ def version_details(client, module, function_name):
     except is_boto3_error_code('ResourceNotFoundException'):
         lambda_info.update(versions=[])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Trying to get {0} versions".format(function_name))
+        module.fail_json_aws(e, msg="Trying to get {0} versions".format(function_name))
 
     return camel_dict_to_snake_dict(lambda_info)
 

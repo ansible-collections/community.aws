@@ -252,7 +252,7 @@
       - result.configuration.runtime == 'python3.6'
       - result.configuration.tracing_config.mode == 'PassThrough'
 
-  # Query the Lambda
+  # Test lambda_info
   - name: lambda_info | Gather all infos for all lambda functions
     lambda_info:
     register: lambda_infos_all
@@ -261,6 +261,7 @@
     assert:
       that:
       - lambda_infos_all is not failed
+      - lambda_infos_all.function | length > 0
       - lambda_infos_all.function[lambda_function_name].function_name == lambda_function_name
       - lambda_infos_all.function[lambda_function_name].runtime == "python3.6"
       - lambda_infos_all.function[lambda_function_name].versions is defined
@@ -281,6 +282,7 @@
     assert:
       that:
       - lambda_infos_versions is not failed
+      - lambda_infos_versions.function | length == 1
       - lambda_infos_versions.function[lambda_function_name].versions|length > 0
       - lambda_infos_versions.function[lambda_function_name].function_name is undefined
       - lambda_infos_versions.function[lambda_function_name].policy is undefined
@@ -297,6 +299,7 @@
     assert:
       that:
       - lambda_infos_config is not failed
+      - lambda_infos_config.function | length == 1
       - lambda_infos_config.function[lambda_function_name].function_name == lambda_function_name
       - lambda_infos_config.function[lambda_function_name].description is defined
       - lambda_infos_config.function[lambda_function_name].versions is undefined
@@ -314,6 +317,7 @@
     assert:
       that:
       - lambda_infos_policy is not failed
+      - lambda_infos_policy.function | length == 1
       - lambda_infos_policy.function[lambda_function_name].policy is defined
       - lambda_infos_policy.function[lambda_function_name].versions is undefined
       - lambda_infos_policy.function[lambda_function_name].function_name is undefined
@@ -330,6 +334,7 @@
     assert:
       that:
       - lambda_infos_aliases is not failed
+      - lambda_infos_aliases.function | length == 1
       - lambda_infos_aliases.function[lambda_function_name].aliases is defined
       - lambda_infos_aliases.function[lambda_function_name].versions is undefined
       - lambda_infos_aliases.function[lambda_function_name].function_name is undefined
@@ -346,6 +351,7 @@
     assert:
       that:
       - lambda_infos_mappings is not failed
+      - lambda_infos_mappings.function | length == 1
       - lambda_infos_mappings.function[lambda_function_name].mappings is defined
       - lambda_infos_mappings.function[lambda_function_name].versions is undefined
       - lambda_infos_mappings.function[lambda_function_name].function_name is undefined
