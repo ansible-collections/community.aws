@@ -253,10 +253,8 @@
       - result.configuration.tracing_config.mode == 'PassThrough'
 
   # Query the Lambda
-  - name: lambda_info | Gather all infos for given lambda function
+  - name: lambda_info | Gather all infos for all lambda functions
     lambda_info:
-      name: '{{ lambda_function_name }}'
-      query: all
     register: lambda_infos_all
     check_mode: yes
   - name: lambda_info | Assert successfull retrieval of all information
@@ -285,6 +283,10 @@
       - lambda_infos_versions is not failed
       - lambda_infos_versions.function[lambda_function_name].versions|length > 0
       - lambda_infos_versions.function[lambda_function_name].function_name is undefined
+      - lambda_infos_versions.function[lambda_function_name].policy is undefined
+      - lambda_infos_versions.function[lambda_function_name].aliases is undefined
+      - lambda_infos_versions.function[lambda_function_name].mappings is undefined
+      - lambda_infos_versions.function[lambda_function_name].tags is undefined
 
   - name: lambda_info | Gather config infos for given lambda function
     lambda_info:
@@ -298,6 +300,10 @@
       - lambda_infos_config.function[lambda_function_name].function_name == lambda_function_name
       - lambda_infos_config.function[lambda_function_name].description is defined
       - lambda_infos_config.function[lambda_function_name].versions is undefined
+      - lambda_infos_config.function[lambda_function_name].policy is undefined
+      - lambda_infos_config.function[lambda_function_name].aliases is undefined
+      - lambda_infos_config.function[lambda_function_name].mappings is undefined
+      - lambda_infos_config.function[lambda_function_name].tags is undefined
 
   - name: lambda_info | Gather policy infos for given lambda function
     lambda_info:
@@ -310,6 +316,10 @@
       - lambda_infos_policy is not failed
       - lambda_infos_policy.function[lambda_function_name].policy is defined
       - lambda_infos_policy.function[lambda_function_name].versions is undefined
+      - lambda_infos_policy.function[lambda_function_name].function_name is undefined
+      - lambda_infos_policy.function[lambda_function_name].aliases is undefined
+      - lambda_infos_policy.function[lambda_function_name].mappings is undefined
+      - lambda_infos_policy.function[lambda_function_name].tags is undefined
 
   - name: lambda_info | Gather aliases infos for given lambda function
     lambda_info:
@@ -321,6 +331,11 @@
       that:
       - lambda_infos_aliases is not failed
       - lambda_infos_aliases.function[lambda_function_name].aliases is defined
+      - lambda_infos_aliases.function[lambda_function_name].versions is undefined
+      - lambda_infos_aliases.function[lambda_function_name].function_name is undefined
+      - lambda_infos_aliases.function[lambda_function_name].policy is undefined
+      - lambda_infos_aliases.function[lambda_function_name].mappings is undefined
+      - lambda_infos_aliases.function[lambda_function_name].tags is undefined
 
   - name: lambda_info | Gather mappings infos for given lambda function
     lambda_info:
@@ -332,6 +347,11 @@
       that:
       - lambda_infos_mappings is not failed
       - lambda_infos_mappings.function[lambda_function_name].mappings is defined
+      - lambda_infos_mappings.function[lambda_function_name].versions is undefined
+      - lambda_infos_mappings.function[lambda_function_name].function_name is undefined
+      - lambda_infos_mappings.function[lambda_function_name].aliases is undefined
+      - lambda_infos_mappings.function[lambda_function_name].policy is undefined
+      - lambda_infos_mappings.function[lambda_function_name].tags is undefined
 
   # More Lambda update tests
   - name: test state=present with all nullable variables explicitly set to null

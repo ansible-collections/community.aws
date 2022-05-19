@@ -13,8 +13,8 @@ version_added: 1.0.0
 short_description: Gathers AWS Lambda function details
 description:
   - Gathers various details related to Lambda functions, including aliases, versions and event source mappings.
-  - Use module M(community.aws.lambda) to manage the lambda function itself, M(community.aws.lambda_alias) to manage function aliases and
-    M(community.aws.lambda_event) to manage lambda event source mappings.
+  - Use module M(community.aws.lambda) to manage the lambda function itself, M(community.aws.lambda_alias) to manage function aliases,
+    M(community.aws.lambda_event) to manage lambda event source mappings, and M(community.aws.lambda_policy) to manage policy statements.
 
 
 options:
@@ -48,17 +48,20 @@ EXAMPLES = '''
     query: all
     function_name: myFunction
   register: my_function_details
+
 # List all versions of a function
 - name: List function versions
   community.aws.lambda_info:
     query: versions
     function_name: myFunction
   register: my_function_versions
-# List all lambda function versions
-- name: List all function
+
+# List all info for all functions
+- name: List all functions
   community.aws.lambda_info:
     query: all
   register: output
+
 - name: show Lambda information
   ansible.builtin.debug:
     msg: "{{ output['function'] }}"
@@ -120,108 +123,118 @@ def fix_return(node):
     return node_value
 
 
-def alias_details(client, module):
+def alias_details(client, module, function_name):
     """
     Returns list of aliases for a specified function.
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
+    :param function_name (str): Name of Lambda function to query
     :return dict:
     """
 
     lambda_info = dict()
 
-    function_name = module.params.get('function_name')
-    if function_name:
-        try:
-            lambda_info.update(aliases=_paginate(client, 'list_aliases', FunctionName=function_name)['Aliases'])
-        except is_boto3_error_code('ResourceNotFoundException'):
-            lambda_info.update(aliases=[])
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Trying to get aliases")
-    else:
-        module.fail_json(msg='Parameter function_name required for query=aliases.')
+    try:
+        lambda_info.update(aliases=_paginate(client, 'list_aliases', FunctionName=function_name)['Aliases'])
+    except is_boto3_error_code('ResourceNotFoundException'):
+        lambda_info.update(aliases=[])
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Trying to get aliases")
 
-    return {function_name: camel_dict_to_snake_dict(lambda_info)}
+    return camel_dict_to_snake_dict(lambda_info)
 
 
-def all_details(client, module):
+def list_lambdas(client, module):
     """
-    Returns all lambda related facts.
+    Returns queried facts for a specified function (or all functions).
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
     :return dict:
     """
 
-    lambda_info = dict()
-
+    # Function name is specified - retrieve info on that function
     function_name = module.params.get('function_name')
     if function_name:
-        lambda_info[function_name] = {}
-        lambda_info[function_name].update(config_details(client, module)[function_name])
-        lambda_info[function_name].update(alias_details(client, module)[function_name])
-        lambda_info[function_name].update(policy_details(client, module)[function_name])
-        lambda_info[function_name].update(version_details(client, module)[function_name])
-        lambda_info[function_name].update(mapping_details(client, module)[function_name])
-        lambda_info[function_name].update(tags_details(client, module)[function_name])
-    else:
-        lambda_info.update(config_details(client, module))
+        function_names = [function_name]
 
-    return lambda_info
+    # Function name is not specified - retrieve all function names
+    all_function_info = _paginate(client, 'list_functions')['Functions']
+    function_names = [function_info['FunctionName'] for function_info in all_function_info]
+
+    query = module.params['query']
+    lambdas = dict()
+
+    for function_name in function_names:
+        lambdas[function_name] = {}
+
+        if query == 'all':
+            lambdas[function_name].update(config_details(client, module, function_name))
+            lambdas[function_name].update(alias_details(client, module, function_name))
+            lambdas[function_name].update(policy_details(client, module, function_name))
+            lambdas[function_name].update(version_details(client, module, function_name))
+            lambdas[function_name].update(mapping_details(client, module, function_name))
+            lambdas[function_name].update(tags_details(client, module, function_name))
+
+        elif query == 'config':
+            lambdas[function_name].update(config_details(client, module, function_name))
+
+        elif query == 'aliases':
+            lambdas[function_name].update(alias_details(client, module, function_name))
+
+        elif query == 'policy':
+            lambdas[function_name].update(policy_details(client, module, function_name))
+
+        elif query == 'versions':
+            lambdas[function_name].update(version_details(client, module, function_name))
+
+        elif query == 'mappings':
+            lambdas[function_name].update(mapping_details(client, module, function_name))
+
+        elif query == 'tags':
+            lambdas[function_name].update(tags_details(client, module, function_name))
 
 
-def config_details(client, module):
+    return lambdas
+
+
+def config_details(client, module, function_name):
     """
-    Returns configuration details for one or all lambda functions.
+    Returns configuration details for a lambda function.
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
+    :param function_name (str): Name of Lambda function to query
     :return dict:
     """
 
     lambda_info = dict()
 
-    function_name = module.params.get('function_name')
-    if function_name:
-        try:
-            lambda_info.update(client.get_function_configuration(aws_retry=True, FunctionName=function_name))
-        except is_boto3_error_code('ResourceNotFoundException'):
-            lambda_info.update(function={})
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Trying to get {0} configuration".format(function_name))
-    else:
-        try:
-            lambda_info.update(function_list=_paginate(client, 'list_functions')['Functions'])
-        except is_boto3_error_code('ResourceNotFoundException'):
-            lambda_info.update(function_list=[])
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Trying to get function list")
+    try:
+        lambda_info.update(client.get_function_configuration(aws_retry=True, FunctionName=function_name))
+    except is_boto3_error_code('ResourceNotFoundException'):
+        lambda_info.update(function={})
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Trying to get {0} configuration".format(function_name))
 
-        functions = dict()
-        for func in lambda_info.pop('function_list', []):
-            func['tags'] = client.get_function(FunctionName=func['FunctionName']).get('Tags', {})
-            functions[func['FunctionName']] = camel_dict_to_snake_dict(func)
-        return functions
-
-    return {function_name: camel_dict_to_snake_dict(lambda_info)}
+    return camel_dict_to_snake_dict(lambda_info)
 
 
-def mapping_details(client, module):
+def mapping_details(client, module, function_name):
     """
     Returns all lambda event source mappings.
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
+    :param function_name (str): Name of Lambda function to query
     :return dict:
     """
 
     lambda_info = dict()
     params = dict()
-    function_name = module.params.get('function_name')
 
-    if function_name:
-        params['FunctionName'] = module.params.get('function_name')
+    params['FunctionName'] = function_name
 
     if module.params.get('event_source_arn'):
         params['EventSourceArn'] = module.params.get('event_source_arn')
@@ -233,86 +246,74 @@ def mapping_details(client, module):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Trying to get source event mappings")
 
-    if function_name:
-        return {function_name: camel_dict_to_snake_dict(lambda_info)}
-
     return camel_dict_to_snake_dict(lambda_info)
 
 
-def policy_details(client, module):
+def policy_details(client, module, function_name):
     """
     Returns policy attached to a lambda function.
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
+    :param function_name (str): Name of Lambda function to query
     :return dict:
     """
 
     lambda_info = dict()
 
-    function_name = module.params.get('function_name')
-    if function_name:
-        try:
-            # get_policy returns a JSON string so must convert to dict before reassigning to its key
-            lambda_info.update(policy=json.loads(client.get_policy(aws_retry=True, FunctionName=function_name)['Policy']))
-        except is_boto3_error_code('ResourceNotFoundException'):
-            lambda_info.update(policy={})
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Trying to get {0} policy".format(function_name))
-    else:
-        module.fail_json(msg='Parameter function_name required for query=policy.')
+    try:
+        # get_policy returns a JSON string so must convert to dict before reassigning to its key
+        lambda_info.update(policy=json.loads(client.get_policy(aws_retry=True, FunctionName=function_name)['Policy']))
+    except is_boto3_error_code('ResourceNotFoundException'):
+        lambda_info.update(policy={})
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Trying to get {0} policy".format(function_name))
 
-    return {function_name: camel_dict_to_snake_dict(lambda_info)}
+    return camel_dict_to_snake_dict(lambda_info)
 
 
-def version_details(client, module):
+def version_details(client, module, function_name):
     """
     Returns all lambda function versions.
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
+    :param function_name (str): Name of Lambda function to query
     :return dict:
     """
 
     lambda_info = dict()
 
-    function_name = module.params.get('function_name')
-    if function_name:
-        try:
-            lambda_info.update(versions=_paginate(client, 'list_versions_by_function', FunctionName=function_name)['Versions'])
-        except is_boto3_error_code('ResourceNotFoundException'):
-            lambda_info.update(versions=[])
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+    try:
+        lambda_info.update(versions=_paginate(client, 'list_versions_by_function', FunctionName=function_name)['Versions'])
+    except is_boto3_error_code('ResourceNotFoundException'):
+        lambda_info.update(versions=[])
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(e, msg="Trying to get {0} versions".format(function_name))
-    else:
-        module.fail_json(msg='Parameter function_name required for query=versions.')
 
-    return {function_name: camel_dict_to_snake_dict(lambda_info)}
+    return camel_dict_to_snake_dict(lambda_info)
 
 
-def tags_details(client, module):
+def tags_details(client, module, function_name):
     """
-    Returns tag details for one or all lambda functions.
+    Returns tag details for a lambda function.
 
     :param client: AWS API client reference (boto3)
     :param module: Ansible module reference
+    :param function_name (str): Name of Lambda function to query
     :return dict:
     """
 
     lambda_info = dict()
 
-    function_name = module.params.get('function_name')
-    if function_name:
-        try:
-            lambda_info.update(tags=client.get_function(aws_retry=True, FunctionName=function_name).get('Tags', {}))
-        except is_boto3_error_code('ResourceNotFoundException'):
-            lambda_info.update(function={})
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Trying to get {0} tags".format(function_name))
-    else:
-        module.fail_json(msg='Parameter function_name required for query=tags.')
+    try:
+        lambda_info.update(tags=client.get_function(aws_retry=True, FunctionName=function_name).get('Tags', {}))
+    except is_boto3_error_code('ResourceNotFoundException'):
+        lambda_info.update(function={})
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Trying to get {0} tags".format(function_name))
 
-    return {function_name: camel_dict_to_snake_dict(lambda_info)}
+    return camel_dict_to_snake_dict(lambda_info)
 
 
 def main():
@@ -346,18 +347,7 @@ def main():
 
     client = module.client('lambda', retry_decorator=AWSRetry.jittered_backoff())
 
-    invocations = dict(
-        aliases='alias_details',
-        all='all_details',
-        config='config_details',
-        mappings='mapping_details',
-        policy='policy_details',
-        versions='version_details',
-        tags='tags_details',
-    )
-
-    this_module_function = globals()[invocations[module.params['query']]]
-    all_facts = fix_return(this_module_function(client, module))
+    all_facts = fix_return(list_lambdas(client, module))
 
     results = dict(function=all_facts, changed=False)
 
