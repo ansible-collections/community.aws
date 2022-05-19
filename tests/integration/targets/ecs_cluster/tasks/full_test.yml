@@ -235,8 +235,6 @@
       assert:
         that:
           - not ecs_service_again.changed
-      # FIXME: service should not change, needs fixing
-      ignore_errors: yes
 
     - name: attempt to use ECS network configuration on task definition without awsvpc network_mode
       ecs_service:
