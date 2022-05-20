@@ -549,11 +549,19 @@
       - result is not failed
 
   always:
-  - name: ensure function is absent at end of test
+
+  - name: ensure functions are absent at end of test
     lambda:
-      name: '{{lambda_function_name}}'
+      name: "{{ item }}"
       state: absent
     ignore_errors: true
+    with_items:
+      - "{{ lambda_function_name }}"
+      - "{{ lambda_function_name }}_1"
+      - "{{ lambda_function_name }}_2"
+      - "{{ lambda_function_name }}_3"
+      - "{{ lambda_function_name }}_4"
+
   - name: ensure role has been removed at end of test
     iam_role:
       name: '{{ lambda_role_name }}'
