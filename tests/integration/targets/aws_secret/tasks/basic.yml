@@ -1,29 +1,67 @@
 ---
-- block:
+############################################################
+# This Integration test is currently very minimal
+# It would be good if someone would update the tests to run through the standard 4-step checks for
+# all of the module parameters
+#
+# 1) Set Value (Check mode)
+#     - changed is True
+#     - object *NOT* updated
+# 2) Set Value
+#     - changed is True
+#     - object updated
+# 3) Set same Value (Check mode)
+#     - changed is False
+#     - object *NOT* updated
+#     - Tests idemoptency
+# 4) Set same Value
+#     - changed is False
+#     - object *NOT* updated
+#     - Tests idemoptency
+
+- vars:
+    first_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      'New Key with Spaces': Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+    final_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+  block:
   # ============================================================
   #   Preparation
   # ============================================================
   - name: 'Retrieve caller facts'
     aws_caller_info:
-    register: aws_caller_info
+    register: caller_info
+
+  - name: 'Generate the ARN pattern to search for'
+    vars:
+      _caller_info: '{{ caller_info.arn.split(":") }}'
+      _base_arn: 'arn:{{_caller_info[1]}}:secretsmanager:{{ aws_region }}'
+    set_fact:
+      account_arn: '{{_base_arn}}:{{_caller_info[4]}}:secret:'
 
   # ============================================================
-  # Module parameter testing
-  # ============================================================
-  - name: test with no parameters
-    aws_secret:
-    register: result
-    ignore_errors: true
-    check_mode: true
-
-  - name: assert failure when called with no parameters
-    assert:
-      that:
-         - result.failed
-         - 'result.msg.startswith("missing required arguments:")'
-
-  # ============================================================
-  # Creation/Deletion testing
+  # Creation testing
   # ============================================================
   - name: add secret to AWS Secrets Manager
     aws_secret:
@@ -37,10 +75,20 @@
     assert:
       that:
         - result.changed
-        - result.arn is not none
-        - result.name is not none
-        - result.tags is not none
-        - result.version_ids_to_stages is not none
+        - '"arn" in result.secret'
+        # - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.arn.startswith(account_arn)
+        # ARN includes a random string after the name
+        - secret_name in result.secret.arn
+        - result.secret.name == secret_name
+        - result.secret.version_ids_to_stages | length == 1
+
+  - name: save the ARN for later comparison
+    set_fact:
+      secret_arn: '{{ result.secret.arn }}'
 
   - name: no changes to secret
     aws_secret:
@@ -54,47 +102,17 @@
     assert:
       that:
         - not result.changed
-        - result.arn is not none
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.version_ids_to_stages | length == 1
 
-  - name: make change to secret
-    aws_secret:
-      name: "{{ secret_name }}"
-      description: 'this is a change to this secret'
-      state: present
-      secret_type: 'string'
-      secret: "{{ super_secret_string }}"
-    register: result
-
-  - debug:
-      var: result
-
-  - name: assert correct keys are returned
-    assert:
-      that:
-        - result.changed
-        - result.arn is not none
-        - result.name is not none
-        - result.tags is not none
-        - result.version_ids_to_stages is not none
-
-  - name: add tags to secret
-    aws_secret:
-      name: "{{ secret_name }}"
-      description: 'this is a change to this secret'
-      state: present
-      secret_type: 'string'
-      secret: "{{ super_secret_string }}"
-      tags:
-        Foo: 'Bar'
-        Test: 'Tag'
-    register: result
-
-  - name: assert correct keys are returned
-    assert:
-      that:
-        - result.changed
-
-  - name: remove tags from secret
+  - name: Set secret description
     aws_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to this secret'
@@ -107,6 +125,449 @@
     assert:
       that:
         - result.changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.version_ids_to_stages | length == 2
+
+  ###############################################################
+  # Tagging
+  ###############################################################
+
+  - name: Set tags (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ first_tags }}"
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Set tags
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ first_tags }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 4
+        - result.secret.tags_dict == first_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  - name: Set tags - idempotency (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ first_tags }}"
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Set tags - idempotency
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ first_tags }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is not changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 4
+        - result.secret.tags_dict == first_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  ###
+
+  - name: Update tags with purge (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ second_tags }}"
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update tags with purge
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ second_tags }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 4
+        - result.secret.tags_dict == second_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  - name: Update tags with purge - idempotency (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ second_tags }}"
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update tags with purge - idempotency
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ second_tags }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is not changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 4
+        - result.secret.tags_dict == second_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  ###
+
+  - name: Update tags without purge (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ third_tags }}"
+      purge_tags: false
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update tags without purge
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ third_tags }}"
+      purge_tags: false
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 8
+        - result.secret.tags_dict == final_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  - name: Update tags without purge - idempotency (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ third_tags }}"
+      purge_tags: false
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update tags without purge - idempotency
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: "{{ third_tags }}"
+      purge_tags: false
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is not changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 8
+        - result.secret.tags_dict == final_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  ###
+
+  - name: Tags not set - idempotency (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+    check_mode: True
+
+  - name: assert changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Tags not set - idempotency
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is not changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 8
+        - result.secret.tags_dict == final_tags
+        - result.secret.version_ids_to_stages | length == 2
+
+  ###
+
+  - name: remove all tags from secret (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: {}
+    register: result
+    check_mode: true
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is changed
+
+  - name: remove all tags from secret
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: {}
+    register: result
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 0
+        - result.secret.tags_dict | length == 0
+        - result.secret.version_ids_to_stages | length == 2
+
+  - name: remove all tags from secret - idempotency (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: {}
+    register: result
+    check_mode: true
+
+  - name: assert correct keys are returned
+    assert:
+      that:
+        - result is not changed
+
+  - name: remove all tags from secret
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      tags: {}
+    register: result
+
+  - name: assert correct keys are returned - idempotency
+    assert:
+      that:
+        - result is not changed
+        - '"arn" in result.secret'
+        - '"created_date" in result.secret'
+        - '"description" in result.secret'
+        - '"last_accessed_date" in result.secret'
+        - '"last_changed_date" in result.secret'
+        - '"name" in result.secret'
+        - '"tags" in result.secret'
+        - '"tags_dict" in result.secret'
+        - '"version_ids_to_stages" in result.secret'
+        - result.secret.description == "this is a change to this secret"
+        - result.secret.arn == secret_arn
+        - result.secret.name == secret_name
+        - result.secret.tags | length == 0
+        - result.secret.tags_dict | length == 0
+        - result.secret.version_ids_to_stages | length == 2
+
+  ###############################################################
+  # Resource policy
+  ###############################################################
 
   - name: add resource policy to secret
     aws_secret:
@@ -150,6 +611,10 @@
     assert:
       that:
         - not result.changed
+
+  # ============================================================
+  # Removal testing
+  # ============================================================
 
   - name: remove secret
     aws_secret:
