@@ -71,6 +71,8 @@ options:
       to match exactly what is defined by I(tags) parameter.
     type: bool
     required: false
+    default: true
+    version_added: 4.0.0
   rotation_lambda:
     description:
     - Specifies the ARN of the Lambda function that can rotate the secret.
@@ -476,8 +478,8 @@ def main():
                     secrets_mgr.untag_secret(secret.name, tags_to_remove)
                     changed = True
         result = camel_dict_to_snake_dict(secrets_mgr.get_secret(secret.name))
-        if result.get('tags', None):
-            result['tags_dict'] = boto3_tag_list_to_ansible_dict(result.get('tags'))
+        if result.get('tags', None) is not None:
+            result['tags_dict'] = boto3_tag_list_to_ansible_dict(result.get('tags', []))
         result.pop("response_metadata")
 
     module.exit_json(changed=changed, secret=result)
