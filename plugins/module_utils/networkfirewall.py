@@ -1456,7 +1456,9 @@ class NetworkFirewallManager(NFFirewallBoto3Mixin, NFPolicyBoto3Mixin, BaseNetwo
     def _normalize_firewall(self, firewall):
         if firewall is None:
             return None
+        subnets = [s.get('SubnetId') for s in firewall.get('SubnetMappings', [])]
         firewall = self._normalize_boto3_resource(firewall, add_tags=True)
+        firewall['subnets'] = subnets
         return firewall
 
     def _normalize_sync_state_config(self, policy):

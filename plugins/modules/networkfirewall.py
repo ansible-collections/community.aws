@@ -19,6 +19,7 @@ options:
       - Exactly one of I(arn) or I(name) must be provided.
     required: false
     type: str
+    aliases: ['firewall_arn']
   name:
     description:
       - The name of the firewall.
@@ -26,6 +27,7 @@ options:
       - Exactly one of I(arn) or I(name) must be provided.
     required: false
     type: str
+    aliases: ['firewall_name']
   state:
     description:
       - Create or remove the firewall.
@@ -59,6 +61,7 @@ options:
       - Defaults to C(false) when not provided on creation.
     type: bool
     required: false
+    aliases: ['firewall_policy_change_protection']
   subnet_change_protection:
     description:
       - When I(subnet_change_protection=True), the firewall is protected from
@@ -112,6 +115,7 @@ options:
       - Required when creating a new firewall.
     type: str
     required: false
+    aliases: ['firewall_policy_arn']
 
 author: Mark Chappell (@tremble)
 extends_documentation_fragment:
@@ -208,8 +212,13 @@ firewall:
           type: bool
           returned: success
           example: true
-        subnet_mappings:
+        subnets:
           description: A list of the subnets the firewall endpoints are in.
+          type: list
+          elements: str
+          example: ["subnet-12345678", "subnet-87654321"]
+        subnet_mappings:
+          description: A list representing the subnets the firewall endpoints are in.
           type: list
           elements: dict
           contains:
@@ -283,8 +292,8 @@ from ansible_collections.community.aws.plugins.module_utils.networkfirewall impo
 def main():
 
     argument_spec = dict(
-        name=dict(type='str', required=False),
-        arn=dict(type='str', required=False),
+        name=dict(type='str', required=False, aliases=['firewall_name']),
+        arn=dict(type='str', required=False, aliases=['firewall_arn']),
         state=dict(type='str', required=False, default='present', choices=['present', 'absent']),
         description=dict(type='str', required=False),
         tags=dict(type='dict', required=False),
@@ -292,11 +301,11 @@ def main():
         wait=dict(type='bool', required=False, default=True),
         wait_timeout=dict(type='int', required=False),
         subnet_change_protection=dict(type='bool', required=False),
-        policy_change_protection=dict(type='bool', required=False),
+        policy_change_protection=dict(type='bool', required=False, aliases=['firewall_policy_change_protection']),
         delete_protection=dict(type='bool', required=False),
         subnets=dict(type='list', elements='str', required=False),
         purge_subnets=dict(type='bool', required=False, default=True),
-        policy=dict(type='str', required=False),
+        policy=dict(type='str', required=False, aliases=['firewall_policy_arn']),
     )
 
     mutually_exclusive = [
