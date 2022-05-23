@@ -185,6 +185,11 @@
         state: present
       register: ecs_task_definition
 
+    - name: check that initial task definition changes
+      assert:
+        that:
+          - ecs_task_definition.changed
+
     - name: recreate task definition
       ecs_taskdefinition:
         containers: "{{ ecs_task_containers }}"
