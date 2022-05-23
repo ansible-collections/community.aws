@@ -255,6 +255,7 @@
   # Test lambda_info
   - name: lambda_info | Gather all infos for all lambda functions
     lambda_info:
+      query: all
     register: lambda_infos_all
     check_mode: yes
   - name: lambda_info | Assert successfull retrieval of all information
@@ -264,14 +265,50 @@
       - lambda_infos_all.function | length > 0
       - lambda_infos_all.function[lambda_function_name].function_name == lambda_function_name
       - lambda_infos_all.function[lambda_function_name].runtime == "python3.6"
+      - lambda_infos_all.function[lambda_function_name].description == ""
+      - lambda_infos_all.function[lambda_function_name].function_arn is defined
+      - lambda_infos_all.function[lambda_function_name].handler == "mini_lambda.handler"
       - lambda_infos_all.function[lambda_function_name].versions is defined
       - lambda_infos_all.function[lambda_function_name].aliases is defined
       - lambda_infos_all.function[lambda_function_name].policy is defined
       - lambda_infos_all.function[lambda_function_name].mappings is defined
-      - lambda_infos_all.function[lambda_function_name].description == ""
-      - lambda_infos_all.function[lambda_function_name].function_arn is defined
-      - lambda_infos_all.function[lambda_function_name].handler == "mini_lambda.handler"
       - lambda_infos_all.function[lambda_function_name].tags is defined
+
+  - name: lambda_info | Ensure default query value is 'config' when function name omitted
+    lambda_info:
+    register: lambda_infos_query_config
+    check_mode: yes
+  - name: lambda_info | Assert successfull retrieval of all information
+    assert:
+      that:
+      - lambda_infos_query_config is not failed
+      - lambda_infos_query_config.function | length > 0
+      - lambda_infos_query_config.function[lambda_function_name].function_name == lambda_function_name
+      - lambda_infos_query_config.function[lambda_function_name].runtime == "python3.6"
+      - lambda_infos_query_config.function[lambda_function_name].description == ""
+      - lambda_infos_query_config.function[lambda_function_name].function_arn is defined
+      - lambda_infos_query_config.function[lambda_function_name].handler == "mini_lambda.handler"
+      - lambda_infos_query_config.function[lambda_function_name].versions is not defined
+      - lambda_infos_query_config.function[lambda_function_name].aliases is not defined
+      - lambda_infos_query_config.function[lambda_function_name].policy is not defined
+      - lambda_infos_query_config.function[lambda_function_name].mappings is not defined
+      - lambda_infos_query_config.function[lambda_function_name].tags is not defined
+
+  - name: lambda_info | Ensure default query value is 'all' when function name specified
+    lambda_info:
+      name: '{{ lambda_function_name }}'
+    register: lambda_infos_query_all
+  - name: lambda_info | Assert successfull retrieval of all information
+    assert:
+      that:
+      - lambda_infos_query_all is not failed
+      - lambda_infos_query_all.function | length == 1
+      - lambda_infos_query_all.function[lambda_function_name].versions|length > 0
+      - lambda_infos_query_all.function[lambda_function_name].function_name is defined
+      - lambda_infos_query_all.function[lambda_function_name].policy is defined
+      - lambda_infos_query_all.function[lambda_function_name].aliases is defined
+      - lambda_infos_query_all.function[lambda_function_name].mappings is defined
+      - lambda_infos_query_all.function[lambda_function_name].tags is defined
 
   - name: lambda_info | Gather version infos for given lambda function
     lambda_info:

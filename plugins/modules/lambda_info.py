@@ -20,9 +20,10 @@ description:
 options:
   query:
     description:
-      - Specifies the resource type for which to gather information.  Leave blank to retrieve all information.
+      - Specifies the resource type for which to gather information.
+      - Defaults to C(all) when I(function_name) is specified.
+      - Defaults to C(config) when I(function_name) is NOT specified.
     choices: [ "aliases", "all", "config", "mappings", "policy", "versions", "tags" ]
-    default: "all"
     type: str
   function_name:
     description:
@@ -324,7 +325,7 @@ def main():
     """
     argument_spec = dict(
         function_name=dict(required=False, default=None, aliases=['function', 'name']),
-        query=dict(required=False, choices=['aliases', 'all', 'config', 'mappings', 'policy', 'versions', 'tags'], default='all'),
+        query=dict(required=False, choices=['aliases', 'all', 'config', 'mappings', 'policy', 'versions', 'tags'], default=None),
         event_source_arn=dict(required=False, default=None),
     )
 
@@ -344,6 +345,15 @@ def main():
             )
         if len(function_name) > 64:
             module.fail_json(msg='Function name "{0}" exceeds 64 character limit'.format(function_name))
+
+    # create default values for query if not specified.
+    # if function name exists, query should default to 'all'.
+    # if function name does not exist, query should default to 'config' to limit the runtime when listing all lambdas.
+    if not module.params.get('query'):
+        if function_name:
+            module.params['query'] = 'all'
+        else:
+            module.params['query'] = 'config'
 
     client = module.client('lambda', retry_decorator=AWSRetry.jittered_backoff())
 
