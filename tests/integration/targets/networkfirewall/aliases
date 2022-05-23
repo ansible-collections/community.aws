@@ -1,0 +1,7 @@
+cloud/aws
+
+# Takes around 45 minutes: deletion of resources has to be serial and is
+# painfully slow
+slow
+
+networkfirewall_info

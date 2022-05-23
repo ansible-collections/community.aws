@@ -1,0 +1,118 @@
+---
+# The simplest form of rule group
+- name: 'Create Rule Groups with minimal settings (Default order)'
+  networkfirewall_rule_group:
+    name: '{{ default_group_name }}-{{ item }}'
+    type: 'stateful'
+    capacity: '{{ rule_group_capacity }}'
+    rule_strings:
+      - 'pass tcp any any -> any any (sid:1000001;)'
+  register: default_groups
+  loop: '{{ range(0,3,1) | list }}'
+
+# Store Group Names and ARNs for later
+- set_fact:
+    default_group_names: >-
+      {{ default_groups.results
+        | map(attribute="rule_group")
+        | map(attribute="rule_group_metadata")
+        | map(attribute="rule_group_name") | list }}
+    default_group_arns: >-
+      {{ default_groups.results
+        | map(attribute="rule_group")
+        | map(attribute="rule_group_metadata")
+        | map(attribute="rule_group_arn") | list }}
+
+- name: 'Pick 2 AZs available for use'
+  set_fact:
+    subnet_az_a_1: '{{ ec2_availability_zone_names[0] }}'
+    subnet_az_a_1a: '{{ ec2_availability_zone_names[0] }}'
+    subnet_az_a_2: '{{ ec2_availability_zone_names[1] }}'
+    subnet_az_a_3: '{{ ec2_availability_zone_names[2] }}'
+    subnet_az_b_1: '{{ ec2_availability_zone_names[0] }}'
+    subnet_az_b_2: '{{ ec2_availability_zone_names[1] }}'
+
+- name: 'Create VPCs to attach to Firewall'
+  ec2_vpc_net:
+    cidr_block: '{{ item.cidr }}'
+    name: '{{ item.name }}'
+  loop:
+  - cidr: '{{ vpc_cidr_a }}'
+    name: '{{ vpc_name_a }}'
+  - cidr: '{{ vpc_cidr_b }}'
+    name: '{{ vpc_name_b }}'
+  register: create_vpcs
+
+- set_fact:
+    vpc_id_a: '{{ vpc_a.id }}'
+    vpc_id_b: '{{ vpc_b.id }}'
+    vpc_owner_a: '{{ vpc_a.owner_id }}'
+    vpc_owner_b: '{{ vpc_b.owner_id }}'
+  vars:
+    vpc_a: '{{ create_vpcs.results[0].vpc }}'
+    vpc_b: '{{ create_vpcs.results[1].vpc }}'
+
+- name: 'Create subnets'
+  ec2_vpc_subnet:
+    az: '{{ item.az }}'
+    cidr: '{{ item.cidr }}'
+    tags:
+      Name: '{{ item.name }}'
+    vpc_id: '{{ item.vpc_id }}'
+  loop:
+  - az: '{{ subnet_az_a_1 }}'
+    cidr: '{{ subnet_cidr_a_1 }}'
+    vpc_id: '{{ vpc_id_a }}'
+    name: '{{ subnet_name_a_1 }}'
+  - az: '{{ subnet_az_a_2 }}'
+    cidr: '{{ subnet_cidr_a_2 }}'
+    vpc_id: '{{ vpc_id_a }}'
+    name: '{{ subnet_name_a_2 }}'
+  - az: '{{ subnet_az_a_3 }}'
+    cidr: '{{ subnet_cidr_a_3 }}'
+    vpc_id: '{{ vpc_id_a }}'
+    name: '{{ subnet_name_a_3 }}'
+  - az: '{{ subnet_az_b_1 }}'
+    cidr: '{{ subnet_cidr_b_1 }}'
+    vpc_id: '{{ vpc_id_b }}'
+    name: '{{ subnet_name_b_1 }}'
+  - az: '{{ subnet_az_b_2 }}'
+    cidr: '{{ subnet_cidr_b_2 }}'
+    vpc_id: '{{ vpc_id_b }}'
+    name: '{{ subnet_name_b_2 }}'
+  - az: '{{ subnet_az_a_1a }}'
+    cidr: '{{ subnet_cidr_a_1a }}'
+    vpc_id: '{{ vpc_id_a }}'
+    name: '{{ subnet_name_a_1a }}'
+  register: create_subnets
+
+- set_fact:
+    subnet_id_a_1: '{{ create_subnets.results[0].subnet.id }}'
+    subnet_id_a_2: '{{ create_subnets.results[1].subnet.id }}'
+    subnet_id_a_3: '{{ create_subnets.results[2].subnet.id }}'
+    subnet_id_b_1: '{{ create_subnets.results[3].subnet.id }}'
+    subnet_id_b_2: '{{ create_subnets.results[4].subnet.id }}'
+    subnet_id_a_1a: '{{ create_subnets.results[5].subnet.id }}'
+
+- name: 'Create a simple firewall policy with `default` rule order'
+  networkfirewall_policy:
+    name: '{{ default_policy_name }}-{{ item }}'
+    stateful_rule_order: 'default'
+    stateful_rule_groups:
+    - '{{ default_group_names[(item)] }}'
+    state: present
+  register: default_policies
+  loop: '{{ range(0,3,1) | list }}'
+
+# Store Group Names and ARNs for later
+- set_fact:
+    default_policy_names: >-
+      {{ default_policies.results
+        | map(attribute="policy")
+        | map(attribute="policy_metadata")
+        | map(attribute="firewall_policy_name") | list }}
+    default_policy_arns: >-
+      {{ default_policies.results
+        | map(attribute="policy")
+        | map(attribute="policy_metadata")
+        | map(attribute="firewall_policy_arn") | list }}
