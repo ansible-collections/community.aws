@@ -1,0 +1,4 @@
+bugfixes:
+  - ecs_taskdefinition - fix broken change detect of ``launch_type`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+  - ecs_service - fix broken compare of ``task_definition`` that results always in a changed task (https://github.com/ansible-collections/community.aws/pull/1145).
+  - ecs_service - add missing change detect of ``health_check_grace_period_seconds`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
