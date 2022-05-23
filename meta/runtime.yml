@@ -150,6 +150,8 @@ action_groups:
   - lambda_info
   - lambda_policy
   - lightsail
+  - networkfirewall
+  - networkfirewall_info
   - networkfirewall_policy
   - networkfirewall_policy_info
   - networkfirewall_rule_group
