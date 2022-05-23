@@ -273,7 +273,7 @@
         that:
           - ecs_service_again.changed
 
-    - name: attempt to use ECS network configuration on task definition without awsvpc network_mode
+    - name: attempt to use ECS network configuration on task definition without awsvpc network_mode (expected to fail)
       ecs_service:
         state: present
         name: "{{ ecs_service_name }}3"
@@ -373,13 +373,6 @@
     - name: pause to allow service to scale down
       pause:
         seconds: 60
-
-    - name: delete ECS service definition
-      ecs_service:
-        state: absent
-        name: "{{ ecs_service_name }}4"
-        cluster: "{{ ecs_cluster_name }}"
-      register: delete_ecs_service
 
     - name: create ECS service definition with network configuration
       ecs_service:
