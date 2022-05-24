@@ -215,11 +215,14 @@
         desired_count: 1
         deployment_configuration: "{{ ecs_service_deployment_configuration }}"
         placement_strategy: "{{ ecs_service_placement_strategy }}"
+        placement_constraints:
+          - type: distinctInstance
         health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
         load_balancers:
           - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
             containerName: "{{ ecs_task_name }}"
             containerPort: "{{ ecs_task_container_port }}"
+
         role: "ecsServiceRole"
       register: ecs_service
 
@@ -237,6 +240,8 @@
         desired_count: 1
         deployment_configuration: "{{ ecs_service_deployment_configuration }}"
         placement_strategy: "{{ ecs_service_placement_strategy }}"
+        placement_constraints:
+          - type: distinctInstance
         health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
         load_balancers:
           - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
@@ -260,6 +265,8 @@
         desired_count: 1
         deployment_configuration: "{{ ecs_service_deployment_configuration }}"
         placement_strategy: "{{ ecs_service_placement_strategy }}"
+        placement_constraints:
+          - type: distinctInstance
         health_check_grace_period_seconds: "{{ ecs_service_health_check_grace_period }}"
         load_balancers:
           - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
