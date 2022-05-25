@@ -466,7 +466,7 @@
         - '"write_capacity" in update_indexes'
         - update_indexes.hash_key_name == table_index
         - update_indexes.hash_key_type == table_index_type
-        - update_indexes.indexes | length == 2
+        - update_indexes.indexes | length == 3
         # - update_indexes.range_key_name == range_index
         # - update_indexes.range_key_type == range_index_type
         - update_indexes.read_capacity == 3
@@ -513,7 +513,7 @@
         - '"write_capacity" in update_indexes'
         - update_indexes.hash_key_name == table_index
         - update_indexes.hash_key_type == table_index_type
-        - update_indexes.indexes | length == 2
+        - update_indexes.indexes | length == 3
         # - update_indexes.range_key_name == range_index
         # - update_indexes.range_key_type == range_index_type
         - update_indexes.read_capacity == 3
@@ -633,7 +633,7 @@
         - '"write_capacity" in create_complex_table'
         - create_complex_table.hash_key_name == table_index
         - create_complex_table.hash_key_type == table_index_type
-        - create_complex_table.indexes | length == 2
+        - create_complex_table.indexes | length == 3
         - create_complex_table.range_key_name == range_index
         - create_complex_table.range_key_type == range_index_type
         - create_complex_table.read_capacity == 3
@@ -701,7 +701,7 @@
         - '"write_capacity" in create_complex_table'
         - create_complex_table.hash_key_name == table_index
         - create_complex_table.hash_key_type == table_index_type
-        - create_complex_table.indexes | length == 2
+        - create_complex_table.indexes | length == 3
         - create_complex_table.range_key_name == range_index
         - create_complex_table.range_key_type == range_index_type
         - create_complex_table.read_capacity == 3
@@ -788,7 +788,7 @@
         - '"write_capacity" in update_index'
         - update_index.hash_key_name == table_index
         - update_index.hash_key_type == table_index_type
-        - update_index.indexes | length == 2
+        - update_index.indexes | length == 3
         - update_index.range_key_name == range_index
         - update_index.range_key_type == range_index_type
         - update_index.read_capacity == 3
@@ -839,7 +839,7 @@
         - '"write_capacity" in update_index'
         - update_index.hash_key_name == table_index
         - update_index.hash_key_type == table_index_type
-        - update_index.indexes | length == 2
+        - update_index.indexes | length == 3
         - update_index.range_key_name == range_index
         - update_index.range_key_type == range_index_type
         - update_index.read_capacity == 3

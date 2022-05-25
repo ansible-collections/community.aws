@@ -1,0 +1,2 @@
+bugfixes:
+- dynamodb_table - fix an issue when creating secondary indexes with global_keys_only (https://github.com/ansible-collections/community.aws/issues/967).
