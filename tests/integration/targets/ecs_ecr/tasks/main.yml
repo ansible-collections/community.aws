@@ -124,7 +124,7 @@
     - name: When in check mode, and deleting a policy that exists
       ecs_ecr:
         name: '{{ ecr_name }}'
-        delete_policy: yes
+        purge_policy: yes
       register: result
       check_mode: yes
 
