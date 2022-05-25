@@ -1,7 +1,6 @@
 plugins/modules/aws_kms.py pylint:ansible-deprecated-no-version
 plugins/modules/aws_kms_info.py pylint:ansible-deprecated-no-version
 plugins/modules/ec2_metric_alarm.py pylint:ansible-deprecated-no-version
-plugins/modules/elb_network_lb.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_policy.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_role.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_user.py pylint:ansible-deprecated-no-version
