@@ -383,6 +383,79 @@
   - assert:
       that:
       - not _result_cluster_snapshot.changed
+  
+  # ------------------------------------------------------------------------------------------
+   # Test copying a snapshot
+   ### Copying a snapshot from a different region is supported, but not in CI,
+   ### because the aws-terminator only terminates resources in one region.
+  - set_fact:
+      _snapshot_arn: "{{ _result_cluster_snapshot.db_cluster_snapshot_arn }}"
+
+  - name: Copy a snapshot (check mode)
+    rds_instance_snapshot:
+      id: "{{ snapshot_id }}-copy"
+      source_id: "{{ snapshot_id }}-b"
+      copy_tags: yes
+      wait: true
+    register: _result_cluster_copy_snapshot
+    check_mode: yes
+
+  - assert:
+      that:
+        - _result_cluster_copy_snapshot.changed
+
+  - name: Copy a snapshot
+    rds_instance_snapshot:
+      id: "{{ snapshot_id }}-copy"
+      source_id: "{{ snapshot_id }}-b"
+      copy_tags: yes
+      wait: true
+    register: _result_cluster_copy_snapshot
+
+  - assert:
+      that:
+        - _result_cluster_copy_snapshot.changed
+        - _result_cluster_copy_snapshot.db_cluster_identifier == "{{ cluster_id }}"
+        - _result_cluster_copy_snapshot.source_db_cluster_snapshot_arn == "{{ _snapshot_arn }}"
+        - _result_cluster_copy_snapshot.db_cluster_snapshot_identifier == "{{ snapshot_id }}-copy"
+        - "'tags' in _result_cluster_copy_snapshot"
+        - _result_cluster_copy_snapshot.tags | length == 3
+        - _result_cluster_copy_snapshot.tags["tag_one"] == "{{ snapshot_id }}-b One"
+        - _result_cluster_copy_snapshot.tags["Tag Two"] == "two {{ snapshot_id }}-b"
+        - _result_cluster_copy_snapshot.tags["tag_three"] == "{{ snapshot_id }}-b Three"
+
+  - name: Copy a snapshot (idempotence - check mode)
+    rds_instance_snapshot:
+      id: "{{ snapshot_id }}-copy"
+      source_id: "{{ snapshot_id }}-b"
+      copy_tags: yes
+      wait: true
+    register: _result_cluster_copy_snapshot
+    check_mode: yes
+
+  - assert:
+      that:
+        - not _result_cluster_copy_snapshot.changed
+
+  - name: Copy a snapshot (idempotence)
+    rds_instance_snapshot:
+      id: "{{ snapshot_id }}-copy"
+      source_id: "{{ snapshot_id }}-b"
+      copy_tags: yes
+      wait: true
+    register: _result_cluster_copy_snapshot
+
+  - assert:
+      that:
+        - not _result_cluster_copy_snapshot.changed
+        - _result_cluster_copy_snapshot.db_instance_identifier == "{{ cluster_id }}"
+        - _result_cluster_copy_snapshot.source_db_cluster_snapshot_arn == "{{ _snapshot_arn }}"
+        - _result_cluster_copy_snapshot.db_cluster_snapshot_identifier == "{{ snapshot_id }}-copy"
+        - "'tags' in _result_cluster_copy_snapshot"
+        - _result_cluster_copy_snapshot.tags | length == 3
+        - _result_cluster_copy_snapshot.tags["tag_one"] == "{{ snapshot_id }}-b One"
+        - _result_cluster_copy_snapshot.tags["Tag Two"] == "two {{ snapshot_id }}-b"
+        - _result_cluster_copy_snapshot.tags["tag_three"] == "{{ snapshot_id }}-b Three"
 
   always:
   - name: Delete the existing DB cluster snapshots
@@ -394,6 +467,7 @@
     loop:
     - "{{ snapshot_id }}"
     - "{{ snapshot_id }}-b"
+    - "{{ snapshot_id }}-copy"
 
   - name: Delete the existing DB cluster without creating a final snapshot
     rds_cluster:
