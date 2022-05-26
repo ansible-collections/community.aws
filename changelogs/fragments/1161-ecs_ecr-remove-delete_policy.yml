@@ -1,0 +1,2 @@
+removed_features:
+- ecs_ecr - The deprecated alias ``delete_policy`` has been removed.  Please use ``purge_policy`` instead (https://github.com/ansible-collections/community.aws/pull/1161).
