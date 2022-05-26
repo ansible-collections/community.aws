@@ -51,7 +51,7 @@
         namespace: "AWS/EC2"
         treat_missing_data: missing
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 300
         evaluation_periods: 3
@@ -90,7 +90,7 @@
         namespace: "AWS/EC2"
         treat_missing_data: missing
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 300
         evaluation_periods: 3
@@ -138,7 +138,7 @@
         namespace: "AWS/EC2"
         treat_missing_data: missing
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 300
         evaluation_periods: 3
@@ -193,7 +193,7 @@
         namespace: "AWS/EC2"
         treat_missing_data: missing
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 300
         evaluation_periods: 3
@@ -246,7 +246,7 @@
         metric: "CPUUtilization"
         namespace: "AWS/EC2"
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 60
         evaluation_periods: 3
@@ -286,7 +286,7 @@
         metric: "CPUUtilization"
         namespace: "AWS/EC2"
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 60
         evaluation_periods: 3
@@ -385,7 +385,7 @@
         namespace: "AWS/EC2"
         treat_missing_data: missing
         statistic: Average
-        comparison: "<="
+        comparison: "LessThanOrEqualToThreshold"
         threshold: 5.0
         period: 300
         evaluation_periods: 3
