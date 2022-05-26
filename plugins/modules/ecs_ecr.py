@@ -168,6 +168,10 @@ name:
     type: str
     description: The name of the repository
     returned: "when state == 'absent'"
+policy:
+    type: dict
+    description: The existing, created or updated repository policy
+    returned: "when state == 'present'"
 repository:
     type: dict
     description: The created or updated repository
@@ -493,6 +497,11 @@ def run(ecr, params):
                     # policy is.
                     result['policy'] = policy_text
                     raise
+
+            else:
+                original_policy = ecr.get_repository_policy(registry_id, name)
+                if original_policy:
+                    result['policy'] = original_policy
 
             original_scan_on_push = ecr.get_repository(registry_id, name)
             if original_scan_on_push is not None:
