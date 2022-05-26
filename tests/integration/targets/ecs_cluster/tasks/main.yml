@@ -222,9 +222,13 @@
           - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
             containerName: "{{ ecs_task_name }}"
             containerPort: "{{ ecs_task_container_port }}"
-
         role: "ecsServiceRole"
       register: ecs_service
+
+    - name: check that placement constraint has been applied
+      assert:
+        that:
+          - "ecs_service.service.placementConstraints[0].type == 'distinctInstance'"
 
     - name: check that ECS service creation changed
       assert:
