@@ -115,7 +115,7 @@
       - '"tags" in create_complex_table'
       - create_complex_table.hash_key_name == table_index
       - create_complex_table.hash_key_type == table_index_type
-      - create_complex_table.indexes | length == 2
+      - create_complex_table.indexes | length == 3
       - create_complex_table.table_name == table_name_on_demand_complex
       - create_complex_table.tags == tags_default
 
