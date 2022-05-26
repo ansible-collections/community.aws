@@ -25,6 +25,11 @@ indexes:
     range_key_name: bar
     read_capacity: 5
     write_capacity: 5
+  - name: KeysOnlyIndex
+    type: global_keys_only
+    hash_key_name: create_time
+    read_capacity: 2
+    write_capacity: 2
 
 indexes_pay_per_request:
   - name: NamedIndex
@@ -38,6 +43,9 @@ indexes_pay_per_request:
     type: global_all
     hash_key_name: foo
     range_key_name: bar
+  - name: KeysOnlyIndex
+    type: global_keys_only
+    hash_key_name: create_time
 
 indexes_pay_per_request_bad:
   - name: NamedIndex
@@ -54,6 +62,9 @@ indexes_pay_per_request_bad:
     includes:
       - another_field
       - another_field2
+  - name: KeysOnlyIndex
+    type: global_keys_only
+    hash_key_name: create_time
 
 index_updated:
   - name: NamedIndex
