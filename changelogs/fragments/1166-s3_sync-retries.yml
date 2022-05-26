@@ -1,0 +1,2 @@
+removed_features:
+- s3_sync - remove unused ``retries`` parameter (https://github.com/ansible-collections/community.aws/pull/1166).
