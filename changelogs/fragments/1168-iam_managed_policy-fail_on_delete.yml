@@ -1,0 +1,2 @@
+removed_features:
+- iam_managed_policy - the unused ``fail_on_delete`` parameter has been removed (https://github.com/ansible-collections/community.aws/pull/1168)
