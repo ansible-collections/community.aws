@@ -172,6 +172,7 @@ policy:
     type: dict
     description: The existing, created or updated repository policy
     returned: "when state == 'present'"
+    version_added: 4.0.0
 repository:
     type: dict
     description: The created or updated repository
