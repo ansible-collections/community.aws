@@ -1,0 +1,2 @@
+breaking_changes:
+- elb_instance - the ``ec2_elbs`` fact has been removed, ``updated_elbs`` has been added the return values and includes the same information (https://github.com/ansible-collections/community.aws/pull/1173).
