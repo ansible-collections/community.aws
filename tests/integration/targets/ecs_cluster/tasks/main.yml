@@ -228,6 +228,7 @@
     - name: check that placement constraint has been applied
       assert:
         that:
+          - ecs_service.changed
           - "ecs_service.service.placementConstraints[0].type == 'distinctInstance'"
 
     - name: check that ECS service creation changed
