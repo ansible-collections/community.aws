@@ -56,11 +56,7 @@
 
     - name: When pulling an existing repository that has no existing policy
       ecs_ecr:
-<<<<<<< HEAD
         name: '{{ ecr_name }}'
-=======
-        name: {{ ecr_name }}'
->>>>>>> 8bb68d3 (Add integration tests for pulling and printing policy)
       register: result
       
     - name: it should return the repo but without a policy and not create or change
