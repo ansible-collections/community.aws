@@ -170,7 +170,7 @@ name:
     returned: "when state == 'absent'"
 policy:
     type: dict
-    description: The existing, created or updated repository policy
+    description: The existing, created or updated repository policy.
     returned: "when state == 'present'"
     version_added: 4.0.0
 repository:
