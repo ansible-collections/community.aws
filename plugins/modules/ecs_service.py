@@ -162,7 +162,7 @@ options:
     capacity_provider_strategy:
         version_added: 4.0.0
         description:
-          - The capacity provider strategy to use with your service.
+          - The capacity provider strategy to use with your service. You can specify a maximum of 6 providers per strategy.
         required: false
         type: list
         elements: dict
