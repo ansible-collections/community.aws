@@ -539,7 +539,7 @@ class Connection(ConnectionBase):
         bucket_location = client_s3.get_bucket_location(
             Bucket=(self.get_option('bucket_name')),
         )
-        region_name=bucket_location['LocationConstraint']
+        region_name = bucket_location['LocationConstraint']
 
         client = self._get_boto_client('s3', region_name=region_name, profile_name=profile_name)
         params = {'Bucket': bucket_name, 'Key': out_path}
