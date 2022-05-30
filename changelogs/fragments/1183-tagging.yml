@@ -1,0 +1,6 @@
+minor_changes:
+- efs - the default value for ``tags`` has been updated, to remove all tags the ``tags`` parameter must be explicitly set to the empty dict ``{}`` (https://github.com/ansible-collections/community.aws/pull/1183).
+- ec2_transit_gateway - the default value for ``tags`` has been updated, to remove all tags the ``tags`` parameter must be explicitly set to the empty dict ``{}`` (https://github.com/ansible-collections/community.aws/pull/1183).
+- eks_fargate_profile - the default value for ``tags`` has been updated, to remove all tags the ``tags`` parameter must be explicitly set to the empty dict ``{}`` (https://github.com/ansible-collections/community.aws/pull/1183).
+- elb_target_group - explicitly setting the ``tags`` parameter to the empty dict ``{}`` will now remove all tags unles ``purge_tags`` is explicitly set to ``False`` (https://github.com/ansible-collections/community.aws/pull/1183).
+- ec2_transit_gateway - code updated to use common ``ensure_ec2_tags`` helper (https://github.com/ansible-collections/community.aws/pull/1183).
