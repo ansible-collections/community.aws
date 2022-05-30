@@ -259,7 +259,8 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>
@@ -400,11 +401,27 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Key</th>
+            <th colspan="2">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>result</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>Resulting data structure from a successful task execution.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>logs</b>
@@ -415,11 +432,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>if <em>tail_log</em> == true</td>
                 <td>
-                            <div>The last 4KB of the function logs. Only provided if <em>tail_log</em> is true</div>
+                            <div>The last 4KB of the function logs. Only provided if <em>tail_log</em> is <code>true</code></div>
                     <br/>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>output</b>
@@ -437,6 +455,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>status</b>
@@ -453,6 +472,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">200</div>
                 </td>
             </tr>
+
     </table>
     <br/><br/>
 

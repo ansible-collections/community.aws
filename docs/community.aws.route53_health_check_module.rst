@@ -209,7 +209,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Domain name of the endpoint to check. Either this or <em>ip_address</em> has to be provided. When both are given the `fqdn` is used in the `Host:` header of the HTTP request.</div>
+                        <div>Domain name of the endpoint to check. Either this or <em>ip_address</em> has to be provided. When both are given the <em>fqdn</em> is used in the <code>Host:</code> header of the HTTP request.</div>
                 </td>
             </tr>
             <tr>
@@ -348,7 +348,8 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>

@@ -1,14 +1,14 @@
-.. _community.aws.elasticache_module:
+.. _community.aws.aws_api_gateway_domain_module:
 
 
-*************************
-community.aws.elasticache
-*************************
+************************************
+community.aws.aws_api_gateway_domain
+************************************
 
-**Manage cache clusters in Amazon ElastiCache**
+**Manage AWS API Gateway custom domains**
 
 
-Version added: 1.0.0
+Version added: 3.3.0
 
 .. contents::
    :local:
@@ -17,8 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Manage cache clusters in Amazon ElastiCache.
-- Returns information about the specified cache cluster.
+- Manages API Gateway custom domains for API GW Rest APIs.
+- AWS API Gateway custom domain setups use CloudFront behind the scenes. So you will get a CloudFront distribution as a result, configured to be aliased with your domain.
 
 
 
@@ -115,80 +115,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cache_engine_version</b>
+                    <b>certificate_arn</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The version number of the cache engine.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cache_parameter_group</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The name of the cache parameter group to associate with this cache cluster. If this argument is omitted, the default cache parameter group for the specified engine will be used.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: parameter_group</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cache_port</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The port number on which each of the cache nodes will accept connections.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cache_security_groups</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A list of cache security group names to associate with this cache cluster.</div>
-                        <div>Don&#x27;t use if your Cache is inside a VPC. In that case use <em>security_group_ids</em> instead!</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cache_subnet_group</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The subnet group name to associate with. Only use if inside a VPC.</div>
-                        <div>Required if inside a VPC.</div>
+                        <div>AWS Certificate Manger (ACM) TLS certificate ARN.</div>
                 </td>
             </tr>
             <tr>
@@ -213,6 +150,42 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>domain_mappings</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Map your domain base paths to your API GW REST APIs, that you previously created. Use provided ID of the API setup and the release stage.</div>
+                        <div>domain_mappings should be a list of dictionaries containing three keys: base_path, rest_api_id and stage.</div>
+                        <div>Example: <em>[{ base_path: v1, rest_api_id: abc123, stage: production }]</em></div>
+                        <div>if you want base path to be just <em>/</em> omit the param completely or set it to empty string.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>domain_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Domain name you want to use for your API GW deployment.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -229,87 +202,21 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>engine</b>
+                    <b>endpoint_type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">"memcached"</div>
-                </td>
-                <td>
-                        <div>Name of the cache engine to be used.</div>
-                        <div>Supported values are <code>redis</code> and <code>memcached</code>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>hard_modify</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
+                                    <li><div style="color: blue"><b>EDGE</b>&nbsp;&larr;</div></li>
+                                    <li>REGIONAL</li>
+                                    <li>PRIVATE</li>
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to destroy and recreate an existing cache cluster if necessary in order to modify its state.</div>
-                        <div>Defaults to <code>false</code>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The cache cluster identifier.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>node_type</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">"cache.t2.small"</div>
-                </td>
-                <td>
-                        <div>The compute and memory capacity of the nodes in the cache cluster.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>num_nodes</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">1</div>
-                </td>
-                <td>
-                        <div>The initial number of cache nodes that the cache cluster will have.</div>
-                        <div>Required when <em>state=present</em>.</div>
+                        <div>API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use <code>REGIONAL</code> or <code>PRIVATE</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -348,17 +255,20 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>security_group_ids</b>
+                    <b>security_policy</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>TLS_1_0</li>
+                                    <li><div style="color: blue"><b>TLS_1_2</b>&nbsp;&larr;</div></li>
+                        </ul>
                 </td>
                 <td>
-                        <div>A list of VPC security group IDs to associate with this cache cluster. Only use if inside a VPC.</div>
+                        <div>Set allowed TLS versions through AWS defined policies. Currently only <code>TLS_1_0</code> and <code>TLS_1_2</code> are available.</div>
                 </td>
             </tr>
             <tr>
@@ -387,19 +297,16 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>present</li>
+                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
                                     <li>absent</li>
-                                    <li>rebooted</li>
                         </ul>
                 </td>
                 <td>
-                        <div><code>absent</code> or <code>present</code> are idempotent actions that will create or destroy a cache cluster as needed.</div>
-                        <div><code>rebooted</code> will reboot the cluster, resulting in a momentary outage.</div>
+                        <div>Create or delete custom domain setup.</div>
                 </td>
             </tr>
             <tr>
@@ -421,40 +328,6 @@ Parameters
                         <div>When set to &quot;no&quot;, SSL certificates will not be validated for communication with the AWS APIs.</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>wait</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Wait for cache cluster result before returning.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>zone</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The EC2 Availability Zone in which the cache cluster will be created.</div>
-                </td>
-            </tr>
     </table>
     <br/>
 
@@ -463,6 +336,8 @@ Notes
 -----
 
 .. note::
+   - Does not create a DNS entry on Route53, for that use the route53 module.
+   - Only supports TLS certificates from AWS ACM that can just be referenced by the ARN, while the AWS API still offers (deprecated) options to add own Certificates.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - Modules based on the original AWS SDK (boto) may read their default configuration from different files. See https://boto.readthedocs.io/en/latest/boto_config_tut.html for more information.
@@ -475,34 +350,60 @@ Examples
 
 .. code-block:: yaml
 
-    # Note: None of these examples set aws_access_key, aws_secret_key, or region.
-    # It is assumed that their matching environment variables are set.
-
-    - name: Basic example
-      community.aws.elasticache:
-        name: "test-please-delete"
+    - name: Setup endpoint for a custom domain for your API Gateway HTTP API
+      community.aws.aws_api_gateway_domain:
+        domain_name: myapi.foobar.com
+        certificate_arn: 'arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx'
+        security_policy: TLS_1_2
+        endpoint_type: EDGE
+        domain_mappings:
+            - { rest_api_id: abc123, stage: production }
         state: present
-        engine: memcached
-        cache_engine_version: 1.4.14
-        node_type: cache.m1.small
-        num_nodes: 1
-        cache_port: 11211
-        cache_security_groups:
-          - default
-        zone: us-east-1d
+      register: api_gw_domain_result
+
+    - name: Create a DNS record for your custom domain on route 53 (using route53 module)
+      community.aws.route53:
+        record: myapi.foobar.com
+        value: "{{ api_gw_domain_result.response.domain.distribution_domain_name }}"
+        type: A
+        alias: true
+        zone: foobar.com
+        alias_hosted_zone_id: "{{ api_gw_domain_result.response.domain.distribution_hosted_zone_id }}"
+        command: create
 
 
-    - name: Ensure cache cluster is gone
-      community.aws.elasticache:
-        name: "test-please-delete"
-        state: absent
 
-    - name: Reboot cache cluster
-      community.aws.elasticache:
-        name: "test-please-delete"
-        state: rebooted
+Return Values
+-------------
+Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
 
+.. raw:: html
 
+    <table border=0 cellpadding=0 class="documentation-table">
+        <tr>
+            <th colspan="1">Key</th>
+            <th>Returned</th>
+            <th width="100%">Description</th>
+        </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>response</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The data returned by create_domain_name (or update and delete) and create_base_path_mapping methods by boto3.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;domain&#x27;: {&#x27;domain_name&#x27;: &#x27;mydomain.com&#x27;, &#x27;certificate_arn&#x27;: &#x27;arn:aws:acm:xxxxxx&#x27;, &#x27;distribution_domain_name&#x27;: &#x27;xxxx.cloudfront.net&#x27;, &#x27;distribution_hosted_zone_id&#x27;: &#x27;ABC123123&#x27;, &#x27;endpoint_configuration&#x27;: {&#x27;types&#x27;: [&#x27;EDGE&#x27;]}, &#x27;domain_name_status&#x27;: &#x27;AVAILABLE&#x27;, &#x27;security_policy&#x27;: &#x27;TLS_1_2&#x27;, &#x27;tags&#x27;: {}}, &#x27;path_mappings&#x27;: [{&#x27;base_path&#x27;: &#x27;(empty)&#x27;, &#x27;rest_api_id&#x27;: &#x27;abcd123&#x27;, &#x27;stage&#x27;: &#x27;production&#x27;}]}</div>
+                </td>
+            </tr>
+    </table>
+    <br/><br/>
 
 
 Status
@@ -512,4 +413,4 @@ Status
 Authors
 ~~~~~~~
 
-- Jim Dalton (@jsdalton)
+- Stefan Horning (@stefanhorning)

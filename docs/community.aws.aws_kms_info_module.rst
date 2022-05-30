@@ -286,7 +286,8 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>
@@ -704,6 +705,26 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>key_policies</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>list of policy documents for the key. Empty when access is denied even if there are policies.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Version&#x27;: &#x27;2012-10-17&#x27;, &#x27;Id&#x27;: &#x27;auto-ebs-2&#x27;, &#x27;Statement&#x27;: [{&#x27;Sid&#x27;: &#x27;Allow access through EBS for all principals in the account that are authorized to use EBS&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;*&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Encrypt&#x27;, &#x27;kms:Decrypt&#x27;, &#x27;kms:ReEncrypt*&#x27;, &#x27;kms:GenerateDataKey*&#x27;, &#x27;kms:CreateGrant&#x27;, &#x27;kms:DescribeKey&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;, &#x27;Condition&#x27;: {&#x27;StringEquals&#x27;: {&#x27;kms:CallerAccount&#x27;: &#x27;111111111111&#x27;, &#x27;kms:ViaService&#x27;: &#x27;ec2.ap-southeast-2.amazonaws.com&#x27;}}}, {&#x27;Sid&#x27;: &#x27;Allow direct access to key metadata to the account&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;arn:aws:iam::111111111111:root&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Describe*&#x27;, &#x27;kms:Get*&#x27;, &#x27;kms:List*&#x27;, &#x27;kms:RevokeGrant&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;}]}</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_state</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
@@ -762,11 +783,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>list of policy documents for the keys. Empty when access is denied even if there are policies.</div>
+                            <div>list of policy documents for the key. Empty when access is denied even if there are policies.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Version&#x27;: &#x27;2012-10-17&#x27;, &#x27;Id&#x27;: &#x27;auto-ebs-2&#x27;, &#x27;Statement&#x27;: [{&#x27;Sid&#x27;: &#x27;Allow access through EBS for all principals in the account that are authorized to use EBS&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;*&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Encrypt&#x27;, &#x27;kms:Decrypt&#x27;, &#x27;kms:ReEncrypt*&#x27;, &#x27;kms:GenerateDataKey*&#x27;, &#x27;kms:CreateGrant&#x27;, &#x27;kms:DescribeKey&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;, &#x27;Condition&#x27;: {&#x27;StringEquals&#x27;: {&#x27;kms:CallerAccount&#x27;: &#x27;111111111111&#x27;, &#x27;kms:ViaService&#x27;: &#x27;ec2.ap-southeast-2.amazonaws.com&#x27;}}}, {&#x27;Sid&#x27;: &#x27;Allow direct access to key metadata to the account&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;arn:aws:iam::111111111111:root&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Describe*&#x27;, &#x27;kms:Get*&#x27;, &#x27;kms:List*&#x27;, &#x27;kms:RevokeGrant&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;}]}</div>
