@@ -160,6 +160,7 @@ options:
         choices: ["EC2", "FARGATE"]
         type: str
     capacity_provider_strategy:
+        version_added: 4.0.0
         description:
           - The capacity provider strategy to use with your service.
         required: false
