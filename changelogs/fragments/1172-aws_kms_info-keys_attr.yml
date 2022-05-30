@@ -1,0 +1,2 @@
+removed_features:
+- aws_kms_info - the unused and deprecated ``keys_attr`` parameter has been removed (https://github.com/ansible-collections/amazon.aws/pull/1172).
