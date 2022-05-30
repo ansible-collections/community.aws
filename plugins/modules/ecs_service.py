@@ -769,6 +769,9 @@ def main():
         if module.params['desired_count'] is None:
             module.fail_json(msg='state is present, scheduling_strategy is REPLICA; missing desired_count')
 
+    if len(module.params['capacity_provider_strategy']) > 6:
+        module.fail_json(msg='AWS allows a maximum of six capacity providers in the strategy.')
+
     service_mgr = EcsServiceManager(module)
     if module.params['network_configuration']:
         network_configuration = service_mgr.format_network_configuration(module.params['network_configuration'])
