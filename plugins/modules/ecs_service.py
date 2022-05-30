@@ -166,7 +166,7 @@ options:
         type: list
         elements: dict
         suboptions:
-            capacityProvider:
+            capacity_provider:
                 description:
                   - Name of capacity provider.
                 type: str
@@ -278,7 +278,7 @@ EXAMPLES = r'''
     task_definition: test-task-definition
     desired_count: 1
     capacity_provider_strategy:
-      - capacityProvider: test-capacity-provider-1
+      - capacity_provider: test-capacity-provider-1
         weight: 1
         base: 0
 '''
@@ -755,7 +755,12 @@ def main():
         platform_version=dict(required=False, type='str'),
         service_registries=dict(required=False, type='list', default=[], elements='dict'),
         scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA']),
-        capacity_provider_strategy=dict(required=False, type='list', default=[], elements='dict')
+        capacity_provider_strategy=dict(required=False, type='list', default=[], elements='dict', options=dict(
+            capacity_provider=dict(type='str'),
+            weight=dict(type='int'),
+            base=dict(type='int')
+            )
+        )
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
@@ -783,6 +788,7 @@ def main():
 
     deploymentConfiguration = snake_dict_to_camel_dict(deployment_configuration)
     serviceRegistries = list(map(snake_dict_to_camel_dict, module.params['service_registries']))
+    capacityProviders = list(map(snake_dict_to_camel_dict, module.params['capacity_provider_strategy']))
 
     try:
         existing = service_mgr.describe_service(module.params['cluster'], module.params['name'])
@@ -849,7 +855,8 @@ def main():
                                                           network_configuration,
                                                           module.params['health_check_grace_period_seconds'],
                                                           module.params['force_new_deployment'],
-                                                          module.params['capacity_provider_strategy'])
+                                                          capacityProviders
+                                                          )
 
                 else:
                     try:
@@ -869,7 +876,7 @@ def main():
                                                               module.params['launch_type'],
                                                               module.params['platform_version'],
                                                               module.params['scheduling_strategy'],
-                                                              module.params['capacity_provider_strategy']
+                                                              capacityProviders
                                                               )
                     except botocore.exceptions.ClientError as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
