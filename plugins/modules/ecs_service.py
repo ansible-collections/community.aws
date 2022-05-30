@@ -290,6 +290,7 @@ service:
     type: complex
     contains:
         capacityProviderStrategy:
+            version_added: 4.0.0
             description: The capacity provider strategy to use with your service.
             returned: always
             type: complex
