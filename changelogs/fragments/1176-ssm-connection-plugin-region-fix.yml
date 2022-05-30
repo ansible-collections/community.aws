@@ -1,2 +1,2 @@
-minor-changes:
+minor_changes:
   - aws_ssm - pull s3 bucket region for session generated for file transfer during playbooks
