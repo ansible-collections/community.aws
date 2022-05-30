@@ -38,7 +38,7 @@ Bugfixes
 - ecs_service - fix broken compare of ``task_definition`` that results always in a changed task (https://github.com/ansible-collections/community.aws/pull/1145).
 - ecs_service - fix validation for ``placement_constraints``. It's possible to use ``distinctInstance`` placement constraint now (https://github.com/ansible-collections/community.aws/issues/1058)
 - ecs_taskdefinition - fix broken change detect of ``launch_type`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
-- execute_lamba - add waiter for function_updated (https://github.com/ansible-collections/community.aws/pull/1108).
+- execute_lambda - add waiter for function_updated (https://github.com/ansible-collections/community.aws/pull/1108).
 - execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
 - iam_policy - require one of `policy_document` and `policy_json` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
 - iam_user - don't delete user login profile on check mode (https://github.com/ansible-collections/community.aws/pull/1059).
