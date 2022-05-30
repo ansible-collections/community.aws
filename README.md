@@ -9,8 +9,8 @@ AWS related modules and plugins supported by the Ansible Cloud team are in the [
 
 This collection has been tested against following Ansible versions: **>=2.9.10**.
 
-For collections that support Ansible 2.9, please ensure you update your `network_os` to use the 
-fully qualified collection name (for example, `cisco.ios.ios`). 
+For collections that support Ansible 2.9, please ensure you update your `network_os` to use the
+fully qualified collection name (for example, `cisco.ios.ios`).
 Plugins and modules within a collection may be tested with only specific Ansible versions.
 A collection may contain metadata that identifies these versions.
 PEP440 is the schema used to describe the versions of Ansible.
@@ -37,6 +37,7 @@ Name | Description
 [community.aws.aws_acm](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_acm_module.rst)|Upload and delete certificates in the AWS Certificate Manager service
 [community.aws.aws_acm_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_acm_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.aws_api_gateway](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_api_gateway_module.rst)|Manage AWS API Gateway APIs
+[community.aws.aws_api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
 [community.aws.aws_batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
 [community.aws.aws_batch_job_definition](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.aws_batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
@@ -182,7 +183,7 @@ Name | Description
 [community.aws.rds_cluster_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_cluster_info_module.rst)|Obtain information about one or more RDS clusters
 [community.aws.rds_instance](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_instance_module.rst)|Manage RDS instances
 [community.aws.rds_instance_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_instance_info_module.rst)|obtain information about one or more RDS instances
-[community.aws.rds_instance_snapshot](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_instance_snapshot_module.rst)|manage Amazon RDS snapshots.
+[community.aws.rds_instance_snapshot](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_instance_snapshot_module.rst)|Manage Amazon RDS instance snapshots
 [community.aws.rds_option_group](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_option_group_module.rst)|rds_option_group module
 [community.aws.rds_option_group_info](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_option_group_info_module.rst)|rds_option_group_info module
 [community.aws.rds_param_group](https://github.com/ansible-collections/community.aws/blob/stable-3/docs/community.aws.rds_param_group_module.rst)|manage RDS parameter groups

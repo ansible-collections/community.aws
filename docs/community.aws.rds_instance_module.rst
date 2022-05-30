@@ -433,6 +433,26 @@ Parameters
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>deletion_protection</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>A value that indicates whether the DB instance has deletion protection enabled. The database can&#x27;t be deleted when deletion protection is enabled. By default, deletion protection is disabled.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>domain</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -631,6 +651,58 @@ Parameters
                         <div>Set to True to update your cluster password with <em>master_user_password</em>. Since comparing passwords to determine if it needs to be updated is not possible this is set to False by default to allow idempotence.</div>
                 </td>
             </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>iam_roles</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>List of Amazon Web Services Identity and Access Management (IAM) roles to associate with DB instance.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>feature_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the feature associated with the IAM role.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>role_arn</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ARN of the IAM role to associate with the DB instance.</div>
+                </td>
+            </tr>
+
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -1004,6 +1076,26 @@ Parameters
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge_iam_roles</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Set to <code>True</code> to remove any IAM roles that aren&#x27;t specified in the task and are associated with the instance.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>purge_security_groups</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -1153,7 +1245,8 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>
@@ -1515,7 +1608,49 @@ Examples
         vpc_security_group_ids:
           - sg-0be17ba10c9286b0b
         purge_security_groups: false
-        register: result
+      register: result
+
+    # Add IAM role to db instance
+    - name: Create IAM policy
+      community.aws.iam_managed_policy:
+        policy_name: "my-policy"
+        policy: "{{ lookup('file','files/policy.json') }}"
+        state: present
+      register: iam_policy
+
+    - name: Create IAM role
+      community.aws.iam_role:
+        assume_role_policy_document: "{{ lookup('file','files/assume_policy.json') }}"
+        name: "my-role"
+        state: present
+        managed_policy: "{{ iam_policy.policy.arn }}"
+      register: iam_role
+
+    - name: Create DB instance with added IAM role
+      community.aws.rds_instance:
+        id: "my-instance-id"
+        state: present
+        engine: postgres
+        engine_version: 14.2
+        username: "{{ username }}"
+        password: "{{ password }}"
+        db_instance_class: db.m6g.large
+        allocated_storage: "{{ allocated_storage }}"
+        iam_roles:
+          - role_arn: "{{ iam_role.arn }}"
+            feature_name: 's3Export'
+
+    - name: Remove IAM role from DB instance
+      community.aws.rds_instance:
+        id: "my-instance-id"
+        state: present
+        engine: postgres
+        engine_version: 14.2
+        username: "{{ username }}"
+        password: "{{ password }}"
+        db_instance_class: db.m6g.large
+        allocated_storage: "{{ allocated_storage }}"
+        purge_iam_roles: yes
 
 
 
@@ -1992,6 +2127,22 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">db-UHV3QRNWX4KB6GALCIGRML6QFA</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>deletion_protection</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div><code>True</code> if the DB instance has deletion protection enabled, <code>False</code> if not.</div>
+                    <br/>
                 </td>
             </tr>
             <tr>

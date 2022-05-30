@@ -173,7 +173,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be used to encrypt the `secret_string` or `secret_binary` values in the versions stored in this secret.</div>
+                        <div>Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be used to encrypt the <em>secret</em> values in the versions stored in this secret.</div>
                 </td>
             </tr>
             <tr>
@@ -340,7 +340,8 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>

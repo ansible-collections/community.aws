@@ -5,7 +5,7 @@
 community.aws.rds_instance_snapshot
 ***********************************
 
-**manage Amazon RDS snapshots.**
+**Manage Amazon RDS instance snapshots**
 
 
 Version added: 1.0.0
@@ -114,6 +114,26 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>copy_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Whether to copy all tags from <em>source_db_snapshot_identifier</em> to <em>db_instance_identifier</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>db_instance_identifier</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -123,7 +143,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Database instance identifier. Required when state is present.</div>
+                        <div>Database instance identifier. Required when creating a snapshot.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: instance_id</div>
                 </td>
             </tr>
@@ -212,7 +232,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>whether to remove tags not present in the <code>tags</code> parameter.</div>
+                        <div>whether to remove tags not present in the <em>tags</em> parameter.</div>
                 </td>
             </tr>
             <tr>
@@ -246,7 +266,44 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>source_db_snapshot_identifier</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The identifier of the source DB snapshot.</div>
+                        <div>Required when copying a snapshot.</div>
+                        <div>If the source snapshot is in the same AWS region as the copy, specify the snapshot&#x27;s identifier.</div>
+                        <div>If the source snapshot is in a different AWS region as the copy, specify the snapshot&#x27;s ARN.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: source_id, source_snapshot_id</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>source_region</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The region that contains the snapshot to be copied.</div>
                 </td>
             </tr>
             <tr>
@@ -361,6 +418,15 @@ Examples
       community.aws.rds_instance_snapshot:
         db_instance_identifier: new-database
         db_snapshot_identifier: new-database-snapshot
+      register: snapshot
+
+    - name: Copy snapshot from a different region and copy its tags
+      community.aws.rds_instance_snapshot:
+        id: new-database-snapshot-copy
+        region: us-east-1
+        source_id: "{{ snapshot.db_snapshot_arn }}"
+        source_region: us-east-2
+        copy_tags: yes
 
     - name: Delete snapshot
       community.aws.rds_instance_snapshot:
@@ -701,6 +767,24 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>source_db_snapshot_identifier</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>when snapshot is a copy</td>
+                <td>
+                            <div>The DB snapshot ARN that the DB snapshot was copied from.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:rds:us-west-2:123456789012:snapshot:ansible-test-16638696-test-snapshot-source</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
@@ -777,3 +861,5 @@ Authors
 
 - Will Thames (@willthames)
 - Michael De La Rue (@mikedlr)
+- Alina Buzachis (@alinabuzachis)
+- Joseph Torcasso (@jatorcasso)

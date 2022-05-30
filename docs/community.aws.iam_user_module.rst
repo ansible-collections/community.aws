@@ -18,7 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - A module to manage AWS IAM users.
-- The module does not manage groups that users belong to, groups memberships can be managed using `iam_group`.
+- The module does not manage groups that users belong to, groups memberships can be managed using :ref:`community.aws.iam_group <community.aws.iam_group_module>`.
 
 
 
@@ -326,7 +326,8 @@ Parameters
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
                         <div>If <em>profile</em> is set this parameter is ignored.</div>
                         <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>
@@ -465,7 +466,7 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
     # Note: This module does not allow management of groups that users belong to.
-    #       Groups should manage their membership directly using `iam_group`,
+    #       Groups should manage their membership directly using community.aws.iam_group,
     #       as users belong to them.
 
     - name: Create a user
@@ -602,7 +603,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>user tags</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&quot;Env&quot;: &quot;Prod&quot;}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Env&#x27;: &#x27;Prod&#x27;}</div>
                 </td>
             </tr>
             <tr>
