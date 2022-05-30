@@ -167,16 +167,16 @@ created:
 name:
     type: str
     description: The name of the repository
-    returned: "when state == 'absent'"
+    returned: I(state=absent)
 policy:
     type: dict
     description: The existing, created or updated repository policy.
-    returned: "when state == 'present'"
+    returned: I(state=present)
     version_added: 4.0.0
 repository:
     type: dict
     description: The created or updated repository
-    returned: "when state == 'present'"
+    returned: I(state=present)
     sample:
         createdAt: '2017-01-17T08:41:32-06:00'
         registryId: '999999999999'
