@@ -134,7 +134,11 @@
 
     - name: When pulling an existing repository that has an existing policy
       ecs_ecr:
+<<<<<<< HEAD
         name: '{{ ecr_name }}'
+=======
+        name: {{ ecr_name }}'
+>>>>>>> 08e485e (Add integration tests for pulling and printing policy)
       register: result
       
     - name: it should return the policy but not create or change
