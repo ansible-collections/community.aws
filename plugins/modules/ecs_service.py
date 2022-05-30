@@ -755,10 +755,15 @@ def main():
         platform_version=dict(required=False, type='str'),
         service_registries=dict(required=False, type='list', default=[], elements='dict'),
         scheduling_strategy=dict(required=False, choices=['DAEMON', 'REPLICA']),
-        capacity_provider_strategy=dict(required=False, type='list', default=[], elements='dict', options=dict(
-            capacity_provider=dict(type='str'),
-            weight=dict(type='int'),
-            base=dict(type='int')
+        capacity_provider_strategy=dict(
+            required=False,
+            type='list',
+            default=[],
+            elements='dict',
+            options=dict(
+                capacity_provider=dict(type='str'),
+                weight=dict(type='int'),
+                base=dict(type='int')
             )
         )
     )
