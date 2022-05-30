@@ -211,7 +211,7 @@ Parameters
                 </td>
                 <td>
                         <div>Shell pattern-style file matching.</div>
-                        <div>Used after include to remove files (for instance, skip &quot;*.txt&quot;)</div>
+                        <div>Used after include to remove files (for instance, skip <code>&quot;*.txt&quot;</code>)</div>
                         <div>For multiple patterns, comma-separate them.</div>
                 </td>
             </tr>
@@ -269,7 +269,7 @@ Parameters
                 </td>
                 <td>
                         <div>Shell pattern-style file matching.</div>
-                        <div>Used before exclude to determine eligible files (for instance, only &quot;*.gif&quot;)</div>
+                        <div>Used before exclude to determine eligible files (for instance, only <code>&quot;*.gif&quot;</code>)</div>
                         <div>For multiple patterns, comma-separate them.</div>
                 </td>
             </tr>

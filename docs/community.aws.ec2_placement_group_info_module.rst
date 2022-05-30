@@ -269,7 +269,8 @@ Examples
       register: specific_ec2_placement_groups
 
     - ansible.builtin.debug:
-        msg: "{{ specific_ec2_placement_groups | json_query(\"[?name=='my-cluster']\") }}"
+        msg: >
+          {{ specific_ec2_placement_groups | json_query("[?name=='my-cluster']") }}
 
 
 

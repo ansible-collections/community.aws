@@ -258,7 +258,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A list of paths on the distribution to invalidate. Each path should begin with &#x27;/&#x27;. Wildcards are allowed. eg. &#x27;/foo/bar/*&#x27;</div>
+                        <div>A list of paths on the distribution to invalidate. Each path should begin with <code>/</code>. Wildcards are allowed. eg. <code>/foo/bar/*</code></div>
                 </td>
             </tr>
             <tr>

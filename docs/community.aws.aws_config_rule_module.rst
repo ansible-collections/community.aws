@@ -376,9 +376,9 @@ Parameters
                 <td>
                         <div>Provides the source and type of the event that causes AWS Config to evaluate your AWS resources.</div>
                         <div>This parameter expects a list of dictionaries.  Each dictionary expects the following key/value pairs.</div>
-                        <div>Key `EventSource` The source of the event, such as an AWS service, that triggers AWS Config to evaluate your AWS resources.</div>
-                        <div>Key `MessageType` The type of notification that triggers AWS Config to run an evaluation for a rule.</div>
-                        <div>Key `MaximumExecutionFrequency` The frequency at which you want AWS Config to run evaluations for a custom rule with a periodic trigger.</div>
+                        <div>Key <code>EventSource</code> The source of the event, such as an AWS service, that triggers AWS Config to evaluate your AWS resources.</div>
+                        <div>Key <code>MessageType</code> The type of notification that triggers AWS Config to run an evaluation for a rule.</div>
+                        <div>Key <code>MaximumExecutionFrequency</code> The frequency at which you want AWS Config to run evaluations for a custom rule with a periodic trigger.</div>
                 </td>
             </tr>
             <tr>

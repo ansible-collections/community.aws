@@ -293,7 +293,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether or not to remove conditions that are not passed when updating `conditions`.</div>
+                        <div>Whether or not to remove conditions that are not passed when updating <em>conditions</em>.</div>
                 </td>
             </tr>
             <tr>
