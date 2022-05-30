@@ -674,6 +674,8 @@ class EcsServiceManager:
             params['networkConfiguration'] = network_configuration
         if force_new_deployment:
             params['forceNewDeployment'] = force_new_deployment
+        if capacity_provider_strategy:
+            params['capacityProviderStrategy'] = capacity_provider_strategy
         if health_check_grace_period_seconds is not None:
             params['healthCheckGracePeriodSeconds'] = health_check_grace_period_seconds
         # desired count is not required if scheduling strategy is daemon
