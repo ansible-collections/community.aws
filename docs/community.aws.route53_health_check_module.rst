@@ -209,7 +209,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Domain name of the endpoint to check. Either this or <em>ip_address</em> has to be provided. When both are given the `fqdn` is used in the `Host:` header of the HTTP request.</div>
+                        <div>Domain name of the endpoint to check. Either this or <em>ip_address</em> has to be provided. When both are given the <em>fqdn</em> is used in the <code>Host:</code> header of the HTTP request.</div>
                 </td>
             </tr>
             <tr>

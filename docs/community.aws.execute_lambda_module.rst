@@ -400,11 +400,27 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Key</th>
+            <th colspan="2">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>result</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>Resulting data structure from a successful task execution.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>logs</b>
@@ -415,11 +431,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>if <em>tail_log</em> == true</td>
                 <td>
-                            <div>The last 4KB of the function logs. Only provided if <em>tail_log</em> is true</div>
+                            <div>The last 4KB of the function logs. Only provided if <em>tail_log</em> is <code>true</code></div>
                     <br/>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>output</b>
@@ -437,6 +454,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>status</b>
@@ -453,6 +471,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">200</div>
                 </td>
             </tr>
+
     </table>
     <br/><br/>
 

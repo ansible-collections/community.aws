@@ -5,6 +5,33 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v2.5.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+
+Minor Changes
+-------------
+
+- iam_policy - update broken examples and add RETURN section to documentation; add extra integration tests for idempotency check mode runs (https://github.com/ansible-collections/community.aws/pull/1093).
+- iam_role - delete inline policies prior to deleting role (https://github.com/ansible-collections/community.aws/pull/1054).
+- iam_role - remove global vars and refactor accordingly (https://github.com/ansible-collections/community.aws/pull/1054).
+
+Bugfixes
+--------
+
+- ecs_service - add missing change detect of ``health_check_grace_period_seconds`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+- ecs_service - fix broken compare of ``task_definition`` that results always in a changed task (https://github.com/ansible-collections/community.aws/pull/1145).
+- ecs_service - fix validation for ``placement_constraints``. It's possible to use ``distinctInstance`` placement constraint now (https://github.com/ansible-collections/community.aws/issues/1058)
+- ecs_taskdefinition - fix broken change detect of ``launch_type`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+- execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
+- iam_policy - require one of `policy_document` and `policy_json` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
+- s3_lifecycle - add support of value *0* for ``transition_days`` (https://github.com/ansible-collections/community.aws/pull/1077).
+- s3_lifecycle - check that configuration is complete before returning (https://github.com/ansible-collections/community.aws/pull/1085).
+
 v2.4.0
 ======
 

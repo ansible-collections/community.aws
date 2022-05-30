@@ -173,7 +173,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be used to encrypt the `secret_string` or `secret_binary` values in the versions stored in this secret.</div>
+                        <div>Specifies the ARN or alias of the AWS KMS customer master key (CMK) to be used to encrypt the <em>secret</em> values in the versions stored in this secret.</div>
                 </td>
             </tr>
             <tr>

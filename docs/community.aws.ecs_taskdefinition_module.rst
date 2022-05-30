@@ -152,12 +152,13 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The command that is passed to the container.</div>
+                        <div>The command that is passed to the container. If there are multiple arguments, each argument is a separated string in the array.</div>
                 </td>
             </tr>
             <tr>
@@ -265,6 +266,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -282,6 +284,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -315,6 +318,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -594,6 +598,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -646,6 +651,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -705,6 +711,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -820,6 +827,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -952,6 +960,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
@@ -1372,15 +1381,55 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
                         <div>The type and amount of a resource to assign to a container.</div>
-                        <div>The only supported resource is a <code>GPU</code>.</div>
+                        <div>The only supported resources are <code>GPU</code> and <code>InferenceAccelerator</code>.</div>
                 </td>
             </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>GPU</li>
+                                    <li>InferenceAccelerator</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The type of resource to assign to a container.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>value</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The value for the specified resource type.</div>
+                </td>
+            </tr>
+
             <tr>
                     <td class="elbow-placeholder"></td>
                 <td colspan="3">
@@ -1527,6 +1576,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
                 <td>
@@ -1535,6 +1585,41 @@ Parameters
                         <div>A list of namespaced kernel parameters to set in the container.</div>
                 </td>
             </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>namespace</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The namespaced kernel parameter to set a <code>value</code> for.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>value</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The value for the namespaced kernel parameter that&#x27;s specified in <code>namespace</code>.</div>
+                </td>
+            </tr>
+
             <tr>
                     <td class="elbow-placeholder"></td>
                 <td colspan="3">

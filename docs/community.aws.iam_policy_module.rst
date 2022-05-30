@@ -375,8 +375,7 @@ Examples
     # Advanced example, create two new groups and add a READ-ONLY policy to both
     # groups.
     - name: Create Two Groups, Mario and Luigi
-      community.aws.iam:
-        iam_type: group
+      community.aws.iam_group:
         name: "{{ item }}"
         state: present
       loop:
@@ -387,9 +386,9 @@ Examples
     - name: Apply READ-ONLY policy to new groups that have been recently created
       community.aws.iam_policy:
         iam_type: group
-        iam_name: "{{ item.created_group.group_name }}"
+        iam_name: "{{ item.iam_group.group.group_name }}"
         policy_name: "READ-ONLY"
-        policy_document: readonlypolicy.json
+        policy_json: "{{ lookup('template', 'readonly.json.j2') }}"
         state: present
       loop: "{{ new_groups.results }}"
 
@@ -400,12 +399,43 @@ Examples
         iam_name: "{{ item.user }}"
         policy_name: "s3_limited_access_{{ item.prefix }}"
         state: present
-        policy_json: " {{ lookup( 'template', 's3_policy.json.j2') }} "
+        policy_json: "{{ lookup('template', 's3_policy.json.j2') }}"
         loop:
           - user: s3_user
             prefix: s3_user_prefix
 
 
+
+Return Values
+-------------
+Common return values are documented `here <https://docs.ansible.com/ansible/latest/reference_appendices/common_return_values.html#common-return-values>`_, the following are the fields unique to this module:
+
+.. raw:: html
+
+    <table border=0 cellpadding=0 class="documentation-table">
+        <tr>
+            <th colspan="1">Key</th>
+            <th>Returned</th>
+            <th width="100%">Description</th>
+        </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>policies</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A list of names of the inline policies embedded in the specified IAM resource (user, group, or role).</div>
+                    <br/>
+                </td>
+            </tr>
+    </table>
+    <br/><br/>
 
 
 Status

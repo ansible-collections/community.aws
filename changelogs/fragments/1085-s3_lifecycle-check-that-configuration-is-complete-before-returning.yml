@@ -1,2 +1,0 @@
-bugfixes:
-  - s3_lifecycle - check that configuration is complete before returning (https://github.com/ansible-collections/community.aws/pull/1085).
