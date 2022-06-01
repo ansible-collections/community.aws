@@ -3,7 +3,6 @@ minor_changes:
 - aws_msk_cluster - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - aws_secret - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - aws_step_functions_state_machine - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
-- dynamodb_table - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - ec2_eip - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - ec2_vpc_peer - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - elb_application_lb - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
@@ -12,7 +11,6 @@ minor_changes:
 - iam_user - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - rds_cluster - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - rds_instance - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
-- rds_instance_snapshot - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - rds_option_group - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - rds_subnet_group - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - redshift - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
