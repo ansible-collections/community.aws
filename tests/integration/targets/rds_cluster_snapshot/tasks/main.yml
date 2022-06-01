@@ -61,7 +61,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}"
     check_mode: true
     register: _result_cluster_snapshot
 
@@ -73,7 +73,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}"
       wait: true
     register: _result_cluster_snapshot
 
@@ -89,8 +89,8 @@
       - "'db_cluster_snapshot_arn' in _result_cluster_snapshot"
       - "'engine' in _result_cluster_snapshot"
       - _result_cluster_snapshot.engine == "{{ engine }}"
-      - "'engine_mode' in _result_cluster_snapshot"
-      - _result_cluster_snapshot.engine_mode == "provisioned"
+      # - "'engine_mode' in _result_cluster_snapshot"
+      # - _result_cluster_snapshot.engine_mode == "provisioned"
       - "'engine_version' in _result_cluster_snapshot"
       - "'iam_database_authentication_enabled' in _result_cluster_snapshot"
       - "'license_model' in _result_cluster_snapshot"
@@ -165,7 +165,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}-b"
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
       wait: true
     register: _result_cluster_snapshot
 
@@ -181,8 +181,8 @@
       - "'db_cluster_snapshot_arn' in _result_cluster_snapshot"
       - "'engine' in _result_cluster_snapshot"
       - _result_cluster_snapshot.engine == "{{ engine }}"
-      - "'engine_mode' in _result_cluster_snapshot"
-      - _result_cluster_snapshot.engine_mode == "provisioned"
+      # - "'engine_mode' in _result_cluster_snapshot"
+      # - _result_cluster_snapshot.engine_mode == "provisioned"
       - "'engine_version' in _result_cluster_snapshot"
       - "'iam_database_authentication_enabled' in _result_cluster_snapshot"
       - "'license_model' in _result_cluster_snapshot"
@@ -209,7 +209,7 @@
   - name: Delete existing DB cluster snapshot (CHECK_MODE)
     rds_cluster_snapshot:
       state: absent
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
     register: _result_delete_snapshot
     check_mode: true
 
@@ -220,7 +220,7 @@
   - name: Delete the existing DB cluster snapshot
     rds_cluster_snapshot:
       state: absent
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
     register: _result_delete_snapshot
 
   - assert:
@@ -240,7 +240,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
       wait: true
       tags:
         tag_one: '{{ snapshot_id }}-b One'
@@ -259,8 +259,8 @@
       - "'db_cluster_snapshot_arn' in _result_cluster_snapshot"
       - "'engine' in _result_cluster_snapshot"
       - _result_cluster_snapshot.engine == "{{ engine }}"
-      - "'engine_mode' in _result_cluster_snapshot"
-      - _result_cluster_snapshot.engine_mode == "provisioned"
+      # - "'engine_mode' in _result_cluster_snapshot"
+      # - _result_cluster_snapshot.engine_mode == "provisioned"
       - "'engine_version' in _result_cluster_snapshot"
       - "'iam_database_authentication_enabled' in _result_cluster_snapshot"
       - "'license_model' in _result_cluster_snapshot"
@@ -281,7 +281,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
       wait: true
       tags:
         tag_one: '{{ snapshot_id }}-b One'
@@ -296,7 +296,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
       tags:
         tag_three: '{{ snapshot_id }}-b Three'
         "Tag Two": 'two {{ snapshot_id }}-b'
@@ -314,8 +314,8 @@
       - "'db_cluster_snapshot_arn' in _result_cluster_snapshot"
       - "'engine' in _result_cluster_snapshot"
       - _result_cluster_snapshot.engine == "{{ engine }}"
-      - "'engine_mode' in _result_cluster_snapshot"
-      - _result_cluster_snapshot.engine_mode == "provisioned"
+      # - "'engine_mode' in _result_cluster_snapshot"
+      # - _result_cluster_snapshot.engine_mode == "provisioned"
       - "'engine_version' in _result_cluster_snapshot"
       - "'iam_database_authentication_enabled' in _result_cluster_snapshot"
       - "'license_model' in _result_cluster_snapshot"
@@ -336,7 +336,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
       purge_tags: false
       tags:
         tag_one: '{{ snapshot_id }}-b One'
@@ -354,8 +354,8 @@
       - "'db_cluster_snapshot_arn' in _result_cluster_snapshot"
       - "'engine' in _result_cluster_snapshot"
       - _result_cluster_snapshot.engine == "{{ engine }}"
-      - "'engine_mode' in _result_cluster_snapshot"
-      - _result_cluster_snapshot.engine_mode == "provisioned"
+      # - "'engine_mode' in _result_cluster_snapshot"
+      # - _result_cluster_snapshot.engine_mode == "provisioned"
       - "'engine_version' in _result_cluster_snapshot"
       - "'iam_database_authentication_enabled' in _result_cluster_snapshot"
       - "'license_model' in _result_cluster_snapshot"
@@ -377,7 +377,7 @@
     rds_cluster_snapshot:
       state: present
       db_cluster_identifier: "{{ cluster_id }}"
-      db_snapshot_identifier: "{{ snapshot_id }}-b"
+      db_cluster_snapshot_identifier: "{{ snapshot_id }}-b"
     register: _result_cluster_snapshot
 
   - assert:
@@ -386,13 +386,13 @@
   
   # ------------------------------------------------------------------------------------------
    # Test copying a snapshot
-   ### Copying a snapshot from a different region is supported, but not in CI,
+   ### Copying a DB cluster snapshot from a different region is supported, but not in CI,
    ### because the aws-terminator only terminates resources in one region.
   - set_fact:
       _snapshot_arn: "{{ _result_cluster_snapshot.db_cluster_snapshot_arn }}"
 
-  - name: Copy a snapshot (check mode)
-    rds_instance_snapshot:
+  - name: Copy a DB cluster snapshot (check mode)
+    rds_cluster_snapshot:
       id: "{{ snapshot_id }}-copy"
       source_id: "{{ snapshot_id }}-b"
       copy_tags: yes
@@ -404,8 +404,8 @@
       that:
         - _result_cluster_copy_snapshot.changed
 
-  - name: Copy a snapshot
-    rds_instance_snapshot:
+  - name: Copy a DB cluster snapshot
+    rds_cluster_snapshot:
       id: "{{ snapshot_id }}-copy"
       source_id: "{{ snapshot_id }}-b"
       copy_tags: yes
@@ -424,8 +424,8 @@
         - _result_cluster_copy_snapshot.tags["Tag Two"] == "two {{ snapshot_id }}-b"
         - _result_cluster_copy_snapshot.tags["tag_three"] == "{{ snapshot_id }}-b Three"
 
-  - name: Copy a snapshot (idempotence - check mode)
-    rds_instance_snapshot:
+  - name: Copy a DB cluster snapshot (idempotence - check mode)
+    rds_cluster_snapshot:
       id: "{{ snapshot_id }}-copy"
       source_id: "{{ snapshot_id }}-b"
       copy_tags: yes
@@ -437,8 +437,8 @@
       that:
         - not _result_cluster_copy_snapshot.changed
 
-  - name: Copy a snapshot (idempotence)
-    rds_instance_snapshot:
+  - name: Copy a DB cluster snapshot (idempotence)
+    rds_cluster_snapshot:
       id: "{{ snapshot_id }}-copy"
       source_id: "{{ snapshot_id }}-b"
       copy_tags: yes
@@ -448,7 +448,7 @@
   - assert:
       that:
         - not _result_cluster_copy_snapshot.changed
-        - _result_cluster_copy_snapshot.db_instance_identifier == "{{ cluster_id }}"
+        - _result_cluster_copy_snapshot.db_cluster_identifier == "{{ cluster_id }}"
         - _result_cluster_copy_snapshot.source_db_cluster_snapshot_arn == "{{ _snapshot_arn }}"
         - _result_cluster_copy_snapshot.db_cluster_snapshot_identifier == "{{ snapshot_id }}-copy"
         - "'tags' in _result_cluster_copy_snapshot"
@@ -461,7 +461,7 @@
   - name: Delete the existing DB cluster snapshots
     rds_cluster_snapshot:
       state: absent
-      db_snapshot_identifier: "{{ item }}"
+      db_cluster_snapshot_identifier: "{{ item }}"
     register: _result_delete_snapshot
     ignore_errors: true
     loop:

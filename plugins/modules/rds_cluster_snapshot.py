@@ -10,7 +10,7 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: rds_cluster_snapshot
-version_added: 3.3.0
+version_added: 4.0.0
 short_description: Manage Amazon RDS snapshots of DB clusters
 description:
   - Create, modify and delete RDS snapshots of DB clusters.
@@ -21,7 +21,7 @@ options:
     default: present
     choices: [ 'present', 'absent']
     type: str
-  db_snapshot_identifier:
+  db_cluster_snapshot_identifier:
     description:
       - The identifier of the DB cluster snapshot.
     required: true
@@ -40,12 +40,12 @@ options:
     type: str
   source_db_cluster_snapshot_identifier:
      description:
-       - The identifier of the DB cluster snapshot to copy.
-       - If the source snapshot is in the same AWS region as the copy, specify the snapshot's identifier.
-       - If the source snapshot is in a different AWS region as the copy, specify the snapshot's ARN.
+      - The identifier of the DB cluster snapshot to copy.
+      - If the source snapshot is in the same AWS region as the copy, specify the snapshot's identifier.
+      - If the source snapshot is in a different AWS region as the copy, specify the snapshot's ARN.
      aliases:
-       - source_id
-       - source_snapshot_id
+      - source_id
+      - source_snapshot_id
      type: str
   source_region:
     description:
@@ -53,7 +53,7 @@ options:
     type: str
   copy_tags:
     description:
-      - Whether to copy all tags from I(source_db_cluster_snapshot_identifier) to I(db_snapshot_identifier).
+      - Whether to copy all tags from I(source_db_cluster_snapshot_identifier) to I(db_cluster_snapshot_identifier).
     type: bool
     default: False
   wait:
@@ -66,35 +66,30 @@ options:
       - How long before wait gives up, in seconds.
     default: 300
     type: int
-  tags:
-    description:
-      - The tags to be assigned to the DB cluster snapshot.
-    type: dict
-  purge_tags:
-    description:
-      - Whether to remove tags not present in the C(tags) parameter.
-    default: true
-    type: bool
+notes:
+  - Retrieve the information about a specific DB cluster or list the DB cluster snapshots for a specific DB cluster
+    can de done using M(community.aws.rds_snapshot_info)
 author:
-    - Alina Buzachis (@alinabuzachis)
+  - Alina Buzachis (@alinabuzachis)
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
+  - amazon.aws.aws
+  - amazon.aws.ec2
+  - amazon.aws.tags
 '''
 
 EXAMPLES = r'''
 - name: Create a DB cluster snapshot
   community.aws.rds_cluster_snapshot:
     db_cluster_identifier: "{{ cluster_id }}"
-    db_snapshot_identifier: new-cluster-snapshot
+    db_cluster_snapshot_identifier: new-cluster-snapshot
 
 - name: Delete a DB cluster snapshot
   community.aws.rds_cluster_snapshot:
-    db_snapshot_identifier: new-cluster-snapshot
+    db_cluster_snapshot_identifier: new-cluster-snapshot
     state: absent
 
 - name: Copy snapshot from a different region and copy its tags
-  community.aws.rds_instance_snapshot:
+  community.aws.rds_cluster_snapshot:
     id: new-database-snapshot-copy
     region: us-east-1
     source_id: "{{ snapshot.db_snapshot_arn }}"
@@ -198,7 +193,7 @@ db_cluster_snapshot_arn:
   type: str
   sample: arn:aws:rds:us-west-2:123456789012:snapshot:ansible-test-16638696-test-snapshot
 source_db_cluster_snapshot_arn:
-  description: If the DB cluster snapshot was copied from a source DB cluster snapshot, the Amazon Resource Name (ARN) for the source DB cluster snapshot, otherwise, a null value.
+  description: If the DB cluster snapshot was copied from a source DB cluster snapshot, the ARN for the source DB cluster snapshot, otherwise, null.
   returned: always
   type: str
   sample: null
@@ -243,6 +238,8 @@ def get_snapshot(snapshot_id):
         snapshot["Tags"] = get_tags(client, module, snapshot["DBClusterSnapshotArn"])
     except is_boto3_error_code("DBClusterSnapshotNotFound"):
         return {}
+    except is_boto3_error_code("DBClusterSnapshotNotFoundFault"):  # pylint: disable=duplicate-except
+        return {}
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Couldn't get snapshot {0}".format(snapshot_id))
     return snapshot
@@ -263,7 +260,7 @@ def get_parameters(parameters, method_name):
 
 
 def ensure_snapshot_absent():
-    snapshot_name = module.params.get("db_snapshot_identifier")
+    snapshot_name = module.params.get("db_cluster_snapshot_identifier")
     params = {"DBClusterSnapshotIdentifier": snapshot_name}
     changed = False
 
@@ -285,15 +282,17 @@ def copy_snapshot(params):
         method_params = get_parameters(params, 'copy_db_cluster_snapshot')
         if method_params.get('Tags'):
             method_params['Tags'] = ansible_dict_to_boto3_tag_list(method_params['Tags'])
-        result, changed = call_method(client, module, 'copy_db__cluster_snapshot', method_params)
+        result, changed = call_method(client, module, 'copy_db_cluster_snapshot', method_params)
 
     return changed
 
 
 def ensure_snapshot_present(params):
     source_id = module.params.get('source_db_cluster_snapshot_identifier')
-    snapshot_name = module.params.get("db_snapshot_identifier")
+    snapshot_name = module.params.get("db_cluster_snapshot_identifier")
     changed = False
+
+    snapshot = get_snapshot(snapshot_name)
 
     # Copy snapshot
     if source_id:
@@ -338,12 +337,12 @@ def main():
 
     argument_spec = dict(
         state=dict(type='str', choices=['present', 'absent'], default='present'),
-        db_snapshot_identifier=dict(type='str', aliases=['id', 'snapshot_id', 'snapshot_name'], required=True),
+        db_cluster_snapshot_identifier=dict(type='str', aliases=['id', 'snapshot_id', 'snapshot_name'], required=True),
         db_cluster_identifier=dict(type='str', aliases=['cluster_id', 'cluster_name']),
         source_db_cluster_snapshot_identifier=dict(type='str', aliases=['source_id', 'source_snapshot_id']),
         wait=dict(type='bool', default=False),
         wait_timeout=dict(type='int', default=300),
-        tags=dict(type='dict'),
+        tags=dict(type='dict', aliases=['resource_tags']),
         purge_tags=dict(type='bool', default=True),
         copy_tags=dict(type='bool', default=False),
         source_region=dict(type='str'),
