@@ -365,9 +365,11 @@ class SnsTopicManager(object):
     def _create_topic(self):
         attributes = {'FifoTopic': 'false'}
         tags = []
+        endpoint = self.module.region
 
         if self.topic_type == 'fifo':
-            attributes['FifoTopic'] = 'true'
+            if "us-gov" not in endpoint:
+                attributes['FifoTopic'] = 'true'
             if not self.name.endswith('.fifo'):
                 self.name = self.name + '.fifo'
 
