@@ -1,0 +1,2 @@
+minor_changes:
+- dynamodb_table - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1199).
