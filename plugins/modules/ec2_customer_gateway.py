@@ -24,7 +24,7 @@ options:
   bgp_asn:
     description:
       - Border Gateway Protocol (BGP) Autonomous System Number (ASN).
-      - Defaults to 65000 if not specified when I(state=present).
+      - Defaults to C(65000) if not specified when I(state=present).
     type: int
   ip_address:
     description:
