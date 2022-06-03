@@ -359,7 +359,7 @@ def main():
         started_by=dict(required=False, type='str'),  # R S
         network_configuration=dict(required=False, type='dict'),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
-        tags=dict(required=False, type='dict', aliases=['resource_tags'])
+        tags=dict(required=False, type='dict', aliases=['resource_tags']),
         wait=dict(required=False, default=False, type='bool'),
     )
 
