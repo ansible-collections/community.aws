@@ -1,8 +1,0 @@
-bugfixes:
-  - ecs_service - only compare ``health_check_grace_period_seconds`` parameter when it's supplied (https://github.com/ansible-collections/community.aws/pull/1209).
-  - ecs_task - dont require ``cluster`` parameter and default it to ``default`` (https://github.com/ansible-collections/community.aws/pull/1209).
-
-minor_changes:
-  - ecs_service - add default value of ``default`` to ``cluster`` (https://github.com/ansible-collections/community.aws/pull/1209).
-  - ecs_service - add ``wait`` parameter and waiter for deleting services (https://github.com/ansible-collections/community.aws/pull/1209).
-  - ecs_task - add ``wait`` parameter and waiter for running and stopping tasks (https://github.com/ansible-collections/community.aws/pull/1209).
