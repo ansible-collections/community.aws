@@ -435,7 +435,7 @@ class Connection(ConnectionBase):
                     stdout = ''
                 continue
             if begin:
-                if mark_end in line:
+                if line.startswith(mark_end):
                     display.vvvv(u"POST_PROCESS: {0}".format(to_text(stdout)), host=self.host)
                     returncode, stdout = self._post_process(stdout, mark_begin)
                     break
