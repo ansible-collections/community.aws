@@ -28,8 +28,10 @@ options:
     cluster:
         description:
             - The name of the cluster to run the task on.
-        required: True
+            - If not specified, the cluster name will be 'default'.
+        required: False
         type: str
+        default: 'default'
     task_definition:
         description:
             - The task definition to start, run or stop.
@@ -90,6 +92,12 @@ options:
           - Tags that will be added to ecs tasks on start and run
         required: false
         aliases: ['resource_tags']
+    wait:
+        description:
+          - Whether or not to wait for the desired state.
+        type: bool
+        default: false
+        version_added: 3.4.0
 extends_documentation_fragment:
     - amazon.aws.aws
     - amazon.aws.ec2
@@ -342,7 +350,7 @@ class EcsExecManager:
 def main():
     argument_spec = dict(
         operation=dict(required=True, choices=['run', 'start', 'stop']),
-        cluster=dict(required=True, type='str'),  # R S P
+        cluster=dict(required=False, type='str', default='default'),  # R S P
         task_definition=dict(required=False, type='str'),  # R* S*
         overrides=dict(required=False, type='dict'),  # R S
         count=dict(required=False, type='int'),  # R
@@ -352,6 +360,7 @@ def main():
         network_configuration=dict(required=False, type='dict'),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
         tags=dict(required=False, type='dict', aliases=['resource_tags'])
+        wait=dict(required=False, default=False, type='bool'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True,
@@ -393,7 +402,9 @@ def main():
             results['task'] = existing
         else:
             if not module.check_mode:
-                results['task'] = service_mgr.run_task(
+
+                # run_task returns a list of tasks created
+                tasks = service_mgr.run_task(
                     module.params['cluster'],
                     module.params['task_definition'],
                     module.params['overrides'],
@@ -402,6 +413,18 @@ def main():
                     module.params['launch_type'],
                     module.params['tags'],
                 )
+
+                # Wait for task(s) to be running prior to exiting
+                if module.params['wait']:
+
+                    params = {}
+                    params['tasks'] = [task['taskArn'] for task in tasks]
+                    params['cluster'] = module.params['cluster']
+
+                    service_mgr.ecs.get_waiter('tasks_running').wait(**params)
+
+                results['task'] = tasks
+
             results['changed'] = True
 
     elif module.params['operation'] == 'start':
@@ -418,6 +441,7 @@ def main():
                     module.params['started_by'],
                     module.params['tags'],
                 )
+
             results['changed'] = True
 
     elif module.params['operation'] == 'stop':
@@ -431,6 +455,16 @@ def main():
                     module.params['cluster'],
                     module.params['task']
                 )
+
+                # Wait for task to be stopped prior to exiting
+                if module.params['wait']:
+
+                    params = {}
+                    params['tasks'] = [module.params['task']]
+                    params['cluster'] = module.params['cluster']
+
+                    service_mgr.ecs.get_waiter('tasks_stopped').wait(**params)
+
             results['changed'] = True
 
     module.exit_json(**results)
