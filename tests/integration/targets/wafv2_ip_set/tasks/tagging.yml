@@ -1,0 +1,256 @@
+- name: Tests relating to tagging wavf2_ip_sets
+  vars:
+    first_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      'New Key with Spaces': Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+    final_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+  # Mandatory settings
+  module_defaults:
+    community.aws.wafv2_ip_set:
+      name: '{{ ip_set_name }}'
+      state: present
+      scope: REGIONAL
+      ip_address_version: IPV4
+      purge_addresses: no
+      addresses: []
+    community.aws.wafv2_ip_set_info:
+      name: '{{ ip_set_name }}'
+      scope: REGIONAL
+  block:
+
+  ###
+
+  - name: test adding tags to wafv2_ip_set (check mode)
+    wafv2_ip_set:
+      tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+
+  - name: test adding tags to wafv2_ip_set
+    wafv2_ip_set:
+      tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.tags == first_tags
+
+  - name: test adding tags to wafv2_ip_set - idempotency (check mode)
+    wafv2_ip_set:
+      tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+
+  - name: test adding tags to wafv2_ip_set - idempotency
+    wafv2_ip_set:
+      tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.tags == first_tags
+
+  ###
+
+  - name: test updating tags with purge on wafv2_ip_set (check mode)
+    wafv2_ip_set:
+      tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+
+  - name: test updating tags with purge on wafv2_ip_set
+    wafv2_ip_set:
+      tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.tags == second_tags
+
+  - name: test updating tags with purge on wafv2_ip_set - idempotency (check mode)
+    wafv2_ip_set:
+      tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+
+  - name: test updating tags with purge on wafv2_ip_set - idempotency
+    wafv2_ip_set:
+      tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.tags == second_tags
+
+  ###
+
+  - name: test updating tags without purge on wafv2_ip_set (check mode)
+    wafv2_ip_set:
+      tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+
+  - name: test updating tags without purge on wafv2_ip_set
+    wafv2_ip_set:
+      tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.tags == final_tags
+
+  - name: test updating tags without purge on wafv2_ip_set - idempotency (check mode)
+    wafv2_ip_set:
+      tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+
+  - name: test updating tags without purge on wafv2_ip_set - idempotency
+    wafv2_ip_set:
+      tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.tags == final_tags
+
+  ###
+
+  - name: test that wafv2_ip_set_info returns the tags
+    wafv2_ip_set_info:
+    register: tag_info
+  - name: assert tags present
+    assert:
+      that:
+      - tag_info.tags == final_tags
+
+  ###
+
+  - name: test no tags param wafv2_ip_set (check mode)
+    wafv2_ip_set: {}
+    register: update_result
+    check_mode: yes
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.tags == final_tags
+
+
+  - name: test no tags param wafv2_ip_set
+    wafv2_ip_set: {}
+    register: update_result
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.tags == final_tags
+
+  ###
+
+  - name: test removing tags from wafv2_ip_set (check mode)
+    wafv2_ip_set:
+      tags: {}
+      purge_tags: True
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+
+  - name: test removing tags from wafv2_ip_set
+    wafv2_ip_set:
+      tags: {}
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.tags == {}
+
+  - name: test removing tags from wafv2_ip_set - idempotency (check mode)
+    wafv2_ip_set:
+      tags: {}
+      purge_tags: True
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+
+  - name: test removing tags from wafv2_ip_set - idempotency
+    wafv2_ip_set:
+      tags: {}
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.tags == {}

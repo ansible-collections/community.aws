@@ -5,7 +5,6 @@
       aws_secret_key: "{{ aws_secret_key }}"
       security_token: "{{ security_token | default(omit) }}"
       region: "{{ aws_region }}"
-
   block:
     - name: check_mode create ip set
       wafv2_ip_set:
@@ -176,6 +175,8 @@
       assert:
         that:
           - out.addresses | count == 1
+
+    - include_tasks: 'tagging.yml'
 
     - name: delete ip set
       wafv2_ip_set:
