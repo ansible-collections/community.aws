@@ -236,6 +236,13 @@
         that:
           - ecs_service.changed
 
+    - name: check that ECS service was created with deployment_circuit_breaker
+      assert:
+        that:
+          - ecs_service.service.deploymentCircuitBreaker
+          - ecs_service.service.deploymentCircuitBreaker.enable
+          - ecs_service.service.deploymentCircuitBreaker.rollback
+
     - name: create same ECS service definition (should not change)
       ecs_service:
         state: present
