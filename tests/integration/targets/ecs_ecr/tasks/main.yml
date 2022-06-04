@@ -54,6 +54,18 @@
         that:
           - result.repository.imageTagMutability == "MUTABLE"
 
+    - name: When pulling an existing repository that has no existing policy
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+      register: result
+      
+    - name: it should return the repo but without a policy and not create or change
+      assert:
+        that:
+          - result.repository
+          - not result.policy
+          - not result.created
+          - not result.changed
 
     - name: When creating a repository that already exists in check mode
       ecs_ecr:
@@ -120,6 +132,17 @@
           - result is changed
           - not result.created
 
+    - name: When pulling an existing repository that has an existing policy
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+      register: result
+      
+    - name: it should return the policy but not create or change
+      assert:
+        that:
+          - result.policy
+          - not result.created
+          - not result.changed
 
     - name: When in check mode, and deleting a policy that exists
       ecs_ecr:
