@@ -464,32 +464,6 @@ ansible_facts:
                     description: The Amazon Resource Name (ARN) of the of the cluster that hosts the service.
                     returned: always
                     type: str
-                deploymentConfiguration:
-                    description: dictionary of deploymentConfiguration
-                    returned: always
-                    type: complex
-                    contains:
-                        deploymentCircuitBreaker:
-                            description: dictionary of deploymentCircuitBreaker
-                            returned: always
-                            type: complex
-                            contains:
-                                enable:
-                                    description: The state of the circuit breaker feature.
-                                    returned: always
-                                    type: bool
-                                rollback:
-                                    description: The state of the rollback feature of the circuit breaker.
-                                    returned: always
-                                    type: bool
-                        maximumPercent:
-                            description: Upper limit on the number of tasks in a service that are allowed in the RUNNING or PENDING state during a deployment.
-                            returned: always
-                            type: int
-                        minimumHealthyPercent:
-                            description: A lower limit on the number of tasks in a service that must remain in the RUNNING state during a deployment.
-                            returned: always
-                            type: int
                 desiredCount:
                     description: The desired number of instantiations of the task definition to keep running on the service.
                     returned: always
@@ -555,6 +529,19 @@ ansible_facts:
                             description: minimumHealthyPercent param
                             returned: always
                             type: int
+                        deploymentCircuitBreaker:
+                            description: dictionary of deploymentCircuitBreaker
+                            returned: always
+                            type: complex
+                            contains:
+                                enable:
+                                    description: The state of the circuit breaker feature.
+                                    returned: always
+                                    type: bool
+                                rollback:
+                                    description: The state of the rollback feature of the circuit breaker.
+                                    returned: always
+                                    type: bool
                 events:
                     description: list of service events
                     returned: always
