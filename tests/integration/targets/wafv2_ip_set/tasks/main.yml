@@ -177,6 +177,7 @@
           - out.addresses | count == 1
 
     - include_tasks: 'tagging.yml'
+    - include_tasks: 'description.yml'
 
     - name: delete ip set
       wafv2_ip_set:
