@@ -24,9 +24,9 @@ ecs_task_containers:
 ecs_service_deployment_configuration:
   minimum_healthy_percent: 0
   maximum_percent: 100
-    deployment_circuit_breaker:
-      enable: true
-      rollback: true
+  deployment_circuit_breaker:
+    enable: true
+    rollback: true
 ecs_service_placement_strategy:
   - type: binpack
     field: memory
