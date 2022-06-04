@@ -584,7 +584,7 @@ import time
 DEPLOYMENT_CONFIGURATION_TYPE_MAP = {
     'maximum_percent': 'int',
     'minimum_healthy_percent': 'int',
-    'deployment_circuit_breaker': 'dict'
+    'deployment_circuit_breaker': 'dict',
 }
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
