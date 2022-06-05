@@ -1,0 +1,6 @@
+minor_changes:
+- wafv2_web_acl_info - added support for returning tags (https://github.com/ansible-collections/community.aws/pull/1218).
+- wafv2_web_acl - added support for returning tags (https://github.com/ansible-collections/community.aws/pull/1218).
+- wafv2_web_acl - Added support for ``purge_tags`` (https://github.com/ansible-collections/community.aws/pull/1218).
+- wafv2_web_acl - Added support for updating tags (https://github.com/ansible-collections/community.aws/pull/1218).
+- wafv2_web_acl - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1218).
