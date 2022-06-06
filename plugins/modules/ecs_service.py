@@ -220,7 +220,8 @@ options:
         type: str
     wait:
         description:
-          - Whether or not to wait for the desired state.
+          - Whether or not to wait for the service to be inactive.
+          - Waits only when I(state) is C(absent).
         type: bool
         default: false
         version_added: 3.4.0
