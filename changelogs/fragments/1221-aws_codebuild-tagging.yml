@@ -3,18 +3,18 @@ minor_changes:
   (https://github.com/ansible-collections/community.aws/pull/1221).
 - aws_codebuild - the ``source`` and ``artifacts`` parameters are now optional unless creating a new project
   (https://github.com/ansible-collections/community.aws/pull/1221).
-- aws_codebuild - add the ``resource_tags`` paramater which takes the dictionary format for tags instead of the list of dictionaries format
+- aws_codebuild - add the ``resource_tags`` parameter which takes the dictionary format for tags instead of the list of dictionaries format
   (https://github.com/ansible-collections/community.aws/pull/1221).
 - aws_codebuild - add the ``resource_tags`` return value which returns the standard dictionary format for tags instead of the list of
   dictionaries format
   (https://github.com/ansible-collections/community.aws/pull/1221).
 
 bugfixes:
-- aws_codebuild - fix bug where the result may be supuriously flagged as ``changed`` when multiple tags were set on the project
+- aws_codebuild - fix bug where the result may be spuriously flagged as ``changed`` when multiple tags were set on the project
   (https://github.com/ansible-collections/community.aws/pull/1221).
 
 deprecated_features:
-- aws_codebuild - The ``tags`` parameter currently uses a non-standard format and has been deprecated.  In release 6.0.0 this paramater will
+- aws_codebuild - The ``tags`` parameter currently uses a non-standard format and has been deprecated.  In release 6.0.0 this parameter will
   accept a simple key/value pair dictionary instead of the current list of dictionaries.  It is recommended to migrate to using the
   resource_tags parameter which already accepts the simple dictionary format
  (https://github.com/ansible-collections/community.aws/pull/1221).
