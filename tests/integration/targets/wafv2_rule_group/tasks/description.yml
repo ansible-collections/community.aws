@@ -1,0 +1,131 @@
+- name: Tests relating to setting the descriptions of wavf2_ip_sets
+  vars:
+    description_one: 'a Description - {{ resource_prefix }}'
+    description_two: 'Another_Description - {{ resource_prefix }}'
+  # Mandatory settings
+  module_defaults:
+    community.aws.wafv2_rule_group:
+      name: '{{ rule_group_name }}'
+      state: present
+      scope: REGIONAL
+      purge_rules: no
+      rules: []
+      capacity: 500
+    community.aws.wafv2_rule_group_info:
+      name: '{{ rule_group_name }}'
+      scope: REGIONAL
+  block:
+
+  - name: test setting description wafv2_rule_group (check mode)
+    wafv2_rule_group:
+      description: '{{ description_one }}'
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+
+  - name: test setting description wafv2_rule_group
+    wafv2_rule_group:
+      description: '{{ description_one }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.description == description_one
+
+  - name: test setting description wafv2_rule_group - idempotency (check mode)
+    wafv2_rule_group:
+      description: '{{ description_one }}'
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+
+  - name: test setting description wafv2_rule_group - idempotency
+    wafv2_rule_group:
+      description: '{{ description_one }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.description == description_one
+
+  ###
+
+  - name: test updating description on wafv2_rule_group (check mode)
+    wafv2_rule_group:
+      description: '{{ description_two }}'
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+
+  - name: test updating description on wafv2_rule_group
+    wafv2_rule_group:
+      description: '{{ description_two }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.description == description_two
+
+  - name: test updating description on wafv2_rule_group - idempotency (check mode)
+    wafv2_rule_group:
+      description: '{{ description_two }}'
+    register: update_result
+    check_mode: yes
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+
+  - name: test updating description on wafv2_rule_group - idempotency
+    wafv2_rule_group:
+      description: '{{ description_two }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.description == description_two
+
+  ###
+
+  - name: test that wafv2_rule_group_info returns the description
+    wafv2_rule_group_info:
+    register: tag_info
+  - name: assert description present
+    assert:
+      that:
+      - tag_info.description == description_two
+
+  ###
+
+  - name: test no description param wafv2_rule_group (check mode)
+    wafv2_rule_group: {}
+    register: update_result
+    check_mode: yes
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.description == description_two
+
+
+  - name: test no description param wafv2_rule_group
+    wafv2_rule_group: {}
+    register: update_result
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.description == description_two

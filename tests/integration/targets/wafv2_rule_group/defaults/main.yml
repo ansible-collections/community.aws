@@ -1,0 +1,11 @@
+---
+web_acl_name: '{{ tiny_prefix }}-web-acl'
+rule_group_name: '{{ tiny_prefix }}-rule-group'
+alb_name: "my-alb-{{ tiny_prefix }}"
+tg_name: "my-tg-{{ tiny_prefix }}"
+cidr:
+  main: 10.228.228.0/22
+  a: 10.228.228.0/24
+  b: 10.228.229.0/24
+  c: 10.228.230.0/24
+  d: 10.228.231.0/24

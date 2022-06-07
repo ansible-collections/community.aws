@@ -1,0 +1,8 @@
+bugfixes:
+- wafv2_rule_group - fix bug where updating just the description did not update the changed state (https://github.com/ansible-collections/community.aws/pull/1210).
+- wafv2_rule_group - fix bug where description of resource state was missing when rule groups were updated (https://github.com/ansible-collections/community.aws/pull/1210).
+minor_changes:
+- wafv2_rule_group - Added support for ``purge_tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1210).
+- wafv2_rule_group - Added support for updating tags (https://github.com/ansible-collections/community.aws/pull/1210).
+- wafv2_rule_group - Added support for returning tags (https://github.com/ansible-collections/community.aws/pull/1210).
+- wafv2_rule_group_info - Added support for returning tags (https://github.com/ansible-collections/community.aws/pull/1210).
