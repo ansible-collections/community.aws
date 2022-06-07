@@ -225,16 +225,21 @@
         role: "ecsServiceRole"
       register: ecs_service
 
-    - name: check that placement constraint has been applied
-      assert:
-        that:
-          - ecs_service.changed
-          - "ecs_service.service.placementConstraints[0].type == 'distinctInstance'"
-
     - name: check that ECS service creation changed
       assert:
         that:
           - ecs_service.changed
+
+    - name: check that placement constraint has been applied
+      assert:
+        that:
+          - "ecs_service.service.placementConstraints[0].type == 'distinctInstance'"
+  
+    - name: check that ECS service was created with deployment_circuit_breaker
+      assert:
+        that:
+          - ecs_service.service.deploymentConfiguration.deploymentCircuitBreaker.enable
+          - ecs_service.service.deploymentConfiguration.deploymentCircuitBreaker.rollback
 
     - name: create same ECS service definition (should not change)
       ecs_service:
