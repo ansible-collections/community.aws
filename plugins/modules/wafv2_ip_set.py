@@ -304,14 +304,17 @@ def main():
 
     if state == 'present':
         if ip_set.get():
-            change, addresses = compare(ip_set.get(), addresses, purge_addresses, state)
-            if (change or ip_set.description() != description) and not check_mode:
+            ips_updated, addresses = compare(ip_set.get(), addresses, purge_addresses, state)
+            description_updated = bool(description) and ip_set.description() != description
+            change = ips_updated or description_updated
+            retval = ip_set.get()
+            if module.check_mode:
+                pass
+            elif ips_updated or description_updated:
                 retval = ip_set.update(
                     description=description,
                     addresses=addresses
                 )
-            else:
-                retval = ip_set.get()
         else:
             if not check_mode:
                 retval = ip_set.create(
