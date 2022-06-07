@@ -1,0 +1,125 @@
+- name: Tests relating to setting description on aws_codebuild
+  vars:
+    description_one: 'a Description - {{ resource_prefix }}'
+    description_two: 'Another_Description - {{ resource_prefix }}'
+  # Mandatory settings
+  module_defaults:
+    community.aws.aws_codebuild:
+      name: '{{ project_name }}'
+#    community.aws.aws_codebuild_info:
+#      name: '{{ project_name }}'
+  block:
+
+#  - name: test setting description aws_codebuild (check mode)
+#    aws_codebuild:
+#      description: '{{ description_one }}'
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test setting description aws_codebuild
+    aws_codebuild:
+      description: '{{ description_one }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.project.description == description_one
+
+#  - name: test setting description aws_codebuild - idempotency (check mode)
+#    aws_codebuild:
+#      description: '{{ description_one }}'
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test setting description aws_codebuild - idempotency
+    aws_codebuild:
+      description: '{{ description_one }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.description == description_one
+
+  ###
+
+#  - name: test updating description on aws_codebuild (check mode)
+#    aws_codebuild:
+#      description: '{{ description_two }}'
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test updating description on aws_codebuild
+    aws_codebuild:
+      description: '{{ description_two }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.project.description == description_two
+
+#  - name: test updating description on aws_codebuild - idempotency (check mode)
+#    aws_codebuild:
+#      description: '{{ description_two }}'
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test updating description on aws_codebuild - idempotency
+    aws_codebuild:
+      description: '{{ description_two }}'
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.description == description_two
+
+#  ###
+#
+#  - name: test that aws_codebuild_info returns the description
+#    aws_codebuild_info:
+#    register: tag_info
+#  - name: assert description present
+#    assert:
+#      that:
+#      - tag_info.project.description == description_two
+#
+#  ###
+
+#  - name: test no description param aws_codebuild (check mode)
+#    aws_codebuild: {}
+#    register: update_result
+#    check_mode: yes
+#  - name: assert no change
+#    assert:
+#      that:
+#      - update_result is not changed
+#      - update_result.project.description == description_two
+
+
+  - name: test no description param aws_codebuild
+    aws_codebuild: {}
+    register: update_result
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.description == description_two
