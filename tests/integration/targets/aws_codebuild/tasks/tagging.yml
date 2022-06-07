@@ -1,0 +1,250 @@
+- name: Tests relating to tagging aws_codebuild
+  vars:
+    first_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      'New Key with Spaces': Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+    final_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+  # Mandatory settings
+  module_defaults:
+    community.aws.aws_codebuild:
+      name: '{{ project_name }}'
+#    community.aws.aws_codebuild_info:
+#      name: '{{ project_name }}'
+  block:
+
+  ###
+
+#  - name: test adding tags to aws_codebuild (check mode)
+#    aws_codebuild:
+#      resource_tags: '{{ first_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test adding tags to aws_codebuild
+    aws_codebuild:
+      resource_tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.project.resource_tags == first_tags
+
+#  - name: test adding tags to aws_codebuild - idempotency (check mode)
+#    aws_codebuild:
+#      resource_tags: '{{ first_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test adding tags to aws_codebuild - idempotency
+    aws_codebuild:
+      resource_tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.resource_tags == first_tags
+
+  ###
+
+#  - name: test updating tags with purge on aws_codebuild (check mode)
+#    aws_codebuild:
+#      resource_tags: '{{ second_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test updating tags with purge on aws_codebuild
+    aws_codebuild:
+      resource_tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.project.resource_tags == second_tags
+
+#  - name: test updating tags with purge on aws_codebuild - idempotency (check mode)
+#    aws_codebuild:
+#      resource_tags: '{{ second_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test updating tags with purge on aws_codebuild - idempotency
+    aws_codebuild:
+      resource_tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.resource_tags == second_tags
+
+  ###
+
+#  - name: test updating tags without purge on aws_codebuild (check mode)
+#    aws_codebuild:
+#      resource_tags: '{{ third_tags }}'
+#      purge_tags: False
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test updating tags without purge on aws_codebuild
+    aws_codebuild:
+      resource_tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.project.resource_tags == final_tags
+
+#  - name: test updating tags without purge on aws_codebuild - idempotency (check mode)
+#    aws_codebuild:
+#      resource_tags: '{{ third_tags }}'
+#      purge_tags: False
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test updating tags without purge on aws_codebuild - idempotency
+    aws_codebuild:
+      resource_tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.resource_tags == final_tags
+
+#  ###
+#
+#  - name: test that aws_codebuild_info returns the tags
+#    aws_codebuild_info:
+#    register: tag_info
+#  - name: assert tags present
+#    assert:
+#      that:
+#      - tag_info.project.tags == final_tags
+#
+#  ###
+
+#  - name: test no tags param aws_codebuild (check mode)
+#    aws_codebuild: {}
+#    register: update_result
+#    check_mode: yes
+#  - name: assert no change
+#    assert:
+#      that:
+#      - update_result is not changed
+#      - update_result.project.resource_tags == final_tags
+#
+
+  - name: test no tags param aws_codebuild
+    aws_codebuild: {}
+    register: update_result
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.resource_tags == final_tags
+
+  ###
+
+#  - name: test removing tags from aws_codebuild (check mode)
+#    aws_codebuild:
+#      resource_tags: {}
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test removing tags from aws_codebuild
+    aws_codebuild:
+      resource_tags: {}
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.project.resource_tags == {}
+
+#  - name: test removing tags from aws_codebuild - idempotency (check mode)
+#    aws_codebuild:
+#      resource_tags: {}
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test removing tags from aws_codebuild - idempotency
+    aws_codebuild:
+      resource_tags: {}
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.project.resource_tags == {}
