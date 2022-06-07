@@ -923,15 +923,21 @@ def main():
 
                         # Wait for service to be INACTIVE prior to exiting
                         if module.params['wait']:
-
-                            params = {}
-                            params['services'] = [module.params['name']]
-                            params['cluster'] = module.params['cluster']
-
-                            service_mgr.ecs.get_waiter('services_inactive').wait(**params)
-
+                            waiter = service_mgr.ecs.get_waiter('services_inactive')
+                            try:
+                                waiter.wait(
+                                    services=[module.params['name']],
+                                    cluster=module.params['cluster'],
+                                    WaiterConfig={
+                                        'Delay': module.params['delay'],
+                                        'MaxAttempts': module.params['repeat']
+                                    }
+                                )
+                            except botocore.exceptions.WaiterError as e:
+                                module.fail_json_aws(e, 'Timeout waiting for service removal')
                     except botocore.exceptions.ClientError as e:
                         module.fail_json_aws(e, msg="Couldn't delete service")
+
                 results['changed'] = True
 
     elif module.params['state'] == 'deleting':

@@ -415,11 +415,14 @@ def main():
                 # Wait for task(s) to be running prior to exiting
                 if module.params['wait']:
 
-                    params = {}
-                    params['tasks'] = [task['taskArn'] for task in tasks]
-                    params['cluster'] = module.params['cluster']
-
-                    service_mgr.ecs.get_waiter('tasks_running').wait(**params)
+                    waiter = service_mgr.ecs.get_waiter('tasks_running')
+                    try:
+                        waiter.wait(
+                            tasks=[task['taskArn'] for task in tasks],
+                            cluster=module.params['cluster'],
+                        )
+                    except botocore.exceptions.WaiterError as e:
+                        module.fail_json_aws(e, 'Timeout waiting for tasks to run')
 
                 results['task'] = tasks
 
@@ -457,11 +460,14 @@ def main():
                 # Wait for task to be stopped prior to exiting
                 if module.params['wait']:
 
-                    params = {}
-                    params['tasks'] = [module.params['task']]
-                    params['cluster'] = module.params['cluster']
-
-                    service_mgr.ecs.get_waiter('tasks_stopped').wait(**params)
+                    waiter = service_mgr.ecs.get_waiter('tasks_stopped')
+                    try:
+                        waiter.wait(
+                            tasks=[module.params['task']],
+                            cluster=module.params['cluster'],
+                        )
+                    except botocore.exceptions.WaiterError as e:
+                        module.fail_json_aws(e, 'Timeout waiting for task to stop')
 
             results['changed'] = True
 
