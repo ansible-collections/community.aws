@@ -317,6 +317,7 @@ def create_or_update_project(client, params, module):
 
     if 'name' in found:
         found_project = found
+        found_tags = found_project.pop('tags', [])
         resp = update_project(client=client, params=formatted_update_params, module=module)
         updated_project = resp['project']
 
