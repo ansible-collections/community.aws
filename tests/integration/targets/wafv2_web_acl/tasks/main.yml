@@ -512,6 +512,7 @@
           - out.rules[0].statement.geo_match_statement.country_codes[0] == 'DE'
 
     - include_tasks: 'description.yml'
+    - include_tasks: 'tags.yml'
 
     - name: re-read webacl
       wafv2_web_acl_info:
