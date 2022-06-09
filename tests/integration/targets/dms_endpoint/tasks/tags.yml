@@ -1,0 +1,258 @@
+- name: Tests relating to setting tags on dms_endpoint
+  vars:
+    first_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      'New Key with Spaces': Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+    final_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+  # Mandatory settings
+  module_defaults:
+    community.aws.dms_endpoint:
+      state: present
+      endpointidentifier: "{{ dms_identifier }}"
+      # These shouldn't be necessary, but that's the way the module works today.
+      endpointtype: source
+      enginename: aurora
+      username: testing
+      password: testint1234
+      servername: "{{ resource_prefix }}.exampledomain.com"
+      port: 3306
+      databasename: 'testdb2'
+      sslmode: none
+    # community.aws.dms_endpoint_info:
+    #   endpointidentifier: "{{ dms_identifier }}"
+  block:
+
+#  - name: test adding tags to dms_endpoint (check mode)
+#    dms_endpoint:
+#      tags: '{{ first_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test adding tags to dms_endpoint
+    dms_endpoint:
+      tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.endpoint.tags == first_tags
+
+#  - name: test adding tags to dms_endpoint - idempotency (check mode)
+#    dms_endpoint:
+#      tags: '{{ first_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test adding tags to dms_endpoint - idempotency
+    dms_endpoint:
+      tags: '{{ first_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.endpoint.tags == first_tags
+
+  ###
+
+#  - name: test updating tags with purge on dms_endpoint (check mode)
+#    dms_endpoint:
+#      tags: '{{ second_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test updating tags with purge on dms_endpoint
+    dms_endpoint:
+      tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.endpoint.tags == second_tags
+
+#  - name: test updating tags with purge on dms_endpoint - idempotency (check mode)
+#    dms_endpoint:
+#      tags: '{{ second_tags }}'
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test updating tags with purge on dms_endpoint - idempotency
+    dms_endpoint:
+      tags: '{{ second_tags }}'
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.endpoint.tags == second_tags
+
+  ###
+
+#  - name: test updating tags without purge on dms_endpoint (check mode)
+#    dms_endpoint:
+#      tags: '{{ third_tags }}'
+#      purge_tags: False
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test updating tags without purge on dms_endpoint
+    dms_endpoint:
+      tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.endpoint.tags == final_tags
+
+#  - name: test updating tags without purge on dms_endpoint - idempotency (check mode)
+#    dms_endpoint:
+#      tags: '{{ third_tags }}'
+#      purge_tags: False
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test updating tags without purge on dms_endpoint - idempotency
+    dms_endpoint:
+      tags: '{{ third_tags }}'
+      purge_tags: False
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.endpoint.tags == final_tags
+
+  ###
+#
+#  - name: test that dms_endpoint_info returns the tags
+#    dms_endpoint_info:
+#    register: tag_info
+#  - name: assert tags present
+#    assert:
+#      that:
+#      - tag_info.endpoint.tags == final_tags
+#
+  ###
+
+#  - name: test no tags param dms_endpoint (check mode)
+#    dms_endpoint: {}
+#    register: update_result
+#    check_mode: yes
+#  - name: assert no change
+#    assert:
+#      that:
+#      - update_result is not changed
+#      - update_result.endpoint.tags == final_tags
+#
+
+  - name: test no tags param dms_endpoint
+    dms_endpoint: {}
+    register: update_result
+  - name: assert no change
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.endpoint.tags == final_tags
+
+  ###
+
+#  - name: test removing tags from dms_endpoint (check mode)
+#    dms_endpoint:
+#      tags: {}
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is changed
+
+  - name: test removing tags from dms_endpoint
+    dms_endpoint:
+      tags: {}
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is changed
+      - update_result.endpoint.tags == {}
+
+#  - name: test removing tags from dms_endpoint - idempotency (check mode)
+#    dms_endpoint:
+#      tags: {}
+#      purge_tags: True
+#    register: update_result
+#    check_mode: yes
+#  - name: assert that update succeeded
+#    assert:
+#      that:
+#      - update_result is not changed
+
+  - name: test removing tags from dms_endpoint - idempotency
+    dms_endpoint:
+      tags: {}
+      purge_tags: True
+    register: update_result
+  - name: assert that update succeeded
+    assert:
+      that:
+      - update_result is not changed
+      - update_result.endpoint.tags == {}
