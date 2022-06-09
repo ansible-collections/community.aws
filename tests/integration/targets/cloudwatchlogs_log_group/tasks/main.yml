@@ -75,8 +75,18 @@
       that:
       - '"log_groups" in result'
       - result.log_groups | length == 1
+      - '"log_group_name" in log_group'
+      - '"creation_time" in log_group'
+      - '"retention_in_days" in log_group'
+      - '"metric_filter_count" in log_group'
+      - '"arn" in log_group'
+      - '"stored_bytes" in log_group'
+      # - '"kms_key_id" in log_group'
+      - '"tags" in log_group'
     vars:
       log_group: '{{ result.log_groups[0] }}'
+
+  - include_tasks: 'tags.yml'
 
   - name: delete cloudwatch log group for integration test
     cloudwatchlogs_log_group:
