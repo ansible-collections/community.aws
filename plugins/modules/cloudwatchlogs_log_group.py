@@ -96,6 +96,7 @@ log_groups:
     description: Return the list of complex objects representing log groups
     returned: success
     type: complex
+    version_added: 4.0.0
     contains:
         log_group_name:
             description: The name of the log group.
@@ -135,6 +136,7 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
 def create_log_group(client, log_group_name, kms_key_id, tags, retention, module):
@@ -154,15 +156,11 @@ def create_log_group(client, log_group_name, kms_key_id, tags, retention, module
                                log_group_name=log_group_name,
                                retention=retention, module=module)
 
-    desc_log_group = describe_log_group(client=client,
-                                        log_group_name=log_group_name,
-                                        module=module)
+    found_log_group = describe_log_group(client=client, log_group_name=log_group_name, module=module)
 
-    if 'logGroups' in desc_log_group:
-        for i in desc_log_group['logGroups']:
-            if log_group_name == i['logGroupName']:
-                return i
-    module.fail_json(msg="The aws CloudWatchLogs log group was not created. \n please try again!")
+    if not found_log_group:
+        module.fail_json(msg="The aws CloudWatchLogs log group was not created. \n please try again!")
+    return found_log_group
 
 
 def input_retention_policy(client, log_group_name, retention, module):
@@ -187,16 +185,10 @@ def delete_retention_policy(client, log_group_name, module):
 
 
 def delete_log_group(client, log_group_name, module):
-    desc_log_group = describe_log_group(client=client,
-                                        log_group_name=log_group_name,
-                                        module=module)
-
     try:
-        if 'logGroups' in desc_log_group:
-            for i in desc_log_group['logGroups']:
-                if log_group_name == i['logGroupName']:
-                    client.delete_log_group(logGroupName=log_group_name)
-
+        client.delete_log_group(logGroupName=log_group_name)
+    except is_boto3_error_code('ResourceNotFoundException'):
+        return {}
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to delete log group {0}".format(log_group_name))
 
@@ -204,9 +196,27 @@ def delete_log_group(client, log_group_name, module):
 def describe_log_group(client, log_group_name, module):
     try:
         desc_log_group = client.describe_log_groups(logGroupNamePrefix=log_group_name)
-        return desc_log_group
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to describe log group {0}".format(log_group_name))
+
+    found_log_group = {}
+    for i in desc_log_group.get('logGroups', []):
+        if log_group_name == i['logGroupName']:
+            found_log_group = i
+            break
+
+    if not found_log_group:
+        return {}
+
+
+    return found_log_group
+
+
+def format_result(found_log_group):
+    # Prior to 4.0.0 we documented returning log_groups=[log_group], but returned **log_group
+    # Return both to avoid a breaking change.
+    log_group = camel_dict_to_snake_dict(found_log_group, ignore_list=['tags'])
+    return dict(log_groups=[log_group], **log_group)
 
 
 def main():
@@ -233,12 +243,7 @@ def main():
     changed = False
 
     # Determine if the log group exists
-    desc_log_group = describe_log_group(client=logs, log_group_name=module.params['log_group_name'], module=module)
-    found_log_group = {}
-    for i in desc_log_group.get('logGroups', []):
-        if module.params['log_group_name'] == i['logGroupName']:
-            found_log_group = i
-            break
+    found_log_group = describe_log_group(client=logs, log_group_name=module.params['log_group_name'], module=module)
 
     if state == 'present':
         if found_log_group:
@@ -275,7 +280,8 @@ def main():
                                                retention=module.params['retention'],
                                                module=module)
 
-        module.exit_json(changed=changed, **camel_dict_to_snake_dict(found_log_group))
+        result = format_result(found_log_group)
+        module.exit_json(changed=changed, **result)
 
     elif state == 'absent':
         if found_log_group:
