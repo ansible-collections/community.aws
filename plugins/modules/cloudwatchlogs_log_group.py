@@ -201,25 +201,22 @@ def describe_log_group(client, log_group_name, module):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Unable to describe log group {0}".format(log_group_name))
 
-    found_log_group = {}
-    for i in desc_log_group.get('logGroups', []):
-        if log_group_name == i['logGroupName']:
-            found_log_group = i
-            break
+    matching_logs = [log for log in desc_log_group.get('logGroups', []) if log['logGroupName'] == log_group_name]
 
-    if not found_log_group:
+    if not matching_logs:
         return {}
 
-    if found_log_group:
-        try:
-            tags = client.list_tags_log_group(logGroupName=log_group_name)
-        except is_boto3_error_code('AccessDeniedException'):
-            tags = {}
-            module.warn('Permission denied listing tags for log group {0}'.format(log_group_name))
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-            module.fail_json_aws(e, msg="Unable to describe tags for log group {0}".format(log_group_name))
+    found_log_group = matching_logs[0]
 
-        found_log_group['tags'] = tags.get('tags', {})
+    try:
+        tags = client.list_tags_log_group(logGroupName=log_group_name)
+    except is_boto3_error_code('AccessDeniedException'):
+        tags = {}
+        module.warn('Permission denied listing tags for log group {0}'.format(log_group_name))
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, msg="Unable to describe tags for log group {0}".format(log_group_name))
+
+    found_log_group['tags'] = tags.get('tags', {})
     return found_log_group
 
 
