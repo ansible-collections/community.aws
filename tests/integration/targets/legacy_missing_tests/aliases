@@ -16,7 +16,6 @@ cloudfront_info
 cloudfront_invalidation
 cloudfront_origin_access_identity
 cloudwatchevent_rule
-cloudwatchlogs_log_group_info
 data_pipeline
 dynamodb_ttl
 ec2_ami_copy
@@ -24,7 +23,6 @@ ec2_asg_lifecycle_hook
 ec2_customer_gateway
 ec2_customer_gateway_info
 ec2_snapshot_copy
-ec2_vpc_vgw_info
 ec2_win_password
 ecs_attribute
 elasticache_info

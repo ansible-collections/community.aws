@@ -1,0 +1,5 @@
+minor_changes:
+- cloudwatchlogs_log_group - now consistently returns the values as defined in the return documentation (https://github.com/ansible-collections/community.aws/pull/1233).
+- cloudwatchlogs_log_group - adds support for updating tags (https://github.com/ansible-collections/community.aws/pull/1233).
+- cloudwatchlogs_log_group - adds support for returning tags (https://github.com/ansible-collections/community.aws/pull/1233).
+- cloudwatchlogs_log_group_info - adds support for returning tags (https://github.com/ansible-collections/community.aws/pull/1233).
