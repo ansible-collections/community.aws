@@ -1,0 +1,68 @@
+{
+  "Id": "key-ansible-test-policy-123",
+  "Version": "2012-10-17",
+  "Statement": [
+      {
+            "Sid": "Allow access for root user",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::{{ aws_caller_info.account }}:root"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+      },
+      {
+            "Sid": "AnsibleTestManage",
+            "Effect": "Allow",
+            "Principal": {
+                 "AWS": "{{ aws_caller_info.arn }}"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+      },
+      {
+            "Sid": "Allow access for Key Administrators",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "arn:aws:iam::{{ aws_caller_info.account }}:role/admin"
+            },
+            "Action": "kms:*",
+            "Resource": "*"
+      },
+      {
+            "Sid": "Allow access through OpenSearch Service for all principals in the account that are authorized to use OpenSearch Service",
+            "Effect": "Allow",
+            "Principal": {
+                "AWS": "*"
+            },
+            "Action": [
+                "kms:Encrypt",
+                "kms:Decrypt",
+                "kms:ReEncrypt*",
+                "kms:GenerateDataKey*",
+                "kms:CreateGrant",
+                "kms:DescribeKey"
+            ],
+            "Resource": "*",
+            "Condition": {
+                "StringEquals": {
+                    "kms:CallerAccount": "{{ aws_caller_info.account }}",
+                    "kms:ViaService": "es.{{ aws_region }}.amazonaws.com"
+                }
+            }
+      },
+      {
+            "Sid": "Allow OpenSearch service principals to describe the key directly",
+            "Effect": "Allow",
+            "Principal": {
+                "Service": "es.amazonaws.com"
+            },
+            "Action": [
+                "kms:Describe*",
+                "kms:Get*",
+                "kms:List*"
+            ],
+            "Resource": "*"
+      }
+  ]
+}

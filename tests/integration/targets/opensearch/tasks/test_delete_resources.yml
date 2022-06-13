@@ -1,0 +1,61 @@
+- name: Delete all resources that were created in the integration tests
+  block:
+    - name: Get list of OpenSearch domains
+      opensearch_info:
+        tags:
+          Environment: "Testing"
+          Application: "Search"
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+      register: opensearch_domains
+
+    - name: Initiate deletion of all test-related OpenSearch clusters
+      opensearch:
+        state: absent
+        domain_name: "{{ domain_name }}"
+      with_items: "{{ opensearch_domains.domains }}"
+      vars:
+        domain_name: "{{ item.domain_status.domain_name }}"
+
+    # We have to wait until the cluster is deleted before proceeding to delete
+    # security group, VPC, KMS. Otherwise there will be active references and
+    # deletion of the security group will fail.
+    - name: Delete OpenSearch clusters, wait until deletion is complete
+      opensearch:
+        state: absent
+        domain_name: "{{ domain_name }}"
+        wait: true
+        wait_timeout: "{{ 60 * 60 }}"
+      with_items: "{{ opensearch_domains.domains }}"
+      vars:
+        domain_name: "{{ item.domain_status.domain_name }}"
+
+    - name: Get VPC info
+      ec2_vpc_net_info:
+        filters:
+          "tag:AnsibleTest": "AnsibleTestVpc"
+      register: vpc_info
+
+    - name: delete VPC resources
+      include_tasks: test_delete_vpc_resources.yml
+      with_items: "{{ vpc_info.vpcs }}"
+      vars:
+        vpc_id: "{{ item.vpc_id }}"
+        vpc_name: "{{ item.tags['Name'] }}"
+
+    - name: collect info about KMS keys used for test purpose
+      aws_kms_info:
+        filters:
+          "tag:AnsibleTest": "AnsibleTestVpc"
+      register: kms_info
+    - name: Delete KMS keys that were created for test purpose
+      aws_kms:
+        key_id: "{{ kms_arn }}"
+        state: absent
+      with_items: "{{ kms_info.kms_keys }}"
+      vars:
+        kms_arn: "{{ item.key_arn }}"
+
+    - name: delete certificate from ACM
+      aws_acm:
+        name_tag: 'opensearch.ansible-integ-test.com'
+        state: absent

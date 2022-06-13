@@ -1,0 +1,134 @@
+- name: Configure pre-requisites for test, VPC and KMS resources
+  block:
+    - name: Create VPC for use in testing
+      ec2_vpc_net:
+        name: "{{ tiny_prefix }}-vpc"
+        state: present
+        cidr_block: 10.55.0.0/16
+        tenancy: default
+        tags:
+          AnsibleEIPTest: "{{ tiny_prefix }}-vpc"
+          AnsibleTest: AnsibleTestVpc
+      register: testing_vpc
+
+    - name: Wait until VPC is created.
+      ec2_vpc_net_info:
+        filters:
+          tag:AnsibleEIPTest:
+          - "{{ tiny_prefix }}-vpc"
+      register: vpc_info
+      retries: 120
+      delay: 5
+      until:
+      - vpc_info.vpcs | length > 0
+      - vpc_info.vpcs[0].state == 'available'
+
+    - name: Create internet gateway for use in testing
+      ec2_vpc_igw:
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        state: present
+        resource_tags:
+          Name: "{{ tiny_prefix }}-igw"
+          AnsibleTest: AnsibleTestVpc
+      register: igw
+
+    # The list of AZs varies across regions and accounts.
+    # Gather info and pick two AZs for test purpose.
+    - name: gather AZ info in VPC for test purpose
+      amazon.aws.aws_az_info:
+        region: "{{ aws_region }}"
+      register: az_info
+    - assert:
+        that:
+          # We cannot run the test if this region does not have at least 2 AZs
+          - "az_info.availability_zones | length >= 2"
+    - set_fact:
+        test_az_zone1: "{{ az_info.availability_zones[0].zone_name }}"
+        test_az_zone2: "{{ az_info.availability_zones[1].zone_name }}"
+    - name: Create subnet_1 for use in testing
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        cidr: 10.55.77.0/24
+        az: "{{ test_az_zone1 }}"
+        resource_tags:
+          Name: "{{ tiny_prefix }}-subnet_1"
+          AnsibleTest: AnsibleTestVpc
+        wait: true
+      register: testing_subnet_1
+
+    - name: Create subnet_2 for use in testing
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        cidr: 10.55.78.0/24
+        az: "{{ test_az_zone2 }}"
+        resource_tags:
+          Name: "{{ tiny_prefix }}-subnet_2"
+          AnsibleTest: AnsibleTestVpc
+        wait: true
+      register: testing_subnet_2
+
+    - name: Create routing rules
+      ec2_vpc_route_table:
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw.gateway_id }}"
+        subnets:
+          - "{{ testing_subnet_1.subnet.id }}"
+          - "{{ testing_subnet_2.subnet.id }}"
+        tags:
+          Name: "{{ tiny_prefix }}-route"
+          AnsibleTest: AnsibleTestVpc
+
+    - name: Create security group for use in testing
+      ec2_group:
+        name: "{{ tiny_prefix }}-sg"
+        description: a security group for ansible tests
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        tags:
+          Name: "{{ tiny_prefix }}-sg"
+          AnsibleTest: AnsibleTestVpc
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+      register: sg
+
+    # A private route53 zone is needed to configure a custom endpoint in the OpenSearch cluster.
+    # See https://docs.aws.amazon.com/opensearch-service/latest/developerguide/customendpoint.html
+    - name: Create private Route53 zone for the VPC
+      register: route53_zone
+      route53_zone:
+        comment: "zone for ansible integration tests"
+        zone: "ansible-integ-test.com"
+        state: present
+        vpc_id: '{{ testing_vpc.vpc.id }}'
+        tags:
+          Name: "{{ tiny_prefix }}-zone"
+          AnsibleTest: AnsibleTestVpc
+
+    - name: Set fact for route53 zone id
+      set_fact:
+        route53_zone_id: "{{ route53_zone.result.zone_id }}"
+
+    - name: Create KMS key for test purpose
+      # The key is needed for OpenSearch encryption at rest.
+      aws_kms:
+        alias: "{{ tiny_prefix }}-kms"
+        description: a key used for encryption at rest in test OpenSearch cluster
+        state: present
+        enabled: yes
+        key_spec: SYMMETRIC_DEFAULT
+        key_usage: ENCRYPT_DECRYPT
+        policy: "{{ lookup('template', 'kms_policy.j2') }}"
+        tags:
+          Name: "{{ tiny_prefix }}-kms"
+          AnsibleTest: AnsibleTestVpc
+      register: kms_test_key

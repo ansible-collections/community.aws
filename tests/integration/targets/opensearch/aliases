@@ -1,0 +1,24 @@
+# reason: slow
+#
+# The duration of the tasks below was obtained from a single test job.
+# There may be significant variations across runs.
+#
+# OpenSearch Cluster attached to Internet:
+#   13 minutes to create ES cluster. Task is not waiting for cluster to become available.
+# OpenSearch Cluster attached to VPC:
+#   17 minutes to create ES cluster with 2 nodes and dedicated masters.
+#   12 minutes to increase size of EBS volumes.
+#   12 minutes to increase the node count from 2 to 4.
+#    7 minutes to reduce the node count from 4 to 2.
+#   35 minutes to upgrade cluster from 7.1 to 7.10.
+#   23 minutes to enable node-to-node encryption.
+#   36 minutes to enable encryption at rest.
+#   30 minutes to enable warm storage.
+#   30 minutes to enable cold storage.
+#   30 minutes to enable and enforce HTTPS on the domain endpoint.
+#    3 minutes to enable auto-tune option.
+#   45 minutes to delete cluster.
+
+disabled
+
+cloud/aws

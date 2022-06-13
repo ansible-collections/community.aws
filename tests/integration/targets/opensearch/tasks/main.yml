@@ -1,0 +1,30 @@
+---
+# tasks file for test_opensearch
+- name: Run opensearch integration tests.
+
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+    route53:
+      # Route53 is explicitly a global service
+      region: null
+  collections:
+    - amazon.aws
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
+
+  block:
+    # Get some information about who we are before starting our tests
+    # we'll need this as soon as we start working on the policies
+    - name: get ARN of calling user
+      aws_caller_info:
+      register: aws_caller_info
+    - include_tasks: test_delete_resources.yml
+    - include_tasks: test_create_cert.yml
+    - include_tasks: test_vpc_setup.yml
+    - include_tasks: test_opensearch.yml
+  always:
+    - include_tasks: test_delete_resources.yml
