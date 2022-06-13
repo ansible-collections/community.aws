@@ -1,0 +1,1252 @@
+- name: Create OpenSearch clusters
+  block:
+    - name: test without specifying required module options
+      opensearch:
+        engine_version: "Elasticsearch_7.1"
+      ignore_errors: yes
+      register: result
+
+    - name: assert domain_name is a required module option
+      assert:
+        that:
+          - "result.msg == 'missing required arguments: domain_name'"
+
+    - name: Create public-facing OpenSearch cluster in check mode
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-public"
+        engine_version: "OpenSearch_1.1"
+        cluster_config:
+          instance_type: "t2.small.search"
+          instance_count: 2
+          dedicated_master: false
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        ebs_options:
+          ebs_enabled: true
+          volume_size: 10
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain is changed"
+
+    - name: Create public-facing OpenSearch cluster, changes expected
+      # This could take 30 minutes
+      opensearch:
+        state: present
+        # Note domain_name must be less than 28 characters and satisfy regex [a-z][a-z0-9\\-]+
+        domain_name: "es-{{ tiny_prefix }}-public"
+        engine_version: "OpenSearch_1.1"
+        cluster_config:
+          instance_type: "t2.small.search"
+          instance_count: 2
+          dedicated_master: false
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        ebs_options:
+          # EBS must be enabled for "t2.small.search"
+          ebs_enabled: true
+          volume_size: 10
+        tags:
+          # Note: The domain name must start with a letter, but the tiny prefix may start with
+          # a digit.
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        # Intentionally not waiting for cluster to be available.
+        # All other integration tests are performed with the
+        # OpenSearch cluster attached to the VPC.
+        wait: false
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 4"
+          - "opensearch_domain.engine_version == 'OpenSearch_1.1'"
+          - "opensearch_domain.cluster_config.instance_count == 2"
+          - "opensearch_domain.cluster_config.instance_type == 't2.small.search'"
+          - "opensearch_domain.cluster_config.dedicated_master_enabled == false"
+          - "opensearch_domain.cluster_config.warm_enabled == false"
+          - "opensearch_domain.ebs_options.ebs_enabled == true"
+          - "opensearch_domain.ebs_options.volume_size == 10"
+          # Below should be default settings when not specified as input arguments
+          - "opensearch_domain.ebs_options.volume_type == 'gp2'"
+          - "opensearch_domain.advanced_security_options.enabled == false"
+          - "opensearch_domain.cognito_options.enabled == false"
+          - "opensearch_domain.domain_endpoint_options.custom_endpoint_enabled == false"
+          - "opensearch_domain.encryption_at_rest_options.enabled == false"
+          - "opensearch_domain.node_to_node_encryption_options.enabled == false"
+          - "opensearch_domain.snapshot_options.automated_snapshot_start_hour == 0"
+          # Assert task has changed/not changed OpenSearch domain
+          - "opensearch_domain is changed"
+
+    - name: Create public-facing OpenSearch cluster in check mode again
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-public"
+        engine_version: "OpenSearch_1.1"
+        cluster_config:
+          instance_type: "t2.small.search"
+          instance_count: 2
+          dedicated_master: false
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        ebs_options:
+          ebs_enabled: true
+          volume_size: 10
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Create public-facing OpenSearch cluster, no change expected
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-public"
+        engine_version: "OpenSearch_1.1"
+        cluster_config:
+          instance_type: "t2.small.search"
+          instance_count: 2
+          dedicated_master: false
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        ebs_options:
+          ebs_enabled: true
+          volume_size: 10
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Create VPC-attached OpenSearch cluster, check mode
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.1"
+        cluster_config:
+          instance_type: "m5.large.search"
+          instance_count: 2
+          zone_awareness: true
+          availability_zone_count: 2
+          dedicated_master: true
+          dedicated_master_instance_type: "m5.large.search"
+          dedicated_master_instance_count: 3
+        ebs_options:
+          ebs_enabled: true
+          volume_type: "gp2"
+          volume_size: 10
+        snapshot_options:
+          automated_snapshot_start_hour: 12
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        vpc_options:
+          subnets:
+            - "{{ testing_subnet_1.subnet.id }}"
+            - "{{ testing_subnet_2.subnet.id }}"
+          security_groups:
+            - "{{ sg.group_id }}"
+        encryption_at_rest_options:
+          enabled: false
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain is changed"
+
+    - name: Create VPC-attached OpenSearch cluster, change expected
+      # Considerations for selecting node instances for test purpose:
+      # 1) Low cost
+      # 2) Supports encryption at rest, advanced security options, node-to-node encryption.
+      # See https://docs.aws.amazon.com/opensearch-service/latest/developerguide/supported-instance-types.html
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.1"
+        cluster_config:
+          instance_type: "m5.large.search"
+          instance_count: 2
+          zone_awareness: true
+          availability_zone_count: 2
+          dedicated_master: true
+          dedicated_master_instance_type: "m5.large.search"
+          dedicated_master_instance_count: 3
+        ebs_options:
+          ebs_enabled: true
+          volume_type: "gp2"
+          volume_size: 10
+        snapshot_options:
+          automated_snapshot_start_hour: 12
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        vpc_options:
+          subnets:
+            - "{{ testing_subnet_1.subnet.id }}"
+            - "{{ testing_subnet_2.subnet.id }}"
+          security_groups:
+            - "{{ sg.group_id }}"
+        encryption_at_rest_options:
+          enabled: false
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+        # It could take about 45 minutes for the cluster to be created and available.
+        wait_timeout: "{{ 45 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 4"
+          - "opensearch_domain.engine_version == 'Elasticsearch_7.1'"
+          - "opensearch_domain.cluster_config.instance_count == 2"
+          - "opensearch_domain.cluster_config.instance_type == 'm5.large.search'"
+          - "opensearch_domain.cluster_config.dedicated_master_enabled == true"
+          - "opensearch_domain.cluster_config.dedicated_master_type == 'm5.large.search'"
+          - "opensearch_domain.cluster_config.dedicated_master_count == 3"
+          - "opensearch_domain.cluster_config.warm_enabled == false"
+          - "opensearch_domain.cluster_config.zone_awareness_enabled == true"
+          - "opensearch_domain.ebs_options.ebs_enabled == true"
+          - "opensearch_domain.ebs_options.volume_size == 10"
+          - "opensearch_domain.ebs_options.volume_type == 'gp2'"
+          - "opensearch_domain.snapshot_options.automated_snapshot_start_hour == 12"
+          - "opensearch_domain.vpc_options is defined"
+          - "opensearch_domain.vpc_options.vpc_id is defined"
+          - "opensearch_domain.vpc_options.vpc_id == testing_vpc.vpc.id"
+          - "opensearch_domain.vpc_options.subnet_ids is defined"
+          - "opensearch_domain.vpc_options.subnet_ids | length == 2"
+          - "opensearch_domain.vpc_options.security_group_ids is defined"
+          - "opensearch_domain.vpc_options.security_group_ids | length == 1"
+          # Assert task has changed/not changed OpenSearch domain
+          - "opensearch_domain is changed"
+
+    - name: Create VPC-attached OpenSearch cluster, check mode again
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.1"
+        cluster_config:
+          instance_type: "m5.large.search"
+          instance_count: 2
+          zone_awareness: true
+          availability_zone_count: 2
+          dedicated_master: true
+          dedicated_master_instance_type: "m5.large.search"
+          dedicated_master_instance_count: 3
+        ebs_options:
+          ebs_enabled: true
+          volume_type: "gp2"
+          volume_size: 10
+        snapshot_options:
+          automated_snapshot_start_hour: 12
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        vpc_options:
+          subnets:
+            - "{{ testing_subnet_1.subnet.id }}"
+            - "{{ testing_subnet_2.subnet.id }}"
+          security_groups:
+            - "{{ sg.group_id }}"
+        encryption_at_rest_options:
+          enabled: false
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Create VPC-attached OpenSearch cluster, no change expected
+      opensearch:
+        state: present
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.1"
+        cluster_config:
+          instance_type: "m5.large.search"
+          instance_count: 2
+          zone_awareness: true
+          availability_zone_count: 2
+          dedicated_master: true
+          dedicated_master_instance_type: "m5.large.search"
+          dedicated_master_instance_count: 3
+        ebs_options:
+          ebs_enabled: true
+          volume_type: "gp2"
+          volume_size: 10
+        snapshot_options:
+          automated_snapshot_start_hour: 12
+        access_policies: "{{ lookup('file', 'opensearch_policy.json') | from_json }}"
+        vpc_options:
+          subnets:
+            - "{{ testing_subnet_1.subnet.id }}"
+            - "{{ testing_subnet_2.subnet.id }}"
+          security_groups:
+            - "{{ sg.group_id }}"
+        encryption_at_rest_options:
+          enabled: false
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Get list of OpenSearch domains
+      opensearch_info:
+        tags:
+          Environment: "Testing"
+          Application: "Search"
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+      register: opensearch_domains_info
+    - assert:
+        that:
+          - opensearch_domains_info.domains is defined
+          - opensearch_domains_info.domains | length == 2
+
+    - name: Get OpenSearch domains matching domain name
+      opensearch_info:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+      register: opensearch_domains_info
+    - assert:
+        that:
+          - opensearch_domains_info is not changed
+          - opensearch_domains_info.domains is defined
+          - opensearch_domains_info.domains | length == 1
+          - opensearch_domains_info.domains[0].domain_config is defined
+          - opensearch_domains_info.domains[0].domain_status is defined
+          # Even after waiting for the OpenSearch cluster to complete installation,
+          # it may take a few additional minutes for the 'Endpoints' property
+          # to be present in the AWS API.
+          # See further down below. The same `opensearch_info` task is invoked
+          # after running a task that takes time, and that time there is
+          # an assert on the 'endpoint' property.
+          #- opensearch_domains_info.domains[0].domain_status.endpoints is defined
+          #- opensearch_domains_info.domains[0].domain_status.endpoints.vpc is defined
+
+    - name: Tag Opensearch domain, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          tag_a: 'value 1'
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Tag Opensearch domain, expect changes
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          tag_a: 'value 1'
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 5"
+          - opensearch_domain is changed
+
+    - name: Tag Opensearch domain, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          tag_a: 'value 1'
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Tag Opensearch domain, expect no change
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          tag_a: 'value 1'
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 5"
+          - opensearch_domain is not changed
+
+    - name: Add tag_b to Opensearch domain without purging, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          tag_b: 'value 2'
+        purge_tags: false
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Add tag_b to Opensearch domain without purging
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          tag_b: 'value 2'
+        purge_tags: false
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 6"
+          - opensearch_domain is changed
+
+    - name: Add tag_b to Opensearch domain without purging, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          tag_b: 'value 2'
+        purge_tags: false
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Add tag_b to Opensearch domain without purging, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          tag_b: 'value 2'
+        purge_tags: false
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 6"
+          - opensearch_domain is not changed
+
+    - name: Set tags to Opensearch domain and purge tags, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        purge_tags: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Set tags to Opensearch domain and purge tags
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        purge_tags: true
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 4"
+          - opensearch_domain is changed
+
+    - name: Set tags to Opensearch domain and purge tags, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        purge_tags: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Set tags to Opensearch domain and purge tags, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        tags:
+          Name: "es-{{ tiny_prefix }}-public"
+          Environment: Testing
+          Application: Search
+          AnsibleTest: "AnsibleTestOpenSearchCluster"
+        purge_tags: true
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.tags | length == 4"
+          - opensearch_domain is not changed
+
+- name: Change EBS storage configuration, snapshot hour, instance count
+  block:
+    - name: Increase size of EBS volumes, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        ebs_options:
+          volume_size: 12
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Increase size of EBS volumes, expect changes
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        ebs_options:
+          volume_size: 12
+        wait: true
+        # It could take 20 minutes to increase the size of the EBS volumes
+        wait_timeout: "{{ 30 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.ebs_options.volume_size == 12"
+          - opensearch_domain is changed
+
+    - name: Increase size of EBS volumes, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        ebs_options:
+          volume_size: 12
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Increase size of EBS volumes, expect no change
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        ebs_options:
+          volume_size: 12
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.ebs_options.volume_size == 12"
+          - opensearch_domain is not changed
+
+    - name: Get OpenSearch domains matching domain name
+      opensearch_info:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+      register: opensearch_domains_info
+    - assert:
+        that:
+          - opensearch_domains_info is not changed
+          - opensearch_domains_info.domains is defined
+          - opensearch_domains_info.domains | length == 1
+          - opensearch_domains_info.domains[0].domain_config is defined
+          - opensearch_domains_info.domains[0].domain_status is defined
+          # Even after waiting for the OpenSearch cluster to complete installation,
+          # it may take a few additional minutes for the 'Endpoints' property
+          # to be present in the AWS API.
+          - opensearch_domains_info.domains[0].domain_status.endpoints is defined
+          - opensearch_domains_info.domains[0].domain_status.endpoints.vpc is defined
+
+    - name: Set fact for OpenSearch endpoint FQDN in the VPC
+      set_fact:
+        opensearch_vpc_fqdn: "{{ opensearch_domains_info.domains[0].domain_status.endpoints.vpc }}"
+
+    # Create a Route53 CNAME record.
+    # This CNAME record will be used when configuring a custom endpoint
+    # for the OpenSearch cluster.
+    - name: Create CNAME record for the OpenSearch custom endpoint
+      route53:
+        state: present
+        hosted_zone_id: "{{ route53_zone_id }}"
+        record: "opensearch.ansible-integ-test.com"
+        private_zone: true
+        type: CNAME
+        value: "{{ opensearch_vpc_fqdn }}"
+
+    - name: Change snapshot start hour, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        snapshot_options:
+          automated_snapshot_start_hour: 3
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Change snapshot start hour
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        snapshot_options:
+          automated_snapshot_start_hour: 3
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.snapshot_options.automated_snapshot_start_hour == 3"
+          - opensearch_domain is changed
+
+    - name: Change snapshot start hour, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        snapshot_options:
+          automated_snapshot_start_hour: 3
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Change snapshot start hour, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        snapshot_options:
+          automated_snapshot_start_hour: 3
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Set instance count to 4 in the OpenSearch cluster, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          # It's a 2-AZ deployment, therefore the node count must be even.
+          instance_count: 4
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Set instance count to 4 in the OpenSearch cluster, changes expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          # It's a 2-AZ deployment, therefore the node count must be even.
+          instance_count: 4
+        wait: true
+        # It could take 20 minutes to increase the number of nodes in the cluster
+        wait_timeout: "{{ 30 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.instance_count == 4"
+          - opensearch_domain is changed
+
+    - name: Set instance count to 4 in the OpenSearch cluster, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          # It's a 2-AZ deployment, therefore the node count must be even.
+          instance_count: 4
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Set instance count to 4 in the OpenSearch cluster, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          # It's a 2-AZ deployment, therefore the node count must be even.
+          instance_count: 4
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Set instance count to 2 in the OpenSearch cluster, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          instance_count: 2
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Set instance count to 2 in the OpenSearch cluster, changes expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          instance_count: 2
+        wait: true
+        # It could take 20 minutes to decrease the number of nodes in the cluster
+        wait_timeout: "{{ 30 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.instance_count == 2"
+          - opensearch_domain is changed
+
+    - name: Set instance count to 2 in the OpenSearch cluster, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          instance_count: 2
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Set instance count to 2 in the OpenSearch cluster, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          instance_count: 2
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.instance_count == 2"
+          - opensearch_domain is not changed
+
+- name: Upgrade OpenSearch cluster
+  block:
+    - name: Upgrade OpenSearch cluster, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.10"
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Upgrade OpenSearch cluster, change expected
+      # Upgrade from version 7.1 to version 7.10.
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.10"
+        wait: true
+        # It could take 40 minutes to upgrade the cluster
+        wait_timeout: "{{ 50 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.engine_version == 'Elasticsearch_7.10'"
+          - "opensearch_domain.cluster_config.instance_count == 2"
+          - opensearch_domain is changed
+
+    - name: Upgrade OpenSearch cluster, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.10"
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Upgrade OpenSearch cluster, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        engine_version: "Elasticsearch_7.10"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.engine_version == 'Elasticsearch_7.10'"
+          - "opensearch_domain.cluster_config.instance_count == 2"
+          - opensearch_domain is not changed
+
+- name: Configure encryption
+  when: false
+  block:
+    - name: Enable node to node encryption, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        node_to_node_encryption_options:
+          enabled: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Enable node to node encryption, change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        node_to_node_encryption_options:
+          enabled: true
+        wait: true
+        # This may take a long time.
+        wait_timeout: "{{ 60 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.node_to_node_encryption_options.enabled == True"
+          - opensearch_domain is changed
+
+    - name: Enable node to node encryption, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        node_to_node_encryption_options:
+          enabled: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Enable node to node encryption, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        node_to_node_encryption_options:
+          enabled: true
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.node_to_node_encryption_options.enabled == True"
+          - opensearch_domain is not changed
+
+    - name: Enable encryption at rest, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        encryption_at_rest_options:
+          enabled: true
+          #kms_key_id: "{{ kms_test_key.key_id }}"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Enable encryption at rest, change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        encryption_at_rest_options:
+          enabled: true
+          # key ARN has the format:
+          # 'arn:aws:kms:{{region}}:{{account}}:key/{{key_id}}'
+          # The API docs indicate the value is the KMS key id, which works
+          # However, the KMS key ARN seems to be a better option because
+          # the AWS API actually returns the KMS key ARN.
+
+          # Do not set 'kms_key_id' to let AWS manage the key.
+          #kms_key_id: "{{ kms_test_key.key_arn }}"
+        wait: true
+        # It may take a long time for the task to complete.
+        wait_timeout: "{{ 60 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.encryption_at_rest_options.enabled == True"
+          - opensearch_domain is changed
+
+    - name: Enable encryption at rest, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        encryption_at_rest_options:
+          enabled: true
+          #kms_key_id: "{{ kms_test_key.key_arn }}"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Enable encryption at rest, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        encryption_at_rest_options:
+          enabled: true
+          #kms_key_id: "{{ kms_test_key.key_arn }}"
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+- name: Configure HTTPs endpoint
+  when: false
+  block:
+    - name: Enforce HTTPS for OpenSearch endpoint, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        domain_endpoint_options:
+          enforce_https: true
+          tls_security_policy: "Policy-Min-TLS-1-0-2019-07"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Enforce HTTPS for OpenSearch endpoint, changes expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        domain_endpoint_options:
+          enforce_https: true
+          tls_security_policy: "Policy-Min-TLS-1-0-2019-07"
+          # Refer to CNAME that was defined in the previous tasks.
+          custom_endpoint_enabled: true
+          custom_endpoint: "opensearch.ansible-integ-test.com"
+          # TODO: create a certificate. There is a dependency on the aws_acm module
+          # which does not support certificates issued by AWS.
+          # The OpenSearch endpoint should have a certificate issued by a trusted CA
+          # otherwise clients to the OpenSearch cluster will not be able to validate
+          # the x.509 certificate of the OpenSearch endpoint.
+          custom_endpoint_certificate_arn: "{{ opensearch_certificate_arn }}"
+        wait: true
+        wait_timeout: "{{ 60 * 60 }}"
+      register: opensearch_domain
+      until: opensearch_domain is not failed
+      ignore_errors: yes
+      retries: 10
+      # After enabling at rest encryption, there is a period during which the API fails, so retry.
+      delay: 30
+    - assert:
+        that:
+          - "opensearch_domain.domain_endpoint_options.enforce_https == True"
+          - "opensearch_domain.domain_endpoint_options.tls_security_policy == 'Policy-Min-TLS-1-0-2019-07'"
+          #- "opensearch_domain.domain_endpoint_options.custom_endpoint_enabled == True"
+          - opensearch_domain is changed
+
+    - name: Change TLS policy, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        domain_endpoint_options:
+          tls_security_policy: "Policy-Min-TLS-1-2-2019-07"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Change TLS policy, change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        domain_endpoint_options:
+          tls_security_policy: "Policy-Min-TLS-1-2-2019-07"
+        wait: true
+        wait_timeout: "{{ 60 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.domain_endpoint_options.enforce_https == True"
+          - "opensearch_domain.domain_endpoint_options.tls_security_policy == 'Policy-Min-TLS-1-2-2019-07'"
+          - opensearch_domain is changed
+
+- name: Configure advanced security
+  block:
+    - name: Enable advanced security, check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        advanced_security_options:
+          enabled: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    # Pre-requisites before enabling advanced security options:
+    # 1) node-to-node encryption must be enabled.
+    # 2) encryption at rest to must be enabled.
+    # 3) Enforce HTTPS in the domain endpoint options.
+    - name: Enable advanced security, change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        advanced_security_options:
+          enabled: true
+        wait: true
+        wait_timeout: "{{ 60 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.advanced_security_options.enabled == True"
+          - opensearch_domain is changed
+
+    - name: Enable advanced security, check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        advanced_security_options:
+          enabled: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Enable advanced security, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        advanced_security_options:
+          enabled: true
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.advanced_security_options.enabled == True"
+          - opensearch_domain is not changed
+
+- name: Configure warm and cold storage
+  block:
+    - name: Enable warm storage in check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          warm_enabled: true
+          warm_type: "ultrawarm1.medium.search"
+          warm_count: 2
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Enable warm storage, change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          warm_enabled: true
+          warm_type: "ultrawarm1.medium.search"
+          warm_count: 2
+        wait: true
+        # Adding warm storage may take a long time.
+        wait_timeout: "{{ 45 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.warm_enabled == True"
+          - "opensearch_domain.cluster_config.warm_count == 2"
+          - "opensearch_domain.cluster_config.warm_type == 'ultrawarm1.medium.search'"
+          - opensearch_domain is changed
+
+    - name: Enable warm storage in check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          warm_enabled: true
+          warm_type: "ultrawarm1.medium.search"
+          warm_count: 2
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Enable warm storage, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          warm_enabled: true
+          warm_type: "ultrawarm1.medium.search"
+          warm_count: 2
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.warm_enabled == True"
+          - "opensearch_domain.cluster_config.warm_count == 2"
+          - opensearch_domain is not changed
+
+    - name: Enable cold storage in check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          cold_storage_options:
+            enabled: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Enable cold storage, change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          cold_storage_options:
+            enabled: true
+        wait: true
+        # Adding cold storage may take a long time.
+        wait_timeout: "{{ 45 * 60 }}"
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.cold_storage_options.enabled == True"
+          - opensearch_domain is changed
+
+    - name: Enable cold storage in check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          cold_storage_options:
+            enabled: true
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Enable cold storage, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        cluster_config:
+          cold_storage_options:
+            enabled: true
+        wait: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.cluster_config.cold_storage_options.enabled == True"
+          - opensearch_domain is not changed
+
+- name: Configure auto-tune options
+  block:
+    - name: Enable auto-tune options in check mode
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        auto_tune_options:
+          desired_state: "ENABLED"
+          maintenance_schedules:
+          - start_at: "{{ ansible_date_time.year|int + 1 }}-01-01"
+            duration:
+              value: 10
+              unit: "HOURS"
+            cron_expression_for_recurrence: "cron(0 12 * * ? *)"
+        wait: true
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is changed
+
+    - name: Enable auto-tune options, changes expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        auto_tune_options:
+          desired_state: "ENABLED"
+          maintenance_schedules:
+          # Create a schedule one year from the date we start the test.
+          # If we hard code the date, we have to pick a date, but the API will fail
+          # if start_at is in the past.
+          - start_at: "{{ ansible_date_time.year|int + 1 }}-01-01"
+            duration:
+              value: 10
+              unit: "HOURS"
+            cron_expression_for_recurrence: "cron(0 12 * * ? *)"
+        # I have observed that at least during one test run,
+        # the cluster status was stuck in 'processing=true' for over 24 hours
+        # after enabling auto-tune options.
+        # This does not seem right. From a test perspective, that means we cannot
+        # execute any change that needs to wait until the cluster is not processing
+        # background tasks.
+        wait: false
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.auto_tune_options.state == 'ENABLED'"
+          - opensearch_domain is changed
+
+    - name: Enable auto-tune options in check mode again
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        auto_tune_options:
+          desired_state: "ENABLED"
+          maintenance_schedules:
+          - start_at: "{{ ansible_date_time.year|int + 1 }}-01-01"
+            duration:
+              value: 10
+              unit: "HOURS"
+            cron_expression_for_recurrence: "cron(0 12 * * ? *)"
+        wait: false
+      check_mode: true
+      register: opensearch_domain
+    - assert:
+        that:
+          - opensearch_domain is not changed
+
+    - name: Enable auto-tune options, no change expected
+      opensearch:
+        domain_name: "es-{{ tiny_prefix }}-vpc"
+        auto_tune_options:
+          desired_state: "ENABLED"
+          maintenance_schedules:
+          - start_at: "{{ ansible_date_time.year|int + 1 }}-01-01"
+            duration:
+              value: 10
+              unit: "HOURS"
+            cron_expression_for_recurrence: "cron(0 12 * * ? *)"
+        wait: false
+      register: opensearch_domain
+    - assert:
+        that:
+          - "opensearch_domain.auto_tune_options.state == 'ENABLED'"
+          - opensearch_domain is not changed
