@@ -1,0 +1,5 @@
+minor_changes:
+- dms_endpoint - ``endpointtype`` and ``enginename`` no longer required when deleting an endpoint (https://github.com/ansible-collections/community.aws/pull/1234).
+- dms_endpoint - ``resource_tags`` added as an alias for ``tags`` (https://github.com/ansible-collections/community.aws/pull/1234).
+- dms_endpoint - added support for ``purge_tags`` (https://github.com/ansible-collections/community.aws/pull/1234).
+- dms_endpoint - now returns details of the endpoint (https://github.com/ansible-collections/community.aws/pull/1234).

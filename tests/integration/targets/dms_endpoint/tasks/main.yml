@@ -86,6 +86,34 @@
           - result is not changed
           - result is not failed
 
+    - include_tasks: 'tags.yml'
+
+    - name: delete endpoints
+      dms_endpoint:
+        state: absent
+        endpointidentifier: "{{ dms_identifier }}"
+        wait: True
+        timeout: 60
+        retries: 10
+      register: result
+
+    - assert:
+        that:
+          - result is changed
+          - result is not failed
+
+    - name: delete endpoints no change
+      dms_endpoint:
+        state: absent
+        endpointidentifier:  "{{ dms_identifier }}"
+        wait: False
+      register: result
+
+    - assert:
+        that:
+          - result is not changed
+          - result is not failed
+
   always:
     - name: delete endpoints
       dms_endpoint:
@@ -102,29 +130,4 @@
         wait: True
         timeout: 60
         retries: 10
-      register: result
-
-    - assert:
-        that:
-          - result is changed
-          - result is not failed
-
-    - name: delete endpoints no change
-      dms_endpoint:
-        state: absent
-        endpointidentifier:  "{{ dms_identifier }}"
-        endpointtype: source
-        enginename: aurora
-        username: testing
-        password: testint1234
-        servername: "{{ resource_prefix }}.exampledomain.com"
-        port: 3306
-        databasename: 'testdb'
-        sslmode: none
-        wait: False
-      register: result
-
-    - assert:
-        that:
-          - result is not changed
-          - result is not failed
+      ignore_errors: True
