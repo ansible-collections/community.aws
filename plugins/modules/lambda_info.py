@@ -87,6 +87,7 @@ lambda_info:
     returned: always
     type: list
     elements: dict
+    version_added: 3.4.0
     contains:
         lambda:
             description: Information for specific lambda.

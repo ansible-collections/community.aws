@@ -1,0 +1,8 @@
+minor_changes:
+- lambda_info - add return key ``lambda_info`` which returns a list of dictionaries instead of the previously returned
+  ``function``, which returned a dictionary of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
+  - lambda_info - now returns basic configuration information of each lambda, regardless of query (https://github.com/ansible-collections/community.aws/pull/1239).
+
+deprecated_features:
+- lambda_info - The ``function`` return key returns a dictionary of dictionaries and has been deprecated. In release 6.0.0 this module will instead
+  return ``lambda_info`` which returns a list of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
