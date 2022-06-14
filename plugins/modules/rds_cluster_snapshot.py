@@ -68,7 +68,7 @@ options:
     type: int
 notes:
   - Retrieve the information about a specific DB cluster or list the DB cluster snapshots for a specific DB cluster
-    can de done using M(community.aws.rds_snapshot_info)
+    can de done using M(community.aws.rds_snapshot_info).
 author:
   - Alina Buzachis (@alinabuzachis)
 extends_documentation_fragment:
@@ -234,7 +234,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.rds import arg_spec_to_
 
 def get_snapshot(snapshot_id):
     try:
-        snapshot = client.describe_db_cluster_snapshots(DBClusterSnapshotIdentifier=snapshot_id)["DBClusterSnapshots"][0]
+        snapshot = client.describe_db_cluster_snapshots(DBClusterSnapshotIdentifier=snapshot_id, aws_retry=True)["DBClusterSnapshots"][0]
         snapshot["Tags"] = get_tags(client, module, snapshot["DBClusterSnapshotArn"])
     except is_boto3_error_code("DBClusterSnapshotNotFound"):
         return {}
