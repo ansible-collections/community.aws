@@ -160,6 +160,7 @@ action_groups:
   - rds_subnet_group
   - rds_cluster
   - rds_cluster_info
+  - rds_cluster_snapshot
   - redshift
   - redshift_cross_region_snapshots
   - redshift_info
