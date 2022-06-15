@@ -253,6 +253,7 @@ resource_record_sets:
                     description: The two-letter code for a state of the United States
                     type: str
                     sample: 'NY'
+    version_added: 4.0.0
 hosted_zones:
     description: A list of hosted zones returned by list_hosted_zones in boto3.
     returned: when I(query=hosted_zone)
@@ -287,6 +288,7 @@ hosted_zones:
                     description: A value that indicates whether this is a private hosted zone or not.
                     type: bool
                     sample: false
+    version_added: 4.0.0
 health_checks:
     description: A list of Route53 health checks returned by list_health_checks in boto3.
     type: list
@@ -357,6 +359,7 @@ health_checks:
                     description: The type of the health check.
                     type: str
                     sample: HTTPS
+    version_added: 4.0.0
 '''
 
 try:
