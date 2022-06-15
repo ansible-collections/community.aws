@@ -89,186 +89,183 @@ lambda_info:
     elements: dict
     version_added: 3.4.0
     contains:
-        lambda:
-            description: Information for specific lambda.
-            returned: on success
+        aliases:
+            description: The aliases assoicated with the function.
+            returned: when C(query) is I(aliases) or I(all)
+            type: list
+            elements: str
+        code_sha256:
+            description: The SHA256 hash of the function's deployment package.
+            returned: success
+            type: str
+            sample: 'zOAGfF5JLFuzZoSNirUtOrQp+S341IOA3BcoXXoaIaU='
+        code_size:
+            description: The size of the function's deployment package in bytes.
+            returned: success
+            type: int
+            sample: 123
+        dead_letter_config:
+            description: The function's dead letter queue.
+            returned: when the function has a dead letter queue configured
+            type: dict
+            sample: { 'target_arn': arn:aws:lambda:us-east-1:123456789012:function:myFunction:1 }
+            contains:
+                target_arn:
+                    description: The ARN of an SQS queue or SNS topic.
+                    returned: when the function has a dead letter queue configured
+                    type: str
+                    sample: arn:aws:lambda:us-east-1:123456789012:function:myFunction:1
+        description:
+            description: The function's description.
+            returned: success
+            type: str
+            sample: 'My function'
+        environment:
+            description: The function's environment variables.
+            returned: when environment variables exist
             type: dict
             contains:
-                aliases:
-                    description: The aliases assoicated with the function.
-                    returned: when C(query) is I(aliases) or I(all)
-                    type: list
-                    elements: str
-                code_sha256:
-                    description: The SHA256 hash of the function's deployment package.
-                    returned: success
-                    type: str
-                    sample: 'zOAGfF5JLFuzZoSNirUtOrQp+S341IOA3BcoXXoaIaU='
-                code_size:
-                    description: The size of the function's deployment package in bytes.
-                    returned: success
-                    type: int
-                    sample: 123
-                dead_letter_config:
-                    description: The function's dead letter queue.
-                    returned: when the function has a dead letter queue configured
-                    type: dict
-                    sample: { 'target_arn': arn:aws:lambda:us-east-1:123456789012:function:myFunction:1 }
-                    contains:
-                        target_arn:
-                            description: The ARN of an SQS queue or SNS topic.
-                            returned: when the function has a dead letter queue configured
-                            type: str
-                            sample: arn:aws:lambda:us-east-1:123456789012:function:myFunction:1
-                description:
-                    description: The function's description.
-                    returned: success
-                    type: str
-                    sample: 'My function'
-                environment:
-                    description: The function's environment variables.
+                variables:
+                    description: Environment variable key-value pairs.
                     returned: when environment variables exist
                     type: dict
+                    sample: {'key': 'value'}
+                error:
+                    description: Error message for environment variables that could not be applied.
+                    returned: when there is an error applying environment variables
+                    type: dict
                     contains:
-                        variables:
-                            description: Environment variable key-value pairs.
-                            returned: when environment variables exist
-                            type: dict
-                            sample: {'key': 'value'}
-                        error:
-                            description: Error message for environment variables that could not be applied.
+                        error_code:
+                            description: The error code.
                             returned: when there is an error applying environment variables
-                            type: dict
-                            contains:
-                                error_code:
-                                    description: The error code.
-                                    returned: when there is an error applying environment variables
-                                    type: str
-                                message:
-                                    description: The error message.
-                                    returned: when there is an error applying environment variables
-                                    type: str
+                            type: str
+                        message:
+                            description: The error message.
+                            returned: when there is an error applying environment variables
+                            type: str
+        function_arn:
+            description: The function's Amazon Resource Name (ARN).
+            returned: on success
+            type: str
+            sample: 'arn:aws:lambda:us-east-1:123456789012:function:myFunction:1'
+        function_name:
+            description: The function's name.
+            returned: on success
+            type: str
+            sample: 'myFunction'
+        handler:
+            description: The function Lambda calls to begin executing your function.
+            returned: on success
+            type: str
+            sample: 'index.handler'
+        last_modified:
+            description: The date and time that the function was last updated, in ISO-8601 format (YYYY-MM-DDThh:mm:ssTZD).
+            returned: on success
+            type: str
+            sample: '2017-08-01T00:00:00.000+0000'
+        mappings:
+            description: List of configuration information for each event source mapping.
+            returned: when C(query) is I(all) or I(mappings)
+            type: list
+            elements: dict
+            contains:
+                uuid:
+                    description: The AWS Lambda assigned opaque identifier for the mapping.
+                    returned: on success
+                    type: str
+                batch_size:
+                    description: The largest number of records that AWS Lambda will retrieve from the event source at the time of invoking the function.
+                    returned: on success
+                    type: int
+                event_source_arn:
+                    description: The ARN of the Amazon Kinesis or DyanmoDB stream that is the source of events.
+                    returned: on success
+                    type: str
                 function_arn:
-                    description: The function's Amazon Resource Name (ARN).
+                    description: The Lambda function to invoke when AWS Lambda detects an event on the poll-based source.
                     returned: on success
                     type: str
-                    sample: 'arn:aws:lambda:us-east-1:123456789012:function:myFunction:1'
-                function_name:
-                    description: The function's name.
-                    returned: on success
-                    type: str
-                    sample: 'myFunction'
-                handler:
-                    description: The function Lambda calls to begin executing your function.
-                    returned: on success
-                    type: str
-                    sample: 'index.handler'
                 last_modified:
-                    description: The date and time that the function was last updated, in ISO-8601 format (YYYY-MM-DDThh:mm:ssTZD).
+                    description: The UTC time string indicating the last time the event mapping was updated.
                     returned: on success
                     type: str
-                    sample: '2017-08-01T00:00:00.000+0000'
-                mappings:
-                    description: List of configuration information for each event source mapping.
-                    returned: when C(query) is I(all) or I(mappings)
-                    type: list
-                    elements: dict
-                    contains:
-                        uuid:
-                            description: The AWS Lambda assigned opaque identifier for the mapping.
-                            returned: on success
-                            type: str
-                        batch_size:
-                            description: The largest number of records that AWS Lambda will retrieve from the event source at the time of invoking the function.
-                            returned: on success
-                            type: int
-                        event_source_arn:
-                            description: The ARN of the Amazon Kinesis or DyanmoDB stream that is the source of events.
-                            returned: on success
-                            type: str
-                        function_arn:
-                            description: The Lambda function to invoke when AWS Lambda detects an event on the poll-based source.
-                            returned: on success
-                            type: str
-                        last_modified:
-                            description: The UTC time string indicating the last time the event mapping was updated.
-                            returned: on success
-                            type: str
-                        last_processing_result:
-                            description: The result of the last AWS Lambda invocation of your Lambda function.
-                            returned: on success
-                            type: str
-                        state:
-                            description: The state of the event source mapping.
-                            returned: on success
-                            type: str
-                        state_transition_reason:
-                            description: The reason the event source mapping is in its current state.
-                            returned: on success
-                            type: str
-                memory_size:
-                    description: The memory allocated to the function.
-                    returned: on success
-                    type: int
-                    sample: 128
-                policy:
-                    description: The policy associated with the function.
-                    returned: when C(query) is I(all) or I(policy)
-                    type: dict
-                revision_id:
-                    description: The latest updated revision of the function or alias.
+                last_processing_result:
+                    description: The result of the last AWS Lambda invocation of your Lambda function.
                     returned: on success
                     type: str
-                    sample: 'a2x9886d-d48a-4a0c-ab64-82abc005x80c'
-                role:
-                    description: The function's execution role.
+                state:
+                    description: The state of the event source mapping.
                     returned: on success
                     type: str
-                    sample: 'arn:aws:iam::123456789012:role/lambda_basic_execution'
-                runtime:
-                    description: The funtime environment for the Lambda function.
+                state_transition_reason:
+                    description: The reason the event source mapping is in its current state.
                     returned: on success
                     type: str
-                    sample: 'nodejs6.10'
-                tracing_config:
-                    description: The function's AWS X-Ray tracing configuration.
-                    returned: on success
-                    type: dict
-                    sample: { 'mode': 'Active' }
-                    contains:
-                        mode:
-                            description: The tracing mode.
-                            returned: on success
-                            type: str
-                            sample: 'Active'
-                timeout:
-                    description: The amount of time that Lambda allows a function to run before terminating it.
-                    returned: on success
-                    type: int
-                    sample: 3
-                version:
-                    description: The version of the Lambda function.
-                    returned: on success
-                    type: str
-                    sample: '1'
-                versions:
-                    description: List of Lambda function versions.
-                    returned: when C(query) is I(all) or I(versions)
-                    type: list
-                    elements: dict
-                vpc_config:
-                    description: The function's networking configuration.
-                    returned: on success
-                    type: dict
-                    sample: {
-                    'security_group_ids': [],
-                    'subnet_ids': [],
-                    'vpc_id': '123'
-                    }
-        response_metadata:
-            description: The metadata associated with each Lambda.
+        memory_size:
+            description: The memory allocated to the function.
+            returned: on success
+            type: int
+            sample: 128
+        policy:
+            description: The policy associated with the function.
+            returned: when C(query) is I(all) or I(policy)
+            type: dict
+        revision_id:
+            description: The latest updated revision of the function or alias.
+            returned: on success
+            type: str
+            sample: 'a2x9886d-d48a-4a0c-ab64-82abc005x80c'
+        role:
+            description: The function's execution role.
+            returned: on success
+            type: str
+            sample: 'arn:aws:iam::123456789012:role/lambda_basic_execution'
+        runtime:
+            description: The funtime environment for the Lambda function.
+            returned: on success
+            type: str
+            sample: 'nodejs6.10'
+        tracing_config:
+            description: The function's AWS X-Ray tracing configuration.
             returned: on success
             type: dict
+            sample: { 'mode': 'Active' }
+            contains:
+                mode:
+                    description: The tracing mode.
+                    returned: on success
+                    type: str
+                    sample: 'Active'
+        timeout:
+            description: The amount of time that Lambda allows a function to run before terminating it.
+            returned: on success
+            type: int
+            sample: 3
+        version:
+            description: The version of the Lambda function.
+            returned: on success
+            type: str
+            sample: '1'
+        versions:
+            description: List of Lambda function versions.
+            returned: when C(query) is I(all) or I(versions)
+            type: list
+            elements: dict
+        vpc_config:
+            description: The function's networking configuration.
+            returned: on success
+            type: dict
+            sample: {
+            'security_group_ids': [],
+            'subnet_ids': [],
+            'vpc_id': '123'
+            }
+response_metadata:
+    description: List of response metadata associated with each Lambda.
+    returned: on success
+    type: list
+    elements: dict
+    version_added: 3.4.0
 
 '''
 import json
@@ -335,45 +332,43 @@ def list_lambdas(client, module):
 
     query = module.params['query']
     lambdas = []
+    response_metadatas = []
+
+    # keep returning deprecated response (dict of dicts) until removed
+    all_facts = {}
 
     for function_name in function_names:
-        current_lambda = {
-            "lambda": {}
-        }
+        current_lambda = {}
 
         # query = 'config' returns info such as FunctionName, FunctionArn, Description, etc
         # these details should be returned regardless of the query
-        current_lambda['lambda'].update(config_details(client, module, function_name))
+        current_lambda.update(config_details(client, module, function_name))
 
         if query in ['all', 'aliases']:
-            current_lambda['lambda'].update(alias_details(client, module, function_name))
+            current_lambda.update(alias_details(client, module, function_name))
 
         if query in ['all', 'policy']:
-            current_lambda['lambda'].update(policy_details(client, module, function_name))
+            current_lambda.update(policy_details(client, module, function_name))
 
         if query in ['all', 'versions']:
-            current_lambda['lambda'].update(version_details(client, module, function_name))
+            current_lambda.update(version_details(client, module, function_name))
 
         if query in ['all', 'mappings']:
-            current_lambda['lambda'].update(mapping_details(client, module, function_name))
+            current_lambda.update(mapping_details(client, module, function_name))
 
         if query in ['all', 'tags']:
-            current_lambda['lambda'].update(tags_details(client, module, function_name))
+            current_lambda.update(tags_details(client, module, function_name))
+
+        all_facts[current_lambda['function_name']] = current_lambda.copy()
 
         # keep `response_metadata` outside of `lambda`
-        current_lambda['response_metadata'] = current_lambda['lambda'].pop('response_metadata', {})
+        response_metadatas.append(current_lambda.pop('response_metadata', {}))
 
         # add current lambda to list of lambdas
         lambdas.append(current_lambda)
 
-    # keep returning deprecated response (dict of dicts) until removed
-    all_facts = {}
-    for l in lambdas:
-        all_facts[l['lambda']['function_name']] = l['lambda'].copy()  # copy to not add back response_metadata that we just popped
-        all_facts[l['lambda']['function_name']]['response_metadata'] = l['response_metadata']
-
     # return info
-    module.exit_json(function=all_facts, lambda_info=lambdas, changed=False)
+    module.exit_json(function=all_facts, lambda_info=lambdas, response_metadata=response_metadatas, changed=False)
 
 
 def config_details(client, module, function_name):
