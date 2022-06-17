@@ -363,21 +363,21 @@ health_checks:
 ResourceRecordSets:
     description: A deprecated CamelCased list of resource record sets returned by list_resource_record_sets in boto3. \
                  This list contains same elements/parameters as it's snake_cased version mentioned above. \
-                 This field is deprecated and will be removed in next major version release.
+                 This field is deprecated and will be removed in 6.0.0 version release.
     returned: when I(query=record_sets)
     type: list
     elements: dict
 HostedZones:
     description: A deprecated CamelCased list of hosted zones returned by list_hosted_zones in boto3. \
                  This list contains same elements/parameters as it's snake_cased version mentioned above. \
-                 This field is deprecated and will be removed in next major version release.
+                 This field is deprecated and will be removed in 6.0.0 version release.
     returned: when I(query=hosted_zone)
     type: list
     elements: dict
 HealthChecks:
     description: A deprecated CamelCased list of Route53 health checks returned by list_health_checks in boto3. \
                  This list contains same elements/parameters as it's snake_cased version mentioned above. \
-                 This field is deprecated and will be removed in next major version release.
+                 This field is deprecated and will be removed in 6.0.0 version release.
     type: list
     elements: dict
     returned: when I(query=health_check)
