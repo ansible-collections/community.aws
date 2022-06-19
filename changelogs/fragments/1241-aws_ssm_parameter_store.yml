@@ -1,0 +1,2 @@
+bugfixes:
+- aws_ssm_parameter_store - fix exception when description was set without value (https://github.com/ansible-collections/community.aws/pull/1241).

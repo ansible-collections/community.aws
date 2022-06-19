@@ -165,6 +165,13 @@ def update_parameter(client, module, args):
     return changed, response
 
 
+def describe_parameter(client, module, **args):
+    paginator = client.get_paginator('describe_parameters')
+    existing_parameter = paginator.paginate(**args).build_full_result()
+
+    return existing_parameter['Parameters'][0]
+
+
 def create_update_parameter(client, module):
     changed = False
     existing_parameter = None
@@ -172,7 +179,6 @@ def create_update_parameter(client, module):
 
     args = dict(
         Name=module.params.get('name'),
-        Value=module.params.get('value'),
         Type=module.params.get('string_type'),
         Tier=module.params.get('tier')
     )
@@ -181,6 +187,9 @@ def create_update_parameter(client, module):
         args.update(Overwrite=True)
     else:
         args.update(Overwrite=False)
+
+    if module.params.get('value') is not None:
+        args.update(Value=module.params.get('value'))
 
     if module.params.get('description'):
         args.update(Description=module.params.get('description'))
@@ -194,8 +203,10 @@ def create_update_parameter(client, module):
         pass
 
     if existing_parameter:
-        if (module.params.get('overwrite_value') == 'always'):
+        if 'Value' not in args:
+            args['Value'] = existing_parameter['Parameter']['Value']
 
+        if (module.params.get('overwrite_value') == 'always'):
             (changed, response) = update_parameter(client, module, args)
 
         elif (module.params.get('overwrite_value') == 'changed'):
@@ -207,16 +218,14 @@ def create_update_parameter(client, module):
 
             if args.get('Description'):
                 # Description field not available from get_parameter function so get it from describe_parameters
-                describe_existing_parameter = None
                 try:
-                    describe_existing_parameter_paginator = client.get_paginator('describe_parameters')
-                    describe_existing_parameter = describe_existing_parameter_paginator.paginate(
-                        Filters=[{"Key": "Name", "Values": [args['Name']]}]).build_full_result()
-
+                    describe_existing_parameter = describe_parameter(
+                        client, module,
+                        Filters=[{"Key": "Name", "Values": [args['Name']]}])
                 except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     module.fail_json_aws(e, msg="getting description value")
 
-                if describe_existing_parameter['Parameters'][0]['Description'] != args['Description']:
+                if describe_existing_parameter['Description'] != args['Description']:
                     (changed, response) = update_parameter(client, module, args)
     else:
         (changed, response) = update_parameter(client, module, args)
