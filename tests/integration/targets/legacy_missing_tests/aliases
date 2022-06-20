@@ -1,4 +1,4 @@
-disabled 
+disabled
 
 # Modules that do not have test suites
 aws_application_scaling_policy
@@ -35,4 +35,3 @@ rds_snapshot_info
 redshift_cross_region_snapshots
 s3_website
 sts_session_token
-ec2_vpc_vpn
