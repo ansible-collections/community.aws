@@ -42,6 +42,22 @@
      that:
       - result is changed
       - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   - name: Create key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
@@ -57,6 +73,22 @@
      that:
       - result is not changed
       - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   # ============================================================
   # Update description
@@ -74,6 +106,22 @@
      that:
       - result is changed
       - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      #- result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   - name: Update description - idempotency
     aws_ssm_parameter_store:
@@ -88,6 +136,29 @@
      that:
       - result is not changed
       - lookup_value == simple_value
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+    # 2022-06-20:
+    # There's a quirk in the AWS API that it doesn't seem to return updates to
+    # the metadata until there's a change in the value of the parameter.  The
+    # change has been made (as we'll see below) but we can't properly determine
+    # idempotency
+    ignore_errors: True
 
   # ============================================================
   # Update value
@@ -105,6 +176,22 @@
      that:
       - result is changed
       - lookup_value == updated_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   - name: Update key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
@@ -119,21 +206,22 @@
      that:
       - result is not changed
       - lookup_value == updated_value
-
-  # ============================================================
-  # Because we have no mechanism for viewing the description, test that passing
-  # new value and description doesn't result in a change
-
-  - name: Test no change to description
-    aws_ssm_parameter_store:
-      name: '{{ simple_name }}'
-      value: '{{ updated_value }}'
-      description: '{{ updated_description }}'
-    register: result
-
-  - assert:
-     that:
-      - result is not changed
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   # ============================================================
   # Complex update
@@ -152,6 +240,22 @@
      that:
       - result is changed
       - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   - name: Complex update to key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
@@ -167,17 +271,33 @@
      that:
       - result is not changed
       - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
   # ============================================================
   # Delete
 
-  - name: Create key/value pair in aws parameter store
+  - name: Delete key/value pair in aws parameter store
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
       state: absent
     register: result
 
-  - name: Lookup a single key
+  - name: Lookup a single (missing) key
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
     register: info_result
@@ -187,7 +307,7 @@
       - result is changed
       - info_result is failed
 
-  - name: Create key/value pair in aws parameter store - idempotency
+  - name: Delete key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
       state: absent

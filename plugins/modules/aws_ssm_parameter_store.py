@@ -10,9 +10,11 @@ DOCUMENTATION = '''
 ---
 module: aws_ssm_parameter_store
 version_added: 1.0.0
-short_description: Manage key-value pairs in aws parameter store.
+short_description: Manage key-value pairs in AWS SSM parameter store
 description:
-  - Manage key-value pairs in aws parameter store.
+  - Manage key-value pairs in AWS SSM parameter store.
+  - To retreive SSM parameters use the M(amazon.aws.aws_ssm_parameter) lookup
+    plugin.
 options:
   name:
     description:
@@ -44,6 +46,7 @@ options:
     choices: ['String', 'StringList', 'SecureString']
     default: String
     type: str
+    aliases: ['type']
   decryption:
     description:
       - Work with SecureString type to get plain text secrets
@@ -86,7 +89,7 @@ extends_documentation_fragment:
 '''
 
 EXAMPLES = '''
-- name: Create or update key/value pair in aws parameter store
+- name: Create or update key/value pair in AWS SSM parameter store
   community.aws.aws_ssm_parameter_store:
     name: "Hello"
     description: "This is your first key"
@@ -120,7 +123,7 @@ EXAMPLES = '''
     value: "Test1234"
     overwrite_value: "always"
 
-- name: Create or update key/value pair in aws parameter store with tier
+- name: Create or update key/value pair in AWS SSM parameter store with tier
   community.aws.aws_ssm_parameter_store:
     name: "Hello"
     description: "This is your first key"
@@ -129,18 +132,78 @@ EXAMPLES = '''
 
 - name: recommend to use with aws_ssm lookup plugin
   ansible.builtin.debug:
-    msg: "{{ lookup('amazon.aws.aws_ssm', 'hello') }}"
+    msg: "{{ lookup('amazon.aws.aws_ssm', 'Hello') }}"
 '''
 
 RETURN = '''
-put_parameter:
-    description: Add one or more parameters to the system.
-    returned: success
-    type: dict
-delete_parameter:
-    description: Delete a parameter from the system.
-    returned: success
-    type: dict
+parameter_metadata:
+  type: dict
+  description:
+    - Information about a parameter.
+    - Does not include the value of the parameter as this can be sensitive
+      information.
+  returned: success
+  contains:
+    data_type:
+      type: str
+      description: Parameter Data type.
+      example: text
+      returned: success
+    description:
+      type: str
+      description: Parameter key description.
+      example: This is your first key
+      returned: success
+    last_modified_date:
+      type: str
+      description: Time and date that the parameter was last modified.
+      example: '2022-06-20T09:56:58.573000+00:00'
+      returned: success
+    last_modified_user:
+      type: str
+      description: ARN of the last user to modify the parameter.
+      example: 'arn:aws:sts::123456789012:assumed-role/example-role/session=example'
+      returned: success
+    name:
+      type: str
+      description: Parameter key name.
+      example: Hello
+      returned: success
+    policies:
+      type: list
+      description: A list of policies associated with a parameter.
+      elements: dict
+      returned: success
+      contains:
+        policy_text:
+          type: str
+          description: The JSON text of the policy.
+          returned: success
+        policy_type:
+          type: str
+          description: The type of policy.
+          example: Expiration
+          returned: success
+        policy_status:
+          type: str
+          description: The status of the policy.
+          example: Pending
+          returned: success
+    tier:
+      type: str
+      description: Parameter tier.
+      example: Standard
+      returned: success
+    type:
+      type: str
+      description: Parameter type
+      example: String
+      returned: success
+    version:
+      type: int
+      description: Parameter version number
+      example: 3
+      returned: success
 '''
 
 try:
@@ -148,11 +211,13 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 
 
-def update_parameter(client, module, args):
+def update_parameter(client, module, **args):
     changed = False
     response = {}
 
@@ -168,6 +233,9 @@ def update_parameter(client, module, args):
 def describe_parameter(client, module, **args):
     paginator = client.get_paginator('describe_parameters')
     existing_parameter = paginator.paginate(**args).build_full_result()
+
+    if not existing_parameter['Parameters']:
+        return None
 
     return existing_parameter['Parameters'][0]
 
@@ -207,16 +275,16 @@ def create_update_parameter(client, module):
             args['Value'] = existing_parameter['Parameter']['Value']
 
         if (module.params.get('overwrite_value') == 'always'):
-            (changed, response) = update_parameter(client, module, args)
+            (changed, response) = update_parameter(client, module, **args)
 
         elif (module.params.get('overwrite_value') == 'changed'):
             if existing_parameter['Parameter']['Type'] != args['Type']:
-                (changed, response) = update_parameter(client, module, args)
+                (changed, response) = update_parameter(client, module, **args)
 
-            if existing_parameter['Parameter']['Value'] != args['Value']:
-                (changed, response) = update_parameter(client, module, args)
+            elif existing_parameter['Parameter']['Value'] != args['Value']:
+                (changed, response) = update_parameter(client, module, **args)
 
-            if args.get('Description'):
+            elif args.get('Description'):
                 # Description field not available from get_parameter function so get it from describe_parameters
                 try:
                     describe_existing_parameter = describe_parameter(
@@ -226,9 +294,9 @@ def create_update_parameter(client, module):
                     module.fail_json_aws(e, msg="getting description value")
 
                 if describe_existing_parameter['Description'] != args['Description']:
-                    (changed, response) = update_parameter(client, module, args)
+                    (changed, response) = update_parameter(client, module, **args)
     else:
-        (changed, response) = update_parameter(client, module, args)
+        (changed, response) = update_parameter(client, module, **args)
 
     return changed, response
 
@@ -259,7 +327,7 @@ def setup_module_object():
         description=dict(),
         value=dict(required=False, no_log=True),
         state=dict(default='present', choices=['present', 'absent']),
-        string_type=dict(default='String', choices=['String', 'StringList', 'SecureString']),
+        string_type=dict(default='String', choices=['String', 'StringList', 'SecureString'], aliases=['type']),
         decryption=dict(default=True, type='bool'),
         key_id=dict(default="alias/aws/ssm"),
         overwrite_value=dict(default='changed', choices=['never', 'changed', 'always']),
@@ -281,7 +349,16 @@ def main():
         "absent": delete_parameter,
     }
     (changed, response) = invocations[state](client, module)
-    module.exit_json(changed=changed, response=response)
+
+    result = {"response": response}
+
+    parameter_metadata = describe_parameter(
+        client, module,
+        Filters=[{"Key": "Name", "Values": [module.params.get('name')]}])
+    if parameter_metadata:
+        result['parameter_metadata'] = camel_dict_to_snake_dict(parameter_metadata)
+
+    module.exit_json(changed=changed, **result)
 
 
 if __name__ == '__main__':
