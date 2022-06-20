@@ -535,8 +535,7 @@ class Connection(ConnectionBase):
     def _get_url(self, client_method, bucket_name, out_path, http_method, profile_name, extra_args=None):
         ''' Generate URL for get_object / put_object '''
 
-        client_s3 = boto3.client('s3')
-        bucket_location = client_s3.get_bucket_location(
+        bucket_location = boto3.client('s3').get_bucket_location(
             Bucket=(self.get_option('bucket_name')),
         )
         region_name = bucket_location['LocationConstraint']
