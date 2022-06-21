@@ -1,123 +1,328 @@
 ---
-#
-#  Author: Michael De La Rue
-#  based on aws_lambda test cases
+- set_fact:
+    # As a lookup plugin we don't have access to module_defaults
+    connection_args:
+      region: "{{ aws_region }}"
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      aws_security_token: "{{ security_token | default(omit) }}"
+  no_log: True
 
-- name: 'aws_ssm_parameter_store integration tests'
+- name: 'aws_ssm lookup plugin integration tests'
   collections:
-    - amazon.aws
+  - amazon.aws
   module_defaults:
     group/aws:
       aws_access_key: '{{ aws_access_key }}'
       aws_secret_key: '{{ aws_secret_key }}'
       security_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
+  vars:
+    simple_name: '/{{ ssm_key_prefix }}/Simple'
+    simple_description: 'This is a simple example'
+    simple_value: 'A simple VALue'
+    updated_description: 'This is an updated example'
+    updated_value: 'A simple VALue **UPDATED**'
   block:
 
-    # ============================================================
-    - name: Create or update key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/Hello"
-        description: "This is your first key"
-        value: "World"
+  # ============================================================
+  # Create
 
-    - name: Check that parameter was stored correctly
-      assert:
-       that:
-        - "'{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/Hello', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token )}}' == 'World'"
+  - name: Create key/value pair in aws parameter store
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ simple_description }}'
+      value: '{{ simple_value }}'
+    register: result
 
-    # ============================================================
-    - name: Create or update key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/path/wonvar"
-        description: "This is your first key"
-        value: "won value"
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is changed
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
-    - name: Create or update key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/path/toovar"
-        description: "This is your first key"
-        value: "too value"
+  - name: Create key/value pair in aws parameter store - idempotency
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ simple_description }}'
+      value: '{{ simple_value }}'
+    register: result
 
-    - name: Create or update key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/path/tree/treevar"
-        description: "This is your first key"
-        value: "tree value"
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is not changed
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
-    # ============================================================
-    - name: Create or update key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/deeppath/wondir/samevar"
-        description: "This is your first key"
-        value: "won value"
+  # ============================================================
+  # Update description
 
-    - name: Create or update key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/deeppath/toodir/samevar"
-        description: "This is your first key"
-        value: "too value"
+  - name: Update description
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ updated_description }}'
+    register: result
 
-    # ============================================================
-    - name: debug the lookup
-      debug:
-       msg: "{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/path', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token, bypath=True )}}'"
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is changed
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      #- result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
-    - name: Check that parameter path is stored and retrieved
-      assert:
-       that:
-        - "'{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/path', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token, bypath=True, shortnames=true ) | to_json }}' == '{\"toovar\": \"too value\", \"wonvar\": \"won value\"}'"
+  - name: Update description - idempotency
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ updated_description }}'
+    register: result
 
-    # ============================================================
-    - name: Returns empty value in case we don't find a named parameter and default filter works
-      assert:
-       that:
-        - "'{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/Goodbye', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token )}}' == ''"
-        - "'{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/Goodbye', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token ) | default('I_can_has_default', true)}}' == 'I_can_has_default'"
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is not changed
+      - lookup_value == simple_value
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+    # 2022-06-20:
+    # There's a quirk in the AWS API that it doesn't seem to return updates to
+    # the metadata until there's a change in the value of the parameter.  The
+    # change has been made (as we'll see below) but we can't properly determine
+    # idempotency
+    ignore_errors: True
 
-    # ============================================================
-    - name: Handle multiple paths with one that doesn't exist - default to full names.
-      assert:
-       that:
-        - "'{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/path', '/' ~ ssm_key_prefix ~ '/dont_create_this_path_you_will_break_the_ansible_tests', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token, bypath=True ) | to_json }}' in ( '[{\"/' ~ ssm_key_prefix ~ '/path/toovar\": \"too value\", \"/' ~ ssm_key_prefix ~ '/path/wonvar\": \"won value\"}, {}]',  '[{\"/' ~ ssm_key_prefix ~ '/path/wonvar\": \"won value\", \"/' ~ ssm_key_prefix ~ '/path/toovar\": \"too value\"}, {}]' )"
+  # ============================================================
+  # Update value
 
+  - name: Update key/value pair in aws parameter store
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ updated_value }}'
+    register: result
 
-    # ============================================================
-    # this may be a bit of a nasty test case;  we should perhaps accept _either_ value that was stored
-    # in the two variables named 'samevar'
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is changed
+      - lookup_value == updated_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
-    - name: Handle multiple paths with one that doesn't exist - shortnames - including overlap.
-      assert:
-       that:
-        - "'{{lookup('amazon.aws.aws_ssm', '/' ~ ssm_key_prefix ~ '/path', '/' ~ ssm_key_prefix ~ '/dont_create_this_path_you_will_break_the_ansible_tests', '/' ~ ssm_key_prefix ~ '/deeppath', region=ec2_region, aws_access_key=ec2_access_key, aws_secret_key=ec2_secret_key, aws_security_token=security_token, bypath=True, shortnames=true, recursive=true ) | to_json }}' == '[{\"toovar\": \"too value\", \"treevar\": \"tree value\", \"wonvar\": \"won value\"}, {}, {\"samevar\": \"won value\"}]'"
+  - name: Update key/value pair in aws parameter store - idempotency
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ updated_value }}'
+    register: result
 
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is not changed
+      - lookup_value == updated_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == updated_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
 
-    # ============================================================
-    - name: Delete key/value pair in aws parameter store
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/Hello"
-        state: absent
+  # ============================================================
+  # Complex update
 
-    # ============================================================
-    - name: Attempt delete key/value pair in aws parameter store again
-      aws_ssm_parameter_store:
-        name: "/{{ssm_key_prefix}}/Hello"
-        state: absent
-      register: result
+  - name: Complex update to key/value pair in aws parameter store
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ simple_value }}'
+      description: '{{ simple_description }}'
+    register: result
 
-    - name: assert that changed is False since parameter should be deleted
-      assert:
-        that:
-          - result.changed == False
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is changed
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Complex update to key/value pair in aws parameter store - idempotency
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ simple_value }}'
+      description: '{{ simple_description }}'
+    register: result
+
+  - name: Lookup a single key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+  - assert:
+     that:
+      - result is not changed
+      - lookup_value == simple_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_description
+      - result.parameter_metadata.name == simple_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  # ============================================================
+  # Delete
+
+  - name: Delete key/value pair in aws parameter store
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      state: absent
+    register: result
+
+  - name: Lookup a single (missing) key
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
+    register: info_result
+    ignore_errors: true
+  - assert:
+     that:
+      - result is changed
+      - info_result is failed
+
+  - name: Delete key/value pair in aws parameter store - idempotency
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      state: absent
+    register: result
+
+  - assert:
+     that:
+      - result is not changed
+
   always:
-    # ============================================================
-    - name: Delete remaining key/value pairs in aws parameter store
-      aws_ssm_parameter_store:
-        name: "{{item}}"
-        state: absent
-      with_items:
-        - "/{{ssm_key_prefix}}/Hello"
-        - "/{{ssm_key_prefix}}/path/wonvar"
-        - "/{{ssm_key_prefix}}/path/toovar"
-        - "/{{ssm_key_prefix}}/path/tree/treevar"
-        - "/{{ssm_key_prefix}}/deeppath/wondir/samevar"
+  # ============================================================
+  - name: Delete remaining key/value pairs in aws parameter store
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_name }}'
