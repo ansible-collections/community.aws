@@ -34,4 +34,3 @@ rds_instance_snapshot
 rds_snapshot_info
 redshift_cross_region_snapshots
 s3_website
-sts_session_token
