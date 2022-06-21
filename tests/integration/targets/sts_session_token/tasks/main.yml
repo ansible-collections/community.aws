@@ -1,0 +1,68 @@
+---
+# tasks file for sts_assume_role
+- module_defaults:
+    group/aws:
+        region: "{{ aws_region }}"
+        aws_access_key: "{{ aws_access_key }}"
+        aws_secret_key: "{{ aws_secret_key }}"
+        security_token: "{{ security_token | default(omit) }}"
+  collections:
+    - amazon.aws
+  block:
+    # Get some information about who we are before starting our tests
+    # we'll need this as soon as we start working on the policies
+    - name: get ARN of calling user
+      aws_caller_info:
+      register: original_aws_caller_info
+
+    # ============================================================
+
+    - name: Get a session token
+      sts_session_token:
+      register: token_details
+      no_log: True
+
+    - assert:
+        that:
+          - '"sts_creds" in token_details'
+          - '"access_key" in token_details.sts_creds'
+          - '"expiration" in token_details.sts_creds'
+          - '"secret_key" in token_details.sts_creds'
+          - '"session_token" in token_details.sts_creds'
+
+    - name: Get a session token
+      sts_session_token:
+        duration_seconds: 1000
+      register: token_details
+      no_log: True
+
+    - debug:
+        var: ansible_date_time
+
+    - assert:
+        that:
+          - '"sts_creds" in token_details'
+          - '"access_key" in token_details.sts_creds'
+          - '"expiration" in token_details.sts_creds'
+          - '"secret_key" in token_details.sts_creds'
+          - '"session_token" in token_details.sts_creds'
+          # Expiry within a minute of given duration
+          - (((expiry | int) - (ansible_date_time.epoch | int)) - 1000 | abs) < 60
+      vars:
+        # 2022-06-21T03:26:13+00:00
+        expiry: "{{ (token_details.sts_creds.expiration | to_datetime('%Y-%m-%dT%H:%M:%S%z')).strftime('%s') }}"
+
+    - name: Get ARN of user when running with generated token
+      aws_caller_info:
+        aws_access_key: "{{ token_details.sts_creds.access_key }}"
+        aws_secret_key: "{{ token_details.sts_creds.secret_key }}"
+        security_token: "{{ token_details.sts_creds.session_token }}"
+      register: token_aws_caller_info
+
+    - assert:
+        that:
+          - token_aws_caller_info.account == original_aws_caller_info.account
+          - token_aws_caller_info.arn == original_aws_caller_info.arn
+
+    # ============================================================
+  always: []
