@@ -1,2 +1,0 @@
-minor_changes:
-- ecs_service - ``deployment_circuit_breaker`` has been added as a supported feature (https://github.com/ansible-collections/community.aws/pull/1215).

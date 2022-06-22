@@ -37,12 +37,12 @@ Parameters
 
     <table  border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="2">Parameter</th>
+            <th colspan="3">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_access_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -60,7 +60,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_ca_bundle</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -77,7 +77,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -94,7 +94,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_secret_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -112,7 +112,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>client_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -127,7 +127,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>cluster</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -136,13 +136,15 @@ Parameters
                     </div>
                 </td>
                 <td>
+                        <b>Default:</b><br/><div style="color: blue">"default"</div>
                 </td>
                 <td>
                         <div>The name of the cluster in which the service exists.</div>
+                        <div>If not specified, the cluster name will be <code>default</code>.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -161,7 +163,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>delay</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -177,7 +179,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>deployment_configuration</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -194,7 +196,66 @@ Parameters
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>deployment_circuit_breaker</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The deployment circuit breaker determines whether a service deployment will fail if the service can&#x27;t reach a steady state.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
                 <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>enable</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>If enabled, a service deployment will transition to a failed state and stop launching new tasks.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>rollback</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>If enabled, ECS will roll back your service to the last completed deployment after a failure.</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>maximum_percent</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -210,7 +271,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>minimum_healthy_percent</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -226,7 +287,7 @@ Parameters
             </tr>
 
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>desired_count</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -242,7 +303,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -258,7 +319,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>force_deletion</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -278,7 +339,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>force_new_deployment</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -297,7 +358,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>health_check_grace_period_seconds</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -312,7 +373,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>launch_type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -331,7 +392,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>load_balancers</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -347,7 +408,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -360,10 +421,11 @@ Parameters
                 </td>
                 <td>
                         <div>The name of the service.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: service</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>network_configuration</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -379,7 +441,7 @@ Parameters
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>assign_public_ip</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -399,7 +461,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_groups</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -416,7 +478,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>subnets</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -433,7 +495,7 @@ Parameters
             </tr>
 
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>placement_constraints</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -451,7 +513,7 @@ Parameters
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>expression</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -467,7 +529,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -483,7 +545,7 @@ Parameters
             </tr>
 
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>placement_strategy</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -500,7 +562,7 @@ Parameters
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>field</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -516,7 +578,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -532,7 +594,7 @@ Parameters
             </tr>
 
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>platform_version</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -549,7 +611,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -566,7 +628,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -582,7 +644,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>repeat</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -598,7 +660,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>role</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -614,7 +676,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>scheduling_strategy</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -634,7 +696,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -652,7 +714,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>service_registries</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -669,7 +731,7 @@ Parameters
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>arn</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -685,7 +747,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>container_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -701,7 +763,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>container_port</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -717,7 +779,7 @@ Parameters
             </tr>
 
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -738,7 +800,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>task_definition</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -754,7 +816,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -850,13 +912,13 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
 .. raw:: html
 
     <table border=0 cellpadding=0 class="documentation-table">
-                                                                                                                                                                                                                                                                                                        <tr>
-            <th colspan="3">Fact</th>
+                                                                                                                                                                                                                                                                                                                                            <tr>
+            <th colspan="4">Fact</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="3" colspan="3">
+                <td colspan="4" colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>service</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -873,7 +935,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>clusterArn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -890,7 +952,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>deploymentConfiguration</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -908,7 +970,64 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                                 <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
+                <td colspan="2" colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>deploymentCircuitBreaker</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>dictionary of deploymentCircuitBreaker
+                            </div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
                 <td colspan="1" colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>enable</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The state of the circuit breaker feature.
+                            </div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1" colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>rollback</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The state of the rollback feature of the circuit breaker.
+                            </div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>maximumPercent</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -926,7 +1045,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>minimumHealthyPercent</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -944,7 +1063,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
 
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>deployments</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -962,7 +1081,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>desiredCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -979,7 +1098,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>events</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -997,7 +1116,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>loadBalancers</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1015,7 +1134,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                                 <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>containerName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1033,7 +1152,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>containerPort</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1051,7 +1170,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>loadBalancerName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1069,7 +1188,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
 
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>pendingCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1086,7 +1205,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>placementConstraints</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1105,7 +1224,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                                 <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>expression</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1123,7 +1242,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1141,7 +1260,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
 
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>placementStrategy</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1160,7 +1279,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                                 <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>field</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1178,7 +1297,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             <tr>
                     <td class="elbow-placeholder"></td>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1" colspan="1">
+                <td colspan="2" colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1196,7 +1315,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
 
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>runningCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1213,7 +1332,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>serviceArn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1230,7 +1349,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>serviceName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1247,7 +1366,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1264,7 +1383,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="2" colspan="2">
+                <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>taskDefinition</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
@@ -1292,12 +1411,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="3">Key</th>
+            <th colspan="4">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="3">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>service</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1313,7 +1432,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>clusterArn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1329,7 +1448,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>deploymentConfiguration</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1346,7 +1465,61 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>deploymentCircuitBreaker</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>dictionary of deploymentCircuitBreaker</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>enable</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The state of the circuit breaker feature.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>rollback</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The state of the rollback feature of the circuit breaker.</div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>maximumPercent</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1363,7 +1536,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>minimumHealthyPercent</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1380,7 +1553,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>deployments</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1397,7 +1570,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>desiredCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1413,7 +1586,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>events</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1430,7 +1603,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>loadBalancers</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1447,7 +1620,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>containerName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1464,7 +1637,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>containerPort</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1481,7 +1654,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>loadBalancerName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1498,7 +1671,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>pendingCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1514,7 +1687,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>placementConstraints</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1532,7 +1705,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>expression</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1549,7 +1722,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1566,7 +1739,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>placementStrategy</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1584,7 +1757,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>field</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1601,7 +1774,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1618,7 +1791,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>runningCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1634,7 +1807,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>serviceArn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1650,7 +1823,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>serviceName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1666,7 +1839,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -1682,7 +1855,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>taskDefinition</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
