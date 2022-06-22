@@ -5,6 +5,14 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v2.6.1
+======
+
+Release Summary
+---------------
+
+- Bump collection from 2.6.0 to 2.6.1 due to a publishing error with 2.6.0.  This release supersedes 2.6.0 entirely, users should skip 2.6.0.
+
 v2.6.0
 ======
 
