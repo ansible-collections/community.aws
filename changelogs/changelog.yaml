@@ -1641,3 +1641,11 @@ releases:
     - 1215-ecs-service-deployment-circuit-breaker-support.yml
     - 2.6.0.yml
     release_date: '2022-06-22'
+  2.6.1:
+    changes:
+      release_summary:
+      - Bump collection from 2.6.0 to 2.6.1 due to a publishing error with 2.6.0.  This
+        release supersedes 2.6.0 entirely, users should skip 2.6.0.
+    fragments:
+    - 261_increase.yml
+    release_date: '2022-06-22'
