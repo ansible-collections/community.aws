@@ -265,6 +265,7 @@ Parameters
                 </td>
                 <td>
                         <div>One or more services to get details for</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
                 </td>
             </tr>
             <tr>
