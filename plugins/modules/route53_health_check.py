@@ -427,6 +427,9 @@ def main():
         failure_threshold=dict(type='int', choices=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
         tags=dict(type='dict', aliases=['resource_tags']),
         purge_tags=dict(type='bool'),
+        health_check_id=dict(type='str', aliases=['id'], required=False),
+        health_check_name=dict(type='str', aliases=['name'], required=False),
+        use_unique_names=dict(type='bool', default='False', required=False),
     )
 
     args_one_of = [
@@ -498,8 +501,13 @@ def main():
         else:
             changed, action = update_health_check(existing_check)
         if check_id:
+            tags = module.params.get('tags')
+            #add health_check_name to tags if provided
+            if module.params.get('health_check_name'):
+                tags['Name'] = module.params.get('health_check_name')
+
             changed |= manage_tags(module, client, 'healthcheck', check_id,
-                                   module.params.get('tags'), module.params.get('purge_tags'))
+                                   tags, module.params.get('purge_tags'))
 
     health_check = describe_health_check(id=check_id)
     health_check['action'] = action
