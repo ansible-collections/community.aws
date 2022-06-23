@@ -1,2 +1,0 @@
-minor_changes:
-- rds_instance_info - add retries on common AWS failures (https://github.com/ansible-collections/community.aws/pull/1026).

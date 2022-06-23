@@ -5,6 +5,118 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v3.4.0
+======
+
+Minor Changes
+-------------
+
+- aws_codebuild - add support for ``purge_tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1221).
+- aws_codebuild - add the ``resource_tags`` parameter which takes the dictionary format for tags instead of the list of dictionaries format (https://github.com/ansible-collections/community.aws/pull/1221).
+- aws_codebuild - add the ``resource_tags`` return value which returns the standard dictionary format for tags instead of the list of dictionaries format (https://github.com/ansible-collections/community.aws/pull/1221).
+- aws_codebuild - the ``source`` and ``artifacts`` parameters are now optional unless creating a new project (https://github.com/ansible-collections/community.aws/pull/1221).
+- ecs_service - ``deployment_circuit_breaker`` has been added as a supported feature (https://github.com/ansible-collections/community.aws/pull/1215).
+- ecs_service - add ``service`` alias to address the ecs service name with the same parameter as the ecs_service_info module is doing (https://github.com/ansible-collections/community.aws/pull/1187).
+- ecs_service_info - add ``name`` alias to address the ecs service name with the same parameter as the ecs_service module is doing (https://github.com/ansible-collections/community.aws/pull/1187).
+- ecs_tag - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1184).
+- efs_tag - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1184).
+- rds_instance - add snapshot tests to test suite to test restoring db from snapshot (https://github.com/ansible-collections/community.aws/pull/1081).
+- rds_instance_info - add retries on common AWS failures (https://github.com/ansible-collections/community.aws/pull/1026).
+- wafv2_web_acl - relax botocore requirement to bare minimum required (https://github.com/ansible-collections/community.aws/pull/1216).
+
+Deprecated Features
+-------------------
+
+- aws_codebuild - The ``tags`` parameter currently uses a non-standard format and has been deprecated.  In release 6.0.0 this parameter will accept a simple key/value pair dictionary instead of the current list of dictionaries.  It is recommended to migrate to using the resource_tags parameter which already accepts the simple dictionary format (https://github.com/ansible-collections/community.aws/pull/1221).
+- route53_info - The CamelCase return values for ``HostedZones``, ``ResourceRecordSets``, and ``HealthChecks`` have been deprecated, in the future release you must use snake_case return values ``hosted_zones``, ``resource_record_sets``, and ``health_checks`` instead respectively".
+
+Bugfixes
+--------
+
+- aws_codebuild - fix bug where the result may be spuriously flagged as ``changed`` when multiple tags were set on the project (https://github.com/ansible-collections/community.aws/pull/1221).
+- ecs_service - fix broken change detect of ``health_check_grace_period_seconds`` parameter when not specified (https://github.com/ansible-collections/community.aws/pull/1212).
+- ecs_service - use default cluster name of ``default`` when not input (https://github.com/ansible-collections/community.aws/pull/1212).
+- ecs_task - dont require ``cluster`` and use name of ``default`` when not input (https://github.com/ansible-collections/community.aws/pull/1212).
+- lambda_info - fix bug that forces query=config when getting info for all lambdas. Now, if function name is specified, query will default to all.  This may have a performance impact when querying a large number of lambdas. If function name is not specified, query will default to config (https://github.com/ansible-collections/community.aws/pull/1152).
+- rds_instance - fix bugs associated with restoring db instance from snapshot (https://github.com/ansible-collections/community.aws/pull/1081).
+- wafv2_ip_set - fix bug where incorrect changed state was returned when only changing the description (https://github.com/ansible-collections/community.aws/pull/1211).
+- wafv2_web_acl - consistently return web ACL info as described in module documentation (https://github.com/ansible-collections/community.aws/pull/1216).
+- wafv2_web_acl - fix ``changed`` status when description not specified (https://github.com/ansible-collections/community.aws/pull/1216).
+
+v3.3.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+
+Minor Changes
+-------------
+
+- aws_kms - add extra key/value pair to return data (key_policies) to return each policy as a dictionary rather than json string (https://github.com/ansible-collections/community.aws/pull/1052).
+- aws_kms - fix some bugs in integration tests and add check mode support for key rotation as well as document issues with time taken for requested changes to be reflected on AWS (https://github.com/ansible-collections/community.aws/pull/1052).
+- ec2_asg - add check mode support (https://github.com/ansible-collections/community.aws/pull/1033).
+- iam_policy - update broken examples and add RETURN section to documentation; add extra integration tests for idempotency check mode runs (https://github.com/ansible-collections/community.aws/pull/1093).
+- iam_user - add ``user`` value to return data structure to deprecate old ``iam_user`` (https://github.com/ansible-collections/community.aws/pull/1059).
+- lambda - add kms_key_arn parameter (https://github.com/ansible-collections/community.aws/pull/1108).
+- rds_instance - add ``deletion_protection`` parameter (https://github.com/ansible-collections/community.aws/pull/1105).
+- rds_instance - add support for addition/removal of iam roles to db instance (https://github.com/ansible-collections/community.aws/pull/1002).
+- rds_instance_snapshot - add ``check_mode`` (https://github.com/ansible-collections/community.aws/pull/789).
+- rds_instance_snapshot - add copy_db_snapshot functionality (https://github.com/ansible-collections/community.aws/pull/1078).
+- rds_instance_snapshot - add integration tests (https://github.com/ansible-collections/community.aws/pull/789).
+- rds_instance_snapshot - update module to use handlers defined in module_utils/rds.py (https://github.com/ansible-collections/community.aws/pull/789).
+- route53 - add support for GeoLocation param (https://github.com/ansible-collections/amazon.aws/pull/1117).
+
+Bugfixes
+--------
+
+- dynamodb_table - fix an issue when creating secondary indexes with global_keys_only (https://github.com/ansible-collections/community.aws/issues/967).
+- ecs_service - add missing change detect of ``health_check_grace_period_seconds`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+- ecs_service - fix broken compare of ``task_definition`` that results always in a changed task (https://github.com/ansible-collections/community.aws/pull/1145).
+- ecs_service - fix validation for ``placement_constraints``. It's possible to use ``distinctInstance`` placement constraint now (https://github.com/ansible-collections/community.aws/issues/1058)
+- ecs_taskdefinition - fix broken change detect of ``launch_type`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+- execute_lambda - add waiter for function_updated (https://github.com/ansible-collections/community.aws/pull/1108).
+- execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
+- iam_policy - require one of ``policy_document`` and ``policy_json`` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
+- iam_user - don't delete user login profile on check mode (https://github.com/ansible-collections/community.aws/pull/1059).
+- iam_user_info - gracefully handle when no users are found (https://github.com/ansible-collections/community.aws/pull/1059).
+- lambda - fix check mode on creation (https://github.com/ansible-collections/community.aws/pull/1108).
+- rds_instance - fix check_mode and idempotency issues and added integration tests for all tests in suite (https://github.com/ansible-collections/community.aws/pull/1002).
+- rds_instance_snapshot - don't require ``db_instance_identifier`` on state = present (https://github.com/ansible-collections/community.aws/pull/1078).
+- s3_lifecycle - add support of value *0* for ``transition_days`` (https://github.com/ansible-collections/community.aws/pull/1077).
+- s3_lifecycle - check that configuration is complete before returning (https://github.com/ansible-collections/community.aws/pull/1085).
+
+New Modules
+-----------
+
+- aws_api_gateway_domain - Manage AWS API Gateway custom domains
+
+v3.2.1
+======
+
+Release Summary
+---------------
+
+This is a bugfix release of the ``community.aws`` collection.
+The new parameter ``purge_tags`` in ``ec2_asg`` module, that
+was introduced in ``community.aws 3.2.0`` with its default
+value ``true``, possibly breaks existing playbooks for users
+if they don't update their playbooks and specify
+``purge_tags: false``. However, this release restores the
+previous behaviour.
+
+Minor Changes
+-------------
+
+- iam_role - delete inline policies prior to deleting role (https://github.com/ansible-collections/community.aws/pull/1054).
+- iam_role - remove global vars and refactor accordingly (https://github.com/ansible-collections/community.aws/pull/1054).
+
+Bugfixes
+--------
+
+- ec2_asg - Change the default value of ``purge_tags`` to ``false``. Restores previous behaviour (https://github.com/ansible-collections/community.aws/pull/1064).
+
 v3.2.0
 ======
 
@@ -34,7 +146,7 @@ Minor Changes
 - elb_application_lb_info - update documentation and refactor integration tests (https://github.com/ansible-collections/community.aws/pull/894)
 - elb_target_group - add support for alb target_type and update documentation (https://github.com/ansible-collections/community.aws/pull/966).
 - elb_target_group - add support for setting load_balancing_algorithm_type (https://github.com/ansible-collections/community.aws/pull/1016).
-- rds_instance - add `choices` for valid engine value (https://github.com/ansible-collections/community.aws/pull/1034).
+- rds_instance - add ``choices`` for valid engine value (https://github.com/ansible-collections/community.aws/pull/1034).
 - rds_subnet_group - add ``check_mode`` (https://github.com/ansible-collections/community.aws/pull/562).
 - rds_subnet_group - add ``tags`` feature (https://github.com/ansible-collections/community.aws/pull/562).
 
@@ -78,7 +190,7 @@ Minor Changes
 - ec2_launch_template - Add metadata options parameter ``http_protocol_ipv6`` and ``instance_metadata_tags`` (https://github.com/ansible-collections/community.aws/pull/917).
 - ec2_lc - add support for throughput parameter (https://github.com/ansible-collections/community.aws/pull/790).
 - ec2_placement_group - add support for partition strategy and partition count (https://github.com/ansible-collections/community.aws/pull/872).
-- elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
+- elb_instance - ``wait`` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
 - elb_target_group - add support for parameter ``deregistration_connection_termination`` (https://github.com/ansible-collections/community.aws/pull/913).
 - iam_managed_policy - refactor module adding ``check_mode`` and better AWSRetry backoff logic (https://github.com/ansible-collections/community.aws/pull/893).
 - iam_user - add parameter ``password_reset_required`` (https://github.com/ansible-collections/community.aws/pull/860).
@@ -127,9 +239,9 @@ Minor Changes
 - aws_glue_job - Added support for tags (https://github.com/ansible-collections/community.aws/pull/480).
 - aws_ssm connection plugin - add parameters to explicitly specify SSE mode and KMS key id for uploads on the file transfer bucket. (https://github.com/ansible-collections/community.aws/pull/763)
 - iam_user - add boto3 waiter for iam user creation (https://github.com/ansible-collections/community.aws/pull/822).
-- iam_user - add password management support bringing parity with `iam` module (https://github.com/ansible-collections/community.aws/pull/822).
+- iam_user - add password management support bringing parity with ``iam`` module (https://github.com/ansible-collections/community.aws/pull/822).
 - route53 - ``ttl``  and ``value`` are not required for deleting records (https://github.com/ansible-collections/community.aws/pull/801).
-- route53_info - `max_items` and `type` are no longer ignored fixing a regression (https://github.com/ansible-collections/community.aws/pull/813).
+- route53_info - ``max_items`` and ``type`` are no longer ignored fixing a regression (https://github.com/ansible-collections/community.aws/pull/813).
 
 Breaking Changes / Porting Guide
 --------------------------------
@@ -219,7 +331,7 @@ that have been made after the previous release.
 Minor Changes
 -------------
 
-- elb_instance - `wait` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
+- elb_instance - ``wait`` parameter is no longer ignored (https://github.com/ansible-collections/community.aws/pull/826)
 
 Bugfixes
 --------
@@ -243,7 +355,7 @@ Minor Changes
 - aws_ssm connection plugin - add parameters to explicitly specify SSE mode and KMS key id for uploads on the file transfer bucket. (https://github.com/ansible-collections/community.aws/pull/763)
 - ecs_taskdefinition - remove duplicated and unspecific requirements (https://github.com/ansible-collections/community.aws/pull/863).
 - iam_user - add boto3 waiter for iam user creation (https://github.com/ansible-collections/community.aws/pull/822).
-- iam_user - add password management support bringing parity with `iam` module (https://github.com/ansible-collections/community.aws/pull/822).
+- iam_user - add password management support bringing parity with ``iam`` module (https://github.com/ansible-collections/community.aws/pull/822).
 - s3_lifecycle - Add ``abort_incomplete_multipart_upload_days`` and ``expire_object_delete_marker`` parameters (https://github.com/ansible-collections/community.aws/pull/794).
 
 Bugfixes
@@ -275,7 +387,7 @@ Minor Changes
 - cloudfront_distribution - add ``TLSv1.2_2021`` security policy for viewer connections (https://github.com/ansible-collections/community.aws/pull/707).
 - dms_endpoint - replaced use of deprecated backoff decorator (https://github.com/ansible-collections/community.aws/pull/764).
 - dms_replication_subnet_group - replaced use of deprecated backoff decorator (https://github.com/ansible-collections/community.aws/pull/764).
-- dynamodb_table - add support for setting the `billing_mode` option (https://github.com/ansible-collections/community.aws/pull/753).
+- dynamodb_table - add support for setting the ``billing_mode`` option (https://github.com/ansible-collections/community.aws/pull/753).
 - dynamodb_table - the module has been updated to use the boto3 AWS SDK (https://github.com/ansible-collections/community.aws/pull/726).
 - ec2_asg - replaced use of deprecated backoff decorator (https://github.com/ansible-collections/community.aws/pull/764).
 - ec2_eip - added support for tagging EIPs (https://github.com/ansible-collections/community.aws/pull/332).
@@ -292,7 +404,7 @@ Minor Changes
 - elb_target_group - add ``preserve_client_ip_enabled`` option (https://github.com/ansible-collections/community.aws/pull/670).
 - elb_target_group - add ``proxy_protocol_v2_enabled`` option (https://github.com/ansible-collections/community.aws/pull/670).
 - iam_managed_policy - replaced use of deprecated backoff decorator (https://github.com/ansible-collections/community.aws/pull/764).
-- iam_role - Added `wait` option for IAM role creation / updates (https://github.com/ansible-collections/community.aws/pull/767).
+- iam_role - Added ``wait`` option for IAM role creation / updates (https://github.com/ansible-collections/community.aws/pull/767).
 - iam_saml_federation - replaced use of deprecated backoff decorator (https://github.com/ansible-collections/community.aws/pull/764).
 - iam_server_certificate - add support for check_mode (https://github.com/ansible-collections/community.aws/pull/737).
 - iam_server_certificate - migrate module to using the boto3 SDK (https://github.com/ansible-collections/community.aws/pull/737).
@@ -441,7 +553,7 @@ Deprecated Features
 - elb_classic_lb - the ``elb_classic_lb`` module has been removed and redirected to the ``amazon.aws.ec2_elb_lb`` module which functions identically.
 - iam - the boto based ``iam`` module has been deprecated in favour of the boto3 based ``iam_user``, ``iam_group`` and ``iam_role`` modules. The ``iam`` module will be removed in release 3.0.0 (https://github.com/ansible-collections/community.aws/pull/664).
 - rds - the boto based ``rds`` module has been deprecated in favour of the boto3 based ``rds_instance`` module. The ``rds`` module will be removed in release 3.0.0 (https://github.com/ansible-collections/community.aws/pull/663).
-- script_inventory_ec2 - The ec2.py inventory script is being moved to a new repository. The script can now be downloaded from https://github.com/ansible-community/contrib-scripts/blob/main/inventory/ec2.py and will be removed from this collection in the 3.0 release. We recommend migrating from the script to the `amazon.aws.ec2` inventory plugin.
+- script_inventory_ec2 - The ec2.py inventory script is being moved to a new repository. The script can now be downloaded from https://github.com/ansible-community/contrib-scripts/blob/main/inventory/ec2.py and will be removed from this collection in the 3.0 release. We recommend migrating from the script to the ``amazon.aws.ec2`` inventory plugin.
 
 Bugfixes
 --------
@@ -602,7 +714,7 @@ v1.4.0
 Minor Changes
 -------------
 
-- aws_kms - add support for setting the deletion window using `pending_window` (PendingWindowInDays) (https://github.com/ansible-collections/community.aws/pull/200).
+- aws_kms - add support for setting the deletion window using ``pending_window`` (PendingWindowInDays) (https://github.com/ansible-collections/community.aws/pull/200).
 - aws_kms_info - Add ``key_id`` and ``alias`` parameters to support fetching a single key (https://github.com/ansible-collections/community.aws/pull/200).
 - dynamodb_ttl - use ``botocore_at_least`` helper for checking the available botocore version (https://github.com/ansible-collections/community.aws/pull/280).
 - ec2_instance - add automatic retries on all paginated queries for temporary errors (https://github.com/ansible-collections/community.aws/pull/373).
@@ -629,12 +741,12 @@ Bugfixes
 - aws_kms - fixes issue where module execution fails without the kms:GetKeyRotationStatus permission. (https://github.com/ansible-collections/community.aws/pull/200).
 - aws_kms_info - ensure that searching by tag works when tag only exists on some CMKs (https://github.com/ansible-collections/community.aws/issues/276).
 - aws_s3_cors - fix element type for rules parameter. (https://github.com/ansible-collections/community.aws/pull/408).
-- aws_ssm - fix the generation of CURL URL used to download Ansible Python file from S3 bucket by ```_get_url()``` due to due to non-assignment of aws region in the URL and not using V4 signature as specified for AWS S3 signature URL by ```_get_boto_client()``` in (https://github.com/ansible-collections/community.aws/pull/352).
+- aws_ssm - fix the generation of CURL URL used to download Ansible Python file from S3 bucket by ``_get_url()`` due to due to non-assignment of aws region in the URL and not using V4 signature as specified for AWS S3 signature URL by ``_get_boto_client()`` in (https://github.com/ansible-collections/community.aws/pull/352).
 - aws_ssm - fixed ``UnicodeEncodeError`` error when using unicode file names (https://github.com/ansible-collections/community.aws/pull/295).
 - ec2_eip - fix eip association by instance id & private ip address due to case-sensitivity of the ``PrivateIpAddress`` parameter (https://github.com/ansible-collections/community.aws/pull/328).
 - ec2_vpc_endpoint - ensure ``changed`` is correctly set when deleting an endpoint (https://github.com/ansible-collections/community.aws/pull/362).
 - ec2_vpc_endpoint - fix exception when attempting to delete an endpoint which has already been deleted (https://github.com/ansible-collections/community.aws/pull/362).
-- ecs_task - use `required_if` to enforce mandatory parameters based on specified operation (https://github.com/ansible-collections/community.aws/pull/402).
+- ecs_task - use ``required_if`` to enforce mandatory parameters based on specified operation (https://github.com/ansible-collections/community.aws/pull/402).
 - elb_application_lb - during the removal of an instance, the associated listeners are also removed.
 
 v1.3.0
@@ -659,7 +771,7 @@ Deprecated Features
 Bugfixes
 --------
 
-- aws_kms_info - fixed incompatibility with external and custom key-store keys. The module was attempting to call `GetKeyRotationStatus`, which raises `UnsupportedOperationException` for these key types (https://github.com/ansible-collections/community.aws/pull/311).
+- aws_kms_info - fixed incompatibility with external and custom key-store keys. The module was attempting to call  ``GetKeyRotationStatus``, which raises ``UnsupportedOperationException`` for these key types (https://github.com/ansible-collections/community.aws/pull/311).
 - ec2_win_password - on success return state as not changed (https://github.com/ansible-collections/community.aws/issues/145)
 - ec2_win_password - return failed if unable to decode the password (https://github.com/ansible-collections/community.aws/issues/142)
 - ecs_service - fix element type for ``load_balancers`` parameter (https://github.com/ansible-collections/community.aws/issues/265).
@@ -698,7 +810,7 @@ v1.2.0
 Minor Changes
 -------------
 
-- Add retries for aws_api_gateway when AWS throws `TooManyRequestsException`
+- Add retries for aws_api_gateway when AWS throws ``TooManyRequestsException``
 - Migrate the remaning boto3 based modules to the module based helpers for creating AWS connections.
 
 Bugfixes
