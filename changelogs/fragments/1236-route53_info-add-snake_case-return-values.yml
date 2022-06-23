@@ -1,4 +1,0 @@
-deprecated_features:
-  - route53_info - The CamelCase return values for ``HostedZones``, ``ResourceRecordSets``, and ``HealthChecks``
-    have been deprecated, in the future release you must use snake_case return values ``hosted_zones``, ``resource_record_sets``,
-    and ``health_checks`` instead respectively".

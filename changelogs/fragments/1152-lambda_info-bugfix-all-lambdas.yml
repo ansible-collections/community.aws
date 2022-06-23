@@ -1,3 +1,0 @@
-bugfixes:
-  - lambda_info - fix bug that forces query=config when getting info for all lambdas. Now, if function name is specified, query will default to all.  This may have a performance impact when querying a large number of lambdas.
-    If function name is not specified, query will default to config (https://github.com/ansible-collections/community.aws/pull/1152).
