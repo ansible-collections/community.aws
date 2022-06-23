@@ -1902,14 +1902,14 @@ releases:
         (https://github.com/ansible-collections/community.aws/pull/1145).
       - execute_lambda - add waiter for function_updated (https://github.com/ansible-collections/community.aws/pull/1108).
       - execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
-      - iam_policy - require one of `policy_document` and `policy_json` when state
+      - iam_policy - require one of ``policy_document`` and ``policy_json`` when state
         is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
       - iam_user - don't delete user login profile on check mode (https://github.com/ansible-collections/community.aws/pull/1059).
       - iam_user_info - gracefully handle when no users are found (https://github.com/ansible-collections/community.aws/pull/1059).
       - lambda - fix check mode on creation (https://github.com/ansible-collections/community.aws/pull/1108).
       - rds_instance - fix check_mode and idempotency issues and added integration
         tests for all tests in suite (https://github.com/ansible-collections/community.aws/pull/1002).
-      - rds_instance_snapshot - don't require `db_instance_identifier` on state = present (https://github.com/ansible-collections/community.aws/pull/1078).
+      - rds_instance_snapshot - don't require ``db_instance_identifier`` on state = present (https://github.com/ansible-collections/community.aws/pull/1078).
       - s3_lifecycle - add support of value *0* for ``transition_days`` (https://github.com/ansible-collections/community.aws/pull/1077).
       - s3_lifecycle - check that configuration is complete before returning (https://github.com/ansible-collections/community.aws/pull/1085).
       minor_changes:
@@ -1921,10 +1921,10 @@ releases:
       - ec2_asg - add check mode support (https://github.com/ansible-collections/community.aws/pull/1033).
       - iam_policy - update broken examples and add RETURN section to documentation;
         add extra integration tests for idempotency check mode runs (https://github.com/ansible-collections/community.aws/pull/1093).
-      - iam_user - add `user` value to return data structure to deprecate old `iam_user`
+      - iam_user - add ``user`` value to return data structure to deprecate old ``iam_user``
         (https://github.com/ansible-collections/community.aws/pull/1059).
       - lambda - add kms_key_arn parameter (https://github.com/ansible-collections/community.aws/pull/1108).
-      - rds_instance - add `deletion_protection` parameter (https://github.com/ansible-collections/community.aws/pull/1105).
+      - rds_instance - add ``deletion_protection`` parameter (https://github.com/ansible-collections/community.aws/pull/1105).
       - rds_instance - add support for addition/removal of iam roles to db instance
         (https://github.com/ansible-collections/community.aws/pull/1002).
       - rds_instance_snapshot - add ``check_mode`` (https://github.com/ansible-collections/community.aws/pull/789).
