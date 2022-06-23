@@ -91,7 +91,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>A value that specifies whether modifying a cluster with <em>new_db_instance_identifier</em> and <em>master_user_password</em> should be applied as soon as possible, regardless of the <em>preferred_maintenance_window</em> setting. If false, changes are applied during the next maintenance window.</div>
+                        <div>A value that specifies whether modifying an instance with <em>new_db_instance_identifier</em> and <em>master_user_password</em> should be applied as soon as possible, regardless of the <em>preferred_maintenance_window</em> setting. If false, changes are applied during the next maintenance window.</div>
                 </td>
             </tr>
             <tr>
@@ -125,7 +125,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A list of EC2 Availability Zones that instances in the DB cluster can be created in. May be used when creating a cluster or when restoring from S3 or a snapshot. Mutually exclusive with <em>multi_az</em>.</div>
+                        <div>A list of EC2 Availability Zones that the DB instance can be created in. May be used when creating an instance or when restoring from S3 or a snapshot. Mutually exclusive with <em>multi_az</em>.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: az, zone</div>
                 </td>
             </tr>
@@ -213,7 +213,7 @@ Parameters
                 <td>
                         <div>The number of days for which automated backups are retained.</div>
                         <div>When set to <code>0</code>, automated backups will be disabled. (Not applicable if the DB instance is a source to read replicas)</div>
-                        <div>May be used when creating a new cluster, when restoring from S3, or when modifying a cluster.</div>
+                        <div>May be used when creating a new instance, when restoring from S3, or when modifying an instance.</div>
                 </td>
             </tr>
             <tr>
@@ -243,7 +243,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The character set to associate with the DB cluster.</div>
+                        <div>The character set to associate with the DB instance.</div>
                 </td>
             </tr>
             <tr>
@@ -392,7 +392,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The identifier for the DB snapshot to restore from if using <em>creation_source=snapshot</em>.</div>
+                        <div>The identifier or ARN of the DB snapshot to restore from when using <em>creation_source=snapshot</em>.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: snapshot_identifier, snapshot_id</div>
                 </td>
             </tr>
             <tr>
@@ -529,7 +530,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Enable mapping of AWS Identity and Access Management (IAM) accounts to database accounts. If this option is omitted when creating the cluster, Amazon RDS sets this to False.</div>
+                        <div>Enable mapping of AWS Identity and Access Management (IAM) accounts to database accounts. If this option is omitted when creating the instance, Amazon RDS sets this to False.</div>
                 </td>
             </tr>
             <tr>
@@ -648,7 +649,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Set to True to update your cluster password with <em>master_user_password</em>. Since comparing passwords to determine if it needs to be updated is not possible this is set to False by default to allow idempotence.</div>
+                        <div>Set to <code>True</code> to update your instance password with <em>master_user_password</em>. Since comparing passwords to determine if it needs to be updated is not possible this is set to False by default to allow idempotence.</div>
                 </td>
             </tr>
             <tr>
@@ -779,7 +780,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The name of the master user for the DB cluster. Must be 1-16 letters or numbers and begin with a letter.</div>
+                        <div>The name of the master user for the DB instance. Must be 1-16 letters or numbers and begin with a letter.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: username</div>
                 </td>
             </tr>
@@ -859,7 +860,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The new DB cluster (lowercase) identifier for the DB cluster when renaming a DB instance. The identifier must contain from 1 to 63 letters, numbers, or hyphens and the first character must be a letter and may not end in a hyphen or contain consecutive hyphens. Use <em>apply_immediately</em> to rename immediately, otherwise it is updated during the next maintenance window.</div>
+                        <div>The new DB instance (lowercase) identifier for the DB instance when renaming a DB instance. The identifier must contain from 1 to 63 letters, numbers, or hyphens and the first character must be a letter and may not end in a hyphen or contain consecutive hyphens. Use <em>apply_immediately</em> to rename immediately, otherwise it is updated during the next maintenance window.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: new_instance_id, new_id</div>
                 </td>
             </tr>
@@ -1149,7 +1150,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Set to False to promote a read replica cluster or true to create one. When creating a read replica <code>creation_source</code> should be set to &#x27;instance&#x27; or not provided. <code>source_db_instance_identifier</code> must be provided with this option.</div>
+                        <div>Set to <code>False</code> to promote a read replica instance or true to create one. When creating a read replica <code>creation_source</code> should be set to &#x27;instance&#x27; or not provided. <code>source_db_instance_identifier</code> must be provided with this option.</div>
                 </td>
             </tr>
             <tr>
@@ -1265,22 +1266,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether a final DB cluster snapshot is created before the DB cluster is deleted. If this is false <em>final_db_snapshot_identifier</em> must be provided.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>snapshot_identifier</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ARN of the DB snapshot to restore from when using <em>creation_source=snapshot</em>.</div>
+                        <div>Whether a final DB instance snapshot is created before the DB instance is deleted. If this is false <em>final_db_snapshot_identifier</em> must be provided.</div>
                 </td>
             </tr>
             <tr>
@@ -1423,7 +1409,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A dictionary of key value pairs to assign the DB cluster.</div>
+                        <div>A dictionary of key value pairs to assign the DB instance.</div>
                 </td>
             </tr>
             <tr>
@@ -1526,7 +1512,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A list of EC2 VPC security groups to associate with the DB cluster.</div>
+                        <div>A list of EC2 VPC security groups to associate with the DB instance.</div>
                 </td>
             </tr>
             <tr>
@@ -1545,7 +1531,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to wait for the cluster to be available, stopped, or deleted. At a later time a wait_timeout option may be added. Following each API call to create/modify/delete the instance a waiter is used with a 60 second delay 30 times until the instance reaches the expected state (available/stopped/deleted). The total task time may also be influenced by AWSRetry which helps stabilize if the instance is in an invalid state to operate on to begin with (such as if you try to stop it when it is in the process of rebooting). If setting this to False task retries and delays may make your playbook execution better handle timeouts for major modifications.</div>
+                        <div>Whether to wait for the instance to be available, stopped, or deleted. At a later time a <em>wait_timeout</em> option may be added. Following each API call to create/modify/delete the instance a waiter is used with a 60 second delay 30 times until the instance reaches the expected state (available/stopped/deleted). The total task time may also be influenced by AWSRetry which helps stabilize if the instance is in an invalid state to operate on to begin with (such as if you try to stop it when it is in the process of rebooting). If setting this to False task retries and delays may make your playbook execution better handle timeouts for major modifications.</div>
                 </td>
             </tr>
     </table>
@@ -1644,13 +1630,25 @@ Examples
       community.aws.rds_instance:
         id: "my-instance-id"
         state: present
-        engine: postgres
-        engine_version: 14.2
-        username: "{{ username }}"
-        password: "{{ password }}"
-        db_instance_class: db.m6g.large
-        allocated_storage: "{{ allocated_storage }}"
         purge_iam_roles: yes
+
+    # Restore DB instance from snapshot
+    - name: Create a snapshot and wait until completion
+      community.aws.rds_instance_snapshot:
+        instance_id: 'my-instance-id'
+        snapshot_id: 'my-new-snapshot'
+        state: present
+        wait: yes
+      register: snapshot
+
+    - name: Restore DB from snapshot
+      community.aws.rds_instance:
+        id: 'my-restored-db'
+        creation_source: snapshot
+        snapshot_identifier: 'my-new-snapshot'
+        engine: mariadb
+        state: present
+      register: restored_db
 
 
 

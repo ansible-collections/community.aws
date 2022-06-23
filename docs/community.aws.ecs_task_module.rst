@@ -118,13 +118,14 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
+                        <b>Default:</b><br/><div style="color: blue">"default"</div>
                 </td>
                 <td>
                         <div>The name of the cluster to run the task on.</div>
+                        <div>If not specified, the cluster name will be <code>default</code>.</div>
                 </td>
             </tr>
             <tr>

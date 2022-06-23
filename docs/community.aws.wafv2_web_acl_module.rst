@@ -147,7 +147,7 @@ Parameters
                         <div>A map of custom response keys and content bodies. Define response bodies here and reference them in the rules by providing</div>
                         <div>the key of the body dictionary element.</div>
                         <div>Each element must have a unique dict key and in the dict two keys for <em>content_type</em> and <em>content</em>.</div>
-                        <div>Requires botocore &gt;= 1.21.0</div>
+                        <div>Requires botocore &gt;= 1.20.40</div>
                 </td>
             </tr>
             <tr>

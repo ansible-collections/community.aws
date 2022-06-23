@@ -308,7 +308,9 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>The asn1der encoded PEM string</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">-----BEGIN CERTIFICATE----- bunch of random data -----END CERTIFICATE-----</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">-----BEGIN CERTIFICATE-----
+    bunch of random data
+    -----END CERTIFICATE-----</div>
                 </td>
             </tr>
             <tr>

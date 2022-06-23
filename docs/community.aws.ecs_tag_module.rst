@@ -306,6 +306,7 @@ Parameters
                 <td>
                         <div>A dictionary of tags to add or remove from the resource.</div>
                         <div>If the value provided for a tag is null and <em>state=absent</em>, the tag will be removed regardless of its current value.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: resource_tags</div>
                 </td>
             </tr>
             <tr>
