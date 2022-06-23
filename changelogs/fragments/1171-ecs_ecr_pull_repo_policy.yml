@@ -1,2 +1,0 @@
-minor_changes:
-  - ecs_ecr - Will now return repository permission policy if it exists, even if we did not create or modify it. (https://github.com/ansible-collections/community.aws/pull/1171).

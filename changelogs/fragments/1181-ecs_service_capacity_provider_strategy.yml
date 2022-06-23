@@ -1,2 +1,0 @@
-minor_changes:
-  - ecs_service - Now allows for a ``capacity_provider_strategy`` to be utilized when creating/updating a service (https://github.com/ansible-collections/community.aws/pull/1181).
