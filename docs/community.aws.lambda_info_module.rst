@@ -18,7 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Gathers various details related to Lambda functions, including aliases, versions and event source mappings.
-- Use module :ref:`community.aws.lambda <community.aws.lambda_module>` to manage the lambda function itself, :ref:`community.aws.lambda_alias <community.aws.lambda_alias_module>` to manage function aliases and :ref:`community.aws.lambda_event <community.aws.lambda_event_module>` to manage lambda event source mappings.
+- Use module :ref:`community.aws.lambda <community.aws.lambda_module>` to manage the lambda function itself, :ref:`community.aws.lambda_alias <community.aws.lambda_alias_module>` to manage function aliases, :ref:`community.aws.lambda_event <community.aws.lambda_event_module>` to manage lambda event source mappings, and :ref:`community.aws.lambda_policy <community.aws.lambda_policy_module>` to manage policy statements.
 
 
 
@@ -207,7 +207,7 @@ Parameters
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li>aliases</li>
-                                    <li><div style="color: blue"><b>all</b>&nbsp;&larr;</div></li>
+                                    <li>all</li>
                                     <li>config</li>
                                     <li>mappings</li>
                                     <li>policy</li>
@@ -216,7 +216,9 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Specifies the resource type for which to gather information.  Leave blank to retrieve all information.</div>
+                        <div>Specifies the resource type for which to gather information.</div>
+                        <div>Defaults to <code>all</code> when <em>function_name</em> is specified.</div>
+                        <div>Defaults to <code>config</code> when <em>function_name</em> is NOT specified.</div>
                 </td>
             </tr>
             <tr>
@@ -300,17 +302,20 @@ Examples
         query: all
         function_name: myFunction
       register: my_function_details
+
     # List all versions of a function
     - name: List function versions
       community.aws.lambda_info:
         query: versions
         function_name: myFunction
       register: my_function_versions
-    # List all lambda function versions
-    - name: List all function
+
+    # List all info for all functions
+    - name: List all functions
       community.aws.lambda_info:
         query: all
       register: output
+
     - name: show Lambda information
       ansible.builtin.debug:
         msg: "{{ output['function'] }}"

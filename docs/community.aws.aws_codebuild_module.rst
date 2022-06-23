@@ -48,13 +48,13 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">dictionary</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
                         <div>Information about the build output artifacts for the build project.</div>
+                        <div><em>artifacts</em> is required when creating a new project.</div>
                 </td>
             </tr>
                                 <tr>
@@ -480,6 +480,27 @@ Parameters
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
+                        <div>If the <em>resource_tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</div>
+                        <div>Tag keys beginning with <code>aws:</code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a href='https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions'>https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -491,6 +512,23 @@ Parameters
                 <td>
                         <div>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a href='http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region'>http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_region, ec2_region</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>resource_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>A dictionary representing the tags to be applied to the build project.</div>
+                        <div>If the <em>resource_tags</em> parameter is not set then tags will not be modified.</div>
+                        <div>Mutually exclusive with the <em>tags</em> parameter.</div>
                 </td>
             </tr>
             <tr>
@@ -534,13 +572,13 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">dictionary</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
                         <div>Configure service and location for the build input source.</div>
+                        <div><em>source</em> is required when creating a new project.</div>
                 </td>
             </tr>
                                 <tr>
@@ -662,6 +700,8 @@ Parameters
                 </td>
                 <td>
                         <div>A set of tags for the build project.</div>
+                        <div>Mutually exclusive with the <em>resource_tags</em> parameter.</div>
+                        <div>In release 6.0.0 this parameter will accept a simple dictionary instead of the list of dictionaries format.  To use the simple dictionary format prior to release 6.0.0 the <em>resource_tags</em> can be used instead of <em>tags</em>.</div>
                 </td>
             </tr>
                                 <tr>
@@ -984,6 +1024,24 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>reource_tags</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.0.0</div>
+                </td>
+                <td>when configured</td>
+                <td>
+                            <div>A simple dictionary representing the tags added to the project.</div>
+                            <div><em>tags</em> and <em>reource_tags</em> represent the same information in different formats.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>service_role</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
@@ -1131,7 +1189,8 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when configured</td>
                 <td>
-                            <div>Tags added to the project</div>
+                            <div>Tags added to the project in the boto3 list of dictionaries format.</div>
+                            <div><em>tags</em> and <em>reource_tags</em> represent the same information in different formats.</div>
                     <br/>
                 </td>
             </tr>

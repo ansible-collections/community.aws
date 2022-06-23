@@ -123,7 +123,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Border Gateway Protocol (BGP) Autonomous System Number (ASN), required when <em>state=present</em>.</div>
+                        <div>Border Gateway Protocol (BGP) Autonomous System Number (ASN).</div>
+                        <div>Defaults to <code>65000</code> if not specified when <em>state=present</em>.</div>
                 </td>
             </tr>
             <tr>
