@@ -249,7 +249,6 @@ def find_health_check(ip_addr, fqdn, hc_type, request_interval, port):
     # Additionally, we can't properly wrap the paginator, so retrying means
     # starting from scratch with a paginator
     results = _list_health_checks()
-
     while True:
         for check in results.get('HealthChecks'):
             config = check.get('HealthCheckConfig')
@@ -266,6 +265,20 @@ def find_health_check(ip_addr, fqdn, hc_type, request_interval, port):
             results = _list_health_checks(Marker=results.get('NextMarker'))
         else:
             return None
+
+
+def get_existing_checks_with_name():
+    results = _list_health_checks()
+    health_checks_with_name = {}
+    while True:
+        for check in results.get('HealthChecks'):
+            if 'Name' in describe_health_check(check['Id'])['tags']:
+                check_name = describe_health_check(check['Id'])['tags']['Name']
+                health_checks_with_name[check_name] = check
+        if results.get('IsTruncated', False):
+            results = _list_health_checks(Marker=results.get('NextMarker'))
+        else:
+            return health_checks_with_name
 
 
 def delete_health_check(check_id):
@@ -352,7 +365,6 @@ def update_health_check(existing_check):
     # FullyQualifiedDomainName, however, because we use these in lieu of a
     # 'Name' to uniquely identify the health check this isn't currently
     # supported.  If we accepted an ID it would be possible to modify them.
-
     changes = dict()
     existing_config = existing_check.get('HealthCheckConfig')
 
@@ -375,7 +387,6 @@ def update_health_check(existing_check):
     # No changes...
     if not changes:
         return False, None
-
     if module.check_mode:
         return True, 'update'
 
@@ -467,6 +478,7 @@ def main():
     string_match_in = module.params.get('string_match')
     request_interval_in = module.params.get('request_interval')
     failure_threshold_in = module.params.get('failure_threshold')
+    health_check_name = module.params.get('health_check_name')
 
     # Default port
     if port_in is None:
@@ -481,6 +493,9 @@ def main():
         if len(string_match_in) > 255:
             module.fail_json(msg="parameter 'string_match' is limited to 255 characters max")
 
+    if module.params.get('use_unique_names') and not health_check_name:
+        module.fail_json(msg="parameter 'health_check_name' or 'name' is required when 'use_unique_names' set to true.")
+
     client = module.client('route53', retry_decorator=AWSRetry.jittered_backoff())
 
     changed = False
@@ -492,19 +507,41 @@ def main():
     if existing_check:
         check_id = existing_check.get('Id')
 
+    # Delete Health Check
     if state_in == 'absent':
         changed, action = delete_health_check(check_id)
         check_id = None
+    # Create Health Check
     elif state_in == 'present':
         if existing_check is None:
             changed, action, check_id = create_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
+            if check_id:
+                if health_check_name:
+                    name_tag = {}
+                    name_tag['Name'] = health_check_name
+                    changed |= manage_tags(module, client, 'healthcheck', check_id,
+                                           name_tag, module.params.get('purge_tags'))
+        # Update Health Check
         else:
-            changed, action = update_health_check(existing_check)
+            # Update when health_check_name is a unique identifier
+            if module.params.get('use_unique_names'):
+                existing_checks_with_name = get_existing_checks_with_name()
+                if health_check_name in existing_checks_with_name:
+                    changed, action = update_health_check(existing_checks_with_name[health_check_name])
+                else:
+                    changed, action, check_id = create_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
+                    # Add tags
+                    if check_id:
+                        tags = module.params.get('tags')
+                        if health_check_name:
+                            tags['Name'] = health_check_name
+                        changed |= manage_tags(module, client, 'healthcheck', check_id,
+                                               tags, module.params.get('purge_tags'))
+            else:
+                changed, action = update_health_check(existing_check)
+
         if check_id:
             tags = module.params.get('tags')
-            #add health_check_name to tags if provided
-            if module.params.get('health_check_name'):
-                tags['Name'] = module.params.get('health_check_name')
 
             changed |= manage_tags(module, client, 'healthcheck', check_id,
                                    tags, module.params.get('purge_tags'))
