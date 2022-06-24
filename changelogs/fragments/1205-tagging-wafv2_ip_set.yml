@@ -1,5 +1,0 @@
-minor_changes:
-- wafv2_ip_set - Added support for ``purge_tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1205).
-- wafv2_ip_set - Added support for updating tags (https://github.com/ansible-collections/community.aws/pull/1205).
-- wafv2_ip_set - Added support for returning tags (https://github.com/ansible-collections/community.aws/pull/1205).
-- wafv2_ip_set_info - Added support for returning tags (https://github.com/ansible-collections/community.aws/pull/1205).

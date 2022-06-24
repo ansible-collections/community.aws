@@ -1,3 +1,0 @@
----
-minor_changes:
-- ec2_transit_gateway - wait and retry if API returns an IncorrectState error.

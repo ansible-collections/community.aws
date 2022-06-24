@@ -1,4 +1,0 @@
-removed_features:
-- ec2_metric_alarm - support for using the ``<=``, ``<``, ``>`` and ``>=`` operators for comparison has been dropped.
-  Please use ``LessThanOrEqualToThreshold``, ``LessThanThreshold``, ``GreaterThanThreshold`` or
-  ``GreaterThanOrEqualToThreshold`` instead (https://github.com/ansible-collections/amazon.aws/pull/1164).

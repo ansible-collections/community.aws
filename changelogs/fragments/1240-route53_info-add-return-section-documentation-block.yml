@@ -1,2 +1,0 @@
-minor_changes:
-  - route53_info - add RETURN section to documentation (https://github.com/ansible-collections/community.aws/pull/1240).

@@ -1,2 +1,0 @@
-removed_features:
-- data_pipeline - the ``version`` option has always been ignored and has been removed (https://github.com/ansible-collections/community.aws/pull/1160"
