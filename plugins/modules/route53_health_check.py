@@ -86,6 +86,24 @@ options:
       - Will default to C(3) if not specified on creation.
     choices: [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ]
     type: int
+  health_check_name:
+    description:
+      - To be added
+    type: str
+    required: False
+    aliases: ['name']
+  use_unique_names:
+    description:
+      - To be added
+    type: bool
+    required: False
+    default: False
+  health_check_id:
+    description:
+      - To be added
+    type: str
+    required: False
+    aliases: ['id']
 author:
   - "zimbatm (@zimbatm)"
 notes:
