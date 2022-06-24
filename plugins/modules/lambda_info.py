@@ -87,7 +87,7 @@ lambda_info:
     returned: always
     type: list
     elements: dict
-    version_added: 3.4.0
+    version_added: 4.1.0
     contains:
         aliases:
             description: The aliases assoicated with the function.
@@ -260,16 +260,8 @@ lambda_info:
             'subnet_ids': [],
             'vpc_id': '123'
             }
-response_metadata:
-    description: List of response metadata associated with each Lambda.
-    returned: on success
-    type: list
-    elements: dict
-    version_added: 3.4.0
-
 '''
 import json
-import datetime
 import re
 
 try:
@@ -332,7 +324,6 @@ def list_lambdas(client, module):
 
     query = module.params['query']
     lambdas = []
-    response_metadatas = []
 
     # keep returning deprecated response (dict of dicts) until removed
     all_facts = {}
@@ -359,16 +350,13 @@ def list_lambdas(client, module):
         if query in ['all', 'tags']:
             current_lambda.update(tags_details(client, module, function_name))
 
-        all_facts[current_lambda['function_name']] = current_lambda.copy()
-
-        # keep `response_metadata` outside of `lambda`
-        response_metadatas.append(current_lambda.pop('response_metadata', {}))
+        all_facts[current_lambda['function_name']] = current_lambda
 
         # add current lambda to list of lambdas
         lambdas.append(current_lambda)
 
     # return info
-    module.exit_json(function=all_facts, lambda_info=lambdas, response_metadata=response_metadatas, changed=False)
+    module.exit_json(function=all_facts, lambda_info=lambdas, changed=False)
 
 
 def config_details(client, module, function_name):
