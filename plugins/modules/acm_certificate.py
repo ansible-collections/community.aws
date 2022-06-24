@@ -27,7 +27,7 @@ __metaclass__ = type
 
 DOCUMENTATION = r'''
 ---
-module: aws_acm
+module: acm_certificate
 short_description: Upload and delete certificates in the AWS Certificate Manager service
 version_added: 1.0.0
 description:
@@ -176,7 +176,6 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.tags.deprecated_purge
-
 '''
 
 EXAMPLES = '''

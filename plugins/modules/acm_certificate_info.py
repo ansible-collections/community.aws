@@ -7,11 +7,11 @@ __metaclass__ = type
 
 
 DOCUMENTATION = r'''
-module: aws_acm_info
+module: acm_certificate_info
 short_description: Retrieve certificate information from AWS Certificate Manager service
 version_added: 1.0.0
 description:
-  - Retrieve information for ACM certificates
+  - Retrieve information for ACM certificates.
   - Note that this will not return information about uploaded keys of size 4096 bits, due to a limitation of the ACM API.
 options:
   certificate_arn:
@@ -24,13 +24,13 @@ options:
     type: str
   domain_name:
     description:
-      - The domain name of an ACM certificate to limit the search to
+      - The domain name of an ACM certificate to limit the search to.
     aliases:
       - name
     type: str
   statuses:
     description:
-      - Status to filter the certificate results
+      - Status to filter the certificate results.
     choices: ['PENDING_VALIDATION', 'ISSUED', 'INACTIVE', 'EXPIRED', 'VALIDATION_TIMED_OUT', 'REVOKED', 'FAILED']
     type: list
     elements: str
