@@ -1,2 +1,0 @@
-breaking_changes:
-- elb_network_lb - the default value of ``state`` has changed from ``absent`` to ``present`` (https://github.com/ansible-collections/community.aws/pull/1167).

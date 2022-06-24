@@ -35,6 +35,7 @@ Name | Description
 [community.aws.aws_acm](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_acm_module.rst)|Upload and delete certificates in the AWS Certificate Manager service
 [community.aws.aws_acm_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_acm_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.aws_api_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_api_gateway_module.rst)|Manage AWS API Gateway APIs
+[community.aws.aws_api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
 [community.aws.aws_batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
 [community.aws.aws_batch_job_definition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
@@ -57,31 +58,32 @@ Name | Description
 [community.aws.aws_glue_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_connection_module.rst)|Manage an AWS Glue connection
 [community.aws.aws_glue_job](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_job_module.rst)|Manage an AWS Glue job
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
-[community.aws.aws_kms](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_kms_module.rst)|Perform various KMS management tasks.
+[community.aws.aws_kms](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_kms_module.rst)|Perform various KMS management tasks
 [community.aws.aws_kms_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_kms_info_module.rst)|Gather information about AWS KMS keys
-[community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters.
+[community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
 [community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
 [community.aws.aws_s3_bucket_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_s3_bucket_info_module.rst)|lists S3 buckets in AWS
 [community.aws.aws_s3_cors](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_s3_cors_module.rst)|Manage CORS for S3 buckets in AWS
-[community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager.
+[community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
 [community.aws.aws_ses_identity](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ses_identity_module.rst)|Manages SES email and domain identity
 [community.aws.aws_ses_identity_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ses_identity_policy_module.rst)|Manages SES sending authorization policies
 [community.aws.aws_ses_rule_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ses_rule_set_module.rst)|Manages SES inbound receipt rule sets
 [community.aws.aws_sgw_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_sgw_info_module.rst)|Fetch AWS Storage Gateway information
-[community.aws.aws_ssm_parameter_store](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ssm_parameter_store_module.rst)|Manage key-value pairs in aws parameter store.
+[community.aws.aws_ssm_parameter_store](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ssm_parameter_store_module.rst)|Manage key-value pairs in AWS SSM parameter store
 [community.aws.aws_step_functions_state_machine](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_module.rst)|Manage AWS Step Functions state machines
 [community.aws.aws_step_functions_state_machine_execution](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_execution_module.rst)|Start or stop execution of an AWS Step Functions state machine.
 [community.aws.aws_waf_condition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_condition_module.rst)|Create and delete WAF Conditions
 [community.aws.aws_waf_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_info_module.rst)|Retrieve information for WAF ACLs, Rule , Conditions and Filters.
 [community.aws.aws_waf_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_rule_module.rst)|Create and delete WAF Rules
-[community.aws.aws_waf_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_web_acl_module.rst)|Create and delete WAF Web ACLs.
+[community.aws.aws_waf_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_web_acl_module.rst)|Create and delete WAF Web ACLs
 [community.aws.cloudformation_exports_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudformation_exports_info_module.rst)|Read a value from CloudFormation Exports
 [community.aws.cloudformation_stack_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudformation_stack_set_module.rst)|Manage groups of CloudFormation stacks
-[community.aws.cloudfront_distribution](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_distribution_module.rst)|Create, update and delete AWS CloudFront distributions.
+[community.aws.cloudfront_distribution](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_distribution_module.rst)|Create, update and delete AWS CloudFront distributions
 [community.aws.cloudfront_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_info_module.rst)|Obtain facts about an AWS CloudFront distribution
 [community.aws.cloudfront_invalidation](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_invalidation_module.rst)|create invalidations for AWS CloudFront distributions
 [community.aws.cloudfront_origin_access_identity](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_origin_access_identity_module.rst)|Create, update and delete origin access identities for a CloudFront distribution
+[community.aws.cloudfront_response_headers_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_response_headers_policy_module.rst)|Create, update and delete response headers policies to be used in a Cloudfront distribution
 [community.aws.cloudtrail](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudtrail_module.rst)|manage CloudTrail create, delete, update
 [community.aws.cloudwatchevent_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchevent_rule_module.rst)|Manage CloudWatch Event rules and targets
 [community.aws.cloudwatchlogs_log_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_module.rst)|create or delete log_group in CloudWatchLogs
@@ -95,6 +97,8 @@ Name | Description
 [community.aws.ec2_ami_copy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_ami_copy_module.rst)|copies AMI between AWS regions, return new image id
 [community.aws.ec2_asg](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_module.rst)|Create or delete AWS AutoScaling Groups (ASGs)
 [community.aws.ec2_asg_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_info_module.rst)|Gather information about ec2 Auto Scaling Groups (ASGs) in AWS
+[community.aws.ec2_asg_instance_refresh](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_instance_refresh_module.rst)|Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
+[community.aws.ec2_asg_instance_refresh_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_instance_refresh_info_module.rst)|Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
 [community.aws.ec2_asg_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks.
 [community.aws.ec2_asg_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions.
 [community.aws.ec2_customer_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_customer_gateway_module.rst)|Manage an AWS customer gateway
@@ -109,19 +113,19 @@ Name | Description
 [community.aws.ec2_placement_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_placement_group_module.rst)|Create or delete an EC2 Placement Group
 [community.aws.ec2_placement_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_placement_group_info_module.rst)|List EC2 Placement Group(s) details
 [community.aws.ec2_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_scaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
-[community.aws.ec2_snapshot_copy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_snapshot_copy_module.rst)|Copies an EC2 snapshot and returns the new Snapshot ID.
+[community.aws.ec2_snapshot_copy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_snapshot_copy_module.rst)|Copies an EC2 snapshot and returns the new Snapshot ID
 [community.aws.ec2_transit_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_transit_gateway_module.rst)|Create and delete AWS Transit Gateways
 [community.aws.ec2_transit_gateway_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_transit_gateway_info_module.rst)|Gather information about ec2 transit gateways in AWS
+[community.aws.ec2_transit_gateway_vpc_attachment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_transit_gateway_vpc_attachment_module.rst)|Create and delete AWS Transit Gateway VPC attachments
+[community.aws.ec2_transit_gateway_vpc_attachment_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_transit_gateway_vpc_attachment_info_module.rst)|describes AWS Transit Gateway VPC attachments
 [community.aws.ec2_vpc_egress_igw](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_egress_igw_module.rst)|Manage an AWS VPC Egress Only Internet gateway
-[community.aws.ec2_vpc_nacl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_nacl_module.rst)|create and delete Network ACLs.
+[community.aws.ec2_vpc_nacl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_nacl_module.rst)|create and delete Network ACLs
 [community.aws.ec2_vpc_nacl_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_nacl_info_module.rst)|Gather information about Network ACLs in an AWS VPC
 [community.aws.ec2_vpc_peer](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_peer_module.rst)|create, delete, accept, and reject VPC peering connections between two VPCs.
 [community.aws.ec2_vpc_peering_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_peering_info_module.rst)|Retrieves AWS VPC Peering details using AWS methods.
-[community.aws.ec2_vpc_route_table](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_route_table_module.rst)|Manage route tables for AWS virtual private clouds
-[community.aws.ec2_vpc_route_table_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_route_table_info_module.rst)|Gather information about ec2 VPC route tables in AWS
-[community.aws.ec2_vpc_vgw](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_vgw_module.rst)|Create and delete AWS VPN Virtual Gateways.
+[community.aws.ec2_vpc_vgw](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_vgw_module.rst)|Create and delete AWS VPN Virtual Gateways
 [community.aws.ec2_vpc_vgw_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_vgw_info_module.rst)|Gather information about virtual gateways in AWS
-[community.aws.ec2_vpc_vpn](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_vpn_module.rst)|Create, modify, and delete EC2 VPN connections.
+[community.aws.ec2_vpc_vpn](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_vpn_module.rst)|Create, modify, and delete EC2 VPN connections
 [community.aws.ec2_vpc_vpn_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_vpc_vpn_info_module.rst)|Gather information about VPN Connections in AWS.
 [community.aws.ec2_win_password](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_win_password_module.rst)|Gets the default administrator password for EC2 Windows instances
 [community.aws.ecs_attribute](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_attribute_module.rst)|manage ecs attributes
@@ -130,19 +134,20 @@ Name | Description
 [community.aws.ecs_service](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_service_module.rst)|Create, terminate, start or stop a service in ECS
 [community.aws.ecs_service_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_service_info_module.rst)|List or describe services in ECS
 [community.aws.ecs_tag](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_tag_module.rst)|create and remove tags on Amazon ECS resources
-[community.aws.ecs_task](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_task_module.rst)|Run, start or stop a task in ecs
+[community.aws.ecs_task](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_task_module.rst)|Run, start or stop a task in ECS
 [community.aws.ecs_taskdefinition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_taskdefinition_module.rst)|register a task definition in ecs
 [community.aws.ecs_taskdefinition_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ecs_taskdefinition_info_module.rst)|Describe a task definition in ECS
 [community.aws.efs](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.efs_module.rst)|create and maintain EFS file systems
 [community.aws.efs_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.efs_info_module.rst)|Get information about Amazon EFS file systems
 [community.aws.efs_tag](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.efs_tag_module.rst)|create and remove tags on Amazon EFS resources
+[community.aws.eks_fargate_profile](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.eks_fargate_profile_module.rst)|Manage EKS Fargate Profile
 [community.aws.elasticache](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_module.rst)|Manage cache clusters in Amazon ElastiCache
 [community.aws.elasticache_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_info_module.rst)|Retrieve information for AWS ElastiCache clusters
 [community.aws.elasticache_parameter_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_parameter_group_module.rst)|Manage cache parameter groups in Amazon ElastiCache.
 [community.aws.elasticache_snapshot](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_snapshot_module.rst)|Manage cache snapshots in Amazon ElastiCache
 [community.aws.elasticache_subnet_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_subnet_group_module.rst)|manage ElastiCache subnet groups
 [community.aws.elb_application_lb](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_application_lb_module.rst)|Manage an Application Load Balancer
-[community.aws.elb_application_lb_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_application_lb_info_module.rst)|Gather information about application ELBs in AWS
+[community.aws.elb_application_lb_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_application_lb_info_module.rst)|Gather information about Application Load Balancers in AWS
 [community.aws.elb_classic_lb_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_classic_lb_info_module.rst)|Gather information about EC2 Elastic Load Balancers in AWS
 [community.aws.elb_instance](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_instance_module.rst)|De-registers or registers instances from EC2 ELBs
 [community.aws.elb_network_lb](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_network_lb_module.rst)|Manage a Network Load Balancer
@@ -173,10 +178,21 @@ Name | Description
 [community.aws.lambda_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_info_module.rst)|Gathers AWS Lambda function details
 [community.aws.lambda_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_policy_module.rst)|Creates, updates or deletes AWS Lambda policy statements.
 [community.aws.lightsail](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lightsail_module.rst)|Manage instances in AWS Lightsail
+[community.aws.networkfirewall](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_module.rst)|manage AWS Network Firewall firewalls
+[community.aws.networkfirewall_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_info_module.rst)|describe AWS Network Firewall firewalls
+[community.aws.networkfirewall_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_policy_module.rst)|manage AWS Network Firewall policies
+[community.aws.networkfirewall_policy_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_policy_info_module.rst)|describe AWS Network Firewall policies
+[community.aws.networkfirewall_rule_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_rule_group_module.rst)|create, delete and modify AWS Network Firewall rule groups
+[community.aws.networkfirewall_rule_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_rule_group_info_module.rst)|describe AWS Network Firewall rule groups
+[community.aws.opensearch](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.opensearch_module.rst)|Creates OpenSearch or ElasticSearch domain
+[community.aws.opensearch_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.opensearch_info_module.rst)|obtain information about one or more OpenSearch or ElasticSearch domain
+[community.aws.rds_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_cluster_module.rst)|rds_cluster module
+[community.aws.rds_cluster_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_cluster_info_module.rst)|Obtain information about one or more RDS clusters
+[community.aws.rds_cluster_snapshot](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_cluster_snapshot_module.rst)|Manage Amazon RDS snapshots of DB clusters
 [community.aws.rds_instance](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_instance_module.rst)|Manage RDS instances
 [community.aws.rds_instance_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_instance_info_module.rst)|obtain information about one or more RDS instances
-[community.aws.rds_instance_snapshot](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_instance_snapshot_module.rst)|manage Amazon RDS snapshots.
-[community.aws.rds_option_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_option_group_module.rst)|rds_option_group module
+[community.aws.rds_instance_snapshot](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_instance_snapshot_module.rst)|Manage Amazon RDS instance snapshots
+[community.aws.rds_option_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_option_group_module.rst)|Manages the creation, modification, deletion of RDS option groups
 [community.aws.rds_option_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_option_group_info_module.rst)|rds_option_group_info module
 [community.aws.rds_param_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_param_group_module.rst)|manage RDS parameter groups
 [community.aws.rds_snapshot_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.rds_snapshot_info_module.rst)|obtain information about one or more RDS snapshots
@@ -189,7 +205,7 @@ Name | Description
 [community.aws.route53_health_check](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.route53_health_check_module.rst)|Manage health-checks in Amazons Route53 DNS service
 [community.aws.route53_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.route53_info_module.rst)|Retrieves route53 details using AWS methods
 [community.aws.route53_zone](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.route53_zone_module.rst)|add or delete Route53 zones
-[community.aws.s3_bucket_notification](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_bucket_notification_module.rst)|Creates, updates or deletes S3 Bucket notification for lambda
+[community.aws.s3_bucket_notification](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_bucket_notification_module.rst)|Creates, updates or deletes S3 Bucket notifications targeting Lambda functions, SNS or SQS.
 [community.aws.s3_lifecycle](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_lifecycle_module.rst)|Manage S3 bucket lifecycle rules in AWS
 [community.aws.s3_logging](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_logging_module.rst)|Manage logging facility of an s3 bucket in AWS
 [community.aws.s3_metrics_configuration](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_metrics_configuration_module.rst)|Manage s3 bucket metrics configuration in AWS
@@ -197,6 +213,7 @@ Name | Description
 [community.aws.s3_website](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_website_module.rst)|Configure an s3 bucket as a website
 [community.aws.sns](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_module.rst)|Send Amazon Simple Notification Service messages
 [community.aws.sns_topic](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_topic_module.rst)|Manages AWS SNS topics and subscriptions
+[community.aws.sns_topic_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_topic_info_module.rst)|sns_topic_info module
 [community.aws.sqs_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sqs_queue_module.rst)|Creates or deletes AWS SQS queues
 [community.aws.sts_assume_role](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sts_assume_role_module.rst)|Assume a role using AWS Security Token Service and obtain temporary credentials
 [community.aws.sts_session_token](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sts_session_token_module.rst)|Obtain a session token from the AWS Security Token Service
@@ -206,7 +223,7 @@ Name | Description
 [community.aws.wafv2_resources_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_resources_info_module.rst)|wafv2_resources_info
 [community.aws.wafv2_rule_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_rule_group_module.rst)|wafv2_web_acl
 [community.aws.wafv2_rule_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_rule_group_info_module.rst)|wafv2_web_acl_info
-[community.aws.wafv2_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_web_acl_module.rst)|wafv2_web_acl
+[community.aws.wafv2_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_web_acl_module.rst)|Create and delete WAF Web ACLs
 [community.aws.wafv2_web_acl_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_web_acl_info_module.rst)|wafv2_web_acl
 
 <!--end collection content-->

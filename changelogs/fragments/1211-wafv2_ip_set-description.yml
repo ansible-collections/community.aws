@@ -1,2 +1,0 @@
-bugfixes:
-- wafv2_ip_set - fix bug where incorrect changed state was returned when only changing the description (https://github.com/ansible-collections/community.aws/pull/1211).

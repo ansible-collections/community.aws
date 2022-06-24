@@ -1,4 +1,0 @@
-minor_changes:
-- cloudtrail - the default value for ``tags`` has been updated, to remove all tags the ``tags`` parameter must be explicitly set to the empty dict ``{}`` (https://github.com/ansible-collections/community.aws/pull/1219).
-- cloudtrail - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1219).
-- cloudtrail - updated to pass tags as part of the create API call rather than tagging the trail after creation (https://github.com/ansible-collections/community.aws/pull/1219).

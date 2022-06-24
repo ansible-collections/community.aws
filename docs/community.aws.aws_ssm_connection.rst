@@ -397,7 +397,7 @@ Authors
 
 - Pat Sharkey (@psharkey) <psharkey@cleo.com>
 - HanumanthaRao MVL (@hanumantharaomvl) <hanumanth@flux7.com>
-- Gaurav Ashtikar (@gau1991 )<gaurav.ashtikar@flux7.com>
+- Gaurav Ashtikar (@gau1991) <gaurav.ashtikar@flux7.com>
 
 
 .. hint::

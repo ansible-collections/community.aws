@@ -1,4 +1,0 @@
-minor_changes:
-- ec2_vpc_nacl - add support for ``purge_tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1189).
-- ec2_vpc_nacl - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1189).
-- ec2_vpc_nacl - the default value for ``tags`` has been updated, to remove all tags the ``tags`` parameter must be explicitly set to the empty dict ``{}`` and ``purge_tags`` to ``True`` (https://github.com/ansible-collections/community.aws/pull/1189).

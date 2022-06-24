@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Gather information about AWS KMS keys including tags and grants
+- Gather information about AWS KMS keys including tags and grants.
 
 
 
@@ -26,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.16.0
-- botocore >= 1.19.0
+- boto3 >= 1.17.0
+- botocore >= 1.20.0
 
 
 Parameters
@@ -72,8 +72,7 @@ Parameters
                 </td>
                 <td>
                         <div><code>AWS access key</code>. If not set then the value of the <code>AWS_ACCESS_KEY_ID</code>, <code>AWS_ACCESS_KEY</code> or <code>EC2_ACCESS_KEY</code> environment variable is used.</div>
-                        <div>If <em>profile</em> is set this parameter is ignored.</div>
-                        <div>Passing the <em>aws_access_key</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
+                        <div>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: ec2_access_key, access_key</div>
                 </td>
             </tr>
@@ -90,7 +89,6 @@ Parameters
                 </td>
                 <td>
                         <div>The location of a CA Bundle to use when validating SSL certificates.</div>
-                        <div>Not used by boto 2 based modules.</div>
                         <div>Note: The CA Bundle is read &#x27;module&#x27; side and may need to be explicitly copied from the controller if not run locally.</div>
                 </td>
             </tr>
@@ -108,7 +106,6 @@ Parameters
                 <td>
                         <div>A dictionary to modify the botocore configuration.</div>
                         <div>Parameters can be found at <a href='https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config'>https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</div>
-                        <div>Only the &#x27;user_agent&#x27; key is used for boto modules. See <a href='http://boto.cloudhackers.com/en/latest/boto_config_tut.html#boto'>http://boto.cloudhackers.com/en/latest/boto_config_tut.html#boto</a> for more boto configuration.</div>
                 </td>
             </tr>
             <tr>
@@ -124,8 +121,7 @@ Parameters
                 </td>
                 <td>
                         <div><code>AWS secret key</code>. If not set then the value of the <code>AWS_SECRET_ACCESS_KEY</code>, <code>AWS_SECRET_KEY</code>, or <code>EC2_SECRET_KEY</code> environment variable is used.</div>
-                        <div>If <em>profile</em> is set this parameter is ignored.</div>
-                        <div>Passing the <em>aws_secret_key</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
+                        <div>The <em>aws_secret_key</em> and <em>profile</em> options are mutually exclusive.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: ec2_secret_key, secret_key</div>
                 </td>
             </tr>
@@ -201,27 +197,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>keys_attr</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.0.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Returning the <code>keys</code> attribute conflicted with the builtin keys() method on dictionaries and as such was deprecated.</div>
-                        <div>This parameter now does nothing, and after version <code>4.0.0</code> this parameter will be removed.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>pending_deletion</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -235,7 +210,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to get full details (tags, grants etc.) of keys pending deletion</div>
+                        <div>Whether to get full details (tags, grants etc.) of keys pending deletion.</div>
                 </td>
             </tr>
             <tr>
@@ -250,8 +225,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Using <em>profile</em> will override <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> and support for passing them at the same time as <em>profile</em> has been deprecated.</div>
-                        <div><em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> will be made mutually exclusive with <em>profile</em> after 2022-06-01.</div>
+                        <div>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_profile</div>
                 </td>
             </tr>
@@ -284,9 +258,9 @@ Parameters
                 </td>
                 <td>
                         <div><code>AWS STS security token</code>. If not set then the value of the <code>AWS_SECURITY_TOKEN</code> or <code>EC2_SECURITY_TOKEN</code> environment variable is used.</div>
-                        <div>If <em>profile</em> is set this parameter is ignored.</div>
-                        <div>Passing the <em>security_token</em> and <em>profile</em> options at the same time has been deprecated and the options will be made mutually exclusive after 2022-06-01.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_security_token, access_token</div>
+                        <div>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</div>
+                        <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
                 </td>
             </tr>
             <tr>
@@ -318,7 +292,6 @@ Notes
 .. note::
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
-   - Modules based on the original AWS SDK (boto) may read their default configuration from different files. See https://boto.readthedocs.io/en/latest/boto_config_tut.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
 
 
@@ -368,7 +341,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>list of keys</div>
+                            <div>List of keys.</div>
                     <br/>
                 </td>
             </tr>
@@ -384,7 +357,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>list of aliases associated with the key</div>
+                            <div>list of aliases associated with the key.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;aws/acm&#x27;, &#x27;aws/ebs&#x27;]</div>
@@ -402,7 +375,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The AWS Account ID that the key belongs to</div>
+                            <div>The AWS Account ID that the key belongs to.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1234567890123</div>
@@ -420,7 +393,26 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Date of creation of the key</div>
+                            <div>Date and time of creation of the key.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2017-04-18T15:12:08.551000+10:00</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>deletion_date</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>when key_state is PendingDeletion</td>
+                <td>
+                            <div>Date and time after which KMS deletes this KMS key.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2017-04-18T15:12:08.551000+10:00</div>
@@ -438,7 +430,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Description of the key</div>
+                            <div>Description of the key.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">My Key for Protecting important stuff</div>
@@ -456,7 +448,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Whether the automatically key rotation every year is enabled. Returns None if key rotation status can&#x27;t be determined.</div>
+                            <div>Whether the automatic annual key rotation is enabled. Returns None if key rotation status can&#x27;t be determined.</div>
                     <br/>
                 </td>
             </tr>
@@ -467,12 +459,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>enabled</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Whether the key is enabled. True if <code>KeyState</code> is true.</div>
+                            <div>Whether the key is enabled. True if <em>key_state</em> is <code>Enabled</code>.</div>
                     <br/>
                 </td>
             </tr>
@@ -483,12 +475,13 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>grants</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>list of grants associated with a key</div>
+                            <div>List of grants associated with a key.</div>
                     <br/>
                 </td>
             </tr>
@@ -524,7 +517,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Date of creation of the grant</div>
+                            <div>Date of creation of the grant.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2017-04-18T15:12:08+10:00</div>
@@ -543,7 +536,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The unique ID for the grant</div>
+                            <div>The unique ID for the grant.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234</div>
@@ -562,7 +555,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The principal that receives the grant&#x27;s permissions</div>
+                            <div>The principal that receives the grant&#x27;s permissions.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:sts::0123456789012:assumed-role/lambda_xyz/xyz</div>
@@ -581,7 +574,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The AWS account under which the grant was issued</div>
+                            <div>The AWS account under which the grant was issued.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:iam::01234567890:root</div>
@@ -619,7 +612,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The friendly name that identifies the grant</div>
+                            <div>The friendly name that identifies the grant.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">xyz</div>
@@ -638,7 +631,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The list of operations permitted by the grant</div>
+                            <div>The list of operations permitted by the grant.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;Decrypt&#x27;, &#x27;RetireGrant&#x27;]</div>
@@ -657,7 +650,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The principal that can retire the grant</div>
+                            <div>The principal that can retire the grant.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:sts::0123456789012:assumed-role/lambda_xyz/xyz</div>
@@ -676,7 +669,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>ARN of key</div>
+                            <div>ARN of key.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:kms:ap-southeast-2:123456789012:key/abcd1234-abcd-1234-5678-ef1234567890</div>
@@ -694,10 +687,30 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>ID of key</div>
+                            <div>ID of key.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd1234-abcd-1234-5678-ef1234567890</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>key_policies</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 3.3.0</div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>List of policy documents for the key. Empty when access is denied even if there are policies.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Version&#x27;: &#x27;2012-10-17&#x27;, &#x27;Id&#x27;: &#x27;auto-ebs-2&#x27;, &#x27;Statement&#x27;: [{&#x27;Sid&#x27;: &#x27;Allow access through EBS for all principals in the account that are authorized to use EBS&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;*&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Encrypt&#x27;, &#x27;kms:Decrypt&#x27;, &#x27;kms:ReEncrypt*&#x27;, &#x27;kms:GenerateDataKey*&#x27;, &#x27;kms:CreateGrant&#x27;, &#x27;kms:DescribeKey&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;, &#x27;Condition&#x27;: {&#x27;StringEquals&#x27;: {&#x27;kms:CallerAccount&#x27;: &#x27;111111111111&#x27;, &#x27;kms:ViaService&#x27;: &#x27;ec2.ap-southeast-2.amazonaws.com&#x27;}}}, {&#x27;Sid&#x27;: &#x27;Allow direct access to key metadata to the account&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;arn:aws:iam::111111111111:root&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Describe*&#x27;, &#x27;kms:Get*&#x27;, &#x27;kms:List*&#x27;, &#x27;kms:RevokeGrant&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;}]}</div>
                 </td>
             </tr>
             <tr>
@@ -712,7 +725,8 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The state of the key</div>
+                            <div>The state of the key.</div>
+                            <div>Will be one of <code>&#x27;Creating&#x27;</code>, <code>&#x27;Enabled&#x27;</code>, <code>&#x27;Disabled&#x27;</code>, <code>&#x27;PendingDeletion&#x27;</code>, <code>&#x27;PendingImport&#x27;</code>, <code>&#x27;PendingReplicaDeletion&#x27;</code>, <code>&#x27;Unavailable&#x27;</code>, or <code>&#x27;Updating&#x27;</code>.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">PendingDeletion</div>
@@ -762,11 +776,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>list of policy documents for the keys. Empty when access is denied even if there are policies.</div>
+                            <div>List of policy documents for the key. Empty when access is denied even if there are policies.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Version&#x27;: &#x27;2012-10-17&#x27;, &#x27;Id&#x27;: &#x27;auto-ebs-2&#x27;, &#x27;Statement&#x27;: [{&#x27;Sid&#x27;: &#x27;Allow access through EBS for all principals in the account that are authorized to use EBS&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;*&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Encrypt&#x27;, &#x27;kms:Decrypt&#x27;, &#x27;kms:ReEncrypt*&#x27;, &#x27;kms:GenerateDataKey*&#x27;, &#x27;kms:CreateGrant&#x27;, &#x27;kms:DescribeKey&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;, &#x27;Condition&#x27;: {&#x27;StringEquals&#x27;: {&#x27;kms:CallerAccount&#x27;: &#x27;111111111111&#x27;, &#x27;kms:ViaService&#x27;: &#x27;ec2.ap-southeast-2.amazonaws.com&#x27;}}}, {&#x27;Sid&#x27;: &#x27;Allow direct access to key metadata to the account&#x27;, &#x27;Effect&#x27;: &#x27;Allow&#x27;, &#x27;Principal&#x27;: {&#x27;AWS&#x27;: &#x27;arn:aws:iam::111111111111:root&#x27;}, &#x27;Action&#x27;: [&#x27;kms:Describe*&#x27;, &#x27;kms:Get*&#x27;, &#x27;kms:List*&#x27;, &#x27;kms:RevokeGrant&#x27;], &#x27;Resource&#x27;: &#x27;*&#x27;}]}</div>
@@ -784,7 +799,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>dictionary of tags applied to the key. Empty when access is denied even if there are tags.</div>
+                            <div>Dictionary of tags applied to the key. Empty when access is denied even if there are tags.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Name&#x27;: &#x27;myKey&#x27;, &#x27;Purpose&#x27;: &#x27;protecting_stuff&#x27;}</div>

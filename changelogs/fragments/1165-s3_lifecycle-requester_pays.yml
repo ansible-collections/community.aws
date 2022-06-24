@@ -1,2 +1,0 @@
-removed_features:
-- s3_lifecycle - the unused parameter ``requester_pays`` has been removed (https://github.com/ansible-collections/community.aws/pull/1165).
