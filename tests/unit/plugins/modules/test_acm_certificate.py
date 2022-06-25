@@ -20,8 +20,8 @@ __metaclass__ = type
 
 from pprint import pprint
 
-from ansible_collections.community.aws.plugins.modules.aws_acm import chain_compare
-from ansible_collections.community.aws.plugins.modules.aws_acm import pem_chain_split
+from ansible_collections.community.aws.plugins.modules.acm_certificate import chain_compare
+from ansible_collections.community.aws.plugins.modules.acm_certificate import pem_chain_split
 from ansible.module_utils._text import to_text
 
 
