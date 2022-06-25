@@ -1,6 +1,8 @@
 requires_ansible: '>=2.9.10'
 action_groups:
   aws:
+  - acm_certificate
+  - acm_certificate_info
   - aws_acm
   - aws_acm_info
   - aws_api_gateway
@@ -200,6 +202,12 @@ action_groups:
   - wafv2_web_acl_info
 plugin_routing:
   modules:
+    aws_acm:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.acm_certificate
+    aws_acm_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.acm_certificate_info
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_instance:
