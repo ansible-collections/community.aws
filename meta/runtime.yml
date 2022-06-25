@@ -186,6 +186,9 @@ action_groups:
   - s3_metrics_configuration
   - s3_sync
   - s3_website
+  - ses_identity
+  - ses_identity_policy
+  - ses_rule_set
   - sns
   - sns_topic
   - sns_topic_info
@@ -208,6 +211,15 @@ plugin_routing:
     aws_acm_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.acm_certificate_info
+    aws_ses_identity:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ses_identity
+    aws_ses_identity_policy:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ses_identity_policy
+    aws_ses_rule_set:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ses_rule_set
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_instance:

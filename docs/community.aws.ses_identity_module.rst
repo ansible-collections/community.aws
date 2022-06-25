@@ -1,9 +1,9 @@
-.. _community.aws.aws_ses_identity_module:
+.. _community.aws.ses_identity_module:
 
 
-******************************
-community.aws.aws_ses_identity
-******************************
+**************************
+community.aws.ses_identity
+**************************
 
 **Manages SES email and domain identity**
 
@@ -19,6 +19,7 @@ Synopsis
 --------
 - This module allows the user to manage verified email and domain identity for SES.
 - This covers verifying and removing identities as well as setting up complaint, bounce and delivery notification settings.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_ses_identity``. The usage did not change.
 
 
 
@@ -457,17 +458,17 @@ Examples
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
     - name: Ensure example@example.com email identity exists
-      community.aws.aws_ses_identity:
+      community.aws.ses_identity:
         identity: example@example.com
         state: present
 
     - name: Delete example@example.com email identity
-      community.aws.aws_ses_identity:
+      community.aws.ses_identity:
         email: example@example.com
         state: absent
 
     - name: Ensure example.com domain identity exists
-      community.aws.aws_ses_identity:
+      community.aws.ses_identity:
         identity: example.com
         state: present
 
@@ -481,7 +482,7 @@ Examples
       register: topic_info
 
     - name: Deliver feedback to topic instead of owner email
-      community.aws.aws_ses_identity:
+      community.aws.ses_identity:
         identity: example@example.com
         state: present
         complaint_notifications:
@@ -502,7 +503,7 @@ Examples
       register: topic_info
 
     - name: Delivery notifications to topic
-      community.aws.aws_ses_identity:
+      community.aws.ses_identity:
         identity: example@example.com
         state: present
         delivery_notifications:
@@ -752,4 +753,4 @@ Status
 Authors
 ~~~~~~~
 
-- Ed Costello    (@orthanc)
+- Ed Costello (@orthanc)
