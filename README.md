@@ -32,8 +32,8 @@ Name | Description
 ### Modules
 Name | Description
 --- | ---
-[community.aws.aws_acm](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_acm_module.rst)|Upload and delete certificates in the AWS Certificate Manager service
-[community.aws.aws_acm_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_acm_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
+[community.aws.acm_certificate](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.acm_certificate_module.rst)|Upload and delete certificates in the AWS Certificate Manager service
+[community.aws.acm_certificate_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.acm_certificate_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.aws_api_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_api_gateway_module.rst)|Manage AWS API Gateway APIs
 [community.aws.aws_api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies

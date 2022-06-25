@@ -1,9 +1,9 @@
-.. _community.aws.aws_acm_module:
+.. _community.aws.acm_certificate_module:
 
 
-*********************
-community.aws.aws_acm
-*********************
+*****************************
+community.aws.acm_certificate
+*****************************
 
 **Upload and delete certificates in the AWS Certificate Manager service**
 

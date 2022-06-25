@@ -1,9 +1,9 @@
-.. _community.aws.aws_acm_info_module:
+.. _community.aws.acm_certificate_info_module:
 
 
-**************************
-community.aws.aws_acm_info
-**************************
+**********************************
+community.aws.acm_certificate_info
+**********************************
 
 **Retrieve certificate information from AWS Certificate Manager service**
 
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Retrieve information for ACM certificates
+- Retrieve information for ACM certificates.
 - Note that this will not return information about uploaded keys of size 4096 bits, due to a limitation of the ACM API.
 
 
@@ -157,7 +157,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The domain name of an ACM certificate to limit the search to</div>
+                        <div>The domain name of an ACM certificate to limit the search to.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
                 </td>
             </tr>
@@ -249,7 +249,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Status to filter the certificate results</div>
+                        <div>Status to filter the certificate results.</div>
                 </td>
             </tr>
             <tr>
