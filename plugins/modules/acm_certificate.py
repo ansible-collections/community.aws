@@ -74,6 +74,8 @@ description:
   - >
     Note that this may not work properly with keys of size 4096 bits, due to a
     limitation of the ACM API.
+  - Prior to release 5.0.0 this module was called C(community.aws.aws_acm).
+    The usage did not change.
 options:
   certificate:
     description:
