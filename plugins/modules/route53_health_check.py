@@ -541,18 +541,21 @@ def main():
                                            name_tag, module.params.get('purge_tags'))
         # Update Health Check
         else:
-            # Update when health_check_name is a unique identifier
+            # If health_check_name is a unique identifier
             if module.params.get('use_unique_names'):
                 existing_checks_with_name = get_existing_checks_with_name()
+                # update the health_check if another health check with same name exists
                 if health_check_name in existing_checks_with_name:
                     changed, action = update_health_check(existing_checks_with_name[health_check_name])
                 else:
+                    # create a new health_check if another health check with same name does not exists
                     changed, action, check_id = create_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
-                    # Add tags
+                    # Add tags to add name to health check
                     if check_id:
                         tags = module.params.get('tags')
-                        if health_check_name:
-                            tags['Name'] = health_check_name
+                        if not tags:
+                            tags = {}
+                        tags['Name'] = health_check_name
                         changed |= manage_tags(module, client, 'healthcheck', check_id,
                                                tags, module.params.get('purge_tags'))
             else:
