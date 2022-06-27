@@ -27,7 +27,9 @@ failure_threshold_updated: 1
 # for string_match we need an _STR_MATCH type
 type_https_match: 'HTTPS_STR_MATCH'
 type_http_match: 'HTTP_STR_MATCH'
+type_http: 'HTTP'
 resource_path: '/health.php'
+resource_path_1: '/new-health.php'
 resource_path_updated: '/healthz'
 string_match: 'Hello'
 string_match_updated: 'Hello World'

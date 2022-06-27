@@ -32,6 +32,9 @@
   - set_fact:
       ip_address: '{{ eip.public_ip }}'
 
+  - name: Run tests for creating multiple health checks with name as unique identifier
+    include_tasks: create_multiple_health_checks.yml
+
   # Minimum possible definition
   - name: 'Create a TCP health check - check_mode'
     route53_health_check:
