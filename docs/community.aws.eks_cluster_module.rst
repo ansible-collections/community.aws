@@ -1,11 +1,11 @@
-.. _community.aws.aws_eks_cluster_module:
+.. _community.aws.eks_cluster_module:
 
 
-*****************************
-community.aws.aws_eks_cluster
-*****************************
+*************************
+community.aws.eks_cluster
+*************************
 
-**Manage Elastic Kubernetes Service Clusters**
+**Manage Elastic Kubernetes Service (EKS) Clusters**
 
 
 Version added: 1.0.0
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Manage Elastic Kubernetes Service Clusters
+- Manage Elastic Kubernetes Service (EKS) Clusters.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_eks_cluster``. The usage did not change.
 
 
 
@@ -155,7 +156,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of EKS cluster</div>
+                        <div>Name of the EKS cluster.</div>
                 </td>
             </tr>
             <tr>
@@ -202,7 +203,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>ARN of IAM role used by the EKS cluster</div>
+                        <div>ARN of IAM role used by the EKS cluster.</div>
                 </td>
             </tr>
             <tr>
@@ -218,7 +219,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>list of security group names or IDs</div>
+                        <div>List of security group names or IDs.</div>
                 </td>
             </tr>
             <tr>
@@ -255,7 +256,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>desired state of the EKS cluster</div>
+                        <div>Desired state of the EKS cluster.</div>
                 </td>
             </tr>
             <tr>
@@ -271,7 +272,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>list of subnet IDs for the Kubernetes cluster</div>
+                        <div>List of subnet IDs for the Kubernetes cluster.</div>
                 </td>
             </tr>
             <tr>
@@ -305,7 +306,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Kubernetes version - defaults to latest</div>
+                        <div>Kubernetes version.</div>
+                        <div>Defaults to <code>latest</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -365,7 +367,7 @@ Examples
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
     - name: Create an EKS cluster
-      community.aws.aws_eks_cluster:
+      community.aws.eks_cluster:
         name: my_cluster
         version: 1.14
         role_arn: my_eks_role
@@ -377,7 +379,7 @@ Examples
       register: caller_facts
 
     - name: Remove an EKS cluster
-      community.aws.aws_eks_cluster:
+      community.aws.eks_cluster:
         name: my_cluster
         wait: yes
         state: absent
@@ -580,7 +582,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                             <div>ARN of the IAM role used by the cluster</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:iam::111111111111:role/aws_eks_cluster_role</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:iam::111111111111:role/eks_cluster_role</div>
                 </td>
             </tr>
             <tr>

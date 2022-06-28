@@ -111,6 +111,7 @@ action_groups:
   - ecs_taskdefinition_info
   - efs
   - efs_info
+  - eks_cluster
   - efs_tag
   - eks_fargate_profile
   - elasticache
@@ -214,6 +215,9 @@ plugin_routing:
     aws_ses_identity:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_identity
+    aws_eks_cluster:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.eks_cluster
     aws_ses_identity_policy:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_identity_policy

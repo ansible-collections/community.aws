@@ -1,0 +1,2 @@
+minor_changes:
+- aws_eks_cluster - the ``aws_eks_cluster`` module has been renamed to ``eks_cluster``, ``aws_eks_cluster`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1269).
