@@ -227,9 +227,6 @@ plugin_routing:
     aws_batch_job_queue:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_job_queue
-    aws_ses_identity:
-      # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.ses_identity
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster
@@ -239,6 +236,9 @@ plugin_routing:
     aws_s3_cors:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_cors
+    aws_ses_identity:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ses_identity
     aws_ses_rule_set:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_rule_set
