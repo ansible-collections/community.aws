@@ -497,6 +497,7 @@ def main():
     request_interval_in = module.params.get('request_interval')
     failure_threshold_in = module.params.get('failure_threshold')
     health_check_name = module.params.get('health_check_name')
+    tags = module.params.get('tags')
 
     # Default port
     if port_in is None:
@@ -529,16 +530,12 @@ def main():
     if state_in == 'absent':
         changed, action = delete_health_check(check_id)
         check_id = None
+
     # Create Health Check
     elif state_in == 'present':
-        if existing_check is None:
+        if existing_check is None and not module.params.get('use_unique_names'):
             changed, action, check_id = create_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
-            if check_id:
-                if health_check_name:
-                    name_tag = {}
-                    name_tag['Name'] = health_check_name
-                    changed |= manage_tags(module, client, 'healthcheck', check_id,
-                                           name_tag, module.params.get('purge_tags'))
+
         # Update Health Check
         else:
             # If health_check_name is a unique identifier
@@ -550,20 +547,16 @@ def main():
                 else:
                     # create a new health_check if another health check with same name does not exists
                     changed, action, check_id = create_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
-                    # Add tags to add name to health check
+                    # Add tag to add name to health check
                     if check_id:
-                        tags = module.params.get('tags')
                         if not tags:
                             tags = {}
                         tags['Name'] = health_check_name
-                        changed |= manage_tags(module, client, 'healthcheck', check_id,
-                                               tags, module.params.get('purge_tags'))
+
             else:
                 changed, action = update_health_check(existing_check)
 
         if check_id:
-            tags = module.params.get('tags')
-
             changed |= manage_tags(module, client, 'healthcheck', check_id,
                                    tags, module.params.get('purge_tags'))
 
