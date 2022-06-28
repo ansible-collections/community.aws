@@ -366,6 +366,7 @@ class SnsTopicManager(object):
         self.attributes_set = []
 
     def _create_topic(self):
+        attributes = {}
         tags = []
 
         # NOTE: Never set FifoTopic = False. Some regions (including GovCloud)
