@@ -8,48 +8,15 @@ on:
 
 jobs:
   validate-docs:
-    runs-on: ubuntu-latest
     permissions:
       contents: read
     name: Validate Ansible Docs
-    env:
-      ANSIBLE_COLLECTIONS_PATHS: ${{ github.workspace }}
-    if: github.event.action != 'closed'
-    steps:
-      - name: Set up Python
-        uses: actions/setup-python@v3
-        with:
-          python-version: '3.9'
+    uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-pr.yml@main
+    with:
+      init-lenient: false
+      init-fail-on-error: true
+      extra-collections: 'amazon.aws'
 
-      - name: Install Ansible
-        run: pip install https://github.com/ansible/ansible/archive/devel.tar.gz --disable-pip-version-check
-
-      - name: Install extra collections
-        shell: bash
-        run: ansible-galaxy collection install amazon.aws
-
-      - name: Checkout
-        uses: actions/checkout@v3
-        with:
-          ref: refs/pull/${{ github.event.number }}/merge
-          path: ansible_collections/amazon/aws
-
-      - name: Initialize the build environment
-        id: init
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-init@main
-        with:
-          collections: amazon.aws
-          lenient: false
-          fail-on-error: true
-
-      - name: Build
-        id: build
-        uses: ansible-community/github-docs-build/actions/ansible-docs-build-html@main
-        with:
-          artifact-upload: false
-        # Add continue-on-error: true because of failing due to
-        # 'Missing documentation or could not parse documentation: unknown doc_fragment(s) in file'
-        continue-on-error: true
 
   build-docs:
     permissions:
