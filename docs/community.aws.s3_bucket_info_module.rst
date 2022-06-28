@@ -1,11 +1,11 @@
-.. _community.aws.aws_s3_bucket_info_module:
+.. _community.aws.s3_bucket_info_module:
 
 
-********************************
-community.aws.aws_s3_bucket_info
-********************************
+****************************
+community.aws.s3_bucket_info
+****************************
 
-**lists S3 buckets in AWS**
+**Lists S3 buckets in AWS**
 
 
 Version added: 1.0.0
@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Lists S3 buckets and details about those buckets.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_s3_bucket_info``. The usage did not change.
 
 
 
@@ -120,7 +121,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Retrieve requested S3 bucket detailed information</div>
+                        <div>Retrieve requested S3 bucket detailed information.</div>
                         <div>Each bucket_X option executes one API call, hence many options being set to <code>true</code> will cause slower module execution.</div>
                         <div>You can limit buckets by using the <em>name</em> or <em>name_filter</em> option.</div>
                 </td>
@@ -629,12 +630,12 @@ Examples
 
     # Note: Only AWS S3 is currently supported
 
-    # Lists all s3 buckets
-    - community.aws.aws_s3_bucket_info:
+    # Lists all S3 buckets
+    - community.aws.s3_bucket_info:
       register: result
 
     # Retrieve detailed bucket information
-    - community.aws.aws_s3_bucket_info:
+    - community.aws.s3_bucket_info:
         # Show only buckets with name matching
         name_filter: your.testing
         # Choose facts to retrieve

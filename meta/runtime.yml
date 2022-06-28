@@ -182,6 +182,8 @@ action_groups:
   - route53_info
   - route53_zone
   - s3_bucket_notification
+  - s3_bucket_info
+  - s3_cors
   - s3_lifecycle
   - s3_logging
   - s3_metrics_configuration
@@ -218,9 +220,12 @@ plugin_routing:
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster
-    aws_ses_identity_policy:
+    aws_s3_bucket_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.ses_identity_policy
+      redirect: community.aws.s3_bucket_info
+    aws_s3_cors:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.s3_cors
     aws_ses_rule_set:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_rule_set

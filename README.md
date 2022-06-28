@@ -62,8 +62,6 @@ Name | Description
 [community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
 [community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
-[community.aws.aws_s3_bucket_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_s3_bucket_info_module.rst)|lists S3 buckets in AWS
-[community.aws.aws_s3_cors](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_s3_cors_module.rst)|Manage CORS for S3 buckets in AWS
 [community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
 [community.aws.aws_sgw_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_sgw_info_module.rst)|Fetch AWS Storage Gateway information
 [community.aws.aws_ssm_parameter_store](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ssm_parameter_store_module.rst)|Manage key-value pairs in AWS SSM parameter store
@@ -202,7 +200,9 @@ Name | Description
 [community.aws.route53_health_check](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.route53_health_check_module.rst)|Manage health-checks in Amazons Route53 DNS service
 [community.aws.route53_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.route53_info_module.rst)|Retrieves route53 details using AWS methods
 [community.aws.route53_zone](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.route53_zone_module.rst)|add or delete Route53 zones
+[community.aws.s3_bucket_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_bucket_info_module.rst)|Lists S3 buckets in AWS
 [community.aws.s3_bucket_notification](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_bucket_notification_module.rst)|Creates, updates or deletes S3 Bucket notifications targeting Lambda functions, SNS or SQS.
+[community.aws.s3_cors](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_cors_module.rst)|Manage CORS for S3 buckets in AWS
 [community.aws.s3_lifecycle](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_lifecycle_module.rst)|Manage S3 bucket lifecycle rules in AWS
 [community.aws.s3_logging](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_logging_module.rst)|Manage logging facility of an s3 bucket in AWS
 [community.aws.s3_metrics_configuration](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_metrics_configuration_module.rst)|Manage s3 bucket metrics configuration in AWS

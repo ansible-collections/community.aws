@@ -10,7 +10,6 @@ aws_direct_connect_connection
 aws_direct_connect_gateway
 aws_direct_connect_link_aggregation_group
 aws_direct_connect_virtual_interface
-aws_s3_cors
 aws_sgw_info
 cloudfront_info
 cloudfront_invalidation
@@ -33,4 +32,5 @@ lambda_event
 rds_instance_snapshot
 rds_snapshot_info
 redshift_cross_region_snapshots
+s3_cors
 s3_website
