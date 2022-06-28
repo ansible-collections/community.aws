@@ -19,6 +19,7 @@ Synopsis
 --------
 - Retrieve information for ACM certificates.
 - Note that this will not return information about uploaded keys of size 4096 bits, due to a limitation of the ACM API.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_acm_info``. The usage did not change.
 
 
 
