@@ -372,7 +372,7 @@ class SnsTopicManager(object):
         # NOTE: Never set FifoTopic = False. Some regions (including GovCloud)
         # don't support the attribute being set, even to False.
         if self.topic_type == 'fifo':
-            attributes = {'FifoTopic': 'true'}
+            attributes['FifoTopic'] = 'true'
             if not self.name.endswith('.fifo'):
                 self.name = self.name + '.fifo'
 
