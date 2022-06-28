@@ -37,9 +37,6 @@ Name | Description
 [community.aws.aws_api_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_api_gateway_module.rst)|Manage AWS API Gateway APIs
 [community.aws.aws_api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
-[community.aws.aws_batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
-[community.aws.aws_batch_job_definition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
-[community.aws.aws_batch_job_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_batch_job_queue_module.rst)|Manage AWS Batch Job Queues
 [community.aws.aws_codebuild](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codebuild_module.rst)|Create or delete an AWS CodeBuild project
 [community.aws.aws_codecommit](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codecommit_module.rst)|Manage repositories in AWS CodeCommit
 [community.aws.aws_codepipeline](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codepipeline_module.rst)|Create or delete AWS CodePipelines
@@ -73,6 +70,9 @@ Name | Description
 [community.aws.aws_waf_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_info_module.rst)|Retrieve information for WAF ACLs, Rule , Conditions and Filters.
 [community.aws.aws_waf_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_rule_module.rst)|Create and delete WAF Rules
 [community.aws.aws_waf_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_web_acl_module.rst)|Create and delete WAF Web ACLs
+[community.aws.batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
+[community.aws.batch_job_definition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
+[community.aws.batch_job_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_queue_module.rst)|Manage AWS Batch Job Queues
 [community.aws.cloudformation_exports_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudformation_exports_info_module.rst)|Read a value from CloudFormation Exports
 [community.aws.cloudformation_stack_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudformation_stack_set_module.rst)|Manage groups of CloudFormation stacks
 [community.aws.cloudfront_distribution](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_distribution_module.rst)|Create, update and delete AWS CloudFront distributions

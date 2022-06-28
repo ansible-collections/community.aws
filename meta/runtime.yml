@@ -47,6 +47,9 @@ action_groups:
   - aws_waf_info
   - aws_waf_rule
   - aws_waf_web_acl
+  - batch_compute_environment
+  - batch_job_definition
+  - batch_job_queue
   - cloudformation_exports_info
   - cloudformation_stack_set
   - cloudfront_distribution
@@ -212,6 +215,15 @@ plugin_routing:
     aws_acm_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.acm_certificate_info
+    aws_batch_compute_environment:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.batch_compute_environment
+    aws_batch_job_definition:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.batch_job_definition
+    aws_batch_job_queue:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.batch_job_queue
     aws_ses_identity:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_identity
