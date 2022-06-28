@@ -66,9 +66,6 @@ Name | Description
 [community.aws.aws_s3_bucket_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_s3_bucket_info_module.rst)|lists S3 buckets in AWS
 [community.aws.aws_s3_cors](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_s3_cors_module.rst)|Manage CORS for S3 buckets in AWS
 [community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
-[community.aws.aws_ses_identity](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ses_identity_module.rst)|Manages SES email and domain identity
-[community.aws.aws_ses_identity_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ses_identity_policy_module.rst)|Manages SES sending authorization policies
-[community.aws.aws_ses_rule_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ses_rule_set_module.rst)|Manages SES inbound receipt rule sets
 [community.aws.aws_sgw_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_sgw_info_module.rst)|Fetch AWS Storage Gateway information
 [community.aws.aws_ssm_parameter_store](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ssm_parameter_store_module.rst)|Manage key-value pairs in AWS SSM parameter store
 [community.aws.aws_step_functions_state_machine](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_module.rst)|Manage AWS Step Functions state machines
@@ -211,6 +208,9 @@ Name | Description
 [community.aws.s3_metrics_configuration](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_metrics_configuration_module.rst)|Manage s3 bucket metrics configuration in AWS
 [community.aws.s3_sync](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_sync_module.rst)|Efficiently upload multiple files to S3
 [community.aws.s3_website](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_website_module.rst)|Configure an s3 bucket as a website
+[community.aws.ses_identity](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ses_identity_module.rst)|Manages SES email and domain identity
+[community.aws.ses_identity_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ses_identity_policy_module.rst)|Manages SES sending authorization policies
+[community.aws.ses_rule_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ses_rule_set_module.rst)|Manages SES inbound receipt rule sets
 [community.aws.sns](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_module.rst)|Send Amazon Simple Notification Service messages
 [community.aws.sns_topic](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_topic_module.rst)|Manages AWS SNS topics and subscriptions
 [community.aws.sns_topic_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_topic_info_module.rst)|sns_topic_info module

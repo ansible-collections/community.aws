@@ -1,0 +1,4 @@
+minor_changes:
+- aws_ses_identity - the ``aws_ses_identity`` module has been renamed to ``ses_identity``, ``aws_ses_identity`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1264).
+- aws_ses_identity_policy - the ``aws_ses_identity_policy`` module has been renamed to ``ses_identity_policy``, ``aws_ses_identity_policy`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1264).
+- aws_ses_rule_set - the ``aws_ses_rule_set`` module has been renamed to ``ses_rule_set``, ``aws_ses_rule_set`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1264).
