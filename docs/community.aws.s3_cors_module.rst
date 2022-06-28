@@ -1,9 +1,9 @@
-.. _community.aws.aws_s3_cors_module:
+.. _community.aws.s3_cors_module:
 
 
-*************************
-community.aws.aws_s3_cors
-*************************
+*********************
+community.aws.s3_cors
+*********************
 
 **Manage CORS for S3 buckets in AWS**
 
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Manage CORS for S3 buckets in AWS
+- Manage CORS for S3 buckets in AWS.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_s3_cors``. The usage did not change.
 
 
 
@@ -155,7 +156,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of the s3 bucket</div>
+                        <div>Name of the S3 bucket.</div>
                 </td>
             </tr>
             <tr>
@@ -203,7 +204,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Cors rules to put on the s3 bucket</div>
+                        <div>Cors rules to put on the S3 bucket.</div>
                 </td>
             </tr>
             <tr>
@@ -241,7 +242,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Create or remove cors on the s3 bucket</div>
+                        <div>Create or remove cors on the S3 bucket.</div>
                 </td>
             </tr>
             <tr>
@@ -285,7 +286,7 @@ Examples
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
     # Create a simple cors for s3 bucket
-    - community.aws.aws_s3_cors:
+    - community.aws.s3_cors:
         name: mys3bucket
         state: present
         rules:
@@ -302,7 +303,7 @@ Examples
             max_age_seconds: 30000
 
     # Remove cors for s3 bucket
-    - community.aws.aws_s3_cors:
+    - community.aws.s3_cors:
         name: mys3bucket
         state: absent
 
