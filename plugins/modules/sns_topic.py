@@ -26,8 +26,11 @@ options:
     type: str
   topic_type:
     description:
-      - The type of topic that should be created. Either Standard for FIFO (first-in, first-out)
-    choices: ['standard', 'fifo']
+      - The type of topic that should be created. Either Standard for FIFO (first-in, first-out).
+      - Some regions, including GovCloud regions do not support FIFO topics.
+      - Use a default value of  'standard' or omit the option if the region
+      - does not support FIFO topics.
+    choices: ["standard", "fifo"]
     default: 'standard'
     type: str
     version_added: 2.0.0
@@ -363,19 +366,20 @@ class SnsTopicManager(object):
         self.attributes_set = []
 
     def _create_topic(self):
-        attributes = {'FifoTopic': 'false'}
         tags = []
-        endpoint = self.module.region
 
+        # NOTE: Never set FifoTopic = False. Some regions (including GovCloud)
+        # don't support the attribute being set, even to False.
         if self.topic_type == 'fifo':
-            if "us-gov" not in endpoint:
-                attributes['FifoTopic'] = 'true'
+            attributes = {'FifoTopic': 'true'}
             if not self.name.endswith('.fifo'):
                 self.name = self.name + '.fifo'
 
         if not self.check_mode:
             try:
-                response = self.connection.create_topic(Name=self.name, Attributes=attributes, Tags=tags)
+                response = self.connection.create_topic(Name=self.name,
+                                                        Attributes=attributes,
+                                                        Tags=tags)
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Couldn't create topic %s" % self.name)
             self.topic_arn = response['TopicArn']
@@ -508,7 +512,6 @@ class SnsTopicManager(object):
 
 
 def main():
-
     # We're kinda stuck with CamelCase here, it would be nice to switch to
     # snake_case, but we'd need to purge out the alias entries
     http_retry_args = dict(
