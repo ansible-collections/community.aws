@@ -53,7 +53,6 @@ Name | Description
 [community.aws.aws_direct_connect_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_gateway_module.rst)|Manage AWS Direct Connect gateway
 [community.aws.aws_direct_connect_link_aggregation_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_link_aggregation_group_module.rst)|Manage Direct Connect LAG bundles
 [community.aws.aws_direct_connect_virtual_interface](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_virtual_interface_module.rst)|Manage Direct Connect virtual interfaces
-[community.aws.aws_eks_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_eks_cluster_module.rst)|Manage Elastic Kubernetes Service Clusters
 [community.aws.aws_elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_elasticbeanstalk_app_module.rst)|Create, update, and delete an elastic beanstalk application
 [community.aws.aws_glue_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_connection_module.rst)|Manage an AWS Glue connection
 [community.aws.aws_glue_job](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_job_module.rst)|Manage an AWS Glue job
@@ -137,6 +136,7 @@ Name | Description
 [community.aws.efs](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.efs_module.rst)|create and maintain EFS file systems
 [community.aws.efs_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.efs_info_module.rst)|Get information about Amazon EFS file systems
 [community.aws.efs_tag](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.efs_tag_module.rst)|create and remove tags on Amazon EFS resources
+[community.aws.eks_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.eks_cluster_module.rst)|Manage Elastic Kubernetes Service (EKS) Clusters
 [community.aws.eks_fargate_profile](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.eks_fargate_profile_module.rst)|Manage EKS Fargate Profile
 [community.aws.elasticache](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_module.rst)|Manage cache clusters in Amazon ElastiCache
 [community.aws.elasticache_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_info_module.rst)|Retrieve information for AWS ElastiCache clusters
