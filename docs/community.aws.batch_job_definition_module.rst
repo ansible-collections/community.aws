@@ -1,9 +1,9 @@
-.. _community.aws.aws_batch_job_definition_module:
+.. _community.aws.batch_job_definition_module:
 
 
-**************************************
-community.aws.aws_batch_job_definition
-**************************************
+**********************************
+community.aws.batch_job_definition
+**********************************
 
 **Manage AWS Batch Job Definitions**
 
@@ -19,7 +19,8 @@ Synopsis
 --------
 - This module allows the management of AWS Batch Job Definitions.
 - It is idempotent and supports "Check" mode.
-- Use module :ref:`community.aws.aws_batch_compute_environment <community.aws.aws_batch_compute_environment_module>` to manage the compute environment, :ref:`community.aws.aws_batch_job_queue <community.aws.aws_batch_job_queue_module>` to manage job queues, :ref:`community.aws.aws_batch_job_definition <community.aws.aws_batch_job_definition_module>` to manage job definitions.
+- Use module :ref:`community.aws.batch_compute_environment <community.aws.batch_compute_environment_module>` to manage the compute environment, :ref:`community.aws.batch_job_queue <community.aws.batch_job_queue_module>` to manage job queues, :ref:`community.aws.batch_job_definition <community.aws.batch_job_definition_module>` to manage job definitions.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_batch_job_definition``. The usage did not change.
 
 
 
@@ -681,13 +682,8 @@ Examples
 .. code-block:: yaml
 
     ---
-    - hosts: localhost
-      gather_facts: no
-      vars:
-        state: present
-      tasks:
     - name: My Batch Job Definition
-      community.aws.aws_batch_job_definition:
+      community.aws.batch_job_definition:
         job_definition_name: My Batch Job Definition
         state: present
         type: container
