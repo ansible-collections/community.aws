@@ -1,0 +1,9 @@
+breaking_changes:
+- iam_server_certificate - Passing file names to the ``cert``, ``chain_cert``
+  and ``key`` parameters has been removed. We recommend using a lookup plugin
+  to read the files instead, see the documentation for an example
+  (https://github.com/ansible-collections/community.aws/pull/1265).
+- iam_server_certificate - the default value for the ``dup_ok`` parameter has
+  been changed to ``true``. To preserve the original behaviour explicitly set
+  the ``dup_ok`` parameter to ``false``
+  (https://github.com/ansible-collections/community.aws/pull/1265).
