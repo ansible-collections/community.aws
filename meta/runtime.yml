@@ -271,17 +271,3 @@ plugin_routing:
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.lambda_execute
-    iam_cert:
-      redirect: community.aws.iam_server_certificate
-      deprecation:
-        removal_version: 5.0.0
-        warning_text: >-
-          iam_cert has been renamed to iam_server_certificate for consistency.
-          Please update your tasks.
-    rds_snapshot:
-       redirect: community.aws.rds_instance_snapshot
-       deprecation:
-         removal_version: 5.0.0
-         warning_text: >-
-           rds_snapshot has been renamed to rds_instance_snapshot.
-           Please update your tasks.
