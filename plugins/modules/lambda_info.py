@@ -82,15 +82,15 @@ function.TheName:
         - C(function) has been deprecated in will be removed in the next major release after 2025-01-01.
     returned: success
     type: dict
-lambda_info:
-    description: List of information for each lambda matching the query.
+functions:
+    description: List of information for each lambda function matching the query.
     returned: always
     type: list
     elements: dict
     version_added: 4.1.0
     contains:
         aliases:
-            description: The aliases assoicated with the function.
+            description: The aliases associated with the function.
             returned: when C(query) is I(aliases) or I(all)
             type: list
             elements: str
@@ -304,7 +304,7 @@ def alias_details(client, module, function_name):
     return camel_dict_to_snake_dict(lambda_info)
 
 
-def list_lambdas(client, module):
+def list_functions(client, module):
     """
     Returns queried facts for a specified function (or all functions).
 
@@ -323,40 +323,40 @@ def list_lambdas(client, module):
         function_names = [function_info['FunctionName'] for function_info in all_function_info]
 
     query = module.params['query']
-    lambdas = []
+    functions = []
 
     # keep returning deprecated response (dict of dicts) until removed
     all_facts = {}
 
     for function_name in function_names:
-        current_lambda = {}
+        function = {}
 
         # query = 'config' returns info such as FunctionName, FunctionArn, Description, etc
         # these details should be returned regardless of the query
-        current_lambda.update(config_details(client, module, function_name))
+        function.update(config_details(client, module, function_name))
 
         if query in ['all', 'aliases']:
-            current_lambda.update(alias_details(client, module, function_name))
+            function.update(alias_details(client, module, function_name))
 
         if query in ['all', 'policy']:
-            current_lambda.update(policy_details(client, module, function_name))
+            function.update(policy_details(client, module, function_name))
 
         if query in ['all', 'versions']:
-            current_lambda.update(version_details(client, module, function_name))
+            function.update(version_details(client, module, function_name))
 
         if query in ['all', 'mappings']:
-            current_lambda.update(mapping_details(client, module, function_name))
+            function.update(mapping_details(client, module, function_name))
 
         if query in ['all', 'tags']:
-            current_lambda.update(tags_details(client, module, function_name))
+            function.update(tags_details(client, module, function_name))
 
-        all_facts[current_lambda['function_name']] = current_lambda
+        all_facts[function['function_name']] = function
 
         # add current lambda to list of lambdas
-        lambdas.append(current_lambda)
+        functions.append(function)
 
     # return info
-    module.exit_json(function=all_facts, lambda_info=lambdas, changed=False)
+    module.exit_json(function=all_facts, functions=functions, changed=False)
 
 
 def config_details(client, module, function_name):
@@ -524,7 +524,7 @@ def main():
         collection_name='community.aws'
     )
 
-    list_lambdas(client, module)
+    list_functions(client, module)
 
 
 if __name__ == '__main__':

@@ -264,17 +264,17 @@
     assert:
       that:
       - lambda_infos_all is not failed
-      - lambda_infos_all.lambda_info | length > 0
-      - lambda_infos_all.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_all.lambda_info[0].runtime == lambda_python_runtime
-      - lambda_infos_all.lambda_info[0].description == ""
-      - lambda_infos_all.lambda_info[0].function_arn is defined
-      - lambda_infos_all.lambda_info[0].handler == lambda_python_handler
-      - lambda_infos_all.lambda_info[0].versions is defined
-      - lambda_infos_all.lambda_info[0].aliases is defined
-      - lambda_infos_all.lambda_info[0].policy is defined
-      - lambda_infos_all.lambda_info[0].mappings is defined
-      - lambda_infos_all.lambda_info[0].tags is defined
+      - lambda_infos_all.functions | length > 0
+      - lambda_infos_all.functions[0].function_name == lambda_function_name
+      - lambda_infos_all.functions[0].runtime == lambda_python_runtime
+      - lambda_infos_all.functions[0].description == ""
+      - lambda_infos_all.functions[0].function_arn is defined
+      - lambda_infos_all.functions[0].handler == lambda_python_handler
+      - lambda_infos_all.functions[0].versions is defined
+      - lambda_infos_all.functions[0].aliases is defined
+      - lambda_infos_all.functions[0].policy is defined
+      - lambda_infos_all.functions[0].mappings is defined
+      - lambda_infos_all.functions[0].tags is defined
 
   - name: lambda_info | Ensure default query value is 'config' when function name omitted
     lambda_info:
@@ -284,17 +284,17 @@
     assert:
       that:
       - lambda_infos_query_config is not failed
-      - lambda_infos_query_config.lambda_info | length > 0
-      - lambda_infos_query_config.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_query_config.lambda_info[0].runtime == lambda_python_runtime
-      - lambda_infos_query_config.lambda_info[0].description == ""
-      - lambda_infos_query_config.lambda_info[0].function_arn is defined
-      - lambda_infos_query_config.lambda_info[0].handler == lambda_python_handler
-      - lambda_infos_query_config.lambda_info[0].versions is not defined
-      - lambda_infos_query_config.lambda_info[0].aliases is not defined
-      - lambda_infos_query_config.lambda_info[0].policy is not defined
-      - lambda_infos_query_config.lambda_info[0].mappings is not defined
-      - lambda_infos_query_config.lambda_info[0].tags is not defined
+      - lambda_infos_query_config.functions | length > 0
+      - lambda_infos_query_config.functions[0].function_name == lambda_function_name
+      - lambda_infos_query_config.functions[0].runtime == lambda_python_runtime
+      - lambda_infos_query_config.functions[0].description == ""
+      - lambda_infos_query_config.functions[0].function_arn is defined
+      - lambda_infos_query_config.functions[0].handler == lambda_python_handler
+      - lambda_infos_query_config.functions[0].versions is not defined
+      - lambda_infos_query_config.functions[0].aliases is not defined
+      - lambda_infos_query_config.functions[0].policy is not defined
+      - lambda_infos_query_config.functions[0].mappings is not defined
+      - lambda_infos_query_config.functions[0].tags is not defined
 
   - name: lambda_info | Ensure default query value is 'all' when function name specified
     lambda_info:
@@ -304,13 +304,13 @@
     assert:
       that:
       - lambda_infos_query_all is not failed
-      - lambda_infos_query_all.lambda_info | length == 1
-      - lambda_infos_query_all.lambda_info[0].versions|length > 0
-      - lambda_infos_query_all.lambda_info[0].function_name is defined
-      - lambda_infos_query_all.lambda_info[0].policy is defined
-      - lambda_infos_query_all.lambda_info[0].aliases is defined
-      - lambda_infos_query_all.lambda_info[0].mappings is defined
-      - lambda_infos_query_all.lambda_info[0].tags is defined
+      - lambda_infos_query_all.functions | length == 1
+      - lambda_infos_query_all.functions[0].versions|length > 0
+      - lambda_infos_query_all.functions[0].function_name is defined
+      - lambda_infos_query_all.functions[0].policy is defined
+      - lambda_infos_query_all.functions[0].aliases is defined
+      - lambda_infos_query_all.functions[0].mappings is defined
+      - lambda_infos_query_all.functions[0].tags is defined
 
   - name: lambda_info | Gather version infos for given lambda function
     lambda_info:
@@ -321,13 +321,13 @@
     assert:
       that:
       - lambda_infos_versions is not failed
-      - lambda_infos_versions.lambda_info | length == 1
-      - lambda_infos_versions.lambda_info[0].versions|length > 0
-      - lambda_infos_versions.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_versions.lambda_info[0].policy is undefined
-      - lambda_infos_versions.lambda_info[0].aliases is undefined
-      - lambda_infos_versions.lambda_info[0].mappings is undefined
-      - lambda_infos_versions.lambda_info[0].tags is undefined
+      - lambda_infos_versions.functions | length == 1
+      - lambda_infos_versions.functions[0].versions|length > 0
+      - lambda_infos_versions.functions[0].function_name == lambda_function_name
+      - lambda_infos_versions.functions[0].policy is undefined
+      - lambda_infos_versions.functions[0].aliases is undefined
+      - lambda_infos_versions.functions[0].mappings is undefined
+      - lambda_infos_versions.functions[0].tags is undefined
 
   - name: lambda_info | Gather config infos for given lambda function
     lambda_info:
@@ -338,14 +338,14 @@
     assert:
       that:
       - lambda_infos_config is not failed
-      - lambda_infos_config.lambda_info | length == 1
-      - lambda_infos_config.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_config.lambda_info[0].description is defined
-      - lambda_infos_config.lambda_info[0].versions is undefined
-      - lambda_infos_config.lambda_info[0].policy is undefined
-      - lambda_infos_config.lambda_info[0].aliases is undefined
-      - lambda_infos_config.lambda_info[0].mappings is undefined
-      - lambda_infos_config.lambda_info[0].tags is undefined
+      - lambda_infos_config.functions | length == 1
+      - lambda_infos_config.functions[0].function_name == lambda_function_name
+      - lambda_infos_config.functions[0].description is defined
+      - lambda_infos_config.functions[0].versions is undefined
+      - lambda_infos_config.functions[0].policy is undefined
+      - lambda_infos_config.functions[0].aliases is undefined
+      - lambda_infos_config.functions[0].mappings is undefined
+      - lambda_infos_config.functions[0].tags is undefined
 
   - name: lambda_info | Gather policy infos for given lambda function
     lambda_info:
@@ -356,13 +356,13 @@
     assert:
       that:
       - lambda_infos_policy is not failed
-      - lambda_infos_policy.lambda_info | length == 1
-      - lambda_infos_policy.lambda_info[0].policy is defined
-      - lambda_infos_policy.lambda_info[0].versions is undefined
-      - lambda_infos_policy.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_policy.lambda_info[0].aliases is undefined
-      - lambda_infos_policy.lambda_info[0].mappings is undefined
-      - lambda_infos_policy.lambda_info[0].tags is undefined
+      - lambda_infos_policy.functions | length == 1
+      - lambda_infos_policy.functions[0].policy is defined
+      - lambda_infos_policy.functions[0].versions is undefined
+      - lambda_infos_policy.functions[0].function_name == lambda_function_name
+      - lambda_infos_policy.functions[0].aliases is undefined
+      - lambda_infos_policy.functions[0].mappings is undefined
+      - lambda_infos_policy.functions[0].tags is undefined
 
   - name: lambda_info | Gather aliases infos for given lambda function
     lambda_info:
@@ -373,13 +373,13 @@
     assert:
       that:
       - lambda_infos_aliases is not failed
-      - lambda_infos_aliases.lambda_info | length == 1
-      - lambda_infos_aliases.lambda_info[0].aliases is defined
-      - lambda_infos_aliases.lambda_info[0].versions is undefined
-      - lambda_infos_aliases.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_aliases.lambda_info[0].policy is undefined
-      - lambda_infos_aliases.lambda_info[0].mappings is undefined
-      - lambda_infos_aliases.lambda_info[0].tags is undefined
+      - lambda_infos_aliases.functions | length == 1
+      - lambda_infos_aliases.functions[0].aliases is defined
+      - lambda_infos_aliases.functions[0].versions is undefined
+      - lambda_infos_aliases.functions[0].function_name == lambda_function_name
+      - lambda_infos_aliases.functions[0].policy is undefined
+      - lambda_infos_aliases.functions[0].mappings is undefined
+      - lambda_infos_aliases.functions[0].tags is undefined
 
   - name: lambda_info | Gather mappings infos for given lambda function
     lambda_info:
@@ -390,13 +390,13 @@
     assert:
       that:
       - lambda_infos_mappings is not failed
-      - lambda_infos_mappings.lambda_info | length == 1
-      - lambda_infos_mappings.lambda_info[0].mappings is defined
-      - lambda_infos_mappings.lambda_info[0].versions is undefined
-      - lambda_infos_mappings.lambda_info[0].function_name == lambda_function_name
-      - lambda_infos_mappings.lambda_info[0].aliases is undefined
-      - lambda_infos_mappings.lambda_info[0].policy is undefined
-      - lambda_infos_mappings.lambda_info[0].tags is undefined
+      - lambda_infos_mappings.functions | length == 1
+      - lambda_infos_mappings.functions[0].mappings is defined
+      - lambda_infos_mappings.functions[0].versions is undefined
+      - lambda_infos_mappings.functions[0].function_name == lambda_function_name
+      - lambda_infos_mappings.functions[0].aliases is undefined
+      - lambda_infos_mappings.functions[0].policy is undefined
+      - lambda_infos_mappings.functions[0].tags is undefined
 
   # More Lambda update tests
   - name: test state=present with all nullable variables explicitly set to null
