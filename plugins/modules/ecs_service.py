@@ -224,7 +224,7 @@ options:
           - Waits only when I(state) is C(absent).
         type: bool
         default: false
-        version_added: 3.4.0
+        version_added: 4.1.0
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
