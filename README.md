@@ -150,7 +150,6 @@ Name | Description
 [community.aws.elb_target_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_target_group_module.rst)|Manage a target group for an Application or Network load balancer
 [community.aws.elb_target_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_target_group_info_module.rst)|Gather information about ELB target groups in AWS
 [community.aws.elb_target_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_target_info_module.rst)|Gathers which target groups a target is associated with.
-[community.aws.execute_lambda](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.execute_lambda_module.rst)|Execute an AWS Lambda function
 [community.aws.iam_access_key](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_access_key_module.rst)|Manage AWS IAM User access keys
 [community.aws.iam_access_key_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_access_key_info_module.rst)|fetch information about AWS IAM User access keys
 [community.aws.iam_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_group_module.rst)|Manage AWS IAM groups
@@ -170,6 +169,7 @@ Name | Description
 [community.aws.lambda](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_module.rst)|Manage AWS Lambda functions
 [community.aws.lambda_alias](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_alias_module.rst)|Creates, updates or deletes AWS Lambda function aliases
 [community.aws.lambda_event](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_event_module.rst)|Creates, updates or deletes AWS Lambda function event mappings
+[community.aws.lambda_execute](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_execute_module.rst)|Execute an AWS Lambda function
 [community.aws.lambda_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_info_module.rst)|Gathers AWS Lambda function details
 [community.aws.lambda_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_policy_module.rst)|Creates, updates or deletes AWS Lambda policy statements.
 [community.aws.lightsail](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lightsail_module.rst)|Manage instances in AWS Lightsail
