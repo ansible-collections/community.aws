@@ -153,6 +153,7 @@ action_groups:
   - lambda
   - lambda_alias
   - lambda_event
+  - lambda_execute
   - lambda_info
   - lambda_policy
   - lightsail
@@ -226,9 +227,6 @@ plugin_routing:
     aws_batch_job_queue:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_job_queue
-    aws_ses_identity:
-      # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.ses_identity
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster
@@ -238,6 +236,9 @@ plugin_routing:
     aws_s3_cors:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_cors
+    aws_ses_identity:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ses_identity
     aws_ses_rule_set:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_rule_set
@@ -267,6 +268,9 @@ plugin_routing:
        redirect: amazon.aws.ec2_vpc_route_table_info
     elb_classic_lb:
       redirect: amazon.aws.ec2_elb_lb
+    execute_lambda:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.lambda_execute
     iam_cert:
       redirect: community.aws.iam_server_certificate
       deprecation:

@@ -1,0 +1,2 @@
+minor_changes:
+- execute_lambda - the ``execute_lambda`` module has been renamed to ``lambda_execute``, ``execute_lambda`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1273).

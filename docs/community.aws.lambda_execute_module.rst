@@ -1,8 +1,8 @@
-.. _community.aws.execute_lambda_module:
+.. _community.aws.lambda_execute_module:
 
 
 ****************************
-community.aws.execute_lambda
+community.aws.lambda_execute
 ****************************
 
 **Execute an AWS Lambda function**
@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - This module executes AWS Lambda functions, allowing synchronous and asynchronous invocation.
+- Prior to release 5.0.0 this module was called ``community.aws.execute_lambda``. The usage did not change.
 
 
 
@@ -350,7 +351,7 @@ Examples
 
 .. code-block:: yaml
 
-    - community.aws.execute_lambda:
+    - community.aws.lambda_execute:
         name: test-function
         # the payload is automatically serialized and sent to the function
         payload:
@@ -360,11 +361,11 @@ Examples
 
     # Test that you have sufficient permissions to execute a Lambda function in
     # another account
-    - community.aws.execute_lambda:
+    - community.aws.lambda_execute:
         function_arn: arn:aws:lambda:us-east-1:123456789012:function/some-function
         dry_run: true
 
-    - community.aws.execute_lambda:
+    - community.aws.lambda_execute:
         name: test-function
         payload:
           foo: bar
@@ -375,12 +376,12 @@ Examples
       # the response will have a `logs` key that will contain a log (up to 4KB) of the function execution in Lambda
 
     # Pass the Lambda event payload as a json file.
-    - community.aws.execute_lambda:
+    - community.aws.lambda_execute:
         name: test-function
         payload: "{{ lookup('file','lambda_event.json') }}"
       register: response
 
-    - community.aws.execute_lambda:
+    - community.aws.lambda_execute:
         name: test-function
         version_qualifier: PRODUCTION
 
