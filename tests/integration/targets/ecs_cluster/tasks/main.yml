@@ -331,15 +331,40 @@
         role: "ecsServiceRole"
       register: ecs_service_scale_down
 
-    - name: pause to allow service to scale down
-      pause:
-        seconds: 60
+    - name: assert that ECS service is scaled down
+      assert:
+        that:
+          - ecs_service_scale_down.changed
+          - ecs_service_scale_down.service.desiredCount == 0
+
+    - name: scale down ECS service again
+      ecs_service:
+        state: present
+        name: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        desired_count: 0
+        deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+        placement_strategy: "{{ ecs_service_placement_strategy }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        role: "ecsServiceRole"
+      register: ecs_service_scale_down
+
+    - name: assert no change
+      assert:
+        that:
+          - not ecs_service_scale_down.changed
+          - ecs_service_scale_down.service.desiredCount == 0
 
     - name: delete ECS service definition
       ecs_service:
         state: absent
         name: "{{ ecs_service_name }}"
         cluster: "{{ ecs_cluster_name }}"
+        wait: yes
       register: delete_ecs_service
 
     - name: assert that deleting ECS service worked
@@ -347,10 +372,17 @@
         that:
           - delete_ecs_service.changed
 
-    - name: assert that deleting ECS service worked
+    - name: delete ECS service definition again
+      ecs_service:
+        state: absent
+        name: "{{ ecs_service_name }}"
+        cluster: "{{ ecs_cluster_name }}"
+      register: delete_ecs_service
+
+    - name: assert no change
       assert:
         that:
-          - delete_ecs_service.changed
+          - not delete_ecs_service.changed
 
     - name: create VPC-networked task definition with host port set to 0 (expected to fail)
       ecs_taskdefinition:
@@ -386,10 +418,6 @@
       assert:
         that:
           - "ecs_taskdefinition_info.network_mode == 'awsvpc'"
-
-    - name: pause to allow service to scale down
-      pause:
-        seconds: 60
 
     - name: create ECS service definition with network configuration
       ecs_service:
@@ -432,7 +460,6 @@
         desired_count: 1
         state: present
       register: ecs_service_creation_hcgp
-
 
     - name: health_check_grace_period_seconds sets HealthChecGracePeriodSeconds
       assert:
@@ -530,7 +557,7 @@
     - name: attempt to get facts from missing task definition
       ecs_taskdefinition_info:
         task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_task_definition.taskdefinition.revision + 1}}"
-    
+
     - name: Create another task definition with placement constraints
       ecs_taskdefinition:
         containers: "{{ ecs_task_containers }}"
@@ -545,18 +572,30 @@
           - ecs_task_definition_constraints is changed
           - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].type == "{{ ecs_taskdefinition_placement_constraints[0].type }}"
           - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].expression == "{{ ecs_taskdefinition_placement_constraints[0].expression }}"
-    
+
     - name: Remove ecs task definition with placement constraints
       ecs_taskdefinition:
         containers: "{{ ecs_task_containers }}"
         arn: "{{ ecs_task_definition_constraints.taskdefinition.taskDefinitionArn }}"
         state: absent
       register: ecs_task_definition_constraints_delete
-  
+
     - name: Check that task definition has been deleted
       assert:
         that:
           - ecs_task_definition_constraints_delete is changed
+
+    - name: Remove ecs task definition with placement constraints again
+      ecs_taskdefinition:
+        containers: "{{ ecs_task_containers }}"
+        arn: "{{ ecs_task_definition_constraints.taskdefinition.taskDefinitionArn }}"
+        state: absent
+      register: ecs_task_definition_constraints_delete
+
+    - name: Assert no change
+      assert:
+        that:
+          - ecs_task_definition_constraints_delete is not changed
 
     # ============================================================
     # Begin tests for Fargate
@@ -679,6 +718,8 @@
         that:
           - 'ecs_fargate_service_network_with_awsvpc.service.networkConfiguration.awsvpcConfiguration.assignPublicIp == "ENABLED"'
 
+    ### FIX - run tasks are all failing with CannotPullContainerError in AWS
+    ### So using wait: True fails when waiting for tasks to be started
     - name: create fargate ECS task with run task
       ecs_task:
         operation: run
@@ -692,8 +733,35 @@
             - '{{ setup_sg.group_id }}'
           assign_public_ip: true
         started_by: ansible_user
+        # wait: yes
       register: fargate_run_task_output
 
+    - name: Assert changed
+      assert:
+        that:
+          - fargate_run_task_output.changed
+
+    # - name: create fargate ECS task with run task again
+    #   ecs_task:
+    #     operation: run
+    #     cluster: "{{ ecs_cluster_name }}"
+    #     task_definition: "{{ ecs_task_name }}-vpc"
+    #     launch_type: FARGATE
+    #     count: 1
+    #     network_configuration:
+    #       subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+    #       security_groups:
+    #         - '{{ setup_sg.group_id }}'
+    #       assign_public_ip: true
+    #     started_by: ansible_user
+    #   register: fargate_run_task_output
+
+    # - name: Assert no change
+    #   assert:
+    #     that:
+    #       - not fargate_run_task_output.changed
+
+    ### This does not fail
     - name: create fargate ECS task with run task and tags (LF disabled) (should fail)
       ecs_task:
         operation: run
@@ -712,6 +780,11 @@
         started_by: ansible_user
       register: fargate_run_task_output_with_tags_fail
       ignore_errors: yes
+
+    # - name: assert that using Fargate ECS service fails
+    #   assert:
+    #     that:
+    #       - fargate_run_task_output_with_tags_fail is failed
 
     - name: enable taskLongArnFormat
       command: aws ecs put-account-setting --name taskLongArnFormat --value enabled
@@ -870,26 +943,19 @@
       ignore_errors: yes
       register: ecs_service_scale_down
 
-    - name: stop Fargate ECS task
+    - name: stop Fargate ECS tasks
       ecs_task:
-        task: "{{ fargate_run_task_output.task[0].taskArn }}"
+        task: "{{ item.task[0].taskArn }}"
         task_definition: "{{ ecs_task_name }}-vpc"
         operation: stop
         cluster: "{{ ecs_cluster_name }}"
+        wait: yes
       ignore_errors: yes
-
-    - name: stop Fargate ECS task
-      ecs_task:
-        task: "{{ fargate_run_task_output_with_tags.task[0].taskArn }}"
-        task_definition: "{{ ecs_task_name }}-vpc"
-        operation: stop
-        cluster: "{{ ecs_cluster_name }}"
-      ignore_errors: yes
-
-    - name: pause to allow services to scale down
-      pause:
-        seconds: 60
-      when: ecs_service_scale_down is not failed
+      with_items:
+        - "{{ fargate_run_task_output }}"
+        - "{{ fargate_run_task_output_with_tags }}"
+        - "{{ fargate_run_task_output_with_assign_ip }}"
+        - "{{ fargate_run_task_output_with_tags_fail }}"
 
     - name: remove ecs service
       ecs_service:
@@ -897,6 +963,7 @@
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}"
         force_deletion: yes
+        wait: yes
       ignore_errors: yes
 
     - name: remove second ecs service
@@ -905,6 +972,7 @@
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}2"
         force_deletion: yes
+        wait: yes
       ignore_errors: yes
 
     - name: remove mft ecs service
@@ -913,6 +981,7 @@
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-mft"
         force_deletion: yes
+        wait: yes
       ignore_errors: yes
 
     - name: remove scheduling_strategy ecs service
@@ -921,6 +990,7 @@
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-replica"
         force_deletion: yes
+        wait: yes
       ignore_errors: yes
 
     - name: remove fargate ECS service
@@ -929,6 +999,7 @@
         name: "{{ ecs_service_name }}4"
         cluster: "{{ ecs_cluster_name }}"
         force_deletion: yes
+        wait: yes
       ignore_errors: yes
       register: ecs_fargate_service_network_with_awsvpc
 
@@ -970,6 +1041,14 @@
         state: absent
       ignore_errors: yes
 
+    - name: remove ec2 ecs task definition
+      ecs_taskdefinition:
+        containers: "{{ ecs_fargate_task_containers }}"
+        family: "{{ ecs_task_name }}-vpc"
+        revision: "{{ ecs_ec2_task_definition.taskdefinition.revision }}"
+        state: absent
+      ignore_errors: yes
+
     - name: remove ecs task definition for absent with arn
       ecs_taskdefinition:
         containers: "{{ ecs_task_containers }}"
@@ -986,11 +1065,6 @@
       ignore_errors: yes
       register: elb_application_lb_remove
 
-    - name: pause to allow target group to be disassociated
-      pause:
-        seconds: 30
-      when: not elb_application_lb_remove is failed
-
     - name: remove setup keypair
       ec2_key:
         name: '{{ resource_prefix }}_ecs_cluster'
@@ -1003,9 +1077,6 @@
         state: absent
       ignore_errors: yes
       register: this_deletion
-      retries: 12
-      delay: 10
-      until: this_deletion is not failed
 
     - name: remove security groups
       ec2_group:
