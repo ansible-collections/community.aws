@@ -28,8 +28,8 @@ options:
     description:
       - The type of topic that should be created. Either Standard for FIFO (first-in, first-out).
       - Some regions, including GovCloud regions do not support FIFO topics.
-      - Use a default value of  'standard' or omit the option if the region
-      - does not support FIFO topics.
+        Use a default value of  'standard' or omit the option if the region
+        does not support FIFO topics.
     choices: ["standard", "fifo"]
     default: 'standard'
     type: str
