@@ -518,7 +518,7 @@ def main():
 
     # Deprecate previous return key of `function`, as it was a dict of dicts, as opposed to a list of dicts
     module.deprecate(
-        "The returned key 'function', which returned a dictionary of dictionaries, is deprecated and will be replaced by 'lambda_info',"
+        "The returned key 'function', which returned a dictionary of dictionaries, is deprecated and will be replaced by 'functions',"
         " which returns a list of dictionaries. Both keys are returned for now.",
         date='2025-01-01',
         collection_name='community.aws'
