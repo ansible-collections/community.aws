@@ -5,4 +5,4 @@
 
 cloud/aws
 
-aws_kms_info
+kms_key_info

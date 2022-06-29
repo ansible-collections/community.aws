@@ -54,8 +54,6 @@ Name | Description
 [community.aws.aws_glue_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_connection_module.rst)|Manage an AWS Glue connection
 [community.aws.aws_glue_job](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_job_module.rst)|Manage an AWS Glue job
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
-[community.aws.aws_kms](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_kms_module.rst)|Perform various KMS management tasks
-[community.aws.aws_kms_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_kms_info_module.rst)|Gather information about AWS KMS keys
 [community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
 [community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
@@ -166,6 +164,8 @@ Name | Description
 [community.aws.iam_user](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_user_module.rst)|Manage AWS IAM users
 [community.aws.iam_user_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_user_info_module.rst)|Gather IAM user(s) facts in AWS
 [community.aws.kinesis_stream](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.kinesis_stream_module.rst)|Manage a Kinesis Stream.
+[community.aws.kms_key](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.kms_key_module.rst)|Perform various KMS key management tasks
+[community.aws.kms_key_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.kms_key_info_module.rst)|Gather information about AWS KMS keys
 [community.aws.lambda](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_module.rst)|Manage AWS Lambda functions
 [community.aws.lambda_alias](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_alias_module.rst)|Creates, updates or deletes AWS Lambda function aliases
 [community.aws.lambda_event](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_event_module.rst)|Creates, updates or deletes AWS Lambda function event mappings
