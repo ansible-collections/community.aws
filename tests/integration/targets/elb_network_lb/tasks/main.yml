@@ -11,7 +11,7 @@
   block:
 
   - name: create certificate
-    iam_cert:
+    iam_server_certificate:
       name: test_cert
       state: present
       cert: "{{ lookup('file', 'cert.pem') }}"
@@ -242,7 +242,7 @@
       ignore_errors: yes
 
     - name: destroy certificate
-      iam_cert:
+      iam_server_certificate:
         name: test_cert
         state: absent
       ignore_errors: yes
