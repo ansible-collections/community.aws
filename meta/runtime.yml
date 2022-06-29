@@ -149,6 +149,8 @@ action_groups:
   - iam_user
   - iam_user_info
   - kinesis_stream
+  - kms_key
+  - kms_key_info
   - lambda
   - lambda_alias
   - lambda_event
@@ -228,6 +230,12 @@ plugin_routing:
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster
+    aws_kms:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.kms_key
+    aws_kms_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.kms_key_info
     aws_s3_bucket_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_bucket_info

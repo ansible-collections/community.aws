@@ -1,11 +1,11 @@
-.. _community.aws.aws_kms_module:
+.. _community.aws.kms_key_info_module:
 
 
-*********************
-community.aws.aws_kms
-*********************
+**************************
+community.aws.kms_key_info
+**************************
 
-**Perform various KMS management tasks**
+**Gather information about AWS KMS keys**
 
 
 Version added: 1.0.0
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Manage role/user access to a KMS key. Not designed for encrypting/decrypting.
+- Gather information about AWS KMS keys including tags and grants.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_kms_info``. The usage did not change.
 
 
 
@@ -37,28 +38,30 @@ Parameters
 
     <table  border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="2">Parameter</th>
+            <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>alias</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
                     </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.4.0</div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>An alias for a key. For safety, even though KMS does not require keys to have an alias, this module expects all new keys to be given an alias to make them easier to manage. Existing keys without an alias may be referred to by <em>key_id</em>. Use <span class='module'>community.aws.aws_kms_info</span> to find key ids. Required if <em>key_id</em> is not given. Note that passing a <em>key_id</em> and <em>alias</em> will only cause a new alias to be added, an alias will never be renamed. The &#x27;alias/&#x27; prefix is optional.</div>
+                        <div>Alias for key.</div>
+                        <div>Mutually exclusive with <em>key_id</em> and <em>filters</em>.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: key_alias</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_access_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -75,7 +78,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_ca_bundle</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -91,7 +94,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -107,7 +110,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_secret_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -124,7 +127,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -143,22 +146,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>description</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A description of the CMK. Use a description that helps you decide whether the CMK is appropriate for a task.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -174,67 +162,9 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>enable_key_rotation</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether the key should be automatically rotated every year.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>enabled</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether or not a key is enabled.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>grants</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A list of grants to apply to the key. Each item must contain <em>grantee_principal</em>. Each item can optionally contain <em>retiring_principal</em>, <em>operations</em>, <em>constraints</em>, <em>name</em>.</div>
-                        <div><em>grantee_principal</em> and <em>retiring_principal</em> must be ARNs</div>
-                        <div>For full documentation of suboptions see the boto3 documentation:</div>
-                        <div><a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kms.html#KMS.Client.create_grant'>https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kms.html#KMS.Client.create_grant</a></div>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder"></td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>constraints</b>
+                    <b>filters</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">dictionary</span>
@@ -243,179 +173,32 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Constraints is a dict containing <code>encryption_context_subset</code> or <code>encryption_context_equals</code>, either or both being a dict specifying an encryption context match. See <a href='https://docs.aws.amazon.com/kms/latest/APIReference/API_GrantConstraints.html'>https://docs.aws.amazon.com/kms/latest/APIReference/API_GrantConstraints.html</a> or <a href='https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kms.html#KMS.Client.create_grant'>https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/kms.html#KMS.Client.create_grant</a></div>
+                        <div>A dict of filters to apply. Each dict item consists of a filter key and a filter value. The filters aren&#x27;t natively supported by boto3, but are supported to provide similar functionality to other modules. Standard tag filters (<code>tag-key</code>, <code>tag-value</code> and <code>tag:tagName</code>) are available, as are <code>key-id</code> and <code>alias</code></div>
+                        <div>Mutually exclusive with <em>alias</em> and <em>key_id</em>.</div>
                 </td>
             </tr>
             <tr>
-                    <td class="elbow-placeholder"></td>
                 <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>grantee_principal</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The full ARN of the principal being granted permissions.</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>operations</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>Decrypt</li>
-                                    <li>Encrypt</li>
-                                    <li>GenerateDataKey</li>
-                                    <li>GenerateDataKeyWithoutPlaintext</li>
-                                    <li>ReEncryptFrom</li>
-                                    <li>ReEncryptTo</li>
-                                    <li>CreateGrant</li>
-                                    <li>RetireGrant</li>
-                                    <li>DescribeKey</li>
-                                    <li>Verify</li>
-                                    <li>Sign</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>A list of operations that the grantee may perform using the CMK.</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>retiring_principal</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The full ARN of the principal permitted to revoke/retire the grant.</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>key_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
                     </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Key ID or ARN of the key.</div>
-                        <div>One of <em>alias</em> or <em>key_id</em> are required.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: key_arn</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>key_spec</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>SYMMETRIC_DEFAULT</b>&nbsp;&larr;</div></li>
-                                    <li>RSA_2048</li>
-                                    <li>RSA_3072</li>
-                                    <li>RSA_4096</li>
-                                    <li>ECC_NIST_P256</li>
-                                    <li>ECC_NIST_P384</li>
-                                    <li>ECC_NIST_P521</li>
-                                    <li>ECC_SECG_P256K1</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Specifies the type of KMS key to create.</div>
-                        <div>The specification is not changeable once the key is created.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: customer_master_key_spec</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>key_usage</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.1.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>ENCRYPT_DECRYPT</b>&nbsp;&larr;</div></li>
-                                    <li>SIGN_VERIFY</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Determines the cryptographic operations for which you can use the KMS key.</div>
-                        <div>The usage is not changeable once the key is created.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>pending_window</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
                     <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.4.0</div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The number of days between requesting deletion of the CMK and when it will actually be deleted.</div>
-                        <div>Only used when <em>state=absent</em> and the CMK has not yet been deleted.</div>
-                        <div>Valid values are between 7 and 30 (inclusive).</div>
-                        <div>See also: <a href='https://docs.aws.amazon.com/kms/latest/APIReference/API_ScheduleKeyDeletion.html#KMS-ScheduleKeyDeletion-request-PendingWindowInDays'>https://docs.aws.amazon.com/kms/latest/APIReference/API_ScheduleKeyDeletion.html#KMS-ScheduleKeyDeletion-request-PendingWindowInDays</a></div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: deletion_delay</div>
+                        <div>Key ID or ARN of the key.</div>
+                        <div>Mutually exclusive with <em>alias</em> and <em>filters</em>.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: key_arn</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">json</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>policy to apply to the KMS key.</div>
-                        <div>See <a href='https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html'>https://docs.aws.amazon.com/kms/latest/developerguide/key-policies.html</a></div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_clean_invalid_entries</b>
+                    <b>pending_deletion</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">boolean</span>
@@ -423,100 +206,16 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
                         </ul>
                 </td>
                 <td>
-                        <div>(deprecated) If adding/removing a role and invalid grantees are found, remove them. These entries will cause an update to fail in all known cases.</div>
-                        <div>Only cleans if changes are being made.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: clean_invalid_entries</div>
+                        <div>Whether to get full details (tags, grants etc.) of keys pending deletion.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_grant_types</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>(deprecated) List of grants to give to user/role. Likely &quot;role,role grant&quot; or &quot;role,role grant,admin&quot;.</div>
-                        <div>Required when <em>policy_mode=grant</em>.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: grant_types</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_mode</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>grant</b>&nbsp;&larr;</div></li>
-                                    <li>deny</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>(deprecated) Grant or deny access.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: mode</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_role_arn</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>(deprecated) ARN of role to allow/deny access.</div>
-                        <div>One of <em>policy_role_name</em> or <em>policy_role_arn</em> are required.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: role_arn</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_role_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>(deprecated) Role to allow/deny access.</div>
-                        <div>One of <em>policy_role_name</em> or <em>policy_role_arn</em> are required.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: role_name</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -532,48 +231,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_grants</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether the <em>grants</em> argument should cause grants not in the list to be removed.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
-                        <div>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</div>
-                        <div>Tag keys beginning with <code>aws:</code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a href='https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions'>https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</div>
-                        <div>The current default value of <code>False</code> has been deprecated.  The default value will change to <code>True</code> in release 5.0.0.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -589,7 +247,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -607,43 +265,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                                    <li>absent</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether a key should be present or absent. Note that making an existing key absent only schedules a key for deletion.  Passing a key that is scheduled for deletion with state present will cancel key deletion.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A dictionary representing the tags to be applied to the resource.</div>
-                        <div>If the <em>tags</em> parameter is not set then tags will not be modified.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: resource_tags</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -669,7 +291,6 @@ Notes
 -----
 
 .. note::
-   - There are known inconsistencies in the amount of time required for updates of KMS keys to be fully reflected on AWS. This can cause issues when running duplicate tasks in succession or using the aws_kms_info module to fetch key metadata shortly after modifying keys. For this reason, it is recommended to use the return data from this module (aws_kms) to fetch a key's metadata.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
@@ -681,64 +302,20 @@ Examples
 
 .. code-block:: yaml
 
-    # Managing the KMS IAM Policy via policy_mode and policy_grant_types is fragile
-    # and has been deprecated in favour of the policy option.
-    - name: grant user-style access to production secrets
-      community.aws.aws_kms:
-      args:
-        alias: "alias/my_production_secrets"
-        policy_mode: grant
-        policy_role_name: "prod-appServerRole-1R5AQG2BSEL6L"
-        policy_grant_types: "role,role grant"
-    - name: remove access to production secrets from role
-      community.aws.aws_kms:
-      args:
-        alias: "alias/my_production_secrets"
-        policy_mode: deny
-        policy_role_name: "prod-appServerRole-1R5AQG2BSEL6L"
+    # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    # Create a new KMS key
-    - community.aws.aws_kms:
-        alias: mykey
-        tags:
-          Name: myKey
-          Purpose: protect_stuff
+    # Gather information about all KMS keys
+    - community.aws.kms_key_info:
 
-    # Update previous key with more tags
-    - community.aws.aws_kms:
-        alias: mykey
-        tags:
-          Name: myKey
-          Purpose: protect_stuff
-          Owner: security_team
+    # Gather information about all keys with a Name tag
+    - community.aws.kms_key_info:
+        filters:
+          tag-key: Name
 
-    # Update a known key with grants allowing an instance with the billing-prod IAM profile
-    # to decrypt data encrypted with the environment: production, application: billing
-    # encryption context
-    - community.aws.aws_kms:
-        key_id: abcd1234-abcd-1234-5678-ef1234567890
-        grants:
-          - name: billing_prod
-            grantee_principal: arn:aws:iam::1234567890123:role/billing_prod
-            constraints:
-              encryption_context_equals:
-                environment: production
-                application: billing
-            operations:
-              - Decrypt
-              - RetireGrant
-
-    - name: Update IAM policy on an existing KMS key
-      community.aws.aws_kms:
-        alias: my-kms-key
-        policy: '{"Version": "2012-10-17", "Id": "my-kms-key-permissions", "Statement": [ { <SOME STATEMENT> } ]}'
-        state: present
-
-    - name: Example using lookup for policy json
-      community.aws.aws_kms:
-        alias: my-kms-key
-        policy: "{{ lookup('template', 'kms_iam_policy_template.json.j2') }}"
-        state: present
+    # Gather information about all keys with a specific name
+    - community.aws.kms_key_info:
+        filters:
+          "tag:Name": Example
 
 
 
@@ -750,11 +327,27 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="2">Key</th>
+            <th colspan="3">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>kms_keys</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">complex</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>List of keys.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>aliases</b>
@@ -765,13 +358,14 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>List of aliases associated with the key.</div>
+                            <div>list of aliases associated with the key.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;aws/acm&#x27;, &#x27;aws/ebs&#x27;]</div>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>aws_account_id</b>
@@ -789,23 +383,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>changes_needed</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Grant types that would be changed/were changed.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;role&#x27;: &#x27;add&#x27;, &#x27;role grant&#x27;: &#x27;add&#x27;}</div>
-                </td>
-            </tr>
-            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>creation_date</b>
@@ -823,6 +401,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>deletion_date</b>
@@ -841,6 +420,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>description</b>
@@ -858,6 +438,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>enable_key_rotation</b>
@@ -873,6 +454,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>enabled</b>
@@ -888,6 +470,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>grants</b>
@@ -904,6 +487,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
                                 <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -923,6 +507,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>creation_date</b>
@@ -940,6 +525,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -959,6 +545,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>grantee_principal</b>
@@ -976,6 +563,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -995,6 +583,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_id</b>
@@ -1012,6 +601,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -1031,6 +621,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>operations</b>
@@ -1048,6 +639,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -1067,21 +659,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
 
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>had_invalid_entries</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Whether there are invalid (non-ARN) entries in the KMS entry. These don&#x27;t count as a change, but will be removed if any changes are being made.</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_arn</b>
@@ -1099,6 +677,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_id</b>
@@ -1116,6 +695,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_policies</b>
@@ -1135,6 +715,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_state</b>
@@ -1153,6 +734,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>key_usage</b>
@@ -1170,6 +752,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>origin</b>
@@ -1187,6 +770,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>policies</b>
@@ -1205,6 +789,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>tags</b>
@@ -1221,6 +806,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Name&#x27;: &#x27;myKey&#x27;, &#x27;Purpose&#x27;: &#x27;protecting_stuff&#x27;}</div>
                 </td>
             </tr>
+
     </table>
     <br/><br/>
 
@@ -1232,6 +818,4 @@ Status
 Authors
 ~~~~~~~
 
-- Ted Timmons (@tedder)
 - Will Thames (@willthames)
-- Mark Chappell (@tremble)
