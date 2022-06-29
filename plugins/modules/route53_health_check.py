@@ -44,7 +44,6 @@ options:
     description:
       - The type of health check that you want to create, which indicates how
         Amazon Route 53 determines whether an endpoint is healthy.
-    required: true
     choices: [ 'HTTP', 'HTTPS', 'HTTP_STR_MATCH', 'HTTPS_STR_MATCH', 'TCP' ]
     type: str
   resource_path:
@@ -497,7 +496,7 @@ def main():
     )
 
     args_one_of = [
-        ['ip_address', 'fqdn', 'id'],
+        ['ip_address', 'fqdn', 'health_check_id'],
     ]
 
     args_if = [
