@@ -6,6 +6,7 @@ action_groups:
   - aws_acm
   - aws_acm_info
   - aws_api_gateway
+  - aws_api_gateway_domain
   - aws_application_scaling_policy
   - aws_batch_compute_environment
   - aws_batch_job_definition
@@ -56,6 +57,7 @@ action_groups:
   - cloudfront_info
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
+  - cloudfront_response_headers_policy
   - cloudtrail
   - cloudwatchevent_rule
   - cloudwatchlogs_log_group
@@ -66,7 +68,6 @@ action_groups:
   - dms_replication_subnet_group
   - dynamodb_table
   - dynamodb_ttl
-  - ec2
   - ec2_ami_copy
   - ec2_asg
   - ec2_asg_info
@@ -79,7 +80,6 @@ action_groups:
   - ec2_eip
   - ec2_eip_info
   - ec2_elb
-  - ec2_elb_info
   - ec2_launch_template
   - ec2_lc
   - ec2_lc_find
@@ -135,7 +135,6 @@ action_groups:
   - execute_lambda
   - iam_access_key
   - iam_access_key_info
-  - iam_cert
   - iam_group
   - iam_managed_policy
   - iam_mfa_device_info
@@ -171,7 +170,6 @@ action_groups:
   - rds_option_group
   - rds_option_group_info
   - rds_param_group
-  - rds_snapshot
   - rds_snapshot_info
   - rds_subnet_group
   - rds_cluster
@@ -239,6 +237,9 @@ plugin_routing:
     aws_ses_identity:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_identity
+    aws_ses_identity_policy:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ses_identity_policy
     aws_ses_rule_set:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_rule_set
