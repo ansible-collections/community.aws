@@ -15,7 +15,7 @@ from ansible_collections.amazon.aws.plugins.module_utils import modules as aws_m
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import set_module_args
 
-import ansible_collections.community.aws.plugins.modules.aws_api_gateway as agw
+import ansible_collections.community.aws.plugins.modules.api_gateway as agw
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_api_gateway.py requires the `boto3` and `botocore` modules")
@@ -61,7 +61,7 @@ def test_upload_api(monkeypatch):
 def test_warn_if_region_not_specified():
 
     set_module_args({
-        "name": "aws_api_gateway",
+        "name": "api_gateway",
         "state": "present",
         "runtime": 'python2.7',
         "role": 'arn:aws:iam::987654321012:role/lambda_basic_execution',
