@@ -492,7 +492,7 @@ def main():
         purge_tags=dict(type='bool'),
         health_check_id=dict(type='str', aliases=['id'], required=False),
         health_check_name=dict(type='str', aliases=['name'], required=False),
-        use_unique_names=dict(type='bool', default='False', required=False),
+        use_unique_names=dict(type='bool', required=False),
     )
 
     args_one_of = [
@@ -503,6 +503,10 @@ def main():
         ['type', 'TCP', ('port',)],
     ]
 
+    args_required_together = [
+      ['use_unique_names', 'health_check_name'],
+    ]
+
     global module
     global client
 
@@ -510,6 +514,7 @@ def main():
         argument_spec=argument_spec,
         required_one_of=args_one_of,
         required_if=args_if,
+        required_together=args_required_together,
         supports_check_mode=True,
     )
 
@@ -548,9 +553,6 @@ def main():
             module.fail_json(msg="parameter 'string_match' argument is only for the HTTP(S)_STR_MATCH types")
         if len(string_match_in) > 255:
             module.fail_json(msg="parameter 'string_match' is limited to 255 characters max")
-
-    if module.params.get('use_unique_names') and not health_check_name:
-        module.fail_json(msg="parameter 'health_check_name' or 'name' is required when 'use_unique_names' set to true.")
 
     client = module.client('route53', retry_decorator=AWSRetry.jittered_backoff())
 
