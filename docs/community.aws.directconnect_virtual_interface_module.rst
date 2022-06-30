@@ -1,9 +1,9 @@
-.. _community.aws.aws_direct_connect_virtual_interface_module:
+.. _community.aws.directconnect_virtual_interface_module:
 
 
-**************************************************
-community.aws.aws_direct_connect_virtual_interface
-**************************************************
+*********************************************
+community.aws.directconnect_virtual_interface
+*********************************************
 
 **Manage Direct Connect virtual interfaces**
 
@@ -458,14 +458,14 @@ Examples
 
     ---
     - name: create an association between a LAG and connection
-      community.aws.aws_direct_connect_virtual_interface:
+      community.aws.directconnect_virtual_interface:
         state: present
         name: "{{ name }}"
         link_aggregation_group_id: LAG-XXXXXXXX
         connection_id: dxcon-XXXXXXXX
 
     - name: remove an association between a connection and virtual interface
-      community.aws.aws_direct_connect_virtual_interface:
+      community.aws.directconnect_virtual_interface:
         state: absent
         connection_id: dxcon-XXXXXXXX
         virtual_interface_id: dxv-XXXXXXXX

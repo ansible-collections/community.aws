@@ -1,9 +1,9 @@
-.. _community.aws.aws_direct_connect_gateway_module:
+.. _community.aws.directconnect_gateway_module:
 
 
-****************************************
-community.aws.aws_direct_connect_gateway
-****************************************
+***********************************
+community.aws.directconnect_gateway
+***********************************
 
 **Manage AWS Direct Connect gateway**
 
@@ -332,7 +332,7 @@ Examples
 .. code-block:: yaml
 
     - name: Create a new direct connect gateway attached to virtual private gateway
-      community.aws.aws_direct_connect_gateway:
+      community.aws.directconnect_gateway:
         state: present
         name: my-dx-gateway
         amazon_asn: 7224
@@ -340,7 +340,7 @@ Examples
       register: created_dxgw
 
     - name: Create a new unattached dxgw
-      community.aws.aws_direct_connect_gateway:
+      community.aws.directconnect_gateway:
         state: present
         name: my-dx-gateway
         amazon_asn: 7224

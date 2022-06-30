@@ -1,9 +1,9 @@
-.. _community.aws.aws_direct_connect_link_aggregation_group_module:
+.. _community.aws.directconnect_link_aggregation_group_module:
 
 
-*******************************************************
-community.aws.aws_direct_connect_link_aggregation_group
-*******************************************************
+**************************************************
+community.aws.directconnect_link_aggregation_group
+**************************************************
 
 **Manage Direct Connect LAG bundles**
 
@@ -431,7 +431,7 @@ Examples
 .. code-block:: yaml
 
     # create a Direct Connect connection
-    - community.aws.aws_direct_connect_link_aggregation_group:
+    - community.aws.directconnect_link_aggregation_group:
       state: present
       location: EqDC2
       lag_id: dxlag-xxxxxxxx
