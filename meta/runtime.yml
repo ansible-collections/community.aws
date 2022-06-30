@@ -3,6 +3,8 @@ action_groups:
   aws:
   - acm_certificate
   - acm_certificate_info
+  - api_gateway
+  - api_gateway_domain
   - aws_acm
   - aws_acm_info
   - aws_api_gateway
@@ -218,6 +220,12 @@ plugin_routing:
     aws_acm_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.acm_certificate_info
+    aws_api_gateway:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.api_gateway
+    aws_api_gateway_domain:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.api_gateway_domain
     aws_batch_compute_environment:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_compute_environment
