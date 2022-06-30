@@ -1,9 +1,9 @@
-.. _community.aws.aws_api_gateway_module:
+.. _community.aws.api_gateway_module:
 
 
-*****************************
-community.aws.aws_api_gateway
-*****************************
+*************************
+community.aws.api_gateway
+*************************
 
 **Manage AWS API Gateway APIs**
 
@@ -468,7 +468,7 @@ Examples
 .. code-block:: yaml
 
     - name: Setup AWS API Gateway setup on AWS and deploy API definition
-      community.aws.aws_api_gateway:
+      community.aws.api_gateway:
         swagger_file: my_api.yml
         stage: production
         cache_enabled: true
@@ -478,7 +478,7 @@ Examples
         state: present
 
     - name: Update API definition to deploy new version
-      community.aws.aws_api_gateway:
+      community.aws.api_gateway:
         api_id: 'abc123321cba'
         swagger_file: my_api.yml
         deploy_desc: Make auth fix available.
@@ -488,7 +488,7 @@ Examples
         state: present
 
     - name: Update API definitions and settings and deploy as canary
-      community.aws.aws_api_gateway:
+      community.aws.api_gateway:
         api_id: 'abc123321cba'
         swagger_file: my_api.yml
         cache_enabled: true

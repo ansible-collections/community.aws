@@ -1,9 +1,9 @@
-.. _community.aws.aws_api_gateway_domain_module:
+.. _community.aws.api_gateway_domain_module:
 
 
-************************************
-community.aws.aws_api_gateway_domain
-************************************
+********************************
+community.aws.api_gateway_domain
+********************************
 
 **Manage AWS API Gateway custom domains**
 
@@ -330,7 +330,7 @@ Notes
 -----
 
 .. note::
-   - Does not create a DNS entry on Route53, for that use the route53 module.
+   - Does not create a DNS entry on Route53, for that use the :ref:`community.aws.route53 <community.aws.route53_module>` module.
    - Only supports TLS certificates from AWS ACM that can just be referenced by the ARN, while the AWS API still offers (deprecated) options to add own Certificates.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
@@ -344,7 +344,7 @@ Examples
 .. code-block:: yaml
 
     - name: Setup endpoint for a custom domain for your API Gateway HTTP API
-      community.aws.aws_api_gateway_domain:
+      community.aws.api_gateway_domain:
         domain_name: myapi.foobar.com
         certificate_arn: 'arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx'
         security_policy: TLS_1_2
