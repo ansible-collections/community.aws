@@ -11,6 +11,7 @@
 
 #ip_address: We allocate an EIP due to route53 restrictions
 fqdn: '{{ tiny_prefix }}.route53-health.ansible.test'
+fqdn_1: '{{ tiny_prefix }}-1.route53-health.ansible.test'
 port: 8080
 type: 'TCP'
 request_interval: 30

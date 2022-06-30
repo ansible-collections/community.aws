@@ -20,8 +20,8 @@
         that:
         - create_check is not failed
         - create_check is changed
-        - '"route53:CreateHealthChecks" not in create_check.results[0].resource_actions'
-        - '"route53:CreateHealthChecks" not in create_check.results[1].resource_actions'
+        - '"route53:CreateHealthCheck" not in create_check.results[0].resource_actions'
+        - '"route53:CreateHealthCheck" not in create_check.results[1].resource_actions'
 
     - name: 'Create multiple HTTP health checks with different resource_path'
       route53_health_check:
