@@ -87,19 +87,20 @@ options:
     type: int
   health_check_name:
     description:
-      - To be added
+      - Name of the Health Check.
+      - Used together with I(use_unique_names) to set/make use of I(health_check_name) as a unique identifier.
     type: str
     required: False
     aliases: ['name']
   use_unique_names:
     description:
-      - To be added
+      - Used together with I(health_check_name) to set/make use of I(health_check_name) as a unique identifier.
     type: bool
     required: False
-    default: False
   health_check_id:
     description:
-      - To be added
+      - ID of the health check to be update or deleted.
+      - If provided, a health check can be updated or deleted based on the ID as unique identifier.
     type: str
     required: False
     aliases: ['id']
@@ -504,7 +505,7 @@ def main():
     ]
 
     args_required_together = [
-      ['use_unique_names', 'health_check_name'],
+        ['use_unique_names', 'health_check_name'],
     ]
 
     global module
