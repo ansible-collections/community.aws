@@ -107,9 +107,6 @@
         - '{{ resource_path }}'
         - '{{ resource_path_1 }}'
 
-    - debug:
-        var: create_idem
-
     - name: 'Check result - Create multiple HTTP health check - idempotency - check_mode'
       assert:
         that:

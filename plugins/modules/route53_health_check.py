@@ -558,11 +558,6 @@ def main():
     action = None
     check_id = None
 
-    existing_check = find_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
-
-    if existing_check:
-        check_id = existing_check.get('Id')
-
     # If update or delete Health Check based on ID
     update_delete_by_id = False
     if module.params.get('health_check_id'):
@@ -572,6 +567,10 @@ def main():
             existing_check = client.get_health_check(HealthCheckId=id_to_update_delete)['HealthCheck']
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.exit_json(changed=False, msg='The specified health check with ID: {0} does not exist'.format(id_to_update_delete))
+    else:
+        existing_check = find_health_check(ip_addr_in, fqdn_in, type_in, request_interval_in, port_in)
+        if existing_check:
+            check_id = existing_check.get('Id')
 
     # Delete Health Check
     if state_in == 'absent':
