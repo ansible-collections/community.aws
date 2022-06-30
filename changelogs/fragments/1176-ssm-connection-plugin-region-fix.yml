@@ -1,2 +1,2 @@
-minor_changes:
+bugfixes:
   - aws_ssm - pull S3 bucket region for session generated for file transfer during playbooks (https://github.com/ansible-collections/community.aws/issues/1190).
