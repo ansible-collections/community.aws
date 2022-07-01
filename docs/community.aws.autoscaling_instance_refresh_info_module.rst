@@ -1,14 +1,14 @@
-.. _community.aws.ec2_lc_find_module:
+.. _community.aws.autoscaling_instance_refresh_info_module:
 
 
-*************************
-community.aws.ec2_lc_find
-*************************
+***********************************************
+community.aws.autoscaling_instance_refresh_info
+***********************************************
 
-**Find AWS Autoscaling Launch Configurations**
+**Gather information about EC2 Auto Scaling Group (ASG) Instance Refreshes in AWS**
 
 
-Version added: 1.0.0
+Version added: 3.2.0
 
 .. contents::
    :local:
@@ -17,9 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Returns list of matching Launch Configurations for a given name, along with other useful information.
-- Results can be sorted and sliced.
-- Based on the work by Tom Bamford https://github.com/tombamford
+- Describes one or more instance refreshes.
+- You can determine the status of a request by looking at the *status* parameter.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_asg_instance_refresh_info``. The usage did not change.
 
 
 
@@ -147,7 +147,24 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>limit</b>
+                    <b>ids</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">[]</div>
+                </td>
+                <td>
+                        <div>One or more instance refresh IDs.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>max_records</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">integer</span>
@@ -156,14 +173,13 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>How many results to show.</div>
-                        <div>Corresponds to Python slice notation like list[:limit].</div>
+                        <div>The maximum number of items to return with this call. The default value is 50 and the maximum value is 100.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>name_regex</b>
+                    <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -173,8 +189,22 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A Launch Configuration to match.</div>
-                        <div>It&#x27;ll be compiled as regex.</div>
+                        <div>The name of the Auto Scaling group.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>next_token</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The token for the next set of items to return. (You received this token from a previous call.)</div>
                 </td>
             </tr>
             <tr>
@@ -230,25 +260,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>sort_order</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>ascending</b>&nbsp;&larr;</div></li>
-                                    <li>descending</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Order in which to sort results.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -286,11 +297,27 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    - name: Search for the Launch Configurations that start with "app"
-      community.aws.ec2_lc_find:
-        name_regex: app.*
-        sort_order: descending
-        limit: 2
+    - name: Find an refresh by ASG name
+      community.aws.autoscaling_instance_refresh_info:
+        name: somename-asg
+
+    - name: Find an refresh by ASG name and one or more refresh-IDs
+      community.aws.autoscaling_instance_refresh_info:
+        name: somename-asg
+        ids: ['some-id-123']
+      register: asgs
+
+    - name: Find an refresh by ASG name and set max_records
+      community.aws.autoscaling_instance_refresh_info:
+        name: somename-asg
+        max_records: 4
+      register: asgs
+
+    - name: Find an refresh by ASG name and NextToken, if received from a previous call
+      community.aws.autoscaling_instance_refresh_info:
+        name: somename-asg
+        next_token: 'some-token-123'
+      register: asgs
 
 
 
@@ -309,244 +336,127 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>arn</b>
+                    <b>auto_scaling_group_name</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>Name of the AMI</div>
+                            <div>Name of autoscaling group</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:autoscaling:eu-west-1:12345:launchConfiguration:d82f050e-e315:launchConfigurationName/yourproject</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">public-webapp-production-1</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>associate_public_address</b>
+                    <b>end_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
+                      <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>Assign public address or not</div>
+                            <div>The date and time this ASG was created, in ISO 8601 format.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-11-25T00:05:36.309Z</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>block_device_mappings</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>Launch Configuration block device mappings property</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>classic_link_vpc_security_groups</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>Launch Configuration classic link vpc security groups property</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>created_time</b>
+                    <b>instance_refresh_id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>When it was created</div>
+                            <div>instance refresh id</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2016-06-29T14:59:22.222000+00:00</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">08b91cf7-8fa6-48af-b6a6-d227f40f1b9b</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>ebs_optimized</b>
+                    <b>instances_to_update</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">boolean</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>Launch Configuration EBS optimized property</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>image_id</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>AMI id</div>
+                            <div>num. of instance to update</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ami-0d75df7e</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">5</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>instance_monitoring</b>
+                    <b>percentage_complete</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>Launch Configuration instance monitoring property</div>
+                            <div>the % of completeness</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Enabled&#x27;: False}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">100</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>instance_type</b>
+                    <b>start_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>Type of ec2 instance</div>
+                            <div>The date and time this ASG was created, in ISO 8601 format.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">t2.small</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-11-25T00:05:36.309Z</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>kernel_id</b>
+                    <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when Launch Configuration was found</td>
+                <td>success</td>
                 <td>
-                            <div>Launch Configuration kernel to use</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>keyname</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>Launch Configuration ssh key</div>
+                            <div>The current state of the group when DeleteAutoScalingGroup is in progress.</div>
+                            <div>The following are the possible statuses</div>
+                            <div><code>Pending</code>: The request was created, but the operation has not started.</div>
+                            <div><code>InProgress</code>: The operation is in progress.</div>
+                            <div><code>Successful</code>: The operation completed successfully.</div>
+                            <div><code>Failed</code>: The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</div>
+                            <div><code>Cancelling</code>: An ongoing operation is being cancelled.  Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.</div>
+                            <div><code>Cancelled</code>: The operation is cancelled.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mykey</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>Name of the Launch Configuration</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">myapp-v123</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>ram_disk_id</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>Launch Configuration ram disk property</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>security_groups</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>Launch Configuration security groups</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>user_data</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when Launch Configuration was found</td>
-                <td>
-                            <div>User data used to start instance</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ZXhwb3J0IENMT1VE</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Pending</div>
                 </td>
             </tr>
     </table>
@@ -560,4 +470,4 @@ Status
 Authors
 ~~~~~~~
 
-- Jose Armesto (@fiunchinho)
+- Dan Khersonsky (@danquixote)

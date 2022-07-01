@@ -1,9 +1,9 @@
-.. _community.aws.ec2_asg_instance_refresh_module:
+.. _community.aws.autoscaling_instance_refresh_module:
 
 
-**************************************
-community.aws.ec2_asg_instance_refresh
-**************************************
+******************************************
+community.aws.autoscaling_instance_refresh
+******************************************
 
 **Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS**
 
@@ -18,7 +18,8 @@ Version added: 3.2.0
 Synopsis
 --------
 - Start or cancel an EC2 Auto Scaling Group instance refresh in AWS.
-- Can be used with :ref:`community.aws.ec2_asg_instance_refresh_info <community.aws.ec2_asg_instance_refresh_info_module>` to track the subsequent progress.
+- Can be used with :ref:`community.aws.autoscaling_instance_refresh_info <community.aws.autoscaling_instance_refresh_info_module>` to track the subsequent progress.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_asg_instance_refresh``. The usage did not change.
 
 
 
@@ -345,17 +346,17 @@ Examples
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
     - name: Start a refresh
-      community.aws.ec2_asg_instance_refresh:
+      community.aws.autoscaling_instance_refresh:
         name: some-asg
         state: started
 
     - name: Cancel a refresh
-      community.aws.ec2_asg_instance_refresh:
+      community.aws.autoscaling_instance_refresh:
         name: some-asg
         state: cancelled
 
     - name: Start a refresh and pass preferences
-      community.aws.ec2_asg_instance_refresh:
+      community.aws.autoscaling_instance_refresh:
         name: some-asg
         state: started
         preferences:

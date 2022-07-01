@@ -1,14 +1,14 @@
-.. _community.aws.ec2_asg_instance_refresh_info_module:
+.. _community.aws.autoscaling_lifecycle_hook_module:
 
 
-*******************************************
-community.aws.ec2_asg_instance_refresh_info
-*******************************************
+****************************************
+community.aws.autoscaling_lifecycle_hook
+****************************************
 
-**Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS**
+**Create, delete or update AWS ASG Lifecycle Hooks**
 
 
-Version added: 3.2.0
+Version added: 1.0.0
 
 .. contents::
    :local:
@@ -17,8 +17,10 @@ Version added: 3.2.0
 
 Synopsis
 --------
-- Describes one or more instance refreshes.
-- You can determine the status of a request by looking at the *status* parameter.
+- Will create a new hook when *state=present* and no given Hook is found.
+- Will update an existing hook when *state=present* and a Hook is found, but current and provided parameters differ.
+- Will delete the hook when *state=absent* and a Hook is found.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_asg_lifecycle_hook``. The usage did not change.
 
 
 
@@ -42,6 +44,22 @@ Parameters
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>autoscaling_group_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the Auto Scaling group to which you want to assign the lifecycle hook.</div>
+                </td>
+            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -130,6 +148,25 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>default_result</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>ABANDON</b>&nbsp;&larr;</div></li>
+                                    <li>CONTINUE</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -146,24 +183,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>ids</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">[]</div>
-                </td>
-                <td>
-                        <div>One or more instance refresh IDs.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>max_records</b>
+                    <b>heartbeat_timeout</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">integer</span>
@@ -172,13 +192,14 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The maximum number of items to return with this call. The default value is 50 and the maximum value is 100.</div>
+                        <div>The amount of time, in seconds, that can elapse before the lifecycle hook times out. When the lifecycle hook times out, Auto Scaling performs the default action. You can prevent the lifecycle hook from timing out by calling RecordLifecycleActionHeartbeat.</div>
+                        <div>By default Amazon AWS will use <code>3600</code> (1 hour).</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>name</b>
+                    <b>lifecycle_hook_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -188,13 +209,13 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The name of the Auto Scaling group.</div>
+                        <div>The name of the lifecycle hook.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>next_token</b>
+                    <b>notification_meta_data</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -203,7 +224,24 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The token for the next set of items to return. (You received this token from a previous call.)</div>
+                        <div>Contains additional information that you want to include any time Auto Scaling sends a message to the notification target.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>notification_target_arn</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ARN of the notification target that Auto Scaling will use to notify you when an instance is in the transition state for the lifecycle hook.</div>
+                        <div>This target can be either an SQS queue or an SNS topic.</div>
+                        <div>If you specify an empty string, this overrides the current ARN.</div>
                 </td>
             </tr>
             <tr>
@@ -241,6 +279,21 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>role_arn</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ARN of the IAM role that allows the Auto Scaling group to publish to the specified notification target.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -254,6 +307,46 @@ Parameters
                         <div>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</div>
                         <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>state</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
+                                    <li>absent</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Create or delete Lifecycle Hook.</div>
+                        <div>When <em>state=present</em> updates existing hook or creates a new hook if not found.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>transition</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>autoscaling:EC2_INSTANCE_TERMINATING</li>
+                                    <li>autoscaling:EC2_INSTANCE_LAUNCHING</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The instance state to which you want to attach the lifecycle hook.</div>
+                        <div>Required when <em>state=present</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -294,29 +387,22 @@ Examples
 
 .. code-block:: yaml
 
-    # Note: These examples do not set authentication details, see the AWS Guide for details.
+    - name: Create / Update lifecycle hook
+      community.aws.autoscaling_lifecycle_hook:
+        region: eu-central-1
+        state: present
+        autoscaling_group_name: example
+        lifecycle_hook_name: example
+        transition: autoscaling:EC2_INSTANCE_LAUNCHING
+        heartbeat_timeout: 7000
+        default_result: ABANDON
 
-    - name: Find an refresh by ASG name
-      community.aws.ec2_asg_instance_refresh_info:
-        name: somename-asg
-
-    - name: Find an refresh by ASG name and one or more refresh-IDs
-      community.aws.ec2_asg_instance_refresh_info:
-        name: somename-asg
-        ids: ['some-id-123']
-      register: asgs
-
-    - name: Find an refresh by ASG name and set max_records
-      community.aws.ec2_asg_instance_refresh_info:
-        name: somename-asg
-        max_records: 4
-      register: asgs
-
-    - name: Find an refresh by ASG name and NextToken, if received from a previous call
-      community.aws.ec2_asg_instance_refresh_info:
-        name: somename-asg
-        next_token: 'some-token-123'
-      register: asgs
+    - name: Delete lifecycle hook
+      community.aws.autoscaling_lifecycle_hook:
+        region: eu-central-1
+        state: absent
+        autoscaling_group_name: example
+        lifecycle_hook_name: example
 
 
 
@@ -343,16 +429,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>Name of autoscaling group</div>
+                            <div>The unique name of the auto scaling group.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">public-webapp-production-1</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">myasg</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>end_time</b>
+                    <b>default_result</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -360,33 +446,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>The date and time this ASG was created, in ISO 8601 format.</div>
+                            <div>Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-11-25T00:05:36.309Z</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">CONTINUE</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>instance_refresh_id</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>success</td>
-                <td>
-                            <div>instance refresh id</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">08b91cf7-8fa6-48af-b6a6-d227f40f1b9b</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>instances_to_update</b>
+                    <b>global_timeout</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">integer</span>
@@ -394,16 +463,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>num. of instance to update</div>
+                            <div>The maximum time, in seconds, that an instance can remain in a <code>Pending:Wait</code> or <code>Terminating:Wait</code> state.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">5</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">172800</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>percentage_complete</b>
+                    <b>heartbeat_timeout</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">integer</span>
@@ -411,16 +480,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>the % of completeness</div>
+                            <div>The maximum time, in seconds, that can elapse before the lifecycle hook times out.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">100</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3600</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>start_time</b>
+                    <b>lifecycle_hook_name</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -428,16 +497,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>The date and time this ASG was created, in ISO 8601 format.</div>
+                            <div>The name of the lifecycle hook.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2015-11-25T00:05:36.309Z</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mylifecyclehook</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>status</b>
+                    <b>lifecycle_transition</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -445,20 +514,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>The current state of the group when DeleteAutoScalingGroup is in progress.</div>
-                            <div>The following are the possible statuses</div>
-                            <div>Pending --  The request was created, but the operation has not started.</div>
-                            <div>InProgress --  The operation is in progress.</div>
-                            <div>Successful --  The operation completed successfully.</div>
-                            <div>Failed --  The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</div>
-                            <div>Cancelling --</div>
-                            <div>An ongoing operation is being cancelled.</div>
-                            <div>Cancellation does not roll back any replacements that have already been completed,</div>
-                            <div>but it prevents new replacements from being started.</div>
-                            <div>Cancelled --  The operation is cancelled.</div>
+                            <div>The instance state to which lifecycle hook should be attached.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Pending</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">autoscaling:EC2_INSTANCE_LAUNCHING</div>
                 </td>
             </tr>
     </table>
@@ -472,4 +531,4 @@ Status
 Authors
 ~~~~~~~
 
-- Dan Khersonsky (@danquixote)
+- Igor 'Tsigankov' Eyrich (@tsiganenok) <tsiganenok@gmail.com>
