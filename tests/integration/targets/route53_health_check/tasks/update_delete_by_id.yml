@@ -8,6 +8,7 @@
         port: '{{ port }}'
         type: '{{ type_http }}'
         resource_path: '{{ resource_path }}'
+        fqdn: '{{ fqdn }}'
         use_unique_names: true
       register: create_result
 
@@ -154,6 +155,85 @@
       register: update_result
     
     - name: 'Check result - Update Health Check IP address and FQDN - idempotency'
+      assert:
+        that:
+          - update_result is not failed
+          - update_result is not changed
+          - '"route53:UpdateHealthCheck" not in update_result.resource_actions'
+
+    # Update Health Check (Port) by name
+
+    - name: 'Update Health Check by name - Update Port - check_mode'
+      route53_health_check:
+        state: present
+        port: 8080
+        type: '{{ type_http }}'
+        fqdn: '{{ fqdn }}'
+        health_check_name: '{{ tiny_prefix }}-test-update-delete-by-id'
+        use_unique_names: true
+      register: update_result
+      check_mode: true
+
+    - name: 'Check result - Update Health Check Port - check_mode'
+      assert:
+        that:
+          - update_result is not failed
+          - update_result is changed
+          - '"route53:UpdateHealthCheck" not in update_result.resource_actions'
+
+    - name: 'Update Health Check by name - Update Port'
+      route53_health_check:
+        state: present
+        port: 8080
+        type: '{{ type_http }}'
+        fqdn: '{{ fqdn }}'
+        health_check_name: '{{ tiny_prefix }}-test-update-delete-by-id'
+        use_unique_names: true
+      register: update_result
+
+    - name: Get health_check info
+      community.aws.route53_info:
+        query: health_check
+        health_check_id: "{{ health_check_id }}"
+        health_check_method: details
+      register: health_check_info
+
+    - name: 'Check result - Update Health Check Port'
+      assert:
+        that:
+          - update_result is not failed
+          - update_result is changed
+          - health_check_info.HealthCheck.HealthCheckConfig.Port == 8080
+
+    - name: 'Update Health Check by name - Update Port - idempotency - check_mode'
+      route53_health_check:
+        state: present
+        port: 8080
+        type: '{{ type_http }}'
+        fqdn: '{{ fqdn }}'
+        health_check_name: '{{ tiny_prefix }}-test-update-delete-by-id'
+        use_unique_names: true
+      register: update_result
+      check_mode: true
+
+    - name: 'Check result - Update Health Check Port - idempotency - check_mode'
+      assert:
+        that:
+          - update_result is not failed
+          - update_result is not changed
+          - '"route53:UpdateHealthCheck" not in update_result.resource_actions'
+
+    - name: 'Update Health Check by name - Update Port - idempotency'
+      route53_health_check:
+        state: present
+        port: 8080
+        type: '{{ type_http }}'
+        fqdn: '{{ fqdn }}'
+        health_check_name: '{{ tiny_prefix }}-test-update-delete-by-id'
+        use_unique_names: true
+      register: update_result
+
+    - name: 'Check result - Update Health Check Port - idempotency'
       assert:
         that:
           - update_result is not failed

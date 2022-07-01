@@ -44,6 +44,7 @@ options:
     description:
       - The type of health check that you want to create, which indicates how
         Amazon Route 53 determines whether an endpoint is healthy.
+      - Once health_check is created, type can not be changed.
     choices: [ 'HTTP', 'HTTPS', 'HTTP_STR_MATCH', 'HTTPS_STR_MATCH', 'TCP' ]
     type: str
   resource_path:
@@ -92,11 +93,13 @@ options:
     type: str
     required: False
     aliases: ['name']
+    version_added: 4.1.0
   use_unique_names:
     description:
       - Used together with I(health_check_name) to set/make use of I(health_check_name) as a unique identifier.
     type: bool
     required: False
+    version_added: 4.1.0
   health_check_id:
     description:
       - ID of the health check to be update or deleted.
@@ -104,6 +107,7 @@ options:
     type: str
     required: False
     aliases: ['id']
+    version_added:4.1.0
 author:
   - "zimbatm (@zimbatm)"
 notes:
@@ -137,6 +141,15 @@ EXAMPLES = '''
     identifier: "host1@www"
     weight: 100
     health_check: "{{ my_health_check.health_check.id }}"
+
+- name: create a simple health check with health_check_name as unique identifier
+  route53_health_check:
+    state: present
+    health_check_name: ansible
+    fqdn: ansible.com
+    port: 443
+    type: HTTPS
+    use_unique_names: true
 
 - name: Delete health-check
   community.aws.route53_health_check:
@@ -423,8 +436,8 @@ def update_health_check(existing_check):
     if disabled is not None and disabled != existing_config.get('Disabled'):
         changes['Disabled'] = module.params.get('disabled')
 
-    # If updating based on Health Check ID, we can update
-    if module.params.get('health_check_id'):
+    # If updating based on Health Check ID or health_check_name, we can update
+    if module.params.get('health_check_id') or module.params.get('use_unique_names'):
         ip_address = module.params.get('ip_address', None)
         if ip_address is not None and ip_address != existing_config.get('IPAddress'):
             changes['IPAddress'] = module.params.get('ip_address')
@@ -508,6 +521,10 @@ def main():
         ['use_unique_names', 'health_check_name'],
     ]
 
+    args_mutually_exclusive = [
+        ['health_check_id', 'health_check_name']
+    ]
+
     global module
     global client
 
@@ -516,6 +533,7 @@ def main():
         required_one_of=args_one_of,
         required_if=args_if,
         required_together=args_required_together,
+        mutually_exclusive=args_mutually_exclusive,
         supports_check_mode=True,
     )
 
@@ -560,6 +578,13 @@ def main():
     changed = False
     action = None
     check_id = None
+
+    if module.params.get('use_unique_names') or module.params.get('health_check_id'):
+        module.deprecate(
+            'The health_check_name is currently non required parameter.'
+            ' This behavior will change and health_check_name '
+            ' will change to required=True and use_unique_names will change to default=True in release 6.0.0.',
+            version='6.0.0', collection_name='community.aws')
 
     # If update or delete Health Check based on ID
     update_delete_by_id = False
