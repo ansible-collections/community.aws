@@ -24,7 +24,6 @@ ec2_customer_gateway_info
 ec2_snapshot_copy
 ec2_win_password
 ecs_attribute
-elasticache_info
 elasticache_parameter_group
 elasticache_snapshot
 iam_mfa_device_info
