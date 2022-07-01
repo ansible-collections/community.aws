@@ -150,6 +150,7 @@ action_groups:
   - lambda_info
   - lambda_policy
   - lightsail
+  - lightsail_static_ip
   - networkfirewall
   - networkfirewall_info
   - networkfirewall_policy
