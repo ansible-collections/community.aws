@@ -65,8 +65,6 @@ static_ip:
     support_code: "677585553206/192.0.2.5"
 '''
 
-import time
-
 try:
     import botocore
 except ImportError:
