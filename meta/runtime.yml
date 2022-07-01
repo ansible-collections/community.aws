@@ -5,6 +5,16 @@ action_groups:
   - acm_certificate_info
   - api_gateway
   - api_gateway_domain
+  - autoscaling_group_info
+  - autoscaling_group
+  - autoscaling_instance_refresh_info
+  - autoscaling_instance_refresh
+  - autoscaling_launch_config_find
+  - autoscaling_launch_config_info
+  - autoscaling_launch_config
+  - autoscaling_lifecycle_hook
+  - autoscaling_policy
+  - autoscaling_scheduled_action
   - aws_acm
   - aws_acm_info
   - aws_api_gateway
@@ -301,12 +311,42 @@ plugin_routing:
     aws_waf_web_acl:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.waf_web_acl
+    ec2_asg:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_group
+    ec2_asg_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_group_info
+    ec2_asg_instance_refresh:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_instance_refresh
+    ec2_asg_instance_refresh_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_instance_refresh_info
+    ec2_asg_lifecycle_hook:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_lifecycle_hook
+    ec2_asg_scheduled_action:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_scheduled_action
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_instance:
       redirect: amazon.aws.ec2_instance
     ec2_instance_info:
       redirect: amazon.aws.ec2_instance_info
+    ec2_lc:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_launch_config
+    ec2_lc_find:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_launch_config_find
+    ec2_lc_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_launch_config_info
+    ec2_scaling_policy:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.autoscaling_policy
     ec2_vpc_endpoint:
       redirect: amazon.aws.ec2_vpc_endpoint
     ec2_vpc_endpoint_info:
