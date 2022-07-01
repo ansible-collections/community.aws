@@ -1,0 +1,2 @@
+minor_changes:
+- elasticache_info - added ``replication_group`` to the returned information for an elasticache cluster (https://github.com/ansible-collections/community.aws/pull/646).

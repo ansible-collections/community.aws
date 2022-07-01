@@ -95,6 +95,81 @@
           - elasticache_redis_new.elasticache.data.Engine == "redis"
           - elasticache_redis_new.elasticache.data.SecurityGroups.0.SecurityGroupId == elasticache_redis_sg.group_id
 
+    - name: Describe all Elasticache clusters
+      elasticache_info: {}
+      register: elasticache_info
+
+    - assert:
+        that:
+          - '"elasticache_clusters" in elasticache_info'
+          - elasticache_info.elasticache_clusters | length >= 1
+
+    - name: Describe Elasticache Redis cluster
+      elasticache_info:
+        name: "{{ elasticache_redis.elasticache.name }}"
+      register: elasticache_info
+
+    - assert:
+        that:
+          - '"elasticache_clusters" in elasticache_info'
+          - elasticache_info.elasticache_clusters | length == 1
+          - '"arn" in elasticache_info.elasticache_clusters[0]'
+          - '"at_rest_encryption_enabled" in elasticache_info.elasticache_clusters[0]'
+          - '"auth_token_enabled" in elasticache_info.elasticache_clusters[0]'
+          - '"auto_minor_version_upgrade" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_cluster_create_time" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_cluster_id" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_cluster_status" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_node_type" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_nodes" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_parameter_group" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_security_groups" in elasticache_info.elasticache_clusters[0]'
+          - '"cache_subnet_group_name" in elasticache_info.elasticache_clusters[0]'
+          - '"client_download_landing_page" in elasticache_info.elasticache_clusters[0]'
+          - '"engine" in elasticache_info.elasticache_clusters[0]'
+          - '"engine_version" in elasticache_info.elasticache_clusters[0]'
+          - '"num_cache_nodes" in elasticache_info.elasticache_clusters[0]'
+          - '"pending_modified_values" in elasticache_info.elasticache_clusters[0]'
+          - '"preferred_availability_zone" in elasticache_info.elasticache_clusters[0]'
+          - '"preferred_maintenance_window" in elasticache_info.elasticache_clusters[0]'
+          - '"security_groups" in elasticache_info.elasticache_clusters[0]'
+          - '"snapshot_retention_limit" in elasticache_info.elasticache_clusters[0]'
+          - '"snapshot_window" in elasticache_info.elasticache_clusters[0]'
+          - '"tags" in elasticache_info.elasticache_clusters[0]'
+          - '"transit_encryption_enabled" in elasticache_info.elasticache_clusters[0]'
+          - elasticache_info.elasticache_clusters[0].arn.startswith("arn:aws")
+          - elasticache_info.elasticache_clusters[0].at_rest_encryption_enabled == False
+          - elasticache_info.elasticache_clusters[0].auth_token_enabled == False
+          - elasticache_info.elasticache_clusters[0].auto_minor_version_upgrade == True
+          - elasticache_info.elasticache_clusters[0].cache_cluster_status == "available"
+          - elasticache_info.elasticache_clusters[0].cache_node_type == "cache.t3.micro"
+          - elasticache_info.elasticache_clusters[0].cache_subnet_group_name == elasticache_subnet_group_name
+          - elasticache_info.elasticache_clusters[0].engine == "redis"
+          - elasticache_info.elasticache_clusters[0].num_cache_nodes == 1
+          - elasticache_info.elasticache_clusters[0].snapshot_retention_limit == 0
+          - elasticache_info.elasticache_clusters[0].transit_encryption_enabled == False
+          - elasticache_info.elasticache_clusters[0].cache_nodes | length == 1
+          - '"cache_node_create_time" in elasticache_info.elasticache_clusters[0].cache_nodes[0]'
+          - '"cache_node_id" in elasticache_info.elasticache_clusters[0].cache_nodes[0]'
+          - '"cache_node_status" in elasticache_info.elasticache_clusters[0].cache_nodes[0]'
+          - '"customer_availability_zone" in elasticache_info.elasticache_clusters[0].cache_nodes[0]'
+          - '"endpoint" in elasticache_info.elasticache_clusters[0].cache_nodes[0]'
+          - '"parameter_group_status" in elasticache_info.elasticache_clusters[0].cache_nodes[0]'
+          - elasticache_info.elasticache_clusters[0].cache_nodes[0].cache_node_status == "available"
+          - elasticache_info.elasticache_clusters[0].cache_nodes[0].parameter_group_status == "in-sync"
+          - '"address" in elasticache_info.elasticache_clusters[0].cache_nodes[0].endpoint'
+          - '"port" in elasticache_info.elasticache_clusters[0].cache_nodes[0].endpoint'
+          - '"cache_node_ids_to_reboot" in elasticache_info.elasticache_clusters[0].cache_parameter_group'
+          - '"cache_parameter_group_name" in elasticache_info.elasticache_clusters[0].cache_parameter_group'
+          - '"parameter_apply_status" in elasticache_info.elasticache_clusters[0].cache_parameter_group'
+          - elasticache_info.elasticache_clusters[0].cache_parameter_group.cache_node_ids_to_reboot | length == 0
+          - elasticache_info.elasticache_clusters[0].cache_parameter_group.parameter_apply_status == "in-sync"
+          - elasticache_info.elasticache_clusters[0].security_groups | length == 1
+          - '"security_group_id" in elasticache_info.elasticache_clusters[0].security_groups[0]'
+          - '"status" in elasticache_info.elasticache_clusters[0].security_groups[0]'
+          - elasticache_info.elasticache_clusters[0].security_groups[0].security_group_id == elasticache_redis_sg.group_id
+          - elasticache_info.elasticache_clusters[0].security_groups[0].status == "active"
+
   always:
 
     # == Cleanup ==
