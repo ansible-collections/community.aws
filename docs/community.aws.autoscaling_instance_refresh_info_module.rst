@@ -448,12 +448,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 <td>
                             <div>The current state of the group when DeleteAutoScalingGroup is in progress.</div>
                             <div>The following are the possible statuses</div>
-                            <div><code>Pending</code>: The request was created, but the operation has not started.</div>
-                            <div><code>InProgress</code>: The operation is in progress.</div>
-                            <div><code>Successful</code>: The operation completed successfully.</div>
-                            <div><code>Failed</code>: The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</div>
-                            <div><code>Cancelling</code>: An ongoing operation is being cancelled.  Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.</div>
-                            <div><code>Cancelled</code>: The operation is cancelled.</div>
+                            <div><code>Pending</code> - The request was created, but the operation has not started.</div>
+                            <div><code>InProgress</code> - The operation is in progress.</div>
+                            <div><code>Successful</code> - The operation completed successfully.</div>
+                            <div><code>Failed</code> - The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.</div>
+                            <div><code>Cancelling</code> - An ongoing operation is being cancelled. Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.</div>
+                            <div><code>Cancelled</code> - The operation is cancelled.&#x27;</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Pending</div>

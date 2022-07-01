@@ -87,12 +87,15 @@ status:
     description:
       - The current state of the group when DeleteAutoScalingGroup is in progress.
       - The following are the possible statuses
-      - 'C(Pending): The request was created, but the operation has not started.'
-      - 'C(InProgress): The operation is in progress.'
-      - 'C(Successful): The operation completed successfully.'
-      - 'C(Failed): The operation failed to complete. You can troubleshoot using the status reason and the scaling activities.'
-      - 'C(Cancelling): An ongoing operation is being cancelled.  Cancellation does not roll back any replacements that have already been completed, but it prevents new replacements from being started.'
-      - 'C(Cancelled): The operation is cancelled.'
+      - C(Pending) - The request was created, but the operation has not started.
+      - C(InProgress) - The operation is in progress.
+      - C(Successful) - The operation completed successfully.
+      - C(Failed) - The operation failed to complete.
+        You can troubleshoot using the status reason and the scaling activities.
+      - C(Cancelling) - An ongoing operation is being cancelled.
+        Cancellation does not roll back any replacements that have already been
+        completed, but it prevents new replacements from being started.
+      - C(Cancelled) - The operation is cancelled.'
     returned: success
     type: str
     sample: "Pending"
