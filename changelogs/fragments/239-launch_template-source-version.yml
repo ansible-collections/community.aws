@@ -1,0 +1,2 @@
+minor_changes:
+- ec2_launch_template - Adds support for specifying the ``source_version`` upon which template updates are based (https://github.com/ansible-collections/community.aws/pull/239).
