@@ -1,11 +1,11 @@
-.. _community.aws.aws_direct_connect_confirm_connection_module:
+.. _community.aws.directconnect_confirm_connection_module:
 
 
-***************************************************
-community.aws.aws_direct_connect_confirm_connection
-***************************************************
+**********************************************
+community.aws.directconnect_confirm_connection
+**********************************************
 
-**Confirms the creation of a hosted DirectConnect connection.**
+**Confirms the creation of a hosted DirectConnect connection**
 
 
 
@@ -17,8 +17,8 @@ community.aws.aws_direct_connect_confirm_connection
 Synopsis
 --------
 - Confirms the creation of a hosted DirectConnect, which requires approval before it can be used.
-- DirectConnect connections that require approval would be in the 'ordering'.
-- After confirmation, they will move to the 'pending' state and finally the 'available' state.
+- DirectConnect connections that require approval would be in the ``ordering``.
+- After confirmation, they will move to the ``pending`` state and finally the ``available`` state.
 
 
 
@@ -265,12 +265,12 @@ Examples
 
     # confirm a Direct Connect by name
     - name: confirm the connection id
-      aws_direct_connect_confirm_connection:
+      community.aws.directconnect_confirm_connection:
         name: my_host_direct_connect
 
     # confirm a Direct Connect by connection_id
     - name: confirm the connection id
-      aws_direct_connect_confirm_connection:
+      community.aws.directconnect_confirm_connection:
         connection_id: dxcon-xxxxxxxx
 
 

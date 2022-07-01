@@ -15,10 +15,14 @@ import collections
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep  # pylint: disable=unused-import
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify  # pylint: disable=unused-import
 
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
-from ansible_collections.community.aws.plugins.modules import aws_direct_connect_link_aggregation_group as lag_module
+from ansible_collections.community.aws.plugins.modules import directconnect_link_aggregation_group as lag_module
+
+if not HAS_BOTO3:
+    pytestmark = pytest.mark.skip("test_directconnect_confirm_connection.py requires the `boto3` and `botocore` modules")
 
 
 @pytest.fixture(scope="module")

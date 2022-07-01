@@ -1,9 +1,9 @@
-.. _community.aws.aws_direct_connect_connection_module:
+.. _community.aws.directconnect_connection_module:
 
 
-*******************************************
-community.aws.aws_direct_connect_connection
-*******************************************
+**************************************
+community.aws.directconnect_connection
+**************************************
 
 **Creates, deletes, modifies a DirectConnect connection**
 
@@ -17,7 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Create, update, or delete a Direct Connect connection between a network and a specific AWS Direct Connect location. Upon creation the connection may be added to a link aggregation group or established as a standalone connection. The connection may later be associated or disassociated with a link aggregation group.
+- Create, update, or delete a Direct Connect connection between a network and a specific AWS Direct Connect location.
+- Upon creation the connection may be added to a link aggregation group or established as a standalone connection.
+- The connection may later be associated or disassociated with a link aggregation group.
 
 
 
@@ -356,7 +358,7 @@ Examples
 .. code-block:: yaml
 
     # create a Direct Connect connection
-    - community.aws.aws_direct_connect_connection:
+    - community.aws.directconnect_connection:
         name: ansible-test-connection
         state: present
         location: EqDC2
@@ -365,14 +367,14 @@ Examples
       register: dc
 
     # disassociate the LAG from the connection
-    - community.aws.aws_direct_connect_connection:
+    - community.aws.directconnect_connection:
         state: present
         connection_id: dc.connection.connection_id
         location: EqDC2
         bandwidth: 1Gbps
 
     # replace the connection with one with more bandwidth
-    - community.aws.aws_direct_connect_connection:
+    - community.aws.directconnect_connection:
         state: present
         name: ansible-test-connection
         location: EqDC2
@@ -380,7 +382,7 @@ Examples
         forced_update: true
 
     # delete the connection
-    - community.aws.aws_direct_connect_connection:
+    - community.aws.directconnect_connection:
         state: absent
         name: ansible-test-connection
 

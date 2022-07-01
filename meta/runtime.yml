@@ -66,6 +66,11 @@ action_groups:
   - cloudwatchlogs_log_group_info
   - cloudwatchlogs_log_group_metric_filter
   - data_pipeline
+  - directconnect_confirm_connection
+  - directconnect_connection
+  - directconnect_gateway
+  - directconnect_link_aggregation_group
+  - directconnect_virtual_interface
   - dms_endpoint
   - dms_replication_subnet_group
   - dynamodb_table
@@ -235,6 +240,21 @@ plugin_routing:
     aws_batch_job_queue:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_job_queue
+    aws_direct_connect_confirm_connection:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.directconnect_confirm_connection
+    aws_direct_connect_connection:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.directconnect_connection
+    aws_direct_connect_gateway:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.directconnect_gateway
+    aws_direct_connect_link_aggregation_group:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.directconnect_link_aggregation_group
+    aws_direct_connect_virtual_interface:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.directconnect_virtual_interface
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster

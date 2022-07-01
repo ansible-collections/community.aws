@@ -45,11 +45,6 @@ Name | Description
 [community.aws.aws_config_delivery_channel](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_delivery_channel_module.rst)|Manage AWS Config delivery channels
 [community.aws.aws_config_recorder](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_recorder_module.rst)|Manage AWS Config Recorders
 [community.aws.aws_config_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_rule_module.rst)|Manage AWS Config resources
-[community.aws.aws_direct_connect_confirm_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_confirm_connection_module.rst)|Confirms the creation of a hosted DirectConnect connection.
-[community.aws.aws_direct_connect_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_connection_module.rst)|Creates, deletes, modifies a DirectConnect connection
-[community.aws.aws_direct_connect_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_gateway_module.rst)|Manage AWS Direct Connect gateway
-[community.aws.aws_direct_connect_link_aggregation_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_link_aggregation_group_module.rst)|Manage Direct Connect LAG bundles
-[community.aws.aws_direct_connect_virtual_interface](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_direct_connect_virtual_interface_module.rst)|Manage Direct Connect virtual interfaces
 [community.aws.aws_elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_elasticbeanstalk_app_module.rst)|Create, update, and delete an elastic beanstalk application
 [community.aws.aws_glue_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_connection_module.rst)|Manage an AWS Glue connection
 [community.aws.aws_glue_job](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_job_module.rst)|Manage an AWS Glue job
@@ -82,6 +77,11 @@ Name | Description
 [community.aws.cloudwatchlogs_log_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_info_module.rst)|Get information about log_group in CloudWatchLogs
 [community.aws.cloudwatchlogs_log_group_metric_filter](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_metric_filter_module.rst)|Manage CloudWatch log group metric filter
 [community.aws.data_pipeline](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.data_pipeline_module.rst)|Create and manage AWS Datapipelines
+[community.aws.directconnect_confirm_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_confirm_connection_module.rst)|Confirms the creation of a hosted DirectConnect connection
+[community.aws.directconnect_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_connection_module.rst)|Creates, deletes, modifies a DirectConnect connection
+[community.aws.directconnect_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_gateway_module.rst)|Manage AWS Direct Connect gateway
+[community.aws.directconnect_link_aggregation_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_link_aggregation_group_module.rst)|Manage Direct Connect LAG bundles
+[community.aws.directconnect_virtual_interface](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_virtual_interface_module.rst)|Manage Direct Connect virtual interfaces
 [community.aws.dms_endpoint](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.dms_endpoint_module.rst)|Creates or destroys a data migration services endpoint
 [community.aws.dms_replication_subnet_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.dms_replication_subnet_group_module.rst)|creates or destroys a data migration services subnet group
 [community.aws.dynamodb_table](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.dynamodb_table_module.rst)|Create, update or delete AWS Dynamo DB tables

@@ -7,11 +7,17 @@
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
+import pytest
+
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 # Magic...  Incorrectly identified by pylint as unused
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep  # pylint: disable=unused-import
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify  # pylint: disable=unused-import
 
-from ansible_collections.community.aws.plugins.modules import aws_direct_connect_virtual_interface
+from ansible_collections.community.aws.plugins.modules import directconnect_virtual_interface
+
+if not HAS_BOTO3:
+    pytestmark = pytest.mark.skip("test_directconnect_confirm_connection.py requires the `boto3` and `botocore` modules")
 
 
 class FakeModule(object):
@@ -30,22 +36,22 @@ class FakeModule(object):
 
 def test_find_unique_vi_by_connection_id(placeboify, maybe_sleep):
     client = placeboify.client("directconnect")
-    vi_id = aws_direct_connect_virtual_interface.find_unique_vi(client, "dxcon-aaaaaaaa", None, None)
+    vi_id = directconnect_virtual_interface.find_unique_vi(client, "dxcon-aaaaaaaa", None, None)
     assert vi_id == "dxvif-aaaaaaaa"
 
 
 def test_find_unique_vi_by_vi_id(placeboify, maybe_sleep):
     client = placeboify.client("directconnect")
-    vi_id = aws_direct_connect_virtual_interface.find_unique_vi(client,
-                                                                None,
-                                                                "dxvif-aaaaaaaaa",
-                                                                None)
+    vi_id = directconnect_virtual_interface.find_unique_vi(client,
+                                                           None,
+                                                           "dxvif-aaaaaaaaa",
+                                                           None)
     assert vi_id == "dxvif-aaaaaaaa"
 
 
 def test_find_unique_vi_by_name(placeboify, maybe_sleep):
     client = placeboify.client("directconnect")
-    vi_id = aws_direct_connect_virtual_interface.find_unique_vi(client, None, None, "aaaaaaaa")
+    vi_id = directconnect_virtual_interface.find_unique_vi(client, None, None, "aaaaaaaa")
     assert vi_id == "dxvif-aaaaaaaa"
 
 
@@ -56,7 +62,7 @@ def test_find_unique_vi_returns_multiple(placeboify, maybe_sleep):
                         public=False,
                         name=None)
     try:
-        aws_direct_connect_virtual_interface.ensure_state(
+        directconnect_virtual_interface.ensure_state(
             client,
             module
         )
@@ -72,7 +78,7 @@ def test_find_unique_vi_returns_missing_for_vi_id(placeboify, maybe_sleep):
                         name=None,
                         virtual_interface_id="dxvif-aaaaaaaa")
     try:
-        aws_direct_connect_virtual_interface.ensure_state(
+        directconnect_virtual_interface.ensure_state(
             client,
             module
         )
@@ -94,7 +100,7 @@ def test_construct_public_vi():
                         cidr=["10.88.0.0/30"],
                         virtual_gateway_id="xxxx",
                         direct_connect_gateway_id="yyyy")
-    vi = aws_direct_connect_virtual_interface.assemble_params_for_creating_vi(module.params)
+    vi = directconnect_virtual_interface.assemble_params_for_creating_vi(module.params)
     assert vi == {
         "virtualInterfaceName": "aaaaaaaa",
         "vlan": 1,
@@ -121,7 +127,7 @@ def test_construct_private_vi_with_virtual_gateway_id():
                         cidr=["10.88.0.0/30"],
                         virtual_gateway_id="xxxx",
                         direct_connect_gateway_id="yyyy")
-    vi = aws_direct_connect_virtual_interface.assemble_params_for_creating_vi(module.params)
+    vi = directconnect_virtual_interface.assemble_params_for_creating_vi(module.params)
     assert vi == {
         "virtualInterfaceName": "aaaaaaaa",
         "vlan": 1,
@@ -148,7 +154,7 @@ def test_construct_private_vi_with_direct_connect_gateway_id():
                         cidr=["10.88.0.0/30"],
                         virtual_gateway_id=None,
                         direct_connect_gateway_id="yyyy")
-    vi = aws_direct_connect_virtual_interface.assemble_params_for_creating_vi(module.params)
+    vi = directconnect_virtual_interface.assemble_params_for_creating_vi(module.params)
     print(vi)
     assert vi == {
         "virtualInterfaceName": "aaaaaaaa",
@@ -178,7 +184,7 @@ def test_create_public_vi(placeboify, maybe_sleep):
                         cidr=["10.88.0.0/30"],
                         virtual_gateway_id="xxxx",
                         direct_connect_gateway_id="yyyy")
-    changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
+    changed, latest_state = directconnect_virtual_interface.ensure_state(client, module)
     assert changed is True
     assert latest_state is not None
 
@@ -199,7 +205,7 @@ def test_create_private_vi(placeboify, maybe_sleep):
                         cidr=["10.88.0.0/30"],
                         virtual_gateway_id="xxxx",
                         direct_connect_gateway_id="yyyy")
-    changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
+    changed, latest_state = directconnect_virtual_interface.ensure_state(client, module)
     assert changed is True
     assert latest_state is not None
 
@@ -220,6 +226,6 @@ def test_delete_vi(placeboify, maybe_sleep):
                         cidr=["10.88.0.0/30"],
                         virtual_gateway_id=None,
                         direct_connect_gateway_id="yyyy")
-    changed, latest_state = aws_direct_connect_virtual_interface.ensure_state(client, module)
+    changed, latest_state = directconnect_virtual_interface.ensure_state(client, module)
     assert changed is True
     assert latest_state == {}
