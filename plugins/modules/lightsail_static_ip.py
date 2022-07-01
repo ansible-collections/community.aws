@@ -11,12 +11,12 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: lightsail_static_ip
-version_added: 1.2.0
+version_added: 4.1.0
 short_description: Manage static IP addresses in AWS Lightsail
 description:
-     - Manage static IP addresses in AWS Lightsail
+  - Manage static IP addresses in AWS Lightsail.
 author:
-    - "Daniel Cotton (@danielcotton)"
+  - "Daniel Cotton (@danielcotton)"
 options:
   state:
     description:
@@ -28,11 +28,9 @@ options:
     description: Name of the static IP.
     required: true
     type: str
-
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-
+  - amazon.aws.aws
+  - amazon.aws.ec2
 '''
 
 
@@ -50,12 +48,6 @@ EXAMPLES = '''
 '''
 
 RETURN = '''
-changed:
-  description: if a static_ip instance has been modified/created
-  returned: always
-  type: bool
-  sample:
-    changed: true
 static_ip:
   description: static_ipinstance data
   returned: always
