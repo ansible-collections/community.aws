@@ -1,0 +1,96 @@
+---
+
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+
+  block:
+
+    # ==== Tests ===================================================
+
+    - name: Create a new static IP
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.changed == True
+          - '"static_ip" in result'
+          - '"arn" in result.static_ip'
+          - '"created_at" in result.static_ip'
+          - '"ip_address" in result.static_ip'
+          - '"is_attached" in result.static_ip'
+          - '"location" in result.static_ip'
+          - '"name" in result.static_ip'
+          - '"resource_type" in result.static_ip'
+          - '"support_code" in result.static_ip'
+          - result.static_ip.arn.startswith("arn:")
+          - result.static_ip.name == static_ip_name
+          - result.static_ip.resource_type == 'StaticIp'
+          - result.static_ip.is_attached == false
+          - result.static_ip.ip_address | ansible.utils.ipaddr
+          - '"availability_zone" in result.static_ip.location'
+          - '"region_name" in result.static_ip.location'
+
+    - set_fact:
+        lightsail_ip_arn: '{{ result.static_ip.arn }}'
+        lightsail_ip_address: '{{ result.static_ip.ip_address }}'
+
+    - name: Make sure create is idempotent
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+      register: result
+
+    - assert:
+        that:
+          - result.changed == False
+          - '"static_ip" in result'
+          - '"arn" in result.static_ip'
+          - '"created_at" in result.static_ip'
+          - '"ip_address" in result.static_ip'
+          - '"is_attached" in result.static_ip'
+          - '"location" in result.static_ip'
+          - '"name" in result.static_ip'
+          - '"resource_type" in result.static_ip'
+          - '"support_code" in result.static_ip'
+          - result.static_ip.arn == lightsail_ip_arn
+          - result.static_ip.name == static_ip_name
+          - result.static_ip.resource_type == 'StaticIp'
+          - result.static_ip.is_attached == false
+          - result.static_ip.ip_address == lightsail_ip_address
+          - '"availability_zone" in result.static_ip.location'
+          - '"region_name" in result.static_ip.location'
+
+    - name: Delete the static IP
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result.changed == True
+
+    - name: Make sure deletion is idempotent
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+        state: absent
+      register: result
+
+    - assert:
+        that:
+          - result.changed == False
+
+  # ==== Cleanup ====================================================
+
+  always:
+
+    - name: Cleanup - delete static IP
+      lightsail_static_ip:
+        name: "{{ static_ip_name }}"
+        state: absent
+      ignore_errors: yes
