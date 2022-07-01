@@ -320,6 +320,7 @@ options:
       Snapshots applied to the block device mapping are ignored when creating a new version unless they are explicitly included.
     type: str
     default: latest
+    version_added: 4.1.0
   tags:
     type: dict
     description:
@@ -588,7 +589,7 @@ def create_or_update(module, template_options):
                     LaunchTemplateId=template['LaunchTemplateId'],
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
-                    SourceVersion=most_recent['VersionNumber'],
+                    SourceVersion=str(most_recent['VersionNumber']),
                     aws_retry=True,
                 )
             else:
@@ -596,18 +597,17 @@ def create_or_update(module, template_options):
                     int(module.params.get('source_version'))
                 except ValueError:
                     module.fail_json(msg='source_version param was not a valid integer, got "{0}"'.format(module.params.get('source_version')))
-                    # get source template version
-                    source_version = next((v for v in template_versions if v['VersionNumber'] == int(module.params.get('source_version'))), None)
-                    if source_version is not None:
-                        resp = ec2.create_launch_template_version(
-                            LaunchTemplateId=template['LaunchTemplateId'],
-                            LaunchTemplateData=lt_data,
-                            ClientToken=uuid4().hex,
-                            SourceVersion=source_version['VersionNumber'],
-                            aws_retry=True,
-                        )
-                    else:
-                        module.fail_json(msg='source_version does not exist, got "{0}"'.format(module.params.get('source_version')))
+                # get source template version
+                source_version = next((v for v in template_versions if v['VersionNumber'] == int(module.params.get('source_version'))), None)
+                if source_version is None:
+                    module.fail_json(msg='source_version does not exist, got "{0}"'.format(module.params.get('source_version')))
+                resp = ec2.create_launch_template_version(
+                    LaunchTemplateId=template['LaunchTemplateId'],
+                    LaunchTemplateData=lt_data,
+                    ClientToken=uuid4().hex,
+                    SourceVersion=str(source_version['VersionNumber']),
+                    aws_retry=True,
+                )
 
             if module.params.get('default_version') in (None, ''):
                 # no need to do anything, leave the existing version as default
