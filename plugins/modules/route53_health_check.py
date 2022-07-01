@@ -107,7 +107,7 @@ options:
     type: str
     required: False
     aliases: ['id']
-    version_added:4.1.0
+    version_added: 4.1.0
 author:
   - "zimbatm (@zimbatm)"
 notes:
