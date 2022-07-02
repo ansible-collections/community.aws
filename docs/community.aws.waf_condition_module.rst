@@ -1,9 +1,9 @@
-.. _community.aws.aws_waf_condition_module:
+.. _community.aws.waf_condition_module:
 
 
-*******************************
-community.aws.aws_waf_condition
-*******************************
+***************************
+community.aws.waf_condition
+***************************
 
 **Create and delete WAF Conditions**
 
@@ -569,7 +569,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to use waf-regional module.</div>
+                        <div>Whether to use <code>waf-regional</code> module.</div>
                 </td>
             </tr>
     </table>
@@ -592,7 +592,7 @@ Examples
 .. code-block:: yaml
 
     - name: create WAF byte condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: my_byte_condition
           filters:
           - field_to_match: header
@@ -602,7 +602,7 @@ Examples
           type: byte
 
       - name: create WAF geo condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: my_geo_condition
           filters:
             - country: US
@@ -611,7 +611,7 @@ Examples
           type: geo
 
       - name: create IP address condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: "{{ resource_prefix }}_ip_condition"
           filters:
             - ip_address: "10.0.0.0/8"
@@ -619,7 +619,7 @@ Examples
           type: ip
 
       - name: create WAF regex condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: my_regex_condition
           filters:
             - field_to_match: query_string
@@ -632,7 +632,7 @@ Examples
           type: regex
 
       - name: create WAF size condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: my_size_condition
           filters:
             - field_to_match: query_string
@@ -641,7 +641,7 @@ Examples
           type: size
 
       - name: create WAF sql injection condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: my_sql_condition
           filters:
             - field_to_match: query_string
@@ -649,7 +649,7 @@ Examples
           type: sql
 
       - name: create WAF xss condition
-        community.aws.aws_waf_condition:
+        community.aws.waf_condition:
           name: my_xss_condition
           filters:
             - field_to_match: query_string

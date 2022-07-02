@@ -1,11 +1,11 @@
-.. _community.aws.aws_waf_web_acl_module:
+.. _community.aws.waf_info_module:
 
 
-*****************************
-community.aws.aws_waf_web_acl
-*****************************
+**********************
+community.aws.waf_info
+**********************
 
-**Create and delete WAF Web ACLs**
+**Retrieve information for WAF ACLs, Rules, Conditions and Filters**
 
 
 Version added: 1.0.0
@@ -17,8 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Module for WAF classic, for WAF v2 use the *wafv2_** modules.
-- Read the AWS documentation for WAF https://docs.aws.amazon.com/waf/latest/developerguide/classic-waf-chapter.html.
+- Retrieve information for WAF ACLs, Rules, Conditions and Filters.
 
 
 
@@ -38,12 +37,12 @@ Parameters
 
     <table  border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="2">Parameter</th>
+            <th colspan="1">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_access_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -60,7 +59,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_ca_bundle</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -76,7 +75,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -92,7 +91,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_secret_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -109,7 +108,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -128,27 +127,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>default_action</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>block</li>
-                                    <li>allow</li>
-                                    <li>count</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The action that you want AWS WAF to take when a request doesn&#x27;t match the criteria specified in any of the Rule objects that are associated with the WebACL.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -164,41 +143,22 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>metric_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A friendly name or description for the metrics for this WebACL.</div>
-                        <div>The name can contain only alphanumeric characters (A-Z, a-z, 0-9); the name can&#x27;t contain whitespace.</div>
-                        <div>You can&#x27;t change <em>metric_name</em> after you create the WebACL.</div>
-                        <div>Metric name will default to <em>name</em> with disallowed characters stripped out.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>Name of the Web Application Firewall ACL to manage.</div>
+                        <div>The name of a Web Application Firewall.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -214,26 +174,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_rules</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether to remove rules that aren&#x27;t passed with <em>rules</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -249,95 +190,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>rules</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A list of rules that the Web ACL will enforce.</div>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder"></td>
                 <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>action</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The action to perform.</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Name of the rule.</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>priority</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The priority of the action.  Priorities must be unique. Lower numbered priorities are evaluated first.</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder"></td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>type</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>rate_based</li>
-                                    <li>regular</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The type of rule.</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -355,26 +208,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                                    <li>absent</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether the Web ACL should be present or absent.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -393,7 +227,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>waf_regional</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -408,7 +242,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to use waf-regional module.</div>
+                        <div>Whether to use the <code>waf-regional</code> module.</div>
                 </td>
             </tr>
     </table>
@@ -430,21 +264,17 @@ Examples
 
 .. code-block:: yaml
 
-    - name: create web ACL
-        community.aws.aws_waf_web_acl:
-          name: my_web_acl
-          rules:
-            - name: my_rule
-              priority: 1
-              action: block
-          default_action: block
-          purge_rules: yes
-          state: present
+    - name: obtain all WAF information
+      community.aws.waf_info:
 
-      - name: delete the web acl
-        community.aws.aws_waf_web_acl:
-          name: my_web_acl
-          state: absent
+    - name: obtain all information for a single WAF
+      community.aws.waf_info:
+        name: test_waf
+
+    - name: obtain all information for a single WAF Regional
+      community.aws.waf_info:
+        name: test_waf
+        waf_regional: true
 
 
 
@@ -463,15 +293,15 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>web_acl</b>
+                    <b>wafs</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">complex</span>
                     </div>
                 </td>
-                <td>always</td>
+                <td>success</td>
                 <td>
-                            <div>contents of the Web ACL.</div>
+                            <div>The WAFs that match the passed arguments.</div>
                     <br/>
                 </td>
             </tr>
@@ -482,15 +312,15 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>default_action</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Default action taken by the Web ACL if no rules match.</div>
+                            <div>The action to perform if none of the Rules contained in the WebACL match.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;type&#x27;: &#x27;BLOCK&#x27;}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">BLOCK</div>
                 </td>
             </tr>
             <tr>
@@ -505,10 +335,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Metric name used as an identifier.</div>
+                            <div>A friendly name or description for the metrics for this WebACL.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mywebacl</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">test_waf_metric</div>
                 </td>
             </tr>
             <tr>
@@ -523,10 +353,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Friendly name of the Web ACL.</div>
+                            <div>A friendly name or description of the WebACL.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my web acl</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">test_waf</div>
                 </td>
             </tr>
             <tr>
@@ -541,7 +371,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>List of rules.</div>
+                            <div>An array that contains the action for each Rule in a WebACL , the priority of the Rule.</div>
                     <br/>
                 </td>
             </tr>
@@ -553,15 +383,15 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <b>action</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Action taken by the WAF when the rule matches.</div>
+                            <div>The action to perform if the Rule matches.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;type&#x27;: &#x27;ALLOW&#x27;}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">BLOCK</div>
                 </td>
             </tr>
             <tr>
@@ -569,26 +399,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>priority</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>priority number of the rule (lower numbers are run first).</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>rule_id</b>
+                    <b>metric_name</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -596,10 +407,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Rule ID.</div>
+                            <div>A friendly name or description for the metrics for this Rule.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">a6fc7ab5-287b-479f-8004-7fd0399daf75</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ipblockrule</div>
                 </td>
             </tr>
             <tr>
@@ -607,7 +418,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>type</b>
+                    <b>name</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -615,31 +426,32 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Type of rule (either REGULAR or RATE_BASED).</div>
+                            <div>A friendly name or description of the Rule.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">REGULAR</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ip_block_rule</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>predicates</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The Predicates list contains a Predicate for each ByteMatchSet, IPSet, SizeConstraintSet, SqlInjectionMatchSet or XssMatchSet object in a Rule.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;byte_match_set_id&#x27;: &#x27;47b822b5-abcd-1234-faaf-1234567890&#x27;, &#x27;byte_match_tuples&#x27;: [{&#x27;field_to_match&#x27;: {&#x27;type&#x27;: &#x27;QUERY_STRING&#x27;}, &#x27;positional_constraint&#x27;: &#x27;STARTS_WITH&#x27;, &#x27;target_string&#x27;: &#x27;bobbins&#x27;, &#x27;text_transformation&#x27;: &#x27;NONE&#x27;}], &#x27;name&#x27;: &#x27;bobbins&#x27;, &#x27;negated&#x27;: False, &#x27;type&#x27;: &#x27;ByteMatch&#x27;}]</div>
                 </td>
             </tr>
 
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>web_acl_id</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Unique identifier of Web ACL.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">10fff965-4b6b-46e2-9d78-24f6d2e2d21c</div>
-                </td>
-            </tr>
 
     </table>
     <br/><br/>
