@@ -30,21 +30,18 @@ options:
   metric_name:
     description:
       - A friendly name or description for the metrics for the rule.
-      - The name can contain only alphanumeric characters (A-Z, a-z, 0-9); the name can't contain whitespace.
+      - The name can contain only alphanumeric characters (A-Z, a-z, 0-9); the name may not contain whitespace.
       - You can't change I(metric_name) after you create the rule.
       - Defaults to the same as I(name) with disallowed characters removed.
-      type: str
+    type: str
   state:
     description: Whether the rule should be present or absent.
-    choices:
-      - present
-      - absent
+    choices: ['present', 'absent']
     default: present
     type: str
   conditions:
     description: >
-      List of conditions used in the rule. M(community.aws.waf_condition) can be used to
-      create new conditions.
+      List of conditions used in the rule. M(community.aws.waf_condition) can be used to create new conditions.
     type: list
     elements: dict
     suboptions:
