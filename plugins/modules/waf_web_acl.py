@@ -7,7 +7,7 @@ __metaclass__ = type
 
 
 DOCUMENTATION = r'''
-module: aws_waf_web_acl
+module: waf_web_acl
 short_description: Create and delete WAF Web ACLs
 version_added: 1.0.0
 description:
@@ -18,75 +18,75 @@ author:
   - Mike Mochan (@mmochan)
   - Will Thames (@willthames)
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
+  - amazon.aws.aws
+  - amazon.aws.ec2
 
 options:
-    name:
-        description: Name of the Web Application Firewall ACL to manage.
-        required: yes
+  name:
+    description: Name of the Web Application Firewall ACL to manage.
+    required: yes
+    type: str
+  default_action:
+    description: The action that you want AWS WAF to take when a request doesn't
+      match the criteria specified in any of the Rule objects that are associated with the WebACL.
+    choices:
+      - block
+      - allow
+      - count
+    type: str
+  state:
+    description: Whether the Web ACL should be present or absent.
+    choices:
+      - present
+      - absent
+    default: present
+    type: str
+  metric_name:
+    description:
+      - A friendly name or description for the metrics for this WebACL.
+      - The name can contain only alphanumeric characters (A-Z, a-z, 0-9); the name can't contain whitespace.
+      - You can't change I(metric_name) after you create the WebACL.
+      - Metric name will default to I(name) with disallowed characters stripped out.
+    type: str
+  rules:
+    description:
+      - A list of rules that the Web ACL will enforce.
+    type: list
+    elements: dict
+    suboptions:
+      name:
+        description: Name of the rule.
         type: str
-    default_action:
-        description: The action that you want AWS WAF to take when a request doesn't
-          match the criteria specified in any of the Rule objects that are associated with the WebACL.
+        required: true
+      action:
+        description: The action to perform.
+        type: str
+        required: true
+      priority:
+        description: The priority of the action.  Priorities must be unique. Lower numbered priorities are evaluated first.
+        type: int
+        required: true
+      type:
+        description: The type of rule.
         choices:
-        - block
-        - allow
-        - count
+          - rate_based
+          - regular
         type: str
-    state:
-        description: Whether the Web ACL should be present or absent.
-        choices:
-        - present
-        - absent
-        default: present
-        type: str
-    metric_name:
-        description:
-        - A friendly name or description for the metrics for this WebACL.
-        - The name can contain only alphanumeric characters (A-Z, a-z, 0-9); the name can't contain whitespace.
-        - You can't change I(metric_name) after you create the WebACL.
-        - Metric name will default to I(name) with disallowed characters stripped out.
-        type: str
-    rules:
-        description:
-        - A list of rules that the Web ACL will enforce.
-        type: list
-        elements: dict
-        suboptions:
-            name:
-                description: Name of the rule.
-                type: str
-                required: true
-            action:
-                description: The action to perform.
-                type: str
-                required: true
-            priority:
-                description: The priority of the action.  Priorities must be unique. Lower numbered priorities are evaluated first.
-                type: int
-                required: true
-            type:
-                description: The type of rule.
-                choices:
-                - rate_based
-                - regular
-                type: str
-    purge_rules:
-        description:
-        - Whether to remove rules that aren't passed with I(rules).
-        default: False
-        type: bool
-    waf_regional:
-        description: Whether to use waf-regional module.
-        default: false
-        required: no
-        type: bool
+  purge_rules:
+    description:
+      - Whether to remove rules that aren't passed with I(rules).
+    default: False
+    type: bool
+  waf_regional:
+    description: Whether to use C(waf-regional) module.
+    default: false
+    required: no
+    type: bool
 '''
 
 EXAMPLES = r'''
   - name: create web ACL
-    community.aws.aws_waf_web_acl:
+    community.aws.waf_web_acl:
       name: my_web_acl
       rules:
         - name: my_rule
@@ -97,7 +97,7 @@ EXAMPLES = r'''
       state: present
 
   - name: delete the web acl
-    community.aws.aws_waf_web_acl:
+    community.aws.waf_web_acl:
       name: my_web_acl
       state: absent
 '''
