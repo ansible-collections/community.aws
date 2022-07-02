@@ -24,6 +24,10 @@
         managed_policies:
           - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
 
+    - name: Pause for role creation to finish
+      pause:
+        seconds: 10
+
     - name: Create Glue crawler (check mode)
       aws_glue_crawler:
         name: "{{ glue_crawler_name }}"
@@ -72,7 +76,7 @@
       register: glue_crawler
 
     - name: Get info on Glue crawler
-      command: "aws glue get-crawler --crawler-name {{ glue_crawler_name }}"
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -119,7 +123,7 @@
       register: glue_crawler_idempotent_check
 
     - name: Get info on Glue crawler
-      command: "aws glue get-crawler --crawler-name {{ glue_crawler_name }}"
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -181,7 +185,7 @@
     - name: Verity that Glue crawler was not modified
       assert:
         that:
-          - not glue_crawler_idempotent.changed
+          - glue_crawler_idempotent is not changed
           - crawler_info["Crawler"]["Name"] == crawler_info_idempotent["Crawler"]["Name"]
           - crawler_info["Crawler"]["DatabaseName"] == crawler_info_idempotent["Crawler"]["DatabaseName"]
           - crawler_info["Crawler"]["Description"] == crawler_info_idempotent["Crawler"]["Description"]
@@ -333,8 +337,3 @@
         name: "{{ glue_crawler_role_name }}"
         state: absent
       ignore_errors: true
-
-    - name: Delete virtualenv
-      file:
-        path: "{{ virtualenv }}"
-        state: absent
