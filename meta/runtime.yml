@@ -25,6 +25,7 @@ action_groups:
   - aws_eks_cluster
   - aws_elasticbeanstalk_app
   - aws_glue_connection
+  - aws_glue_crawler
   - aws_glue_job
   - aws_inspector_target
   - aws_kms
