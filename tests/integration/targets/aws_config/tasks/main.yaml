@@ -153,23 +153,6 @@
            - output.failed
            - 'output.msg.startswith("missing required arguments: organization_source")'
 
-    - name: test resource_type configuration_aggregator with organization_source parameter
-      aws_config_aggregator:
-        name: random_name
-        state: present
-        account_sources: []
-        organization_source:
-          all_aws_regions: true
-          role_arn: "{{ config_iam_role.arn }}"
-      register: output
-      ignore_errors: true
-
-    - name: assert failure when called with organization_source parameter
-      assert:
-        that:
-           - output.failed
-           - output.changed
-
     # ============================================================
     # Creation testing
     # ============================================================
@@ -217,6 +200,36 @@
     - assert:
         that:
           - output.changed
+
+    - name: Create aws_config_aggregator
+      aws_config_aggregator:
+        name: random_name
+        state: present
+        account_sources: []
+        organization_source:
+          all_aws_regions: true
+          role_arn: "{{ config_iam_role.arn }}"
+      register: output
+
+    - name: assert success
+      assert:
+        that:
+           - output is changed
+
+    - name: Create aws_config_aggregator - idempotency
+      aws_config_aggregator:
+        name: random_name
+        state: present
+        account_sources: []
+        organization_source:
+          all_aws_regions: true
+          role_arn: "{{ config_iam_role.arn }}"
+      register: output
+
+    - name: assert not changed
+      assert:
+        that:
+           - output is not changed
 
     # ============================================================
     # Update testing
@@ -266,6 +279,40 @@
     - assert:
         that:
           - output.changed
+
+    - name: Update aws_config_aggregator
+      aws_config_aggregator:
+        name: random_name
+        state: present
+        account_sources: []
+        organization_source:
+          all_aws_regions: false
+          aws_regions:
+            - '{{ aws_region }}'
+          role_arn: "{{ config_iam_role.arn }}"
+      register: output
+
+    - name: assert success
+      assert:
+        that:
+           - output is changed
+
+    - name: Update aws_config_aggregator - idempotency
+      aws_config_aggregator:
+        name: random_name
+        state: present
+        account_sources: []
+        organization_source:
+          all_aws_regions: false
+          aws_regions:
+            - '{{ aws_region }}'
+          role_arn: "{{ config_iam_role.arn }}"
+      register: output
+
+    - name: assert success
+      assert:
+        that:
+           - output is not changed
 
     # ============================================================
     # Read testing
@@ -317,6 +364,14 @@
           - not output.changed
 
   always:
+
+    - name: delete aws_config_aggregator
+      aws_config_aggregator:
+        name: random_name
+        state: absent
+      register: output
+      ignore_errors: true
+
     # ============================================================
     # Destroy testing
     # ============================================================
