@@ -1,0 +1,3 @@
+bugfixes:
+  - aws_config_aggregator - Fix idempotency when ``account_sources`` parameter is not specified (https://github.com/ansible-collections/community.aws/pull/645).
+  - aws_config_aggregator - Fix `KeyError` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
