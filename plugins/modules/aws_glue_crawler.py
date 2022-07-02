@@ -229,6 +229,23 @@ def _get_glue_crawler(connection, module, glue_crawler_name):
         module.fail_json_aws(e)
 
 
+def _trim_targets(targets):
+    return [_trim_target(t) for t in targets]
+
+
+def _trim_target(target):
+    """
+    Some target types have optional parameters which AWS will fill in and return
+    To compare the desired targets and the current targets we need to ignore the defaults
+    """
+    if not target:
+        return None
+    retval = target.copy()
+    if not retval.get('Exclusions', None):
+        retval.pop('Exclusions', None)
+    return retval
+
+
 def _compare_glue_crawler_params(user_params, current_params):
     '''
     Compare Glue crawler params. If there is a difference, return True immediately else return False
@@ -246,10 +263,12 @@ def _compare_glue_crawler_params(user_params, current_params):
     if 'TablePrefix' in user_params and user_params['TablePrefix'] != current_params['TablePrefix']:
         return True
     if 'Targets' in user_params:
-        if 'S3Targets' in user_params['Targets'] and user_params['Targets']['S3Targets'] != current_params['Targets']['S3Targets']:
-            return True
+        if 'S3Targets' in user_params['Targets']:
+            if _trim_targets(user_params['Targets']['S3Targets']) != _trim_targets(current_params['Targets']['S3Targets']):
+                return True
         if 'JdbcTargets' in user_params['Targets'] and user_params['Targets']['JdbcTargets'] != current_params['Targets']['JdbcTargets']:
-            return True
+            if _trim_targets(user_params['Targets']['JdbcTargets']) != _trim_targets(current_params['Targets']['JdbcTargets']):
+                return True
         if 'MongoDBTargets' in user_params['Targets'] and user_params['Targets']['MongoDBTargets'] != current_params['Targets']['MongoDBTargets']:
             return True
         if 'DynamoDBTargets' in user_params['Targets'] and user_params['Targets']['DynamoDBTargets'] != current_params['Targets']['DynamoDBTargets']:
@@ -381,7 +400,7 @@ def main():
             )),
             state=dict(required=True, choices=['present', 'absent'], type='str'),
             table_prefix=dict(type='str'),
-            tags=dict(type='dict'),
+            tags=dict(type='dict', aliases=['resource_tags']),
             targets=dict(type='dict')
         )
     )

@@ -139,7 +139,7 @@
     - name: Verity that Glue crawler was not modified in check mode
       assert:
         that:
-          - not glue_crawler_idempotent_check.changed
+          - glue_crawler_idempotent_check is not changed
           - crawler_info["Crawler"]["Name"] == crawler_info_idempotent_check["Crawler"]["Name"]
           - crawler_info["Crawler"]["DatabaseName"] == crawler_info_idempotent_check["Crawler"]["DatabaseName"]
           - crawler_info["Crawler"]["Description"] == crawler_info_idempotent_check["Crawler"]["Description"]
@@ -169,7 +169,7 @@
       register: glue_crawler_idempotent
 
     - name: Get info on Glue crawler
-      command: "aws glue get-crawler --crawler-name {{ glue_crawler_name }}"
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -216,7 +216,7 @@
       register: glue_crawler_update_check
 
     - name: Get info on Glue crawler
-      command: "aws glue get-crawler --crawler-name {{ glue_crawler_name }}"
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -232,7 +232,7 @@
     - name: Verity that Glue crawler was not modified in check mode
       assert:
         that:
-          - glue_crawler_update_check.changed
+          - glue_crawler_update_check is changed
           - glue_crawler_update_check.name == crawler_info_update_check["Crawler"]["Name"]
           - glue_crawler_update_check.database_name == crawler_info_update_check["Crawler"]["DatabaseName"]
           - glue_crawler_update_check.description == crawler_info_update_check["Crawler"]["Description"]
@@ -262,7 +262,7 @@
       register: glue_crawler_update
 
     - name: Get info on Glue crawler
-      command: "aws glue get-crawler --crawler-name {{ glue_crawler_name }}"
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
@@ -295,7 +295,7 @@
       register: glue_crawler_delete_check
 
     - name: Get info on Glue crawler
-      command: "aws glue get-crawler --crawler-name {{ glue_crawler_name }}"
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
       environment:
         AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
         AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
