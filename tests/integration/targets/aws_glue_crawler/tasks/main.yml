@@ -1,0 +1,339 @@
+---
+- name: aws_glue_crawler integration tests
+  collections:
+    - amazon.aws
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  block:
+
+    - name: Create minimal Glue crawler role
+      iam_role:
+        name: "{{ glue_crawler_role_name }}"
+        assume_role_policy_document:
+          Version: "2008-10-17"
+          Statement:
+            - Action: "sts:AssumeRole"
+              Effect: Allow
+              Principal:
+                Service: glue.amazonaws.com
+        create_instance_profile: false
+        managed_policies:
+          - "arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess"
+
+    - name: Pause for role creation to finish
+      pause:
+        seconds: 10
+
+    - name: Create Glue crawler (check mode)
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        database_name: my_database
+        description: "{{ glue_crawler_description }}"
+        role: "{{ glue_crawler_role_name }}"
+        recrawl_policy:
+          recrawl_behavior: CRAWL_EVERYTHING
+        schema_change_policy:
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
+        targets:
+          S3Targets:
+            - Path: "{{ glue_crawler_s3_path }}"
+        tags:
+          Environment: Test
+          Product: Glue
+        state: present
+      check_mode: true
+      register: glue_crawler_check
+
+    - name: Verity that Glue crawler was not created in check mode
+      assert:
+        that:
+          - glue_crawler_check.changed
+          - glue_crawler_check.description is not defined
+
+    - name: Create Glue crawler
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        database_name: my_database
+        description: "{{ glue_crawler_description }}"
+        role: "{{ glue_crawler_role_name }}"
+        recrawl_policy:
+          recrawl_behavior: CRAWL_EVERYTHING
+        schema_change_policy:
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
+        targets:
+          S3Targets:
+            - Path: "{{ glue_crawler_s3_path }}"
+        tags:
+          Environment: Test
+          Product: Glue
+        state: present
+      register: glue_crawler
+
+    - name: Get info on Glue crawler
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: crawler_info_query
+      no_log: True
+
+    - name: Convert it to an object
+      set_fact:
+        crawler_info: "{{ crawler_info_query.stdout | from_json }}"
+
+    - name: Verity that Glue crawler was created
+      assert:
+        that:
+          - glue_crawler.changed
+          - glue_crawler.name == crawler_info["Crawler"]["Name"]
+          - glue_crawler.database_name == crawler_info["Crawler"]["DatabaseName"]
+          - glue_crawler.description == crawler_info["Crawler"]["Description"]
+          - glue_crawler.recrawl_policy == crawler_info["Crawler"]["RecrawlPolicy"]
+          - glue_crawler.role == crawler_info["Crawler"]["Role"]
+          - glue_crawler.schema_change_policy == crawler_info["Crawler"]["SchemaChangePolicy"]
+          - glue_crawler.targets.S3Targets == crawler_info["Crawler"]["Targets"]["S3Targets"]
+
+    - name: Create Glue crawler (idempotent) (check mode)
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        database_name: my_database
+        description: "{{ glue_crawler_description }}"
+        role: "{{ glue_crawler_role_name }}"
+        recrawl_policy:
+          recrawl_behavior: CRAWL_EVERYTHING
+        schema_change_policy:
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
+        targets:
+          S3Targets:
+            - Path: "{{ glue_crawler_s3_path }}"
+        tags:
+          Environment: Test
+          Product: Glue
+        state: present
+      check_mode: true
+      register: glue_crawler_idempotent_check
+
+    - name: Get info on Glue crawler
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: crawler_info_query_idempotent_check
+      no_log: True
+
+    - name: Convert it to an object
+      set_fact:
+        crawler_info_idempotent_check: "{{ crawler_info_query_idempotent_check.stdout | from_json }}"
+
+    - name: Verity that Glue crawler was not modified in check mode
+      assert:
+        that:
+          - glue_crawler_idempotent_check is not changed
+          - crawler_info["Crawler"]["Name"] == crawler_info_idempotent_check["Crawler"]["Name"]
+          - crawler_info["Crawler"]["DatabaseName"] == crawler_info_idempotent_check["Crawler"]["DatabaseName"]
+          - crawler_info["Crawler"]["Description"] == crawler_info_idempotent_check["Crawler"]["Description"]
+          - crawler_info["Crawler"]["RecrawlPolicy"] == crawler_info_idempotent_check["Crawler"]["RecrawlPolicy"]
+          - crawler_info["Crawler"]["Role"] == crawler_info_idempotent_check["Crawler"]["Role"]
+          - crawler_info["Crawler"]["SchemaChangePolicy"] == crawler_info_idempotent_check["Crawler"]["SchemaChangePolicy"]
+          - crawler_info["Crawler"]["Targets"]["S3Targets"] == crawler_info_idempotent_check["Crawler"]["Targets"]["S3Targets"]
+
+    - name: Create Glue crawler (idempotent)
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        database_name: my_database
+        description: "{{ glue_crawler_description }}"
+        role: "{{ glue_crawler_role_name }}"
+        recrawl_policy:
+          recrawl_behavior: CRAWL_EVERYTHING
+        schema_change_policy:
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
+        targets:
+          S3Targets:
+            - Path: "{{ glue_crawler_s3_path }}"
+        tags:
+          Environment: Test
+          Product: Glue
+        state: present
+      register: glue_crawler_idempotent
+
+    - name: Get info on Glue crawler
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: crawler_info_query_idempotent
+      no_log: True
+
+    - name: Convert it to an object
+      set_fact:
+        crawler_info_idempotent: "{{ crawler_info_query_idempotent.stdout | from_json }}"
+
+    - name: Verity that Glue crawler was not modified
+      assert:
+        that:
+          - glue_crawler_idempotent is not changed
+          - crawler_info["Crawler"]["Name"] == crawler_info_idempotent["Crawler"]["Name"]
+          - crawler_info["Crawler"]["DatabaseName"] == crawler_info_idempotent["Crawler"]["DatabaseName"]
+          - crawler_info["Crawler"]["Description"] == crawler_info_idempotent["Crawler"]["Description"]
+          - crawler_info["Crawler"]["RecrawlPolicy"] == crawler_info_idempotent["Crawler"]["RecrawlPolicy"]
+          - crawler_info["Crawler"]["Role"] == crawler_info_idempotent["Crawler"]["Role"]
+          - crawler_info["Crawler"]["SchemaChangePolicy"] == crawler_info_idempotent["Crawler"]["SchemaChangePolicy"]
+          - crawler_info["Crawler"]["Targets"]["S3Targets"] == crawler_info_idempotent["Crawler"]["Targets"]["S3Targets"]
+
+    - name: Update Glue crawler (check mode)
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        database_name: my_database_2
+        description: "{{ glue_crawler_description }}"
+        role: "{{ glue_crawler_role_name }}"
+        recrawl_policy:
+          recrawl_behavior: CRAWL_EVERYTHING
+        schema_change_policy:
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
+        targets:
+          S3Targets:
+            - Path: "{{ glue_crawler_s3_path }}"
+        tags:
+          Environment: Test
+          Product: Glue
+        state: present
+      check_mode: true
+      register: glue_crawler_update_check
+
+    - name: Get info on Glue crawler
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: crawler_info_query_update_check
+      no_log: True
+
+    - name: Convert it to an object
+      set_fact:
+        crawler_info_update_check: "{{ crawler_info_query_update_check.stdout | from_json }}"
+
+    - name: Verity that Glue crawler was not modified in check mode
+      assert:
+        that:
+          - glue_crawler_update_check is changed
+          - glue_crawler_update_check.name == crawler_info_update_check["Crawler"]["Name"]
+          - glue_crawler_update_check.database_name == crawler_info_update_check["Crawler"]["DatabaseName"]
+          - glue_crawler_update_check.description == crawler_info_update_check["Crawler"]["Description"]
+          - glue_crawler_update_check.recrawl_policy == crawler_info_update_check["Crawler"]["RecrawlPolicy"]
+          - glue_crawler_update_check.role == crawler_info_update_check["Crawler"]["Role"]
+          - glue_crawler_update_check.schema_change_policy == crawler_info_update_check["Crawler"]["SchemaChangePolicy"]
+          - glue_crawler_update_check.targets.S3Targets == crawler_info_update_check["Crawler"]["Targets"]["S3Targets"]
+
+    - name: Update Glue crawler
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        database_name: my_database_2
+        description: "{{ glue_crawler_description }}"
+        role: "{{ glue_crawler_role_name }}"
+        recrawl_policy:
+          recrawl_behavior: CRAWL_EVERYTHING
+        schema_change_policy:
+          delete_behavior: DELETE_FROM_DATABASE
+          update_behavior: UPDATE_IN_DATABASE
+        targets:
+          S3Targets:
+            - Path: "{{ glue_crawler_s3_path }}"
+        tags:
+          Environment: Test
+          Product: Glue
+        state: present
+      register: glue_crawler_update
+
+    - name: Get info on Glue crawler
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: crawler_info_query_update
+      no_log: True
+
+    - name: Convert it to an object
+      set_fact:
+        crawler_info_update: "{{ crawler_info_query_update.stdout | from_json }}"
+
+    - name: Verity that Glue crawler was modified
+      assert:
+        that:
+          - glue_crawler_update.changed
+          - glue_crawler_update.name == crawler_info_update["Crawler"]["Name"]
+          - glue_crawler_update.database_name == crawler_info_update["Crawler"]["DatabaseName"]
+          - glue_crawler_update.description == crawler_info_update["Crawler"]["Description"]
+          - glue_crawler_update.recrawl_policy == crawler_info_update["Crawler"]["RecrawlPolicy"]
+          - glue_crawler_update.role == crawler_info_update["Crawler"]["Role"]
+          - glue_crawler_update.schema_change_policy == crawler_info_update["Crawler"]["SchemaChangePolicy"]
+          - glue_crawler_update.targets.S3Targets == crawler_info_update["Crawler"]["Targets"]["S3Targets"]
+
+    - name: Delete Glue crawler (check mode)
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        state: absent
+      check_mode: true
+      register: glue_crawler_delete_check
+
+    - name: Get info on Glue crawler
+      command: "aws glue get-crawler --name {{ glue_crawler_name }}"
+      environment:
+        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
+        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
+        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      register: crawler_info_query_delete_check
+      no_log: True
+
+    - name: Convert it to an object
+      set_fact:
+        crawler_info_delete_check: "{{ crawler_info_query_delete_check.stdout | from_json }}"
+
+    - name: Verity that Glue crawler was not deleted in check mode
+      assert:
+        that:
+          - glue_crawler_delete_check.changed
+          - crawler_info["Crawler"]["Name"] == crawler_info_delete_check["Crawler"]["Name"]
+
+    - name: Delete Glue crawler
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        state: absent
+      register: glue_crawler_delete
+
+    - name: Verity that Glue crawler was deleted
+      assert:
+        that:
+          - glue_crawler_delete.changed
+
+  always:
+    - name: Delete Glue crawler
+      aws_glue_crawler:
+        name: "{{ glue_crawler_name }}"
+        state: absent
+      ignore_errors: true
+
+    - name: Delete Glue crawler role
+      iam_role:
+        name: "{{ glue_crawler_role_name }}"
+        state: absent
+      ignore_errors: true
