@@ -12,6 +12,8 @@ short_description: Retrieve information for WAF ACLs, Rules, Conditions and Filt
 version_added: 1.0.0
 description:
   - Retrieve information for WAF ACLs, Rules, Conditions and Filters.
+  - Prior to release 5.0.0 this module was called C(community.aws.aws_waf_info).
+    The usage did not change.
 options:
   name:
     description:

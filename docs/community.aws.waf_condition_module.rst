@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Read the AWS documentation for WAF https://aws.amazon.com/documentation/waf/
+- Prior to release 5.0.0 this module was called ``community.aws.aws_waf_condition``. The usage did not change.
 
 
 

@@ -14,6 +14,8 @@ version_added: 1.0.0
 description:
   - Read the AWS documentation for WAF
     U(https://aws.amazon.com/documentation/waf/).
+  - Prior to release 5.0.0 this module was called C(community.aws.aws_waf_rule).
+    The usage did not change.
 
 author:
   - Mike Mochan (@mmochan)

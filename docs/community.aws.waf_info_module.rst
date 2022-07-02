@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Retrieve information for WAF ACLs, Rules, Conditions and Filters.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_waf_info``. The usage did not change.
 
 
 

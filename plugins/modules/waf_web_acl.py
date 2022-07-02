@@ -13,6 +13,8 @@ version_added: 1.0.0
 description:
   - Module for WAF classic, for WAF v2 use the I(wafv2_*) modules.
   - Read the AWS documentation for WAF U(https://docs.aws.amazon.com/waf/latest/developerguide/classic-waf-chapter.html).
+  - Prior to release 5.0.0 this module was called C(community.aws.aws_waf_web_acl).
+    The usage did not change.
 
 author:
   - Mike Mochan (@mmochan)
