@@ -46,8 +46,6 @@ Name | Description
 [community.aws.aws_config_recorder](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_recorder_module.rst)|Manage AWS Config Recorders
 [community.aws.aws_config_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_rule_module.rst)|Manage AWS Config resources
 [community.aws.aws_elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_elasticbeanstalk_app_module.rst)|Create, update, and delete an elastic beanstalk application
-[community.aws.aws_glue_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_connection_module.rst)|Manage an AWS Glue connection
-[community.aws.aws_glue_job](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_glue_job_module.rst)|Manage an AWS Glue job
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
 [community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
@@ -148,6 +146,9 @@ Name | Description
 [community.aws.elb_target_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_target_group_module.rst)|Manage a target group for an Application or Network load balancer
 [community.aws.elb_target_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_target_group_info_module.rst)|Gather information about ELB target groups in AWS
 [community.aws.elb_target_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_target_info_module.rst)|Gathers which target groups a target is associated with.
+[community.aws.glue_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.glue_connection_module.rst)|Manage an AWS Glue connection
+[community.aws.glue_crawler](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.glue_crawler_module.rst)|Manage an AWS Glue crawler
+[community.aws.glue_job](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.glue_job_module.rst)|Manage an AWS Glue job
 [community.aws.iam_access_key](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_access_key_module.rst)|Manage AWS IAM User access keys
 [community.aws.iam_access_key_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_access_key_info_module.rst)|fetch information about AWS IAM User access keys
 [community.aws.iam_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_group_module.rst)|Manage AWS IAM groups

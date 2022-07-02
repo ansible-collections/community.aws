@@ -141,6 +141,9 @@ action_groups:
   - elb_target_group_info
   - elb_target_info
   - execute_lambda
+  - glue_connection
+  - glue_crawler
+  - glue_job
   - iam_access_key
   - iam_access_key_info
   - iam_group
@@ -260,6 +263,15 @@ plugin_routing:
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster
+    aws_glue_connection:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.glue_connection
+    aws_glue_crawler:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.glue_crawler
+    aws_glue_job:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.glue_job
     aws_kms:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.kms_key

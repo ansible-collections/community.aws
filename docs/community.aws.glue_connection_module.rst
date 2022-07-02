@@ -1,11 +1,11 @@
-.. _community.aws.aws_glue_job_module:
+.. _community.aws.glue_connection_module:
 
 
-**************************
-community.aws.aws_glue_job
-**************************
+*****************************
+community.aws.glue_connection
+*****************************
 
-**Manage an AWS Glue job**
+**Manage an AWS Glue connection**
 
 
 Version added: 1.0.0
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Manage an AWS Glue job. See https://aws.amazon.com/glue/ for details.
+- Manage an AWS Glue connection. See https://aws.amazon.com/glue/ for details.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_glue_connection``. The usage did not change.
 
 
 
@@ -44,16 +45,18 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>allocated_capacity</b>
+                    <b>availability_zone</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">integer</span>
+                        <span style="color: purple">string</span>
                     </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.5.0</div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The number of AWS Glue data processing units (DPUs) to allocate to this Job. From 2 to 100 DPUs can be allocated; the default is 10. A DPU is a relative measure of processing power that consists of 4 vCPUs of compute capacity and 16 GB of memory.</div>
+                        <div>Availability Zone used by the connection</div>
+                        <div>Required when <em>connection_type=NETWORK</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -125,66 +128,55 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>command_name</b>
+                    <b>catalog_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
-                        <b>Default:</b><br/><div style="color: blue">"glueetl"</div>
                 </td>
                 <td>
-                        <div>The name of the job command. This must be &#x27;glueetl&#x27;.</div>
+                        <div>The ID of the Data Catalog in which to create the connection. If none is supplied, the AWS account ID is used by default.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>command_python_version</b>
+                    <b>connection_properties</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 2.2.0</div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Python version being used to execute a Python shell job.</div>
-                        <div>AWS currently supports <code>&#x27;2&#x27;</code> or <code>&#x27;3&#x27;</code>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>command_script_location</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The S3 path to a script that executes a job.</div>
+                        <div>A dict of key-value pairs used as parameters for this connection.</div>
                         <div>Required when <em>state=present</em>.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>connections</b>
+                    <b>connection_type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>CUSTOM</li>
+                                    <li><div style="color: blue"><b>JDBC</b>&nbsp;&larr;</div></li>
+                                    <li>KAFKA</li>
+                                    <li>MARKETPLACE</li>
+                                    <li>MONGODB</li>
+                                    <li>NETWORK</li>
+                        </ul>
                 </td>
                 <td>
-                        <div>A list of Glue connections used for this job.</div>
+                        <div>The type of the connection. Currently, SFTP is not supported.</div>
                 </td>
             </tr>
             <tr>
@@ -209,21 +201,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>default_arguments</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A dict of default arguments for this job.  You can specify arguments here that your own job-execution script consumes, as well as arguments that AWS Glue itself consumes.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>description</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -233,7 +210,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Description of the job being defined.</div>
+                        <div>The description of the connection.</div>
                 </td>
             </tr>
             <tr>
@@ -255,47 +232,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>glue_version</b>
+                    <b>match_criteria</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.5.0</div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Glue version determines the versions of Apache Spark and Python that AWS Glue supports.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>max_concurrent_runs</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The maximum number of concurrent runs allowed for the job. The default is 1. An error is returned when this threshold is reached. The maximum value you can specify is controlled by a service limit.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>max_retries</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The maximum number of times to retry this job if it fails.</div>
+                        <div>A list of UTF-8 strings that specify the criteria that you can use in selecting this connection.</div>
                 </td>
             </tr>
             <tr>
@@ -311,23 +258,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The name you assign to this job definition. It must be unique in your account.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>number_of_workers</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.5.0</div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The number of workers of a defined workerType that are allocated when a job runs.</div>
+                        <div>The name of the connection.</div>
                 </td>
             </tr>
             <tr>
@@ -349,27 +280,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
-                        <div>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</div>
-                        <div>Tag keys beginning with <code>aws:</code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a href='https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions'>https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -386,17 +296,18 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>role</b>
+                    <b>security_groups</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>The name or ARN of the IAM role associated with this job.</div>
-                        <div>Required when <em>state=present</em>.</div>
+                        <div>A list of security groups to be used by the connection. Use either security group name or ID.</div>
+                        <div>Required when <em>connection_type=NETWORK</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -434,39 +345,23 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Create or delete the AWS Glue job.</div>
+                        <div>Create or delete the AWS Glue connection.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tags</b>
+                    <b>subnet_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>A dictionary representing the tags to be applied to the resource.</div>
-                        <div>If the <em>tags</em> parameter is not set then tags will not be modified.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: resource_tags</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>timeout</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The job timeout in minutes.</div>
+                        <div>The subnet ID used by the connection.</div>
+                        <div>Required when <em>connection_type=NETWORK</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -488,27 +383,6 @@ Parameters
                         <div>When set to &quot;no&quot;, SSL certificates will not be validated for communication with the AWS APIs.</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>worker_type</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 1.5.0</div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>Standard</li>
-                                    <li>G.1X</li>
-                                    <li>G.2X</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The type of predefined worker that is allocated when a job runs.</div>
-                </td>
-            </tr>
     </table>
     <br/>
 
@@ -517,7 +391,6 @@ Notes
 -----
 
 .. note::
-   - Support for *tags* and *purge_tags* was added in release 2.2.0.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
@@ -531,19 +404,31 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    # Create an AWS Glue job
-    - community.aws.aws_glue_job:
-        command_script_location: "s3://s3bucket/script.py"
-        default_arguments:
-          "--extra-py-files": s3://s3bucket/script-package.zip
-          "--TempDir": "s3://s3bucket/temp/"
-        name: my-glue-job
-        role: my-iam-role
+    # Create an AWS Glue connection
+    - community.aws.glue_connection:
+        name: my-glue-connection
+        connection_properties:
+          JDBC_CONNECTION_URL: jdbc:mysql://mydb:3306/databasename
+          USERNAME: my-username
+          PASSWORD: my-password
         state: present
 
-    # Delete an AWS Glue job
-    - community.aws.aws_glue_job:
-        name: my-glue-job
+    # Create an AWS Glue network connection
+    - community.aws.glue_connection:
+        name: my-glue-network-connection
+        availability_zone: us-east-1a
+        connection_properties:
+          JDBC_ENFORCE_SSL: "false"
+        connection_type: NETWORK
+        description: Test connection
+        security_groups:
+          - sg-glue
+        subnet_id: subnet-123abc
+        state: present
+
+    # Delete an AWS Glue connection
+    - community.aws.glue_connection:
+        name: my-glue-connection
         state: absent
 
 
@@ -556,101 +441,14 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="2">Key</th>
+            <th colspan="1">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>allocated_capacity</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The number of AWS Glue data processing units (DPUs) allocated to runs of this job. From 2 to 100 DPUs can be allocated; the default is 10. A DPU is a relative measure of processing power that consists of 4 vCPUs of compute capacity and 16 GB of memory.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">10</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>command</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">complex</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The JobCommand that executes this job.</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The name of the job command.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">glueetl</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>python_version</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>Specifies the Python version.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>script_location</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>Specifies the S3 path to a script that executes a job.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mybucket/myscript.py</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>connections</b>
+                    <b>connection_properties</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">dictionary</span>
@@ -658,16 +456,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>The connections used for this job.</div>
+                            <div>A dict of key-value pairs used as parameters for this connection.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{ Connections: [ &#x27;list&#x27;, &#x27;of&#x27;, &#x27;connections&#x27; ] }</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;JDBC_CONNECTION_URL&#x27;: &#x27;jdbc:mysql://mydb:3306/databasename&#x27;, &#x27;USERNAME&#x27;: &#x27;x&#x27;, &#x27;PASSWORD&#x27;: &#x27;y&#x27;}</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>created_on</b>
+                    <b>connection_type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -675,31 +473,31 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>The time and date that this job definition was created.</div>
+                            <div>The type of the connection.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">JDBC</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>creation_time</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>The time this connection definition was created.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2018-04-21T05:19:58.326000+00:00</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>default_arguments</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The default arguments for this job, specified as name-value pairs.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{ &#x27;mykey1&#x27;: &#x27;myvalue1&#x27; }</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>description</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -716,43 +514,9 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>execution_property</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">complex</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>An ExecutionProperty specifying the maximum number of concurrent runs allowed for this job.</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>max_concurrent_runs</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The maximum number of concurrent runs allowed for the job. The default is 1. An error is returned when this threshold is reached. The maximum value you can specify is controlled by a service limit.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
-                </td>
-            </tr>
-
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>glue_version</b>
+                    <b>last_updated_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -760,65 +524,29 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>Glue version.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2.0</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>job_name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>The name of the AWS Glue job.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-glue-job</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>last_modified_on</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The last point in time when this job definition was modified.</div>
+                            <div>The last time this connection definition was updated.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2018-04-21T05:19:58.326000+00:00</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>max_retries</b>
+                    <b>match_criteria</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">integer</span>
+                      <span style="color: purple">list</span>
                     </div>
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>The maximum number of times to retry this job after a JobRun fails.</div>
+                            <div>A list of criteria that can be used in selecting this connection.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">5</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>name</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -828,44 +556,27 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>The name assigned to this job definition.</div>
+                            <div>The name of the connection definition.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-glue-job</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-glue-connection</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>role</b>
+                    <b>physical_connection_requirements</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>The name or ARN of the IAM role associated with this job.</div>
+                            <div>A dict of physical connection requirements, such as VPC and SecurityGroup, needed for making this connection successfully.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my-iam-role</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>timeout</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>when state is present</td>
-                <td>
-                            <div>The job timeout in minutes.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">300</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;subnet-id&#x27;: &#x27;subnet-aabbccddee&#x27;}</div>
                 </td>
             </tr>
     </table>
@@ -880,4 +591,3 @@ Authors
 ~~~~~~~
 
 - Rob White (@wimnat)
-- Vijayanand Sharma (@vijayanandsharma)
