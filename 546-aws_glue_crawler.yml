@@ -1,2 +1,0 @@
-minor_changes:
-  - aws_glue_crawler - New module to manage AWS Glue Crawlers (https://github.com/ansible-collections/community.aws/pull/546).
