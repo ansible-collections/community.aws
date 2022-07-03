@@ -941,10 +941,10 @@ def main():
                             module.fail_json(msg="It is not possible to update the load balancers of an existing service")
 
                     if existing['deploymentController']['type'] == 'CODE_DEPLOY':
-                        task_definition = '';
-                        network_configuration = [];
+                        task_definition = ''
+                        network_configuration = []
                     else:
-                        task_definition = module.params['task_definition'];
+                        task_definition = module.params['task_definition']
 
                     # update required
                     response = service_mgr.update_service(module.params['name'],
