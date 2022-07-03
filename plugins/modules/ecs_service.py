@@ -46,7 +46,8 @@ options:
         description:
           - The task definition the service will run.
           - This parameter is required when I(state=present).
-          - This parameter is ignored when updating a service with deployment controller is CODE_DEPLOY. The task definition is managed by Code Pipeline in that case and cannot be updated.
+          - This parameter is ignored when updating a service with a C(CODE_DEPLOY) deployment controller in which case
+            the task definition is managed by Code Pipeline and cannot be updated.
         required: false
         type: str
     load_balancers:
@@ -712,12 +713,13 @@ class EcsServiceManager:
             loadBalancers=load_balancers,
             clientToken=client_token,
             role=role,
-            deploymentController=deployment_controller,
             deploymentConfiguration=deployment_configuration,
             placementStrategy=placement_strategy
         )
         if network_configuration:
             params['networkConfiguration'] = network_configuration
+        if deployment_controller:
+            params['deploymentController'] = deployment_controller
         if launch_type:
             params['launchType'] = launch_type
         if platform_version:
@@ -940,7 +942,7 @@ def main():
                         if existing['deploymentController']['type'] != 'CODE_DEPLOY':
                             module.fail_json(msg="It is not possible to update the load balancers of an existing service")
 
-                    if existing['deploymentController']['type'] == 'CODE_DEPLOY':
+                    if existing.get('deploymentController', {}).get('type', None) == 'CODE_DEPLOY':
                         task_definition = ''
                         network_configuration = []
                     else:
