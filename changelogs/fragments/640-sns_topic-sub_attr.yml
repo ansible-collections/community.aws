@@ -1,0 +1,2 @@
+minor_changes:
+  - sns_topic - Added ``attributes`` parameter to ``subscriptions`` items with support for RawMessageDelievery (SQS)
