@@ -251,6 +251,14 @@
       - delivery_policy.http.defaultHealthyRetryPolicy.maxDelayTarget == 40
       - delivery_policy.http.defaultHealthyRetryPolicy.numRetries == 6
 
+  - name: create SQS queue for subscribing
+    sqs_queue:
+      name: '{{ sns_topic_sqs_name }}'
+    register: sqs_result
+
+  - set_fact:
+      sns_topic_subscriber_sqs_arn: '{{ sqs_result.queue_arn }}'
+
   - name: create temp dir
     tempfile:
       state: directory
@@ -287,7 +295,37 @@
     assert:
       that:
       - sns_topic_subscribe.changed
-      - sns_topic_subscribe.sns_topic.subscriptions|length == 1
+      - sns_topic_subscribe.sns_topic.subscriptions|length == 2
+
+  - name: enable raw message delivery for sqs subscription (attributes)
+    set_fact:
+      sns_sqs_subscription_attributes:
+        RawMessageDelivery: true
+
+  - name: update topic subscriptions - raw message enabled
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      display_name: My new topic name
+      purge_subscriptions: false
+      subscriptions: '{{ sns_topic_subscriptions }}'
+    register: sns_topic_subscribe_update_raw_on
+
+  - name: assert sqs subscription was updated
+    assert:
+      that:
+        - sns_topic_subscribe_update_raw_on.changed
+
+  - name: rerun topic subscriptions with raw message enabled - expect no changes
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      display_name: My new topic name
+      purge_subscriptions: false
+      subscriptions: '{{ sns_topic_subscriptions }}'
+    register: rerun_sns_topic_subscribe_update_raw_on
+  - name: assert no changes after rerun
+    assert:
+      that:
+        - not rerun_sns_topic_subscribe_update_raw_on.changed
 
   - name: run again with purge_subscriptions set to false
     sns_topic:
@@ -300,7 +338,7 @@
     assert:
       that:
       - not sns_topic_no_purge.changed
-      - sns_topic_no_purge.sns_topic.subscriptions|length == 1
+      - sns_topic_no_purge.sns_topic.subscriptions|length == 2
 
   - name: run again with purge_subscriptions set to true
     sns_topic:
@@ -319,6 +357,10 @@
       name: '{{ sns_topic_topic_name }}'
       state: absent
 
+  - name: remove subscription attributes before dealing with third party topic
+    set_fact:
+      sns_sqs_subscription_attributes: {}
+
   - name: no-op with third party topic (effectively get existing subscriptions)
     sns_topic:
       name: '{{ sns_topic_third_party_topic_arn }}'
@@ -336,7 +378,7 @@
     assert:
       that:
       - third_party_topic_subscribe is changed
-      - (third_party_topic_subscribe.sns_topic.subscriptions|length) - (third_party_topic.sns_topic.subscriptions|length) == 1
+      - (third_party_topic_subscribe.sns_topic.subscriptions|length) - (third_party_topic.sns_topic.subscriptions|length) == 2
 
   - name: attempt to change name of third party topic
     sns_topic:
@@ -409,6 +451,12 @@
   - name: remove lambda
     lambda:
       name: '{{ sns_topic_lambda_name }}'
+      state: absent
+    ignore_errors: true
+
+  - name: remove SQS queue
+    sqs_queue:
+      name: '{{ sns_topic_sqs_name }}'
       state: absent
     ignore_errors: true
 
