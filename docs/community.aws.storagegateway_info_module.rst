@@ -1,9 +1,9 @@
-.. _community.aws.aws_sgw_info_module:
+.. _community.aws.storagegateway_info_module:
 
 
-**************************
-community.aws.aws_sgw_info
-**************************
+*********************************
+community.aws.storagegateway_info
+*********************************
 
 **Fetch AWS Storage Gateway information**
 

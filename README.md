@@ -53,7 +53,6 @@ Name | Description
 [community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
 [community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
-[community.aws.aws_sgw_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_sgw_info_module.rst)|Fetch AWS Storage Gateway information
 [community.aws.aws_ssm_parameter_store](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ssm_parameter_store_module.rst)|Manage key-value pairs in AWS SSM parameter store
 [community.aws.aws_step_functions_state_machine](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_module.rst)|Manage AWS Step Functions state machines
 [community.aws.aws_step_functions_state_machine_execution](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_execution_module.rst)|Start or stop execution of an AWS Step Functions state machine.
@@ -215,6 +214,7 @@ Name | Description
 [community.aws.sns_topic](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_topic_module.rst)|Manages AWS SNS topics and subscriptions
 [community.aws.sns_topic_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sns_topic_info_module.rst)|sns_topic_info module
 [community.aws.sqs_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sqs_queue_module.rst)|Creates or deletes AWS SQS queues
+[community.aws.storagegateway_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.storagegateway_info_module.rst)|Fetch AWS Storage Gateway information
 [community.aws.sts_assume_role](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sts_assume_role_module.rst)|Assume a role using AWS Security Token Service and obtain temporary credentials
 [community.aws.sts_session_token](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sts_session_token_module.rst)|Obtain a session token from the AWS Security Token Service
 [community.aws.wafv2_ip_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_ip_set_module.rst)|wafv2_ip_set
