@@ -1,0 +1,2 @@
+minor_changes:
+- aws_sgw_info - the ``aws_sgw_info`` module has been renamed to ``storagegateway_info``, ``aws_sgw_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1301).

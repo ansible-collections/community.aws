@@ -211,6 +211,7 @@ action_groups:
   - sqs_queue
   - sts_assume_role
   - sts_session_token
+  - storagegateway_info
   - wafv2_ip_set
   - wafv2_ip_set_info
   - wafv2_resources
@@ -281,6 +282,9 @@ plugin_routing:
     aws_ses_rule_set:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_rule_set
+    aws_sgw_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.storagegateway_info
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_instance:
