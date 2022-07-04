@@ -212,6 +212,10 @@ action_groups:
   - sts_assume_role
   - sts_session_token
   - storagegateway_info
+  - waf_condition
+  - waf_info
+  - waf_rule
+  - waf_web_acl
   - wafv2_ip_set
   - wafv2_ip_set_info
   - wafv2_resources
@@ -285,6 +289,18 @@ plugin_routing:
     aws_sgw_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.storagegateway_info
+    aws_waf_condition:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.waf_condition
+    aws_waf_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.waf_info
+    aws_waf_rule:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.waf_rule
+    aws_waf_web_acl:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.waf_web_acl
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_instance:

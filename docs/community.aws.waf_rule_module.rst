@@ -1,11 +1,11 @@
-.. _community.aws.aws_waf_info_module:
+.. _community.aws.waf_rule_module:
 
 
-**************************
-community.aws.aws_waf_info
-**************************
+**********************
+community.aws.waf_rule
+**********************
 
-**Retrieve information for WAF ACLs, Rule , Conditions and Filters.**
+**Create and delete WAF Rules**
 
 
 Version added: 1.0.0
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Retrieve information for WAF ACLs, Rule , Conditions and Filters.
+- Read the AWS documentation for WAF https://aws.amazon.com/documentation/waf/.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_waf_rule``. The usage did not change.
 
 
 
@@ -37,12 +38,12 @@ Parameters
 
     <table  border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Parameter</th>
+            <th colspan="2">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_access_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -59,7 +60,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_ca_bundle</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -75,7 +76,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -91,7 +92,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_secret_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -108,7 +109,87 @@ Parameters
                 </td>
             </tr>
             <tr>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>conditions</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>List of conditions used in the rule. <span class='module'>community.aws.waf_condition</span> can be used to create new conditions.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
                 <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>condition</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the condition.  The condition must already exist.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>negated</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Whether the condition should be negated.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>byte</li>
+                                    <li>geo</li>
+                                    <li>ip</li>
+                                    <li>size</li>
+                                    <li>sql</li>
+                                    <li>xss</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The type of rule to match.</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -127,7 +208,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -143,9 +224,9 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>name</b>
+                    <b>metric_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -154,11 +235,30 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The name of a Web Application Firewall.</div>
+                        <div>A friendly name or description for the metrics for the rule.</div>
+                        <div>The name can contain only alphanumeric characters (A-Z, a-z, 0-9); the name may not contain whitespace.</div>
+                        <div>You can&#x27;t change <em>metric_name</em> after you create the rule.</div>
+                        <div>Defaults to the same as <em>name</em> with disallowed characters removed.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Name of the Web Application Firewall rule.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -174,7 +274,26 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge_conditions</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Whether or not to remove conditions that are not passed when updating <em>conditions</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -190,7 +309,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -208,7 +327,26 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>state</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
+                                    <li>absent</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Whether the rule should be present or absent.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -227,7 +365,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>waf_regional</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -242,7 +380,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to use the waf-regional module.</div>
+                        <div>Whether to use <code>waf-regional</code> module.</div>
                 </td>
             </tr>
     </table>
@@ -264,17 +402,24 @@ Examples
 
 .. code-block:: yaml
 
-    - name: obtain all WAF information
-      community.aws.aws_waf_info:
+    - name: create WAF rule
+        community.aws.waf_rule:
+          name: my_waf_rule
+          conditions:
+            - name: my_regex_condition
+              type: regex
+              negated: no
+            - name: my_geo_condition
+              type: geo
+              negated: no
+            - name: my_byte_condition
+              type: byte
+              negated: yes
 
-    - name: obtain all information for a single WAF
-      community.aws.aws_waf_info:
-        name: test_waf
-
-    - name: obtain all information for a single WAF Regional
-      community.aws.aws_waf_info:
-        name: test_waf
-        waf_regional: true
+      - name: remove WAF rule
+        community.aws.waf_rule:
+          name: "my_waf_rule"
+          state: absent
 
 
 
@@ -293,37 +438,19 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>wafs</b>
+                    <b>rule</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">complex</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>always</td>
                 <td>
-                            <div>The WAFs that match the passed arguments.</div>
+                            <div>WAF rule contents</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>default_action</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>The action to perform if none of the Rules contained in the WebACL match.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">BLOCK</div>
-                </td>
-            </tr>
-            <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
@@ -335,10 +462,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>A friendly name or description for the metrics for this WebACL.</div>
+                            <div>Metric name for the rule.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">test_waf_metric</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ansibletest1234rule</div>
                 </td>
             </tr>
             <tr>
@@ -353,105 +480,102 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>A friendly name or description of the WebACL.</div>
+                            <div>Friendly name for the rule.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">test_waf</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ansible-test-1234_rule</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>rules</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">complex</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>An array that contains the action for each Rule in a WebACL , the priority of the Rule.</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>action</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>The action to perform if the Rule matches.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">BLOCK</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>metric_name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>A friendly name or description for the metrics for this Rule.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ipblockrule</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>A friendly name or description of the Rule.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ip_block_rule</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>predicates</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
+                      <span style="color: purple">complex</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The Predicates list contains a Predicate for each ByteMatchSet, IPSet, SizeConstraintSet, SqlInjectionMatchSet or XssMatchSet object in a Rule.</div>
+                            <div>List of conditions used in the rule.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>data_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>ID of the condition.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;byte_match_set_id&#x27;: &#x27;47b822b5-abcd-1234-faaf-1234567890&#x27;, &#x27;byte_match_tuples&#x27;: [{&#x27;field_to_match&#x27;: {&#x27;type&#x27;: &#x27;QUERY_STRING&#x27;}, &#x27;positional_constraint&#x27;: &#x27;STARTS_WITH&#x27;, &#x27;target_string&#x27;: &#x27;bobbins&#x27;, &#x27;text_transformation&#x27;: &#x27;NONE&#x27;}], &#x27;name&#x27;: &#x27;bobbins&#x27;, &#x27;negated&#x27;: False, &#x27;type&#x27;: &#x27;ByteMatch&#x27;}]</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">8251acdb-526c-42a8-92bc-d3d13e584166</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>negated</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Whether the sense of the condition is negated.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>type</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>type of the condition.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ByteMatch</div>
                 </td>
             </tr>
 
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>rule_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>ID of the WAF rule.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">15de0cbc-9204-4e1f-90e6-69b2f415c261</div>
+                </td>
+            </tr>
 
     </table>
     <br/><br/>
