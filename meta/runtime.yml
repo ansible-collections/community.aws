@@ -77,6 +77,11 @@ action_groups:
   - cloudwatchlogs_log_group
   - cloudwatchlogs_log_group_info
   - cloudwatchlogs_log_group_metric_filter
+  - config_aggregation_authorization
+  - config_aggregator
+  - config_delivery_channel
+  - config_recorder
+  - config_rule
   - data_pipeline
   - directconnect_confirm_connection
   - directconnect_connection
@@ -261,6 +266,21 @@ plugin_routing:
     aws_batch_job_queue:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_job_queue
+    aws_config_aggregation_authorization:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.config_aggregation_authorization
+    aws_config_aggregator:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.config_aggregator
+    aws_config_delivery_channel:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.config_delivery_channel
+    aws_config_recorder:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.config_recorder
+    aws_config_rule:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.config_rule
     aws_direct_connect_confirm_connection:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.directconnect_confirm_connection
