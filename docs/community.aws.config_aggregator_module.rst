@@ -1,9 +1,9 @@
-.. _community.aws.aws_config_aggregator_module:
+.. _community.aws.config_aggregator_module:
 
 
-***********************************
-community.aws.aws_config_aggregator
-***********************************
+*******************************
+community.aws.config_aggregator
+*******************************
 
 **Manage AWS Config aggregations across multiple accounts**
 
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Module manages AWS Config resources
+- Module manages AWS Config aggregator resources.
 
 
 
@@ -408,7 +408,7 @@ Examples
 .. code-block:: yaml
 
     - name: Create cross-account aggregator
-      community.aws.aws_config_aggregator:
+      community.aws.config_aggregator:
         name: test_config_rule
         state: present
         account_sources:

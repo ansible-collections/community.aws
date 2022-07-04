@@ -50,11 +50,6 @@ Name | Description
 [community.aws.aws_codebuild](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codebuild_module.rst)|Create or delete an AWS CodeBuild project
 [community.aws.aws_codecommit](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codecommit_module.rst)|Manage repositories in AWS CodeCommit
 [community.aws.aws_codepipeline](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codepipeline_module.rst)|Create or delete AWS CodePipelines
-[community.aws.aws_config_aggregation_authorization](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_aggregation_authorization_module.rst)|Manage cross-account AWS Config authorizations
-[community.aws.aws_config_aggregator](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_aggregator_module.rst)|Manage AWS Config aggregations across multiple accounts
-[community.aws.aws_config_delivery_channel](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_delivery_channel_module.rst)|Manage AWS Config delivery channels
-[community.aws.aws_config_recorder](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_recorder_module.rst)|Manage AWS Config Recorders
-[community.aws.aws_config_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_config_rule_module.rst)|Manage AWS Config resources
 [community.aws.aws_elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_elasticbeanstalk_app_module.rst)|Create, update, and delete an elastic beanstalk application
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
@@ -80,6 +75,11 @@ Name | Description
 [community.aws.cloudwatchlogs_log_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_module.rst)|create or delete log_group in CloudWatchLogs
 [community.aws.cloudwatchlogs_log_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_info_module.rst)|Get information about log_group in CloudWatchLogs
 [community.aws.cloudwatchlogs_log_group_metric_filter](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_metric_filter_module.rst)|Manage CloudWatch log group metric filter
+[community.aws.config_aggregation_authorization](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.config_aggregation_authorization_module.rst)|Manage cross-account AWS Config authorizations
+[community.aws.config_aggregator](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.config_aggregator_module.rst)|Manage AWS Config aggregations across multiple accounts
+[community.aws.config_delivery_channel](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.config_delivery_channel_module.rst)|Manage AWS Config delivery channels
+[community.aws.config_recorder](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.config_recorder_module.rst)|Manage AWS Config Recorders
+[community.aws.config_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.config_rule_module.rst)|Manage AWS Config rule resources
 [community.aws.data_pipeline](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.data_pipeline_module.rst)|Create and manage AWS Datapipelines
 [community.aws.directconnect_confirm_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_confirm_connection_module.rst)|Confirms the creation of a hosted DirectConnect connection
 [community.aws.directconnect_connection](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.directconnect_connection_module.rst)|Creates, deletes, modifies a DirectConnect connection
