@@ -47,7 +47,6 @@ Name | Description
 [community.aws.autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
 [community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
-[community.aws.aws_elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_elasticbeanstalk_app_module.rst)|Create, update, and delete an elastic beanstalk application
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
 [community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
@@ -132,6 +131,7 @@ Name | Description
 [community.aws.elasticache_parameter_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_parameter_group_module.rst)|Manage cache parameter groups in Amazon ElastiCache.
 [community.aws.elasticache_snapshot](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_snapshot_module.rst)|Manage cache snapshots in Amazon ElastiCache
 [community.aws.elasticache_subnet_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticache_subnet_group_module.rst)|manage ElastiCache subnet groups
+[community.aws.elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elasticbeanstalk_app_module.rst)|Create, update, and delete an Elastic Beanstalk application
 [community.aws.elb_application_lb](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_application_lb_module.rst)|Manage an Application Load Balancer
 [community.aws.elb_application_lb_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_application_lb_info_module.rst)|Gather information about Application Load Balancers in AWS
 [community.aws.elb_classic_lb_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.elb_classic_lb_info_module.rst)|Gather information about EC2 Elastic Load Balancers in AWS
