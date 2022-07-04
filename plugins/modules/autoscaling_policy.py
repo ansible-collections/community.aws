@@ -468,6 +468,8 @@ def create_scaling_policy(connection, module):
                                  'TargetTrackingScaling and state is present')
         else:
             params['TargetTrackingConfiguration'] = build_target_specification(module.params.get('target_tracking_config'))
+        if module.params['estimated_instance_warmup']:
+            params['EstimatedInstanceWarmup'] = module.params['estimated_instance_warmup']
 
     # Ensure idempotency with policies
     try:
