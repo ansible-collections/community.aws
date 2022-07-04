@@ -75,6 +75,7 @@ Name | Description
 [community.aws.cloudfront_origin_access_identity](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_origin_access_identity_module.rst)|Create, update and delete origin access identities for a CloudFront distribution
 [community.aws.cloudfront_response_headers_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudfront_response_headers_policy_module.rst)|Create, update and delete response headers policies to be used in a Cloudfront distribution
 [community.aws.cloudtrail](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudtrail_module.rst)|manage CloudTrail create, delete, update
+[community.aws.cloudwatch_metric_alarm](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatch_metric_alarm_module.rst)|Create/update or delete AWS Cloudwatch 'metric alarms'
 [community.aws.cloudwatchevent_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchevent_rule_module.rst)|Manage CloudWatch Event rules and targets
 [community.aws.cloudwatchlogs_log_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_module.rst)|create or delete log_group in CloudWatchLogs
 [community.aws.cloudwatchlogs_log_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.cloudwatchlogs_log_group_info_module.rst)|Get information about log_group in CloudWatchLogs
@@ -95,7 +96,6 @@ Name | Description
 [community.aws.ec2_eip](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_eip_module.rst)|manages EC2 elastic IP (EIP) addresses.
 [community.aws.ec2_eip_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_eip_info_module.rst)|List EC2 EIP details
 [community.aws.ec2_launch_template](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_launch_template_module.rst)|Manage EC2 launch templates
-[community.aws.ec2_metric_alarm](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_metric_alarm_module.rst)|Create/update or delete AWS Cloudwatch 'metric alarms'
 [community.aws.ec2_placement_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_placement_group_module.rst)|Create or delete an EC2 Placement Group
 [community.aws.ec2_placement_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_placement_group_info_module.rst)|List EC2 Placement Group(s) details
 [community.aws.ec2_snapshot_copy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_snapshot_copy_module.rst)|Copies an EC2 snapshot and returns the new Snapshot ID
