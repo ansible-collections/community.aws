@@ -1,0 +1,9 @@
+# reason: broken
+# ansible/ansible#38258
+disabled
+
+cloud/aws
+
+waf_condition
+waf_info
+waf_rule

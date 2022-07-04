@@ -56,10 +56,6 @@ Name | Description
 [community.aws.aws_ssm_parameter_store](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_ssm_parameter_store_module.rst)|Manage key-value pairs in AWS SSM parameter store
 [community.aws.aws_step_functions_state_machine](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_module.rst)|Manage AWS Step Functions state machines
 [community.aws.aws_step_functions_state_machine_execution](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_step_functions_state_machine_execution_module.rst)|Start or stop execution of an AWS Step Functions state machine.
-[community.aws.aws_waf_condition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_condition_module.rst)|Create and delete WAF Conditions
-[community.aws.aws_waf_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_info_module.rst)|Retrieve information for WAF ACLs, Rule , Conditions and Filters.
-[community.aws.aws_waf_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_rule_module.rst)|Create and delete WAF Rules
-[community.aws.aws_waf_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_waf_web_acl_module.rst)|Create and delete WAF Web ACLs
 [community.aws.batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
 [community.aws.batch_job_definition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
 [community.aws.batch_job_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_queue_module.rst)|Manage AWS Batch Job Queues
@@ -217,6 +213,10 @@ Name | Description
 [community.aws.storagegateway_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.storagegateway_info_module.rst)|Fetch AWS Storage Gateway information
 [community.aws.sts_assume_role](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sts_assume_role_module.rst)|Assume a role using AWS Security Token Service and obtain temporary credentials
 [community.aws.sts_session_token](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.sts_session_token_module.rst)|Obtain a session token from the AWS Security Token Service
+[community.aws.waf_condition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.waf_condition_module.rst)|Create and delete WAF Conditions
+[community.aws.waf_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.waf_info_module.rst)|Retrieve information for WAF ACLs, Rules, Conditions and Filters
+[community.aws.waf_rule](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.waf_rule_module.rst)|Create and delete WAF Rules
+[community.aws.waf_web_acl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.waf_web_acl_module.rst)|Create and delete WAF Web ACLs
 [community.aws.wafv2_ip_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_ip_set_module.rst)|wafv2_ip_set
 [community.aws.wafv2_ip_set_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_ip_set_info_module.rst)|Get information about wafv2 ip sets
 [community.aws.wafv2_resources](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.wafv2_resources_module.rst)|wafv2_web_acl
