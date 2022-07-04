@@ -420,13 +420,13 @@ def create_scaling_policy(connection, module):
 
     if policy_type == 'TargetTrackingScaling':
         params = dict(PolicyName=policy_name,
-                PolicyType=policy_type,
-                AutoScalingGroupName=asg_name)
+                      PolicyType=policy_type,
+                      AutoScalingGroupName=asg_name)
     else:
         params = dict(PolicyName=policy_name,
-                PolicyType=policy_type,
-                AutoScalingGroupName=asg_name,
-                AdjustmentType=module.params['adjustment_type'])
+                      PolicyType=policy_type,
+                      AutoScalingGroupName=asg_name,
+                      AdjustmentType=module.params['adjustment_type'])
 
     # min_adjustment_step attribute is only relevant if the adjustment_type
     # is set to percentage change in capacity, so it is a special case
