@@ -1,9 +1,9 @@
-.. _community.aws.ec2_lc_module:
+.. _community.aws.autoscaling_launch_config_module:
 
 
-********************
-community.aws.ec2_lc
-********************
+***************************************
+community.aws.autoscaling_launch_config
+***************************************
 
 **Create or delete AWS Autoscaling Launch Configurations**
 
@@ -18,7 +18,8 @@ Version added: 1.0.0
 Synopsis
 --------
 - Can create or delete AWS Autoscaling Configurations.
-- Works with the ec2_asg module to manage Autoscaling Groups.
+- Works with the :ref:`community.aws.autoscaling_group <community.aws.autoscaling_group_module>` module to manage Autoscaling Groups.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_lc``. The usage did not change.
 
 
 
@@ -418,7 +419,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>A list of security groups to apply to the instances. Since version 2.4 you can specify either security group names or IDs or a mix.  Previous to 2.4, for VPC instances, specify security group IDs and for EC2-Classic, specify either security group names or IDs.</div>
+                        <div>A list of security groups to apply to the instances.</div>
+                        <div>You can specify either security group names or IDs or a mix.</div>
                 </td>
             </tr>
             <tr>
@@ -536,7 +538,7 @@ Parameters
                 </td>
                 <td>
                         <div>A list dictionaries defining the volumes to create.</div>
-                        <div>For any volume, a volume size less than 1 will be interpreted as a request not to create the volume.</div>
+                        <div>For any volume, a volume size less than <code>1</code> will be interpreted as a request not to create the volume.</div>
                 </td>
             </tr>
                                 <tr>
@@ -757,7 +759,7 @@ Examples
 .. code-block:: yaml
 
     - name: create a launch configuration with an encrypted volume
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: special
         image_id: ami-XXX
         key_name: default
@@ -774,7 +776,7 @@ Examples
           ephemeral: ephemeral0
 
     - name: create a launch configuration using a running instance id as a basis
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: special
         instance_id: i-00a48b207ec59e948
         key_name: default
@@ -787,7 +789,7 @@ Examples
           delete_on_termination: true
 
     - name: create a launch configuration to omit the /dev/sdf EBS device that is included in the AMI image
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: special
         image_id: ami-XXX
         key_name: default
@@ -811,7 +813,7 @@ Examples
               encrypted: no
 
       - name: Create launch configuration
-        community.aws.ec2_lc:
+        community.aws.autoscaling_launch_config:
           name: lc1
           image_id: ami-xxxx
           assign_public_ip: yes
@@ -1157,7 +1159,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when <em>state=present</em></td>
                 <td>
-                            <div>Indicates whether the instance is optimized for EBS I/O (true) or not (false).</div>
+                            <div>Indicates whether the instance is optimized for EBS I/O <code>true</code> or not <code>false</code>.</div>
                     <br/>
                 </td>
             </tr>
@@ -1191,7 +1193,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when <em>state=present</em></td>
                 <td>
-                            <div>Indicates whether instances in this group are launched with detailed (true) or basic (false) monitoring.</div>
+                            <div>Indicates whether instances in this group are launched with detailed <code>true</code> or basic <code>false</code> monitoring.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>

@@ -4,4 +4,4 @@
 slow
 cloud/aws
 
-ec2_asg_info
+autoscaling_group_info

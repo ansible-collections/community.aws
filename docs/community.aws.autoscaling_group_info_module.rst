@@ -1,11 +1,11 @@
-.. _community.aws.ec2_asg_info_module:
+.. _community.aws.autoscaling_group_info_module:
 
 
-**************************
-community.aws.ec2_asg_info
-**************************
+************************************
+community.aws.autoscaling_group_info
+************************************
 
-**Gather information about ec2 Auto Scaling Groups (ASGs) in AWS**
+**Gather information about EC2 Auto Scaling Groups (ASGs) in AWS**
 
 
 Version added: 1.0.0
@@ -17,7 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Gather information about ec2 Auto Scaling Groups (ASGs) in AWS
+- Gather information about EC2 Auto Scaling Groups (ASGs) in AWS.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_asg_info``. The usage did not change.
 
 
 
@@ -264,36 +265,36 @@ Examples
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
     - name: Find all groups
-      community.aws.ec2_asg_info:
+      community.aws.autoscaling_group_info:
       register: asgs
 
     - name: Find a group with matching name/prefix
-      community.aws.ec2_asg_info:
+      community.aws.autoscaling_group_info:
         name: public-webserver-asg
       register: asgs
 
     - name: Find a group with matching tags
-      community.aws.ec2_asg_info:
+      community.aws.autoscaling_group_info:
         tags:
           project: webapp
           env: production
       register: asgs
 
     - name: Find a group with matching name/prefix and tags
-      community.aws.ec2_asg_info:
+      community.aws.autoscaling_group_info:
         name: myproject
         tags:
           env: production
       register: asgs
 
     - name: Fail if no groups are found
-      community.aws.ec2_asg_info:
+      community.aws.autoscaling_group_info:
         name: public-webserver-asg
       register: asgs
       failed_when: "{{ asgs.results | length == 0 }}"
 
     - name: Fail if more than 1 group is found
-      community.aws.ec2_asg_info:
+      community.aws.autoscaling_group_info:
         name: public-webserver-asg
       register: asgs
       failed_when: "{{ asgs.results | length > 1 }}"
@@ -476,7 +477,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>Name of launch configuration associated with the ASG. Same as launch_configuration_name, provided for compatibility with ec2_asg module.</div>
+                            <div>Name of launch configuration associated with the ASG. Same as launch_configuration_name, provided for compatibility with <span class='module'>community.aws.autoscaling_group</span> module.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">public-webapp-production-1</div>

@@ -1,0 +1,11 @@
+minor_changes:
+- ec2_asg - the ``ec2_asg`` module has been renamed to ``autoscaling_group``, ``ec2_asg`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_asg_info - the ``ec2_asg_info`` module has been renamed to ``autoscaling_group_info``, ``ec2_asg_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_asg_instance_refresh - the ``ec2_asg_instance_refresh`` module has been renamed to ``autoscaling_instance_refresh``, ``ec2_asg_instance_refresh`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_asg_instance_refresh_info - the ``ec2_asg_instance_refresh_info`` module has been renamed to ``autoscaling_instance_refresh_info``, ``ec2_asg_instance_refresh_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_asg_lifecycle_hook - the ``ec2_asg_lifecycle_hook`` module has been renamed to ``autoscaling_lifecycle_hool``, ``ec2_asg_lifecycle_hook`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_asg_scheduled_action - the ``ec2_asg_scheduled_action`` module has been renamed to ``autoscaling_scheduled_action``, ``ec2_asg_scheduled_action`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_lc - the ``ec2_lc`` module has been renamed to ``autoscaling_launch_config``, ``ec2_lc`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_lc_info - the ``ec2_lc_info`` module has been renamed to ``autoscaling_launch_config_info``, ``ec2_lc_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_lc_find - the ``ec2_lc_find`` module has been renamed to ``autoscaling_launch_config_find``, ``ec2_lc_find`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).
+- ec2_scaling_policy - the ``ec2_scaling_policy`` module has been renamed to ``autoscaling_policy``, ``ec2_scaling_policy`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1294).

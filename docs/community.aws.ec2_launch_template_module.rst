@@ -18,7 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Create, modify, and delete EC2 Launch Templates, which can be used to create individual instances or with Autoscaling Groups.
-- The :ref:`amazon.aws.ec2_instance <amazon.aws.ec2_instance_module>` and :ref:`community.aws.ec2_asg <community.aws.ec2_asg_module>` modules can, instead of specifying all parameters on those tasks, be passed a Launch Template which contains settings like instance size, disk type, subnet, and more.
+- The :ref:`amazon.aws.ec2_instance <amazon.aws.ec2_instance_module>` and :ref:`community.aws.autoscaling_group <community.aws.autoscaling_group_module>` modules can, instead of specifying all parameters on those tasks, be passed a Launch Template which contains settings like instance size, disk type, subnet, and more.
 
 
 

@@ -36,6 +36,16 @@ Name | Description
 [community.aws.acm_certificate_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.acm_certificate_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.api_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.api_gateway_module.rst)|Manage AWS API Gateway APIs
 [community.aws.api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
+[community.aws.autoscaling_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_group_module.rst)|Create or delete AWS AutoScaling Groups (ASGs)
+[community.aws.autoscaling_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_group_info_module.rst)|Gather information about EC2 Auto Scaling Groups (ASGs) in AWS
+[community.aws.autoscaling_instance_refresh](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_instance_refresh_module.rst)|Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
+[community.aws.autoscaling_instance_refresh_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_instance_refresh_info_module.rst)|Gather information about EC2 Auto Scaling Group (ASG) Instance Refreshes in AWS
+[community.aws.autoscaling_launch_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_launch_config_module.rst)|Create or delete AWS Autoscaling Launch Configurations
+[community.aws.autoscaling_launch_config_find](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_launch_config_find_module.rst)|Find AWS Autoscaling Launch Configurations
+[community.aws.autoscaling_launch_config_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_launch_config_info_module.rst)|Gather information about AWS Autoscaling Launch Configurations
+[community.aws.autoscaling_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks
+[community.aws.autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
+[community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
 [community.aws.aws_codebuild](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codebuild_module.rst)|Create or delete an AWS CodeBuild project
 [community.aws.aws_codecommit](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_codecommit_module.rst)|Manage repositories in AWS CodeCommit
@@ -82,24 +92,14 @@ Name | Description
 [community.aws.dynamodb_table](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.dynamodb_table_module.rst)|Create, update or delete AWS Dynamo DB tables
 [community.aws.dynamodb_ttl](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.dynamodb_ttl_module.rst)|Set TTL for a given DynamoDB table
 [community.aws.ec2_ami_copy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_ami_copy_module.rst)|copies AMI between AWS regions, return new image id
-[community.aws.ec2_asg](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_module.rst)|Create or delete AWS AutoScaling Groups (ASGs)
-[community.aws.ec2_asg_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_info_module.rst)|Gather information about ec2 Auto Scaling Groups (ASGs) in AWS
-[community.aws.ec2_asg_instance_refresh](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_instance_refresh_module.rst)|Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
-[community.aws.ec2_asg_instance_refresh_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_instance_refresh_info_module.rst)|Gather information about ec2 Auto Scaling Group (ASG) Instance Refreshes in AWS
-[community.aws.ec2_asg_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks.
-[community.aws.ec2_asg_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_asg_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions.
 [community.aws.ec2_customer_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_customer_gateway_module.rst)|Manage an AWS customer gateway
 [community.aws.ec2_customer_gateway_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_customer_gateway_info_module.rst)|Gather information about customer gateways in AWS
 [community.aws.ec2_eip](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_eip_module.rst)|manages EC2 elastic IP (EIP) addresses.
 [community.aws.ec2_eip_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_eip_info_module.rst)|List EC2 EIP details
 [community.aws.ec2_launch_template](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_launch_template_module.rst)|Manage EC2 launch templates
-[community.aws.ec2_lc](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_lc_module.rst)|Create or delete AWS Autoscaling Launch Configurations
-[community.aws.ec2_lc_find](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_lc_find_module.rst)|Find AWS Autoscaling Launch Configurations
-[community.aws.ec2_lc_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_lc_info_module.rst)|Gather information about AWS Autoscaling Launch Configurations.
 [community.aws.ec2_metric_alarm](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_metric_alarm_module.rst)|Create/update or delete AWS Cloudwatch 'metric alarms'
 [community.aws.ec2_placement_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_placement_group_module.rst)|Create or delete an EC2 Placement Group
 [community.aws.ec2_placement_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_placement_group_info_module.rst)|List EC2 Placement Group(s) details
-[community.aws.ec2_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_scaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
 [community.aws.ec2_snapshot_copy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_snapshot_copy_module.rst)|Copies an EC2 snapshot and returns the new Snapshot ID
 [community.aws.ec2_transit_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_transit_gateway_module.rst)|Create and delete AWS Transit Gateways
 [community.aws.ec2_transit_gateway_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ec2_transit_gateway_info_module.rst)|Gather information about ec2 transit gateways in AWS
