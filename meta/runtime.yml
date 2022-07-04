@@ -72,6 +72,7 @@ action_groups:
   - cloudfront_origin_access_identity
   - cloudfront_response_headers_policy
   - cloudtrail
+  - cloudwatch_metric_alarm
   - cloudwatchevent_rule
   - cloudwatchlogs_log_group
   - cloudwatchlogs_log_group_info
@@ -343,6 +344,9 @@ plugin_routing:
       redirect: community.aws.autoscaling_scheduled_action
     ec2_elb:
       redirect: community.aws.elb_instance
+    ec2_metric_alarm:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.cloudwatch_metric_alarm
     ec2_instance:
       redirect: amazon.aws.ec2_instance
     ec2_instance_info:
