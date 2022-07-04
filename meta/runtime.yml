@@ -6,6 +6,7 @@ action_groups:
   - api_gateway
   - api_gateway_domain
   - application_autoscaling_policy
+  - autoscaling_complete_lifecycle_action
   - autoscaling_group_info
   - autoscaling_group
   - autoscaling_instance_refresh_info
