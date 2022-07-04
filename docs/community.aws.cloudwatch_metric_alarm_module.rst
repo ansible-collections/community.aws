@@ -1,11 +1,11 @@
-.. _community.aws.ec2_metric_alarm_module:
+.. _community.aws.cloudwatch_metric_alarm_module:
 
 
-******************************
-community.aws.ec2_metric_alarm
-******************************
+*************************************
+community.aws.cloudwatch_metric_alarm
+*************************************
 
-**Create/update or delete AWS Cloudwatch 'metric alarms'**
+**Create/update or delete AWS CloudWatch 'metric alarms'**
 
 
 Version added: 1.0.0
@@ -17,8 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Can create or delete AWS metric alarms.
+- Can create or delete AWS CloudWatch metric alarms.
 - Metrics you wish to alarm on must already exist.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_metric_alarm``. The usage did not change.
 
 
 
@@ -287,7 +288,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of the appropriate namespace (<code>AWS/EC2</code>, <code>System/Linux</code>, etc.), which determines the category it will appear under in cloudwatch.</div>
+                        <div>Name of the appropriate namespace (<code>AWS/EC2</code>, <code>System/Linux</code>, etc.), which determines the category it will appear under in CloudWatch.</div>
                 </td>
             </tr>
             <tr>
@@ -532,7 +533,7 @@ Examples
 .. code-block:: yaml
 
     - name: create alarm
-        community.aws.ec2_metric_alarm:
+        community.aws.cloudwatch_metric_alarm:
           state: present
           region: ap-southeast-2
           name: "cpu-low"
@@ -549,7 +550,7 @@ Examples
           alarm_actions: ["action1","action2"]
 
       - name: Create an alarm to recover a failed instance
-        community.aws.ec2_metric_alarm:
+        community.aws.cloudwatch_metric_alarm:
           state: present
           region: us-west-1
           name: "recover-instance"
