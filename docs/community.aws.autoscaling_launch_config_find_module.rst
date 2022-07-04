@@ -1,11 +1,11 @@
-.. _community.aws.ec2_asg_lifecycle_hook_module:
+.. _community.aws.autoscaling_launch_config_find_module:
 
 
-************************************
-community.aws.ec2_asg_lifecycle_hook
-************************************
+********************************************
+community.aws.autoscaling_launch_config_find
+********************************************
 
-**Create, delete or update AWS ASG Lifecycle Hooks.**
+**Find AWS Autoscaling Launch Configurations**
 
 
 Version added: 1.0.0
@@ -17,9 +17,10 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Will create a new hook when *state=present* and no given Hook is found.
-- Will update an existing hook when *state=present* and a Hook is found, but current and provided parameters differ.
-- Will delete the hook when *state=absent* and a Hook is found.
+- Returns list of matching Launch Configurations for a given name, along with other useful information.
+- Results can be sorted and sliced.
+- Based on the work by Tom Bamford https://github.com/tombamford.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_lc_find``. The usage did not change.
 
 
 
@@ -43,22 +44,6 @@ Parameters
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>autoscaling_group_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The name of the Auto Scaling group to which you want to assign the lifecycle hook.</div>
-                </td>
-            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -147,25 +132,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>default_result</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>ABANDON</b>&nbsp;&larr;</div></li>
-                                    <li>CONTINUE</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -182,7 +148,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>heartbeat_timeout</b>
+                    <b>limit</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">integer</span>
@@ -191,14 +157,14 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The amount of time, in seconds, that can elapse before the lifecycle hook times out. When the lifecycle hook times out, Auto Scaling performs the default action. You can prevent the lifecycle hook from timing out by calling RecordLifecycleActionHeartbeat.</div>
-                        <div>By default Amazon AWS will use 3600 (1 hour)</div>
+                        <div>How many results to show.</div>
+                        <div>Corresponds to Python slice notation like list[:limit].</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>lifecycle_hook_name</b>
+                    <b>name_regex</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -208,39 +174,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The name of the lifecycle hook.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>notification_meta_data</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>Contains additional information that you want to include any time Auto Scaling sends a message to the notification target.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>notification_target_arn</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ARN of the notification target that Auto Scaling will use to notify you when an instance is in the transition state for the lifecycle hook.</div>
-                        <div>This target can be either an SQS queue or an SNS topic.</div>
-                        <div>If you specify an empty string, this overrides the current ARN.</div>
+                        <div>A Launch Configuration to match.</div>
+                        <div>It&#x27;ll be compiled as regex.</div>
                 </td>
             </tr>
             <tr>
@@ -278,21 +213,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>role_arn</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ARN of the IAM role that allows the Auto Scaling group to publish to the specified notification target.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -311,7 +231,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
+                    <b>sort_order</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -319,33 +239,12 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                                    <li>absent</li>
+                                    <li><div style="color: blue"><b>ascending</b>&nbsp;&larr;</div></li>
+                                    <li>descending</li>
                         </ul>
                 </td>
                 <td>
-                        <div>Create or delete Lifecycle Hook.</div>
-                        <div>When <em>state=present</em> updates existing hook or creates a new hook if not found.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>transition</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>autoscaling:EC2_INSTANCE_TERMINATING</li>
-                                    <li>autoscaling:EC2_INSTANCE_LAUNCHING</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The instance state to which you want to attach the lifecycle hook.</div>
-                        <div>Required when <em>state=present</em>.</div>
+                        <div>Order in which to sort results.</div>
                 </td>
             </tr>
             <tr>
@@ -386,22 +285,13 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Create / Update lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
-        region: eu-central-1
-        state: present
-        autoscaling_group_name: example
-        lifecycle_hook_name: example
-        transition: autoscaling:EC2_INSTANCE_LAUNCHING
-        heartbeat_timeout: 7000
-        default_result: ABANDON
+    # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    - name: Delete lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
-        region: eu-central-1
-        state: absent
-        autoscaling_group_name: example
-        lifecycle_hook_name: example
+    - name: Search for the Launch Configurations that start with "app"
+      community.aws.autoscaling_launch_config_find:
+        name_regex: app.*
+        sort_order: descending
+        limit: 2
 
 
 
@@ -420,103 +310,244 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>auto_scaling_group_name</b>
+                    <b>arn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>when Launch Configuration was found</td>
                 <td>
-                            <div>The unique name of the auto scaling group</div>
+                            <div>Name of the AMI</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">myasg</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:autoscaling:eu-west-1:12345:launchConfiguration:d82f050e-e315:launchConfigurationName/yourproject</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>default_result</b>
+                    <b>associate_public_address</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Assign public address or not</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>block_device_mappings</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Launch Configuration block device mappings property</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>classic_link_vpc_security_groups</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Launch Configuration classic link vpc security groups property</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>created_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>when Launch Configuration was found</td>
                 <td>
-                            <div>Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs</div>
+                            <div>When it was created</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">CONTINUE</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2016-06-29T14:59:22.222000+00:00</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>global_timeout</b>
+                    <b>ebs_optimized</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">integer</span>
+                      <span style="color: purple">boolean</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>when Launch Configuration was found</td>
                 <td>
-                            <div>The maximum time, in seconds, that an instance can remain in a Pending:Wait or Terminating:Wait state</div>
+                            <div>Launch Configuration EBS optimized property</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">172800</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>heartbeat_timeout</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>success</td>
-                <td>
-                            <div>The maximum time, in seconds, that can elapse before the lifecycle hook times out</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3600</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>lifecycle_hook_name</b>
+                    <b>image_id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>when Launch Configuration was found</td>
                 <td>
-                            <div>The name of the lifecycle hook</div>
+                            <div>AMI id</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mylifecyclehook</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ami-0d75df7e</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>lifecycle_transition</b>
+                    <b>instance_monitoring</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>success</td>
+                <td>when Launch Configuration was found</td>
                 <td>
-                            <div>The instance state to which lifecycle hook should be attached</div>
+                            <div>Launch Configuration instance monitoring property</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">autoscaling:EC2_INSTANCE_LAUNCHING</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;Enabled&#x27;: False}</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>instance_type</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Type of ec2 instance</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">t2.small</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>kernel_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Launch Configuration kernel to use</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>keyname</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Launch Configuration ssh key</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">mykey</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Name of the Launch Configuration</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">myapp-v123</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>ram_disk_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Launch Configuration ram disk property</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>security_groups</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>Launch Configuration security groups</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>user_data</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when Launch Configuration was found</td>
+                <td>
+                            <div>User data used to start instance</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ZXhwb3J0IENMT1VE</div>
                 </td>
             </tr>
     </table>
@@ -530,4 +561,4 @@ Status
 Authors
 ~~~~~~~
 
-- Igor 'Tsigankov' Eyrich (@tsiganenok) <tsiganenok@gmail.com>
+- Jose Armesto (@fiunchinho)

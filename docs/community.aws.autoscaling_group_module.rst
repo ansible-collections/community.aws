@@ -1,9 +1,9 @@
-.. _community.aws.ec2_asg_module:
+.. _community.aws.autoscaling_group_module:
 
 
-*********************
-community.aws.ec2_asg
-*********************
+*******************************
+community.aws.autoscaling_group
+*******************************
 
 **Create or delete AWS AutoScaling Groups (ASGs)**
 
@@ -18,7 +18,8 @@ Version added: 1.0.0
 Synopsis
 --------
 - Can create or delete AWS AutoScaling Groups.
-- Can be used with the :ref:`community.aws.ec2_lc <community.aws.ec2_lc_module>` module to manage Launch Configurations.
+- Can be used with the :ref:`community.aws.autoscaling_launch_config <community.aws.autoscaling_launch_config_module>` module to manage Launch Configurations.
+- Prior to release 5.0.0 this module was called ``community.aws.ec2_asg``. The usage did not change.
 
 
 
@@ -278,7 +279,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of the Launch configuration to use for the group. See the community.aws.ec2_lc) module for managing these.</div>
+                        <div>Name of the Launch configuration to use for the group. See the community.aws.autoscaling_launch_config) module for managing these.</div>
                         <div>If unspecified then the current group value will be used.  One of <em>launch_config_name</em> or <em>launch_template</em> must be provided.</div>
                 </td>
             </tr>
@@ -1040,7 +1041,7 @@ Examples
 
     # Basic configuration with Launch Configuration
 
-    - community.aws.ec2_asg:
+    - community.aws.autoscaling_group:
         name: special
         load_balancers: [ 'lb1', 'lb2' ]
         availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
@@ -1066,7 +1067,7 @@ Examples
     # will have the current launch configuration.
 
     - name: create launch config
-      community.aws.ec2_lc:
+      community.aws.autoscaling_launch_config:
         name: my_new_lc
         image_id: ami-lkajsf
         key_name: mykey
@@ -1075,7 +1076,7 @@ Examples
         instance_type: m1.small
         assign_public_ip: yes
 
-    - community.aws.ec2_asg:
+    - community.aws.autoscaling_group:
         name: myasg
         launch_config_name: my_new_lc
         health_check_period: 60
@@ -1089,7 +1090,7 @@ Examples
     # To only replace a couple of instances instead of all of them, supply a list
     # to "replace_instances":
 
-    - community.aws.ec2_asg:
+    - community.aws.autoscaling_group:
         name: myasg
         launch_config_name: my_new_lc
         health_check_period: 60
@@ -1104,7 +1105,7 @@ Examples
 
     # Basic Configuration with Launch Template
 
-    - community.aws.ec2_asg:
+    - community.aws.autoscaling_group:
         name: special
         load_balancers: [ 'lb1', 'lb2' ]
         availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
@@ -1122,7 +1123,7 @@ Examples
 
     # Basic Configuration with Launch Template using mixed instance policy
 
-    - community.aws.ec2_asg:
+    - community.aws.autoscaling_group:
         name: special
         load_balancers: [ 'lb1', 'lb2' ]
         availability_zones: [ 'eu-west-1a', 'eu-west-1b' ]
@@ -1375,7 +1376,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>Name of launch configuration associated with the ASG. Same as launch_configuration_name, provided for compatibility with ec2_asg module.</div>
+                            <div>Name of launch configuration associated with the ASG. Same as launch_configuration_name, provided for compatibility with <span class='module'>community.aws.autoscaling_group</span> module.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">public-webapp-production-1</div>
