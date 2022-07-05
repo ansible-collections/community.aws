@@ -213,7 +213,7 @@ notes:
 EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- msk_cluster:
+- community.aws.msk_cluster:
     name: kafka-cluster
     state: present
     version: 2.6.1
@@ -228,7 +228,7 @@ EXAMPLES = r"""
     configuration_arn: arn:aws:kafka:us-east-1:000000000001:configuration/kafka-cluster-configuration/aaaaaaaa-bbbb-4444-3333-ccccccccc-1
     configuration_revision: 1
 
-- msk_cluster:
+- community.aws.msk_cluster:
     name: kafka-cluster
     state: absent
 """

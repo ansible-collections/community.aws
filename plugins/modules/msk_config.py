@@ -49,7 +49,7 @@ extends_documentation_fragment:
 EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- msk_config:
+- community.aws.msk_config:
     name: kafka-cluster-configuration
     state: present
     kafka_versions:
@@ -61,7 +61,7 @@ EXAMPLES = r"""
       default.replication.factor: 3
       zookeeper.session.timeout.ms: 18000
 
-- msk_config:
+- community.aws.msk_config:
     name: kafka-cluster-configuration
     state: absent
 """
