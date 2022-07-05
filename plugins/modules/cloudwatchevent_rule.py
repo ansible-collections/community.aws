@@ -92,7 +92,7 @@ options:
             is specified, then the entire event is passed to the target in JSON form.
       input_paths_map:
         type: dict
-        version_added: 2.0.0
+        version_added: 4.1.0
         description:
           - A dict that specifies the transformation of the event data to
             custom input parameters.
@@ -100,7 +100,7 @@ options:
             is specified, then the entire event is passed to the target in JSON form.
       input_template:
         type: str
-        version_added: 2.0.0
+        version_added: 4.1.0
         description:
           - A string that templates the values input_paths_map extracted from the event data.
             It is used to produce the output you want to be sent to the target.

@@ -1,6 +1,6 @@
 ---
 name_pattern: "cloudwatch_event_rule"
-unique_id: "{{ resource_prefix | hash('md5') | truncate(24, True, '')  }}"
+unique_id: "{{ tiny_prefix  }}"
 
 test_event_names:
   - "{{ name_pattern }}-{{ unique_id }}-1"
