@@ -39,12 +39,12 @@ Parameters
 
     <table  border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="2">Parameter</th>
+            <th colspan="3">Parameter</th>
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>adjustment_type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -65,7 +65,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>asg_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -81,7 +81,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_access_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -98,7 +98,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_ca_bundle</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -114,7 +114,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_config</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -130,7 +130,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>aws_secret_key</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -147,7 +147,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>cooldown</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -163,7 +163,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -182,7 +182,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ec2_url</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -198,7 +198,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>estimated_instance_warmup</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -213,7 +213,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>metric_aggregation</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -234,7 +234,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>min_adjustment_step</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -250,7 +250,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -266,7 +266,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>policy_type</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -278,6 +278,7 @@ Parameters
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li>StepScaling</li>
                                     <li><div style="color: blue"><b>SimpleScaling</b>&nbsp;&larr;</div></li>
+                                    <li>TargetTrackingScaling</li>
                         </ul>
                 </td>
                 <td>
@@ -285,7 +286,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -301,7 +302,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -317,7 +318,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>scaling_adjustment</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -335,7 +336,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -353,7 +354,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -372,7 +373,7 @@ Parameters
                 </td>
             </tr>
             <tr>
-                <td colspan="2">
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>step_adjustments</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -393,7 +394,7 @@ Parameters
             </tr>
                                 <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>lower_bound</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -409,7 +410,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>scaling_adjustment</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -426,7 +427,7 @@ Parameters
             </tr>
             <tr>
                     <td class="elbow-placeholder"></td>
-                <td colspan="1">
+                <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>upper_bound</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -442,7 +443,236 @@ Parameters
             </tr>
 
             <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>target_tracking_config</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Allows you to specify a <em>target_tracking_config</em> for autoscaling policies in AWS.</div>
+                        <div><em>target_tracking_config</em> can accept nested dicts for <em>customized_metric_spec</em> or <em>predefined_metric_spec</em>. Each specification aligns with their boto3 equivalent.</div>
+                        <div>Required when <em>TargetTrackingScaling</em> policy is specified.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
                 <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>customized_metric_spec</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specify a dict will be passed in as a call for <code>TargetTrackingConfiguration</code>.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>dimensions</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The dimensions of the metric. The element of the list should be a dict.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>metric_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the metric.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>namespace</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The namespace of the metric.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>statistic</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>Average</li>
+                                    <li>Minimum</li>
+                                    <li>Maximum</li>
+                                    <li>SampleCount</li>
+                                    <li>Sum</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The statistic of the metric.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>unit</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The unit of the metric. Reference AmazonCloudWatch API for valid Units.</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>disable_scalein</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Indicate whether scaling in by the target tracking scaling policy is disabled.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>predefined_metric_spec</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specify a dict will be passed in as a call for <em>TargetTrackingConfiguration</em>.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>predefined_metric_type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>ASGAverageCPUUtilization</li>
+                                    <li>ASGAverageNetworkIn</li>
+                                    <li>ASGAverageNetworkOut</li>
+                                    <li>ALBRequestCountPerTarget</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Required if <code>predefined_metric_spec</code> is used.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>resource_label</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Uniquely identifies a specific ALB target group from which to determine the average request count served by your Auto Scaling group.</div>
+                        <div>You can&#x27;t specify a resource label unless the target group is attached to the Auto Scaling group.</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>target_value</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">float</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specify a float number for target utilization.</div>
+                        <div>Required when <em>target_tracking_config</em> is specified.</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
@@ -507,6 +737,45 @@ Examples
             scaling_adjustment: 100
         adjustment_type: "PercentChangeInCapacity"
         asg_name: "application-asg"
+
+    - name: create TargetTracking predefined policy
+      ec2_scaling_policy:
+        name: "predefined-policy-1"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          predefined_metric_spec:
+            predefined_metric_type: ASGAverageCPUUtilization
+          target_value: 98.0
+        asg_name: "asg-test-1"
+      register: result
+
+    - name: create TargetTracking predefined policy with resource_label
+      ec2_scaling_policy:
+        name: "predefined-policy-1"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          predefined_metric_spec:
+            predefined_metric_type: ALBRequestCountPerTarget
+            resource_label: app/my-alb/778d41231d141a0f/targetgroup/my-alb-target-group/942f017f100becff
+          target_value: 98.0
+        asg_name: "asg-test-1"
+      register: result
+
+    - name: create TargetTrackingScaling custom policy
+      ec2_scaling_policy:
+        name: "custom-policy-1"
+        policy_type: TargetTrackingScaling
+        target_tracking_config:
+          customized_metric_spec:
+            metric_name: metric_1
+            namespace: namespace_1
+            statistic: Minimum
+            unit: Gigabits
+            dimensions: [{'Name': 'dimension1', 'Value': 'value1'}]
+          disable_scalein: true
+          target_value: 98.0
+        asg_name: asg-test-1
+      register: result
 
 
 
