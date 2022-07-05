@@ -1,0 +1,4 @@
+minor_changes:
+- aws_ssm_parameter_store - added support for check_mode (https://github.com/ansible-collections/community.aws/pull/1309).
+bugfixes:
+- aws_ssm_parameter_store - fixed bug where module wasn't consistently idempotent (https://github.com/ansible-collections/community.aws/pull/1309).
