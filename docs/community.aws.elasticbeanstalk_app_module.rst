@@ -1,11 +1,11 @@
-.. _community.aws.aws_elasticbeanstalk_app_module:
+.. _community.aws.elasticbeanstalk_app_module:
 
 
-**************************************
-community.aws.aws_elasticbeanstalk_app
-**************************************
+**********************************
+community.aws.elasticbeanstalk_app
+**********************************
 
-**Create, update, and delete an elastic beanstalk application**
+**Create, update, and delete an Elastic Beanstalk application**
 
 
 Version added: 1.0.0
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Creates, updates, deletes beanstalk applications if app_name is provided.
+- Creates, updates, deletes Elastic Beanstalk applications if *app_name* is provided.
 
 
 
@@ -53,7 +53,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of the beanstalk application you wish to manage.</div>
+                        <div>Name of the Beanstalk application you wish to manage.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
                 </td>
             </tr>
@@ -300,13 +300,13 @@ Examples
 .. code-block:: yaml
 
     # Create or update an application
-    - community.aws.aws_elasticbeanstalk_app:
+    - community.aws.elasticbeanstalk_app:
         app_name: Sample_App
         description: "Hello World App"
         state: present
 
     # Delete application
-    - community.aws.aws_elasticbeanstalk_app:
+    - community.aws.elasticbeanstalk_app:
         app_name: Sample_App
         state: absent
 
