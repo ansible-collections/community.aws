@@ -36,6 +36,7 @@ Name | Description
 [community.aws.acm_certificate_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.acm_certificate_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.api_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.api_gateway_module.rst)|Manage AWS API Gateway APIs
 [community.aws.api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
+[community.aws.application_autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.application_autoscaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
 [community.aws.autoscaling_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_group_module.rst)|Create or delete AWS AutoScaling Groups (ASGs)
 [community.aws.autoscaling_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_group_info_module.rst)|Gather information about EC2 Auto Scaling Groups (ASGs) in AWS
 [community.aws.autoscaling_instance_refresh](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_instance_refresh_module.rst)|Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
@@ -46,7 +47,6 @@ Name | Description
 [community.aws.autoscaling_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks
 [community.aws.autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
 [community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
-[community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
 [community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager

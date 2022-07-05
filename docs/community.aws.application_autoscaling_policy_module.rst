@@ -1,8 +1,8 @@
-.. _community.aws.aws_application_scaling_policy_module:
+.. _community.aws.application_autoscaling_policy_module:
 
 
 ********************************************
-community.aws.aws_application_scaling_policy
+community.aws.application_autoscaling_policy
 ********************************************
 
 **Manage Application Auto Scaling Scaling Policies**
@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Creates, updates or removes a Scaling Policy.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_application_scaling_policy``. The usage did not change.
 
 
 
@@ -523,7 +524,7 @@ Notes
 -----
 
 .. note::
-   - for details of the parameters and returns see http://boto3.readthedocs.io/en/latest/reference/services/application-autoscaling.html#ApplicationAutoScaling.Client.put_scaling_policy
+   - For more details of the parameters and returns see http://boto3.readthedocs.io/en/latest/reference/services/application-autoscaling.html#ApplicationAutoScaling.Client.put_scaling_policy
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.

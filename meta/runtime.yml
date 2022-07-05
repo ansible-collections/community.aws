@@ -5,6 +5,7 @@ action_groups:
   - acm_certificate_info
   - api_gateway
   - api_gateway_domain
+  - application_autoscaling_policy
   - autoscaling_group_info
   - autoscaling_group
   - autoscaling_instance_refresh_info
@@ -266,6 +267,9 @@ plugin_routing:
     aws_api_gateway_domain:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.api_gateway_domain
+    aws_application_scaling_policy:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.application_autoscaling_policy
     aws_batch_compute_environment:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_compute_environment
