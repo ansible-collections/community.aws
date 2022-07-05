@@ -1,11 +1,11 @@
-.. _community.aws.aws_step_functions_state_machine_execution_module:
+.. _community.aws.stepfunctions_state_machine_module:
 
 
-********************************************************
-community.aws.aws_step_functions_state_machine_execution
-********************************************************
+*****************************************
+community.aws.stepfunctions_state_machine
+*****************************************
 
-**Start or stop execution of an AWS Step Functions state machine.**
+**Manage AWS Step Functions state machines**
 
 
 Version added: 1.0.0
@@ -17,7 +17,9 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Start or stop execution of a state machine in AWS Step Functions.
+- Create, update and delete state machines in AWS Step Functions.
+- Calling the module in ``state=present`` for an existing AWS Step Functions state machine will attempt to update the state machine definition, IAM Role, or tags with the provided data.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_step_functions_state_machine``. The usage did not change.
 
 
 
@@ -41,25 +43,6 @@ Parameters
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>action</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>start</b>&nbsp;&larr;</div></li>
-                                    <li>stop</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Desired action (start or stop) for a state machine execution.</div>
-                </td>
-            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -129,22 +112,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cause</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">""</div>
-                </td>
-                <td>
-                        <div>A detailed explanation of the cause for stopping the execution.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -159,6 +126,22 @@ Parameters
                 </td>
                 <td>
                         <div>Use a botocore.endpoint logger to parse the unique (rather than total) &quot;resource:action&quot; API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>definition</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">json</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The Amazon States Language definition of the state machine. See <a href='https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html'>https://docs.aws.amazon.com/step-functions/latest/dg/concepts-amazon-states-language.html</a> for more information on the Amazon States Language.</div>
+                        <div>Required when <em>state=present</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -180,63 +163,17 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>error</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">""</div>
-                </td>
-                <td>
-                        <div>The error code of the failure to pass in when stopping the execution.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>execution_arn</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ARN of the execution you wish to stop.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>execution_input</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">json</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">{}</div>
-                </td>
-                <td>
-                        <div>The JSON input data for the execution.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>Name of the execution.</div>
+                        <div>Name of the state machine.</div>
                 </td>
             </tr>
             <tr>
@@ -258,6 +195,27 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>purge_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
+                        </ul>
+                </td>
+                <td>
+                        <div>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
+                        <div>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</div>
+                        <div>Tag keys beginning with <code>aws:</code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a href='https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions'>https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -269,6 +227,22 @@ Parameters
                 <td>
                         <div>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a href='http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region'>http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_region, ec2_region</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>role_arn</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The ARN of the IAM Role that will be used by the state machine for its executions.</div>
+                        <div>Required when <em>state=present</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -292,16 +266,37 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state_machine_arn</b>
+                    <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
+                                    <li>absent</li>
+                        </ul>
                 </td>
                 <td>
-                        <div>The ARN of the state machine that will be executed.</div>
+                        <div>Desired state for the state machine.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>A dictionary representing the tags to be applied to the resource.</div>
+                        <div>If the <em>tags</em> parameter is not set then tags will not be modified.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: resource_tags</div>
                 </td>
             </tr>
             <tr>
@@ -342,18 +337,29 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Start an execution of a state machine
-      community.aws.aws_step_functions_state_machine_execution:
-        name: an_execution_name
-        execution_input: '{ "IsHelloWorldExample": true }'
-        state_machine_arn: "arn:aws:states:us-west-2:682285639423:stateMachine:HelloWorldStateMachine"
+    # Create a new AWS Step Functions state machine
+    - name: Setup HelloWorld state machine
+      community.aws.stepfunctions_state_machine:
+        name: "HelloWorldStateMachine"
+        definition: "{{ lookup('file','state_machine.json') }}"
+        role_arn: arn:aws:iam::987654321012:role/service-role/invokeLambdaStepFunctionsRole
+        tags:
+          project: helloWorld
 
-    - name: Stop an execution of a state machine
-      community.aws.aws_step_functions_state_machine_execution:
-        action: stop
-        execution_arn: "arn:aws:states:us-west-2:682285639423:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8"
-        cause: "cause of task failure"
-        error: "error code of the failure"
+    # Update an existing state machine
+    - name: Change IAM Role and tags of HelloWorld state machine
+      community.aws.stepfunctions_state_machine:
+        name: HelloWorldStateMachine
+        definition: "{{ lookup('file','state_machine.json') }}"
+        role_arn: arn:aws:iam::987654321012:role/service-role/anotherStepFunctionsRole
+        tags:
+          otherTag: aDifferentTag
+
+    # Remove the AWS Step Functions state machine
+    - name: Delete HelloWorld state machine
+      community.aws.stepfunctions_state_machine:
+        name: HelloWorldStateMachine
+        state: absent
 
 
 
@@ -372,52 +378,16 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>execution_arn</b>
+                    <b>state_machine_arn</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>if action == start and changed == True</td>
+                <td>always</td>
                 <td>
-                            <div>ARN of the AWS Step Functions state machine execution.</div>
+                            <div>ARN of the AWS Step Functions state machine</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:states:us-west-2:682285639423:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>start_date</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>if action == start and changed == True</td>
-                <td>
-                            <div>The date the execution is started.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2019-11-02T22:39:49.071000-07:00</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>stop_date</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>if action == stop</td>
-                <td>
-                            <div>The date the execution is stopped.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2019-11-02T22:39:49.071000-07:00</div>
                 </td>
             </tr>
     </table>
@@ -431,4 +401,4 @@ Status
 Authors
 ~~~~~~~
 
-- Prasad Katti (@prasadkatti)
+- Tom De Keyser (@tdekeyser)
