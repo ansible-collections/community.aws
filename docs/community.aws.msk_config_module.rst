@@ -1,11 +1,11 @@
-.. _community.aws.aws_msk_config_module:
+.. _community.aws.msk_config_module:
 
 
-****************************
-community.aws.aws_msk_config
-****************************
+************************
+community.aws.msk_config
+************************
 
-**Manage Amazon MSK cluster configurations.**
+**Manage Amazon MSK cluster configurations**
 
 
 Version added: 2.0.0
@@ -18,6 +18,7 @@ Version added: 2.0.0
 Synopsis
 --------
 - Create, delete and modify Amazon MSK (Managed Streaming for Apache Kafka) cluster configurations.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_msk_config``. The usage did not change.
 
 
 
@@ -315,7 +316,7 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    - aws_msk_config:
+    - msk_config:
         name: kafka-cluster-configuration
         state: present
         kafka_versions:
@@ -327,7 +328,7 @@ Examples
           default.replication.factor: 3
           zookeeper.session.timeout.ms: 18000
 
-    - aws_msk_config:
+    - msk_config:
         name: kafka-cluster-configuration
         state: absent
 

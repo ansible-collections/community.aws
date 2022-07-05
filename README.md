@@ -48,8 +48,6 @@ Name | Description
 [community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
 [community.aws.aws_application_scaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_application_scaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
-[community.aws.aws_msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_cluster_module.rst)|Manage Amazon MSK clusters
-[community.aws.aws_msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_msk_config_module.rst)|Manage Amazon MSK cluster configurations.
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
 [community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
 [community.aws.batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
@@ -166,6 +164,8 @@ Name | Description
 [community.aws.lambda_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_info_module.rst)|Gathers AWS Lambda function details
 [community.aws.lambda_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_policy_module.rst)|Creates, updates or deletes AWS Lambda policy statements.
 [community.aws.lightsail](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lightsail_module.rst)|Manage instances in AWS Lightsail
+[community.aws.msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.msk_cluster_module.rst)|Manage Amazon MSK clusters
+[community.aws.msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.msk_config_module.rst)|Manage Amazon MSK cluster configurations
 [community.aws.networkfirewall](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_module.rst)|manage AWS Network Firewall firewalls
 [community.aws.networkfirewall_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_info_module.rst)|describe AWS Network Firewall firewalls
 [community.aws.networkfirewall_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_policy_module.rst)|manage AWS Network Firewall policies
