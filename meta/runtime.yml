@@ -144,6 +144,7 @@ action_groups:
   - eks_cluster
   - efs_tag
   - eks_fargate_profile
+  - elasticbeanstalk_app
   - elasticache
   - elasticache_info
   - elasticache_parameter_group
@@ -311,6 +312,9 @@ plugin_routing:
     aws_eks_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.eks_cluster
+    aws_elasticbeanstalk_app:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.elasticbeanstalk_app
     aws_glue_connection:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.glue_connection
