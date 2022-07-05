@@ -77,6 +77,9 @@ action_groups:
   - cloudwatchlogs_log_group
   - cloudwatchlogs_log_group_info
   - cloudwatchlogs_log_group_metric_filter
+  - codebuild_project
+  - codecommit_repository
+  - codepipeline
   - config_aggregation_authorization
   - config_aggregator
   - config_delivery_channel
@@ -266,6 +269,15 @@ plugin_routing:
     aws_batch_job_queue:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.batch_job_queue
+    aws_codebuild:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.codebuild_project
+    aws_codecommit:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.codecommit_repository
+    aws_codepipeline:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.codepipeline
     aws_config_aggregation_authorization:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.config_aggregation_authorization
