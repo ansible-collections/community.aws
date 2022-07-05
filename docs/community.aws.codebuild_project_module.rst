@@ -1,9 +1,9 @@
-.. _community.aws.aws_codebuild_module:
+.. _community.aws.codebuild_project_module:
 
 
-***************************
-community.aws.aws_codebuild
-***************************
+*******************************
+community.aws.codebuild_project
+*******************************
 
 **Create or delete an AWS CodeBuild project**
 
@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Create or delete a CodeBuild projects on AWS, used for building code artifacts from source code.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_codebuild``. The usage did not change.
 
 
 
@@ -70,7 +71,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Information about the build output artifact location. When choosing type S3, set the bucket name here.</div>
+                        <div>Information about the build output artifact location. When choosing <em>type</em> <code>S3</code>, set the bucket name here.</div>
                 </td>
             </tr>
             <tr>
@@ -419,7 +420,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Enables running the Docker daemon inside a Docker container. Set to true only if the build project is be used to build Docker images.</div>
+                        <div>Enables running the Docker daemon inside a Docker container.</div>
+                        <div>Set to <code>true</code> only if the build project is be used to build Docker images.</div>
                 </td>
             </tr>
             <tr>
@@ -588,7 +590,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The build spec declaration to use for the builds in this build project. Leave empty if part of the code project.</div>
+                        <div>The build spec declaration to use for the builds in this build project. Leave empty if part of the CodeBuild project.</div>
                 </td>
             </tr>
             <tr>
@@ -640,7 +642,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Information about the location of the source code to be built. For type CODEPIPELINE location should not be specified.</div>
+                        <div>Information about the location of the source code to be built. For <em>type</em> <code>CODEPIPELINE</code> location should not be specified.</div>
                 </td>
             </tr>
             <tr>
@@ -677,7 +679,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Create or remove code build project.</div>
+                        <div>Create or remove CodeBuild project.</div>
                 </td>
             </tr>
             <tr>
@@ -803,7 +805,7 @@ Examples
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-    - community.aws.aws_codebuild:
+    - community.aws.codebuild_project:
         name: my_project
         description: My nice little project
         service_role: "arn:aws:iam::123123:role/service-role/code-build-service-role"
@@ -868,7 +870,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>ARN of the CodeBuild project</div>
+                            <div>ARN of the CodeBuild project.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:codebuild:us-east-1:123123123:project/vod-api-app-builder</div>
@@ -903,7 +905,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when configured</td>
                 <td>
-                            <div>Output location for build artifacts</div>
+                            <div>Output location for build artifacts.</div>
                     <br/>
                 </td>
             </tr>
@@ -955,7 +957,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Timestamp of the create time of the project</div>
+                            <div>Timestamp of the create time of the project.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2018-04-17T16:56:03.245000+02:00</div>
@@ -973,7 +975,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>A description of the build project</div>
+                            <div>A description of the CodeBuild project.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">My nice little project</div>
@@ -991,7 +993,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Environment settings for the build</div>
+                            <div>Environment settings for the build.</div>
                     <br/>
                 </td>
             </tr>
@@ -1007,7 +1009,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Name of the CodeBuild project</div>
+                            <div>Name of the CodeBuild project.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">my_project</div>
@@ -1112,7 +1114,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when configured</td>
                 <td>
-                            <div>The git clone depth</div>
+                            <div>The git clone depth.</div>
                     <br/>
                 </td>
             </tr>
@@ -1163,7 +1165,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The type of the repository</div>
+                            <div>The type of the repository.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">CODEPIPELINE</div>
@@ -1199,7 +1201,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>The timeout of a build in minutes</div>
+                            <div>The timeout of a build in minutes.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">60</div>
