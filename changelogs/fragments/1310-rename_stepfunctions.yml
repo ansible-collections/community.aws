@@ -1,0 +1,3 @@
+minor_changes:
+- aws_step_functions_state_machine - the ``aws_step_functions_state_machine`` module has been renamed to ``stepfunctions_state_machine``, ``aws_step_functions_state_machine`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1310).
+- aws_step_functions_state_machine_execution - the ``aws_step_functions_state_machine_execution`` module has been renamed to ``stepfunctions_state_machine_execution``, ``aws_step_functions_state_machine_execution`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1310).
