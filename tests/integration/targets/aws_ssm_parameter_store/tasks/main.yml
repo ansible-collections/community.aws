@@ -28,6 +28,17 @@
   # ============================================================
   # Create
 
+  - name: Create key/value pair in aws parameter store (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ simple_description }}'
+      value: '{{ simple_value }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
   - name: Create key/value pair in aws parameter store
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -39,7 +50,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is changed
       - lookup_value == simple_value
       - '"parameter_metadata" in result'
@@ -59,6 +70,17 @@
       - result.parameter_metadata.tier == 'Standard'
       - result.parameter_metadata.type == 'String'
 
+  - name: Create key/value pair in aws parameter store - idempotency (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ simple_description }}'
+      value: '{{ simple_value }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
   - name: Create key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -70,7 +92,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is not changed
       - lookup_value == simple_value
       - '"parameter_metadata" in result'
@@ -93,6 +115,16 @@
   # ============================================================
   # Update description
 
+  - name: Update description (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ updated_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
   - name: Update description
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -103,7 +135,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is changed
       - lookup_value == simple_value
       - '"parameter_metadata" in result'
@@ -123,6 +155,16 @@
       - result.parameter_metadata.tier == 'Standard'
       - result.parameter_metadata.type == 'String'
 
+  - name: Update description - idempotency (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      description: '{{ updated_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
   - name: Update description - idempotency
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -133,7 +175,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is not changed
       - lookup_value == simple_value
       - lookup_value == simple_value
@@ -153,15 +195,19 @@
       - result.parameter_metadata.policies | length == 0
       - result.parameter_metadata.tier == 'Standard'
       - result.parameter_metadata.type == 'String'
-    # 2022-06-20:
-    # There's a quirk in the AWS API that it doesn't seem to return updates to
-    # the metadata until there's a change in the value of the parameter.  The
-    # change has been made (as we'll see below) but we can't properly determine
-    # idempotency
-    ignore_errors: True
 
   # ============================================================
   # Update value
+
+  - name: Update key/value pair in aws parameter store (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ updated_value }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
 
   - name: Update key/value pair in aws parameter store
     aws_ssm_parameter_store:
@@ -173,7 +219,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is changed
       - lookup_value == updated_value
       - '"parameter_metadata" in result'
@@ -193,6 +239,16 @@
       - result.parameter_metadata.tier == 'Standard'
       - result.parameter_metadata.type == 'String'
 
+  - name: Update key/value pair in aws parameter store - idempotency (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ updated_value }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
   - name: Update key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -203,7 +259,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is not changed
       - lookup_value == updated_value
       - '"parameter_metadata" in result'
@@ -226,6 +282,17 @@
   # ============================================================
   # Complex update
 
+  - name: Complex update to key/value pair in aws parameter store (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ simple_value }}'
+      description: '{{ simple_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
   - name: Complex update to key/value pair in aws parameter store
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -237,7 +304,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is changed
       - lookup_value == simple_value
       - '"parameter_metadata" in result'
@@ -257,6 +324,17 @@
       - result.parameter_metadata.tier == 'Standard'
       - result.parameter_metadata.type == 'String'
 
+  - name: Complex update to key/value pair in aws parameter store - idempotency (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ simple_value }}'
+      description: '{{ simple_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
+
   - name: Complex update to key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -268,7 +346,7 @@
     set_fact:
       lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_name, **connection_args) }}"
   - assert:
-     that:
+      that:
       - result is not changed
       - lookup_value == simple_value
       - '"parameter_metadata" in result'
@@ -291,6 +369,16 @@
   # ============================================================
   # Delete
 
+  - name: Delete key/value pair in aws parameter store (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      state: absent
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
   - name: Delete key/value pair in aws parameter store
     aws_ssm_parameter_store:
       name: '{{ simple_name }}'
@@ -303,9 +391,19 @@
     register: info_result
     ignore_errors: true
   - assert:
-     that:
+      that:
       - result is changed
       - info_result is failed
+
+  - name: Delete key/value pair in aws parameter store - idempotency (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      state: absent
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is not changed
 
   - name: Delete key/value pair in aws parameter store - idempotency
     aws_ssm_parameter_store:
@@ -314,7 +412,7 @@
     register: result
 
   - assert:
-     that:
+      that:
       - result is not changed
 
   always:
