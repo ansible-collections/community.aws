@@ -143,7 +143,7 @@ EXAMPLES = '''
     health_check: "{{ my_health_check.health_check.id }}"
 
 - name: create a simple health check with health_check_name as unique identifier
-  route53_health_check:
+  community.aws.route53_health_check:
     state: present
     health_check_name: ansible
     fqdn: ansible.com
@@ -157,17 +157,17 @@ EXAMPLES = '''
     fqdn: host1.example.com
 
 - name: Update Health check by ID - update ip_address
-  route53_health_check:
+  community.aws.route53_health_check:
     id: 12345678-abcd-abcd-abcd-0fxxxxxxxxxx
     ip_address: 1.2.3.4
 
 - name: Update Health check by ID - update port
-  route53_health_check:
+  community.aws.route53_health_check:
     id: 12345678-abcd-abcd-abcd-0fxxxxxxxxxx
     ip_address: 8080
 
 - name: Delete Health check by ID
-  route53_health_check:
+  community.aws.route53_health_check:
     state: absent
     id: 12345678-abcd-abcd-abcd-0fxxxxxxxxxx
 
