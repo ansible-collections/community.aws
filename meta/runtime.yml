@@ -190,6 +190,8 @@ action_groups:
   - lambda_policy
   - lightsail
   - lightsail_static_ip
+  - msk_cluster
+  - msk_config
   - networkfirewall
   - networkfirewall_info
   - networkfirewall_policy
@@ -330,6 +332,12 @@ plugin_routing:
     aws_kms_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.kms_key_info
+    aws_msk_cluster:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.msk_cluster
+    aws_msk_config:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.msk_config
     aws_s3_bucket_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_bucket_info

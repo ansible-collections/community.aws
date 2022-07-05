@@ -9,8 +9,8 @@ __metaclass__ = type
 
 DOCUMENTATION = r"""
 ---
-module: aws_msk_config
-short_description: Manage Amazon MSK cluster configurations.
+module: msk_config
+short_description: Manage Amazon MSK cluster configurations
 version_added: "2.0.0"
 description:
     - Create, delete and modify Amazon MSK (Managed Streaming for Apache Kafka) cluster configurations.
@@ -47,7 +47,7 @@ extends_documentation_fragment:
 EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
-- aws_msk_config:
+- msk_config:
     name: kafka-cluster-configuration
     state: present
     kafka_versions:
@@ -59,7 +59,7 @@ EXAMPLES = r"""
       default.replication.factor: 3
       zookeeper.session.timeout.ms: 18000
 
-- aws_msk_config:
+- msk_config:
     name: kafka-cluster-configuration
     state: absent
 """
