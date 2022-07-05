@@ -1,2 +1,0 @@
-minor_changes:
-  - cloudwatchevent_rule - Added ``input_paths_map`` and ``input_template`` parameters to support ``input_transformer`` on CloudWatch event rule.
