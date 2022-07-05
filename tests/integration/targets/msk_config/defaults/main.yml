@@ -1,5 +1,5 @@
 ---
-msk_config_name: "{{ resource_prefix }}-config"
+msk_config_name: "{{ resource_prefix }}-msk-config"
 msk_configs:
   - auto.create.topics.enable: true
     zookeeper.session.timeout.ms: 18000
