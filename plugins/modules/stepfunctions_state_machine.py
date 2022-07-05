@@ -16,6 +16,8 @@ description:
     - Create, update and delete state machines in AWS Step Functions.
     - Calling the module in C(state=present) for an existing AWS Step Functions state machine
       will attempt to update the state machine definition, IAM Role, or tags with the provided data.
+    - Prior to release 5.0.0 this module was called C(community.aws.aws_step_functions_state_machine).
+      The usage did not change.
 
 options:
     name:

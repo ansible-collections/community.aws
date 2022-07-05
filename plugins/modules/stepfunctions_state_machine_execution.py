@@ -16,6 +16,8 @@ short_description: Start or stop execution of an AWS Step Functions state machin
 
 description:
     - Start or stop execution of a state machine in AWS Step Functions.
+    - Prior to release 5.0.0 this module was called C(community.aws.aws_step_functions_state_machine_execution).
+      The usage did not change.
 
 options:
     action:

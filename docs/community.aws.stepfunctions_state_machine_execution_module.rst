@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Start or stop execution of a state machine in AWS Step Functions.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_step_functions_state_machine_execution``. The usage did not change.
 
 
 
