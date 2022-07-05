@@ -1,11 +1,11 @@
-.. _community.aws.aws_ssm_parameter_store_module:
+.. _community.aws.ssm_parameter_module:
 
 
-*************************************
-community.aws.aws_ssm_parameter_store
-*************************************
+***************************
+community.aws.ssm_parameter
+***************************
 
-**Manage key-value pairs in AWS SSM parameter store**
+**Manage key-value pairs in AWS Systems Manager Parameter Store**
 
 
 Version added: 1.0.0
@@ -17,8 +17,8 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Manage key-value pairs in AWS SSM parameter store.
-- To retreive SSM parameters use the :ref:`amazon.aws.aws_ssm_parameter <amazon.aws.aws_ssm_parameter_module>` lookup plugin.
+- Manage key-value pairs in AWS Systems Manager (SSM) Parameter Store.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_ssm_parameter_store``. The usage did not change.
 
 
 
@@ -389,6 +389,14 @@ Notes
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
 
 
+See Also
+--------
+
+.. seealso::
+
+   :ref:`amazon.aws.aws_ssm lookup <ansible_collections.amazon.aws.aws_ssm_lookup>`
+       The documentation for the ``amazon.aws.aws_ssm`` lookup plugin.
+
 
 Examples
 --------
@@ -396,25 +404,25 @@ Examples
 .. code-block:: yaml
 
     - name: Create or update key/value pair in AWS SSM parameter store
-      community.aws.aws_ssm_parameter_store:
+      community.aws.ssm_paramater:
         name: "Hello"
         description: "This is your first key"
         value: "World"
 
     - name: Delete the key
-      community.aws.aws_ssm_parameter_store:
+      community.aws.ssm_paramater:
         name: "Hello"
         state: absent
 
-    - name: Create or update secure key/value pair with default kms key (aws/ssm)
-      community.aws.aws_ssm_parameter_store:
+    - name: Create or update secure key/value pair with default KMS key (aws/ssm)
+      community.aws.ssm_paramater:
         name: "Hello"
         description: "This is your first key"
         string_type: "SecureString"
         value: "World"
 
-    - name: Create or update secure key/value pair with nominated kms key
-      community.aws.aws_ssm_parameter_store:
+    - name: Create or update secure key/value pair with nominated KMS key
+      community.aws.ssm_paramater:
         name: "Hello"
         description: "This is your first key"
         string_type: "SecureString"
@@ -422,7 +430,7 @@ Examples
         value: "World"
 
     - name: Always update a parameter store value and create a new version
-      community.aws.aws_ssm_parameter_store:
+      community.aws.ssm_paramater:
         name: "overwrite_example"
         description: "This example will always overwrite the value"
         string_type: "String"
@@ -430,7 +438,7 @@ Examples
         overwrite_value: "always"
 
     - name: Create or update key/value pair in AWS SSM parameter store with tier
-      community.aws.aws_ssm_parameter_store:
+      community.aws.ssm_paramater:
         name: "Hello"
         description: "This is your first key"
         value: "World"
