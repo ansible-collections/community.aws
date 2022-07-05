@@ -14,6 +14,8 @@ short_description: Manage Amazon MSK cluster configurations
 version_added: "2.0.0"
 description:
     - Create, delete and modify Amazon MSK (Managed Streaming for Apache Kafka) cluster configurations.
+    - Prior to release 5.0.0 this module was called C(community.aws.aws_msk_config).
+      The usage did not change.
 author:
     - Daniil Kupchenko (@oukooveu)
 options:
