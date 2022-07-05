@@ -9,18 +9,17 @@ __metaclass__ = type
 
 DOCUMENTATION = '''
 ---
-module: aws_step_functions_state_machine_execution
+module: stepfunctions_state_machine_execution
 version_added: 1.0.0
 
-short_description: Start or stop execution of an AWS Step Functions state machine.
-
+short_description: Start or stop execution of an AWS Step Functions state machine
 
 description:
     - Start or stop execution of a state machine in AWS Step Functions.
 
 options:
     action:
-        description: Desired action (start or stop) for a state machine execution.
+        description: Desired action (C(start) or C(stop)) for a state machine execution.
         default: start
         choices: [ start, stop ]
         type: str
@@ -47,9 +46,8 @@ options:
         default: ''
 
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-
+    - amazon.aws.aws
+    - amazon.aws.ec2
 
 author:
     - Prasad Katti (@prasadkatti)
@@ -57,13 +55,13 @@ author:
 
 EXAMPLES = '''
 - name: Start an execution of a state machine
-  community.aws.aws_step_functions_state_machine_execution:
+  community.aws.stepfunctions_state_machine_execution:
     name: an_execution_name
     execution_input: '{ "IsHelloWorldExample": true }'
     state_machine_arn: "arn:aws:states:us-west-2:682285639423:stateMachine:HelloWorldStateMachine"
 
 - name: Stop an execution of a state machine
-  community.aws.aws_step_functions_state_machine_execution:
+  community.aws.stepfunctions_state_machine_execution:
     action: stop
     execution_arn: "arn:aws:states:us-west-2:682285639423:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8"
     cause: "cause of task failure"
