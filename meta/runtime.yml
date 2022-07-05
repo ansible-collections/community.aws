@@ -232,6 +232,7 @@ action_groups:
   - sns_topic
   - sns_topic_info
   - sqs_queue
+  - ssm_parameter
   - stepfunctions_state_machine
   - stepfunctions_state_machine_execution
   - sts_assume_role
@@ -350,6 +351,9 @@ plugin_routing:
     aws_sgw_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.storagegateway_info
+    aws_ssm_parameter_store:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.ssm_parameter
     aws_step_functions_state_machine:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.stepfunctions_state_machine
