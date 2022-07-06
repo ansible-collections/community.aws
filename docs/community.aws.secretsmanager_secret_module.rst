@@ -1,9 +1,9 @@
-.. _community.aws.aws_secret_module:
+.. _community.aws.secretsmanager_secret_module:
 
 
-************************
-community.aws.aws_secret
-************************
+***********************************
+community.aws.secretsmanager_secret
+***********************************
 
 **Manage secrets stored in AWS Secrets Manager**
 
@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Create, update, and delete secrets stored in AWS Secrets Manager.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_secret``. The usage did not change.
 
 
 
@@ -435,14 +436,14 @@ Examples
 .. code-block:: yaml
 
     - name: Add string to AWS Secrets Manager
-      community.aws.aws_secret:
+      community.aws.secretsmanager_secret:
         name: 'test_secret_string'
         state: present
         secret_type: 'string'
         secret: "{{ super_secret_string }}"
 
     - name: Add a secret with resource policy attached
-      community.aws.aws_secret:
+      community.aws.secretsmanager_secret:
         name: 'test_secret_string'
         state: present
         secret_type: 'string'
@@ -450,7 +451,7 @@ Examples
         resource_policy: "{{ lookup('template', 'templates/resource_policy.json.j2', convert_data=False) | string }}"
 
     - name: remove string from AWS Secrets Manager
-      community.aws.aws_secret:
+      community.aws.secretsmanager_secret:
         name: 'test_secret_string'
         state: absent
         secret_type: 'string'

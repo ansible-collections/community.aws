@@ -229,6 +229,7 @@ action_groups:
   - s3_metrics_configuration
   - s3_sync
   - s3_website
+  - secretsmanager_secret
   - ses_identity
   - ses_identity_policy
   - ses_rule_set
@@ -355,6 +356,9 @@ plugin_routing:
     aws_s3_cors:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_cors
+    aws_secret:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.secretsmanager_secret
     aws_ses_identity:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.ses_identity
