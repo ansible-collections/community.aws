@@ -257,13 +257,13 @@ options:
         required: false
         choices: ["TASK_DEFINITION", "SERVICE"]
         type: str
-        version_added: 2.1.0
+        version_added: 4.1.0
     tags:
         description:
           - A dictionary of tags to add or remove from the resource.
         type: dict
         required: false
-        version_added: 2.1.0
+        version_added: 4.1.0
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
