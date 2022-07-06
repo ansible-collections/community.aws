@@ -314,7 +314,11 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
     if changed and not module.check_mode:
         glue_connection = _await_glue_connection(connection, module)
 
-    glue_connection['RawConnectionProperties'] = glue_connection['ConnectionProperties']
+
+    if glue_connection:
+        module.deprecate("The 'connection_properties' return key is deprecated and will be replaced by 'raw_connection_properties'. Both values are returned for now.",
+                         date='2024-06-01', collection_name='community.aws')
+        glue_connection['RawConnectionProperties'] = glue_connection['ConnectionProperties']
 
     module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}, ignore_list=['RawConnectionProperties']))
 
@@ -369,9 +373,6 @@ def main():
                               ],
                               supports_check_mode=True
                               )
-
-    module.deprecate("The 'connection_properties' return key is deprecated and will be replaced by 'raw_connection_properties'. Both values are returned for now.",
-                     date='2024-06-01', collection_name='community.aws')
 
     retry_decorator = AWSRetry.jittered_backoff(retries=10)
     connection_glue = module.client('glue', retry_decorator=retry_decorator)
