@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - ecs_service - added ``tags`` and ``tag_propagation`` support to the module (https://github.com/ansible-collections/community.aws/pull/543).
