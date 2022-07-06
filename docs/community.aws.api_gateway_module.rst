@@ -20,6 +20,7 @@ Synopsis
 - Allows for the management of API Gateway APIs.
 - Normally you should give the api_id since there is no other stable guaranteed unique identifier for the API.  If you do not give api_id then a new API will be created each time this is run.
 - swagger_file and swagger_text are passed directly on to AWS transparently whilst swagger_dict is an ansible dict which is converted to JSON before the API definitions are uploaded.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_api_gateway``. The usage did not change.
 
 
 

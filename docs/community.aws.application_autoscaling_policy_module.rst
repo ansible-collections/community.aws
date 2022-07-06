@@ -540,7 +540,7 @@ Examples
 
     # Create step scaling policy for ECS Service
     - name: scaling_policy
-      community.aws.aws_application_scaling_policy:
+      community.aws.application_autoscaling_policy:
         state: present
         policy_name: test_policy
         service_namespace: ecs
@@ -561,7 +561,7 @@ Examples
 
     # Create target tracking scaling policy for ECS Service
     - name: scaling_policy
-      community.aws.aws_application_scaling_policy:
+      community.aws.application_autoscaling_policy:
         state: present
         policy_name: test_policy
         service_namespace: ecs
@@ -579,7 +579,7 @@ Examples
 
     # Remove scalable target for ECS Service
     - name: scaling_policy
-      community.aws.aws_application_scaling_policy:
+      community.aws.application_autoscaling_policy:
         state: absent
         policy_name: test_policy
         policy_type: StepScaling

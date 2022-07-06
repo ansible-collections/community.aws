@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Module manages AWS Config aggregator resources.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_config_aggregator``. The usage did not change.
 
 
 

@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Module manages AWS Config configuration recorder settings.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_config_recorder``. The usage did not change.
 
 
 

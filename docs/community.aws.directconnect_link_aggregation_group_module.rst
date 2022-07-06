@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Create, delete, or modify a Direct Connect link aggregation group.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_direct_connect_link_aggregation_group``. The usage did not change.
 
 
 

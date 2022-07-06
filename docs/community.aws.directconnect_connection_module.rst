@@ -20,6 +20,7 @@ Synopsis
 - Create, update, or delete a Direct Connect connection between a network and a specific AWS Direct Connect location.
 - Upon creation the connection may be added to a link aggregation group or established as a standalone connection.
 - The connection may later be associated or disassociated with a link aggregation group.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_direct_connect_connection``. The usage did not change.
 
 
 
