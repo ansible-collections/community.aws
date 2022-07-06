@@ -316,7 +316,7 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
 
     glue_connection['RawConnectionProperties'] = glue_connection['ConnectionProperties']
 
-    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}, ignore_list=['ConnectionProperties']))
+    module.exit_json(changed=changed, **camel_dict_to_snake_dict(glue_connection or {}, ignore_list=['RawConnectionProperties']))
 
 
 def delete_glue_connection(connection, module, glue_connection):
