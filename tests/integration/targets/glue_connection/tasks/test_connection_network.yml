@@ -106,6 +106,7 @@
           - glue_connection.physical_connection_requirements.subnet_id == connection_info["Connection"]["PhysicalConnectionRequirements"]["SubnetId"]
           - glue_connection.physical_connection_requirements.security_group_id_list == connection_info["Connection"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"]
           - glue_connection.physical_connection_requirements.availability_zone == connection_info["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"]
+          - glue_connection.raw_connection_properties == connection_info["Connection"]["ConnectionProperties"]
 
     - name: Create Glue connection (idempotent) (check mode)
       aws_glue_connection:
@@ -225,6 +226,7 @@
           - glue_connection_update_check.physical_connection_requirements.subnet_id == connection_info_update_check["Connection"]["PhysicalConnectionRequirements"]["SubnetId"]
           - glue_connection_update_check.physical_connection_requirements.security_group_id_list == connection_info_update_check["Connection"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"]
           - glue_connection_update_check.physical_connection_requirements.availability_zone == connection_info_update_check["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"]
+          - glue_connection_update_check.raw_connection_properties == connection_info_update_check["Connection"]["ConnectionProperties"]
 
     - name: Update Glue connection
       aws_glue_connection:
@@ -264,6 +266,7 @@
           - glue_connection_update.physical_connection_requirements.subnet_id == connection_info_update["Connection"]["PhysicalConnectionRequirements"]["SubnetId"]
           - glue_connection_update.physical_connection_requirements.security_group_id_list == connection_info_update["Connection"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"]
           - glue_connection_update.physical_connection_requirements.availability_zone == connection_info_update["Connection"]["PhysicalConnectionRequirements"]["AvailabilityZone"]
+          - glue_connection_update.raw_connection_properties == connection_info_update["Connection"]["ConnectionProperties"]
 
     - name: Delete Glue connection (check mode)
       aws_glue_connection:
