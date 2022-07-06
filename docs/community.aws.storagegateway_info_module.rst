@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Fetch AWS Storage Gateway information
+- Prior to release 5.0.0 this module was called ``community.aws.aws_sgw_info``. The usage did not change.
 
 
 

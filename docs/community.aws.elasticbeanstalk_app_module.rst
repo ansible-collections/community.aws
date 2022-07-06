@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Creates, updates, deletes Elastic Beanstalk applications if *app_name* is provided.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_elasticbeanstalk_app``. The usage did not change.
 
 
 

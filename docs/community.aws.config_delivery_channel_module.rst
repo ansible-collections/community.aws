@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - This module manages AWS Config delivery locations for rule checks and configuration info.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_config_delivery_channel``. The usage did not change.
 
 
 
