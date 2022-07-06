@@ -48,7 +48,6 @@ Name | Description
 [community.aws.autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
 [community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
-[community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
 [community.aws.batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
 [community.aws.batch_job_definition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
 [community.aws.batch_job_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_queue_module.rst)|Manage AWS Batch Job Queues
@@ -201,6 +200,7 @@ Name | Description
 [community.aws.s3_metrics_configuration](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_metrics_configuration_module.rst)|Manage s3 bucket metrics configuration in AWS
 [community.aws.s3_sync](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_sync_module.rst)|Efficiently upload multiple files to S3
 [community.aws.s3_website](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.s3_website_module.rst)|Configure an s3 bucket as a website
+[community.aws.secretsmanager_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.secretsmanager_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
 [community.aws.ses_identity](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ses_identity_module.rst)|Manages SES email and domain identity
 [community.aws.ses_identity_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ses_identity_policy_module.rst)|Manages SES sending authorization policies
 [community.aws.ses_rule_set](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.ses_rule_set_module.rst)|Manages SES inbound receipt rule sets
