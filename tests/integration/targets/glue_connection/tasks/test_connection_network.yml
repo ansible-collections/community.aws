@@ -101,7 +101,7 @@
           - glue_connection.changed
           - glue_connection.name == connection_info["Connection"]["Name"]
           - glue_connection.description == connection_info["Connection"]["Description"]
-          - glue_connection.connection_properties == connection_info["Connection"]["ConnectionProperties"]
+          - glue_connection.raw_connection_properties == connection_info["Connection"]["ConnectionProperties"]
           - glue_connection.connection_type == connection_info["Connection"]["ConnectionType"]
           - glue_connection.physical_connection_requirements.subnet_id == connection_info["Connection"]["PhysicalConnectionRequirements"]["SubnetId"]
           - glue_connection.physical_connection_requirements.security_group_id_list == connection_info["Connection"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"]
@@ -221,7 +221,7 @@
           - glue_connection_update_check.changed
           - glue_connection_update_check.name == connection_info_update_check["Connection"]["Name"]
           - glue_connection_update_check.description == connection_info_update_check["Connection"]["Description"]
-          - glue_connection_update_check.connection_properties == connection_info_update_check["Connection"]["ConnectionProperties"]
+          - glue_connection_update_check.raw_connection_properties == connection_info_update_check["Connection"]["ConnectionProperties"]
           - glue_connection_update_check.connection_type == connection_info_update_check["Connection"]["ConnectionType"]
           - glue_connection_update_check.physical_connection_requirements.subnet_id == connection_info_update_check["Connection"]["PhysicalConnectionRequirements"]["SubnetId"]
           - glue_connection_update_check.physical_connection_requirements.security_group_id_list == connection_info_update_check["Connection"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"]
@@ -261,7 +261,7 @@
           - glue_connection_update.changed
           - glue_connection_update.name == connection_info_update["Connection"]["Name"]
           - glue_connection_update.description == connection_info_update["Connection"]["Description"]
-          - glue_connection_update.connection_properties == connection_info_update["Connection"]["ConnectionProperties"]
+          - glue_connection_update.raw_connection_properties == connection_info_update["Connection"]["ConnectionProperties"]
           - glue_connection_update.connection_type == connection_info_update["Connection"]["ConnectionType"]
           - glue_connection_update.physical_connection_requirements.subnet_id == connection_info_update["Connection"]["PhysicalConnectionRequirements"]["SubnetId"]
           - glue_connection_update.physical_connection_requirements.security_group_id_list == connection_info_update["Connection"]["PhysicalConnectionRequirements"]["SecurityGroupIdList"]
