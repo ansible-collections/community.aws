@@ -1,0 +1,2 @@
+minor_changes:
+- ecs_ecr - add `force_absent` parameter for removing repositories that contain images (https://github.com/ansible-collections/community.aws/pull/1316).
