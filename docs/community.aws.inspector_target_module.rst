@@ -1,9 +1,9 @@
-.. _community.aws.aws_inspector_target_module:
+.. _community.aws.inspector_target_module:
 
 
-**********************************
-community.aws.aws_inspector_target
-**********************************
+******************************
+community.aws.inspector_target
+******************************
 
 **Create, Update and Delete Amazon Inspector Assessment Targets**
 
@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Creates, updates, or deletes Amazon Inspector Assessment Targets and manages the required Resource Groups.
+- Prior to release 5.0.0 this module was called ``community.aws.aws_inspector_target``. The usage did not change.
 
 
 
@@ -155,7 +156,8 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The user-defined name that identifies the assessment target.  The name must be unique within the AWS account.</div>
+                        <div>The user-defined name that identifies the assessment target.</div>
+                        <div>The name must be unique within the AWS account.</div>
                 </td>
             </tr>
             <tr>
@@ -240,7 +242,7 @@ Parameters
                 </td>
                 <td>
                         <div>Tags of the EC2 instances to be added to the assessment target.</div>
-                        <div>Required if <code>state=present</code>.</div>
+                        <div>Required if <em>state=present</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -282,20 +284,20 @@ Examples
 .. code-block:: yaml
 
     - name: Create my_target Assessment Target
-      community.aws.aws_inspector_target:
+      community.aws.inspector_target:
         name: my_target
         tags:
           role: scan_target
 
     - name: Update Existing my_target Assessment Target with Additional Tags
-      community.aws.aws_inspector_target:
+      community.aws.inspector_target:
         name: my_target
         tags:
           env: dev
           role: scan_target
 
     - name: Delete my_target Assessment Target
-      community.aws.aws_inspector_target:
+      community.aws.inspector_target:
         name: my_target
         state: absent
 
