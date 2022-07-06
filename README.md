@@ -47,7 +47,6 @@ Name | Description
 [community.aws.autoscaling_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks
 [community.aws.autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
 [community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
-[community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
 [community.aws.aws_secret](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_secret_module.rst)|Manage secrets stored in AWS Secrets Manager
 [community.aws.batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
@@ -154,6 +153,7 @@ Name | Description
 [community.aws.iam_server_certificate_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_server_certificate_info_module.rst)|Retrieve the information of a server certificate
 [community.aws.iam_user](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_user_module.rst)|Manage AWS IAM users
 [community.aws.iam_user_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_user_info_module.rst)|Gather IAM user(s) facts in AWS
+[community.aws.inspector_target](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.kinesis_stream](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.kinesis_stream_module.rst)|Manage a Kinesis Stream.
 [community.aws.kms_key](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.kms_key_module.rst)|Perform various KMS key management tasks
 [community.aws.kms_key_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.kms_key_info_module.rst)|Gather information about AWS KMS keys

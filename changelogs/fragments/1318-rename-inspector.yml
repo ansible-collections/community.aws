@@ -1,0 +1,2 @@
+minor_changes:
+- aws_inspector_target - the ``aws_inspector_target`` module has been renamed to ``inspector_target``, ``aws_inspector_target`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1318).
