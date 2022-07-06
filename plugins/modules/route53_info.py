@@ -431,6 +431,7 @@ def reusable_delegation_set_details():
         params['DelegationSetId'] = module.params.get('delegation_set_id')
         results = client.get_reusable_delegation_set(**params)
 
+    results['delegation_sets'] = results['DelegationSets']
     return results
 
 
@@ -495,7 +496,9 @@ def change_details():
 
 
 def checker_ip_range_details():
-    return client.get_checker_ip_ranges()
+    results = client.get_checker_ip_ranges()
+    results['checker_ip_ranges'] = results['CheckerIpRanges']
+    return results
 
 
 def get_count():
@@ -522,6 +525,7 @@ def get_health_check():
     elif module.params.get('health_check_method') == 'status':
         results = client.get_health_check_status(**params)
 
+    results['health_check'] = camel_dict_to_snake_dict(results['HealthCheck'])
     return results
 
 
