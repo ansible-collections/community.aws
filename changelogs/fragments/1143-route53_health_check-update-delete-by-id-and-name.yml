@@ -1,0 +1,3 @@
+minor_changes:
+  - route53_health_check - Added new parameter ``health_check_id`` with alias ``id`` to allow update and delete health check by ID (https://github.com/ansible-collections/community.aws/pull/1143).
+  - route53_health_check - Added new parameter ``use_unique_names`` used with new parameter ``health_check_name`` with alias ``name`` to set health check name as unique identifier (https://github.com/ansible-collections/community.aws/pull/1143).
