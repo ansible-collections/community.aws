@@ -432,6 +432,11 @@ def reusable_delegation_set_details():
         results = client.get_reusable_delegation_set(**params)
 
     results['delegation_sets'] = results['DelegationSets']
+    module.deprecate("The 'CamelCase' return values with key 'DelegationSets' is deprecated and \
+                    will be replaced by 'snake_case' return values with key 'delegation_sets'. \
+                    Both case values are returned for now.",
+                     date='2025-01-01', collection_name='community.aws')
+
     return results
 
 
@@ -498,6 +503,11 @@ def change_details():
 def checker_ip_range_details():
     results = client.get_checker_ip_ranges()
     results['checker_ip_ranges'] = results['CheckerIpRanges']
+    module.deprecate("The 'CamelCase' return values with key 'CheckerIpRanges' is deprecated and \
+                    will be replaced by 'snake_case' return values with key 'checker_ip_ranges'. \
+                    Both case values are returned for now.",
+                     date='2025-01-01', collection_name='community.aws')
+
     return results
 
 
@@ -526,6 +536,11 @@ def get_health_check():
         results = client.get_health_check_status(**params)
 
     results['health_check'] = camel_dict_to_snake_dict(results['HealthCheck'])
+    module.deprecate("The 'CamelCase' return values with key 'HealthCheck' is deprecated and \
+                    will be replaced by 'snake_case' return values with key 'health_check'. \
+                    Both case values are returned for now.",
+                     date='2025-01-01', collection_name='community.aws')
+
     return results
 
 
