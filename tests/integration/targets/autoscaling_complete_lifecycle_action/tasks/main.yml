@@ -1,0 +1,16 @@
+---
+- name: "Wrap up all tests and setup AWS credentials"
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  collections:
+    - community.aws
+  block:
+    - include_tasks: 'env_setup.yml'
+    - include_tasks: 'tests.yml'
+    - include_tasks: 'env_cleanup.yml'
+  always:
+    - include_tasks: 'env_cleanup.yml'
