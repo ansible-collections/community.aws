@@ -1,0 +1,73 @@
+- name: kill asg
+  ec2_asg:
+    name: "{{ asg_name }}"
+    state: absent
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10
+
+- name: remove launch configs
+  ec2_lc:
+    name: "{{ lc_name }}"
+    state: absent
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10
+
+- name: remove the security group
+  ec2_group:
+    name: "{{ sg_name }}"
+    description: a security group for ansible tests
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    state: absent
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10
+
+- name: remove routing rules
+  ec2_vpc_route_table:
+    state: absent
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    tags:
+      Name: '{{ rtb_name }}'
+    routes:
+      - dest: 0.0.0.0/0
+        gateway_id: "{{ igw.gateway_id }}"
+    subnets:
+      - "{{ testing_subnet.subnet.id }}"
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10
+
+- name: remove internet gateway
+  ec2_vpc_igw:
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    state: absent
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10
+
+- name: remove the subnet
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    cidr: "{{ subnet_cidr }}"
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10
+
+- name: remove the VPC
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    state: absent
+  register: removed
+  until: removed is not failed
+  ignore_errors: true
+  retries: 10

@@ -1,0 +1,86 @@
+- name: Run ec2_asg_lifecycle_hook integration tests.
+
+  block:
+    # Set up the testing dependencies: VPC, subnet, security group, and two launch configurations
+    - name: Create VPC for use in testing
+      ec2_vpc_net:
+        name: "{{ vpc_name }}"
+        cidr_block: "{{ vpc_cidr }}"
+        tenancy: default
+      register: testing_vpc
+
+    - name: Create internet gateway for use in testing
+      ec2_vpc_igw:
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        state: present
+      register: igw
+
+    - name: Create subnet for use in testing
+      ec2_vpc_subnet:
+        state: present
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        cidr: "{{ subnet_cidr }}"
+        az: "{{ subnet_az }}"
+        resource_tags:
+          Name: "{{ subnet_name }}"
+      register: testing_subnet
+
+    - name: create routing rules
+      ec2_vpc_route_table:
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        tags:
+          Name: "{{ rtb_name }}"
+        routes:
+          - dest: 0.0.0.0/0
+            gateway_id: "{{ igw.gateway_id }}"
+        subnets:
+          - "{{ testing_subnet.subnet.id }}"
+
+    - name: create a security group with the vpc created in the ec2_setup
+      ec2_group:
+        name: "{{ sg_name }}"
+        description: a security group for ansible tests
+        vpc_id: "{{ testing_vpc.vpc.id }}"
+        rules:
+          - proto: tcp
+            from_port: 22
+            to_port: 22
+            cidr_ip: 0.0.0.0/0
+          - proto: tcp
+            from_port: 80
+            to_port: 80
+            cidr_ip: 0.0.0.0/0
+      register: sg
+
+    - name: create a launch configuration
+      ec2_lc:
+        name: "{{ lc_name }}"
+        image_id: "{{ ec2_ami_id }}"
+        instance_type: t2.micro
+        assign_public_ip: yes
+      register: create_lc
+
+    - name: ensure that lc is created
+      assert:
+        that:
+          - create_lc is changed
+          - create_lc.failed is false
+
+    - name: create a AutoScalingGroup
+      ec2_asg:
+        name: "{{ asg_name }}"
+        launch_config_name: "{{ lc_name }}"
+        health_check_period: 60
+        health_check_type: ELB
+        replace_all_instances: yes
+        min_size: 0
+        max_size: 0
+        desired_capacity: 0
+      register: create_asg
+
+    - name: ensure that AutoScalingGroup is created
+      assert:
+        that:
+          - create_asg is changed
+          - create_asg.failed is false
+          - '"autoscaling:CreateAutoScalingGroup" in create_asg.resource_actions'
