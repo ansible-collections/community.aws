@@ -1,6 +1,7 @@
 requires_ansible: '>=2.9.10'
 action_groups:
   aws:
+  - autoscaling_complete_lifecycle_action
   - aws_acm
   - aws_acm_info
   - aws_api_gateway

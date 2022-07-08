@@ -1,0 +1,120 @@
+---
+- name: Test Lifecycle hooks
+  block:
+    #----------------------------------------------------------------------
+    - name: Create lifecycle hook
+      ec2_asg_lifecycle_hook:
+        autoscaling_group_name: "{{ asg_name }}"
+        lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook"
+        transition: autoscaling:EC2_INSTANCE_LAUNCHING
+        heartbeat_timeout: 7000
+        default_result: ABANDON
+        state: present
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+
+    - name: Create lifecycle hook
+      ec2_asg_lifecycle_hook:
+        autoscaling_group_name: "{{ asg_name }}"
+        lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook-terminate"
+        transition: autoscaling:EC2_INSTANCE_TERMINATING
+        heartbeat_timeout: 90
+        default_result: ABANDON
+        state: present
+      register: output
+
+    - assert:
+        that:
+          - output is changed
+          - output is not failed
+
+    - name: Trigger scale-up
+      ec2_asg:
+        name: "{{ asg_name }}"
+        replace_all_instances: yes
+        min_size: 0
+        max_size: 3
+        desired_capacity: 2
+        wait_for_instances: no
+      register: scale_asg
+
+    - assert:
+        that:
+          - scale_asg is changed
+
+    - name: Describe ASG
+      ec2_asg_info:
+        name: "{{ asg_name }}"
+      register: scaled_asg
+      retries: 24
+      until:
+        - scaled_asg.results[0].instances | length == 2
+        - scaled_asg.results[0].instances[0].lifecycle_state == "Pending:Wait"
+        - scaled_asg.results[0].instances[1].lifecycle_state == "Pending:Wait"
+      delay: 5
+      ignore_errors: true
+
+    - set_fact:
+        instance_ids: '{{ scaled_asg.results[0].instances | map(attribute="instance_id") | list }}'
+
+    - name: Describe ASG
+      ec2_asg_info:
+        name: "{{ asg_name }}"
+
+    - name: Complete Lifecycle Hook
+      autoscaling_complete_lifecycle_action:
+        asg_name: '{{ asg_name }}'
+        lifecycle_hook_name: '{{ resource_prefix }}-lifecycle-hook'
+        lifecycle_action_result: 'CONTINUE'
+        instance_id: '{{ instance_ids[0] }}'
+
+    - name: Abandon Lifecycle Hook
+      autoscaling_complete_lifecycle_action:
+        asg_name: '{{ asg_name }}'
+        lifecycle_hook_name: '{{ resource_prefix }}-lifecycle-hook'
+        lifecycle_action_result: 'ABANDON'
+        instance_id: '{{ instance_ids[1] }}'
+
+    - name: Describe ASG
+      ec2_asg_info:
+        name: "{{ asg_name }}"
+      register: hooks_pending
+      retries: 24
+      delay: 5
+      ignore_errors: true
+      until:
+        - instance_a.lifecycle_state == 'InService'
+        - instance_b.lifecycle_state == 'Terminating:Wait'
+      vars:
+        instance_a: '{{ hooks_pending.results[0].instances | selectattr("instance_id", "==", instance_ids[0]) | first }}'
+        instance_b: '{{ hooks_pending.results[0].instances | selectattr("instance_id", "==", instance_ids[1]) | first }}'
+
+    - name: 'Assert that instances have entered the expected instance states'
+      assert:
+        that:
+          - instance_a.lifecycle_state == 'InService'
+          - instance_b.lifecycle_state == 'Terminating:Wait'
+      vars:
+        instance_a: '{{ hooks_pending.results[0].instances | selectattr("instance_id", "==", instance_ids[0]) | first }}'
+        instance_b: '{{ hooks_pending.results[0].instances | selectattr("instance_id", "==", instance_ids[1]) | first }}'
+
+  always:
+    - name: Delete lifecycle hook
+      community.aws.ec2_asg_lifecycle_hook:
+        autoscaling_group_name: "{{ asg_name }}"
+        lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook"
+        state: absent
+      register: output
+      ignore_errors: True
+
+    - name: Delete lifecycle hook
+      community.aws.ec2_asg_lifecycle_hook:
+        autoscaling_group_name: "{{ asg_name }}"
+        lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook-terminate"
+        state: absent
+      register: output
+      ignore_errors: True
