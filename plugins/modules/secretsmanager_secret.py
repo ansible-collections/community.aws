@@ -54,8 +54,16 @@ options:
   secret:
     description:
     - Specifies string or binary data that you want to encrypt and store in the new version of the secret.
+    - Mutually exclusive with the I(json_secret) option.
     default: ""
     type: str
+  json_secret:
+    description:
+    - Specifies JSON-formatted data that you want to encrypt and store in the new version of the
+      secret.
+    - Mutually exclusive with the I(secret) option.
+    type: json
+    version_added: 4.1.0
   resource_policy:
     description:
     - Specifies JSON-formatted resource policy to attach to the secret. Useful when granting cross-account access
@@ -423,6 +431,7 @@ def main():
             'kms_key_id': dict(),
             'secret_type': dict(choices=['binary', 'string'], default="string"),
             'secret': dict(default="", no_log=True),
+            'json_secret': dict(type='json', no_log=True),
             'resource_policy': dict(type='json', default=None),
             'tags': dict(type='dict', default=None, aliases=['resource_tags']),
             'purge_tags': dict(type='bool', default=True),
@@ -430,6 +439,7 @@ def main():
             'rotation_interval': dict(type='int', default=30),
             'recovery_window': dict(type='int', default=30),
         },
+        mutually_exclusive=[['secret', 'json_secret']],
         supports_check_mode=True,
     )
 
@@ -437,10 +447,14 @@ def main():
     state = module.params.get('state')
     secrets_mgr = SecretsManagerInterface(module)
     recovery_window = module.params.get('recovery_window')
+    if module.params.get('json_secret') is not None:
+        secret_value = module.params.get('json_secret')
+    else:
+        secret_value = module.params.get('secret')
     secret = Secret(
         module.params.get('name'),
         module.params.get('secret_type'),
-        module.params.get('secret'),
+        secret_value,
         description=module.params.get('description'),
         kms_key_id=module.params.get('kms_key_id'),
         resource_policy=module.params.get('resource_policy'),
