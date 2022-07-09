@@ -1,0 +1,2 @@
+minor_changes:
+- ec2_vpc_vgw_info - updated to not throw an error when run in check_mode (https://github.com/ansible-collections/community.aws/issues/137).
