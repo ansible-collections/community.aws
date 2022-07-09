@@ -447,14 +447,10 @@ def main():
     state = module.params.get('state')
     secrets_mgr = SecretsManagerInterface(module)
     recovery_window = module.params.get('recovery_window')
-    if module.params.get('json_secret') is not None:
-        secret_value = module.params.get('json_secret')
-    else:
-        secret_value = module.params.get('secret')
     secret = Secret(
         module.params.get('name'),
         module.params.get('secret_type'),
-        secret_value,
+        module.params.get('secret') or module.params.get('json_secret'),
         description=module.params.get('description'),
         kms_key_id=module.params.get('kms_key_id'),
         resource_policy=module.params.get('resource_policy'),
