@@ -143,6 +143,12 @@
     - assert:
         that:
           - output is changed
+          - '"uploads" in output'
+          - '"filelist_initial" in output'
+          - '"filelist_local_etag" in output'
+          - '"filelist_s3" in output'
+          - '"filelist_typed" in output'
+          - '"filelist_actionable" in output'
 
   always:
 
