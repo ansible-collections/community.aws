@@ -19,6 +19,15 @@
 #     - object *NOT* updated
 #     - Tests idemoptency
 
+- set_fact:
+    # As a lookup plugin we won't have access to module_defaults
+    connection_args:
+      region: "{{ aws_region }}"
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      aws_security_token: "{{ security_token | default(omit) }}"
+  no_log: True
+
 - vars:
     first_tags:
       'Key with Spaces': Value with spaces
@@ -611,6 +620,73 @@
     assert:
       that:
         - not result.changed
+
+  # ============================================================
+  # Update secret using JSON string
+  # ============================================================
+
+  - name: Update secret with JSON (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      json_secret:
+        my_key: '{{ super_secret_string }}'
+    register: result
+    check_mode: True
+
+  - name: assert key would be changed
+    assert:
+      that:
+        - result.changed
+
+  - name: Update secret with JSON
+    aws_secret:
+      name: "{{ secret_name }}"
+      state: present
+      description: 'this is a change to this secret'
+      secret_type: 'string'
+      json_secret:
+        my_key: '{{ super_secret_string }}'
+    register: result
+
+  - name: assert key is changed
+    assert:
+      that:
+        - result.changed
+
+  - name: Update secret with JSON - idempotency (CHECK_MODE)
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      json_secret:
+        my_key: '{{ super_secret_string }}'
+    register: result
+    check_mode: True
+
+  - name: assert key is not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Update secret with JSON - idempotency
+    aws_secret:
+      name: "{{ secret_name }}"
+      description: 'this is a change to this secret'
+      state: present
+      secret_type: 'string'
+      json_secret:
+        my_key: '{{ super_secret_string }}'
+    register: result
+    check_mode: True
+
+  - name: assert key is not changed
+    assert:
+      that:
+        - result is not changed
 
   # ============================================================
   # Removal testing
