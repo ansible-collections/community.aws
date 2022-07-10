@@ -1,0 +1,2 @@
+bugfixes:
+- kms_key_info - handle access denied errors more liberally (https://github.com/ansible-collections/community.aws/issues/206).
