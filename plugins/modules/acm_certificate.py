@@ -177,7 +177,7 @@ author:
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
-  - amazon.aws.tags.deprecated_purge
+  - amazon.aws.tags
 '''
 
 EXAMPLES = '''
@@ -495,7 +495,7 @@ def main():
         name_tag=dict(aliases=['name']),
         private_key=dict(no_log=True),
         tags=dict(type='dict', aliases=['resource_tags']),
-        purge_tags=dict(type='bool'),
+        purge_tags=dict(type='bool', default=True),
         state=dict(default='present', choices=['present', 'absent']),
     )
     module = AnsibleAWSModule(
@@ -503,14 +503,6 @@ def main():
         supports_check_mode=True,
     )
     acm = ACMServiceManager(module)
-
-    if module.params.get('purge_tags') is None:
-        module.deprecate(
-            'The purge_tags parameter currently defaults to False.'
-            ' For consistency across the collection, this default value'
-            ' will change to True in release 5.0.0.',
-            version='5.0.0', collection_name='community.aws')
-        module.params['purge_tags'] = False
 
     # Check argument requirements
     if module.params['state'] == 'present':
