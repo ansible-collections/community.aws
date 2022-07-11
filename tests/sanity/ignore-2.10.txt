@@ -1,9 +1,1 @@
 plugins/modules/route53.py validate-modules:parameter-state-invalid-choice # route53_info needs improvements before we can deprecate this
-plugins/modules/acm_certificate.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/cloudfront_distribution.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/ec2_vpc_vpn.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/kms_key.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/rds_param_group.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/route53_health_check.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/route53_zone.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
-plugins/modules/sqs_queue.py pylint:collection-deprecated-version # Deprecation planned for 5.0.0
