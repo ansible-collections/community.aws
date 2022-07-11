@@ -1,0 +1,3 @@
+breaking_changes:
+- iam_policy - previously deprecated parameter ``policy_document`` has been removed, ``policy_json`` combined with a file lookup can be used as an alternative (https://github.com/ansible-collections/community.aws/pull/1345).
+- iam_policy - default value for ``skip_duplicates`` has been changed from ``True`` to ``False`` (https://github.com/ansible-collections/community.aws/pull/1345).
