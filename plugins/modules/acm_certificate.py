@@ -524,6 +524,9 @@ def main():
     desired_tags = None
     if module.params.get('tags') is not None:
         desired_tags = module.params['tags']
+    else:
+        # Because we're setting the Name tag, we need to explicitly not purge when tags isn't passed
+        module.params['purge_tags'] = False
     if module.params.get('name_tag') is not None:
         # The module was originally implemented to filter certificates based on the 'Name' tag.
         # Other tags are not used to filter certificates.
