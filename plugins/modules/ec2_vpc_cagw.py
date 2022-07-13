@@ -12,8 +12,9 @@ module: ec2_vpc_cagw
 version_added: 5.0.0
 short_description: Manage an AWS VPC Carrier gateway
 description:
-    - Manage an AWS VPC Carrier gateway
-author: "Marco Braga (@mtulio)"
+  - Manage an AWS VPC Carrier gateway.
+author:
+  - "Marco Braga (@mtulio)"
 options:
   vpc_id:
     description:
@@ -22,16 +23,14 @@ options:
     type: str
   state:
     description:
-      - Create or terminate the CAGW
+      - Create or terminate the Carrier Gateway.
     default: present
     choices: [ 'present', 'absent' ]
     type: str
-notes:
-- Support for I(purge_tags) was added in release 1.3.0.
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.tags
+  - amazon.aws.aws
+  - amazon.aws.ec2
+  - amazon.aws.tags
 '''
 
 EXAMPLES = '''
@@ -100,6 +99,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+
 
 @AWSRetry.jittered_backoff(retries=10, delay=10)
 def describe_cagws_with_backoff(connection, **params):
@@ -228,6 +228,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        requires_one_of=[['vpc_id', 'carrier_gateway_id']],
         supports_check_mode=True,
     )
     results = dict(

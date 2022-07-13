@@ -9,11 +9,12 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: ec2_vpc_cagw_info
-version_added: 1.0.0
+version_added: 5.0.0
 short_description: Gather information about carrier gateways in AWS
 description:
-    - Gather information about carrier gateways in AWS.
-author: "Marco Braga (@mtulio)"
+  - Gather information about carrier gateways in AWS.
+author:
+  - "Marco Braga (@mtulio)"
 options:
   filters:
     description:
@@ -22,19 +23,12 @@ options:
     type: dict
   carrier_gateway_ids:
     description:
-      - Get details of specific Carrier Gateway ID. Provide this value as a list.
+      - Get details of specific Carrier Gateway ID.
     type: list
     elements: str
-  convert_tags:
-    description:
-      - Convert tags from boto3 format (list of dictionaries) to the standard dictionary format.
-      - Prior to release 4.0.0 this defaulted to C(False).
-    default: True
-    type: bool
-    version_added: 1.3.0
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
+  - amazon.aws.aws
+  - amazon.aws.ec2
 
 '''
 
@@ -44,13 +38,11 @@ EXAMPLES = r'''
 - name: Gather information about all Carrier Gateways for an account or profile
   amazon.aws.ec2_vpc_cagw_info:
     region: ap-southeast-2
-    profile: production
   register: cagw_info
 
 - name: Gather information about a filtered list of Carrier Gateways
   amazon.aws.ec2_vpc_cagw_info:
     region: ap-southeast-2
-    profile: production
     filters:
         "tag:Name": "cagw-123"
   register: cagw_info
@@ -58,7 +50,6 @@ EXAMPLES = r'''
 - name: Gather information about a specific carrier gateway by CarrierGatewayId
   amazon.aws.ec2_vpc_cagw_info:
     region: ap-southeast-2
-    profile: production
     carrier_gateway_ids: cagw-c1231234
   register: cagw_info
 '''
