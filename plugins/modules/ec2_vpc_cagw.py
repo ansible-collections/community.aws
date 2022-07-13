@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: ec2_vpc_cagw
-version_added: 1.0.0
+version_added: 5.0.0
 short_description: Manage an AWS VPC Carrier gateway
 description:
     - Manage an AWS VPC Carrier gateway
