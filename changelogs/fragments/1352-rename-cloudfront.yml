@@ -1,0 +1,2 @@
+minor_changes:
+- cloudfront_info - the ``cloudfront_info`` module has been renamed to ``cloudfront_distribution_info``, ``cloudfront_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1352).

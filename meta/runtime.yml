@@ -69,6 +69,7 @@ action_groups:
   - cloudformation_exports_info
   - cloudformation_stack_set
   - cloudfront_distribution
+  - cloudfront_distribution_info
   - cloudfront_info
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
@@ -393,6 +394,9 @@ plugin_routing:
     aws_waf_web_acl:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.waf_web_acl
+    cloudfront_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.cloudfront_distribution_info
     ec2_asg:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_group
