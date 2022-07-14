@@ -6,9 +6,9 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 
-DOCUMENTATION = r'''
+DOCUMENTATION = '''
 ---
-module: ec2_vpc_cagw_info
+module: ec2_carrier_gateway_info
 version_added: 5.0.0
 short_description: Gather information about carrier gateways in AWS
 description:
@@ -32,29 +32,29 @@ extends_documentation_fragment:
 
 '''
 
-EXAMPLES = r'''
+EXAMPLES = '''
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all Carrier Gateways for an account or profile
-  amazon.aws.ec2_vpc_cagw_info:
+  community.aws.ec2_carrier_gateway_info:
     region: ap-southeast-2
   register: cagw_info
 
 - name: Gather information about a filtered list of Carrier Gateways
-  amazon.aws.ec2_vpc_cagw_info:
+  community.aws.ec2_carrier_gateway_info:
     region: ap-southeast-2
     filters:
         "tag:Name": "cagw-123"
   register: cagw_info
 
 - name: Gather information about a specific carrier gateway by CarrierGatewayId
-  amazon.aws.ec2_vpc_cagw_info:
+  community.aws.ec2_carrier_gateway_info:
     region: ap-southeast-2
     carrier_gateway_ids: cagw-c1231234
   register: cagw_info
 '''
 
-RETURN = r'''
+RETURN = '''
 changed:
     description: True if listing the carrier gateways succeeds.
     type: bool

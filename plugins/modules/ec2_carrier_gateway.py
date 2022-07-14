@@ -21,6 +21,11 @@ options:
       - The VPC ID for the VPC in which to manage the Carrier Gateway.
     required: true
     type: str
+  carrier_gateway_id:
+    description:
+      - The Carrier Gateway ID to manage the Carrier Gateway.
+    required: false
+    type: str
   state:
     description:
       - Create or terminate the Carrier Gateway.
@@ -37,15 +42,15 @@ EXAMPLES = '''
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Ensure that the VPC has an Carrier Gateway.
-# The Carrier Gateway ID is can be accessed via {{cagw.carrier_gateway_id}} for use in setting up NATs etc.
+# The Carrier Gateway ID can be accessed via {{cagw.carrier_gateway_id}} for use in setting up Route tables etc.
 - name: Create Carrier gateway
-  community.aws.ec2_vpc_cagw:
+  community.aws.ec2_carrier_gateway:
     vpc_id: vpc-abcdefgh
     state: present
   register: cagw
 
 - name: Create Carrier gateway with tags
-  community.aws.ec2_vpc_cagw:
+  community.aws.ec2_carrier_gateway:
     vpc_id: vpc-abcdefgh
     state: present
     tags:
@@ -54,9 +59,10 @@ EXAMPLES = '''
   register: cagw
 
 - name: Delete Carrier gateway
-  community.aws.ec2_vpc_cagw:
-    state: absent
+  community.aws.ec2_carrier_gateway:
     vpc_id: vpc-abcdefgh
+    carrier_gateway_id: "cagw-123"
+    state: absent
   register: vpc_cagw_delete
 '''
 
