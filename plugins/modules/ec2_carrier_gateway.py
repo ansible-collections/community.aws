@@ -226,7 +226,7 @@ class AnsibleEc2Cagw():
 def main():
     argument_spec = dict(
         carrier_gateway_id=dict(required=False),
-        vpc_id=dict(required=False),
+        vpc_id=dict(required=True),
         state=dict(default='present', choices=['present', 'absent']),
         tags=dict(required=False, type='dict', aliases=['resource_tags']),
         purge_tags=dict(default=True, type='bool'),
