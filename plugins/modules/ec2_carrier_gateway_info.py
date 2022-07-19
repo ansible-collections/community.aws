@@ -97,13 +97,9 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 
 
-def get_carrier_gateway_info(carrier_gateway, convert_tags):
-    if convert_tags:
-        tags = boto3_tag_list_to_ansible_dict(carrier_gateway['Tags'])
-        ignore_list = ["Tags"]
-    else:
-        tags = carrier_gateway['Tags']
-        ignore_list = []
+def get_carrier_gateway_info(carrier_gateway):
+    tags = carrier_gateway['Tags']
+    ignore_list = []
     carrier_gateway_info = {'CarrierGatewayId': carrier_gateway['CarrierGatewayId'],
                              'VpcId': carrier_gateway['VpcId'],
                              'Tags': tags}
@@ -116,7 +112,6 @@ def list_carrier_gateways(connection, module):
     params = dict()
 
     params['Filters'] = ansible_dict_to_boto3_filter_list(module.params.get('filters'))
-    convert_tags = module.params.get('convert_tags')
 
     if module.params.get("carrier_gateway_ids"):
         params['CarrierGatewayIds'] = module.params.get("carrier_gateway_ids")
@@ -128,7 +123,7 @@ def list_carrier_gateways(connection, module):
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, 'Unable to describe carrier gateways')
 
-    return [get_carrier_gateway_info(cagw, convert_tags)
+    return [get_carrier_gateway_info(cagw)
             for cagw in all_carrier_gateways['CarrierGateways']]
 
 
@@ -136,7 +131,6 @@ def main():
     argument_spec = dict(
         filters=dict(type='dict', default=dict()),
         carrier_gateway_ids=dict(type='list', default=None, elements='str'),
-        convert_tags=dict(type='bool', default=True),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
