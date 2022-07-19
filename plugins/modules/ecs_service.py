@@ -654,7 +654,7 @@ DEPLOYMENT_CONFIGURATION_TYPE_MAP = {
     'deployment_circuit_breaker': 'dict',
 }
 
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import map_complex_type
@@ -1125,8 +1125,8 @@ def main():
                 .format(repeat, delay)
             )
             return
-
-    module.exit_json(**results)
+    results_snake = camel_dict_to_snake_dict(results, ignore_list=['tags']) 
+    module.exit_json(**results, **results_snake)
 
 
 if __name__ == '__main__':
