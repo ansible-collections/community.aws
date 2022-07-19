@@ -101,8 +101,8 @@ def get_carrier_gateway_info(carrier_gateway):
     tags = carrier_gateway['Tags']
     ignore_list = []
     carrier_gateway_info = {'CarrierGatewayId': carrier_gateway['CarrierGatewayId'],
-                             'VpcId': carrier_gateway['VpcId'],
-                             'Tags': tags}
+                            'VpcId': carrier_gateway['VpcId'],
+                            'Tags': tags}
 
     carrier_gateway_info = camel_dict_to_snake_dict(carrier_gateway_info,
                                                     ignore_list=ignore_list)
