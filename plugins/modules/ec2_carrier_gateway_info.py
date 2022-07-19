@@ -104,15 +104,16 @@ def get_carrier_gateway_info(carrier_gateway):
                              'VpcId': carrier_gateway['VpcId'],
                              'Tags': tags}
 
-    carrier_gateway_info = camel_dict_to_snake_dict(carrier_gateway_info, ignore_list=ignore_list)
+    carrier_gateway_info = camel_dict_to_snake_dict(carrier_gateway_info,
+                                                    ignore_list=ignore_list)
     return carrier_gateway_info
 
 
 def list_carrier_gateways(connection, module):
+
     params = dict()
 
     params['Filters'] = ansible_dict_to_boto3_filter_list(module.params.get('filters'))
-
     if module.params.get("carrier_gateway_ids"):
         params['CarrierGatewayIds'] = module.params.get("carrier_gateway_ids")
 
