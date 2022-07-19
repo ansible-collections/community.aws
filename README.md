@@ -18,9 +18,13 @@ PEP440 is the schema used to describe the versions of Ansible.
 
 As the AWS SDK for Python (Boto3 and Botocore) has [ceased supporting Python 2.7](https://aws.amazon.com/blogs/developer/announcing-end-of-support-for-python-2-7-in-aws-sdk-for-python-and-aws-cli-v1/), this collection requires Python 3.6 or greater.
 
+## AWS SDK version compatibility
+
 Starting with the 2.0.0 releases of amazon.aws and community.aws, it is generally the collection's policy to support the versions of `botocore` and `boto3` that were released 12 months prior to the most recent major collection release, following semantic versioning (for example, 2.0.0, 3.0.0).
 
 Version 4.0.0 of this collection supports `boto3 >= 1.17.0` and `botocore >= 1.20.0`
+
+All support for the original AWS SDK `boto` was removed in release 4.0.0.
 
 ## Included content
 <!--start collection content-->
@@ -249,8 +253,19 @@ A specific version of the collection can be installed by using the `version` key
 ---
 collections:
   - name: community.aws
-    version: 0.1.1
+    version: 3.1.1
 ```
+
+The python module dependencies are not installed by `ansible-galaxy`.  They can
+be manually installed using pip:
+
+    pip install requirements.txt
+
+or:
+
+    pip install boto3 botocore
+
+## Using this collection
 
 You can either call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
 
@@ -278,6 +293,7 @@ You can either call modules by their Fully Qualified Collection Namespace (FQCN)
 ## Contributing to this collection
 
 We welcome community contributions to this collection. If you find problems, please open an issue or create a PR against the [Community AWS collection repository](https://github.com/ansible-collections/community.aws).
+See [Contributing to Ansible-maintained collections](https://docs.ansible.com/ansible/devel/community/contributing_maintained_collections.html#contributing-maintained-collections) for more details.
 
 You can also join us on:
 
@@ -309,4 +325,4 @@ You can also join us on:
 
 GNU General Public License v3.0 or later.
 
-See [LICENSE](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
+See [COPYING](https://www.gnu.org/licenses/gpl-3.0.txt) to see the full text.
