@@ -239,4 +239,8 @@
       iam_server_certificate:
         name: 'nlb_{{ tiny_prefix }}'
         state: absent
+      register: remove_cert
       ignore_errors: yes
+      retries: 10
+      delay: 5
+      until: remove_cert is success
