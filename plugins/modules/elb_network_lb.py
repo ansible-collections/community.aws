@@ -379,18 +379,17 @@ def create_or_update_elb(elb_obj):
     if listeners_obj.changed:
         elb_obj.changed = True
 
-    # Get the ELB again
-    elb_obj.update()
-
-    # Get the ELB listeners again
-    listeners_obj.update()
-
-    # Update the ELB attributes
-    elb_obj.update_elb_attributes()
-
     # Update ELB ip address type only if option has been provided
     if elb_obj.module.params.get('ip_address_type') is not None:
         elb_obj.modify_ip_address_type(elb_obj.module.params.get('ip_address_type'))
+
+    # Update the objects to pickup changes
+    # Get the ELB again
+    elb_obj.update()
+    # Get the ELB listeners again
+    listeners_obj.update()
+    # Update the ELB attributes
+    elb_obj.update_elb_attributes()
 
     # Convert to snake_case and merge in everything we want to return to the user
     snaked_elb = camel_dict_to_snake_dict(elb_obj.elb)
@@ -405,7 +404,10 @@ def create_or_update_elb(elb_obj):
     # ip address type
     snaked_elb['ip_address_type'] = elb_obj.get_elb_ip_address_type()
 
-    elb_obj.module.exit_json(changed=elb_obj.changed, **snaked_elb)
+    elb_obj.module.exit_json(
+        changed=elb_obj.changed,
+        load_balancer=snaked_elb,
+        **snaked_elb)
 
 
 def delete_elb(elb_obj):
