@@ -127,6 +127,60 @@ options:
           - Engine aurora-postgresql supports C(postgresql).
         type: list
         elements: str
+    engine_mode:
+        description:
+          - The DB engine mode of the DB cluster, either C(provisioned), C(serverless), C(parallelquery), C(global), or C(multimaster).
+          - For Aurora PostgreSQL, the global engine mode isn't required, and both the C(parallelquery) and the C(multimaster) engine modes
+            currently aren't supported.
+        type: str
+        choices:
+          - provisioned
+          - serverless
+          - parallelquery
+          - global
+          - multimaster
+        version_added: 5.0.0
+    scaling_configuration:
+        description:
+          - For DB clusters in serverless DB engine mode, the scaling properties of the DB cluster.
+          - Valid for: Aurora DB clusters only.
+        type: dict
+        suboptions:
+          min_capacity:
+            description:
+              - The minimum capacity for an Aurora DB cluster in serverless DB engine mode.
+              - For Aurora MySQL, valid capacity values are C(1), C(2), C(4), C(8), C(16), C(32), C(64), C(128), and C(256).
+              - For Aurora PostgreSQL, valid capacity values are C(2), C(4), C(8), C(16), C(32), C(64), C(192), and C(384).
+              - The minimum capacity must be less than or equal to the maximum capacity.
+            type: int
+          max_capacity:
+            description:
+              - The maximum capacity for an Aurora DB cluster in serverless DB engine mode.
+              - For Aurora MySQL, valid capacity values are C(1), C(2), C(4), C(8), C(16), C(32), C(64), C(128), and C(256).
+              - For Aurora PostgreSQL, valid capacity values are C(2), C(4), C(8), C(16), C(32), C(64), C(192), and C(384).
+              - The maximum capacity must be greater than or equal to the minimum capacity.
+            type: int
+          auto_pause:
+            description:
+              - A value that indicates whether to allow or disallow automatic pause for an Aurora DB cluster in serverless DB engine mode.
+              - A DB cluster can be paused only when it's idle (it has no connections).
+            type: bool
+          timeout_action:
+            description:
+              - The action to take when the timeout is reached, either C(ForceApplyCapacityChange) or C(RollbackCapacityChange).
+              - C(ForceApplyCapacityChange) sets the capacity to the specified value as soon as possible.
+              - C(RollbackCapacityChange), the default, ignores the capacity change if a scaling point isn't found in the timeout period.
+            type: str
+            default: RollbackCapacityChange
+            choices:
+              - ForceApplyCapacityChange
+              - RollbackCapacityChange
+          seconds_before_timeout:
+            description:
+              - The time, in seconds, before an Aurora DB cluster in serverless mode is paused.
+              - Specify a value between 300 and 86,400 seconds.
+            type: int
+        version_added: 5.0.0
     deletion_protection:
         description:
           -  A value that indicates whether the DB cluster has deletion protection enabled.
@@ -946,6 +1000,8 @@ def main():
         use_earliest_time_on_point_in_time_unavailable=dict(type='bool'),
         use_latest_restorable_time=dict(type='bool'),
         vpc_security_group_ids=dict(type='list', elements='str'),
+        engine_mode=dict(type='str', choices=["provisioned", "serverless", "parallelquery", "global", "multimaster"]),
+        scaling_configuration=dict(type='dict'),
     )
     arg_spec.update(parameter_options)
 
