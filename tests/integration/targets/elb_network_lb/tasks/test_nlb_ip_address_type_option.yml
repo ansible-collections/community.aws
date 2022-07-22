@@ -34,7 +34,7 @@
             - Type: forward
               TargetGroupName: "{{ tg_name }}"
       ip_address_type: "dualstack"
-    ignore_errors: true
+      wait: true
     register: nlb
 
   - assert:
@@ -53,7 +53,7 @@
             - Type: forward
               TargetGroupName: "{{ tg_name }}"
       ip_address_type: "ipv4"
-    ignore_errors: true
+      wait: true
     register: nlb
 
   - assert:
@@ -73,7 +73,7 @@
             - Type: forward
               TargetGroupName: "{{ tg_name }}"
       ip_address_type: "ipv4"
-    ignore_errors: true
+      wait: true
     register: nlb
 
   - assert:

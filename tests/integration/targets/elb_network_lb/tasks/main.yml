@@ -10,13 +10,7 @@
       region: '{{ aws_region }}'
   block:
 
-  - name: create certificate
-    iam_server_certificate:
-      name: test_cert
-      state: present
-      cert: "{{ lookup('file', 'cert.pem') }}"
-      key: "{{ lookup('file', 'key.pem') }}"
-    register: cert
+  - include_tasks: generate-certs.yml
 
   - name: create VPC
     ec2_vpc_net:
@@ -243,6 +237,10 @@
 
     - name: destroy certificate
       iam_server_certificate:
-        name: test_cert
+        name: 'nlb_{{ tiny_prefix }}'
         state: absent
+      register: remove_cert
       ignore_errors: yes
+      retries: 10
+      delay: 5
+      until: remove_cert is success
