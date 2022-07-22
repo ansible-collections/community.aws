@@ -1,0 +1,37 @@
+---
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+
+  block:
+    - name: get ARN of calling user
+      aws_caller_info:
+      register: aws_caller_info
+
+    - name: Store Account ID for later use
+      set_fact:
+        aws_account_id: '{{ aws_caller_info.account }}'
+
+    - accessanalyzer_validate_policy_info:
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: AttachPolicyToInvalidRole
+              Effect: Allow
+              Action:
+                - iam:AttachRolePolicy
+              Resource:
+                - 'arn:aws:iam::{{ aws_account_id }}:invalid-role/dms-vpc-role'
+              Condition:
+                ArnLike:
+                  iam:PolicyArn:
+                    - 'arn:aws:iam::aws:policy/*'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length > 1
