@@ -111,6 +111,54 @@ findings:
       type: list
       returned: success
       elements: dict
+      contains:
+        path:
+          description: A path in a policy, represented as a sequence of path elements.
+          type: list
+          elements: dict
+          returned: success
+          sample: [{"value": "Statement"}, {"index": 0}, {"value": "Resource"}, {"index": 0}]
+        span:
+          description:
+            - Where in the policy the finding refers to.
+            - Note - when using lookups or passing dictionaries to I(policy) the policy string may be
+              converted to a single line of JSON, changing th column, line and offset values.
+          type: dict
+          contains:
+            start:
+              description: The start position of the span.
+              type: dict
+              returned: success
+              contains:
+                column:
+                  description: The column of the position, starting from C(0).
+                  type: int
+                  returned: success
+                line:
+                  description: The line of the position, starting from C(1).
+                  type: int
+                  returned: success
+                offset:
+                  description: The offset within the policy that corresponds to the position, starting from C(0).
+                  type: int
+                  returned: success
+            end:
+              description: The end position of the span.
+              type: dict
+              returned: success
+              contains:
+                column:
+                  description: The column of the position, starting from C(0).
+                  type: int
+                  returned: success
+                line:
+                  description: The line of the position, starting from C(1).
+                  type: int
+                  returned: success
+                offset:
+                  description: The offset within the policy that corresponds to the position, starting from C(0).
+                  type: int
+                  returned: success
 '''
 
 try:
