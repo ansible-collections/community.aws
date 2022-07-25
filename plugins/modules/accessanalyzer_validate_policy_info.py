@@ -124,6 +124,19 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 
 
+def filter_findings(findings, type_filter):
+    if not type_filter:
+        return findings
+
+    # Convert type_filter to the findingType strings returned by the API
+    filter_map = dict(error='ERROR', security='SECURITY_WARNING',
+                      suggestion='SUGGESTION', warning='WARNING')
+    allowed_types = [filter_map[t] for t in type_filter]
+
+    filtered_results = [f for f in findings if f.get('findingType', None) in allowed_types]
+    return filtered_results
+
+
 def main():
     # Botocore only supports specific values for locale and resource_type, however the supported
     # values are likely to be expanded, let's avoid hard coding limits which might not hold true in
@@ -150,6 +163,7 @@ def main():
     policy_type = policy_type_map[module.params.get('policy_type')]
     locale = module.params.get('locale').upper()
     resource_type = module.params.get('resource_type')
+    results_filter = module.params.get('results_filter')
 
     try:
         client = module.client('accessanalyzer', retry_decorator=AWSRetry.jittered_backoff())
@@ -161,6 +175,10 @@ def main():
         params['policyType'] = resource_type
 
     results = client.validate_policy(aws_retry=True, **params)
+
+    findings = filter_findings(results.get('findings', []), results_filter)
+    results['findings'] = findings
+
     results = camel_dict_to_snake_dict(results)
 
     module.exit_json(changed=False, **results)
