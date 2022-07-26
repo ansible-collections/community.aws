@@ -1,0 +1,284 @@
+---
+- module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key | default(omit) }}'
+      aws_secret_key: '{{ aws_secret_key | default(omit) }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region | default(omit) }}'
+
+  block:
+    - name: get ARN of calling user
+      aws_caller_info:
+      register: aws_caller_info
+
+    - name: Store Account ID for later use
+      set_fact:
+        aws_account_id: '{{ aws_caller_info.account }}'
+
+    # Notes:
+    # - Because the policy validation includes both linting, security hints and error detection, we
+    #   can't assume that we'll only get the entry we expect.
+    # - Because Ansible's done its thing and converted from YAML to dict to JSON string, line
+    #   numbers aren't useful, as such we can test that the fields we expect are there, but we
+    #   can't test things like locations
+    # - Some fields are arbitrary strings with recommendations, we shouldn't assume these will stay
+    #   constant
+
+    - name: Test with invalid role ('ERROR')
+      accessanalyzer_validate_policy_info:
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: AttachPolicyToInvalidRole
+              Effect: Allow
+              Action:
+                - iam:AttachRolePolicy
+              Resource:
+                - 'arn:aws:iam::{{ aws_account_id }}:invalid-role/example-role'
+                - 'arn:aws:iam::{{ aws_account_id }}:role/example-role'
+              Condition:
+                ArnLike:
+                  iam:PolicyArn:
+                    - 'arn:aws:iam::aws:policy/MyExamplePolicy'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - "'INVALID_ARN_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+          - "'finding_details' in expected_finding"
+          # We should be relatively relaxed with this message, there's a risk AWS will change the
+          # wording, but make a vague check that we're getting English as expected
+          - "'does not match the expected' in expected_finding.finding_details"
+          - "'finding_type' in expected_finding"
+          - expected_finding.finding_type == 'ERROR'
+          - "'issue_code' in expected_finding"
+          - expected_finding.issue_code == 'INVALID_ARN_RESOURCE'
+          - "'learn_more_link' in expected_finding"
+          - "'locations' in expected_finding"
+          - "'path' in first_location"
+          - "'span' in first_location"
+      vars:
+        expected_finding: "{{ results.findings | selectattr('issue_code', 'equalto', 'INVALID_ARN_RESOURCE') | flatten | first }}"
+        first_location: "{{ expected_finding.locations | first }}"
+
+    - name: Test with duplicate role ('SUGGESTION')
+      accessanalyzer_validate_policy_info:
+        policy: |
+            {
+              "Version": "2012-10-17",
+              "Statement": [{
+                "Sid": "AttachPolicyToDuplicateWildcardRole",
+                "Effect": "Allow",
+                "Action": ["iam:AttachRolePolicy"],
+                "Resource": [
+                    "arn:aws:iam::123456789012:role/example-role",
+                    "arn:aws:iam::123456789012:role/example*"
+                ],
+                "Condition": {
+                  "ArnLike": {
+                    "iam:PolicyArn": [
+                      "arn:aws:iam::aws:policy/MyExamplePolicy"
+                    ]
+                  }
+                }
+              }]
+            }
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - "'REDUNDANT_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+          - "'finding_details' in expected_finding"
+          - "'finding_type' in expected_finding"
+          - expected_finding.finding_type == 'SUGGESTION'
+          - "'issue_code' in expected_finding"
+          - expected_finding.issue_code == 'REDUNDANT_RESOURCE'
+          - "'learn_more_link' in expected_finding"
+          - "'locations' in expected_finding"
+          - "'path' in first_location"
+          - "'span' in first_location"
+      vars:
+        expected_finding: "{{ results.findings | selectattr('issue_code', 'equalto', 'REDUNDANT_RESOURCE') | flatten | first }}"
+        first_location: "{{ expected_finding.locations | first }}"
+
+    - name: Test with duplicate SID ('WARNING')
+      accessanalyzer_validate_policy_info:
+        policy_type: resource
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: DuplicateSID
+              Effect: Allow
+              Action:
+                - sts:AssumeRole
+              Principal:
+                Service: 'ssm-incidents.amazonaws.com'
+            - Sid: DuplicateSID
+              Effect: Allow
+              Action:
+                - sts:AssumeRole
+              Principal:
+                Service: 'ec2.amazonaws.com'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - "'UNIQUE_SIDS_RECOMMENDED' in (results.findings | map(attribute='issue_code'))"
+          - "'finding_details' in expected_finding"
+          - "'finding_type' in expected_finding"
+          - expected_finding.finding_type == 'WARNING'
+          - "'issue_code' in expected_finding"
+          - expected_finding.issue_code == 'UNIQUE_SIDS_RECOMMENDED'
+          - "'learn_more_link' in expected_finding"
+          - "'locations' in expected_finding"
+          - "'path' in first_location"
+          - "'span' in first_location"
+      vars:
+        expected_finding: "{{ results.findings | selectattr('issue_code', 'equalto', 'UNIQUE_SIDS_RECOMMENDED') | flatten | first }}"
+        first_location: "{{ expected_finding.locations | first }}"
+
+    - name: Test with wildcard to PassRole ('SECURITY_WARNING')
+      accessanalyzer_validate_policy_info:
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: PassRoleWithWildcard
+              Effect: Allow
+              Action:
+                - iam:PassRole
+              Resource:
+                - '*'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - "'PASS_ROLE_WITH_STAR_IN_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+          - "'finding_details' in expected_finding"
+          - "'finding_type' in expected_finding"
+          - expected_finding.finding_type == 'SECURITY_WARNING'
+          - "'issue_code' in expected_finding"
+          - expected_finding.issue_code == 'PASS_ROLE_WITH_STAR_IN_RESOURCE'
+          - "'learn_more_link' in expected_finding"
+          - "'locations' in expected_finding"
+          - "'path' in first_location"
+          - "'span' in first_location"
+      vars:
+        expected_finding: "{{ results.findings | selectattr('issue_code', 'equalto', 'PASS_ROLE_WITH_STAR_IN_RESOURCE') | flatten | first }}"
+        first_location: "{{ expected_finding.locations | first }}"
+
+    - name: Test with single filter value
+      accessanalyzer_validate_policy_info:
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: AttachPolicyToInvalidRole
+              Effect: Allow
+              Action:
+                - iam:AttachRolePolicy
+              Resource:
+                - 'arn:aws:iam::{{ aws_account_id }}:invalid-role/example-role'
+                - 'arn:aws:iam::{{ aws_account_id }}:role/example-role'
+                - 'arn:aws:iam::{{ aws_account_id }}:role/example-*'
+              Condition:
+                ArnLike:
+                  iam:PolicyArn:
+                    - 'arn:aws:iam::aws:policy/MyExamplePolicy'
+            - Sid: PassRoleWithWildcard
+              Effect: Allow
+              Action:
+                - iam:PassRole
+              Resource:
+                - '*'
+        results_filter: 'error'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - results.findings | map(attribute='finding_type') | unique | list == ['ERROR']
+          - "'INVALID_ARN_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+
+    - name: Test with multiple filter value
+      accessanalyzer_validate_policy_info:
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: AttachPolicyToInvalidRole
+              Effect: Allow
+              Action:
+                - iam:AttachRolePolicy
+              Resource:
+                - 'arn:aws:iam::{{ aws_account_id }}:invalid-role/example-role'
+                - 'arn:aws:iam::{{ aws_account_id }}:role/example-role'
+                - 'arn:aws:iam::{{ aws_account_id }}:role/example-*'
+              Condition:
+                ArnLike:
+                  iam:PolicyArn:
+                    - 'arn:aws:iam::aws:policy/MyExamplePolicy'
+            - Sid: PassRoleWithWildcard
+              Effect: Allow
+              Action:
+                - iam:PassRole
+              Resource:
+                - '*'
+        results_filter:
+          - 'error'
+          - 'security'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - results.findings | map(attribute='finding_type') | unique | list | sort == ['ERROR', 'SECURITY_WARNING']
+          - "'INVALID_ARN_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+          - "'PASS_ROLE_WITH_STAR_IN_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+
+    - name: Test with Locale
+      accessanalyzer_validate_policy_info:
+        locale: 'DE'
+        policy:
+          Version: '2012-10-17'
+          Statement:
+            - Sid: AttachPolicyToInvalidRole
+              Effect: Allow
+              Action:
+                - iam:AttachRolePolicy
+              Resource:
+                - 'arn:aws:iam::{{ aws_account_id }}:invalid-role/example-role'
+                - 'arn:aws:iam::{{ aws_account_id }}:role/example-role'
+              Condition:
+                ArnLike:
+                  iam:PolicyArn:
+                    - 'arn:aws:iam::aws:policy/MyExamplePolicy'
+      register: results
+
+    - assert:
+        that:
+          - "'findings' in results"
+          - results.findings | length >= 1
+          - "'INVALID_ARN_RESOURCE' in (results.findings | map(attribute='issue_code'))"
+          - "'finding_details' in expected_finding"
+          # We should be relatively relaxed with this message, there's a risk AWS will change the
+          # wording, but make a vague check that we're getting German as expected
+          - "'stimmt nicht mit dem erwarteten' in expected_finding.finding_details"
+          - "'finding_type' in expected_finding"
+          - expected_finding.finding_type == 'ERROR'
+          - "'issue_code' in expected_finding"
+          - expected_finding.issue_code == 'INVALID_ARN_RESOURCE'
+          - "'learn_more_link' in expected_finding"
+          - "'locations' in expected_finding"
+          - "'path' in first_location"
+          - "'span' in first_location"
+      vars:
+        expected_finding: "{{ results.findings | selectattr('issue_code', 'equalto', 'INVALID_ARN_RESOURCE') | flatten | first }}"
+        first_location: "{{ expected_finding.locations | first }}"
