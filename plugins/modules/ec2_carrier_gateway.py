@@ -234,6 +234,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
+        required_one_of=[['vpc_id', 'carrier_gateway_id']],
         supports_check_mode=True,
     )
     results = dict(
