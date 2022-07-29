@@ -21,12 +21,11 @@
         tags:
           Description: "Created by ansible-test for CAGW tests"
       register: vpc_result
-      loop: [1, 2]
+      loop: [1]
 
     - name: use set fact for vpc ids
       set_fact:
         vpc_id_1: '{{ vpc_result.results.0.vpc.id }}'
-        vpc_id_2: '{{ vpc_result.results.1.vpc.id }}'
 
     # ============================================================
     - debug: msg="Running tests"
@@ -59,20 +58,6 @@
         that:
           - not cagw.changed
           - cagw.carrier_gateway_id == cagw_id
-
-    # ============================================================TODO
-    - name: attach carrier gateway to the other VPC
-      ec2_carrier_gateway:
-        state: present
-        vpc_id: '{{ vpc_id_2 }}'
-        name: "{{ cagw_name }}"
-      register: cagw
-
-    - assert:
-        that:
-          - cagw.changed
-          - cagw.carrier_gateway_id == cagw_id
-          - cagw.vpc_id == vpc_id_2
 
     # ============================================================
 
@@ -127,29 +112,6 @@
       assert:
         that:
           - cagw_id in cagw_id_list
-
-    # ============================================================TODO
-
-    - name: detach vpn gateway
-      ec2_carrier_gateway:
-        state: present
-        name: "{{ cagw_name }}"
-      register: cagw
-
-    - assert:
-        that:
-          - cagw.changed
-          - not cagw.vpc_id
-
-    - name: test idempotence
-      ec2_carrier_gateway:
-        state: present
-        name: "{{ cagw_name }}"
-      register: cagw
-
-    - assert:
-        that:
-          - not cagw.changed
 
     # ============================================================
 
