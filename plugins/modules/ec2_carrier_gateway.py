@@ -100,6 +100,7 @@ except ImportError:
     pass  # caught by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
@@ -203,6 +204,8 @@ class AnsibleEc2Cagw():
                 response = self._connection.create_carrier_gateway(VpcId=vpc_id, aws_retry=True)
                 cagw = camel_dict_to_snake_dict(response['CarrierGateway'])
                 self._results['changed'] = True
+            except is_boto3_error_message("You must be opted into a wavelength zone to create a carrier gateway.") as e:
+                self._module.fail_json(msg="You must be opted into a wavelength zone to create a carrier gateway")
             except botocore.exceptions.WaiterError as e:
                 self._module.fail_json_aws(e, msg="No Carrier Gateway exists.")
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
