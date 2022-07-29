@@ -5,5 +5,5 @@ unsupported
 
 cloud/aws
 
-ecs_carrier_gateway
-ecs_carrier_gateway_info
+ec2_carrier_gateway
+ec2_carrier_gateway_info
