@@ -1,0 +1,5 @@
+minor_changes:
+- iam_policy - added support for ``--diff`` mode (https://github.com/ansible-collections/community.aws/issues/560).
+- iam_policy - attempts to continue when read requests are denied by IAM policy (https://github.com/ansible-collections/community.aws/pull/1375).
+deprecated_features:
+- iam_policy - the ``policies`` return value has been renamed ``policy_names`` and will be removed in a release after 2024-08-01, both values are currently returned (https://github.com/ansible-collections/community.aws/pull/1375).
