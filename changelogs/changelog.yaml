@@ -2024,3 +2024,41 @@ releases:
     - 1221-aws_codebuild-tagging.yml
     - 1236-route53_info-add-snake_case-return-values.yml
     release_date: '2022-06-23'
+  3.5.0:
+    changes:
+      bugfixes:
+      - aws_api_gateway_domain - added the ``aws_api_gateway_domain`` module to the
+        aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
+      - aws_config_aggregator - Fix `KeyError` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
+      - aws_config_aggregator - Fix idempotency when ``account_sources`` parameter
+        is not specified (https://github.com/ansible-collections/community.aws/pull/645).
+      - aws_ssm - pull S3 bucket region for session generated for file transfer during
+        playbooks (https://github.com/ansible-collections/community.aws/issues/1190).
+      - cloudfront_response_headers_policy - added the ``cloudfront_response_headers_policy``
+        module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
+      - ec2_vpc_peer - fix idempotency when requester/accepter is reversed (https://github.com/ansible-collections/community.aws/issues/580).
+      - kms_key_info - handle access denied errors more liberally (https://github.com/ansible-collections/community.aws/issues/206).
+      - route53 - fixes bug preventing creating a DNS record with a weight of zero
+        (https://github.com/ansible-collections/community.aws/issues/1378)
+      - route53_info - fix ``max_items`` parameter when used with non-paginated commands
+        (https://github.com/ansible-collections/community.aws/issues/1383).
+      minor_changes:
+      - iam_server_certificate - the deprecation for the ``iam_cert`` alias has been
+        extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1257).
+      - iam_server_certificate - the deprecations for ``cert_chain``, ``cert``, ``key``
+        and ``dup_ok`` have been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1256).
+      - rds_instance_snapshot - the deprecation for the ``rds_snapshot`` alias has
+        been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1257).
+      - s3_sync - improves error handling during ``HEAD`` operation to compare existing
+        files (https://github.com/ansible-collections/community.aws/issues/58).
+    fragments:
+    - 1176-ssm-connection-plugin-region-fix.yml
+    - 1257-deprecations.yml
+    - 1282-meta.yml
+    - 1379-zero_weight_dns_fix.yml
+    - 1384-route53_info-fix-max-items.yml
+    - 206-kms_key_info.yml
+    - 58-s3_sync.yml
+    - 580-vpc_peer-idempotency.yml
+    - 645-aws_config_aggregator-fix-update-and-idempotency.yml
+    release_date: '2022-08-02'
