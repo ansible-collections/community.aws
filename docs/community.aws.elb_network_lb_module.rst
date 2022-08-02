@@ -285,6 +285,25 @@ Parameters
                 </td>
                 <td>
                         <div>The Amazon Resource Name (ARN) of the target group.</div>
+                        <div>Mutually exclusive with <em>TargetGroupName</em>.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>TargetGroupName</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the target group.</div>
+                        <div>Mutually exclusive with <em>TargetGroupArn</em>.</div>
                 </td>
             </tr>
             <tr>

@@ -1,2 +1,0 @@
-minor_changes:
-- ecs_service - added parameter ``deployment_controller`` so service can be controlled by Code Deploy (https://github.com/ansible-collections/community.aws/pull/340).

@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Gather information about virtual gateways in AWS.
+- Gather information about virtual gateways (VGWs) in AWS.
 
 
 
@@ -239,7 +239,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Get details of a specific Virtual Gateway ID. This value should be provided as a list.</div>
+                        <div>Get details of a specific Virtual Gateway ID.</div>
                 </td>
             </tr>
     </table>

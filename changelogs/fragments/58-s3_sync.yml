@@ -1,2 +1,0 @@
-minor_changes:
-- s3_sync - improves error handling during ``HEAD`` operation to compare existing files (https://github.com/ansible-collections/community.aws/issues/58).

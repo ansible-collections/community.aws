@@ -43,6 +43,7 @@ Name | Description
 ### Modules
 Name | Description
 --- | ---
+[community.aws.autoscaling_complete_lifecycle_action](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.autoscaling_complete_lifecycle_action_module.rst)|Completes the lifecycle action of an instance
 [community.aws.aws_acm](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_acm_module.rst)|Upload and delete certificates in the AWS Certificate Manager service
 [community.aws.aws_acm_info](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_acm_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.aws_api_gateway](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_api_gateway_module.rst)|Manage AWS API Gateway APIs
@@ -67,6 +68,7 @@ Name | Description
 [community.aws.aws_eks_cluster](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_eks_cluster_module.rst)|Manage Elastic Kubernetes Service Clusters
 [community.aws.aws_elasticbeanstalk_app](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_elasticbeanstalk_app_module.rst)|Create, update, and delete an elastic beanstalk application
 [community.aws.aws_glue_connection](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_glue_connection_module.rst)|Manage an AWS Glue connection
+[community.aws.aws_glue_crawler](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_glue_crawler_module.rst)|Manage an AWS Glue crawler
 [community.aws.aws_glue_job](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_glue_job_module.rst)|Manage an AWS Glue job
 [community.aws.aws_inspector_target](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_inspector_target_module.rst)|Create, Update and Delete Amazon Inspector Assessment Targets
 [community.aws.aws_kms](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.aws_kms_module.rst)|Perform various KMS management tasks
@@ -189,6 +191,7 @@ Name | Description
 [community.aws.lambda_info](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.lambda_info_module.rst)|Gathers AWS Lambda function details
 [community.aws.lambda_policy](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.lambda_policy_module.rst)|Creates, updates or deletes AWS Lambda policy statements.
 [community.aws.lightsail](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.lightsail_module.rst)|Manage instances in AWS Lightsail
+[community.aws.lightsail_static_ip](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.lightsail_static_ip_module.rst)|Manage static IP addresses in AWS Lightsail
 [community.aws.networkfirewall](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.networkfirewall_module.rst)|manage AWS Network Firewall firewalls
 [community.aws.networkfirewall_info](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.networkfirewall_info_module.rst)|describe AWS Network Firewall firewalls
 [community.aws.networkfirewall_policy](https://github.com/ansible-collections/community.aws/blob/stable-4/docs/community.aws.networkfirewall_policy_module.rst)|manage AWS Network Firewall policies

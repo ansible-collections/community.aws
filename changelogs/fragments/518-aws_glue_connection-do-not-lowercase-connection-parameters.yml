@@ -1,4 +1,0 @@
-minor_changes:
-- aws_glue_connection - added new ``raw_connection_parameters`` return key which doesn't snake case the connection parameters (https://github.com/ansible-collections/community.aws/pull/518).
-deprecated_features:
-- aws_glue_connection - the ``connection_parameters`` return key has been deprecated and will be removed in a release after 2024-06-01, it is being replaced by the ``raw_connection_parameters`` key (https://github.com/ansible-collections/community.aws/pull/518).
