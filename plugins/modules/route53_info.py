@@ -520,7 +520,7 @@ def reusable_delegation_set_details():
 
     if not module.params.get('delegation_set_id'):
         if module.params.get('max_items'):
-            params['MaxItems'] = module.params.get('max_items')
+            params['MaxItems'] = str(module.params.get('max_items'))
 
         if module.params.get('next_marker'):
             params['Marker'] = module.params.get('next_marker')
@@ -579,7 +579,7 @@ def list_hosted_zones_by_name():
         params['DNSName'] = module.params.get('dns_name')
 
     if module.params.get('max_items'):
-        params['MaxItems'] = module.params.get('max_items')
+        params['MaxItems'] = str(module.params.get('max_items'))
 
     return client.list_hosted_zones_by_name(**params)
 
