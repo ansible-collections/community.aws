@@ -1,0 +1,2 @@
+bugfixes:
+- s3_sync - fix etag generation when running in FIPS mode (https://github.com/ansible-collections/community.aws/issues/757).
