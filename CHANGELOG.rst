@@ -5,6 +5,70 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v4.1.0
+======
+
+Minor Changes
+-------------
+
+- aws_glue_connection - added new ``raw_connection_parameters`` return key which doesn't snake case the connection parameters (https://github.com/ansible-collections/community.aws/pull/518).
+- aws_ssm_parameter_store - added support for check_mode (https://github.com/ansible-collections/community.aws/pull/1309).
+- cloudwatchevent_rule - Added ``targets.input_transformer.input_paths_map`` and ``targets.input_transformer.input_template`` parameters to support configuring on CloudWatch event rule input transformation (https://github.com/ansible-collections/community.aws/pull/623).
+- cloudwatchevent_rule - Applied validation of ``targets`` arguments (https://github.com/ansible-collections/community.aws/issues/201).
+- cloudwatchlogs_log_group - Added check_mode support (https://github.com/ansible-collections/community.aws/pull/1373).
+- ec2_launch_template - Adds support for specifying the ``source_version`` upon which template updates are based (https://github.com/ansible-collections/community.aws/pull/239).
+- ec2_scaling_policy - add TargetTrackingScaling as a scaling policy option (https://github.com/ansible-collections/community.aws/pull/771)
+- ec2_vpc_vgw_info - updated to not throw an error when run in check_mode (https://github.com/ansible-collections/community.aws/issues/137).
+- ecs_ecr - add `force_absent` parameter for removing repositories that contain images (https://github.com/ansible-collections/community.aws/pull/1316).
+- ecs_service - add ``wait`` parameter and waiter for deleting services (https://github.com/ansible-collections/community.aws/pull/1209).
+- ecs_service - added ``tags`` and ``tag_propagation`` support to the module (https://github.com/ansible-collections/community.aws/pull/543).
+- ecs_service - added parameter ``deployment_controller`` so service can be controlled by Code Deploy (https://github.com/ansible-collections/community.aws/pull/340).
+- ecs_task - add ``wait`` parameter and waiter for running and stopping tasks (https://github.com/ansible-collections/community.aws/pull/1209).
+- elasticache_info - added ``replication_group`` to the returned information for an elasticache cluster (https://github.com/ansible-collections/community.aws/pull/646).
+- iam_policy - added support for ``--diff`` mode (https://github.com/ansible-collections/community.aws/issues/560).
+- iam_policy - attempts to continue when read requests are denied by IAM policy (https://github.com/ansible-collections/community.aws/pull/1375).
+- iam_server_certificate - the deprecation for the ``iam_cert`` alias has been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1257).
+- iam_server_certificate - the deprecations for ``cert_chain``, ``cert``, ``key`` and ``dup_ok`` have been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1256).
+- lambda_info - add return key ``functions`` which returns a list of dictionaries instead of the previously returned ``function``, which returned a dictionary of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
+- lambda_info - now returns basic configuration information of each lambda function, regardless of query (https://github.com/ansible-collections/community.aws/pull/1239).
+- rds_instance_snapshot - the deprecation for the ``rds_snapshot`` alias has been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1257).
+- route53_health_check - Added new parameter ``health_check_id`` with alias ``id`` to allow update and delete health check by ID (https://github.com/ansible-collections/community.aws/pull/1143).
+- route53_health_check - Added new parameter ``use_unique_names`` used with new parameter ``health_check_name`` with alias ``name`` to set health check name as unique identifier (https://github.com/ansible-collections/community.aws/pull/1143).
+- s3_sync - improves error handling during ``HEAD`` operation to compare existing files (https://github.com/ansible-collections/community.aws/issues/58).
+- secretsmanager_secret - add support for storing JSON in secrets (https://github.com/ansible-collections/community.aws/issues/656).
+- sns_topic - Added ``attributes`` parameter to ``subscriptions`` items with support for RawMessageDelievery (SQS)
+
+Deprecated Features
+-------------------
+
+- aws_glue_connection - the ``connection_parameters`` return key has been deprecated and will be removed in a release after 2024-06-01, it is being replaced by the ``raw_connection_parameters`` key (https://github.com/ansible-collections/community.aws/pull/518).
+- community.aws collection - due to the AWS SDKs announcing the end of support for Python less than 3.7 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.7 by this collection has been deprecated and will be removed in a release after 2023-05-31 (https://github.com/ansible-collections/community.aws/pull/1361).
+- iam_policy - the ``policies`` return value has been renamed ``policy_names`` and will be removed in a release after 2024-08-01, both values are currently returned (https://github.com/ansible-collections/community.aws/pull/1375).
+- lambda_info - The ``function`` return key returns a dictionary of dictionaries and has been deprecated. In a release after 2025-01-01, this key will be removed in favor of ``functions``, which returns a list of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
+- route53_info - The CamelCase return values for ```DelegationSets```, ```CheckerIpRanges```, and ```HealthCheck``` have been deprecated, in the future release you must use snake_case return values ```delegation_sets```, ```checker_ip_ranges```, and ```health_check``` instead respectively" (https://github.com/ansible-collections/community.aws/pull/1322).
+
+Bugfixes
+--------
+
+- aws_api_gateway_domain - added the ``aws_api_gateway_domain`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
+- aws_config_aggregator - Fix `KeyError` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
+- aws_config_aggregator - Fix idempotency when ``account_sources`` parameter is not specified (https://github.com/ansible-collections/community.aws/pull/645).
+- aws_ssm - pull S3 bucket region for session generated for file transfer during playbooks (https://github.com/ansible-collections/community.aws/issues/1190).
+- aws_ssm_parameter_store - fixed bug where module wasn't consistently idempotent (https://github.com/ansible-collections/community.aws/pull/1309).
+- cloudfront_response_headers_policy - added the ``cloudfront_response_headers_policy`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
+- ec2_vpc_peer - fix idempotency when requester/accepter is reversed (https://github.com/ansible-collections/community.aws/issues/580).
+- kms_key_info - handle access denied errors more liberally (https://github.com/ansible-collections/community.aws/issues/206).
+- route53 - fixes bug preventing creating a DNS record with a weight of zero (https://github.com/ansible-collections/community.aws/issues/1378)
+- route53_info - fix ``max_items`` parameter when used with non-paginated commands (https://github.com/ansible-collections/community.aws/issues/1383).
+- sns_topic - fix bug which prevented the module being used in GovCloud (https://github.com/ansible-collections/community.aws/issues/836).
+
+New Modules
+-----------
+
+- autoscaling_complete_lifecycle_action - Completes the lifecycle action of an instance
+- aws_glue_crawler - Manage an AWS Glue crawler
+- lightsail_static_ip - Manage static IP addresses in AWS Lightsail
+
 v4.0.0
 ======
 

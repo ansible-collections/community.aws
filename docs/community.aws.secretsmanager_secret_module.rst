@@ -161,6 +161,23 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>json_secret</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">json</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specifies JSON-formatted data that you want to encrypt and store in the new version of the secret.</div>
+                        <div>Mutually exclusive with the <em>secret</em> option.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>kms_key_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -321,6 +338,7 @@ Parameters
                 </td>
                 <td>
                         <div>Specifies string or binary data that you want to encrypt and store in the new version of the secret.</div>
+                        <div>Mutually exclusive with the <em>json_secret</em> option.</div>
                 </td>
             </tr>
             <tr>

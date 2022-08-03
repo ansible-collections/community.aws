@@ -1,14 +1,14 @@
-.. _community.aws.iam_policy_module:
+.. _community.aws.lightsail_static_ip_module:
 
 
-************************
-community.aws.iam_policy
-************************
+*********************************
+community.aws.lightsail_static_ip
+*********************************
 
-**Manage inline IAM policies for users, groups, and roles**
+**Manage static IP addresses in AWS Lightsail**
 
 
-Version added: 1.0.0
+Version added: 4.1.0
 
 .. contents::
    :local:
@@ -17,8 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Allows uploading or removing inline IAM policies for IAM users, groups or roles.
-- To administer managed policies please see :ref:`community.aws.iam_user <community.aws.iam_user_module>`, :ref:`community.aws.iam_role <community.aws.iam_role_module>`, :ref:`community.aws.iam_group <community.aws.iam_group_module>` and :ref:`community.aws.iam_managed_policy <community.aws.iam_managed_policy_module>`
+- Manage static IP addresses in AWS Lightsail.
 
 
 
@@ -146,7 +145,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>iam_name</b>
+                    <b>name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -156,77 +155,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of IAM resource you wish to target for policy actions. In other words, the user name, group name or role name.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>iam_type</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>user</li>
-                                    <li>group</li>
-                                    <li>role</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Type of IAM resource.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_document</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The path to the properly json formatted policy file.</div>
-                        <div>Mutually exclusive with <em>policy_json</em>.</div>
-                        <div>This option has been deprecated and will be removed in a release after 2022-06-01.  The existing behavior can be reproduced by using the <em>policy_json</em> option and reading the file using the lookup plugin.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_json</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">json</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A properly json formatted policy as string.</div>
-                        <div>Mutually exclusive with <em>policy_document</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The name label for the policy to create or remove.</div>
+                        <div>Name of the static IP.</div>
                 </td>
             </tr>
             <tr>
@@ -282,26 +211,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>skip_duplicates</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>When <em>skip_duplicates=true</em> the module looks for any policies that match the document you pass in. If there is a match it will not make a new policy object with the same rules.</div>
-                        <div>The current default is <code>true</code>.  However, this behavior can be confusing and as such the default will change to <code>false</code> in a release after 2022-06-01.  To maintain the existing behavior explicitly set <em>skip_duplicates=true</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -315,7 +224,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether to create or delete the IAM policy.</div>
+                        <div>Describes the desired state.</div>
                 </td>
             </tr>
             <tr>
@@ -356,46 +265,16 @@ Examples
 
 .. code-block:: yaml
 
-    # Create a policy with the name of 'Admin' to the group 'administrators'
-    - name: Assign a policy called Admin to the administrators group
-      community.aws.iam_policy:
-        iam_type: group
-        iam_name: administrators
-        policy_name: Admin
+    - name: Provision a Lightsail static IP
+      community.aws.lightsail_static_ip:
         state: present
-        policy_document: admin_policy.json
+        name: my_static_ip
+      register: my_ip
 
-    # Advanced example, create two new groups and add a READ-ONLY policy to both
-    # groups.
-    - name: Create Two Groups, Mario and Luigi
-      community.aws.iam_group:
-        name: "{{ item }}"
-        state: present
-      loop:
-         - Mario
-         - Luigi
-      register: new_groups
-
-    - name: Apply READ-ONLY policy to new groups that have been recently created
-      community.aws.iam_policy:
-        iam_type: group
-        iam_name: "{{ item.iam_group.group.group_name }}"
-        policy_name: "READ-ONLY"
-        policy_json: "{{ lookup('template', 'readonly.json.j2') }}"
-        state: present
-      loop: "{{ new_groups.results }}"
-
-    # Create a new S3 policy with prefix per user
-    - name: Create S3 policy from template
-      community.aws.iam_policy:
-        iam_type: user
-        iam_name: "{{ item.user }}"
-        policy_name: "s3_limited_access_{{ item.prefix }}"
-        state: present
-        policy_json: "{{ lookup('template', 's3_policy.json.j2') }}"
-        loop:
-          - user: s3_user
-            prefix: s3_user_prefix
+    - name: Remove a static IP
+      community.aws.lightsail_static_ip:
+        state: absent
+        name: my_static_ip
 
 
 
@@ -414,17 +293,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>policy_names</b>
+                    <b>static_ip</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=string</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>A list of names of the inline policies embedded in the specified IAM resource (user, group, or role).</div>
+                            <div>static_ipinstance data</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;arn&#x27;: &#x27;arn:aws:lightsail:ap-southeast-2:184297340509:StaticIp/d8f47672-c261-4443-a484-4a2ec983db9a&#x27;, &#x27;created_at&#x27;: &#x27;2021-02-28T00:04:05.202000+10:30&#x27;, &#x27;ip_address&#x27;: &#x27;192.0.2.5&#x27;, &#x27;is_attached&#x27;: False, &#x27;location&#x27;: {&#x27;availability_zone&#x27;: &#x27;all&#x27;, &#x27;region_name&#x27;: &#x27;ap-southeast-2&#x27;}, &#x27;name&#x27;: &#x27;static_ip&#x27;, &#x27;resource_type&#x27;: &#x27;StaticIp&#x27;, &#x27;support_code&#x27;: &#x27;677585553206/192.0.2.5&#x27;}</div>
                 </td>
             </tr>
     </table>
@@ -438,5 +318,4 @@ Status
 Authors
 ~~~~~~~
 
-- Jonathan I. Davila (@defionscode)
-- Dennis Podkovyrin (@sbj-ss)
+- Daniel Cotton (@danielcotton)

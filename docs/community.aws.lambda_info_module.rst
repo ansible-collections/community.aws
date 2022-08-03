@@ -323,12 +323,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Key</th>
+            <th colspan="4">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>function</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -338,12 +338,13 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>lambda function list</div>
+                            <div>lambda function list.</div>
+                            <div><code>function</code> has been deprecated in will be removed in the next major release after 2025-01-01.</div>
                     <br/>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>function.TheName</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -353,10 +354,651 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>success</td>
                 <td>
-                            <div>lambda function information, including event, mapping, and version information</div>
+                            <div>lambda function information, including event, mapping, and version information.</div>
+                            <div><code>function</code> has been deprecated in will be removed in the next major release after 2025-01-01.</div>
                     <br/>
                 </td>
             </tr>
+            <tr>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>functions</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>List of information for each lambda function matching the query.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>aliases</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>when <code>query</code> is <em>aliases</em> or <em>all</em></td>
+                <td>
+                            <div>The aliases associated with the function.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>code_sha256</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The SHA256 hash of the function&#x27;s deployment package.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">zOAGfF5JLFuzZoSNirUtOrQp+S341IOA3BcoXXoaIaU=</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>code_size</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The size of the function&#x27;s deployment package in bytes.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">123</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>dead_letter_config</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>when the function has a dead letter queue configured</td>
+                <td>
+                            <div>The function&#x27;s dead letter queue.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;target_arn&#x27;: &#x27;arn:aws:lambda:us-east-1:123456789012:function:myFunction:1&#x27;}</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>target_arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when the function has a dead letter queue configured</td>
+                <td>
+                            <div>The ARN of an SQS queue or SNS topic.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:lambda:us-east-1:123456789012:function:myFunction:1</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>description</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The function&#x27;s description.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">My function</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>environment</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>when environment variables exist</td>
+                <td>
+                            <div>The function&#x27;s environment variables.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>error</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>when there is an error applying environment variables</td>
+                <td>
+                            <div>Error message for environment variables that could not be applied.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>error_code</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when there is an error applying environment variables</td>
+                <td>
+                            <div>The error code.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>message</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>when there is an error applying environment variables</td>
+                <td>
+                            <div>The error message.</div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>variables</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>when environment variables exist</td>
+                <td>
+                            <div>Environment variable key-value pairs.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;key&#x27;: &#x27;value&#x27;}</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>function_arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The function&#x27;s Amazon Resource Name (ARN).</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:lambda:us-east-1:123456789012:function:myFunction:1</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>function_name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The function&#x27;s name.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">myFunction</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>handler</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The function Lambda calls to begin executing your function.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">index.handler</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>last_modified</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The date and time that the function was last updated, in ISO-8601 format (YYYY-MM-DDThh:mm:ssTZD).</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2017-08-01T00:00:00.000+0000</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>mappings</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>when <code>query</code> is <em>all</em> or <em>mappings</em></td>
+                <td>
+                            <div>List of configuration information for each event source mapping.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>batch_size</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The largest number of records that AWS Lambda will retrieve from the event source at the time of invoking the function.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>event_source_arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The ARN of the Amazon Kinesis or DyanmoDB stream that is the source of events.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>function_arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The Lambda function to invoke when AWS Lambda detects an event on the poll-based source.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>last_modified</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The UTC time string indicating the last time the event mapping was updated.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>last_processing_result</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The result of the last AWS Lambda invocation of your Lambda function.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>state</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The state of the event source mapping.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>state_transition_reason</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The reason the event source mapping is in its current state.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>uuid</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The AWS Lambda assigned opaque identifier for the mapping.</div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>memory_size</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The memory allocated to the function.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">128</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>policy</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>when <code>query</code> is <em>all</em> or <em>policy</em></td>
+                <td>
+                            <div>The policy associated with the function.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>revision_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The latest updated revision of the function or alias.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">a2x9886d-d48a-4a0c-ab64-82abc005x80c</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>role</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The function&#x27;s execution role.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:iam::123456789012:role/lambda_basic_execution</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>runtime</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The funtime environment for the Lambda function.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">nodejs6.10</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>timeout</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The amount of time that Lambda allows a function to run before terminating it.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>tracing_config</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The function&#x27;s AWS X-Ray tracing configuration.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;mode&#x27;: &#x27;Active&#x27;}</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>mode</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The tracing mode.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Active</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>version</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The version of the Lambda function.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>versions</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>when <code>query</code> is <em>all</em> or <em>versions</em></td>
+                <td>
+                            <div>List of Lambda function versions.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>vpc_config</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>on success</td>
+                <td>
+                            <div>The function&#x27;s networking configuration.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;security_group_ids&#x27;: [], &#x27;subnet_ids&#x27;: [], &#x27;vpc_id&#x27;: &#x27;123&#x27;}</div>
+                </td>
+            </tr>
+
     </table>
     <br/><br/>
 

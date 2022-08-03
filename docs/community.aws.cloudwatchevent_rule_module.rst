@@ -163,13 +163,13 @@ Parameters
                     <b>event_pattern</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">json</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>A string pattern (in valid JSON format) that is used to match against incoming events to determine if the rule should be triggered.</div>
+                        <div>A string pattern that is used to match against incoming events to determine if the rule should be triggered.</div>
                 </td>
             </tr>
             <tr>
@@ -363,6 +363,7 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
@@ -396,14 +397,14 @@ Parameters
                     <b>input</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">string</span>
+                        <span style="color: purple">json</span>
                     </div>
                 </td>
                 <td>
                 </td>
                 <td>
-                        <div>A JSON object that will override the event data when passed to the target.</div>
-                        <div>If neither <em>input</em> nor <em>input_path</em> is specified, then the entire event is passed to the target in JSON form.</div>
+                        <div>A JSON object that will override the event data passed to the target.</div>
+                        <div>If neither <em>input</em> nor <em>input_path</em> nor <em>input_transformer</em> is specified, then the entire event is passed to the target in JSON form.</div>
                 </td>
             </tr>
             <tr>
@@ -420,9 +421,61 @@ Parameters
                 </td>
                 <td>
                         <div>A JSONPath string (e.g. <code>$.detail</code>) that specifies the part of the event data to be passed to the target.</div>
-                        <div>If neither <em>input</em> nor <em>input_path</em> is specified, then the entire event is passed to the target in JSON form.</div>
+                        <div>If neither <em>input</em> nor <em>input_path</em> nor <em>input_transformer</em> is specified, then the entire event is passed to the target in JSON form.</div>
                 </td>
             </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>input_transformer</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Settings to support providing custom input to a target based on certain event data.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>input_paths_map</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>A dict that specifies the transformation of the event data to custom input parameters.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>input_template</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">json</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>A string that templates the values input_paths_map extracted from the event data. It is used to produce the output you want to be sent to the target.</div>
+                </td>
+            </tr>
+
             <tr>
                     <td class="elbow-placeholder"></td>
                 <td colspan="2">
@@ -468,7 +521,7 @@ Notes
 
 .. note::
    - A rule must contain at least an *event_pattern* or *schedule_expression*. A rule can have both an *event_pattern* and a *schedule_expression*, in which case the rule will trigger on matching events as well as on a schedule.
-   - When specifying targets, *input* and *input_path* are mutually-exclusive and optional parameters.
+   - When specifying targets, *input*, *input_path*, *input_paths_map* and *input_template* are mutually-exclusive and optional parameters.
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
@@ -497,6 +550,20 @@ Examples
           - id: MyOtherTargetId
             arn: arn:aws:lambda:us-east-1:123456789012:function:MyFunction
             input: '{"foo": "bar"}'
+
+    - community.aws.cloudwatchevent_rule:
+        name: MyInstanceLaunchEvent
+        description: "Rule for EC2 instance launch"
+        state: present
+        event_pattern: '{"source":["aws.ec2"],"detail-type":["EC2 Instance State-change Notification"],"detail":{"state":["pending"]}}'
+        targets:
+          - id: MyTargetSnsTopic
+            arn: arn:aws:sns:us-east-1:123456789012:MySNSTopic
+            input_transformer:
+              input_paths_map:
+                instance: "$.detail.instance-id"
+                state: "$.detail.state"
+              input_template: "<instance> is in state <state>"
 
     - community.aws.cloudwatchevent_rule:
         name: MyCronTask
