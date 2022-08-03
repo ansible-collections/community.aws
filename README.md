@@ -43,11 +43,13 @@ Name | Description
 ### Modules
 Name | Description
 --- | ---
+[community.aws.accessanalyzer_validate_policy_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.accessanalyzer_validate_policy_info_module.rst)|Performs validation of IAM policies
 [community.aws.acm_certificate](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.acm_certificate_module.rst)|Upload and delete certificates in the AWS Certificate Manager service
 [community.aws.acm_certificate_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.acm_certificate_info_module.rst)|Retrieve certificate information from AWS Certificate Manager service
 [community.aws.api_gateway](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.api_gateway_module.rst)|Manage AWS API Gateway APIs
 [community.aws.api_gateway_domain](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.api_gateway_domain_module.rst)|Manage AWS API Gateway custom domains
 [community.aws.application_autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.application_autoscaling_policy_module.rst)|Manage Application Auto Scaling Scaling Policies
+[community.aws.autoscaling_complete_lifecycle_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_complete_lifecycle_action_module.rst)|Completes the lifecycle action of an instance
 [community.aws.autoscaling_group](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_group_module.rst)|Create or delete AWS AutoScaling Groups (ASGs)
 [community.aws.autoscaling_group_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_group_info_module.rst)|Gather information about EC2 Auto Scaling Groups (ASGs) in AWS
 [community.aws.autoscaling_instance_refresh](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_instance_refresh_module.rst)|Start or cancel an EC2 Auto Scaling Group (ASG) instance refresh in AWS
@@ -58,7 +60,7 @@ Name | Description
 [community.aws.autoscaling_lifecycle_hook](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_lifecycle_hook_module.rst)|Create, delete or update AWS ASG Lifecycle Hooks
 [community.aws.autoscaling_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_policy_module.rst)|Create or delete AWS scaling policies for Autoscaling groups
 [community.aws.autoscaling_scheduled_action](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.autoscaling_scheduled_action_module.rst)|Create, modify and delete ASG scheduled scaling actions
-[community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions.
+[community.aws.aws_region_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.aws_region_info_module.rst)|Gather information about AWS regions
 [community.aws.batch_compute_environment](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_compute_environment_module.rst)|Manage AWS Batch Compute Environments
 [community.aws.batch_job_definition](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_definition_module.rst)|Manage AWS Batch Job Definitions
 [community.aws.batch_job_queue](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.batch_job_queue_module.rst)|Manage AWS Batch Job Queues
@@ -159,7 +161,7 @@ Name | Description
 [community.aws.iam_role](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_role_module.rst)|Manage AWS IAM roles
 [community.aws.iam_role_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_role_info_module.rst)|Gather information on IAM roles
 [community.aws.iam_saml_federation](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_saml_federation_module.rst)|Maintain IAM SAML federation configuration.
-[community.aws.iam_server_certificate](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_server_certificate_module.rst)|Manage server certificates for use on ELBs and CloudFront
+[community.aws.iam_server_certificate](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_server_certificate_module.rst)|Manage IAM server certificates for use on ELBs and CloudFront
 [community.aws.iam_server_certificate_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_server_certificate_info_module.rst)|Retrieve the information of a server certificate
 [community.aws.iam_user](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_user_module.rst)|Manage AWS IAM users
 [community.aws.iam_user_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.iam_user_info_module.rst)|Gather IAM user(s) facts in AWS
@@ -174,6 +176,7 @@ Name | Description
 [community.aws.lambda_info](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_info_module.rst)|Gathers AWS Lambda function details
 [community.aws.lambda_policy](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lambda_policy_module.rst)|Creates, updates or deletes AWS Lambda policy statements.
 [community.aws.lightsail](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lightsail_module.rst)|Manage instances in AWS Lightsail
+[community.aws.lightsail_static_ip](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.lightsail_static_ip_module.rst)|Manage static IP addresses in AWS Lightsail
 [community.aws.msk_cluster](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.msk_cluster_module.rst)|Manage Amazon MSK clusters
 [community.aws.msk_config](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.msk_config_module.rst)|Manage Amazon MSK cluster configurations
 [community.aws.networkfirewall](https://github.com/ansible-collections/community.aws/blob/main/docs/community.aws.networkfirewall_module.rst)|manage AWS Network Firewall firewalls
