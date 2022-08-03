@@ -5,6 +5,30 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v3.5.0
+======
+
+Minor Changes
+-------------
+
+- iam_server_certificate - the deprecation for the ``iam_cert`` alias has been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1257).
+- iam_server_certificate - the deprecations for ``cert_chain``, ``cert``, ``key`` and ``dup_ok`` have been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1256).
+- rds_instance_snapshot - the deprecation for the ``rds_snapshot`` alias has been extended from release 4.0.0 to release 5.0.0 (https://github.com/ansible-collections/community.aws/pull/1257).
+- s3_sync - improves error handling during ``HEAD`` operation to compare existing files (https://github.com/ansible-collections/community.aws/issues/58).
+
+Bugfixes
+--------
+
+- aws_api_gateway_domain - added the ``aws_api_gateway_domain`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
+- aws_config_aggregator - Fix `KeyError` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
+- aws_config_aggregator - Fix idempotency when ``account_sources`` parameter is not specified (https://github.com/ansible-collections/community.aws/pull/645).
+- aws_ssm - pull S3 bucket region for session generated for file transfer during playbooks (https://github.com/ansible-collections/community.aws/issues/1190).
+- cloudfront_response_headers_policy - added the ``cloudfront_response_headers_policy`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
+- ec2_vpc_peer - fix idempotency when requester/accepter is reversed (https://github.com/ansible-collections/community.aws/issues/580).
+- kms_key_info - handle access denied errors more liberally (https://github.com/ansible-collections/community.aws/issues/206).
+- route53 - fixes bug preventing creating a DNS record with a weight of zero (https://github.com/ansible-collections/community.aws/issues/1378)
+- route53_info - fix ``max_items`` parameter when used with non-paginated commands (https://github.com/ansible-collections/community.aws/issues/1383).
+
 v3.4.0
 ======
 
