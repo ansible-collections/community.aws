@@ -1,2 +1,0 @@
-bugfixes:
-  - route53 - fixes bug preventing creating a DNS record with a weight of zero (https://github.com/ansible-collections/community.aws/issues/1378)

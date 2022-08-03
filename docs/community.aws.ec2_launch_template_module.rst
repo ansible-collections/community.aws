@@ -1280,6 +1280,23 @@ Parameters
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>source_version</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"latest"</div>
+                </td>
+                <td>
+                        <div>The version number of the launch template version on which to base the new version. The new version inherits the same launch parameters as the source version, except for parameters that you explicity specify. Snapshots applied to the block device mapping are ignored when creating a new version unless they are explicitly included.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>state</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">

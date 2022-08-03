@@ -18,7 +18,6 @@ Version added: 1.0.0
 Synopsis
 --------
 - Manage key-value pairs in AWS SSM parameter store.
-- To retreive SSM parameters use the :ref:`amazon.aws.aws_ssm_parameter <amazon.aws.aws_ssm_parameter_module>` lookup plugin.
 
 
 
@@ -388,6 +387,14 @@ Notes
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
 
+
+See Also
+--------
+
+.. seealso::
+
+   :ref:`amazon.aws.aws_ssm lookup <ansible_collections.amazon.aws.aws_ssm_lookup>`
+       The documentation for the ``amazon.aws.aws_ssm`` lookup plugin.
 
 
 Examples

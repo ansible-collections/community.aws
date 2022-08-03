@@ -1,14 +1,14 @@
-.. _community.aws.iam_policy_module:
+.. _community.aws.autoscaling_complete_lifecycle_action_module:
 
 
-************************
-community.aws.iam_policy
-************************
+***************************************************
+community.aws.autoscaling_complete_lifecycle_action
+***************************************************
 
-**Manage inline IAM policies for users, groups, and roles**
+**Completes the lifecycle action of an instance**
 
 
-Version added: 1.0.0
+Version added: 4.1.0
 
 .. contents::
    :local:
@@ -17,8 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Allows uploading or removing inline IAM policies for IAM users, groups or roles.
-- To administer managed policies please see :ref:`community.aws.iam_user <community.aws.iam_user_module>`, :ref:`community.aws.iam_role <community.aws.iam_role_module>`, :ref:`community.aws.iam_group <community.aws.iam_group_module>` and :ref:`community.aws.iam_managed_policy <community.aws.iam_managed_policy_module>`
+- Used to complete the lifecycle action for the specified instance with the specified result.
 
 
 
@@ -42,6 +41,22 @@ Parameters
             <th>Choices/<font color="blue">Defaults</font></th>
             <th width="100%">Comments</th>
         </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>asg_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The name of the Auto Scaling Group which the instance belongs to.</div>
+                </td>
+            </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
@@ -146,7 +161,7 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>iam_name</b>
+                    <b>instance_id</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -156,13 +171,13 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Name of IAM resource you wish to target for policy actions. In other words, the user name, group name or role name.</div>
+                        <div>The ID of the instance.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>iam_type</b>
+                    <b>lifecycle_action_result</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -171,52 +186,18 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>user</li>
-                                    <li>group</li>
-                                    <li>role</li>
+                                    <li>CONTINUE</li>
+                                    <li>ABANDON</li>
                         </ul>
                 </td>
                 <td>
-                        <div>Type of IAM resource.</div>
+                        <div>The action for the lifecycle hook to take.</div>
                 </td>
             </tr>
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_document</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The path to the properly json formatted policy file.</div>
-                        <div>Mutually exclusive with <em>policy_json</em>.</div>
-                        <div>This option has been deprecated and will be removed in a release after 2022-06-01.  The existing behavior can be reproduced by using the <em>policy_json</em> option and reading the file using the lookup plugin.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_json</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">json</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A properly json formatted policy as string.</div>
-                        <div>Mutually exclusive with <em>policy_document</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_name</b>
+                    <b>lifecycle_hook_name</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
@@ -226,7 +207,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The name label for the policy to create or remove.</div>
+                        <div>The name of the lifecycle hook to complete.</div>
                 </td>
             </tr>
             <tr>
@@ -282,45 +263,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>skip_duplicates</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>When <em>skip_duplicates=true</em> the module looks for any policies that match the document you pass in. If there is a match it will not make a new policy object with the same rules.</div>
-                        <div>The current default is <code>true</code>.  However, this behavior can be confusing and as such the default will change to <code>false</code> in a release after 2022-06-01.  To maintain the existing behavior explicitly set <em>skip_duplicates=true</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>present</b>&nbsp;&larr;</div></li>
-                                    <li>absent</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether to create or delete the IAM policy.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>validate_certs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -356,46 +298,13 @@ Examples
 
 .. code-block:: yaml
 
-    # Create a policy with the name of 'Admin' to the group 'administrators'
-    - name: Assign a policy called Admin to the administrators group
-      community.aws.iam_policy:
-        iam_type: group
-        iam_name: administrators
-        policy_name: Admin
-        state: present
-        policy_document: admin_policy.json
-
-    # Advanced example, create two new groups and add a READ-ONLY policy to both
-    # groups.
-    - name: Create Two Groups, Mario and Luigi
-      community.aws.iam_group:
-        name: "{{ item }}"
-        state: present
-      loop:
-         - Mario
-         - Luigi
-      register: new_groups
-
-    - name: Apply READ-ONLY policy to new groups that have been recently created
-      community.aws.iam_policy:
-        iam_type: group
-        iam_name: "{{ item.iam_group.group.group_name }}"
-        policy_name: "READ-ONLY"
-        policy_json: "{{ lookup('template', 'readonly.json.j2') }}"
-        state: present
-      loop: "{{ new_groups.results }}"
-
-    # Create a new S3 policy with prefix per user
-    - name: Create S3 policy from template
-      community.aws.iam_policy:
-        iam_type: user
-        iam_name: "{{ item.user }}"
-        policy_name: "s3_limited_access_{{ item.prefix }}"
-        state: present
-        policy_json: "{{ lookup('template', 's3_policy.json.j2') }}"
-        loop:
-          - user: s3_user
-            prefix: s3_user_prefix
+    # Note: These examples do not set authentication details, see the AWS Guide for details.
+    # Complete the lifecycle action
+    - aws_asg_complete_lifecycle_action:
+        asg_name: my-auto-scaling-group
+        lifecycle_hook_name: my-lifecycle-hook
+        lifecycle_action_result: CONTINUE
+        instance_id: i-123knm1l2312
 
 
 
@@ -414,17 +323,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>policy_names</b>
+                    <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                       / <span style="color: purple">elements=string</span>
+                      <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>always</td>
+                <td>success</td>
                 <td>
-                            <div>A list of names of the inline policies embedded in the specified IAM resource (user, group, or role).</div>
+                            <div>How things went</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;OK&#x27;]</div>
                 </td>
             </tr>
     </table>
@@ -438,5 +348,4 @@ Status
 Authors
 ~~~~~~~
 
-- Jonathan I. Davila (@defionscode)
-- Dennis Podkovyrin (@sbj-ss)
+- Saleh Abbas (@salehabbas) <saleh.abbas@thetradedesk.com>

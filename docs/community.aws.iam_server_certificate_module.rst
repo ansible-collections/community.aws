@@ -121,7 +121,7 @@ Parameters
                 <td>
                         <div>The path to, or content of the certificate body in PEM encoded format.</div>
                         <div>If the parameter is not a file, it is assumed to be content.</div>
-                        <div>Passing a file name is deprecated, and support will be dropped in version 4.0.0 of this collection.</div>
+                        <div>Passing a file name is deprecated, and support will be dropped in version 5.0.0 of this collection.</div>
                 </td>
             </tr>
             <tr>
@@ -138,7 +138,7 @@ Parameters
                 <td>
                         <div>The path to, or content of, the CA certificate chain in PEM encoded format.</div>
                         <div>If the parameter is not a file, it is assumed to be content.</div>
-                        <div>Passing a file name is deprecated, and support will be dropped in version 4.0.0 of this collection.</div>
+                        <div>Passing a file name is deprecated, and support will be dropped in version 5.0.0 of this collection.</div>
                 </td>
             </tr>
             <tr>
@@ -178,7 +178,7 @@ Parameters
                 <td>
                         <div>By default the module will not upload a certificate that is already uploaded into AWS.</div>
                         <div>If <em>dup_ok=True</em>, it will upload the certificate as long as the name is unique.</div>
-                        <div>Currently defaults to <code>false</code>, this will default to <code>true</code> in release 4.0.0.</div>
+                        <div>Currently defaults to <code>false</code>, this will default to <code>true</code> in release 5.0.0.</div>
                 </td>
             </tr>
             <tr>
@@ -210,7 +210,7 @@ Parameters
                 </td>
                 <td>
                         <div>The path to, or content of the private key in PEM encoded format. If the parameter is not a file, it is assumed to be content.</div>
-                        <div>Passing a file name is deprecated, and support will be dropped in version 4.0.0 of this collection.</div>
+                        <div>Passing a file name is deprecated, and support will be dropped in version 5.0.0 of this collection.</div>
                 </td>
             </tr>
             <tr>

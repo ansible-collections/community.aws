@@ -455,10 +455,11 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>when state is present</td>
                 <td>
-                            <div>A dict of key-value pairs used as parameters for this connection.</div>
+                            <div>(deprecated) A dict of key-value pairs (converted to lowercase) used as parameters for this connection.</div>
+                            <div>This return key has been deprecated, and will be removed in a release after 2024-06-01.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;JDBC_CONNECTION_URL&#x27;: &#x27;jdbc:mysql://mydb:3306/databasename&#x27;, &#x27;USERNAME&#x27;: &#x27;x&#x27;, &#x27;PASSWORD&#x27;: &#x27;y&#x27;}</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;jdbc_connection_url&#x27;: &#x27;jdbc:mysql://mydb:3306/databasename&#x27;, &#x27;username&#x27;: &#x27;x&#x27;, &#x27;password&#x27;: &#x27;y&#x27;}</div>
                 </td>
             </tr>
             <tr>
@@ -576,6 +577,23 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;subnet-id&#x27;: &#x27;subnet-aabbccddee&#x27;}</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>raw_connection_properties</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>when state is present</td>
+                <td>
+                            <div>A dict of key-value pairs used as parameters for this connection.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;JDBC_CONNECTION_URL&#x27;: &#x27;jdbc:mysql://mydb:3306/databasename&#x27;, &#x27;USERNAME&#x27;: &#x27;x&#x27;, &#x27;PASSWORD&#x27;: &#x27;y&#x27;}</div>
                 </td>
             </tr>
     </table>
