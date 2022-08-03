@@ -2061,4 +2061,4 @@ releases:
     - 58-s3_sync.yml
     - 580-vpc_peer-idempotency.yml
     - 645-aws_config_aggregator-fix-update-and-idempotency.yml
-    release_date: '2022-08-02'
+    release_date: '2022-08-03'
