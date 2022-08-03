@@ -2535,4 +2535,4 @@ releases:
     - description: Manage static IP addresses in AWS Lightsail
       name: lightsail_static_ip
       namespace: ''
-    release_date: '2022-08-02'
+    release_date: '2022-08-03'
