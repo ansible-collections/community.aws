@@ -2442,10 +2442,10 @@ releases:
       - lambda_info - The ``function`` return key returns a dictionary of dictionaries
         and has been deprecated. In a release after 2025-01-01, this key will be removed
         in favor of ``functions``, which returns a list of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
-      - route53_info - The CamelCase return values for ```DelegationSets```, ```CheckerIpRanges```,
-        and ```HealthCheck``` have been deprecated, in the future release you must
-        use snake_case return values ```delegation_sets```, ```checker_ip_ranges```,
-        and ```health_check``` instead respectively" (https://github.com/ansible-collections/community.aws/pull/1322).
+      - route53_info - The CamelCase return values for ``DelegationSets``, ``CheckerIpRanges``,
+        and ``HealthCheck`` have been deprecated, in the future release you must use
+        snake_case return values ``delegation_sets``, ``checker_ip_ranges``, and ``health_check``
+        instead respectively" (https://github.com/ansible-collections/community.aws/pull/1322).
       minor_changes:
       - aws_glue_connection - added new ``raw_connection_parameters`` return key which
         doesn't snake case the connection parameters (https://github.com/ansible-collections/community.aws/pull/518).
@@ -2536,3 +2536,10 @@ releases:
       name: lightsail_static_ip
       namespace: ''
     release_date: '2022-08-03'
+  4.1.1:
+    changes:
+      bugfixes:
+      - ecs_service - fixes KeyError for ``deployment_controller`` parameter (https://github.com/ansible-collections/community.aws/pull/1393).
+    fragments:
+    - 1393-ecs_service.yml
+    release_date: '2022-08-04'
