@@ -234,7 +234,7 @@
       assert:
         that:
           - "ecs_service.service.placementConstraints[0].type == 'distinctInstance'"
-  
+
     - name: check that ECS service was created with deployment_circuit_breaker
       assert:
         that:
@@ -329,6 +329,7 @@
             containerName: "{{ ecs_task_name }}"
             containerPort: "{{ ecs_task_container_port }}"
         role: "ecsServiceRole"
+        wait: true
       register: ecs_service_scale_down
 
     - name: assert that ECS service is scaled down
