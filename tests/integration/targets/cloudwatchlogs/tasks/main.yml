@@ -1,5 +1,4 @@
 ---
-
 - module_defaults:
     group/aws:
       aws_access_key: "{{ aws_access_key }}"
@@ -8,150 +7,179 @@
       region: "{{ aws_region }}"
 
   block:
-    - name: create cloudwatch log group for integration test
-      cloudwatchlogs_log_group:
-        state: present
-        log_group_name: '{{ log_group_name }}'
-        retention: 1
 
-    - name: check_mode set metric filter on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        filter_pattern: '{ ($.value = *) && ($.hostname = "box")}'
-        state: present
-        metric_transformation:
-          metric_name: box_free_space
-          metric_namespace: fluentd_metrics
-          metric_value: "$.value"
-      check_mode: yes
-      register: out
+  - include_tasks: cloudwatchlogs_tests.yml
 
-    - name: check_mode state must be changed
-      assert:
-        that:
-          - out is changed
-          - out.metric_filters | count == 1
+  - name: create cloudwatch log group for integration test (check_mode)
+    cloudwatchlogs_log_group:
+      state: present
+      log_group_name: '{{ log_group_name }}'
+      retention: 1
+      tags:
+        CamelCase: Value
+        snake_case: value
+    check_mode: true
+    register: result
 
-    - name: set metric filter on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        filter_pattern: '{ ($.value = *) && ($.hostname = "box")}'
-        state: present
-        metric_transformation:
-          metric_name: box_free_space
-          metric_namespace: fluentd_metrics
-          metric_value: "$.value"
-      register: out
+  - assert:
+      that:
+        - result is changed
+        - '"log_groups" not in result'
+        - '"logs:CreateLogGroup" not in result.resource_actions'
 
-    - name: create metric filter
-      assert:
-        that:
-          - out is changed
-          - out.metric_filters | count == 1
+  - name: create cloudwatch log group for integration test
+    cloudwatchlogs_log_group:
+      state: present
+      log_group_name: '{{ log_group_name }}'
+      retention: 1
+      tags:
+        CamelCase: Value
+        snake_case: value
+    register: result
 
-    - name: re-set metric filter on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        filter_pattern: '{ ($.value = *) && ($.hostname = "box")}'
-        state: present
-        metric_transformation:
-          metric_name: box_free_space
-          metric_namespace: fluentd_metrics
-          metric_value: "$.value"
-      register: out
+  - assert:
+      that:
+      - result is changed
+      - '"log_groups" in result'
+      - result.log_groups | length == 1
+      - '"log_group_name" in log_group'
+      - '"creation_time" in log_group'
+      - '"retention_in_days" in log_group'
+      - '"metric_filter_count" in log_group'
+      - '"arn" in log_group'
+      - '"stored_bytes" in log_group'
+      # - '"kms_key_id" in log_group'
+      # pre-4.0.0 upgrade compatability
+      - '"log_group_name" in result'
+      - '"creation_time" in result'
+      - '"retention_in_days" in result'
+      - '"metric_filter_count" in result'
+      - '"arn" in result'
+      - '"stored_bytes" in result'
+      # - '"kms_key_id" in result'
+      - '"CamelCase" in log_group.tags'
+      - '"snake_case" in log_group.tags'
+    vars:
+      log_group: '{{ result.log_groups[0] }}'
 
-    - name: metric filter must not change
-      assert:
-        that:
-          - out is not changed
+  - name: create cloudwatch log group for integration test (check_mode - idempotent)
+    cloudwatchlogs_log_group:
+      state: present
+      log_group_name: '{{ log_group_name }}'
+      retention: 1
+    check_mode: true
+    register: result
 
-    - name: update metric transformation on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        filter_pattern: '{ ($.value = *) && ($.hostname = "box")}'
-        state: present
-        metric_transformation:
-          metric_name: box_free_space
-          metric_namespace: made_with_ansible
-          metric_value: "$.value"
-          default_value: 3.1415
-      register: out
+  - assert:
+      that:
+      - result is not changed
+      - '"log_groups" in result'
+      - result.log_groups | length == 1
 
-    - name: update metric filter
-      assert:
-        that:
-          - out is changed
-          - out.metric_filters[0].metric_namespace == "made_with_ansible"
-          - out.metric_filters[0].default_value == 3.1415
+  - name: create cloudwatch log group for integration test (idempotent)
+    cloudwatchlogs_log_group:
+      state: present
+      log_group_name: '{{ log_group_name }}'
+      retention: 1
+    register: result
 
-    - name: update filter_pattern on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        filter_pattern: '{ ($.value = *) && ($.hostname = "ansible")}'
-        state: present
-        metric_transformation:
-          metric_name: box_free_space
-          metric_namespace: made_with_ansible
-          metric_value: "$.value"
-      register: out
+  - assert:
+      that:
+      - result is not changed
+      - '"log_groups" in result'
+      - result.log_groups | length == 1
+    vars:
+      log_group: '{{ result.log_groups[0] }}'
 
-    - name: update metric filter
-      assert:
-        that:
-          - out is changed
-          - out.metric_filters[0].metric_namespace == "made_with_ansible"
+  - name: describe all log groups
+    cloudwatchlogs_log_group_info: {}
+    register: result
 
-    - name: checkmode delete metric filter on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        state: absent
-      check_mode: yes
-      register: out
+  - assert:
+      that:
+      - '"log_groups" in result'
+      - result.log_groups | length >= 1
 
-    - name: check_mode state must be changed
-      assert:
-        that:
-          - out is changed
+  - name: describe log group
+    cloudwatchlogs_log_group_info:
+      log_group_name: '{{ log_group_name }}'
+    register: result
 
-    - name: delete metric filter on '{{ log_group_name }}'
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        state: absent
-      register: out
+  - assert:
+      that:
+      - '"log_groups" in result'
+      - result.log_groups | length == 1
+      - '"log_group_name" in log_group'
+      - '"creation_time" in log_group'
+      - '"retention_in_days" in log_group'
+      - '"metric_filter_count" in log_group'
+      - '"arn" in log_group'
+      - '"stored_bytes" in log_group'
+      # - '"kms_key_id" in log_group'
+      - '"tags" in log_group'
+    vars:
+      log_group: '{{ result.log_groups[0] }}'
 
-    - name: delete metric filter
-      assert:
-        that:
-          - out is changed
+  - include_tasks: 'tags.yml'
 
-    - name: delete metric filter on '{{ log_group_name }}' which does not exist
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        state: absent
-      register: out
+  - name: delete cloudwatch log group for integration test (check_mode)
+    cloudwatchlogs_log_group:
+      state: absent
+      log_group_name: '{{ log_group_name }}'
+    check_mode: true
+    register: result
 
-    - name: delete metric filter
-      assert:
-        that:
-          - out is not changed
+  - assert:
+      that:
+      - result is changed
+      - '"logs:DeleteLogGroup" not in result.resource_actions'
+
+  - name: delete cloudwatch log group for integration test
+    cloudwatchlogs_log_group:
+      state: absent
+      log_group_name: '{{ log_group_name }}'
+    register: result
+
+  - assert:
+      that:
+      - result is changed
+
+  - name: delete cloudwatch log group for integration test (check_mode - idempotent)
+    cloudwatchlogs_log_group:
+      state: absent
+      log_group_name: '{{ log_group_name }}'
+    check_mode: true
+    register: result
+
+  - assert:
+      that:
+      - result is not changed
+      - '"logs:DeleteLogGroup" not in result.resource_actions'
+
+  - name: delete cloudwatch log group for integration test (idempotent)
+    cloudwatchlogs_log_group:
+      state: absent
+      log_group_name: '{{ log_group_name }}'
+    register: result
+
+  - assert:
+      that:
+      - result is not changed
+
+  - name: describe missing log group
+    cloudwatchlogs_log_group_info:
+      log_group_name: '{{ log_group_name }}'
+    register: result
+
+  - assert:
+      that:
+      - '"log_groups" in result'
+      - result.log_groups | length == 0
 
   always:
-    - name: delete metric filter
-      cloudwatchlogs_log_group_metric_filter:
-        log_group_name: '{{ log_group_name }}'
-        filter_name: '{{ filter_name }}'
-        state: absent
 
-    - name: delete cloudwatch log group for integration test
-      cloudwatchlogs_log_group:
-        state: absent
-        log_group_name: '{{ log_group_name }}'
-  ignore_errors: true
+  - name: delete cloudwatch log group for integration test
+    cloudwatchlogs_log_group:
+      state: absent
+      log_group_name: '{{ log_group_name }}'
+    ignore_errors: true
