@@ -1,2 +1,0 @@
-bugfixes:
-  - ecs_service - fixes KeyError for ``deployment_controller`` parameter (https://github.com/ansible-collections/community.aws/pull/1393).
