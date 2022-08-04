@@ -1,5 +1,4 @@
 ---
-
 # Tests for changes to the cloudwatchlogs_log_group and cloudwatchlogs_log_group_metric_filter
 
 - block:
