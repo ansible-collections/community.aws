@@ -5,6 +5,14 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v4.1.1
+======
+
+Bugfixes
+--------
+
+- ecs_service - fixes KeyError for ``deployment_controller`` parameter (https://github.com/ansible-collections/community.aws/pull/1393).
+
 v4.1.0
 ======
 
@@ -45,7 +53,7 @@ Deprecated Features
 - community.aws collection - due to the AWS SDKs announcing the end of support for Python less than 3.7 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.7 by this collection has been deprecated and will be removed in a release after 2023-05-31 (https://github.com/ansible-collections/community.aws/pull/1361).
 - iam_policy - the ``policies`` return value has been renamed ``policy_names`` and will be removed in a release after 2024-08-01, both values are currently returned (https://github.com/ansible-collections/community.aws/pull/1375).
 - lambda_info - The ``function`` return key returns a dictionary of dictionaries and has been deprecated. In a release after 2025-01-01, this key will be removed in favor of ``functions``, which returns a list of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
-- route53_info - The CamelCase return values for ```DelegationSets```, ```CheckerIpRanges```, and ```HealthCheck``` have been deprecated, in the future release you must use snake_case return values ```delegation_sets```, ```checker_ip_ranges```, and ```health_check``` instead respectively" (https://github.com/ansible-collections/community.aws/pull/1322).
+- route53_info - The CamelCase return values for ``DelegationSets``, ``CheckerIpRanges``, and ``HealthCheck`` have been deprecated, in the future release you must use snake_case return values ``delegation_sets``, ``checker_ip_ranges``, and ``health_check`` instead respectively" (https://github.com/ansible-collections/community.aws/pull/1322).
 
 Bugfixes
 --------
