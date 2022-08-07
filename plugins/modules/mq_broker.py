@@ -23,7 +23,7 @@ options:
     type: str
     required: true
   state:
-    description: 
+    description:
       - "C(present): Create/update broker."
       - "C(absent): Delete broker."
       - "C(restarted): Reboot broker."
