@@ -426,7 +426,7 @@ def create_broker(conn, module):
     changed = True
     result = conn.create_broker(**kwargs)
     #
-    return {'broker': camel_dict_to_snake_dict(result, ignore_list=['Tags']), 
+    return {'broker': camel_dict_to_snake_dict(result, ignore_list=['Tags']),
             'changed': changed}
 
 
