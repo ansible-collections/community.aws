@@ -1,0 +1,25 @@
+- name: Create VPC for use in testing
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    tags:
+      Name: Ansible ec2_instance Testing VPC
+    tenancy: default
+  register: testing_vpc
+
+- name: Create subnet in zone A
+  ec2_vpc_subnet:
+    state: present
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    cidr: "{{ subnet_cidr }}"
+    az: "{{ aws_region }}a"
+    resource_tags:
+      Name: "{{ resource_prefix }}-subnet-a"
+  register: testing_subnet_a
+
+- name: create a security group with the vpc
+  ec2_group:
+    name: "{{ sg_name }}"
+    description: a security group for ansible tests
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+  register: testing_sg

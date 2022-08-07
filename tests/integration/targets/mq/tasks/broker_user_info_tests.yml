@@ -1,0 +1,65 @@
+- name: set test data
+  set_fact:
+    create_users:
+      - "info_user1"
+      - "info_user2"
+      - "info_user3"
+      - "info_user4"
+      - "info_user5"
+    delete_users:
+      - "info_user2"
+      - "info_user5"
+- name: prepare tests - create users
+  mq_user:
+    state: present
+    broker_id: "{{ broker_id }}"
+    username: "{{ item }}"
+  loop: "{{ create_users | flatten(levels=1) }}"
+- name: prepare tests - delete users
+  mq_user:
+    state: absent
+    broker_id: "{{ broker_id }}"
+    username: "{{ item }}"
+  loop: "{{ delete_users | flatten(levels=1) }}"
+- name: test2 - list all users
+  mq_user_info:
+    broker_id: "{{ broker_id }}"
+  register: result
+- name: test2 - verify
+  assert:
+    fail_msg: test2 failed
+    that:
+      - result.users['info_user1']
+      - result.users['info_user2']
+      - result.users['info_user3']
+  when: not ansible_check_mode
+- name: test3 - list only user currently being active until next broker reboot
+  mq_user_info:
+    broker_id: "{{ broker_id }}"
+    skip_pending_create: true
+  register: result
+- name: test3 - verify
+  assert:
+    fail_msg: test3 failed
+    that:
+      - not ('info_user1' in result.users)
+      - result.users['info_user2']
+      - not ('info_user3' in result.users)
+      - not ('info_user4' in result.users)
+      - result.users['info_user5']
+  when: not ansible_check_mode
+- name: test4 - list only user that will be active after next broker reboot
+  mq_user_info:
+    broker_id: "{{ broker_id }}"
+    skip_pending_delete: true
+  register: result
+- name: test4 - verify
+  assert:
+    fail_msg: test4 failed
+    that:
+      - result.users['info_user1']
+      - not ('info_user2' in result.users)
+      - result.users['info_user3']
+      - result.users['info_user4']
+      - not ('info_user5' in result.users)
+  when: not ansible_check_mode
