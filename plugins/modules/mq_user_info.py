@@ -74,6 +74,8 @@ users:
     type: dict
     returned: success
     description:
+    - dict key is username
+    - each entry is the record for a user as returned by API but converted to snake yaml
 '''
 
 try:
