@@ -623,7 +623,7 @@
           - output is not changed
 
     # Check create and delete lifecycle policy with an empty prefix
-    - name: example 8
+    - name: Create rule with no prefix
       s3_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: empty-prefix
@@ -635,7 +635,7 @@
         that:
           - output is changed
 
-    - name: example 8 (idempotency)
+    - name: Delete rule with no prefix
       s3_lifecycle:
         name: "{{ bucket_name }}"
         rule_id: empty-prefix
