@@ -502,7 +502,13 @@ def create_or_update_nodegroups(client, module):
     if module.params['instance_types'] is not None:
         params['instanceTypes'] = module.params['instance_types']
     if module.params['launch_template'] is not None:
-        params['launchTemplate'] = snake_dict_to_camel_dict(module.params['launch_template'])
+        params['launchTemplate'] = dict()
+        if module.params['launch_template']['id'] is not None:
+            params['launchTemplate']['id'] = module.params['launch_template']['id']
+        if module.params['launch_template']['version'] is not None:
+            params['launchTemplate']['version'] = module.params['launch_template']['version']
+        if module.params['launch_template']['name'] is not None:
+            params['launchTemplate']['name'] = module.params['launch_template']['name']
     if module.params['release_version'] is not None:
         params['releaseVersion'] = module.params['release_version']
     if module.params['remote_access'] is not None:
@@ -514,7 +520,11 @@ def create_or_update_nodegroups(client, module):
     if module.params['taints'] is not None:
         params['taints'] = module.params['taints']
     if module.params['update_config'] is not None:
-        params['updateConfig'] = snake_dict_to_camel_dict(module.params['update_config'])
+        params['updateConfig'] = dict()
+        if module.params['update_config']['max_unavailable'] is not None:
+            params['updateConfig']['maxUnavailable'] = module.params['update_config']['max_unavailable']
+        if module.params['update_config']['max_unavailable_percentage'] is not None:
+            params['updateConfig']['maxUnavailablePercentage'] = module.params['update_config']['max_unavailable_percentage']
     if module.params['scaling_config'] is not None:
         params['scalingConfig'] = snake_dict_to_camel_dict(module.params['scaling_config'])
 
