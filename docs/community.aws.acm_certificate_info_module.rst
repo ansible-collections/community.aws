@@ -28,8 +28,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -123,7 +123,7 @@ Parameters
                 <td>
                         <div>If provided, the results will be filtered to show only the certificate with this ARN.</div>
                         <div>If no certificate with this ARN exists, this task will fail.</div>
-                        <div>If a certificate with this ARN exists in a different region, this task will fail</div>
+                        <div>If a certificate with this ARN exists in a different region, this task will fail.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: arn</div>
                 </td>
             </tr>

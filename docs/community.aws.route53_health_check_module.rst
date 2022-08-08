@@ -27,8 +27,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -211,6 +211,42 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>health_check_id</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>ID of the health check to be update or deleted.</div>
+                        <div>If provided, a health check can be updated or deleted based on the ID as unique identifier.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: id</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>health_check_name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Name of the Health Check.</div>
+                        <div>Used together with <em>use_unique_names</em> to set/make use of <em>health_check_name</em> as a unique identifier.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: name</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>ip_address</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -267,14 +303,13 @@ Parameters
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li>no</li>
-                                    <li>yes</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
                         </ul>
                 </td>
                 <td>
                         <div>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
                         <div>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</div>
                         <div>Tag keys beginning with <code>aws:</code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a href='https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions'>https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</div>
-                        <div>The current default value of <code>False</code> has been deprecated.  The default value will change to <code>True</code> in release 5.0.0.</div>
                 </td>
             </tr>
             <tr>
@@ -406,7 +441,6 @@ Parameters
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
                         <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
                     </div>
                 </td>
                 <td>
@@ -420,6 +454,27 @@ Parameters
                 </td>
                 <td>
                         <div>The type of health check that you want to create, which indicates how Amazon Route 53 determines whether an endpoint is healthy.</div>
+                        <div>Once health_check is created, type can not be changed.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>use_unique_names</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>no</li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Used together with <em>health_check_name</em> to set/make use of <em>health_check_name</em> as a unique identifier.</div>
                 </td>
             </tr>
             <tr>
@@ -484,10 +539,34 @@ Examples
         weight: 100
         health_check: "{{ my_health_check.health_check.id }}"
 
+    - name: create a simple health check with health_check_name as unique identifier
+      community.aws.route53_health_check:
+        state: present
+        health_check_name: ansible
+        fqdn: ansible.com
+        port: 443
+        type: HTTPS
+        use_unique_names: true
+
     - name: Delete health-check
       community.aws.route53_health_check:
         state: absent
         fqdn: host1.example.com
+
+    - name: Update Health check by ID - update ip_address
+      community.aws.route53_health_check:
+        id: 12345678-abcd-abcd-abcd-0fxxxxxxxxxx
+        ip_address: 1.2.3.4
+
+    - name: Update Health check by ID - update port
+      community.aws.route53_health_check:
+        id: 12345678-abcd-abcd-abcd-0fxxxxxxxxxx
+        ip_address: 8080
+
+    - name: Delete Health check by ID
+      community.aws.route53_health_check:
+        state: absent
+        id: 12345678-abcd-abcd-abcd-0fxxxxxxxxxx
 
 
 

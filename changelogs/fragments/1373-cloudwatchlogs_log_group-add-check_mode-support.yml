@@ -1,2 +1,0 @@
-minor_changes:
-- cloudwatchlogs_log_group - Added check_mode support (https://github.com/ansible-collections/community.aws/pull/1373).

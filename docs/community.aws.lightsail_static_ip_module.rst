@@ -1,14 +1,14 @@
-.. _community.aws.ecs_tag_module:
+.. _community.aws.lightsail_static_ip_module:
 
 
-*********************
-community.aws.ecs_tag
-*********************
+*********************************
+community.aws.lightsail_static_ip
+*********************************
 
-**create and remove tags on Amazon ECS resources**
+**Manage static IP addresses in AWS Lightsail**
 
 
-Version added: 1.0.0
+Version added: 4.1.0
 
 .. contents::
    :local:
@@ -17,8 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Creates and removes tags for Amazon ECS resources.
-- Resources are referenced by their cluster name.
+- Manage static IP addresses in AWS Lightsail.
 
 
 
@@ -111,22 +110,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>cluster_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The name of the cluster whose resources we are tagging.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -162,6 +145,22 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>name</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Name of the static IP.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -178,26 +177,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>purge_tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether unspecified tags should be removed from the resource.</div>
-                        <div>Note that when combined with <em>state=absent</em>, specified tags with non-matching values are not purged.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -209,44 +188,6 @@ Parameters
                 <td>
                         <div>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a href='http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region'>http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_region, ec2_region</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>resource</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ECS resource name.</div>
-                        <div>Required unless <em>resource_type=cluster</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>resource_type</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>cluster</b>&nbsp;&larr;</div></li>
-                                    <li>task</li>
-                                    <li>service</li>
-                                    <li>task_definition</li>
-                                    <li>container</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The type of resource.</div>
                 </td>
             </tr>
             <tr>
@@ -283,24 +224,7 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>Whether the tags should be present or absent on the resource.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>tags</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A dictionary of tags to add or remove from the resource.</div>
-                        <div>If the value provided for a tag is null and <em>state=absent</em>, the tag will be removed regardless of its current value.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: resource_tags</div>
+                        <div>Describes the desired state.</div>
                 </td>
             </tr>
             <tr>
@@ -330,7 +254,6 @@ Notes
 -----
 
 .. note::
-   - none
    - If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence ``AWS_URL`` or ``EC2_URL``, ``AWS_PROFILE`` or ``AWS_DEFAULT_PROFILE``, ``AWS_ACCESS_KEY_ID`` or ``AWS_ACCESS_KEY`` or ``EC2_ACCESS_KEY``, ``AWS_SECRET_ACCESS_KEY`` or ``AWS_SECRET_KEY`` or ``EC2_SECRET_KEY``, ``AWS_SECURITY_TOKEN`` or ``EC2_SECURITY_TOKEN``, ``AWS_REGION`` or ``EC2_REGION``, ``AWS_CA_BUNDLE``
    - When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically ``~/.aws/credentials``). See https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html for more information.
    - ``AWS_REGION`` or ``EC2_REGION`` can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.
@@ -342,39 +265,16 @@ Examples
 
 .. code-block:: yaml
 
-    - name: Ensure tags are present on a resource
-      community.aws.ecs_tag:
-        cluster_name: mycluster
-        resource_type: cluster
+    - name: Provision a Lightsail static IP
+      community.aws.lightsail_static_ip:
         state: present
-        tags:
-          Name: ubervol
-          env: prod
+        name: my_static_ip
+      register: my_ip
 
-    - name: Remove the Env tag
-      community.aws.ecs_tag:
-        cluster_name: mycluster
-        resource_type: cluster
-        tags:
-          Env:
+    - name: Remove a static IP
+      community.aws.lightsail_static_ip:
         state: absent
-
-    - name: Remove the Env tag if it's currently 'development'
-      community.aws.ecs_tag:
-        cluster_name: mycluster
-        resource_type: cluster
-        tags:
-          Env: development
-        state: absent
-
-    - name: Remove all tags except for Name from a cluster
-      community.aws.ecs_tag:
-        cluster_name: mycluster
-        resource_type: cluster
-        tags:
-            Name: foo
-        state: absent
-        purge_tags: true
+        name: my_static_ip
 
 
 
@@ -393,37 +293,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>added_tags</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>If tags were added</td>
-                <td>
-                            <div>A dict of tags that were added to the resource</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>removed_tags</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">dictionary</span>
-                    </div>
-                </td>
-                <td>If tags were removed</td>
-                <td>
-                            <div>A dict of tags that were removed from the resource</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>tags</b>
+                    <b>static_ip</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">dictionary</span>
@@ -431,8 +301,10 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>A dict containing the tags on the resource</div>
+                            <div>static_ipinstance data</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;arn&#x27;: &#x27;arn:aws:lightsail:ap-southeast-2:184297340509:StaticIp/d8f47672-c261-4443-a484-4a2ec983db9a&#x27;, &#x27;created_at&#x27;: &#x27;2021-02-28T00:04:05.202000+10:30&#x27;, &#x27;ip_address&#x27;: &#x27;192.0.2.5&#x27;, &#x27;is_attached&#x27;: False, &#x27;location&#x27;: {&#x27;availability_zone&#x27;: &#x27;all&#x27;, &#x27;region_name&#x27;: &#x27;ap-southeast-2&#x27;}, &#x27;name&#x27;: &#x27;static_ip&#x27;, &#x27;resource_type&#x27;: &#x27;StaticIp&#x27;, &#x27;support_code&#x27;: &#x27;677585553206/192.0.2.5&#x27;}</div>
                 </td>
             </tr>
     </table>
@@ -446,4 +318,4 @@ Status
 Authors
 ~~~~~~~
 
-- Michael Pechner (@mpechner)
+- Daniel Cotton (@danielcotton)

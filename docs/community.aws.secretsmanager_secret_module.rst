@@ -27,8 +27,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -156,6 +156,23 @@ Parameters
                 <td>
                         <div>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_endpoint_url, endpoint_url</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>json_secret</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">json</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>Specifies JSON-formatted data that you want to encrypt and store in the new version of the secret.</div>
+                        <div>Mutually exclusive with the <em>secret</em> option.</div>
                 </td>
             </tr>
             <tr>
@@ -321,6 +338,7 @@ Parameters
                 </td>
                 <td>
                         <div>Specifies string or binary data that you want to encrypt and store in the new version of the secret.</div>
+                        <div>Mutually exclusive with the <em>json_secret</em> option.</div>
                 </td>
             </tr>
             <tr>
