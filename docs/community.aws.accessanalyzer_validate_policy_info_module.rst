@@ -1,14 +1,14 @@
-.. _community.aws.directconnect_link_aggregation_group_module:
+.. _community.aws.accessanalyzer_validate_policy_info_module:
 
 
-**************************************************
-community.aws.directconnect_link_aggregation_group
-**************************************************
+*************************************************
+community.aws.accessanalyzer_validate_policy_info
+*************************************************
 
-**Manage Direct Connect LAG bundles**
+**Performs validation of IAM policies**
 
 
-Version added: 1.0.0
+Version added: 5.0.0
 
 .. contents::
    :local:
@@ -17,8 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Create, delete, or modify a Direct Connect link aggregation group.
-- Prior to release 5.0.0 this module was called ``community.aws.aws_direct_connect_link_aggregation_group``. The usage did not change.
+- Requests the validation of a policy and returns a list of findings.
 
 
 
@@ -111,36 +110,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>bandwidth</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The bandwidth of the link aggregation group.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>connection_id</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>A connection ID to link with the link aggregation group upon creation.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>debug_botocore_endpoint_logs</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -155,25 +124,6 @@ Parameters
                 </td>
                 <td>
                         <div>Use a botocore.endpoint logger to parse the unique (rather than total) &quot;resource:action&quot; API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>delete_with_disassociation</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>To be used with <em>state=absent</em> to delete connections after disassociating them with the LAG.</div>
                 </td>
             </tr>
             <tr>
@@ -195,95 +145,58 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>force_delete</b>
+                    <b>locale</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">"EN"</div>
+                </td>
+                <td>
+                        <div>The locale to use for localizing the findings.</div>
+                        <div>Supported locales include <code>DE</code>, <code>EN</code>, <code>ES</code>, <code>FR</code>, <code>IT</code>, <code>JA</code>, <code>KO</code>, <code>PT_BR</code>, <code>ZH_CN</code> and <code>ZH_TW</code>.</div>
+                        <div>For more information about supported locales see the AWS Documentation <code>https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ValidatePolicy.html</code></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>policy</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">json</span>
+                         / <span style="color: red">required</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>A properly json formatted policy.</div>
+                        <div style="font-size: small; color: darkgreen"><br/>aliases: policy_document</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>policy_type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
                     </div>
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
+                                    <li><div style="color: blue"><b>identity</b>&nbsp;&larr;</div></li>
+                                    <li>resource</li>
+                                    <li>service_control</li>
                         </ul>
                 </td>
                 <td>
-                        <div>This allows the minimum number of links to be set to 0, any hosted connections disassociated, and any virtual interfaces associated to the LAG deleted.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>link_aggregation_group_id</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The ID of the Direct Connect link aggregation group.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>location</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The location of the link aggregation group.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>min_links</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The minimum number of physical connections that must be operational for the LAG itself to be operational.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The name of the Direct Connect link aggregation group.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>num_connections</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The number of connections with which to initialize the link aggregation group.</div>
+                        <div>The type of policy to validate.</div>
+                        <div><code>identity</code> policies grant permissions to IAM principals, including both managed and inline policies for IAM roles, users, and groups.</div>
+                        <div><code>resource</code> policies policies grant permissions on AWS resources, including trust policies for IAM roles and bucket policies for S3 buckets.</div>
                 </td>
             </tr>
             <tr>
@@ -321,6 +234,47 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>resource_type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The type of resource to attach to your resource policy.</div>
+                        <div>Ignored unless <em>policy_type=resource</em>.</div>
+                        <div>Supported resource types include <code>AWS::S3::Bucket</code>, <code>AWS::S3::AccessPoint</code>, <code>AWS::S3::MultiRegionAccessPoint</code> and <code>AWS::S3ObjectLambda::AccessPoint</code></div>
+                        <div>For resource types not supported as valid values, IAM Access Analyzer runs policy checks that apply to all resource policies.</div>
+                        <div>For more information about supported locales see the AWS Documentation <code>https://docs.aws.amazon.com/access-analyzer/latest/APIReference/API_ValidatePolicy.html</code></div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>results_filter</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">list</span>
+                         / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>error</li>
+                                    <li>security</li>
+                                    <li>suggestion</li>
+                                    <li>warning</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Filter the findings and limit them to specific finding types.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>security_token</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -334,26 +288,6 @@ Parameters
                         <div>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</div>
                         <div>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</div>
                         <div style="font-size: small; color: darkgreen"><br/>aliases: aws_session_token, session_token, aws_security_token, access_token</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>state</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                         / <span style="color: red">required</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>present</li>
-                                    <li>absent</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>The state of the Direct Connect link aggregation group.</div>
                 </td>
             </tr>
             <tr>
@@ -375,43 +309,6 @@ Parameters
                         <div>When set to &quot;no&quot;, SSL certificates will not be validated for communication with the AWS APIs.</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>wait</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
-                                    <li>yes</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>Whether or not to wait for the operation to complete.</div>
-                        <div>May be useful when waiting for virtual interfaces to be deleted.</div>
-                        <div>The time to wait can be controlled by setting <em>wait_timeout</em>.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>wait_timeout</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">integer</span>
-                    </div>
-                </td>
-                <td>
-                        <b>Default:</b><br/><div style="color: blue">120</div>
-                </td>
-                <td>
-                        <div>The duration in seconds to wait if <em>wait=true</em>.</div>
-                </td>
-            </tr>
     </table>
     <br/>
 
@@ -431,12 +328,10 @@ Examples
 
 .. code-block:: yaml
 
-    # create a Direct Connect connection
-    - community.aws.directconnect_link_aggregation_group:
-      state: present
-      location: EqDC2
-      lag_id: dxlag-xxxxxxxx
-      bandwidth: 1Gbps
+    # Validate a policy
+    - name: Validate a simple IAM policy
+      community.aws.accessanalyzer_validate_policy_info:
+        policy: "{{ lookup('template', 'managed_policy.json.j2') }}"
 
 
 
@@ -448,202 +343,308 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="1">Key</th>
+            <th colspan="5">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="1">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>aws_device</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>when <em>state=present</em></td>
-                <td>
-                            <div>The AWS Direct Connection endpoint that hosts the LAG.</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">EqSe2-1bwfvazist2k0</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>changed</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Whether or not the LAG has changed.</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>connections</b>
+                    <b>findings</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>A list of connections bundled by this LAG.</div>
+                            <div>The list of findings in a policy returned by IAM Access Analyzer based on its suite of policy checks.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">{&#x27;connections&#x27;: [{&#x27;aws_device&#x27;: &#x27;EqSe2-1bwfvazist2k0&#x27;, &#x27;bandwidth&#x27;: &#x27;1Gbps&#x27;, &#x27;connection_id&#x27;: &#x27;dxcon-fgzjah5a&#x27;, &#x27;connection_name&#x27;: &#x27;Requested Connection 1 for Lag dxlag-fgtoh97h&#x27;, &#x27;connection_state&#x27;: &#x27;down&#x27;, &#x27;lag_id&#x27;: &#x27;dxlag-fgnsp4rq&#x27;, &#x27;location&#x27;: &#x27;EqSe2&#x27;, &#x27;owner_account&#x27;: &#x27;448830907657&#x27;, &#x27;region&#x27;: &#x27;us-west-2&#x27;}]}</div>
                 </td>
             </tr>
-            <tr>
-                <td colspan="1">
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>connections_bandwidth</b>
+                    <b>finding_details</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>The individual bandwidth of the physical connections bundled by the LAG.</div>
+                            <div>A localized message describing the finding.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1Gbps</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">Resource ARN does not match the expected ARN format. Update the resource portion of the ARN.</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>lag_id</b>
+                    <b>finding_type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>Unique identifier for the link aggregation group.</div>
+                            <div>The severity of the finding.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">dxlag-fgnsp4rq</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ERROR</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>lag_name</b>
+                    <b>issue_code</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>User-provided name for the link aggregation group.</div>
+                            <div>An identifier for the type of issue found.</div>
                     <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">INVALID_ARN_RESOURCE</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>lag_state</b>
+                    <b>learn_more_link</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>State of the LAG.</div>
+                            <div>A link to additional information about the finding type.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">pending</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">https://docs.aws.amazon.com/IAM/latest/UserGuide/access-analyzer-reference-policy-checks.html</div>
                 </td>
             </tr>
             <tr>
-                <td colspan="1">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>location</b>
+                    <b>locations</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>Where the connection is located.</div>
+                            <div>The location of the item resulting in the recommendations.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>path</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>A path in a policy, represented as a sequence of path elements.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">EqSe2</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[{&#x27;value&#x27;: &#x27;Statement&#x27;}, {&#x27;index&#x27;: 0}, {&#x27;value&#x27;: &#x27;Resource&#x27;}, {&#x27;index&#x27;: 0}]</div>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>span</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td></td>
+                <td>
+                            <div>Where in the policy the finding refers to.</div>
+                            <div>Note - when using lookups or passing dictionaries to <em>policy</em> the policy string may be converted to a single line of JSON, changing th column, line and offset values.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>end</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The end position of the span.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>minimum_links</b>
+                    <b>column</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>The minimum number of physical connections that must be operational for the LAG itself to be operational.</div>
+                            <div>The column of the position, starting from <code>0</code>.</div>
                     <br/>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>number_of_connections</b>
+                    <b>line</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>The number of physical connections bundled by the LAG.</div>
+                            <div>The line of the position, starting from <code>1</code>.</div>
                     <br/>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>owner_account</b>
+                    <b>offset</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>Owner account ID of the LAG.</div>
+                            <div>The offset within the policy that corresponds to the position, starting from <code>0</code>.</div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>start</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The start position of the span.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>column</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The column of the position, starting from <code>0</code>.</div>
                     <br/>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>region</b>
+                    <b>line</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">string</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
-                <td>when <em>state=present</em></td>
+                <td>success</td>
                 <td>
-                            <div>The region in which the LAG exists.</div>
+                            <div>The line of the position, starting from <code>1</code>.</div>
                     <br/>
                 </td>
             </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="1">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>offset</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The offset within the policy that corresponds to the position, starting from <code>0</code>.</div>
+                    <br/>
+                </td>
+            </tr>
+
+
+
+
     </table>
     <br/><br/>
 
@@ -655,4 +656,4 @@ Status
 Authors
 ~~~~~~~
 
-- Sloane Hertel (@s-hertel)
+- Mark Chappell (@tremble)

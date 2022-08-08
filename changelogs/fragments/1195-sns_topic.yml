@@ -1,2 +1,0 @@
-bugfixes:
-- sns_topic - fix bug which prevented the module being used in GovCloud (https://github.com/ansible-collections/community.aws/issues/836).

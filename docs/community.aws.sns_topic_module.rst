@@ -27,8 +27,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -550,6 +550,24 @@ Parameters
                     <td class="elbow-placeholder"></td>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>attributes</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">-</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                        <b>Default:</b><br/><div style="color: blue">{}</div>
+                </td>
+                <td>
+                        <div>Attributes of subscription. Only supports RawMessageDelievery for SQS endpoints.</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>endpoint</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -598,7 +616,8 @@ Parameters
                         </ul>
                 </td>
                 <td>
-                        <div>The type of topic that should be created. Either Standard for FIFO (first-in, first-out)</div>
+                        <div>The type of topic that should be created. Either Standard for FIFO (first-in, first-out).</div>
+                        <div>Some regions, including GovCloud regions do not support FIFO topics. Use a default value of  &#x27;standard&#x27; or omit the option if the region does not support FIFO topics.</div>
                 </td>
             </tr>
             <tr>

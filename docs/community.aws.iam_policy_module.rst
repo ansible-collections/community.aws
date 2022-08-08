@@ -27,8 +27,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -183,23 +183,6 @@ Parameters
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_document</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>The path to the properly json formatted policy file.</div>
-                        <div>Mutually exclusive with <em>policy_json</em>.</div>
-                        <div>This option has been deprecated and will be removed in a release after 2022-06-01.  The existing behavior can be reproduced by using the <em>policy_json</em> option and reading the file using the lookup plugin.</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="1">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>policy_json</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -210,8 +193,6 @@ Parameters
                 </td>
                 <td>
                         <div>A properly json formatted policy as string.</div>
-                        <div>Mutually exclusive with <em>policy_document</em>.</div>
-                        <div>See <a href='https://github.com/ansible/ansible/issues/7005#issuecomment-42894813'>https://github.com/ansible/ansible/issues/7005#issuecomment-42894813</a> on how to use it properly.</div>
                 </td>
             </tr>
             <tr>
@@ -291,13 +272,12 @@ Parameters
                 </td>
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
                                     <li>yes</li>
                         </ul>
                 </td>
                 <td>
                         <div>When <em>skip_duplicates=true</em> the module looks for any policies that match the document you pass in. If there is a match it will not make a new policy object with the same rules.</div>
-                        <div>The current default is <code>true</code>.  However, this behavior can be confusing and as such the default will change to <code>false</code> in a release after 2022-06-01.  To maintain the existing behavior explicitly set <em>skip_duplicates=true</em>.</div>
                 </td>
             </tr>
             <tr>
@@ -357,15 +337,6 @@ Examples
 
 .. code-block:: yaml
 
-    # Create a policy with the name of 'Admin' to the group 'administrators'
-    - name: Assign a policy called Admin to the administrators group
-      community.aws.iam_policy:
-        iam_type: group
-        iam_name: administrators
-        policy_name: Admin
-        state: present
-        policy_document: admin_policy.json
-
     # Advanced example, create two new groups and add a READ-ONLY policy to both
     # groups.
     - name: Create Two Groups, Mario and Luigi
@@ -415,7 +386,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                 <td colspan="1">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>policies</b>
+                    <b>policy_names</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">list</span>

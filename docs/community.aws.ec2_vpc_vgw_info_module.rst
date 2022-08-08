@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Gather information about virtual gateways in AWS.
+- Gather information about virtual gateways (VGWs) in AWS.
 
 
 
@@ -26,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -239,7 +239,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>Get details of a specific Virtual Gateway ID. This value should be provided as a list.</div>
+                        <div>Get details of a specific Virtual Gateway ID.</div>
                 </td>
             </tr>
     </table>

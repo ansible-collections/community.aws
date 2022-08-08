@@ -8,7 +8,7 @@ description: null
 license_file: COPYING
 tags: [community, aws, cloud, amazon]
 dependencies:
-  amazon.aws: '>=4.0.0'
+  amazon.aws: '>=5.0.0-dev0'
 repository: https://github.com/ansible-collections/community.aws
 documentation: https://github.com/ansible-collections/community.aws/tree/main/docs
 homepage: https://github.com/ansible-collections/community.aws

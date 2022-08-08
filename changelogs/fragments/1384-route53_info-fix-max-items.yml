@@ -1,2 +1,0 @@
-bugfixes:
-- route53_info - fix ``max_items`` parameter when used with non-paginated commands (https://github.com/ansible-collections/community.aws/issues/1383).

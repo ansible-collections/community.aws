@@ -18,6 +18,7 @@ Version added: 1.0.0
 Synopsis
 --------
 - Gets information about an AWS CloudFront distribution.
+- Prior to release 5.0.0 this module was called ``community.aws.cloudfront_info``. The usage did not change.
 
 
 
@@ -26,8 +27,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters

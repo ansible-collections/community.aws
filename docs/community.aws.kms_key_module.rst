@@ -28,8 +28,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -422,109 +422,6 @@ Parameters
             <tr>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_clean_invalid_entries</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">boolean</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li>no</li>
-                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
-                        </ul>
-                </td>
-                <td>
-                        <div>(deprecated) If adding/removing a role and invalid grantees are found, remove them. These entries will cause an update to fail in all known cases.</div>
-                        <div>Only cleans if changes are being made.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: clean_invalid_entries</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_grant_types</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">list</span>
-                         / <span style="color: purple">elements=string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>(deprecated) List of grants to give to user/role. Likely &quot;role,role grant&quot; or &quot;role,role grant,admin&quot;.</div>
-                        <div>Required when <em>policy_mode=grant</em>.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: grant_types</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_mode</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
-                                    <li><div style="color: blue"><b>grant</b>&nbsp;&larr;</div></li>
-                                    <li>deny</li>
-                        </ul>
-                </td>
-                <td>
-                        <div>(deprecated) Grant or deny access.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: mode</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_role_arn</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>(deprecated) ARN of role to allow/deny access.</div>
-                        <div>One of <em>policy_role_name</em> or <em>policy_role_arn</em> are required.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: role_arn</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
-                    <b>policy_role_name</b>
-                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
-                    <div style="font-size: small">
-                        <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>
-                </td>
-                <td>
-                        <div>(deprecated) Role to allow/deny access.</div>
-                        <div>One of <em>policy_role_name</em> or <em>policy_role_arn</em> are required.</div>
-                        <div>Used for modifying the Key Policy rather than modifying a grant and only works on the default policy created through the AWS Console.</div>
-                        <div>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</div>
-                        <div style="font-size: small; color: darkgreen"><br/>aliases: role_name</div>
-                </td>
-            </tr>
-            <tr>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>profile</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -569,14 +466,13 @@ Parameters
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li>no</li>
-                                    <li>yes</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
                         </ul>
                 </td>
                 <td>
                         <div>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</div>
                         <div>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</div>
                         <div>Tag keys beginning with <code>aws:</code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a href='https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions'>https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</div>
-                        <div>The current default value of <code>False</code> has been deprecated.  The default value will change to <code>True</code> in release 5.0.0.</div>
                 </td>
             </tr>
             <tr>
@@ -689,22 +585,6 @@ Examples
 --------
 
 .. code-block:: yaml
-
-    # Managing the KMS IAM Policy via policy_mode and policy_grant_types is fragile
-    # and has been deprecated in favour of the policy option.
-    - name: grant user-style access to production secrets
-      community.aws.kms_key:
-      args:
-        alias: "alias/my_production_secrets"
-        policy_mode: grant
-        policy_role_name: "prod-appServerRole-1R5AQG2BSEL6L"
-        policy_grant_types: "role,role grant"
-    - name: remove access to production secrets from role
-      community.aws.kms_key:
-      args:
-        alias: "alias/my_production_secrets"
-        policy_mode: deny
-        policy_role_name: "prod-appServerRole-1R5AQG2BSEL6L"
 
     # Create a new KMS key
     - community.aws.kms_key:

@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Retrieve information from AWS ElastiCache clusters
+- Retrieve information from AWS ElastiCache clusters.
 
 
 
@@ -26,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -262,28 +262,47 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
     <table border=0 cellpadding=0 class="documentation-table">
         <tr>
-            <th colspan="4">Key</th>
+            <th colspan="6">Key</th>
             <th>Returned</th>
             <th width="100%">Description</th>
         </tr>
             <tr>
-                <td colspan="4">
+                <td colspan="6">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>elasticache_clusters</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>List of ElastiCache clusters</div>
+                            <div>List of ElastiCache clusters.</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>ARN of the cache cluster.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:elasticache:us-east-1:123456789012:cluster:ansible-test</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>auto_minor_version_upgrade</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -293,7 +312,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Whether to automatically upgrade to minor versions</div>
+                            <div>Whether to automatically upgrade to minor versions.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">True</div>
@@ -301,7 +320,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>cache_cluster_create_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -311,7 +330,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Date and time cluster was created</div>
+                            <div>Date and time cluster was created.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2017-09-15T05:43:46.038000+00:00</div>
@@ -319,7 +338,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>cache_cluster_id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -329,7 +348,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>ID of the cache cluster</div>
+                            <div>ID of the cache cluster.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd-1234-001</div>
@@ -337,7 +356,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>cache_cluster_status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -347,7 +366,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Status of ElastiCache cluster</div>
+                            <div>Status of ElastiCache cluster.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">available</div>
@@ -355,7 +374,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>cache_node_type</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -365,7 +384,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Instance type of ElastiCache nodes</div>
+                            <div>Instance type of ElastiCache nodes.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">cache.t2.micro</div>
@@ -373,24 +392,25 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>cache_nodes</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>List of ElastiCache nodes in the cluster</div>
+                            <div>List of ElastiCache nodes in the cluster.</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>cache_node_create_time</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -400,13 +420,761 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Date and time node was created</div>
+                            <div>Date and time node was created.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">2017-09-15T05:43:46.038000+00:00</div>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_node_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>ID of the cache node.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">0001</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_node_status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Status of the cache node.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">available</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>customer_availability_zone</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Availability Zone in which the cache node was created.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ap-southeast-2b</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>endpoint</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Connection details for the cache node.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>address</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>URL of the cache node endpoint.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd-1234-001.bgiz2p.0001.apse2.cache.amazonaws.com</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>port</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Port of the cache node endpoint.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">6379</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>parameter_group_status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Status of the Cache Parameter Group.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">in-sync</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_parameter_group</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Contents of the Cache Parameter Group.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_node_ids_to_reboot</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Cache nodes which need to be rebooted for parameter changes to be applied.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_parameter_group_name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Name of the cache parameter group.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">default.redis3.2</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>parameter_apply_status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Status of parameter updates.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">in-sync</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_security_groups</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Security Groups used by the cache.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;sg-abcd1234&#x27;]</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_subnet_group_name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>ElastiCache Subnet Group used by the cache.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd-subnet-group</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>client_download_landing_page</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>URL of client download web page.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">https://console.aws.amazon.com/elasticache/home#client-download:</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>engine</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Engine used by ElastiCache.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">redis</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>engine_version</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Version of ElastiCache engine.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3.2.4</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>notification_configuration</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>if notifications are enabled</td>
+                <td>
+                            <div>Configuration of notifications.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>topic_arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>if notifications are enabled</td>
+                <td>
+                            <div>ARN of notification destination topic.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:sns:*:123456789012:my_topic</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>topic_name</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>if notifications are enabled</td>
+                <td>
+                            <div>Name of notification destination topic.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">MyTopic</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>num_cache_nodes</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Number of Cache Nodes.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>pending_modified_values</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Values that are pending modification.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>preferred_availability_zone</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Preferred Availability Zone.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ap-southeast-2b</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>preferred_maintenance_window</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Time slot for preferred maintenance window.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">sat:12:00-sat:13:00</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>replication_group</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>if replication is enabled</td>
+                <td>
+                            <div>Informations about the associated replication group.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>arn</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The ARN (Amazon Resource Name) of the replication group.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>at_rest_encryption_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A flag that enables encryption at-rest when set to true.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>auth_token_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A flag that enables using an AuthToken (password) when issuing Redis commands.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>automatic_failover</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>Indicates the status of automatic failover for this Redis replication group.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">enabled</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_node_type</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The name of the compute and memory capacity node type for each node in the replication group.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">cache.t3.medium</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cluster_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A flag indicating whether or not this replication group is cluster enabled.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>description</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The user supplied description of the replication group.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>global_replication_group_info</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The name of the Global datastore and role of this replication group in the Global datastore.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>global_replication_group_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The name of the Global datastore.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>global_replication_group_member_role</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The role of the replication group in a Global datastore. Can be primary or secondary.</div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>kms_key_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The ID of the KMS key used to encrypt the disk in the cluster.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>member_clusters</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The names of all the cache clusters that are part of this replication group.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>multi_az</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A flag indicating if you have Multi-AZ enabled to enhance fault tolerance.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">enabled</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>node_groups</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A list of node groups in this replication group.</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>node_group_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The identifier for the node group (shard).</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>node_group_members</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A list containing information about individual nodes within the node group (shard).</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>cache_cluster_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The ID of the cluster to which the node belongs.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
@@ -419,18 +1187,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>ID of the cache node</div>
+                            <div>The ID of the node within its cluster.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">0001</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>cache_node_status</b>
+                    <b>current_role</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -438,18 +1206,20 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Status of the cache node</div>
+                            <div>The role that is currently assigned to the node - primary or replica.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">available</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">primary</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>customer_availability_zone</b>
+                    <b>preferred_availability_zone</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -457,30 +1227,33 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Availability Zone in which the cache node was created</div>
+                            <div>The name of the Availability Zone in which the node is located.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ap-southeast-2b</div>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>endpoint</b>
+                    <b>read_endpoint</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Connection details for the cache node</div>
+                            <div>The information required for client programs to connect to a node for read operations.</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
@@ -494,13 +1267,13 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>URL of the cache node endpoint</div>
+                            <div>The DNS hostname of the cache node.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd-1234-001.bgiz2p.0001.apse2.cache.amazonaws.com</div>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
@@ -514,7 +1287,68 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Port of the cache node endpoint</div>
+                            <div>The port number that the cache engine is listening on.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">6379</div>
+                </td>
+            </tr>
+
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>primary_endpoint</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The endpoint of the primary node in this node group (shard).</div>
+                    <br/>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>address</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The DNS hostname of the cache node.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>port</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">integer</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The port number that the cache engine is listening on.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">6379</div>
@@ -524,62 +1358,29 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>parameter_group_status</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Status of the Cache Parameter Group</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">in-sync</div>
-                </td>
-            </tr>
-
-            <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>cache_parameter_group</b>
+                    <b>reader_endpoint</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Contents of the Cache Parameter Group</div>
+                            <div>The endpoint of the cache node.</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>cache_node_ids_to_reboot</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Cache nodes which need to be rebooted for parameter changes to be applied</div>
-                    <br/>
-                </td>
-            </tr>
-            <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>cache_parameter_group_name</b>
+                    <b>address</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">string</span>
@@ -587,182 +1388,18 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Name of the cache parameter group</div>
+                            <div>The DNS hostname of the cache node.</div>
                     <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">default.redis3.2</div>
                 </td>
             </tr>
             <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="2">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>parameter_apply_status</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Status of parameter updates</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">in-sync</div>
-                </td>
-            </tr>
-
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>cache_security_groups</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">list</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Security Groups used by the cache</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">[&#x27;sg-abcd1234&#x27;]</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>cache_subnet_group_name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>ElastiCache Subnet Group used by the cache</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">abcd-subnet-group</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>client_download_landing_page</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>URL of client download web page</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">https://console.aws.amazon.com/elasticache/home#client-download:</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>engine</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Engine used by ElastiCache</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">redis</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>engine_version</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Version of ElastiCache engine</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">3.2.4</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>notification_configuration</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">complex</span>
-                    </div>
-                </td>
-                <td>if notifications are enabled</td>
-                <td>
-                            <div>Configuration of notifications</div>
-                    <br/>
-                </td>
-            </tr>
-                                <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>topic_arn</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>if notifications are enabled</td>
-                <td>
-                            <div>ARN of notification destination topic</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">arn:aws:sns:*:123456789012:my_topic</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>topic_name</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>if notifications are enabled</td>
-                <td>
-                            <div>Name of notification destination topic</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">MyTopic</div>
-                </td>
-            </tr>
-
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>num_cache_nodes</b>
+                    <b>port</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
                       <span style="color: purple">integer</span>
@@ -770,67 +1407,55 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Number of Cache Nodes</div>
+                            <div>The port number that the cache engine is listening on.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">1</div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">6379</div>
                 </td>
             </tr>
+
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The current state of this replication group - <code>creating</code>, <code>available</code>, <code>modifying</code>, <code>deleting</code>.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">available</div>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>pending_modified_values</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Values that are pending modification</div>
+                            <div>A group of settings to be applied to the replication group, either immediately or during the next maintenance window.</div>
                     <br/>
                 </td>
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>preferred_availability_zone</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Preferred Availability Zone</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">ap-southeast-2b</div>
-                </td>
-            </tr>
-            <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
-                    <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>preferred_maintenance_window</b>
-                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
-                    <div style="font-size: small">
-                      <span style="color: purple">string</span>
-                    </div>
-                </td>
-                <td>always</td>
-                <td>
-                            <div>Time slot for preferred maintenance window</div>
-                    <br/>
-                        <div style="font-size: smaller"><b>Sample:</b></div>
-                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">sat:12:00-sat:13:00</div>
-                </td>
-            </tr>
-            <tr>
-                    <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>replication_group_id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -840,7 +1465,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 </td>
                 <td>always</td>
                 <td>
-                            <div>Replication Group Id</div>
+                            <div>Replication Group Id.</div>
                     <br/>
                         <div style="font-size: smaller"><b>Sample:</b></div>
                         <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">replication-001</div>
@@ -848,24 +1473,131 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             </tr>
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
-                    <b>security_groups</b>
+                    <b>snapshot_retention_limit</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">integer</span>
                     </div>
                 </td>
                 <td>always</td>
                 <td>
-                            <div>List of Security Groups associated with ElastiCache</div>
+                            <div>The number of days for which ElastiCache retains automatic cluster snapshots before deleting them.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>snapshot_window</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The daily time range (in UTC) during which ElastiCache begins taking a daily snapshot of your node group (shard).</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">07:00-09:00</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>snapshotting_cluster_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The cluster ID that is used as the daily snapshot source for the replication group.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>status</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The current state of this replication group - <code>creating</code>, <code>available</code>, <code>modifying</code>, <code>deleting</code>, <code>create-failed</code>, <code>snapshotting</code></div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="4">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>transit_encryption_enabled</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">boolean</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>A flag that enables in-transit encryption when set to <code>true</code>.</div>
+                    <br/>
+                </td>
+            </tr>
+
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>replication_group_id</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>if replication is enabled</td>
+                <td>
+                            <div>Replication Group Id.</div>
+                    <br/>
+                        <div style="font-size: smaller"><b>Sample:</b></div>
+                        <div style="font-size: smaller; color: blue; word-wrap: break-word; word-break: break-all;">replication-001</div>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="5">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>security_groups</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>List of Security Groups associated with ElastiCache.</div>
                     <br/>
                 </td>
             </tr>
                                 <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>security_group_id</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -884,7 +1616,7 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="2">
+                <td colspan="4">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>status</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
@@ -903,12 +1635,12 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
 
             <tr>
                     <td class="elbow-placeholder">&nbsp;</td>
-                <td colspan="3">
+                <td colspan="5">
                     <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>tags</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
-                      <span style="color: purple">complex</span>
+                      <span style="color: purple">dictionary</span>
                     </div>
                 </td>
                 <td>always</td>

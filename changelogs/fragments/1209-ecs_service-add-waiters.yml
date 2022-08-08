@@ -1,3 +1,0 @@
-minor_changes:
-  - ecs_service - add ``wait`` parameter and waiter for deleting services (https://github.com/ansible-collections/community.aws/pull/1209).
-  - ecs_task - add ``wait`` parameter and waiter for running and stopping tasks (https://github.com/ansible-collections/community.aws/pull/1209).

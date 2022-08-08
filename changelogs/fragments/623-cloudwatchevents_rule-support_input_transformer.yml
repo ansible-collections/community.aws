@@ -1,4 +1,0 @@
-minor_changes:
-  - cloudwatchevent_rule - Added ``targets.input_transformer.input_paths_map`` and ``targets.input_transformer.input_template`` parameters to
-    support configuring on CloudWatch event rule input transformation (https://github.com/ansible-collections/community.aws/pull/623).
-  - cloudwatchevent_rule - Applied validation of ``targets`` arguments (https://github.com/ansible-collections/community.aws/issues/201).

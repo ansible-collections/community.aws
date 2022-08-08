@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Creates or terminates ECS. services.
+- Creates or terminates ECS services.
 
 
 
@@ -26,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -351,6 +351,44 @@ Parameters
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>deployment_controller</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>The deployment controller to use for the service. If no deploymenet controller is specified, the ECS controller is used.</div>
+                </td>
+            </tr>
+                                <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="2">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>type</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>ECS</li>
+                                    <li>CODE_DEPLOY</li>
+                                    <li>EXTERNAL</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>The deployment controller type to use.</div>
+                </td>
+            </tr>
+
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>desired_count</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -467,6 +505,8 @@ Parameters
                 </td>
                 <td>
                         <div>The list of ELBs defined for this service.</div>
+                        <div>Load balancers for an existing service cannot be updated, and it is an error to do so.</div>
+                        <div>When the deployment controller is CODE_DEPLOY changes to this value are simply ignored, and do not cause an error.</div>
                 </td>
             </tr>
             <tr>
@@ -691,6 +731,26 @@ Parameters
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>propagate_tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">string</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li>TASK_DEFINITION</li>
+                                    <li>SERVICE</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Propagate tags from ECS task defintition or ECS service to ECS task.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>region</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -863,6 +923,22 @@ Parameters
             <tr>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>tags</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">dictionary</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                </td>
+                <td>
+                        <div>A dictionary of tags to add or remove from the resource.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
                     <b>task_definition</b>
                     <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
                     <div style="font-size: small">
@@ -874,6 +950,7 @@ Parameters
                 <td>
                         <div>The task definition the service will run.</div>
                         <div>This parameter is required when <em>state=present</em>.</div>
+                        <div>This parameter is ignored when updating a service with a <code>CODE_DEPLOY</code> deployment controller in which case the task definition is managed by Code Pipeline and cannot be updated.</div>
                 </td>
             </tr>
             <tr>
@@ -893,6 +970,27 @@ Parameters
                 </td>
                 <td>
                         <div>When set to &quot;no&quot;, SSL certificates will not be validated for communication with the AWS APIs.</div>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="parameter-"></div>
+                    <b>wait</b>
+                    <a class="ansibleOptionLink" href="#parameter-" title="Permalink to this option"></a>
+                    <div style="font-size: small">
+                        <span style="color: purple">boolean</span>
+                    </div>
+                    <div style="font-style: italic; font-size: small; color: darkgreen">added in 4.1.0</div>
+                </td>
+                <td>
+                        <ul style="margin: 0; padding: 0"><b>Choices:</b>
+                                    <li><div style="color: blue"><b>no</b>&nbsp;&larr;</div></li>
+                                    <li>yes</li>
+                        </ul>
+                </td>
+                <td>
+                        <div>Whether or not to wait for the service to be inactive.</div>
+                        <div>Waits only when <em>state</em> is <code>absent</code>.</div>
                 </td>
             </tr>
     </table>
@@ -918,7 +1016,6 @@ Examples
 .. code-block:: yaml
 
     # Note: These examples do not set authentication details, see the AWS Guide for details.
-
     # Basic provisioning example
     - community.aws.ecs_service:
         state: present
@@ -988,6 +1085,18 @@ Examples
             weight: 1
             base: 0
 
+    # With tags and tag propagation
+    - community.aws.ecs_service:
+        state: present
+        name: tags-test-service
+        cluster: new_cluster
+        task_definition: 'new_cluster-task:1'
+        desired_count: 1
+        tags:
+          Firstname: jane
+          lastName: doe
+        propagate_tags: SERVICE
+
 
 Returned Facts
 --------------
@@ -996,7 +1105,7 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
 .. raw:: html
 
     <table border=0 cellpadding=0 class="documentation-table">
-                                                                                                                                                                                                                                                                                                                                            <tr>
+                                                                                                                                                                                                                                                                                                                                                                    <tr>
             <th colspan="4">Fact</th>
             <th>Returned</th>
             <th width="100%">Description</th>
@@ -1401,6 +1510,23 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                     <td class="elbow-placeholder"></td>
                 <td colspan="3" colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>propagateTags</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The type of tag propagation applied to the resource
+                            </div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="3" colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>runningCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
                     <div style="font-size: small">
@@ -1461,6 +1587,24 @@ Facts returned by this module are added/updated in the ``hostvars`` host facts a
                 <td>always</td>
                 <td>
                             <div>The valid values are ACTIVE, DRAINING, or INACTIVE.
+                            </div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder"></td>
+                <td colspan="3" colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>tags</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this fact"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">list</span>
+                       / <span style="color: purple">elements=dictionary</span>
+                    </div>
+                </td>
+                <td>when tags found</td>
+                <td>
+                            <div>The tags applied to this resource.
                             </div>
                     <br/>
                 </td>
@@ -1946,6 +2090,22 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                     <td class="elbow-placeholder">&nbsp;</td>
                 <td colspan="3">
                     <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>propagateTags</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">string</span>
+                    </div>
+                </td>
+                <td>always</td>
+                <td>
+                            <div>The type of tag propagation applied to the resource.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
                     <b>runningCount</b>
                     <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
                     <div style="font-size: small">
@@ -2003,6 +2163,22 @@ Common return values are documented `here <https://docs.ansible.com/ansible/late
                 <td>always</td>
                 <td>
                             <div>The valid values are ACTIVE, DRAINING, or INACTIVE.</div>
+                    <br/>
+                </td>
+            </tr>
+            <tr>
+                    <td class="elbow-placeholder">&nbsp;</td>
+                <td colspan="3">
+                    <div class="ansibleOptionAnchor" id="return-"></div>
+                    <b>tags</b>
+                    <a class="ansibleOptionLink" href="#return-" title="Permalink to this return value"></a>
+                    <div style="font-size: small">
+                      <span style="color: purple">dictionary</span>
+                    </div>
+                </td>
+                <td>success</td>
+                <td>
+                            <div>The tags applied to this resource.</div>
                     <br/>
                 </td>
             </tr>

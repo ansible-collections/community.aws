@@ -5,7 +5,7 @@
 community.aws.iam_server_certificate
 ************************************
 
-**Manage server certificates for use on ELBs and CloudFront**
+**Manage IAM server certificates for use on ELBs and CloudFront**
 
 
 Version added: 1.0.0
@@ -17,7 +17,7 @@ Version added: 1.0.0
 
 Synopsis
 --------
-- Allows for the management of server certificates.
+- Allows for the management of IAM server certificates.
 
 
 
@@ -26,8 +26,8 @@ Requirements
 The below requirements are needed on the host that executes this module.
 
 - python >= 3.6
-- boto3 >= 1.17.0
-- botocore >= 1.20.0
+- boto3 >= 1.18.0
+- botocore >= 1.21.0
 
 
 Parameters
@@ -119,9 +119,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The path to, or content of the certificate body in PEM encoded format.</div>
-                        <div>If the parameter is not a file, it is assumed to be content.</div>
-                        <div>Passing a file name is deprecated, and support will be dropped in version 4.0.0 of this collection.</div>
+                        <div>The content of the certificate body in PEM encoded format.</div>
                 </td>
             </tr>
             <tr>
@@ -136,9 +134,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The path to, or content of, the CA certificate chain in PEM encoded format.</div>
-                        <div>If the parameter is not a file, it is assumed to be content.</div>
-                        <div>Passing a file name is deprecated, and support will be dropped in version 4.0.0 of this collection.</div>
+                        <div>The content of the CA certificate chain in PEM encoded format.</div>
                 </td>
             </tr>
             <tr>
@@ -172,13 +168,13 @@ Parameters
                 <td>
                         <ul style="margin: 0; padding: 0"><b>Choices:</b>
                                     <li>no</li>
-                                    <li>yes</li>
+                                    <li><div style="color: blue"><b>yes</b>&nbsp;&larr;</div></li>
                         </ul>
                 </td>
                 <td>
                         <div>By default the module will not upload a certificate that is already uploaded into AWS.</div>
                         <div>If <em>dup_ok=True</em>, it will upload the certificate as long as the name is unique.</div>
-                        <div>Currently defaults to <code>false</code>, this will default to <code>true</code> in release 4.0.0.</div>
+                        <div>The default value for this value changed in release 5.0.0 to <code>true</code>.</div>
                 </td>
             </tr>
             <tr>
@@ -209,8 +205,7 @@ Parameters
                 <td>
                 </td>
                 <td>
-                        <div>The path to, or content of the private key in PEM encoded format. If the parameter is not a file, it is assumed to be content.</div>
-                        <div>Passing a file name is deprecated, and support will be dropped in version 4.0.0 of this collection.</div>
+                        <div>The content of the private key in PEM encoded format.</div>
                 </td>
             </tr>
             <tr>
@@ -394,22 +389,14 @@ Examples
         key: "{{ lookup('file', 'path/to/key') }}"
         cert_chain: "{{ lookup('file', 'path/to/certchain') }}"
 
-    - name: Basic server certificate upload
-      community.aws.iam_server_certificate:
-        name: very_ssl
-        state: present
-        cert: path/to/cert
-        key: path/to/key
-        cert_chain: path/to/certchain
-
     - name: Server certificate upload using key string
       community.aws.iam_server_certificate:
         name: very_ssl
         state: present
         path: "/a/cert/path/"
-        cert: body_of_somecert
-        key: vault_body_of_privcertkey
-        cert_chain: body_of_myverytrustedchain
+        cert: "{{ lookup('file', 'path/to/cert') }}"
+        key: "{{ lookup('file', 'path/to/key') }}"
+        cert_chain: "{{ lookup('file', 'path/to/certchain') }}"
 
     - name: Basic rename of existing certificate
       community.aws.iam_server_certificate:
