@@ -31,6 +31,12 @@ options:
       - The name you assign to this crawler definition. It must be unique in your account.
     required: true
     type: str
+  purge_tags:
+    description:
+      - If C(true), existing tags will be purged from the resource to match exactly what is defined by I(tags) parameter.
+      - If the I(tags) parameter is not set then tags will not be modified.
+    default: true
+    type: bool
   recrawl_policy:
     description:
       - A policy that specifies whether to crawl the entire dataset again, or to crawl only folders that were added since the last crawler run.
@@ -71,6 +77,12 @@ options:
     description:
       - The table prefix used for catalog tables that are created.
     type: str
+  tags:
+    description:
+      - A hash/dictionary of tags to be applied to the crawler.
+      - Remove completely or specify an empty dictionary to remove all tags.
+    type: dict
+    aliases: [ resource_tags ]
   targets:
     description:
       - A list of targets to crawl. See example below.
