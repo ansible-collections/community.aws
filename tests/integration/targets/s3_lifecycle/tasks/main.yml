@@ -622,6 +622,31 @@
         that:
           - output is not changed
 
+    # Check create and delete lifecycle policy with an empty prefix
+    - name: example 8
+      s3_lifecycle:
+        name: "{{ bucket_name }}"
+        rule_id: empty-prefix
+        state: present
+        status: enabled
+        expiration_days: 30
+      register: output
+    - assert:
+        that:
+          - output is changed
+
+    - name: example 8 (idempotency)
+      s3_lifecycle:
+        name: "{{ bucket_name }}"
+        rule_id: empty-prefix
+        state: absent
+        status: enabled
+        expiration_days: 30
+      register: output
+    - assert:
+        that:
+          - output is changed
+
  # ============================================================
   always:
     - name: Ensure all buckets are deleted
