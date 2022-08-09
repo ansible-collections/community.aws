@@ -7,10 +7,10 @@
 from __future__ import absolute_import, division, print_function
 
 import os
+from typing import Any
 
 from ansible.errors import AnsibleActionFail
-from OpenSSL import crypto
-from OpenSSL.crypto import Error
+from cryptography import x509
 
 __metaclass__ = type
 
@@ -27,17 +27,19 @@ class HsmClusterInitValidator(Validator):
     def signed_cert(self):
         """Validates if necessary signed_cert info is provided."""
         try:
-            signed_cert = self.module_args["signed_cert"]
+            signed_cert: Any = self.module_args["signed_cert"]
+            print(signed_cert)
             if not isinstance(signed_cert, str):
                 raise TypeError
             if os.path.isfile(signed_cert):
-                cert = crypto.load_certificate(
-                    crypto.FILETYPE_PEM, open(signed_cert).read()
+                cert = x509.load_pem_x509_certificate(
+                    open(signed_cert, "rb").read()
                 )
             else:
-                cert = crypto.load_certificate(crypto.FILETYPE_PEM, signed_cert)
-            if not cert.get_subject().CN or "HSM" not in cert.get_subject().CN:
-                raise ValueError
+                print(signed_cert)
+                cert = x509.load_pem_x509_certificate(signed_cert.encode())
+            if "HSM" not in cert.subject.rfc4514_string():
+                raise ReferenceError
         except TypeError as type_error:
             raise AnsibleActionFail(
                 f"Wrong type was provided for the 'signed_cert' argument. Must be a string. Provided: {type(signed_cert).__name__}"
@@ -46,25 +48,28 @@ class HsmClusterInitValidator(Validator):
             raise AnsibleActionFail(
                 "'signed_cert' is a mandatory argument."
             ) from key_error
-        except Error as error:
+        except ValueError as value_error:
+            print(value_error)
             raise AnsibleActionFail(
                 "Provided signed certificate is not valid."
-            ) from error
-        except ValueError as value_error:
+            ) from value_error
+        except ReferenceError as ref_error:
             raise AnsibleActionFail(
                 "Provided certificate is valid, but the CommonName (CN) does not contain 'HSM' in it. Make sure to use the certificate which was signed using the HSM Cluster generated CSR."
-            ) from value_error
+            ) from ref_error
 
     def trust_anchor(self):
         """Validates if necessary trust_anchor info is provided."""
         try:
-            trust_anchor = self.module_args["trust_anchor"]
+            trust_anchor: Any = self.module_args["trust_anchor"]
             if not isinstance(trust_anchor, str):
                 raise TypeError
             if os.path.isfile(trust_anchor):
-                crypto.load_certificate(crypto.FILETYPE_PEM, open(trust_anchor).read())
+                x509.load_pem_x509_certificate(
+                    open(trust_anchor, "rb").read()
+                )
             else:
-                crypto.load_certificate(crypto.FILETYPE_PEM, trust_anchor)
+                x509.load_pem_x509_certificate(trust_anchor.encode())
         except TypeError as type_error:
             raise AnsibleActionFail(
                 f"Wrong type was provided for the 'trust_anchor' argument. Must be a string. Provided: {type(trust_anchor).__name__}"
@@ -73,10 +78,10 @@ class HsmClusterInitValidator(Validator):
             raise AnsibleActionFail(
                 "'trust_anchor' is a mandatory argument."
             ) from key_error
-        except Error as error:
+        except ValueError as value_error:
             raise AnsibleActionFail(
                 "Provided trust anchor (CA) certificate is not valid."
-            ) from error
+            ) from value_error
 
     def validate(self):
         """Validate all."""

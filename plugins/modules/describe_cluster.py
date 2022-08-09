@@ -66,7 +66,7 @@ options:
 
 
 EXAMPLES = r"""
-- name: "Get All HSM Cluster"
+- name: "Get All HSM Clusters"
   community.aws.describe_cluster:
     aws_access_key: HKHKHOIU
     aws_secret_key: 123dkj973&^871623

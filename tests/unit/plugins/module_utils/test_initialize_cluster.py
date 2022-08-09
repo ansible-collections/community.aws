@@ -25,7 +25,7 @@ from initialize_cluster import HsmClusterInit, HsmClusterInitValidator
             },
             {},
         ),
-        ({"signed_cert": "./tests/unit/module_utils/mocks/hsm_signed.crt"}, {}),
+        ({"signed_cert": "./tests/unit/plugins/module_utils/mocks/signed.crt"}, {}),
     ],
     ids=["Valid Signed Cert", "Valid Signed Cert File"],
 )
@@ -49,12 +49,12 @@ def test_signed_cert(module_args, play_vars):
             "Provided\\s+signed\\s+certificate\\s+is\\s+not\\s+valid.",
         ),
         (
-            {"signed_cert": "./tests/unit/module_utils/mocks/hsms.json"},
+            {"signed_cert": "./tests/unit/plugins/module_utils/mocks/hsms.json"},
             {},
             "Provided\\s+signed\\s+certificate\\s+is\\s+not\\s+valid.",
         ),
         (
-            {"signed_cert": "./tests/unit/module_utils/mocks/customerCA.crt"},
+            {"signed_cert": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt"},
             {},
             "Provided\\s+certificate\\s+is\\s+valid.*CSR",
         ),
@@ -87,7 +87,7 @@ def test_signed_cert_exception(module_args, play_vars, match):
             },
             {},
         ),
-        ({"trust_anchor": "./tests/unit/module_utils/mocks/customerCA.crt"}, {}),
+        ({"trust_anchor": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt"}, {}),
     ],
     ids=["Valid CA Cert", "Valid CA Cert File"],
 )
@@ -111,7 +111,7 @@ def test_trust_anchor(module_args, play_vars):
             "Provided\\s+trust\\s+anchor\\s+\\(CA\\)\\s+certificate\\s+is\\s+not\\s+valid.",
         ),
         (
-            {"trust_anchor": "./tests/unit/module_utils/mocks/hsms.json"},
+            {"trust_anchor": "./tests/unit/plugins/module_utils/mocks/hsms.json"},
             {},
             "Provided\\s+trust\\s+anchor\\s+\\(CA\\)\\s+certificate\\s+is\\s+not\\s+valid.",
         ),
@@ -140,8 +140,8 @@ def test_trust_anchor_exception(module_args, play_vars, match):
         (
             {
                 "cluster_id": "cluster-test123",
-                "signed_cert": "./tests/unit/module_utils/mocks/hsm_signed.crt",
-                "trust_anchor": "./tests/unit/module_utils/mocks/customerCA.crt",
+                "signed_cert": "./tests/unit/plugins/module_utils/mocks/signed.crt",
+                "trust_anchor": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt",
                 "aws_access_key": "TESTAWSACCESSKEY",
                 "aws_secret_key": "testawssecretkey",
                 "region": "us-east-2",
@@ -165,8 +165,8 @@ def test_validate(module_args, play_vars, mock_configparser_sections):
         (
             {
                 "cluster_id": "cluster-test",
-                "signed_cert": "./tests/unit/module_utils/mocks/hsm_signed.crt",
-                "trust_anchor": "./tests/unit/module_utils/mocks/customerCA.crt",
+                "signed_cert": "./tests/unit/plugins/module_utils/mocks/signed.crt",
+                "trust_anchor": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt",
                 "aws_access_key": "TESTAWSACCESSKEY",
                 "aws_secret_key": "testawssecretkey",
                 "region": "us-east-2",
@@ -191,8 +191,8 @@ def test_HsmClusterInit_init(module_args, play_vars, mock_configparser_sections)
             "-----BEGIN CERTIFICATE-----\nMIIDZTCCAk2gAwIBAgIJALZ5lWBXvUBxMA0GCSqGSIb3DQEBCwUAMEkxCzAJBgNV\nBAYTAlVTMQswCQYDVQQIDAJOVjESMBAGA1UEBwwJTGFzIFZlZ2FzMQwwCgYDVQQK\nDANJVFUxCzAJBgNVBAsMAklUMB4XDTIyMDcyOTAzMTUzMFoXDTMyMDcyODAzMTUz\nMFowSTELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAk5WMRIwEAYDVQQHDAlMYXMgVmVn\nYXMxDDAKBgNVBAoMA0lUVTELMAkGA1UECwwCSVQwggEiMA0GCSqGSIb3DQEBAQUA\nA4IBDwAwggEKAoIBAQC8b6kHTUuwreduFDJ8Og2gD3q/8cz+nj0q54XEi6BNBU3i\nA0ykeH6PF0igGGlVGKZYOvBzCdz0lT5andRtDQ5ysQ9gTrQYsoSnCLXLa7MU+IvV\no4YLskNsflg/FGcURdKS+QzcCXWf5MIPv3rnPzPkFf6VFmk3uIGr3PVRUCs9tNZa\nfT5aejGUbnvHLq5YQo0mALCrObTCYTQ1GiohvkE+yEyKSzSVjlMY8lCbCHiHxsef\nLhwDQBlvZDP0h3FqYA8xXs/Av+G4cx25jf7GaB40gKq44mxs/JZQCTuCAlrq6wYJ\n78dZZXHrZF8JWPaDEQ/KVglJ5qy6sbpYgp8p9t0PAgMBAAGjUDBOMB0GA1UdDgQW\nBBQ7Fj4T61iO41BJ2HiMMCgq8+VeGDAfBgNVHSMEGDAWgBQ7Fj4T61iO41BJ2HiM\nMCgq8+VeGDAMBgNVHRMEBTADAQH/MA0GCSqGSIb3DQEBCwUAA4IBAQCZExIIsM9i\nM5DES1o/wfLPVuTKlMjirLPrLnoCoytT9G6ou/yvS5UnjPlHjczN5Bxb3/yU/n6p\n+1AwQTfhkocqB1TCv4PqDttVy/P7k1ZS3dFnMU95gTYStJKjbSEp4tymWSBJY1qS\n3MZyC0dVRsfeCqpnTmafTx8Q0Gjl0FWukIOH/ZH7T0HeZvZxjinlwtblHUYA/VCy\nRw//vKcv5YvPNOpDUrdaUongI9fZyuFV14c+ZOdCHfqGjVJh5I9euYmK9JxHp/OF\n8xRAtuoXinJa9t2FmDrsQSadL4theqOINNC42vmedsTgkYKcOfl9qLk6mV2JSjWc\n1pGHxwLvryHc\n-----END CERTIFICATE-----",
         ),
         (
-            "./tests/unit/module_utils/mocks/hsm_signed.crt",
-            "./tests/unit/module_utils/mocks/customerCA.crt",
+            "./tests/unit/plugins/module_utils/mocks/signed.crt",
+            "./tests/unit/plugins/module_utils/mocks/signing_ca.crt",
         ),
     ],
     ids=["Signed Cert and CA String", "Signed Cert and CA File"],

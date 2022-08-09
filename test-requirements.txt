@@ -18,4 +18,3 @@ pycrypto
 # Used by ec2_win_password
 cryptography
 # Used by initialize_cluster
-pyOpenSSL = "^22.0.0"

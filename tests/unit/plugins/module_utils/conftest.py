@@ -268,8 +268,8 @@ def mock_CreateHsm(request, mock_configparser_sections, mock_boto3):
         [
             {
                 "cluster_id": "cluster-test",
-                "signed_cert": "./tests/unit/module_utils/mocks/hsm_signed.crt",
-                "trust_anchor": "./tests/unit/module_utils/mocks/customerCA.crt",
+                "signed_cert": "./tests/unit/plugins/module_utils/mocks/signed.crt",
+                "trust_anchor": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt",
                 "aws_access_key": "TESTAWSACCESSKEY",
                 "aws_secret_key": "testawssecretkey",
                 "region": "us-east-2",
