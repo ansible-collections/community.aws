@@ -1,0 +1,22 @@
+[
+    {
+        "AvailabilityZone": "us-east-2b",
+        "ClusterId": "cluster-test4",
+        "EniId": "eni-test",
+        "EniIp": "127.0.0.1",
+        "HsmId": "hsm-test",
+        "State": "ACTIVE",
+        "StateMessage": "HSM created.",
+        "SubnetId": "subnet-test"
+    },
+    {
+        "AvailabilityZone": "us-east-2b",
+        "ClusterId": "cluster-test4",
+        "EniId": "eni-test1",
+        "EniIp": "127.0.0.2",
+        "HsmId": "hsm-test1",
+        "State": "ACTIVE",
+        "StateMessage": "HSM created.",
+        "SubnetId": "subnet-test"
+    }
+]

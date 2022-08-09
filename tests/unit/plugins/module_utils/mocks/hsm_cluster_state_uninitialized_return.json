@@ -1,0 +1,66 @@
+[
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test",
+        "CreateTimestamp": "2022-07-23T02:08:23.631000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "UNINITIALIZED",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {},
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "123"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    },
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test3",
+        "CreateTimestamp": "2022-07-23T02:08:23.631000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "UNINITIALIZED",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {},
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "789"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    }
+]

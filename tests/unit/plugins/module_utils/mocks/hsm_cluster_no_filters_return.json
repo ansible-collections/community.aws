@@ -1,0 +1,188 @@
+[
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test",
+        "CreateTimestamp": "2022-07-23T02:08:23.631000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "UNINITIALIZED",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {},
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "123"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    },
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test1",
+        "CreateTimestamp": "2022-07-23T02:08:23.631000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "INITIALIZED",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {},
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "012"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    },
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test2",
+        "CreateTimestamp": "2022-07-23T02:08:23.631000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "ACTIVE",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {},
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "456"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    },
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test3",
+        "CreateTimestamp": "2022-07-23T02:08:23.631000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "UNINITIALIZED",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {},
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "789"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    },
+    {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-test4",
+        "CreateTimestamp": "2022-07-24T19:35:10.889000-07:00",
+        "Hsms": [
+            {
+                "AvailabilityZone": "us-east-2b",
+                "ClusterId": "cluster-test4",
+                "SubnetId": "subnet-test",
+                "EniId": "eni-test",
+                "EniIp": "127.0.0.1",
+                "HsmId": "hsm-test",
+                "State": "ACTIVE",
+                "StateMessage": "HSM created."
+            },
+            {
+                "AvailabilityZone": "us-east-2b",
+                "ClusterId": "cluster-test4",
+                "SubnetId": "subnet-test",
+                "EniId": "eni-test1",
+                "EniIp": "127.0.0.2",
+                "HsmId": "hsm-test1",
+                "State": "ACTIVE",
+                "StateMessage": "HSM created."
+            }
+        ],
+        "HsmType": "hsm1.medium",
+        "SecurityGroup": "sg-test",
+        "State": "DEGRADED",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-test"
+        },
+        "VpcId": "vpc-test",
+        "Certificates": {
+            "ClusterCsr": "-----BEGIN CERTIFICATE REQUEST-----\nMIIC0DCCAbgCAQAwgYoxRDAJBgNVBAYTAlVTMAkGA1UECAwCQ0EwDQYDVQQKDAZD\nYXZpdW0wDQYDVQQLDAZOM0ZJUFMwDgYDVQQHDAdTYW5Kb3NlMUIwQAYDVQQDDDlI\nU006REIwMzA1QzA1MDdBQjkxNUM0REMwNzhCNjM4RDVFOlBBUlROOjEsIGZvciBG\nSVBTIG1vZGUwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCOA+B4sx/l\nlFjTx4yM7AejX5i1GZZGgh4RB5OPdnk/gJpK+/rP6uKGouNzfV3zv4vKDeusk5cC\nVndDjjn6Dz/65ZyEuV2cP9csLsR/C9ufU7ByLa75wrKxSRPmfOV8M/GvJZ9FC55n\nLBOvaNbgAX+JglE3zCSCDuVrwdnDL+jYrej0oAKM5Ke+Nb3S3UqMjvITSfd+XCbn\nZAC2Hk5HygT0uDm/K5vmXXfKIjE2Ayyw52MJHfsAK09UITJ6ZNlZEgQWU1xMsshk\n2fp0ZKV3AJ9/+Qj+nKIH5RRGo3e/miRQYCGIhHC4H1JTv80sAjyPy8o3K1AX/xHH\nIhVHeZ06RyfDAgMBAAGgADANBgkqhkiG9w0BAQsFAAOCAQEAOF/PSYtDmfqHyLRQ\n7VzhBVBLeNhlJYc90kuZmq+h+MCl6lLihcXaEb+i3DpwDw2vMDTMST+ag0RUvv6X\ngpIdCnhza/CRvZwba9H4poLwH25tv4+wEE27E6v/dppe//OlsdSJ4FmHHGUlDd9F\ngOlS+c6k49omfvaJsT4ocl7fA2kb1GOgaaZxVoxO164owp+sEE7ICt5Lnj6inAU2\n/Ve0KQhql0ecSP8zKfOQKQ9DaTxxkftyS9kaXYhhVcnoMAzVCkbH9hmTRbLsbd91\nfSxZnzt7yhaOx0PgPZtEIzhj8C4dKhSl1Leq4Xri77SbF4stx8rpuxcn6d/+prRW\nRCHnrQ==\n-----END CERTIFICATE REQUEST-----\n",
+            "HsmCertificate": "-----BEGIN CERTIFICATE-----\nMIIDejCCAmKgAwIBAgIBATANBgkqhkiG9w0BAQsFADB2MUQwCQYDVQQGEwJVUzAJ\nBgNVBAgMAkNBMA0GA1UECgwGQ2F2aXVtMA0GA1UECwwGTjNGSVBTMA4GA1UEBwwH\nU2FuSm9zZTEuMCwGA1UEAwwlSFNNOjUuMkcxOTI3LUlDTTAwMTM1NSwgZm9yIEZJ\nUFMgbW9kZTAeFw0yMjA3MjYwMDUzNDdaFw0zMjA3MjMwMDUzNDdaMIGKMUQwCQYD\nVQQGEwJVUzAJBgNVBAgMAkNBMA0GA1UECgwGQ2F2aXVtMA0GA1UECwwGTjNGSVBT\nMA4GA1UEBwwHU2FuSm9zZTFCMEAGA1UEAww5SFNNOkRCMDMwNUMwNTA3QUI5MTVD\nNERDMDc4QjYzOEQ1RTpQQVJUTjoxLCBmb3IgRklQUyBtb2RlMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjgPgeLMf5ZRY08eMjOwHo1+YtRmWRoIeEQeT\nj3Z5P4CaSvv6z+rihqLjc31d87+Lyg3rrJOXAlZ3Q445+g8/+uWchLldnD/XLC7E\nfwvbn1Owci2u+cKysUkT5nzlfDPxryWfRQueZywTr2jW4AF/iYJRN8wkgg7la8HZ\nwy/o2K3o9KACjOSnvjW90t1KjI7yE0n3flwm52QAth5OR8oE9Lg5vyub5l13yiIx\nNgMssOdjCR37ACtPVCEyemTZWRIEFlNcTLLIZNn6dGSldwCff/kI/pyiB+UURqN3\nv5okUGAhiIRwuB9SU7/NLAI8j8vKNytQF/8RxyIVR3mdOkcnwwIDAQABMA0GCSqG\nSIb3DQEBCwUAA4IBAQBHNJh14Rx3/xxXcQI+R47RLhTIWLhFOU1Zazo2+jbk6ra0\nCooRoHy+lMVaMVIQmRQ6hMAk9mFq7HaIooc3XaR6+cqCYLz47VC6dzOtE9WGrcYk\n1gewJ8odJRz7+BSzb8xlWvRw/ioPjJHiL8dKJOfiy94LDDYJ+2Yuj5MPoGGkA0AW\nHI4fqemgNJ7/9UiA3AUooEQpBddtNJdypfH5B/5LQjc7OqLlM9n+aUtC70q0BEdk\nO7TdxcQRPdR2n66WGFbQaj+FRBhCFWeEUPfFSE95k40GsDN2tPAbcRjudZ8ZAbhT\no8NRjLngaFheU9wLuDRVpU8KEeSQ3Q8kV/rADNg0\n-----END CERTIFICATE-----\n",
+            "AwsHardwareCertificate": "-----BEGIN CERTIFICATE-----\nMIIDojCCAoqgAwIBAgIEf2S/HjANBgkqhkiG9w0BAQsFADCBhzELMAkGA1UEBhMC\nVVMxETAPBgNVBAgMCFZpcmdpbmlhMRAwDgYDVQQHDAdIZXJuZG9uMSEwHwYDVQQK\nDBhBbWF6b24gV2ViIFNlcnZpY2VzIElOQy4xETAPBgNVBAsMCENsb3VkSFNNMR0w\nGwYDVQQDDBRBV1MgQ2xvdWRIU00gUm9vdCBHMTAeFw0xOTEyMDIxMDUxMjdaFw0y\nOTExMjkxMDUxMjdaMHYxRDAJBgNVBAYTAlVTMAkGA1UECAwCQ0EwDQYDVQQKDAZD\nYXZpdW0wDQYDVQQLDAZOM0ZJUFMwDgYDVQQHDAdTYW5Kb3NlMS4wLAYDVQQDDCVI\nU006NS4yRzE5MjctSUNNMDAxMzU1LCBmb3IgRklQUyBtb2RlMIIBIjANBgkqhkiG\n9w0BAQEFAAOCAQ8AMIIBCgKCAQEAt/KgrsIOh7cVL2wK4vAv6Pzcg61Og0vr2+h1\nQ9zuc0Vi/SodC+80gSfRXFbpW+ojfDEIqcBeKZN1vmNrV5fSyEXp/Rgid6Kbg6/+\nNSX0YOYP4EWOsL1MdXA5+g134/D9zw5rF1kQI80pOTXTgeNs6r/rF3R+Yy3qb14+\nNf1cwKP5KdmsdpPAVysf4kuZe8aMWq3GwwxlUo3fslHSouyuKvtqe+k3EbJxjQ9Y\n2bXS6FY+SYa4rNxbbBjHDaQDYfjTGaGpxDbdzSnidfNJzTbTFruukfS423ne9Dju\nTmQfLr9i85FUeAt+37JgM7sl12aBIDufop0ByQt1LkrVlGCInwIDAQABoyYwJDAO\nBgNVHQ8BAf8EBAMCAgQwEgYDVR0TAQH/BAgwBgEB/wIBADANBgkqhkiG9w0BAQsF\nAAOCAQEAub0ZVhpT+xSenefmMsEsi4IKpKrBRSUuDxEtdS5og1R5QHxCsisofZ0Y\ngRiO4s7qFR6ov16UabMJgcBY3wXMVQpxB5yfe0KrEh8xbjhABJBIqJqovHR46xDr\nAAAq3hGIUGk+ew+SiL90j2iAb/1KBSHnsmPVuRBmdfdD4iat3rtEt6aZWR/T2Xjm\nxGVrrAL5/aXhm2yPM0D1TgqhWhc32ZD3FNGx4X0qgPcPtNAnn+BnGXS7PajnXrkE\npDC+3T+JGRmUqLOIuIO/8PPTRhnXmLB/g9lMw99Uv/GDifDSVUxzlrHc778eWQ7C\n7fJAMZgsPY1QWQ7scd+eT5lXvfmXSA==\n-----END CERTIFICATE-----\n",
+            "ManufacturerHardwareCertificate": "-----BEGIN CERTIFICATE-----\nMIIDqTCCApGgAwIBAgIBATANBgkqhkiG9w0BAQsFADCBkTELMAkGA1UEBhMCVVMx\nEzARBgNVBAgMCkNhbGlmb3JuaWExETAPBgNVBAcMCFNhbiBKb3NlMRUwEwYDVQQK\nDAxDYXZpdW0sIEluYy4xFzAVBgNVBAsMDkxpcXVpZFNlY3VyaXR5MSowKAYDVQQD\nDCFsb2NhbGNhLmxpcXVpZHNlY3VyaXR5LmNhdml1bS5jb20wHhcNMTkxMDIxMjAw\nMTMyWhcNMjkxMDE4MjAwMTMyWjB2MUQwCQYDVQQGEwJVUzAJBgNVBAgMAkNBMA0G\nA1UECgwGQ2F2aXVtMA0GA1UECwwGTjNGSVBTMA4GA1UEBwwHU2FuSm9zZTEuMCwG\nA1UEAwwlSFNNOjUuMkcxOTI3LUlDTTAwMTM1NSwgZm9yIEZJUFMgbW9kZTCCASIw\nDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBALfyoK7CDoe3FS9sCuLwL+j83IOt\nToNL69vodUPc7nNFYv0qHQvvNIEn0VxW6VvqI3wxCKnAXimTdb5ja1eX0shF6f0Y\nIneim4Ov/jUl9GDmD+BFjrC9THVwOfoNd+Pw/c8OaxdZECPNKTk104HjbOq/6xd0\nfmMt6m9ePjX9XMCj+SnZrHaTwFcrH+JLmXvGjFqtxsMMZVKN37JR0qLsrir7anvp\nNxGycY0PWNm10uhWPkmGuKzcW2wYxw2kA2H40xmhqcQ23c0p4nXzSc020xa7rpH0\nuNt53vQ47k5kHy6/YvORVHgLft+yYDO7JddmgSA7n6KdAckLdS5K1ZRgiJ8CAwEA\nAaMmMCQwEgYDVR0TAQH/BAgwBgEB/wIBADAOBgNVHQ8BAf8EBAMCAgQwDQYJKoZI\nhvcNAQELBQADggEBAL+d+2PZUy2tPk9N9P2rVB/IG6jL4kxDYVA2V9CunUFkBbpQ\n5vHd1oNeNkGjANj9dOTj6tcl/r6zHepPxKrdQb7SA3939BUW0dee9w4jXAzYWYsk\n6yfcBLGRUlydWRPbb9QsLg6Zzhiw57uvFd2np/1dzy+hOsF4gGIjuDqbU3+X5pev\nqy5MPVs5WgGndonAFlA832CfanN8pekzJMoqGZiFod0zuwP+8tCUdHPk1SWA4PmX\nuLJvoqUxAfAgJqyJYPS9AXKtctj1EdvQ2gfOi1l49Soyh+fxbQ9VAO/xhS8yyjR1\npVBpvG6gb0qOHEaNM1i7cgBovwvCreJiC25QdCc=\n-----END CERTIFICATE-----\n"
+        },
+        "TagList": [
+            {
+                "Key": "sec",
+                "Value": "none"
+            },
+            {
+                "Key": "name",
+                "Value": "456"
+            },
+            {
+                "Key": "zone",
+                "Value": "west"
+            }
+        ]
+    }
+]

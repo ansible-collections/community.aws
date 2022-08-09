@@ -1,0 +1,12 @@
+{
+    "Hsm": {
+        "AvailabilityZone": "us-west-2b",
+        "ClusterId": "cluster-test",
+        "EniId": "eni-test",
+        "EniIp": "192.168.0.1",
+        "HsmId": "hsm-test",
+        "State": "ACTIVE",
+        "StateMessage": "HSM created.",
+        "SubnetId": "subnet-test"
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "Cluster": {
+        "BackupPolicy": "DEFAULT",
+        "BackupRetentionPolicy": {
+            "Type": "DAYS",
+            "Value": "90"
+        },
+        "ClusterId": "cluster-cmp4w4mhi4j",
+        "CreateTimestamp": "2022-07-27T22:17:41.436000-07:00",
+        "Hsms": [],
+        "HsmType": "hsm1.medium",
+        "State": "CREATE_IN_PROGRESS",
+        "SubnetMapping": {
+            "us-east-2b": "subnet-0dcef7af922f2d5bc"
+        },
+        "VpcId": "vpc-0f08baa19b887bd01",
+        "Certificates": {}
+    },
+    "ResponseMetadata": {
+        "RequestId": "d95c5cfd-ef11-47f1-b224-20a73f077ac0",
+        "HTTPStatusCode": 200,
+        "HTTPHeaders": {
+            "x-amzn-requestid": "d95c5cfd-ef11-47f1-b224-20a73f077ac0",
+            "content-type": "application/x-amz-json-1.1",
+            "content-length": "331",
+            "date": "Thu, 28 Jul 2022 05: 17: 41 GMT"
+        },
+        "RetryAttempts": 0
+    }
+}
