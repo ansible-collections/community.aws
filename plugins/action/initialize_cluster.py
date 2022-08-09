@@ -4,7 +4,7 @@ from __future__ import absolute_import, division, print_function
 __metaclass__ = type
 
 from ansible.plugins.action import ActionBase
-from ansible_collections.aws.hsm.plugins.module_utils.initialize_cluster import (
+from ansible_collections.community.aws.plugins.module_utils.initialize_cluster import (
     HsmClusterInit,
 )
 

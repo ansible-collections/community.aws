@@ -13,8 +13,11 @@ from ansible.errors import AnsibleActionFail
 __metaclass__ = type
 
 
-from ansible_collections.aws.hsm.plugins.module_utils.aws_hsm import AwsHsm, Validator
-from ansible_collections.aws.hsm.plugins.module_utils.constants import *
+from ansible_collections.community.aws.plugins.module_utils.aws_hsm import (
+    AwsHsm,
+    Validator,
+)
+from ansible_collections.community.aws.plugins.module_utils.constants import *
 
 
 class DescribeHsmValidator(Validator):  # type: ignore

@@ -39,8 +39,8 @@ issue, or by reporting any additional information
 
 ## Pull Requests
 
-All modules MUST have integration tests for new features. Upgrading to boto3 shall be considered a feature request.  
-Bug fixes for modules that currently have integration tests SHOULD have tests added.  
+All modules MUST have integration tests for new features. Upgrading to boto3 shall be considered a feature request.
+Bug fixes for modules that currently have integration tests SHOULD have tests added.
 New modules should be submitted to the [community.aws](https://github.com/ansible-collections/community.aws) collection
 and MUST have integration tests.
 

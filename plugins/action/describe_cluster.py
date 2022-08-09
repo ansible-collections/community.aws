@@ -6,7 +6,7 @@ from typing import Any
 __metaclass__ = type
 
 from ansible.plugins.action import ActionBase
-from ansible_collections.aws.hsm.plugins.module_utils.describe_cluster import (
+from ansible_collections.community.aws.plugins.module_utils.describe_cluster import (
     DescribeHsmCluster,
 )
 

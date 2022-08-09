@@ -56,7 +56,7 @@ options:
 
 EXAMPLES = r"""
 - name: "Initialize HSM Cluster"
-  aws.hsm.initialize_cluster:
+  community.aws.initialize_cluster:
     aws_access_key: HKHKHOIU
     aws_secret_key: 123dkj973&^871623
     region: us-west-2c
@@ -107,7 +107,7 @@ EXAMPLES = r"""
 
 
 - name: "Initialize HSM Cluster"
-  aws.hsm.initialize_cluster:
+  community.aws.initialize_cluster:
     cluster_id: cluster_a3231231
     signed_cert: ./signed_cert.crt
     trust_anchor: ./signing_ca.crt

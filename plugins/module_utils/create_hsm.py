@@ -11,8 +11,11 @@ from typing import Any
 
 from ansible.errors import AnsibleActionFail
 from ansible.utils.display import Display
-from ansible_collections.aws.hsm.plugins.module_utils.aws_hsm import AwsHsm, Validator
-from ansible_collections.aws.hsm.plugins.module_utils.constants import *
+from ansible_collections.community.aws.plugins.module_utils.aws_hsm import (
+    AwsHsm,
+    Validator,
+)
+from ansible_collections.community.aws.plugins.module_utils.constants import *
 
 __metaclass__ = type
 

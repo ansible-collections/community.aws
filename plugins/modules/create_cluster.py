@@ -79,7 +79,7 @@ options:
 
 EXAMPLES = r"""
 - name: "Create an HSM Cluster"
-  aws.hsm.create_cluster:
+  community.aws.create_cluster:
     aws_access_key: HKHKHOIU
     aws_secret_key: 123dkj973&^871623
     region: us-west-2c
@@ -90,7 +90,7 @@ EXAMPLES = r"""
     name: "West2a_Cluster"
 
 - name: "Create an HSM Cluster With Tags"
-  aws.hsm.create_cluster:
+  community.aws.create_cluster:
     subnet_ids:
       - subnet-5855b205
     state: present
@@ -100,7 +100,7 @@ EXAMPLES = r"""
       sec: none
 
 - name: "Remove HSM Cluster"
-  aws.hsm.create_cluster:
+  community.aws.create_cluster:
     state: absent
     name: "West2a_Cluster"
 """

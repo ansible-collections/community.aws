@@ -72,7 +72,7 @@ options:
 
 EXAMPLES = r"""
 - name: "Create an HSM Device"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     aws_access_key: HKHKHOIU
     aws_secret_key: 123dkj973&^871623
     region: us-west-2c
@@ -83,7 +83,7 @@ EXAMPLES = r"""
 
 
 - name: "Create an HSM Device with IP"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     availability_zone: zone_asodaos
     cluster_id: cluster_a3231231
     ip_address: 192.168.0.1
@@ -95,7 +95,7 @@ EXAMPLES = r"""
     aws_region: us-west2
 
 - name: "Create Two HSM Devices with IP"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     availability_zone: zone_asodaos
     cluster_id: cluster_a3231231
     ip_address:
@@ -105,31 +105,31 @@ EXAMPLES = r"""
     state: present
 
 - name: "Add Second HSM Devices to the Existing One"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     availability_zone: zone_asodaos
     cluster_id: cluster_a3231231
     count: 2
     state: present
 
 - name: "Remove all HSM Devices"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     cluster_id: cluster_a3231231
     state: absent
 
 - name: "Remove HSM Device Using HSM ID"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     cluster_id: cluster_a3231231
     hsm_id: hsm_asdasd123123
     state: absent
 
 - name: "Remove HSM Device USING ENI ID"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     cluster_id: cluster_a3231231
     eni_id: eni_123asd123
     state: absent
 
 - name: "Remove HSM Device USING ENI IP"
-  aws.hsm.create_hsm:
+  community.aws.create_hsm:
     cluster_id: cluster_a3231231
     eni_ip: 192.168.0.1
     state: absent

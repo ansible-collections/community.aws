@@ -58,24 +58,24 @@ options:
 
 EXAMPLES = r"""
 - name: "Get All HSMs Across all HSM Clusters"
-  aws.hsm.describe_hsm:
+  community.aws.describe_hsm:
     aws_access_key: HKHKHOIU
     aws_secret_key: 123dkj973&^871623
     region: us-west-2c
 
 
 - name: "Get All HSMs in ACTIVE state"
-  aws.hsm.describe_hsm:
+  community.aws.describe_hsm:
     state: ACTIVE
 
 - name: "Get All HSMs in DEGRADED and ACTIVE state"
-  aws.hsm.describe_hsm:
+  community.aws.describe_hsm:
     state:
       - DEGRADED
       - ACTIVE
 
 - name: "Get all HSMs For a Particular Cluster ID"
-  aws.hsm.describe_hsm:
+  community.aws.describe_hsm:
     cluster_id: cluster_a3231231
 """
 

@@ -67,34 +67,34 @@ options:
 
 EXAMPLES = r"""
 - name: "Get All HSM Cluster"
-  aws.hsm.describe_cluster:
+  community.aws.describe_cluster:
     aws_access_key: HKHKHOIU
     aws_secret_key: 123dkj973&^871623
     region: us-west-2c
 
 
 - name: "Get All HSM Clusters in INITIALIZED state"
-  aws.hsm.describe_cluster:
+  community.aws.describe_cluster:
     state: INITIALIZED
 
 - name: "Get All HSM Clusters in INITIALIZED and ACTIVE state"
-  aws.hsm.describe_cluster:
+  community.aws.describe_cluster:
     state:
       - INITIALIZED
       - ACTIVE
 
 - name: "Get HSM Cluster Based on the Cluster ID"
-  aws.hsm.describe_cluster:
+  community.aws.describe_cluster:
     cluster_id: cluster_a3231231
 
 - name: "Get HSM Cluster Based on the Multiple Cluster IDs"
-  aws.hsm.describe_cluster:
+  community.aws.describe_cluster:
     cluster_id:
       - cluster_a3231231
       - cluster_a3231232
 
 - name: "Get HSM Cluster Based on the Cluster name"
-  aws.hsm.describe_cluster:
+  community.aws.describe_cluster:
     name: WestHSMCluster
 """
 
