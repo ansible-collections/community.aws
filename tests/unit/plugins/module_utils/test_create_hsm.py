@@ -12,7 +12,6 @@ import sys
 
 sys.path.append("./plugins/module_utils")
 
-from constants import *
 from create_hsm import CreateHsm, CreateHsmValidator
 
 

@@ -42,7 +42,7 @@ options:
     description:
       - Backup retention days for the cluster.
       - Must be a value between 7 and 379.
-    type: str
+    type: int
     required: false
     default: 90
   source_backup_id:

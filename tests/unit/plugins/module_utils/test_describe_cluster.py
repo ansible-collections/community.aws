@@ -11,7 +11,6 @@ import sys
 
 sys.path.append("./plugins/module_utils")
 
-from constants import *
 from describe_cluster import DescribeHsmCluster, DescribeHsmClusterValidator
 
 

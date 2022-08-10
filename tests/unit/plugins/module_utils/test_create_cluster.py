@@ -10,7 +10,6 @@ import sys
 
 sys.path.append("./plugins/module_utils")
 from create_cluster import CreateHsmCluster, CreateHsmClusterValidator
-from constants import *
 
 
 @pytest.mark.parametrize("module_args, play_vars", [({}, {})], ids=["No arguments"])

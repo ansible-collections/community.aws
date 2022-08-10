@@ -12,7 +12,6 @@ import sys
 
 sys.path.append("./plugins/module_utils")
 
-from constants import *
 from initialize_cluster import HsmClusterInit, HsmClusterInitValidator
 
 
@@ -87,7 +86,10 @@ def test_signed_cert_exception(module_args, play_vars, match):
             },
             {},
         ),
-        ({"trust_anchor": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt"}, {}),
+        (
+            {"trust_anchor": "./tests/unit/plugins/module_utils/mocks/signing_ca.crt"},
+            {},
+        ),
     ],
     ids=["Valid CA Cert", "Valid CA Cert File"],
 )

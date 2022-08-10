@@ -65,7 +65,7 @@ options:
       - Number of HSM devices that need to be created.
       - The value cannot be greater than 3.
     type: int
-    required: true
+    required: false
     default: 1
 """
 

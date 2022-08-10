@@ -7,7 +7,7 @@ import pytest
 
 sys.path.append("plugins/module_utils")
 from aws_hsm import AwsHsm, Validator
-from constants import *
+from constants import AWS_HSM
 from create_cluster import CreateHsmCluster
 from create_hsm import CreateHsm
 from describe_cluster import DescribeHsmCluster
