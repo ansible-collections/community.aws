@@ -18,9 +18,13 @@ string_cipher = base64.b64encode(base64_cipher)
 '''
 
 import datetime
+import pytest
 
 from ansible.module_utils._text import to_bytes
 from ansible.module_utils._text import to_text
+
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
+
 from ansible_collections.community.aws.tests.unit.compat.mock import patch
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import AnsibleExitJson
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import ModuleTestCase
@@ -30,6 +34,9 @@ from ansible_collections.community.aws.plugins.modules.ec2_win_password import s
 from ansible_collections.community.aws.plugins.modules.ec2_win_password import ec2_win_password
 
 fixture_prefix = 'tests/unit/plugins/modules/fixtures/certs'
+
+if not HAS_BOTO3:
+    pytestmark = pytest.mark.skip("test_api_gateway.py requires the `boto3` and `botocore` modules")
 
 
 class TestEc2WinPasswordModule(ModuleTestCase):

@@ -14,14 +14,24 @@ import pytest
 
 from ansible.module_utils._text import to_text
 
+try:
+    import boto3
+except ImportError:
+    pass
+
 # Magic...  Incorrectly identified by pylint as unused
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep  # pylint: disable=unused-import
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify  # pylint: disable=unused-import
 
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 from ansible_collections.community.aws.plugins.modules import data_pipeline
 
-# test_api_gateway.py requires the `boto3` and `botocore` modules
-boto3 = pytest.importorskip('boto3')
+if not HAS_BOTO3:
+    pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
+
+
+class FailException(Exception):
+    pass
 
 
 @pytest.fixture(scope='module')
@@ -62,7 +72,7 @@ def dp_setup():
         yield Dependencies(module=module, data_pipeline_id='df-0590406117G8DPQZY2HA', objects=objects)
     else:
         connection = boto3.client('datapipeline')
-        changed, result = data_pipeline.create_pipeline(connection, module)
+        _changed, result = data_pipeline.create_pipeline(connection, module)
         data_pipeline_id = result['data_pipeline']['pipeline_id']
         yield Dependencies(module=module, data_pipeline_id=data_pipeline_id, objects=objects)
 
@@ -79,7 +89,7 @@ class FakeModule(object):
     def fail_json(self, *args, **kwargs):
         self.exit_args = args
         self.exit_kwargs = kwargs
-        raise Exception('FAIL')
+        raise FailException('FAIL')
 
     def exit_json(self, *args, **kwargs):
         self.exit_args = args
@@ -102,20 +112,23 @@ def test_pipeline_field(placeboify, maybe_sleep, dp_setup):
 def test_define_pipeline(placeboify, maybe_sleep, dp_setup):
     connection = placeboify.client('datapipeline')
     changed, result = data_pipeline.define_pipeline(connection, dp_setup.module, dp_setup.objects, dp_setup.data_pipeline_id)
+    assert changed is True
     assert 'has been updated' in result
 
 
 def test_deactivate_pipeline(placeboify, maybe_sleep, dp_setup):
     connection = placeboify.client('datapipeline')
-    changed, result = data_pipeline.deactivate_pipeline(connection, dp_setup.module)
+    _changed, result = data_pipeline.deactivate_pipeline(connection, dp_setup.module)
+    # XXX possible bug
+    # assert changed is True
     assert "Data Pipeline ansible-test-create-pipeline deactivated" in result['msg']
 
 
 def test_activate_without_population(placeboify, maybe_sleep, dp_setup):
     connection = placeboify.client('datapipeline')
-    with pytest.raises(Exception) as error_message:
-        changed, result = data_pipeline.activate_pipeline(connection, dp_setup.module)
-        assert error_message == "You need to populate your pipeline before activation."
+    with pytest.raises(FailException):
+        _changed, _result = data_pipeline.activate_pipeline(connection, dp_setup.module)
+    assert dp_setup.module.exit_kwargs.get('msg') == "You need to populate your pipeline before activation."
 
 
 def test_create_pipeline(placeboify, maybe_sleep):
@@ -157,7 +170,7 @@ def test_delete_nonexistent_pipeline(placeboify, maybe_sleep):
               'tags': {'ansible': 'test'},
               'timeout': 300}
     m = FakeModule(**params)
-    changed, result = data_pipeline.delete_pipeline(connection, m)
+    changed, _result = data_pipeline.delete_pipeline(connection, m)
     assert changed is False
 
 
@@ -171,7 +184,7 @@ def test_delete_pipeline(placeboify, maybe_sleep):
               'timeout': 300}
     m = FakeModule(**params)
     data_pipeline.create_pipeline(connection, m)
-    changed, result = data_pipeline.delete_pipeline(connection, m)
+    changed, _result = data_pipeline.delete_pipeline(connection, m)
     assert changed is True
 
 
@@ -217,9 +230,8 @@ def test_pipeline_description(placeboify, maybe_sleep, dp_setup):
 def test_pipeline_description_nonexistent(placeboify, maybe_sleep):
     hypothetical_pipeline_id = "df-015440025PF7YGLDK47C"
     connection = placeboify.client('datapipeline')
-    with pytest.raises(Exception) as error:
+    with pytest.raises(data_pipeline.DataPipelineNotFound):
         data_pipeline.pipeline_description(connection, hypothetical_pipeline_id)
-        assert error == data_pipeline.DataPipelineNotFound
 
 
 def test_check_dp_exists_true(placeboify, maybe_sleep, dp_setup):
@@ -249,5 +261,5 @@ def test_activate_pipeline(placeboify, maybe_sleep, dp_setup):
                                   module=dp_setup.module,
                                   objects=dp_setup.objects,
                                   dp_id=dp_setup.data_pipeline_id)
-    changed, result = data_pipeline.activate_pipeline(connection, dp_setup.module)
+    changed, _result = data_pipeline.activate_pipeline(connection, dp_setup.module)
     assert changed is True
