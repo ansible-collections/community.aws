@@ -155,7 +155,7 @@ def create_lifecycle_hook(connection, module):
         # GlobalTimeout is not configurable, but exists in response.
         # Removing it helps to compare both dicts in order to understand
         # what changes were done.
-        del(existing_hook[0]['GlobalTimeout'])
+        del existing_hook[0]['GlobalTimeout']
         added, removed, modified, same = dict_compare(lch_params, existing_hook[0])
         if added or removed or modified:
             changed = True
@@ -166,7 +166,7 @@ def create_lifecycle_hook(connection, module):
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Failed to create LifecycleHook")
 
-    return(changed)
+    return changed
 
 
 def dict_compare(d1, d2):
@@ -213,7 +213,7 @@ def delete_lifecycle_hook(connection, module):
         else:
             pass
 
-    return(changed)
+    return changed
 
 
 def main():
