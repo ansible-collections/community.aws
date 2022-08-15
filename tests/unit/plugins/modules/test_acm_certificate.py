@@ -122,4 +122,4 @@ def test_chain_compare():
             if expected != actual:
                 print("Error, unexpected comparison result between \n%s\nand\n%s" % (chain_a['path'], chain_b['path']))
                 print("Expected %s got %s" % (str(expected), str(actual)))
-            assert(expected == actual)
+            assert expected == actual

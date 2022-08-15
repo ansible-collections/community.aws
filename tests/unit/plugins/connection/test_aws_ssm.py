@@ -91,7 +91,7 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn = connection_loader.get('community.aws.aws_ssm', pc, new_stdin)
         conn.is_windows = MagicMock()
         conn.is_windows.return_value = True
-        return('windows1')
+        return 'windows1'
 
     def test_plugins_connection_aws_ssm_post_process(self):
         pc = PlayContext()
@@ -103,7 +103,7 @@ class TestConnectionBaseClass(unittest.TestCase):
         fail = 2
         conn.stdout = MagicMock()
         returncode = 0
-        return(returncode, conn.stdout)
+        return returncode, conn.stdout
 
     @patch('subprocess.Popen')
     def test_plugins_connection_aws_ssm_flush_stderr(self, s_popen):
@@ -114,7 +114,7 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn.poll_stderr.register = MagicMock()
         conn.stderr = None
         s_popen.poll().return_value = 123
-        return(conn.stderr)
+        return conn.stderr
 
     @patch('boto3.client')
     def test_plugins_connection_aws_ssm_get_url(self, boto):
