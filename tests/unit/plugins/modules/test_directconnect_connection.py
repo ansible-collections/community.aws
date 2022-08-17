@@ -69,7 +69,7 @@ def test_associations_are_not_updated(placeboify, maybe_sleep):
 def test_create_and_delete(placeboify, maybe_sleep):
     client = placeboify.client('directconnect')
     created_conn = verify_create_works(placeboify, maybe_sleep, client)
-    deleted_conn = verify_delete_works(placeboify, maybe_sleep, client, created_conn)
+    verify_delete_works(placeboify, maybe_sleep, client, created_conn)
 
 
 def verify_create_works(placeboify, maybe_sleep, client):

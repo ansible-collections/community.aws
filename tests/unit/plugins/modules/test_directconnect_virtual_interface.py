@@ -20,6 +20,10 @@ if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_directconnect_confirm_connection.py requires the `boto3` and `botocore` modules")
 
 
+class FailException(Exception):
+    pass
+
+
 class FakeModule(object):
     def __init__(self, **kwargs):
         self.params = kwargs
@@ -27,7 +31,7 @@ class FakeModule(object):
     def fail_json(self, *args, **kwargs):
         self.exit_args = args
         self.exit_kwargs = kwargs
-        raise Exception("FAIL")
+        raise FailException("FAIL")
 
     def exit_json(self, *args, **kwargs):
         self.exit_args = args
@@ -61,13 +65,12 @@ def test_find_unique_vi_returns_multiple(placeboify, maybe_sleep):
                         id_to_associate="dxcon-aaaaaaaa",
                         public=False,
                         name=None)
-    try:
+    with pytest.raises(FailException):
         directconnect_virtual_interface.ensure_state(
             client,
             module
         )
-    except Exception:
-        assert "Multiple virtual interfaces were found" in module.exit_kwargs["msg"]
+    assert "Multiple virtual interfaces were found" in module.exit_kwargs["msg"]
 
 
 def test_find_unique_vi_returns_missing_for_vi_id(placeboify, maybe_sleep):
@@ -77,13 +80,12 @@ def test_find_unique_vi_returns_missing_for_vi_id(placeboify, maybe_sleep):
                         public=False,
                         name=None,
                         virtual_interface_id="dxvif-aaaaaaaa")
-    try:
+    with pytest.raises(FailException):
         directconnect_virtual_interface.ensure_state(
             client,
             module
         )
-    except Exception:
-        assert "The virtual interface dxvif-aaaaaaaa does not exist" in module.exit_kwargs["msg"]
+    assert "The virtual interface dxvif-aaaaaaaa does not exist" in module.exit_kwargs["msg"]
 
 
 def test_construct_public_vi():
