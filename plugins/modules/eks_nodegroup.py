@@ -179,7 +179,7 @@ EXAMPLES = r'''
   community.aws.eks_nodegroup:
     name: test_nodegroup
     state: present
-    cluster_name: fake_cluster
+    cluster_name: test_cluster
     node_role: '{{ role }}'
     subnets: >-
       {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
@@ -212,7 +212,7 @@ nodegroup_name:
   description: The name associated with an Amazon EKS managed node group.
   returned: when state is present
   type: str
-  sample: test_profile
+  sample: test_cluster
 nodegroup_arn:
   description: The Amazon Resource Name (ARN) associated with the managed node group.
   returned: when state is present
@@ -222,7 +222,7 @@ cluster_name:
   description: Name of EKS Cluster
   returned: when state is present
   type: str
-  sample: test-cluster
+  sample: test_cluster
 version:
   description: The Kubernetes version of the managed node group.
   returned: when state is present
