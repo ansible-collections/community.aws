@@ -180,10 +180,10 @@ EXAMPLES = r'''
     name: test_nodegroup
     state: present
     cluster_name: test_cluster
-    node_role: '{{ role }}'
-    subnets: >-
-      {{setup_subnets.results|selectattr('subnet.tags.Name', 'contains',
-      'private') | map(attribute='subnet.id') }}
+    node_role: arn:aws:eks:us-east-1:1231231123:role/asdf
+    subnets:
+      - subnet-qwerty123
+      - subnet-asdfg456
     scaling_config:
       - min_size: 1
       - max_size: 2
