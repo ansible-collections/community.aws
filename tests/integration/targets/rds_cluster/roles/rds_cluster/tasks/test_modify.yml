@@ -19,7 +19,7 @@
     rds_cluster:
       id: "{{ cluster_id }}"
       state: present
-      engine: "{{ engine}}"
+      engine: "{{ engine }}"
       username: "{{ username }}"
       password: "{{ password }}"
     register: _result_create_source_db_cluster
@@ -163,7 +163,7 @@
       AWS_DEFAULT_REGION: "{{ aws_region }}"
     register: _result_check_db_parameter_group
     ignore_errors: True
-    changed_when: "_result_check_db_parameter_group.rc == 0"
+    changed_when: _result_check_db_parameter_group.rc == 0
 
   - name: Create DB cluster parameter group if not exists
     command: 'aws rds create-db-cluster-parameter-group --db-cluster-parameter-group-name {{ new_db_parameter_group_name }} --db-parameter-group-family aurora5.6 --description "Test DB cluster parameter group"'
@@ -173,13 +173,13 @@
       AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
       AWS_DEFAULT_REGION: "{{ aws_region }}"
     register: _result_create_db_parameter_group
-    when: "_result_check_db_parameter_group.rc == 0"
-
+    when: _result_check_db_parameter_group.rc != 0
 
   - name: Modify DB cluster parameter group
     rds_cluster:
       id: "{{ cluster_id }}"
       state: present
+      engine: "{{ engine }}"
       db_cluster_parameter_group_name: "{{ new_db_parameter_group_name }}"
     register: _result_modify_db_parameter_group_name
 
