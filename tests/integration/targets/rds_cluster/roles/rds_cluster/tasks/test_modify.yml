@@ -179,6 +179,7 @@
     rds_cluster:
       id: "{{ new_cluster_id }}"
       state: present
+      engine: "{{ engine }}"
       db_cluster_parameter_group_name: "{{ new_db_parameter_group_name }}"
       apply_immediately: True
     register: _result_modify_db_parameter_group_name
