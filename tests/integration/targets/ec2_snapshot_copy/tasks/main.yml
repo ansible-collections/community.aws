@@ -1,0 +1,82 @@
+---
+# Tests for EC2 Snapshot
+#
+# Tests ec2_snapshot_copy:
+# - Snapshot copy without tags
+# - Snapshot copy with tags
+#
+- name: Integration testing for ec2_snapshot_copy
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+
+  block:
+    - name: Gather availability zones
+      amazon.aws.aws_az_info:
+      register: azs
+
+    - name: Create a detached volume without tags
+      amazon.aws.ec2_vol:
+        volume_size: 1
+        zone: '{{ azs.availability_zones[0].zone_name }}'
+      register: volume_detached
+
+    - name: Create a snapshot of detached volume
+      amazon.aws.ec2_snapshot:
+        volume_id: '{{ volume_detached.volume_id }}'
+      register: base_snapshot
+
+    - name: Verify the base snapshot was created as expected
+      ansible.builtin.assert:
+        that:
+          - base_snapshot is changed
+          - base_snapshot.snapshots| length == 1
+          - base_snapshot.snapshots[0].volume_id == volume_detached.volume_id
+
+    - name: Copy snapshot without tags and store results
+      community.aws.ec2_snapshot_copy:
+        source_region: "{{ aws_region }}"
+        source_snapshot_id: "{{ base_snapshot.snapshot_id }}"
+        region: "{{ aws_region }}"
+        description: "Copy of {{ base_snapshot.snapshot_id }} without tags"
+      register: untagged_snapshot
+
+    - name: Verify that the copy without tags worked
+      ansible.builtin.assert:
+        that:
+          - untagged_snapshot is changed
+
+    - name: Copy snapshot with tags and store results
+      community.aws.ec2_snapshot_copy:
+        source_region: "{{ aws_region }}"
+        source_snapshot_id: "{{ base_snapshot.snapshot_id }}"
+        region: "{{ aws_region }}"
+        description: "Copy of {{ base_snapshot.snapshot_id }} with tags"
+        tags:
+          SourceSnapshot: "{{ base_snapshot.snapshot_id }}"
+      register: tagged_snapshot
+
+    - name: Verify that the copy with tags worked
+      ansible.builtin.assert:
+        that:
+          - tagged_snapshot is changed
+
+  always:
+    - name: Delete detached and untagged volume
+      amazon.aws.ec2_vol:
+        id: "{{ volume_detached.volume_id }}"
+        state: absent
+      ignore_errors: true
+
+    - name: Delete snapshots
+      amazon.aws.ec2_snapshot:
+        state: absent
+        snapshot_id: "{{ item }}"
+      ignore_errors: true
+      loop:
+        - "{{ base_snapshot.snapshot_id }}"
+        - "{{ untagged_snapshot.snapshot_id }}"
+        - "{{ tagged_snapshot.snapshot_id }}"
