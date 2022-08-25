@@ -28,8 +28,6 @@
       register: lc_1_create
 
     - name: Gather information about launch configuration 1
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
       community.aws.ec2_lc_info:
         name: '{{ resource_prefix }}-lc1'
       register: lc_1_info_result
@@ -77,8 +75,6 @@
       register: lc_2_create
 
     - name: Gather information about launch configuration 2
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
       community.aws.ec2_lc_info:
         name: '{{ resource_prefix }}-lc2'
       register: lc_2_info_result
@@ -113,8 +109,6 @@
           - '"autoscaling:CreateLaunchConfiguration" not in lc_2_create_idem.resource_actions'
 
     - name: Create launch configuration 3 - test throughput parameter
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc3'
         image_id: '{{ ec2_ami_id }}'
@@ -128,8 +122,6 @@
       register: lc_3_create
 
     - name: Gather information about launch configuration 3
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
       community.aws.ec2_lc_info:
         name: '{{ resource_prefix }}-lc3'
       register: lc_3_info_result
@@ -145,8 +137,6 @@
           - '"autoscaling:CreateLaunchConfiguration" in lc_3_create.resource_actions'
 
     - name: Create launch configuration 3 - Idempotency
-      vars:
-          ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
       community.aws.ec2_lc:
         name: '{{ resource_prefix }}-lc3'
         image_id: '{{ ec2_ami_id }}'

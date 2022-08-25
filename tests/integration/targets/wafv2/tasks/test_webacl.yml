@@ -25,9 +25,9 @@
     rules:
       - name: zwei
         priority: 2
-        action: 
+        action:
           block: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: ddos
@@ -40,9 +40,9 @@
                 priority: 0
       - name: admin_protect
         priority: 1
-        override_action: 
+        override_action:
           none: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -75,9 +75,9 @@
     rules:
       - name: bla
         priority: 8
-        override_action: 
+        override_action:
           none: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -120,9 +120,9 @@
     rules:
       - name: admin_protect
         priority: 1
-        override_action: 
+        override_action:
           none: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: admin_protect
@@ -164,9 +164,9 @@
     rules:
       - name: admin_protect
         priority: 1
-        override_action: 
+        override_action:
           none: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: admin_protect

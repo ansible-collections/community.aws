@@ -2,10 +2,7 @@
 ## Create web acl
 #######################
 
-- name: Wrap test in virtualenv created above (use other python interpreter)
-  vars:
-    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
-  block:
+- block:
 
     - name: check_mode create web acl
       wafv2_web_acl:
