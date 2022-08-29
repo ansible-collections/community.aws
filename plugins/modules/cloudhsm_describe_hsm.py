@@ -20,7 +20,7 @@ options:
   cluster_id:
     description:
       - The HSM cluster's identifier.
-    type: str
+    type: list
     required: false
   state:
     description:
@@ -38,9 +38,21 @@ options:
       - Filter based on the name of the HSM cluster.
     type: str
     required: false
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.cloudhsm
+  eni_id:
+      description:
+          - Elastic network interface (ENI) identifier of the HSM
+      type: list
+      required: false
+  eni_ip:
+      description:
+          - Elastic network interface (ENI) IP address of the HSM
+      type: list
+      required: false
+  hsm_id:
+      description:
+          - The identifier of the HSM
+      type: list
+      required: false
 """
 
 

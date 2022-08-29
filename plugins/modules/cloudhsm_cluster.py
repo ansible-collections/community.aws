@@ -22,7 +22,7 @@ options:
         description:
             - Backup retention days for the cluster
             - Must be a value between 7 and 379
-        type: int
+        type: str
         required: false
         default: 90
     source_backup_id:
@@ -33,7 +33,7 @@ options:
     subnet_ids:
         description:
             - The IDs of subnets where the cluster is being created
-        type: str
+        type: list
         required: false
     tags:
         description:
@@ -58,10 +58,6 @@ options:
             - present
             - absent
             - initialize
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.cloudhsm
-
 """
 
 EXAMPLES = """
@@ -70,8 +66,7 @@ EXAMPLES = """
 - name: Create an HSM Cluster
   community.aws.cloudhsm_cluster:
     backup_retention_days: 7
-    subnet_ids:
-        - subnet-5855b205
+    subnet_ids: subnet-5855b205
     state: present
     name: "West2a_Cluster"
 
@@ -136,7 +131,7 @@ def main():
     """Main function for the module."""
 
     argument_spec = dict(
-        state=dict(required=True, choices=["present", "absent"]),
+        state=dict(required=True, choices=["present", "absent"], type="str"),
         name=dict(required=True, type="str"),
         subnet_ids=dict(required=False, type="list"),
         backup_retention_days=dict(required=False, type="str", default="90"),

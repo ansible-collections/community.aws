@@ -32,7 +32,7 @@ options:
     ip_address:
         description:
             - IP Address of the HSM device.
-        type: str
+        type: list
         required: false
     state:
         description:
@@ -52,11 +52,23 @@ options:
             - Number of HSM devices that need to be created.
             - The value cannot be greater than 3.
         type: int
-        required: true
+        required: false
         default: 1
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.cloudhsm
+    eni_id:
+        description:
+            - Elastic network interface (ENI) identifier of the HSM
+        type: list
+        required: false
+    eni_ip:
+        description:
+            - Elastic network interface (ENI) IP address of the HSM
+        type: list
+        required: false
+    hsm_id:
+        description:
+            - The identifier of the HSM
+        type: list
+        required: false
 """
 
 
@@ -65,7 +77,7 @@ EXAMPLES = """
 
 - name: "Create an HSM Device"
   community.aws.cloudhsm_hsm:
-    availability_zone: zone_asodaos
+    availability_zone: us-west-2b
     cluster_id: cluster_a3231231
     count: 1
     state: present
@@ -73,19 +85,15 @@ EXAMPLES = """
 
 - name: "Create an HSM Device with IP"
   community.aws.cloudhsm_hsm:
-    availability_zone: zone_asodaos
+    availability_zone: us-west-2b
     cluster_id: cluster_a3231231
     ip_address: 192.168.0.1
     count: 1
     state: present
-  vars:
-    aws_access_key: HKHKHOIU
-    aws_secret_key: 123dkj973&^871623
-    aws_region: us-west2
 
 - name: "Create Two HSM Devices with IP"
   community.aws.cloudhsm_hsm:
-    availability_zone: zone_asodaos
+    availability_zone: us-west-2b
     cluster_id: cluster_a3231231
     ip_address:
       - 192.168.0.1  # IP address of the first HSM Device
@@ -95,7 +103,7 @@ EXAMPLES = """
 
 - name: "Add Second HSM Devices to the Existing One"
   community.aws.cloudhsm_hsm:
-    availability_zone: zone_asodaos
+    availability_zone: us-west-2b
     cluster_id: cluster_a3231231
     count: 2
     state: present
@@ -111,13 +119,13 @@ EXAMPLES = """
     hsm_id: hsm_asdasd123123
     state: absent
 
-- name: "Remove HSM Device USING ENI ID"
+- name: "Remove HSM Device Using ENI ID"
   community.aws.cloudhsm_hsm:
     cluster_id: cluster_a3231231
     eni_id: eni_123asd123
     state: absent
 
-- name: "Remove HSM Device USING ENI IP"
+- name: "Remove HSM Device Using ENI IP"
   community.aws.cloudhsm_hsm:
     cluster_id: cluster_a3231231
     eni_ip: 192.168.0.1
@@ -163,9 +171,9 @@ def main():
         name=dict(required=False, type="str"),
         count=dict(required=False, type="int", default=1),
         ip_address=dict(required=False, type="list"),
-        eni_id=dict(required=False, type="list"),
-        eni_ip=dict(required=False, type="list"),
-        hsm_id=dict(required=False, type="list"),
+        eni_id=dict(required=False, type="list", default=[]),
+        eni_ip=dict(required=False, type="list", default=[]),
+        hsm_id=dict(required=False, type="list", default=[]),
     )
     required_if = [
         ("state", "present", ("name", "cluster_id"), True),
@@ -179,7 +187,7 @@ def main():
         required_if=required_if,
     )
     cluster_mgr = CloudHsmCluster(module)
-    ip_addr = cluster_mgr.module.params.get("ip_address")
+    ip_addr = cluster_mgr.module.params.get("ip_address", [])
     count = cluster_mgr.module.params["count"]
     if count < 1 or count > 3:
         cluster_mgr.module.fail_json(
@@ -261,33 +269,35 @@ def main():
                 # If no information is provided, delete all HSMs
                 hsm_ids_to_remove = [
                     hsm["HsmId"]
-                    for index, hsm in enumerate(existing_cluster)
+                    for index, hsm in enumerate(existing_hsms)
                     if index <= count and existing_cluster[0]["Hsms"]
                 ]
                 if not hsm_ids_to_remove:
-                    results["msg"]= f"CloudHSM Cluster ID '{existing_cluster[0]['ClusterId']}' does not contain any HSMs."
+                    results[
+                        "msg"
+                    ] = f"CloudHSM Cluster ID '{existing_cluster[0]['ClusterId']}' does not contain any HSMs."
                 else:
                     for hsm_id in hsm_ids_to_remove:
                         hsm_body.update({"HsmId": hsm_id})
                         cluster_mgr.delete_hsm(hsm_body)
-                    results["changed"]= True
+                    results["changed"] = True
             elif hsm_id:
                 for hsm in hsm_id:
                     hsm_body.update({"HsmId": hsm})
                     cluster_mgr.delete_hsm(hsm_body)
-                results["changed"]= True
+                results["changed"] = True
             elif eni_ip:
                 for eni in eni_ip:
                     hsm_body.update({"EniIp": eni})
                     cluster_mgr.delete_hsm(hsm_body)
-                results["changed"]= True
+                results["changed"] = True
             elif eni_id:
                 for eni in eni_id:
                     hsm_body.update({"EniId": eni})
                     cluster_mgr.delete_hsm(hsm_body)
-                results["changed"]= True
+                results["changed"] = True
         else:
-            results["changed"]= True
+            results["changed"] = True
 
     cluster_mgr.module.exit_json(**results)
 

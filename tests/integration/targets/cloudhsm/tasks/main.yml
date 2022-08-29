@@ -1,0 +1,109 @@
+---
+- name: 'CloudHsm Integration Tests'
+  collections:
+    - community.aws
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+
+  block:
+    - name: Get AWS Subnet IDs
+      amazon.aws.ec2_vpc_subnet_info:
+      register: aws_subnets
+
+    - name: Create CloudHSM Cluster
+      community.aws.cloudhsm_cluster:
+        backup_retention_days: 90
+        subnet_ids: "{{ aws_subnets.subnets[0].subnet_id }}"
+        state: present
+        name: "{{ name }}"
+      register: new_cluster
+
+    - name: Ensure CloudHSM Cluster is Ready
+      community.aws.cloudhsm_describe_cluster:
+        name: "{{ name }}"
+      register: cluster_id
+      until: cluster_id.data[0].state == "UNINITIALIZED"
+      retries: 10
+      delay: 30
+
+    - name: Check CloudHSM Cluster Count
+      fail:
+        msg: The CloudHSM Cluster was not created
+      when: cluster_id.data|length != 1
+
+    - name: Create CloudHSM HSM Device
+      community.aws.cloudhsm_hsm:
+        state: present
+        availability_zone: "{{ aws_subnets.subnets[0].availability_zone }}"
+        cluster_id: "{{ cluster_id.data[0].cluster_id }}"
+      register: new_hsm
+
+    - name: Ensure CloudHSM HSM Device is Ready
+      community.aws.cloudhsm_describe_hsm:
+      register: hsm
+      until: hsm.data[0].state == "ACTIVE"
+      retries: 20
+      delay: 30
+
+    - name: Check HSMs Count
+      fail:
+        msg: The HSM device was not created
+      when: hsm.data|length != 1
+
+    - name: Register Cluster Certificates
+      community.aws.cloudhsm_describe_cluster:
+        name: "{{ name }}"
+      register: cluster_cert
+
+    - name: Write CSR to the File
+      ansible.builtin.copy:
+        content: "{{ cluster_cert.data[0].certificates.cluster_csr }}"
+        dest: "{{ role_path }}/files/cloudhsm_cluster.csr"
+
+    - name: Sign certificate with CA
+      community.crypto.x509_certificate_pipe:
+        csr_content: "{{ lookup('file', 'cloudhsm_cluster.csr') }}"
+        provider: ownca
+        ownca_path: "{{ role_path }}/files/signingCA.crt"
+        ownca_privatekey_path: "{{ role_path }}/files/signingCA.key"
+        ownca_not_after: +365d
+        ownca_not_before: "-1d"
+      register: signed_cert
+
+    - name: Initialize CloudHSM Cluster
+      community.aws.cloudhsm_initialize_cluster:
+        cluster_id: "{{ cluster_cert.data[0].cluster_id }}"
+        signed_cert: "{{ signed_cert.certificate }}"
+        trust_anchor: "{{ role_path }}/files/signingCA.crt"
+      when: cluster_cert.data[0].state == 'UNINITIALIZED'
+
+
+    - name: Register Cluster State
+      community.aws.cloudhsm_describe_cluster:
+        name: "{{ name }}"
+      register: cluster_state
+      until: cluster_state.data[0].state == "INITIALIZED"
+      retries: 20
+      delay: 30
+
+    - name: Delete CloudHSM HSM Device
+      community.aws.cloudhsm_hsm:
+        state: absent
+        name: "{{ name }}"
+
+    - name: Ensure CloudHSM HSM Device is Removed
+      community.aws.cloudhsm_describe_cluster:
+        name: "{{ name }}"
+      register: no_hsms
+      until: no_hsms.data[0].hsms|length == 0
+      retries: 20
+      delay: 30
+
+    - name: Delete CloudHSM Cluster
+      community.aws.cloudhsm_cluster:
+        state: absent
+        name: "{{ name }}"

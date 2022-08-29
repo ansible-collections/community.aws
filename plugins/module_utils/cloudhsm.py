@@ -69,6 +69,8 @@ class CloudHsmCluster:
             states = []
         try:
             if cluster_ids:
+                if isinstance(cluster_ids, str):
+                    cluster_ids = cluster_ids.split()
                 for cluster_id in cluster_ids:
                     filter_dict["Filters"].update({"clusterIds": [cluster_id]})
                     cluster_data.extend(
@@ -180,7 +182,7 @@ class CloudHsmCluster:
         try:
             return self.client.create_hsm(**request_body)["Hsm"]
         except Exception as catch_all:
-            self.module.json_fail(
+            self.module.fail_json(
                 msg=f"Exception raised while creating HSM: {catch_all}"
             )
 
@@ -236,13 +238,13 @@ class CloudHsmCluster:
             hsm_id = self.module.params.get("hsm_id")
             eni_ip = self.module.params.get("eni_ip")
             state = self.module.params.get("state")
-            if (
-                not extend_search
-                or not hsms
-                or (
-                    not eni_id and not state and not hsm_id and not eni_ip and not state
-                )
-            ):
+            if isinstance(state, str):
+                state = []
+            if not extend_search:
+                return hsms
+            if not hsms:
+                return hsms
+            if not eni_id and not state and not hsm_id and not eni_ip:
                 return hsms
             filters = {
                 "EniId": eni_id,
@@ -258,7 +260,6 @@ class CloudHsmCluster:
             #     "EniIp": ["192.168.0.1"],
             #     "HsmId": None
             #     }
-
             for key, value in filters.items():
                 for _value in value:
                     temp_hsms.extend(_find_hsm(key, _value))

@@ -42,7 +42,6 @@ extends_documentation_fragment:
   - amazon.aws.cloudhsm
 """
 
-
 EXAMPLES = """
 # Note: These examples do not set authentication details, see the AWS Guide for details
 
