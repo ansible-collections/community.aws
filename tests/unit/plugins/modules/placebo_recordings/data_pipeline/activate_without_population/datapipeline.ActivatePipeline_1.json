@@ -1,6 +1,10 @@
 {
-    "status_code": 200,
+    "status_code": 400,
     "data": {
+        "Error": {
+            "Message": "Pipeline definition is empty: ",
+            "Code": "InvalidRequestException"
+        },
         "ResponseMetadata": {
             "RequestId": "f6f52c07-68c8-11e7-b9c1-53eb374c7a33",
             "HTTPHeaders": {
@@ -10,7 +14,7 @@
                 "content-length": "2"
             },
             "RetryAttempts": 0,
-            "HTTPStatusCode": 200
+            "HTTPStatusCode": 400
         }
     }
 }

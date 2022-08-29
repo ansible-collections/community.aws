@@ -11,9 +11,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -49,9 +49,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -98,9 +98,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -135,9 +135,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -172,9 +172,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -209,9 +209,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -227,9 +227,9 @@
                 priority: 0
       - name: zwei
         priority: 2
-        action: 
+        action:
           block: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: ddos
@@ -250,7 +250,7 @@
                     body: {}
                   text_transformations:
                     - type: NONE
-                      priority: 0      
+                      priority: 0
     cloudwatch_metrics: yes
     tags:
       A: B
@@ -272,9 +272,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -290,9 +290,9 @@
                 priority: 0
       - name: zwei
         priority: 2
-        action: 
+        action:
           block: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: ddos
@@ -313,7 +313,7 @@
                     body: {}
                   text_transformations:
                     - type: NONE
-                      priority: 0 
+                      priority: 0
     cloudwatch_metrics: yes
     tags:
       A: B
@@ -335,9 +335,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -353,9 +353,9 @@
                 priority: 0
       - name: zwei
         priority: 3
-        action: 
+        action:
           block: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: ddos
@@ -376,7 +376,7 @@
                     body: {}
                   text_transformations:
                     - type: NONE
-                      priority: 0 
+                      priority: 0
     cloudwatch_metrics: yes
     tags:
       A: B
@@ -398,9 +398,9 @@
     rules:
       - name: eins
         priority: 1
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -416,9 +416,9 @@
                 priority: 0
       - name: zwei
         priority: 3
-        action: 
+        action:
           block: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: ddos
@@ -439,7 +439,7 @@
                     body: {}
                   text_transformations:
                     - type: NONE
-                      priority: 0 
+                      priority: 0
     cloudwatch_metrics: yes
     tags:
       A: B
@@ -461,9 +461,9 @@
     rules:
       - name: zwei
         priority: 1
-        action: 
+        action:
           block: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: ddos
@@ -487,9 +487,9 @@
                       priority: 0
       - name: eins
         priority: 2
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: fsd
@@ -525,9 +525,9 @@
     rules:
       - name: allow-admin-svg
         priority: 3
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: allow-admin-svg
@@ -574,9 +574,9 @@
     rules:
       - name: allow-admin-svg
         priority: 3
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: allow-admin-svg
@@ -611,9 +611,9 @@
     rules:
       - name: allow-admin-svg
         priority: 3
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: allow-admin-svg
@@ -646,9 +646,9 @@
     rules:
       - name: allow-admin-svg
         priority: 3
-        action: 
+        action:
           allow: {}
-        visibility_config: 
+        visibility_config:
           sampled_requests_enabled: yes
           cloud_watch_metrics_enabled: yes
           metric_name: allow-admin-svg

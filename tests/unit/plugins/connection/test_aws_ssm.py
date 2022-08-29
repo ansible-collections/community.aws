@@ -4,15 +4,18 @@ __metaclass__ = type
 
 from io import StringIO
 import pytest
-import sys
-from ansible_collections.community.aws.tests.unit.compat import unittest
+
 from ansible_collections.community.aws.tests.unit.compat.mock import patch, MagicMock
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
-@pytest.mark.skipif(sys.version_info < (2, 7), reason="requires Python 2.7 or higher")
-class TestConnectionBaseClass(unittest.TestCase):
+if not HAS_BOTO3:
+    pytestmark = pytest.mark.skip("test_data_pipeline.py requires the python modules 'boto3' and 'botocore'")
+
+
+class TestConnectionBaseClass():
 
     @patch('os.path.exists')
     @patch('subprocess.Popen')
@@ -55,25 +58,19 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn._flush_stderr = MagicMock()
         conn._windows = MagicMock()
         conn._windows.return_value = True
-        sudoable = True
         conn._session.poll = MagicMock()
         conn._session.poll.return_value = None
-        remaining = 0
         conn._timeout = MagicMock()
         conn._poll_stdout = MagicMock()
         conn._poll_stdout.poll = MagicMock()
         conn._poll_stdout.poll.return_value = True
         conn._session.stdout = MagicMock()
         conn._session.stdout.readline = MagicMock()
-        begin = True
-        mark_end = 'a'
-        line = ['a', 'b']
         conn._post_process = MagicMock()
         conn._post_process.return_value = 'test'
         conn._session.stdout.readline.side_effect = iter(['aaaaa\n', 'Hi\n', '0\n', 'bbbbb\n'])
         conn.get_option = MagicMock()
         conn.get_option.return_value = 1
-        cmd = MagicMock()
         returncode = 'a'
         stdout = 'b'
         return (returncode, stdout, conn._flush_stderr)
@@ -91,7 +88,7 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn = connection_loader.get('community.aws.aws_ssm', pc, new_stdin)
         conn.is_windows = MagicMock()
         conn.is_windows.return_value = True
-        return('windows1')
+        return 'windows1'
 
     def test_plugins_connection_aws_ssm_post_process(self):
         pc = PlayContext()
@@ -99,11 +96,9 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn = connection_loader.get('community.aws.aws_ssm', pc, new_stdin)
         conn.is_windows = MagicMock()
         conn.is_windows.return_value = True
-        success = 3
-        fail = 2
         conn.stdout = MagicMock()
         returncode = 0
-        return(returncode, conn.stdout)
+        return returncode, conn.stdout
 
     @patch('subprocess.Popen')
     def test_plugins_connection_aws_ssm_flush_stderr(self, s_popen):
@@ -114,17 +109,17 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn.poll_stderr.register = MagicMock()
         conn.stderr = None
         s_popen.poll().return_value = 123
-        return(conn.stderr)
+        return conn.stderr
 
-    @patch('boto3.client')
-    def test_plugins_connection_aws_ssm_get_url(self, boto):
-        pc = PlayContext()
-        new_stdin = StringIO()
-        conn = connection_loader.get('community.aws.aws_ssm', pc, new_stdin)
-        boto3 = MagicMock()
-        boto3.client('s3').return_value = MagicMock()
-        boto3.generate_presigned_url.return_value = MagicMock()
-        return (boto3.generate_presigned_url.return_value)
+    # XXX This isn't doing anything
+    # def test_plugins_connection_aws_ssm_get_url(self):
+    #     pc = PlayContext()
+    #     new_stdin = StringIO()
+    #     connection_loader.get('community.aws.aws_ssm', pc, new_stdin)
+    #     boto3 = MagicMock()
+    #     boto3.client('s3').return_value = MagicMock()
+    #     boto3.generate_presigned_url.return_value = MagicMock()
+    #     return (boto3.generate_presigned_url.return_value)
 
     @patch('os.path.exists')
     def test_plugins_connection_aws_ssm_put_file(self, mock_ospe):
@@ -134,7 +129,7 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn._connect = MagicMock()
         conn._file_transport_command = MagicMock()
         conn._file_transport_command.return_value = (0, 'stdout', 'stderr')
-        res, stdout, stderr = conn.put_file('/in/file', '/out/file')
+        conn.put_file('/in/file', '/out/file')
 
     def test_plugins_connection_aws_ssm_fetch_file(self):
         pc = PlayContext()
@@ -143,7 +138,7 @@ class TestConnectionBaseClass(unittest.TestCase):
         conn._connect = MagicMock()
         conn._file_transport_command = MagicMock()
         conn._file_transport_command.return_value = (0, 'stdout', 'stderr')
-        res, stdout, stderr = conn.fetch_file('/in/file', '/out/file')
+        conn.fetch_file('/in/file', '/out/file')
 
     @patch('subprocess.check_output')
     @patch('boto3.client')
@@ -158,15 +153,13 @@ class TestConnectionBaseClass(unittest.TestCase):
         boto3 = MagicMock()
         boto3.client('s3').return_value = MagicMock()
         conn.get_option.return_value = 1
-        ssm_action = 'get'
         get_command = MagicMock()
         put_command = MagicMock()
         conn.exec_command = MagicMock()
         conn.exec_command.return_value = (put_command, None, False)
         conn.download_fileobj = MagicMock()
-        (returncode, stdout, stderr) = conn.exec_command(put_command, in_data=None, sudoable=False)
-        returncode = 0
-        (returncode, stdout, stderr) = conn.exec_command(get_command, in_data=None, sudoable=False)
+        conn.exec_command(put_command, in_data=None, sudoable=False)
+        conn.exec_command(get_command, in_data=None, sudoable=False)
 
     @patch('subprocess.check_output')
     def test_plugins_connection_aws_ssm_close(self, s_check_output):
