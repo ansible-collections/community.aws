@@ -43,9 +43,6 @@ options:
       - Filter based on the name of the HSM cluster.
     type: str
     required: false
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.cloudhsm
 """
 
 
@@ -92,35 +89,35 @@ data:
   type: list
   sample:
     - backup_policy: DEFAULT
-        backup_retention_policy:
-        type: DAYS
-        value: '90'
-        certificates: {}
-        cluster_id: cluster-sample
-        create_timestamp: '2022-07-24T19:35:10.889000-07:00'
-        hsm_type: hsm1.medium
-        hsms: []
-        security_group: sg-sample
-        state: UNINITIALIZED
-        subnet_mapping:
-        us-east-2b: subnet-sample
-        tag_list:
-        - key: sec
+      backup_retention_policy:
+      type: DAYS
+      value: '90'
+      certificates: {}
+      cluster_id: cluster-sample
+      create_timestamp: '2022-07-24T19:35:10.889000-07:00'
+      hsm_type: hsm1.medium
+      hsms: []
+      security_group: sg-sample
+      state: UNINITIALIZED
+      subnet_mapping:
+      us-east-2b: subnet-sample
+      tag_list:
+      - key: sec
         value: none
-        - key: name
+      - key: name
         value: '456'
-        - key: zone
+      - key: zone
         value: west
         vpc_id: vpc-sample
 """
 
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible.module_utils.common.dict_transformations import \
+    camel_dict_to_snake_dict
+from ansible_collections.amazon.aws.plugins.module_utils.core import \
+    AnsibleAWSModule
 from ansible_collections.community.aws.plugins.module_utils.cloudhsm import (
-    CLUSTER_STATES,
-    CloudHsmCluster,
-)
+    CLUSTER_STATES, CloudHsmCluster)
 
 
 def main():

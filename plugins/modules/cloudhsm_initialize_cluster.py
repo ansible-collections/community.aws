@@ -37,9 +37,6 @@ options:
             - The name of the cluster
         type: str
         required: false
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.cloudhsm
 """
 
 EXAMPLES = """

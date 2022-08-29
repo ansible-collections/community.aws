@@ -6,17 +6,16 @@ from __future__ import absolute_import, division, print_function
 
 __metaclass__ = type
 
-
 DOCUMENTATION = """
 ---
 module: cloudhsm_cluster
 short_description: Create or delete the CloudHSM Cluster in AWS
 author:
-    - Armen Martirosyan (@armartirosyan)
+  - Armen Martirosyan (@armartirosyan)
 requirements:
-    - boto3
+  - boto3
 description:
-    - Create or delete the CloudHSM Cluster in AWS
+  - Create or delete the CloudHSM Cluster in AWS
 options:
     backup_retention_days:
         description:
@@ -24,7 +23,7 @@ options:
             - Must be a value between 7 and 379
         type: str
         required: false
-        default: 90
+        default: "90"
     source_backup_id:
         description:
             - Cluster backup ID to restore the cluster from
@@ -51,13 +50,12 @@ options:
             - The state of the CloudHSM  Cluster
             - present state will create an CloudHSM Cluster, if one does not exists
             - absent state will remove the CloudHSM Cluster, if one exists
-            - initialize state will initialize the exiting CloudHSM Cluster
         type: str
         required: true
         choices:
             - present
             - absent
-            - initialize
+
 """
 
 EXAMPLES = """
@@ -73,12 +71,12 @@ EXAMPLES = """
 - name: Create an HSM Cluster With Tags
   community.aws.cloudhsm_cluster:
     subnet_ids:
-        - subnet-5855b205
+      - subnet-5855b205
     state: present
     name: "West2a_Cluster"
     tags:
-        zone: west
-        sec: none
+      zone: west
+      sec: none
 
 - name: "Remove HSM Cluster"
   community.aws.cloudhsm_cluster:
@@ -86,7 +84,7 @@ EXAMPLES = """
     name: "West2a_Cluster"
 """
 
-RETURN = """
+RETURN = r"""
 changed:
   description: Boolean that is true if the command changed the state.
   returned: always
@@ -98,24 +96,24 @@ data:
   type: list
   sample:
     - backup_policy: DEFAULT
-        backup_retention_policy:
-        type: DAYS
-        value: '90'
-        certificates: {}
-        cluster_id: cluster-sample
-        create_timestamp: '2022-07-24T19:35:10.889000-07:00'
-        hsm_type: hsm1.medium
-        hsms: []
-        security_group: sg-sample
-        state: UNINITIALIZED
-        subnet_mapping:
-        us-east-2b: subnet-sample
-        tag_list:
-        - key: sec
+      backup_retention_policy:
+      type: DAYS
+      value: '90'
+      certificates: {}
+      cluster_id: cluster-sample
+      create_timestamp: '2022-07-24T19:35:10.889000-07:00'
+      hsm_type: hsm1.medium
+      hsms: []
+      security_group: sg-sample
+      state: UNINITIALIZED
+      subnet_mapping:
+      us-east-2b: subnet-sample
+      tag_list:
+      - key: sec
         value: none
-        - key: name
-        value: '456'
-        - key: zone
+      - key: name
+        value: 'west2b_cluster'
+      - key: zone
         value: west
         vpc_id: vpc-sample
 """
