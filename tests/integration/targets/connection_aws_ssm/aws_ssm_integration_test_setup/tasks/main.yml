@@ -12,7 +12,7 @@
   block:
     - name: AMI Lookup
       ec2_ami_info:
-        owners: 'amazon'
+        owners: 125523088429  # Fedora org
         filters:
           name: '{{ item }}'
       register: ec2_amis
