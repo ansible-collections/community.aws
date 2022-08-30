@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 # Copyright: (c) 2022, TachTech <info@tachtech.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -21,12 +22,13 @@ options:
   cluster_id:
     description:
       - The HSM cluster's identifier.
-    type: str
+    type: list
+    elements: str
     required: false
   state:
     description:
       - Filter based on the state of the HSM cluster.
-    type: str
+    type: list
     required: false
     choices:
       - CREATE_IN_PROGRESS
@@ -37,12 +39,16 @@ options:
       - UPDATE_IN_PROGRESS
       - DELETE_IN_PROGRESS
       - DELETED
-      - DEGRADE
+      - DEGRADED
+    elements: str
   name:
     description:
       - Filter based on the name of the HSM cluster.
     type: str
     required: false
+extends_documentation_fragment:
+- amazon.aws.aws
+- amazon.aws.ec2
 """
 
 
@@ -124,8 +130,8 @@ def main():
     """Main function for the module."""
 
     argument_spec = dict(
-        state=dict(required=False, type="list", choices=CLUSTER_STATES),
-        cluster_id=dict(required=False, type="list"),
+        state=dict(required=False, type="list", choices=CLUSTER_STATES, elements="str"),
+        cluster_id=dict(required=False, type="list", elements="str"),
         name=dict(required=False, type="str"),
     )
 

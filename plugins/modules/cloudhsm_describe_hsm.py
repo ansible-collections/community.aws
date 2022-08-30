@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 # Copyright: (c) 2022, TachTech <info@tachtech.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -22,10 +23,11 @@ options:
       - The HSM cluster's identifier.
     type: list
     required: false
+    elements: str
   state:
     description:
       - Filter based on the state of the HSM cluster.
-    type: str
+    type: list
     required: false
     choices:
       - CREATE_IN_PROGRESS
@@ -33,6 +35,7 @@ options:
       - DEGRADED
       - DELETE_IN_PROGRESS
       - DELETED
+    elements: str
   name:
     description:
       - Filter based on the name of the HSM cluster.
@@ -43,16 +46,22 @@ options:
           - Elastic network interface (ENI) identifier of the HSM
       type: list
       required: false
+      elements: str
   eni_ip:
       description:
           - Elastic network interface (ENI) IP address of the HSM
       type: list
       required: false
+      elements: str
   hsm_id:
       description:
           - The identifier of the HSM
       type: list
+      elements: str
       required: false
+extends_documentation_fragment:
+- amazon.aws.aws
+- amazon.aws.ec2
 """
 
 
@@ -122,12 +131,12 @@ def main():
     """Main function for the module."""
 
     argument_spec = dict(
-        state=dict(required=False, type="list", choices=HSM_STATES),
-        cluster_id=dict(required=False, type="list"),
+        state=dict(required=False, type="list", choices=HSM_STATES, elements="str"),
+        cluster_id=dict(required=False, type="list", elements="str"),
         name=dict(required=False, type="str"),
-        eni_id=dict(required=False, type="list"),
-        hsm_id=dict(required=False, type="list"),
-        eni_ip=dict(required=False, type="list"),
+        eni_id=dict(required=False, type="list", elements="str"),
+        hsm_id=dict(required=False, type="list", elements="str"),
+        eni_ip=dict(required=False, type="list", elements="str"),
     )
 
     module = AnsibleAWSModule(

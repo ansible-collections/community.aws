@@ -1,4 +1,5 @@
 #!/usr/bin/python
+
 # Copyright: (c) 2022, TachTech <info@tachtech.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -34,6 +35,7 @@ options:
             - The IDs of subnets where the cluster is being created
         type: list
         required: false
+        elements: str
     tags:
         description:
             - Tags to apply to the HSM cluster
@@ -55,7 +57,9 @@ options:
         choices:
             - present
             - absent
-
+extends_documentation_fragment:
+- amazon.aws.aws
+- amazon.aws.ec2
 """
 
 EXAMPLES = """
@@ -131,7 +135,7 @@ def main():
     argument_spec = dict(
         state=dict(required=True, choices=["present", "absent"], type="str"),
         name=dict(required=True, type="str"),
-        subnet_ids=dict(required=False, type="list"),
+        subnet_ids=dict(required=False, type="list", elements="str"),
         backup_retention_days=dict(required=False, type="str", default="90"),
         source_backup_id=dict(required=False, type="str"),
         tags=dict(required=False, type="dict"),

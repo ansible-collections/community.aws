@@ -1,10 +1,9 @@
 #!/usr/bin/python
+
 # Copyright: (c) 2022, TachTech <info@tachtech.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from __future__ import absolute_import, division, print_function
-
-from email.policy import default
 
 __metaclass__ = type
 
@@ -34,6 +33,7 @@ options:
             - IP Address of the HSM device.
         type: list
         required: false
+        elements: str
     state:
         description:
             - The state of the HSM Device. If present, the device will be created, if absent, the device will be removed.
@@ -58,17 +58,23 @@ options:
         description:
             - Elastic network interface (ENI) identifier of the HSM
         type: list
+        elements: str
         required: false
     eni_ip:
         description:
             - Elastic network interface (ENI) IP address of the HSM
         type: list
+        elements: str
         required: false
     hsm_id:
         description:
             - The identifier of the HSM
         type: list
+        elements: str
         required: false
+extends_documentation_fragment:
+- amazon.aws.aws
+- amazon.aws.ec2
 """
 
 
@@ -170,10 +176,10 @@ def main():
         cluster_id=dict(required=False, type="str"),
         name=dict(required=False, type="str"),
         count=dict(required=False, type="int", default=1),
-        ip_address=dict(required=False, type="list"),
-        eni_id=dict(required=False, type="list", default=[]),
-        eni_ip=dict(required=False, type="list", default=[]),
-        hsm_id=dict(required=False, type="list", default=[]),
+        ip_address=dict(required=False, type="list", default=[], elements="str"),
+        eni_id=dict(required=False, type="list", default=[], elements="str"),
+        eni_ip=dict(required=False, type="list", default=[], elements="str"),
+        hsm_id=dict(required=False, type="list", default=[], elements="str"),
     )
     required_if = [
         ("state", "present", ("name", "cluster_id"), True),
@@ -220,7 +226,7 @@ def main():
                     )
                 else:
                     if ip_addr:
-                        for ip_addr in ip_addr[count - (count - len(existing_hsms)) :]:
+                        for ip_addr in ip_addr[count - (count - len(existing_hsms)):]:
                             hsm_body.update({"IpAddress": ip_addr})
                             results["data"].append(
                                 camel_dict_to_snake_dict(
@@ -229,7 +235,7 @@ def main():
                             )
                         results["changed"] = True
                     else:
-                        for _ in range(0, count - len(existing_hsms)):
+                        for num in range(0, count - len(existing_hsms)):
                             results["data"].append(
                                 camel_dict_to_snake_dict(
                                     cluster_mgr.create_hsm(hsm_body)

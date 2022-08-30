@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # Copyright: (c) 2022, TachTech <info@tachtech.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
@@ -270,6 +269,8 @@ class CloudHsmCluster:
             return hsms_to_return
         elif not extend_search:
             self.module.fail_json(
-                msg=f"Unable to find CloudHSM Cluster with given argument '{'name: '+self.module.params['name'] if self.module.params['name'] else 'cluster_id:'+self.module.params['cluster_id'] }'. Please check the value and re-run the task. {hsm_cluster}"
+                msg=f"Unable to find CloudHSM Cluster with given argument \
+                    '{'name: '+self.module.params['name'] if self.module.params['name'] else 'cluster_id:'+self.module.params['cluster_id'] }'. \
+                        Please check the value and re-run the task. {hsm_cluster}"
             )
         return []
