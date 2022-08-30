@@ -519,12 +519,8 @@ class SnsTopicManager(object):
         for sub in list_topic_subscriptions(self.connection, self.module, self.topic_arn):
             sub_key = (sub['Protocol'], sub['Endpoint'])
             sub_arn = sub['SubscriptionArn']
-            if sub_key not in self.desired_subscription_attributes:
+            if sub_key not in self.desired_subscription_attributes or not self.desired_subscription_attributes[sub_key]:
                 # subscription isn't defined in desired, skipping
-                continue
-
-            raw_message = self.desired_subscription_attributes[sub_key].get('RawMessageDelivery')
-            if raw_message is None:
                 continue
 
             try:
@@ -532,7 +528,8 @@ class SnsTopicManager(object):
             except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                 self.module.fail_json_aws(e, "Couldn't get subscription attributes for subscription %s" % sub_arn)
 
-            if 'RawMessageDelivery' in sub_current_attributes:
+            raw_message = self.desired_subscription_attributes[sub_key].get('RawMessageDelivery')
+            if raw_message is not None and 'RawMessageDelivery' in sub_current_attributes:
                 if sub_current_attributes['RawMessageDelivery'].lower() != raw_message.lower():
                     changed = True
                     if not self.check_mode:
