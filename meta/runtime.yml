@@ -75,6 +75,11 @@ action_groups:
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
   - cloudfront_response_headers_policy
+  - cloudhsm_describe_cluster
+  - cloudhsm_cluster
+  - cloudhsm_initialize_cluster
+  - cloudhsm_describe_hsm
+  - cloudhsm_hsm
   - cloudtrail
   - cloudwatch_metric_alarm
   - cloudwatchevent_rule

@@ -1,0 +1,15 @@
+name: west2b_cluster
+count: 1
+eni_id:
+  - eni-abcdef123456
+eni_ip:
+  - 127.0.0.1
+hsm_id:
+  - hsm-abcdef123456
+backup_retention_days: 365
+source_backup_id: backup-abcdef123456
+tags:
+  zone: 2b
+  sec_group: default
+signed_cert: signed_cert.crt
+trust_anchor: signing_ca.crt
