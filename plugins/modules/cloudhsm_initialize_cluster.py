@@ -16,7 +16,7 @@ author:
 requirements:
     - boto3
 description:
-    - Using signed certificate and singing CA's public key, initialize the AWS Cluster
+    - Initialize a AWS CloudHSM cluster using signed certificate and singing CA's public key
 options:
     cluster_id:
         description:
