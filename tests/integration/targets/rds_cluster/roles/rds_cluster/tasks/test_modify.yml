@@ -191,7 +191,7 @@
         - "'cluster_create_time' in _result_modify_db_parameter_group_name"
         - _result_modify_db_parameter_group_name.copy_tags_to_snapshot == false
         - "'db_cluster_arn' in _result_modify_db_parameter_group_name"
-        - "_result_modify_db_parameter_group_name.db_cluster_identifier == '{{ cluster_id }}'"
+        - "_result_modify_db_parameter_group_name.db_cluster_identifier == '{{ new_cluster_id }}'"
         - "'db_cluster_parameter_group' in _result_modify_db_parameter_group_name"
         - "'db_cluster_resource_id' in _result_modify_db_parameter_group_name"
         - "'endpoint' in _result_modify_db_parameter_group_name"
