@@ -1289,7 +1289,7 @@ origins:
           description: The number of times that CloudFront attempts to connect to the origin.
           returned: always
           type: int
-          sample: 3 
+          sample: 3
         connection_timeout:
           description: The number of seconds that CloudFront waits when trying to establish a connection to the origin.
           returned: always
