@@ -1283,6 +1283,16 @@ origins:
           returned: always
           type: str
           sample: ''
+        connection_attempts:
+          description: The number of times that CloudFront attempts to connect to the origin.
+          returned: always
+          type: int
+          sample: 3 
+        connection_timeout:
+          description: The number of seconds that CloudFront waits when trying to establish a connection to the origin.
+          returned: always
+          type: int
+          sample: 10
         s3_origin_config:
           description: Origin access identity configuration for S3 Origin.
           returned: when s3_origin_access_identity_enabled is true
