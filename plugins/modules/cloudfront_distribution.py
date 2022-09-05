@@ -168,11 +168,13 @@ options:
               description: A keep-alive timeout (in seconds).
               type: int
         connection_attempts:
-          description: The number of times that CloudFront attempts to connect to the origin. The minimum number is 1, the maximum is 3
+          description: The number of times that CloudFront attempts to connect to the origin.
+                       The minimum number is 1, the maximum is 3
           type: int
           default: 3
         connection_timeout:
-          description: The number of seconds that CloudFront waits when trying to establish a connection to the origin. The minimum timeout is 1 second, the maximum is 10 seconds.
+          description: The number of seconds that CloudFront waits when trying to establish a connection to the origin.
+                       The minimum timeout is 1 second, the maximum is 10 seconds.
           type: int
           default: 10
     purge_origins:
