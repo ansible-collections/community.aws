@@ -1,0 +1,31 @@
+From a01e237ab77cf142bcf7656cd0bd2a799afef02f Mon Sep 17 00:00:00 2001
+From: Felix Fontein <felix@fontein.de>
+Date: Sat, 13 Mar 2021 20:10:09 +0100
+Subject: [PATCH 09/12] [promoted]More no_log=False to fix sanity tests (#474)
+
+* Add no_log=False to mark some more false-positives of the no_log check.
+
+* More false-positives confirmed by tremble.
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/67b6d751cc4ee5728577af2fe7b330f8cc7cd5c2
+---
+ plugins/modules/cloudtrail.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index c0bf3f4..5f8aa5a 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -438,7 +438,7 @@ def main():
+         name=dict(default='default'),
+         enable_logging=dict(default=True, type='bool'),
+         s3_bucket_name=dict(),
+-        s3_key_prefix=dict(),
++        s3_key_prefix=dict(no_log=False),
+         sns_topic_name=dict(),
+         is_multi_region_trail=dict(default=False, type='bool'),
+         enable_log_file_validation=dict(type='bool', aliases=['log_file_validation_enabled']),
+-- 
+2.34.3
+

@@ -1,0 +1,30 @@
+From d8bb0ab1a8d3c36b30ac2b733e21e33ee7ed5d74 Mon Sep 17 00:00:00 2001
+From: flowerysong <junk+github@flowerysong.com>
+Date: Tue, 16 Jun 2020 19:30:00 -0400
+Subject: [PATCH 06/12] [promoted]Update module_utils paths to remove aws
+ subdir (#23)
+
+Co-authored-by: Ezekiel Hendrickson <ezekielh@umich.edu>
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/10853d9441a586ba177006dd889325cfb24a3dd6
+---
+ plugins/modules/cloudtrail.py | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index 83e6cc0..fe8d500 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -253,7 +253,7 @@ try:
+ except ImportError:
+     pass  # Handled by AnsibleAWSModule
+ 
+-from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
++from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
+                                                                      ansible_dict_to_boto3_tag_list,
+                                                                      boto3_tag_list_to_ansible_dict,
+-- 
+2.34.3
+

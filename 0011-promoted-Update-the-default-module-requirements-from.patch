@@ -1,0 +1,29 @@
+From f4076d69416d78a98d6ea218d041d3c8b0b2d725 Mon Sep 17 00:00:00 2001
+From: Mark Chappell <mchappel@redhat.com>
+Date: Thu, 6 May 2021 21:01:46 +0200
+Subject: [PATCH 11/12] [promoted]Update the default module requirements from
+ python 2.6/boto to python 3.6/boto3
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/c097c55293be0834a2b9d394733ec28965d142d7
+---
+ plugins/modules/cloudtrail.py | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index a2f2076..d304667 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -17,9 +17,6 @@ author:
+     - Ansible Core Team
+     - Ted Timmons (@tedder)
+     - Daniel Shepherd (@shepdelacreme)
+-requirements:
+-  - boto3
+-  - botocore
+ options:
+   state:
+     description:
+-- 
+2.34.3
+

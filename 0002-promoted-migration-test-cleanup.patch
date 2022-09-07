@@ -1,0 +1,29 @@
+From f564315f94296834b416b3bac470b06ca411249c Mon Sep 17 00:00:00 2001
+From: jillr <jillr@redhat.com>
+Date: Tue, 3 Mar 2020 19:43:21 +0000
+Subject: [PATCH 02/12] [promoted]migration test cleanup
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/13b104b912784bb31a0bff23eed4c27b0f5e0283
+---
+ plugins/modules/cloudtrail.py | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index 0dc8feb..087419f 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -260,7 +260,9 @@ except ImportError:
+ 
+ from ansible_collections.ansible.amazon.plugins.module_utils.aws.core import AnsibleAWSModule
+ from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
+-                                      ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict)
++                                                                         ansible_dict_to_boto3_tag_list,
++                                                                         boto3_tag_list_to_ansible_dict,
++                                                                         )
+ 
+ 
+ def create_trail(module, client, ct_params):
+-- 
+2.34.3
+

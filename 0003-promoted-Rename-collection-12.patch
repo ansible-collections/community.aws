@@ -1,0 +1,56 @@
+From 5c5a9b9ea5086e7c5b3f59eca1e715af2d3910e9 Mon Sep 17 00:00:00 2001
+From: Jill R <4121322+jillr@users.noreply.github.com>
+Date: Wed, 25 Mar 2020 15:39:40 -0700
+Subject: [PATCH 03/12] [promoted]Rename collection (#12)
+
+* Rename core collection
+
+Rename references to ansible.amazon to amazon.aws.
+
+* Rename community.amazon to community.aws
+Fix pep8 line lengths for rewritten amazon.aws imports
+
+* Missed a path in shippable.sh
+* Dependency repos moved
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/235c5db571cc45db5839476c94356c9b91e1f228
+---
+ plugins/modules/cloudtrail.py | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index 087419f..5fb0858 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -103,8 +103,8 @@ options:
+     type: dict
+ 
+ extends_documentation_fragment:
+-- ansible.amazon.aws
+-- ansible.amazon.ec2
++- amazon.aws.aws
++- amazon.aws.ec2
+ 
+ '''
+ 
+@@ -258,11 +258,11 @@ try:
+ except ImportError:
+     pass  # Handled by AnsibleAWSModule
+ 
+-from ansible_collections.ansible.amazon.plugins.module_utils.aws.core import AnsibleAWSModule
+-from ansible_collections.ansible.amazon.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
+-                                                                         ansible_dict_to_boto3_tag_list,
+-                                                                         boto3_tag_list_to_ansible_dict,
+-                                                                         )
++from ansible_collections.amazon.aws.plugins.module_utils.aws.core import AnsibleAWSModule
++from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (camel_dict_to_snake_dict,
++                                                                     ansible_dict_to_boto3_tag_list,
++                                                                     boto3_tag_list_to_ansible_dict,
++                                                                     )
+ 
+ 
+ def create_trail(module, client, ct_params):
+-- 
+2.34.3
+

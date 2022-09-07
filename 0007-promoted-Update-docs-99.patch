@@ -1,0 +1,35 @@
+From d277a64a3b773233f21c98655fba67d249946c9b Mon Sep 17 00:00:00 2001
+From: Jill R <4121322+jillr@users.noreply.github.com>
+Date: Wed, 17 Jun 2020 09:31:32 -0700
+Subject: [PATCH 07/12] [promoted]Update docs (#99)
+
+* Update docs
+
+Remove .git from repo url so links in readme will generate correctly
+Add required ansible version
+Run latest version of add_docs.py
+Add version_added string to modules
+
+* galaxy.yml was missing authors
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/96ee268e5267f5b12c3d59892bc1279f75aa3135
+---
+ plugins/modules/cloudtrail.py | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index fe8d500..c0bf3f4 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -9,6 +9,7 @@ __metaclass__ = type
+ DOCUMENTATION = '''
+ ---
+ module: cloudtrail
++version_added: 1.0.0
+ short_description: manage CloudTrail create, delete, update
+ description:
+   - Creates, deletes, or updates CloudTrail configuration. Ensures logging is also enabled.
+-- 
+2.34.3
+

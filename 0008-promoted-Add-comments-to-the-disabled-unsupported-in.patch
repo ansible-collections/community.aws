@@ -1,0 +1,27 @@
+From eb2118c607bb06365a7b91cd261ee3c0255c3ee5 Mon Sep 17 00:00:00 2001
+From: Mark Chappell <mchappel@redhat.com>
+Date: Sat, 13 Feb 2021 14:19:21 +0100
+Subject: [PATCH 08/12] [promoted]Add comments to the disabled/unsupported
+ integration test aliase files (#411)
+
+Add some additional comments so we know *why* the various tests aren't running.  Looks like most of them just need policy updates
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/0d245596966100516f1eeab5dcf26ee0ebca24b5
+---
+ tests/integration/targets/cloudtrail/aliases | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/tests/integration/targets/cloudtrail/aliases b/tests/integration/targets/cloudtrail/aliases
+index 5692719..e428027 100644
+--- a/tests/integration/targets/cloudtrail/aliases
++++ b/tests/integration/targets/cloudtrail/aliases
+@@ -1,2 +1,4 @@
+-cloud/aws
++# reason: missing-policy
+ unsupported
++
++cloud/aws
+-- 
+2.34.3
+

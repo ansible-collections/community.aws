@@ -1,0 +1,33 @@
+From 5aa3ba271c0e03e472e9e6dc34f48f005ef3a7e8 Mon Sep 17 00:00:00 2001
+From: Jill R <4121322+jillr@users.noreply.github.com>
+Date: Tue, 19 May 2020 16:06:12 -0700
+Subject: [PATCH 04/12] [promoted]Remove METADATA and cleanup galaxy.yml (#70)
+
+* Remove ANSIBLE_METADATA entirely, see ansible/ansible/pull/69454.
+Remove `license` field from galaxy.yml, in favor of `license_file`.
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/05672a64e2362cc2d865b5af6a57da6bc3cd08e3
+---
+ plugins/modules/cloudtrail.py | 5 -----
+ 1 file changed, 5 deletions(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index 5fb0858..c4a5f2e 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -6,11 +6,6 @@ from __future__ import absolute_import, division, print_function
+ __metaclass__ = type
+ 
+ 
+-ANSIBLE_METADATA = {'metadata_version': '1.1',
+-                    'status': ['preview'],
+-                    'supported_by': 'community'}
+-
+-
+ DOCUMENTATION = '''
+ ---
+ module: cloudtrail
+-- 
+2.34.3
+

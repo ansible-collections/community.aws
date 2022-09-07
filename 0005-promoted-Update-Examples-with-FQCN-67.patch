@@ -1,0 +1,67 @@
+From 2869a1363c24512ff6954eda2039f3a368ed1837 Mon Sep 17 00:00:00 2001
+From: Abhijeet Kasurde <akasurde@redhat.com>
+Date: Wed, 17 Jun 2020 01:24:54 +0530
+Subject: [PATCH 05/12] [promoted]Update Examples with FQCN (#67)
+
+Updated module examples with FQCN
+
+Signed-off-by: Abhijeet Kasurde <akasurde@redhat.com>
+
+This commit was initially merged in https://github.com/ansible-collections/community.aws
+See: https://github.com/ansible-collections/community.aws/commit/98173aefbbceed7fc0d9db62687b73f96a55a999
+---
+ plugins/modules/cloudtrail.py | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/plugins/modules/cloudtrail.py b/plugins/modules/cloudtrail.py
+index c4a5f2e..83e6cc0 100644
+--- a/plugins/modules/cloudtrail.py
++++ b/plugins/modules/cloudtrail.py
+@@ -105,7 +105,7 @@ extends_documentation_fragment:
+ 
+ EXAMPLES = '''
+ - name: create single region cloudtrail
+-  cloudtrail:
++  community.aws.cloudtrail:
+     state: present
+     name: default
+     s3_bucket_name: mylogbucket
+@@ -113,7 +113,7 @@ EXAMPLES = '''
+     region: us-east-1
+ 
+ - name: create multi-region trail with validation and tags
+-  cloudtrail:
++  community.aws.cloudtrail:
+     state: present
+     name: default
+     s3_bucket_name: mylogbucket
+@@ -128,7 +128,7 @@ EXAMPLES = '''
+       Name: default
+ 
+ - name: show another valid kms_key_id
+-  cloudtrail:
++  community.aws.cloudtrail:
+     state: present
+     name: default
+     s3_bucket_name: mylogbucket
+@@ -136,7 +136,7 @@ EXAMPLES = '''
+     # simply "12345678-1234-1234-1234-123456789012" would be valid too.
+ 
+ - name: pause logging the trail we just created
+-  cloudtrail:
++  community.aws.cloudtrail:
+     state: present
+     name: default
+     enable_logging: false
+@@ -149,7 +149,7 @@ EXAMPLES = '''
+       Name: default
+ 
+ - name: delete a trail
+-  cloudtrail:
++  community.aws.cloudtrail:
+     state: absent
+     name: default
+ '''
+-- 
+2.34.3
+
