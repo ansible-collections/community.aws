@@ -21,6 +21,7 @@ jobs:
     with:
       init-lenient: false
       init-fail-on-error: true
+      extra-collections: 'amazon.aws'
 
   publish-docs-gh-pages:
     # use to prevent running on forks
