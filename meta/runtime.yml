@@ -1,3 +1,4 @@
+---
 requires_ansible: '>=2.9.10'
 action_groups:
   aws:
@@ -205,9 +206,6 @@ action_groups:
   - networkfirewall_rule_group_info
   - opensearch
   - opensearch_info
-  - rds_instance
-  - rds_instance_info
-  - rds_instance_snapshot
   - rds_option_group
   - rds_option_group_info
   - rds_param_group
@@ -454,7 +452,7 @@ plugin_routing:
     ec2_vpc_route_table:
       redirect: amazon.aws.ec2_vpc_route_table
     ec2_vpc_route_table_info:
-       redirect: amazon.aws.ec2_vpc_route_table_info
+      redirect: amazon.aws.ec2_vpc_route_table_info
     elb_classic_lb:
       redirect: amazon.aws.ec2_elb_lb
     execute_lambda:
