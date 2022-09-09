@@ -156,8 +156,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-msk-c
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
-<li><p>boto3 &gt;= 1.17.0</p></li>
-<li><p>botocore &gt;= 1.20.0</p></li>
+<li><p>boto3 &gt;= 1.18.0</p></li>
+<li><p>botocore &gt;= 1.21.0</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -271,16 +271,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-msk-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-endpoint-url"><span id="ansible-collections-community-aws-msk-cluster-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-msk-cluster-module-parameter-aws-endpoint-url"></span><strong>ec2_url</strong></p>
-<a class="ansibleOptionLink" href="#parameter-ec2_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_endpoint_url, endpoint_url</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
-</div></td>
-</tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-encryption"><strong>encryption</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -288,14 +278,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-msk-c
 <p>Effective only for new cluster and can not be updated.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption/in_transit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-encryption-in-transit"><strong>in_transit</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption/in_transit" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The details for encryption in transit.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption/in_transit/client_broker"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-encryption-in-transit-client-broker"><strong>client_broker</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption/in_transit/client_broker" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -308,7 +298,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-msk-c
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption/in_transit/in_cluster"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-encryption-in-transit-in-cluster"><strong>in_cluster</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption/in_transit/in_cluster" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -320,11 +310,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-msk-c
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption/kms_key_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-encryption-kms-key-id"><strong>kms_key_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption/kms_key_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN of the AWS KMS key for encrypting data at rest. If you don’t specify a KMS key, MSK creates one for you and uses it.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-msk-cluster-module-parameter-s3-url"><span id="ansible-collections-community-aws-msk-cluster-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-msk-cluster-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-msk-cluster-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">

@@ -155,8 +155,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
-<li><p>boto3 &gt;= 1.17.0</p></li>
-<li><p>botocore &gt;= 1.20.0</p></li>
+<li><p>boto3 &gt;= 1.18.0</p></li>
+<li><p>botocore &gt;= 1.21.0</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -227,10 +227,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-endpoint-url"><span id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-aws-endpoint-url"></span><strong>ec2_url</strong></p>
-<a class="ansibleOptionLink" href="#parameter-ec2_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_endpoint_url, endpoint_url</span></p>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-s3-url"><span id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-info-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>

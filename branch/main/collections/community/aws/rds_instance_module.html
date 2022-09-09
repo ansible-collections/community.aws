@@ -155,8 +155,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-rds-i
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
-<li><p>boto3 &gt;= 1.17.0</p></li>
-<li><p>botocore &gt;= 1.20.0</p></li>
+<li><p>boto3 &gt;= 1.18.0</p></li>
+<li><p>botocore &gt;= 1.21.0</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -416,16 +416,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-rds-i
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-rds-instance-module-parameter-endpoint-url"><span id="ansible-collections-community-aws-rds-instance-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-rds-instance-module-parameter-aws-endpoint-url"></span><strong>ec2_url</strong></p>
-<a class="ansibleOptionLink" href="#parameter-ec2_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_endpoint_url, endpoint_url</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-enable_cloudwatch_logs_exports"></div>
 <div class="ansibleOptionAnchor" id="parameter-cloudwatch_log_exports"></div><p class="ansible-option-title" id="ansible-collections-community-aws-rds-instance-module-parameter-enable-cloudwatch-logs-exports"><span id="ansible-collections-community-aws-rds-instance-module-parameter-cloudwatch-log-exports"></span><strong>enable_cloudwatch_logs_exports</strong></p>
 <a class="ansibleOptionLink" href="#parameter-enable_cloudwatch_logs_exports" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: cloudwatch_log_exports</span></p>
@@ -434,7 +424,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-rds-i
 <td><div class="ansible-option-cell"><p>A list of log types that need to be enabled for exporting to CloudWatch Logs.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-enable_iam_database_authentication"></div><p class="ansible-option-title" id="ansible-collections-community-aws-rds-instance-module-parameter-enable-iam-database-authentication"><strong>enable_iam_database_authentication</strong></p>
 <a class="ansibleOptionLink" href="#parameter-enable_iam_database_authentication" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -446,7 +436,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-rds-i
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-enable_performance_insights"></div><p class="ansible-option-title" id="ansible-collections-community-aws-rds-instance-module-parameter-enable-performance-insights"><strong>enable_performance_insights</strong></p>
 <a class="ansibleOptionLink" href="#parameter-enable_performance_insights" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -456,6 +446,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-rds-i
 <li><p><span class="ansible-option-choices-entry">false</span></p></li>
 <li><p><span class="ansible-option-choices-entry">true</span></p></li>
 </ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-rds-instance-module-parameter-s3-url"><span id="ansible-collections-community-aws-rds-instance-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-rds-instance-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-rds-instance-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
