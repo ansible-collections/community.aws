@@ -18,7 +18,7 @@ jobs:
     with:
       init-lenient: false
       init-fail-on-error: true
-      extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
+      extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,stable-4'
 
 
   build-docs:
@@ -29,7 +29,7 @@ jobs:
     with:
       init-lenient: true
       init-fail-on-error: false
-      extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
+      extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,stable-4'
 
   comment:
     permissions:
