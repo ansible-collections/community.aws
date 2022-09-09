@@ -620,9 +620,12 @@ def get_nodegroup(client, module, nodegroup_name, cluster_name):
 
 def wait_until(client, module, waiter_name, nodegroup_name, cluster_name):
     wait_timeout = module.params.get('wait_timeout')
-    waiter = client.get_waiter(waiter_name)
+    waiter = get_waiter(client, waiter_name)
     attempts = 1 + int(wait_timeout / waiter.config.delay)
-    waiter.wait(clusterName=cluster_name, nodegroupName=nodegroup_name, WaiterConfig={'MaxAttempts': attempts})
+    try:
+        waiter.wait(clusterName=cluster_name, nodegroupName=nodegroup_name, WaiterConfig={'MaxAttempts': attempts})
+    except botocore.exceptions.WaiterError as e:
+        module.fail_json_aws(e, msg="An error occurred waiting")
 
 
 def main():
