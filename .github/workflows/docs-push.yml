@@ -21,7 +21,7 @@ jobs:
     with:
       init-lenient: true
       init-fail-on-error: true
-      extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
+      extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,stable-3'
 
   publish-docs-gh-pages:
     # use to prevent running on forks
