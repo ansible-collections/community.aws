@@ -75,7 +75,6 @@ action_groups:
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
   - cloudfront_response_headers_policy
-  - cloudtrail
   - cloudwatch_metric_alarm
   - cloudwatchevent_rule
   - cloudwatchlogs_log_group
@@ -395,6 +394,9 @@ plugin_routing:
     aws_waf_web_acl:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.waf_web_acl
+    cloudtrail:
+      # Deprecation for this alias should not *start* prior to 2024-11-01
+      redirect: amazon.aws.cloudtrail
     cloudfront_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.cloudfront_distribution_info
