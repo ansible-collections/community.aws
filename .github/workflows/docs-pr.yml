@@ -31,6 +31,8 @@ jobs:
       init-lenient: true
       init-fail-on-error: false
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
+      provide-link-targets: |
+        ansible_collections.amazon.aws.cloudtrail
 
   comment:
     permissions:
