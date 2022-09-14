@@ -132,7 +132,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.ecs_service</span></code>.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0.0: </span>of community.aws</p>
+<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -210,7 +210,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-capacity_provider_strategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-capacity-provider-strategy"><strong>capacity_provider_strategy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-capacity_provider_strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 4.0.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.0.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The capacity provider strategy to use with your service. You can specify a maximum of 6 providers per strategy.</p>
 </div></td>
@@ -328,7 +328,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-deployment_controller"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-deployment-controller"><strong>deployment_controller</strong></p>
 <a class="ansibleOptionLink" href="#parameter-deployment_controller" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 4.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The deployment controller to use for the service. If no deploymenet controller is specified, the ECS controller is used.</p>
 </div></td>
@@ -368,7 +368,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-force_deletion"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-force-deletion"><strong>force_deletion</strong></p>
 <a class="ansibleOptionLink" href="#parameter-force_deletion" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 2.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Forcabily delete the service. Required when deleting a service with &gt;0 scale, or no target group.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
@@ -506,7 +506,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-platform_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-platform-version"><strong>platform_version</strong></p>
 <a class="ansibleOptionLink" href="#parameter-platform_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 1.5.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Numeric part of platform version or LATEST</p>
 <p>See <a class="reference external" href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html">https://docs.aws.amazon.com/AmazonECS/latest/developerguide/platform_versions.html</a> for more details.</p>
@@ -524,7 +524,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-propagate_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-propagate-tags"><strong>propagate_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-propagate_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 4.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Propagate tags from ECS task defintition or ECS service to ECS task.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
@@ -631,7 +631,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 4.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary of tags to add or remove from the resource.</p>
 </div></td>
@@ -660,7 +660,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 4.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Whether or not to wait for the service to be inactive.</p>
 <p>Waits only when <em>state</em> is <code class="docutils literal notranslate"><span class="pre">absent</span></code>.</p>
@@ -1040,7 +1040,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-service/capacityProviderStrategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-service-module-return-service-capacityproviderstrategy"><strong>capacityProviderStrategy</strong></p>
 <a class="ansibleOptionLink" href="#return-service/capacityProviderStrategy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
-<p><span class="ansible-option-versionadded">added in 4.0.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.0.0</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The capacity provider strategy to use with your service.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>

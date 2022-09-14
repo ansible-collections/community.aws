@@ -132,7 +132,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.s3_bucket_info</span></code>.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0.0: </span>of community.aws</p>
+<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -210,7 +210,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-bucket_facts"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-bucket-info-module-parameter-bucket-facts"><strong>bucket_facts</strong></p>
 <a class="ansibleOptionLink" href="#parameter-bucket_facts" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Retrieve requested S3 bucket detailed information.</p>
 <p>Each bucket_X option executes one API call, hence many options being set to <code class="docutils literal notranslate"><span class="pre">true</span></code> will cause slower module execution.</p>
@@ -435,7 +435,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-bucket-info-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Name of bucket to query.</p>
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“”</span></p>
@@ -444,7 +444,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name_filter"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-bucket-info-module-parameter-name-filter"><strong>name_filter</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name_filter" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Limits buckets to only buckets who’s name contain the string in <em>name_filter</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“”</span></p>
@@ -486,7 +486,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-transform_location"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-bucket-info-module-parameter-transform-location"><strong>transform_location</strong></p>
 <a class="ansibleOptionLink" href="#parameter-transform_location" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>S3 bucket location for default us-east-1 is normally reported as <code class="docutils literal notranslate"><span class="pre">null</span></code>.</p>
 <p>Setting this option to <code class="docutils literal notranslate"><span class="pre">true</span></code> will return <code class="docutils literal notranslate"><span class="pre">us-east-1</span></code> instead.</p>
