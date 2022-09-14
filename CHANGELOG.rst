@@ -5,6 +5,14 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v4.2.0
+======
+
+Bugfixes
+--------
+
+- s3_lifecycle - fix bug when deleting rules with an empty prefix (https://github.com/ansible-collections/community.aws/pull/1398).
+
 v4.1.1
 ======
 
