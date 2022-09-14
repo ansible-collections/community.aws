@@ -19,8 +19,9 @@ jobs:
       init-lenient: false
       init-fail-on-error: true
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
+      # Please also update docs-push.yml
       provide-link-targets: |
-        ansible_collections.amazon.aws.cloudtrail
+        ansible_collections.amazon.aws.cloudtrail_module
 
   build-docs:
     permissions:
@@ -31,8 +32,9 @@ jobs:
       init-lenient: true
       init-fail-on-error: false
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
+      # Please also update docs-push.yml
       provide-link-targets: |
-        ansible_collections.amazon.aws.cloudtrail
+        ansible_collections.amazon.aws.cloudtrail_module
 
   comment:
     permissions:
