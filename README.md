@@ -24,7 +24,7 @@ Version 3.0.0 of this collection supports `boto3 >= 1.16.0` and `botocore >= 1.1
 
 ## Included content
 <!--start collection content-->
-See the complete list of collection content in the [Plugin Index](https://ansible-collections.github.io/community.aws/branch/main/collections/community/aws/index.html#plugin-index).
+See the complete list of collection content in the [Plugin Index](https://ansible-collections.github.io/community.aws/branch/stable-3/collections/community/aws/index.html#plugin-index).
 
 <!--end collection content-->
 
