@@ -132,7 +132,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.ec2_launch_template</span></code>.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0.0: </span>of community.aws</p>
+<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -518,7 +518,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-metadata_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-launch-template-module-parameter-metadata-options"><strong>metadata_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-metadata_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 1.5.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Configure EC2 Metadata options.</p>
 <p>For more information see the IMDS documentation <a class="reference external" href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/configuring-instance-metadata-service.html</a>.</p>
@@ -539,7 +539,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-metadata_options/http_protocol_ipv6"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-launch-template-module-parameter-metadata-options-http-protocol-ipv6"><strong>http_protocol_ipv6</strong></p>
 <a class="ansibleOptionLink" href="#parameter-metadata_options/http_protocol_ipv6" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 3.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><ul class="simple">
 <li><p>Wether the instance metadata endpoint is available via IPv6 (<code class="docutils literal notranslate"><span class="pre">enabled</span></code>) or not (<code class="docutils literal notranslate"><span class="pre">disabled</span></code>). - Requires botocore &gt;= 1.21.29</p></li>
@@ -574,7 +574,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-metadata_options/instance_metadata_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-launch-template-module-parameter-metadata-options-instance-metadata-tags"><strong>instance_metadata_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-metadata_options/instance_metadata_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 3.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Wether the instance tags are availble (<code class="docutils literal notranslate"><span class="pre">enabled</span></code>) via metadata endpoint or not (<code class="docutils literal notranslate"><span class="pre">disabled</span></code>).</p>
 <p>Requires botocore &gt;= 1.23.30</p>
@@ -790,7 +790,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-source_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-launch-template-module-parameter-source-version"><strong>source_version</strong></p>
 <a class="ansibleOptionLink" href="#parameter-source_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 4.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The version number of the launch template version on which to base the new version. The new version inherits the same launch parameters as the source version, except for parameters that you explicity specify. Snapshots applied to the block device mapping are ignored when creating a new version unless they are explicitly included.</p>
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“latest”</span></p>
