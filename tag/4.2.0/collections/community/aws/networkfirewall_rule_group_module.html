@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>community.aws.networkfirewall_rule_group module – create, delete and modify AWS Network Firewall rule groups &mdash; Ansible collections  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.svg"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="community.aws.networkfirewall_rule_group_info module – describe AWS Network Firewall rule groups" href="networkfirewall_rule_group_info_module.html" />
+    <link rel="prev" title="community.aws.networkfirewall_policy_info module – describe AWS Network Firewall policies" href="networkfirewall_policy_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
+    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
+    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
+    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.svg"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Ansible Collections Documentation</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Ansible collections
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" class="st-default-search-input" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Community Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Community.Aws</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#communication">Communication</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ansible collections</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Collection Index</a> &raquo;</li>
+          <li><a href="../index.html">Collections in the Community Namespace</a> &raquo;</li>
+          <li><a href="index.html">Community.Aws</a> &raquo;</li>
+      <li>community.aws.networkfirewall_rule_group module – create, delete and modify AWS Network Firewall rule groups</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/networkfirewall_rule_group.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-community-aws-networkfirewall-rule-group-module"></span><section id="community-aws-networkfirewall-rule-group-module-create-delete-and-modify-aws-network-firewall-rule-groups">
+<h1>community.aws.networkfirewall_rule_group module – create, delete and modify AWS Network Firewall rule groups<a class="headerlink" href="#community-aws-networkfirewall-rule-group-module-create-delete-and-modify-aws-network-firewall-rule-groups" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
+You need further requirements to be able to use this module,
+see <a class="reference internal" href="#ansible-collections-community-aws-networkfirewall-rule-group-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.networkfirewall_rule_group</span></code>.</p>
+</div>
+<div class="versionadded">
+<p><span class="versionmodified added">New in version community.aws: </span>4.0.0</p>
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id4">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id5">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id6">Return Values</a></p></li>
+</ul>
+</div>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>A module for managing AWS Network Firewall rule groups.</p></li>
+<li><p><a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/index.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/index.html</a></p></li>
+<li><p>Currently only supports <code class="docutils literal notranslate"><span class="pre">stateful</span></code> firewall groups.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<span id="ansible-collections-community-aws-networkfirewall-rule-group-module-requirements"></span><h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>The below requirements are needed on the host that executes this module.</p>
+<ul class="simple">
+<li><p>python &gt;= 3.6</p></li>
+<li><p>boto3 &gt;= 1.17.0</p></li>
+<li><p>botocore &gt;= 1.20.0</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id3">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-arn"><strong>arn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The ARN of the Network Firewall rule group.</p>
+<p>Exactly one of <em>arn</em> and <em>name</em> must be provided.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-access-key"></span><strong>aws_access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_access_key, access_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">access</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable is used.</p>
+<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
+<p>Note: The CA Bundle is read ‘module’ side and may need to be explicitly copied from the controller if not run locally.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-config"><strong>aws_config</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
+<p>Parameters can be found at <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-secret-key"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-secret-key"></span><strong>aws_secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_secret_key, secret_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">secret</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable is used.</p>
+<p>The <em>aws_secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capacity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-capacity"><strong>capacity</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capacity" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The maximum operating resources that this rule group can use.</p>
+<p>Once a rule group is created this parameter is immutable.</p>
+<p>See also the AWS documentation about how capacityis calculated <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/nwfw-rule-group-capacity.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/nwfw-rule-group-capacity.html</a></p>
+<p>This option is mandatory when creating a new rule group.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
+<a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-description"><strong>description</strong></p>
+<a class="ansibleOptionLink" href="#parameter-description" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A description of the AWS Network Firewall rule group.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_list"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list"><strong>domain_list</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_list" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Inspection criteria for a domain list rule group.</p>
+<p>When set overwrites all Domain List settings with the new configuration.</p>
+<p>For more information about domain name based filtering read the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/stateful-rule-groups-domain-names.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/stateful-rule-groups-domain-names.html</a>.</p>
+<p>Mutually exclusive with <em>rule_type=stateless</em>.</p>
+<p>Mutually exclusive with <em>ip_variables</em>, <em>rule_list</em> and <em>rule_strings</em>.</p>
+<p>Exactly one of <em>rule_strings</em>, <em>domain_list</em> or <em>rule_list</em> must be specified at creation time.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_list/action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-action"><strong>action</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_list/action" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Action to perform on traffic that matches the rule match settings.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">allow</span></p></li>
+<li><p><span class="ansible-option-choices-entry">deny</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_list/domain_names"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-domain-names"><strong>domain_names</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_list/domain_names" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of domain names to look for in the traffic flow.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_list/filter_http"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-filter-http"><strong>filter_http</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_list/filter_http" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether HTTP traffic should be inspected (uses the host header).</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_list/filter_https"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-filter-https"><strong>filter_https</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_list/filter_https" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether HTTPS traffic should be inspected (uses the SNI).</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_list/source_ips"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-source-ips"><strong>source_ips</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_list/source_ips" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Used to expand the local network definition beyond the CIDR range of the VPC where you deploy Network Firewall.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-endpoint-url"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-endpoint-url"></span><strong>ec2_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-ec2_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_endpoint_url, endpoint_url</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-ip_variables"></div>
+<div class="ansibleOptionAnchor" id="parameter-ip_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ip-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ip-set-variables"></span><strong>ip_variables</strong></p>
+<a class="ansibleOptionLink" href="#parameter-ip_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ip_set_variables</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary mapping variable names to a list of IP addresses and address ranges, in CIDR notation.</p>
+<p>For example <code class="docutils literal notranslate"><span class="pre">{EXAMPLE_HOSTS:[&quot;192.0.2.0/24&quot;,</span> <span class="pre">&quot;203.0.113.42&quot;]}</span></code>.</p>
+<p>Mutually exclusive with <em>domain_list</em>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The name of the Network Firewall rule group.</p>
+<p>When <em>name</em> is set, <em>rule_type</em> must also be set.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-port_variables"></div>
+<div class="ansibleOptionAnchor" id="parameter-port_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-port-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-port-set-variables"></span><strong>port_variables</strong></p>
+<a class="ansibleOptionLink" href="#parameter-port_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: port_set_variables</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary mapping variable names to a list of ports.</p>
+<p>For example <code class="docutils literal notranslate"><span class="pre">{SECURE_PORTS:[&quot;22&quot;,</span> <span class="pre">&quot;443&quot;]}</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-profile"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-profile"></span><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_ip_variables"></div>
+<div class="ansibleOptionAnchor" id="parameter-purge_ip_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-ip-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-ip-set-variables"></span><strong>purge_ip_variables</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_ip_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: purge_ip_set_variables</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether to purge variable names not mentioned in the <em>ip_variables</em> dictionary.</p>
+<p>To remove all IP Set Variables it is necessary to explicitly set <em>ip_variables={}</em> and <em>purge_port_variables=true</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">false</span></p></li>
+<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_port_variables"></div>
+<div class="ansibleOptionAnchor" id="parameter-purge_port_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-port-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-port-set-variables"></span><strong>purge_port_variables</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_port_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: purge_port_set_variables</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether to purge variable names not mentioned in the <em>port_variables</em> dictionary.</p>
+<p>To remove all Port Set Variables it is necessary to explicitly set <em>port_variables={}</em> and <em>purge_port_variables=true</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">false</span></p></li>
+<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-tags"><strong>purge_tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</p>
+<p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">false</span></p></li>
+<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-region"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-region"></span><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list"></span><strong>rule_list</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: stateful_rule_list</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Inspection criteria to be used for a 5-tuple based rule group.</p>
+<p>When set overwrites all existing 5-tuple rules with the new configuration.</p>
+<p>Mutually exclusive with <em>domain_list</em> and <em>rule_strings</em>.</p>
+<p>Mutually exclusive with <em>rule_type=stateless</em>.</p>
+<p>Exactly one of <em>rule_strings</em>, <em>domain_list</em> or <em>rule_list</em> must be specified at creation time.</p>
+<p>For more information about valid values see the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/APIReference/API_StatefulRule.html">https://docs.aws.amazon.com/network-firewall/latest/APIReference/API_StatefulRule.html</a> and <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/APIReference/API_Header.html">https://docs.aws.amazon.com/network-firewall/latest/APIReference/API_Header.html</a>.</p>
+<p>Note: Idempotency when comparing AWS Web UI and Ansiible managed rules can not be guaranteed</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/action"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-action"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-action"></span><strong>action</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/action" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>What Network Firewall should do with the packets in a traffic flow when the flow matches.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">pass</span></p></li>
+<li><p><span class="ansible-option-choices-entry">drop</span></p></li>
+<li><p><span class="ansible-option-choices-entry">alert</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/destination"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/destination"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-destination"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-destination"></span><strong>destination</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/destination" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The destination IP address or address range to inspect for, in CIDR notation.</p>
+<p>To match with any address, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/destination_port"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/destination_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-destination-port"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-destination-port"></span><strong>destination_port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/destination_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source port to inspect for.</p>
+<p>To match with any port, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/direction"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/direction"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-direction"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-direction"></span><strong>direction</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/direction" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The direction of traffic flow to inspect.</p>
+<p>If set to <code class="docutils literal notranslate"><span class="pre">any</span></code>, the inspection matches both traffic going from the <em>source</em> to the <em>destination</em> and from the <em>destination</em> to the <em>source</em>.</p>
+<p>If set to <code class="docutils literal notranslate"><span class="pre">forward</span></code>, the inspection only matches traffic going from the <em>source</em> to the <em>destination</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-default-bold">forward</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">any</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/protocol"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-protocol"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-protocol"></span><strong>protocol</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol to inspect for. To specify all, you can use <code class="docutils literal notranslate"><span class="pre">IP</span></code>, because all traffic on AWS is <code class="docutils literal notranslate"><span class="pre">IP</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/rule_options"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/rule_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-rule-options"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-rule-options"></span><strong>rule_options</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/rule_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Additional options for the rule.</p>
+<p>5-tuple based rules are converted by AWS into Suricata rules, for more complex options requirements where order matters consider using <em>rule_strings</em>.</p>
+<p>A dictionary mapping Suricata RuleOptions names to a list of values.</p>
+<p>The examples section contains some examples of using rule_options.</p>
+<p>For more information read the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-limitations-caveats.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-limitations-caveats.html</a> and the Suricata documentation <a class="reference external" href="https://suricata.readthedocs.io/en/suricata-6.0.0/rules/intro.html">https://suricata.readthedocs.io/en/suricata-6.0.0/rules/intro.html</a>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/sid"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/sid"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-sid"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-sid"></span><strong>sid</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/sid" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The signature ID of the rule.</p>
+<p>A unique <em>sid</em> must be passed for all rules.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/source"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-source"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-source"></span><strong>source</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/source" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source IP address or address range to inspect for, in CIDR notation.</p>
+<p>To match with any address, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_list/source_port"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/source_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-source-port"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-source-port"></span><strong>source_port</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_list/source_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source port to inspect for.</p>
+<p>To match with any port, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_order"></div>
+<div class="ansibleOptionAnchor" id="parameter-stateful_rule_order"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-order"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-order"></span><strong>rule_order</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_order" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: stateful_rule_order</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Indicates how to manage the order of the rule evaluation for the rule group.</p>
+<p>Once a rule group is created this parameter is immutable.</p>
+<p>Mutually exclusive with <em>rule_type=stateless</em>.</p>
+<p>For more information on how rules are evaluated read the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-rule-evaluation-order.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-rule-evaluation-order.html</a>.</p>
+<p><em>rule_order</em> requires botocore&gt;=1.23.23.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">default</span></p></li>
+<li><p><span class="ansible-option-choices-entry">strict</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_strings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-strings"><strong>rule_strings</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_strings" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Rules in Suricata format.</p>
+<p>If <em>rule_strings</em> is specified, it must include at least one entry.</p>
+<p>For more information read the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-limitations-caveats.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-limitations-caveats.html</a> and the Suricata documentation <a class="reference external" href="https://suricata.readthedocs.io/en/suricata-6.0.0/rules/intro.html">https://suricata.readthedocs.io/en/suricata-6.0.0/rules/intro.html</a>.</p>
+<p>Mutually exclusive with <em>rule_type=stateless</em>.</p>
+<p>Mutually exclusive with <em>domain_list</em> and <em>rule_list</em>.</p>
+<p>Exactly one of <em>rule_strings</em>, <em>domain_list</em> or <em>rule_list</em> must be specified at creation time.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-rule_type"></div>
+<div class="ansibleOptionAnchor" id="parameter-type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-type"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-type"></span><strong>rule_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-rule_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: type</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Indicates whether the rule group is stateless or stateful.</p>
+<p>Stateless rulesets are currently not supported.</p>
+<p>Required if <em>name</em> is set.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">stateful</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-session-token"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-security-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-access-token"></span><strong>security_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-security_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, session_token, aws_security_token, access_token</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">STS</span> <span class="pre">security</span> <span class="pre">token</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variable is used.</p>
+<p>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Create or remove the Network Firewall rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div>
+<div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-tags"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-resource-tags"></span><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary representing the tags to be applied to the resource.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-validate-certs"><strong>validate_certs</strong></p>
+<a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">false</span></p></li>
+<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-wait"><strong>wait</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether to wait for the firewall rule group to reach the <code class="docutils literal notranslate"><span class="pre">ACTIVE</span></code> or <code class="docutils literal notranslate"><span class="pre">DELETED</span></code> state before the module returns.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">false</span></p></li>
+<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Maximum time, in seconds, to wait for the firewall rule group to reach the expected state.</p>
+<p>Defaults to 600 seconds.</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id4">Notes</a><a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_DEFAULT_PROFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code></p></li>
+<li><p>When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a rule group</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a minimal AWS Network Firewall Rule Group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
+<span class="w">    </span><span class="nt">rule_strings</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">tcp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">(sid:1000001;)&#39;</span><span class="w"></span>
+
+<span class="c1"># Create an example rule group using rule_list</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create 5-tuple Rule List based rule group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">rule_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
+<span class="w">    </span><span class="nt">rule_list</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">        </span><span class="nt">direction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forward</span><span class="w"></span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span><span class="w"></span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IP</span><span class="w"></span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+
+<span class="c1"># Create an example rule group using rule_list</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create 5-tuple Rule List based rule group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">SOURCE_IPS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">DESTINATION_IPS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.48&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port_variables</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">HTTP_PORTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">80</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8080</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">rule_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
+<span class="w">    </span><span class="nt">rule_list</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="c1"># Allow &#39;Destination Unreachable&#39; traffic</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span><span class="w"></span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icmp</span><span class="w"></span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">rule_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">itype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">drop</span><span class="w"></span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="w"></span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$SOURCE_IPS&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$DESTINATION_IPS&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$HTTP_PORTS&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="nt">rule_options</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="nt">urilen</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;20&lt;&gt;40&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># Where only a keyword is needed, add the keword, but no value</span><span class="w"></span>
+<span class="w">          </span><span class="nt">http_uri</span><span class="p">:</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># Settings where Suricata expects raw strings (like the content</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># keyword) will need to have the double-quotes explicitly escaped and</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># passed because there&#39;s no practical way to distinguish between them</span><span class="w"></span>
+<span class="w">          </span><span class="c1"># and flags.</span><span class="w"></span>
+<span class="w">          </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&quot;index.php&quot;&#39;</span><span class="w"></span>
+
+<span class="c1"># Create an example rule group using Suricata rule strings</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Suricata rule string based rule group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleSuricata&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">EXAMPLE_IP</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">      </span><span class="nt">ANOTHER_EXAMPLE</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.48&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port_variables</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">EXAMPLE_PORT</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">443</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">22</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">rule_strings</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">tcp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">$EXAMPLE_IP</span><span class="nv"> </span><span class="s">$EXAMPLE_PORT</span><span class="nv"> </span><span class="s">(sid:1000001;)&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">udp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">$ANOTHER_EXAMPLE</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">(sid:1000002;)&#39;</span><span class="w"></span>
+
+<span class="c1"># Create an example Domain List based rule group</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Domain List based rule group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDomainList&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
+<span class="w">    </span><span class="nt">domain_list</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">domain_names</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;example.com&#39;</span><span class="w"></span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;.example.net&#39;</span><span class="w"></span>
+<span class="w">      </span><span class="nt">filter_https</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
+<span class="w">      </span><span class="nt">filter_http</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
+<span class="w">      </span><span class="nt">source_ips</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="w"></span>
+
+<span class="c1"># Update the description of a rule group</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update the description of a rule group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Another</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
+
+<span class="c1"># Update IP Variables for a rule group</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update IP Variables</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">EXAMPLE_IP</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
+<span class="w">    </span><span class="nt">purge_ip_variables</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+
+<span class="c1"># Delete a rule group</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete a rule group</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="return-values">
+<h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group"><strong>rule_group</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Details of the rules in the rule group</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group"><strong>rule_group</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Details of the rules in the rule group</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rule_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rule-variables"><strong>rule_variables</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rule_variables" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Settings that are available for use in the rules in the rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When rule variables are attached to the rule group.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rule_variables/ip_sets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rule-variables-ip-sets"><strong>ip_sets</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rule_variables/ip_sets" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary mapping variable names to IP addresses in CIDR format.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“192.0.2.0/24”]</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rule_variables/port_sets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rule-variables-port-sets"><strong>port_sets</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rule_variables/port_sets" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary mapping variable names to ports</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“42”]</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source"><strong>rules_source</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Inspection criteria used for a 5-tuple based rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/rules_source_list"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-rules-source-list"><strong>rules_source_list</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/rules_source_list" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A description of the criteria for a domain list rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When the rule group is “domain list” based.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/rules_source_list/generated_rules_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-rules-source-list-generated-rules-type"><strong>generated_rules_type</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/rules_source_list/generated_rules_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether the rule group allows or denies access to the domains in the list.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ALLOWLIST”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/rules_source_list/target_types"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-rules-source-list-target-types"><strong>target_types</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/rules_source_list/target_types" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocols to be inspected by the rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“TLS_SNI”, “HTTP_HOST”]</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/rules_source_list/targets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-rules-source-list-targets"><strong>targets</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/rules_source_list/targets" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of domain names to be inspected for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“abc.example.com”, “.example.net”]</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/rules_string"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-rules-string"><strong>rules_string</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/rules_string" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A string describing the rules that the rule group is comprised of.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When the rule group is “rules string” based.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules"><strong>stateful_rules</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of dictionaries describing the rules that the rule group is comprised of.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When the rule group is “rules list” based.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-action"><strong>action</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/action" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>What action to perform when a flow matches the rule criteria.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “PASS”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header"><strong>header</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A description of the criteria used for the rule.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header/destination"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header-destination"><strong>destination</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header/destination" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The destination address or range of addresses to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “198.51.100.0/24”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header/destination_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header-destination-port"><strong>destination_port</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header/destination_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The destination port to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “6666:6667”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header/direction"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header-direction"><strong>direction</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header/direction" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The direction of traffic flow to inspect.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “FORWARD”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header-protocol"><strong>protocol</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header/protocol" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “IP”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header/source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header-source"><strong>source</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header/source" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source address or range of addresses to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “203.0.113.98”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/header/source_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-header-source-port"><strong>source_port</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/header/source_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source port to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “42”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/rule_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-rule-options"><strong>rule_options</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/rule_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Additional Suricata RuleOptions settings for the rule.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/rule_options/keyword"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-rule-options-keyword"><strong>keyword</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/rule_options/keyword" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The keyword for the setting.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “sid:1”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateful_rules/rule_options/settings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateful-rules-rule-options-settings"><strong>settings</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateful_rules/rule_options/settings" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of values passed to the setting.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When values are available</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions"><strong>stateless_rules_and_custom_actions</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A description of the criteria for a stateless rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When the rule group is a stateless rule group.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-custom-actions"><strong>custom_actions</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of individual custom action definitions that are available for use in stateless rules.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-custom-actions-action-definition"><strong>action_definition</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The custom action associated with the action name.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition/publish_metric_action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-custom-actions-action-definition-publish-metric-action"><strong>publish_metric_action</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition/publish_metric_action" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The description of an action which publishes to CloudWatch.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When the action publishes to CloudWatch.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition/publish_metric_action/dimensions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-custom-actions-action-definition-publish-metric-action-dimensions"><strong>dimensions</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition/publish_metric_action/dimensions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value to use in an Amazon CloudWatch custom metric dimension.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition/publish_metric_action/dimensions/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-custom-actions-action-definition-publish-metric-action-dimensions-value"><strong>value</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_definition/publish_metric_action/dimensions/value" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value to use in the custom metric dimension.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-custom-actions-action-name"><strong>action_name</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/custom_actions/action_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name for the custom action.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules"><strong>stateless_rules</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of stateless rules for use in a stateless rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/priority"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-priority"><strong>priority</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/priority" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates the order in which to run this rule relative to all of the rules that are defined for a stateless rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition"><strong>rule_definition</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Describes the stateless 5-tuple inspection criteria and actions for the rule.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/actions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-actions"><strong>actions</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/actions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The actions to take when a flow matches the rule.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“aws:pass”, “CustomActionName”]</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes"><strong>match_attributes</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Describes the stateless 5-tuple inspection criteria for the rule.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destination_ports"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-destination-ports"><strong>destination_ports</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destination_ports" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The destination port ranges to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destination_ports/from_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-destination-ports-from-port"><strong>from_port</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destination_ports/from_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The lower limit of the port range.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destination_ports/to_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-destination-ports-to-port"><strong>to_port</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destination_ports/to_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The upper limit of the port range.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destinations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-destinations"><strong>destinations</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destinations" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The destination IP addresses and address ranges to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destinations/address_definition"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-destinations-address-definition"><strong>address_definition</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/destinations/address_definition" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An IP address or a block of IP addresses in CIDR notation.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “192.0.2.3”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/protocols"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-protocols"><strong>protocols</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/protocols" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IANA protocol numbers of the protocols to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [6]</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/source_ports"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-source-ports"><strong>source_ports</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/source_ports" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source port ranges to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/source_ports/from_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-source-ports-from-port"><strong>from_port</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/source_ports/from_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The lower limit of the port range.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/source_ports/to_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-source-ports-to-port"><strong>to_port</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/source_ports/to_port" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The upper limit of the port range.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/sources"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-sources"><strong>sources</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/sources" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source IP addresses and address ranges to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/sources/address_definition"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-sources-address-definition"><strong>address_definition</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/sources/address_definition" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An IP address or a block of IP addresses in CIDR notation.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “192.0.2.3”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/tcp_flags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-tcp-flags"><strong>tcp_flags</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/tcp_flags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The TCP flags and masks to inspect for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/tcp_flags/flags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-tcp-flags-flags"><strong>flags</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/tcp_flags/flags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Used with masks to define the TCP flags that flows are inspected for.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/tcp_flags/masks"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-rules-source-stateless-rules-and-custom-actions-stateless-rules-rule-definition-match-attributes-tcp-flags-masks"><strong>masks</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/rules_source/stateless_rules_and_custom_actions/stateless_rules/rule_definition/match_attributes/tcp_flags/masks" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The set of flags considered during inspection.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/stateful_rule_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-stateful-rule-options"><strong>stateful_rule_options</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/stateful_rule_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Additional options governing how Network Firewall handles stateful rules.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> When the rule group is either “rules string” or “rules list” based.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group/stateful_rule_options/rule_order"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-stateful-rule-options-rule-order"><strong>rule_order</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group/stateful_rule_options/rule_order" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The order in which rules will be evaluated.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “DEFAULT_ACTION_ORDER”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata"><strong>rule_group_metadata</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Details of the rules in the rule group</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/capacity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-capacity"><strong>capacity</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/capacity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum operating resources that this rule group can use.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/consumed_capacity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-consumed-capacity"><strong>consumed_capacity</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/consumed_capacity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of capacity units currently consumed by the rule group rules.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-description"><strong>description</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/description" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A description of the rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/number_of_associations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-number-of-associations"><strong>number_of_associations</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/number_of_associations" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of firewall policies that use this rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/rule_group_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-rule-group-arn"><strong>rule_group_arn</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/rule_group_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN for the rule group</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:network-firewall:us-east-1:123456789012:stateful-rulegroup/ExampleGroup”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/rule_group_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-rule-group-id"><strong>rule_group_id</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/rule_group_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A unique identifier for the rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “12345678-abcd-1234-abcd-123456789abc”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/rule_group_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-rule-group-name"><strong>rule_group_name</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/rule_group_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/rule_group_status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-rule-group-status"><strong>rule_group_status</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/rule_group_status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current status of a rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “DELETING”</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary representing the tags associated with the rule group.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rule_group/rule_group_metadata/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-return-rule-group-rule-group-metadata-type"><strong>type</strong></p>
+<a class="ansibleOptionLink" href="#return-rule_group/rule_group_metadata/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether the rule group is stateless or stateful.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “STATEFUL”</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Mark Chappell (&#64;tremble)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Permalink to this heading"></a></h3>
+<p class="ansible-links">
+  <a href="https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" aria-role="button" target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://github.com/ansible-collections/community.aws" aria-role="button" target="_blank" rel="noopener external">Repository (Sources)</a>
+  <a href="./#communication-for-community-aws" aria-role="button" target="_blank">Communication</a>
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="networkfirewall_policy_info_module.html" class="btn btn-neutral float-left" title="community.aws.networkfirewall_policy_info module – describe AWS Network Firewall policies" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="networkfirewall_rule_group_info_module.html" class="btn btn-neutral float-right" title="community.aws.networkfirewall_rule_group_info module – describe AWS Network Firewall rule groups" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ansible contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
