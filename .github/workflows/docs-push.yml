@@ -19,11 +19,11 @@ jobs:
     name: Build Ansible Docs
     uses: ansible-community/github-docs-build/.github/workflows/_shared-docs-build-push.yml@main
     with:
-      init-lenient: false
+      init-lenient: true
       init-fail-on-error: true
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
-      provide-link-targets: |
-        ansible_collections.amazon.aws.cloudtrail
+#      provide-link-targets: |
+#        ansible_collections.amazon.aws.cloudtrail_module
 
   publish-docs-gh-pages:
     # use to prevent running on forks
