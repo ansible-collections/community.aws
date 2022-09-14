@@ -132,7 +132,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.elb_target_group</span></code>.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0.0: </span>of community.aws</p>
+<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -225,7 +225,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-deregistration_connection_termination"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-deregistration-connection-termination"><strong>deregistration_connection_termination</strong></p>
 <a class="ansibleOptionLink" href="#parameter-deregistration_connection_termination" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 3.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Indicates whether the load balancer terminates connections at the end of the deregistration timeout.</p>
 <p>Using this option is only supported when attaching to a Network Load Balancer (NLB).</p>
@@ -315,7 +315,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-load_balancing_algorithm_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-load-balancing-algorithm-type"><strong>load_balancing_algorithm_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-load_balancing_algorithm_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 3.2.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.2.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The type of load balancing algorithm to use.</p>
 <p>Changing the load balancing algorithm is only supported when used with Application Load Balancers (ALB).</p>
@@ -357,7 +357,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-preserve_client_ip_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-preserve-client-ip-enabled"><strong>preserve_client_ip_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-preserve_client_ip_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 2.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Indicates whether client IP preservation is enabled.</p>
 <p>The default is disabled if the target group type is <code class="docutils literal notranslate"><span class="pre">ip</span></code> address and the target group protocol is <code class="docutils literal notranslate"><span class="pre">tcp</span></code> or <code class="docutils literal notranslate"><span class="pre">tls</span></code>. Otherwise, the default is enabled. Client IP preservation cannot be disabled for <code class="docutils literal notranslate"><span class="pre">udp</span></code> and <code class="docutils literal notranslate"><span class="pre">tcp_udp</span></code> target groups.</p>
@@ -405,7 +405,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-proxy_protocol_v2_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-proxy-protocol-v2-enabled"><strong>proxy_protocol_v2_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-proxy_protocol_v2_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 2.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Indicates whether Proxy Protocol version 2 is enabled.</p>
 <p>The value is <code class="docutils literal notranslate"><span class="pre">true</span></code> or <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
@@ -469,7 +469,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_app_cookie_duration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-app-cookie-duration"><strong>stickiness_app_cookie_duration</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_app_cookie_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
-<p><span class="ansible-option-versionadded">added in 1.5.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The time period, in seconds, during which requests from a client should be routed to the same target. After this time period expires, the application-generated cookie is considered stale. The range is 1 second to 1 week (604800 seconds).</p>
 </div></td>
@@ -477,7 +477,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_app_cookie_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-app-cookie-name"><strong>stickiness_app_cookie_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_app_cookie_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 1.5.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the application cookie. Required if <em>stickiness_type=app_cookie</em>.</p>
 </div></td>
@@ -809,7 +809,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-load_balancing_algorithm_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-return-load-balancing-algorithm-type"><strong>load_balancing_algorithm_type</strong></p>
 <a class="ansibleOptionLink" href="#return-load_balancing_algorithm_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 3.2.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.2.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The type load balancing algorithm used.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>

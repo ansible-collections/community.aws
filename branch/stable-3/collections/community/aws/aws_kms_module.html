@@ -132,7 +132,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.aws_kms</span></code>.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0.0: </span>of community.aws</p>
+<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -339,7 +339,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <div class="ansibleOptionAnchor" id="parameter-customer_master_key_spec"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-module-parameter-key-spec"><span id="ansible-collections-community-aws-aws-kms-module-parameter-customer-master-key-spec"></span><strong>key_spec</strong></p>
 <a class="ansibleOptionLink" href="#parameter-key_spec" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: customer_master_key_spec</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 2.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Specifies the type of KMS key to create.</p>
 <p>The specification is not changeable once the key is created.</p>
@@ -359,7 +359,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-key_usage"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-module-parameter-key-usage"><strong>key_usage</strong></p>
 <a class="ansibleOptionLink" href="#parameter-key_usage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 2.1.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Determines the cryptographic operations for which you can use the KMS key.</p>
 <p>The usage is not changeable once the key is created.</p>
@@ -375,7 +375,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <div class="ansibleOptionAnchor" id="parameter-deletion_delay"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-module-parameter-pending-window"><span id="ansible-collections-community-aws-aws-kms-module-parameter-deletion-delay"></span><strong>pending_window</strong></p>
 <a class="ansibleOptionLink" href="#parameter-pending_window" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: deletion_delay</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of days between requesting deletion of the CMK and when it will actually be deleted.</p>
 <p>Only used when <em>state=absent</em> and the CMK has not yet been deleted.</p>
@@ -820,7 +820,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-key_policies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-module-return-key-policies"><strong>key_policies</strong></p>
 <a class="ansibleOptionLink" href="#return-key_policies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 3.3.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.3.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>list of policy documents for the key. Empty when access is denied even if there are policies.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>

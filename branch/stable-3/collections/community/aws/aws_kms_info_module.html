@@ -132,7 +132,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.aws_kms_info</span></code>.</p>
 </div>
 <div class="versionadded">
-<p><span class="versionmodified added">New in version 1.0.0: </span>of community.aws</p>
+<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
 </div>
 <div class="contents local topic" id="contents">
 <ul class="simple">
@@ -173,7 +173,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <div class="ansibleOptionAnchor" id="parameter-key_alias"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-info-module-parameter-key-alias"><span id="ansible-collections-community-aws-aws-kms-info-module-parameter-alias"></span><strong>alias</strong></p>
 <a class="ansibleOptionLink" href="#parameter-alias" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: key_alias</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Alias for key.</p>
 <p>Mutually exclusive with <em>key_id</em> and <em>filters</em>.</p>
@@ -256,7 +256,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <div class="ansibleOptionAnchor" id="parameter-key_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-info-module-parameter-key-id"><span id="ansible-collections-community-aws-aws-kms-info-module-parameter-key-arn"></span><strong>key_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-key_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: key_arn</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-<p><span class="ansible-option-versionadded">added in 1.4.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 1.4.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Key ID or ARN of the key.</p>
 <p>Mutually exclusive with <em>alias</em> and <em>filters</em>.</p>
@@ -265,7 +265,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-keys_attr"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-info-module-parameter-keys-attr"><strong>keys_attr</strong></p>
 <a class="ansibleOptionLink" href="#parameter-keys_attr" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
-<p><span class="ansible-option-versionadded">added in 2.0.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 2.0.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Returning the <code class="docutils literal notranslate"><span class="pre">keys</span></code> attribute conflicted with the builtin keys() method on dictionaries and as such was deprecated.</p>
 <p>This parameter now does nothing, and after version <code class="docutils literal notranslate"><span class="pre">4.0.0</span></code> this parameter will be removed.</p>
@@ -551,7 +551,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-kms_keys/key_policies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-kms-info-module-return-kms-keys-key-policies"><strong>key_policies</strong></p>
 <a class="ansibleOptionLink" href="#return-kms_keys/key_policies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
-<p><span class="ansible-option-versionadded">added in 3.3.0 of community.aws</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 3.3.0</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>list of policy documents for the key. Empty when access is denied even if there are policies.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
