@@ -1,0 +1,3 @@
+---
+trivial:
+- "Set a max duration of some slow integration tests to avoid timeout (https://github.com/ansible-collections/community.aws/pull/1467)." 
