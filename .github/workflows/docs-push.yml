@@ -31,6 +31,7 @@ jobs:
         ansible_collections.amazon.aws.cloudwatchlogs_log_group_info_module
         ansible_collections.amazon.aws.cloudwatchlogs_log_group_metric_filter_module
         ansible_collections.amazon.aws.cloudwatchlogs_log_group_module
+        ansible_collections.amazon.aws.cloudwatch_metric_alarm_module
         ansible_collections.amazon.aws.ec2_eip_info_module
         ansible_collections.amazon.aws.ec2_eip_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
