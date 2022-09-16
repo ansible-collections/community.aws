@@ -192,10 +192,6 @@ action_groups:
   - redshift_cross_region_snapshots
   - redshift_info
   - redshift_subnet_group
-  - route53
-  - route53_health_check
-  - route53_info
-  - route53_zone
   - s3_bucket_notification
   - s3_bucket_info
   - s3_cors
@@ -487,3 +483,11 @@ plugin_routing:
       redirect: amazon.aws.rds_snapshot_info
     rds_subnet_group:
       redirect: amazon.aws.rds_subnet_group
+    route53:
+      redirect: amazon.aws.route53
+    route53_health_check:
+      redirect: amazon.aws.route53_health_check
+    route53_info:
+      redirect: amazon.aws.route53_info
+    route53_zone:
+      redirect: amazon.aws.route53_zone
