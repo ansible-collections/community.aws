@@ -5,12 +5,12 @@ concurrency:
 on:
   push:
     branches:
-      - main
-      - stable-*
+    - main
+    - stable-*
     tags:
-      - '*'
+    - '*'
   schedule:
-    - cron: '0 13 * * *'
+  - cron: '0 13 * * *'
 
 jobs:
   build-docs:
@@ -25,6 +25,13 @@ jobs:
       # Please also update docs-pr.yml
       provide-link-targets: |
         ansible_collections.amazon.aws.cloudtrail_module
+        ansible_collections.amazon.aws.execute_lambda_module
+        ansible_collections.amazon.aws.lambda_module
+        ansible_collections.amazon.aws.lambda_alias_module
+        ansible_collections.amazon.aws.lambda_event_module
+        ansible_collections.amazon.aws.lambda_execute_module
+        ansible_collections.amazon.aws.lambda_info_module
+        ansible_collections.amazon.aws.lambda_policy_module
 
   publish-docs-gh-pages:
     # use to prevent running on forks
