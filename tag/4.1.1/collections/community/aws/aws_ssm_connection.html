@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>community.aws.aws_ssm connection – execute via AWS Systems Manager &mdash; Ansible collections  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.svg"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="community.aws.autoscaling_complete_lifecycle_action module – Completes the lifecycle action of an instance" href="autoscaling_complete_lifecycle_action_module.html" />
+    <link rel="prev" title="Community.Aws" href="index.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
+    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
+    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
+    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.svg"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Ansible Collections Documentation</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Ansible collections
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" class="st-default-search-input" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Community Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Community.Aws</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ansible collections</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Collection Index</a> &raquo;</li>
+          <li><a href="../index.html">Collections in the Community Namespace</a> &raquo;</li>
+          <li><a href="index.html">Community.Aws</a> &raquo;</li>
+      <li>community.aws.aws_ssm connection – execute via AWS Systems Manager</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-community-aws-aws-ssm-connection"></span><section id="community-aws-aws-ssm-connection-execute-via-aws-systems-manager">
+<h1>community.aws.aws_ssm connection – execute via AWS Systems Manager<a class="headerlink" href="#community-aws-aws-ssm-connection-execute-via-aws-systems-manager" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This connection plugin is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.1.1).</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
+You need further requirements to be able to use this connection plugin,
+see <a class="reference internal" href="#ansible-collections-community-aws-aws-ssm-connection-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.aws_ssm</span></code>.</p>
+</div>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
+</ul>
+</div>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>This connection plugin allows ansible to execute tasks on an EC2 instance via the aws ssm CLI.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<span id="ansible-collections-community-aws-aws-ssm-connection-requirements"></span><h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>The below requirements are needed on the local controller node that executes this connection.</p>
+<ul class="simple">
+<li><p>The remote EC2 instance must be running the AWS Systems Manager Agent (SSM Agent).</p></li>
+<li><p>The control machine must have the aws session manager plugin installed.</p></li>
+<li><p>The remote EC2 linux instance must have the curl installed.</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id3">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-access_key_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-access-key-id"><strong>access_key_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-access_key_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in 1.3.0 of community.aws</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The STS access key to use when connecting via session-manager.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_access_key_id</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-bucket_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-bucket-name"><strong>bucket_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-bucket_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The name of the S3 bucket used for file transfers.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_bucket_name</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-bucket_sse_kms_key_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-bucket-sse-kms-key-id"><strong>bucket_sse_kms_key_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-bucket_sse_kms_key_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in 2.2.0 of community.aws</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>KMS key id to use when encrypting objects using <code class="docutils literal notranslate"><span class="pre">bucket_sse_mode=aws:kms</span></code>. Ignored otherwise.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_bucket_sse_kms_key_id</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-bucket_sse_mode"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-bucket-sse-mode"><strong>bucket_sse_mode</strong></p>
+<a class="ansibleOptionLink" href="#parameter-bucket_sse_mode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in 2.2.0 of community.aws</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Server-side encryption mode to use for uploads on the S3 bucket used for file transfer.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">AES256</span></p></li>
+<li><p><span class="ansible-option-choices-entry">aws:kms</span></p></li>
+</ul>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_bucket_sse_mode</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-instance_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-instance-id"><strong>instance_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-instance_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The EC2 instance ID.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_instance_id</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-plugin"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-plugin"><strong>plugin</strong></p>
+<a class="ansibleOptionLink" href="#parameter-plugin" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>This defines the location of the session-manager-plugin binary.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“/usr/local/bin/session-manager-plugin”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_plugin</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-profile"><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in 1.5.0 of community.aws</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Sets AWS profile to use.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_profile</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-reconnection_retries"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-reconnection-retries"><strong>reconnection_retries</strong></p>
+<a class="ansibleOptionLink" href="#parameter-reconnection_retries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Number of attempts to connect.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">3</span></p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_retries</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-region"><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The region the EC2 instance is located.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“us-east-1”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_region</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-secret-access-key"><strong>secret_access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in 1.3.0 of community.aws</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The STS secret key to use when connecting via session-manager.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_secret_access_key</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-session_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-session-token"><strong>session_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in 1.3.0 of community.aws</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The STS session token to use when connecting via session-manager.</p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_session_token</p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-ssm_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-aws-ssm-connection-parameter-ssm-timeout"><strong>ssm_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-ssm_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Connection timeout seconds.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">60</span></p>
+<p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
+<ul class="simple">
+<li><p>Variable: ansible_aws_ssm_timeout</p></li>
+</ul>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id4">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Stop Spooler Process on Windows Instances</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stop Spooler Service on Windows Instances</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_ssm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_shell_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">powershell</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameofthebucket</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stop spooler service</span><span class="w"></span>
+<span class="w">      </span><span class="nt">win_service</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">spooler</span><span class="w"></span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stopped</span><span class="w"></span>
+
+<span class="c1"># Install a Nginx Package on Linux Instance</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install a Nginx Package</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_ssm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameofthebucket</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-west-2</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install a Nginx Package</span><span class="w"></span>
+<span class="w">      </span><span class="nt">yum</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w"></span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+
+<span class="c1"># Create a directory in Windows Instances</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a directory in Windows Instance</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_ssm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_shell_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">powershell</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameofthebucket</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a Directory</span><span class="w"></span>
+<span class="w">      </span><span class="nt">win_file</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:\Windows\temp</span><span class="w"></span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">directory</span><span class="w"></span>
+
+<span class="c1"># Making use of Dynamic Inventory Plugin</span><span class="w"></span>
+<span class="c1"># =======================================</span><span class="w"></span>
+<span class="c1"># aws_ec2.yml (Dynamic Inventory - Linux)</span><span class="w"></span>
+<span class="c1"># This will return the Instance IDs matching the filter</span><span class="w"></span>
+<span class="c1">#plugin: aws_ec2</span><span class="w"></span>
+<span class="c1">#regions:</span><span class="w"></span>
+<span class="c1">#    - us-east-1</span><span class="w"></span>
+<span class="c1">#hostnames:</span><span class="w"></span>
+<span class="c1">#    - instance-id</span><span class="w"></span>
+<span class="c1">#filters:</span><span class="w"></span>
+<span class="c1">#    tag:SSMTag: ssmlinux</span><span class="w"></span>
+<span class="c1"># -----------------------</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">install aws-cli</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
+<span class="w">  </span><span class="nt">gather_facts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_ssm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameofthebucket</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws-cli</span><span class="w"></span>
+<span class="w">    </span><span class="nt">raw</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yum install -y awscli</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws-cli</span><span class="w"></span>
+<span class="c1"># Execution: ansible-playbook linux.yaml -i aws_ec2.yml</span><span class="w"></span>
+<span class="c1"># The playbook tasks will get executed on the instance ids returned from the dynamic inventory plugin using ssm connection.</span><span class="w"></span>
+<span class="c1"># =====================================================</span><span class="w"></span>
+<span class="c1"># aws_ec2.yml (Dynamic Inventory - Windows)</span><span class="w"></span>
+<span class="c1">#plugin: aws_ec2</span><span class="w"></span>
+<span class="c1">#regions:</span><span class="w"></span>
+<span class="c1">#    - us-east-1</span><span class="w"></span>
+<span class="c1">#hostnames:</span><span class="w"></span>
+<span class="c1">#    - instance-id</span><span class="w"></span>
+<span class="c1">#filters:</span><span class="w"></span>
+<span class="c1">#    tag:SSMTag: ssmwindows</span><span class="w"></span>
+<span class="c1"># -----------------------</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a dir.</span><span class="w"></span>
+<span class="w">  </span><span class="nt">hosts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all</span><span class="w"></span>
+<span class="w">  </span><span class="nt">gather_facts</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_ssm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_shell_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">powershell</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameofthebucket</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create the directory</span><span class="w"></span>
+<span class="w">      </span><span class="nt">win_file</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">C:\Temp\SSM_Testing5</span><span class="w"></span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">directory</span><span class="w"></span>
+<span class="c1"># Execution:  ansible-playbook win_file.yaml -i aws_ec2.yml</span><span class="w"></span>
+<span class="c1"># The playbook tasks will get executed on the instance ids returned from the dynamic inventory plugin using ssm connection.</span><span class="w"></span>
+
+<span class="c1"># Install a Nginx Package on Linux Instance; with specific SSE for file transfer</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install a Nginx Package</span><span class="w"></span>
+<span class="w">  </span><span class="nt">vars</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_connection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aws_ssm</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nameofthebucket</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-west-2</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_sse_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;aws:kms&#39;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">ansible_aws_ssm_bucket_sse_kms_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">alias/kms-key-alias</span><span class="w"></span>
+<span class="w">  </span><span class="nt">tasks</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install a Nginx Package</span><span class="w"></span>
+<span class="w">      </span><span class="nt">yum</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">nginx</span><span class="w"></span>
+<span class="w">        </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+</pre></div>
+</div>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Pat Sharkey (&#64;psharkey)</p></li>
+<li><p>HanumanthaRao MVL (&#64;hanumantharaomvl)</p></li>
+<li><p>Gaurav Ashtikar (&#64;gau1991)</p></li>
+</ul>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Configuration entries for each entry type have a low to high priority order. For example, a variable that is lower in the list will override a variable that is higher up.</p>
+</div>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Permalink to this heading"></a></h3>
+<p class="ansible-links">
+  <a href="https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" aria-role="button" target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://github.com/ansible-collections/community.aws" aria-role="button" target="_blank" rel="noopener external">Repository (Sources)</a>
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="index.html" class="btn btn-neutral float-left" title="Community.Aws" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="autoscaling_complete_lifecycle_action_module.html" class="btn btn-neutral float-right" title="community.aws.autoscaling_complete_lifecycle_action module – Completes the lifecycle action of an instance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ansible contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
