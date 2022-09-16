@@ -1,0 +1,3 @@
+---
+bugfixes:
+- "ec2_placement_group - Handle a potential race creation during the creation of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477)."
