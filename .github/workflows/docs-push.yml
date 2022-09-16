@@ -31,8 +31,15 @@ jobs:
         ansible_collections.amazon.aws.ec2_eip_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
         ansible_collections.amazon.aws.elb_application_lb_module
+        ansible_collections.amazon.aws.execute_lambda_module
         ansible_collections.amazon.aws.iam_policy_info_module
         ansible_collections.amazon.aws.iam_policy_module
+        ansible_collections.amazon.aws.lambda_alias_module
+        ansible_collections.amazon.aws.lambda_event_module
+        ansible_collections.amazon.aws.lambda_execute_module
+        ansible_collections.amazon.aws.lambda_info_module
+        ansible_collections.amazon.aws.lambda_module
+        ansible_collections.amazon.aws.lambda_policy_module
         ansible_collections.amazon.aws.rds_cluster_info_module
         ansible_collections.amazon.aws.rds_cluster_module
         ansible_collections.amazon.aws.rds_cluster_snapshot_module
@@ -40,9 +47,9 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
         ansible_collections.amazon.aws.rds_snapshot_info_module
-        ansible_collections.amazon.aws.route53_module
         ansible_collections.amazon.aws.route53_health_check_module
         ansible_collections.amazon.aws.route53_info_module
+        ansible_collections.amazon.aws.route53_module
         ansible_collections.amazon.aws.route53_zone_module
 
   publish-docs-gh-pages:
