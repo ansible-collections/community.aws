@@ -1,3 +1,0 @@
-minor_changes:
-- cloudwatchlogs_log_group - Condensed integration test suites `cloudwatchlogs` and `cloudwatchlogs_log_group` into combined suite `cloudwatchlogs` (https://github.com/ansible-collections/community.aws/pull/1395).
-- cloudwatchlogs - This combined integration test suite covers tests for `cloudwatchlogs_log_group`, `cloudwatchlogs_log_group_info`, and `cloudwatchlogs_log_group_metric_filter` (https://github.com/ansible-collections/community.aws/pull/1395).
