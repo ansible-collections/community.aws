@@ -1,3 +1,4 @@
+---
 requires_ansible: '>=2.9.10'
 action_groups:
   aws:
@@ -107,8 +108,6 @@ action_groups:
   - ec2_asg_lifecycle_hook
   - ec2_customer_gateway
   - ec2_customer_gateway_info
-  - ec2_eip
-  - ec2_eip_info
   - ec2_elb
   - ec2_launch_template
   - ec2_lc
@@ -414,6 +413,10 @@ plugin_routing:
     ec2_asg_scheduled_action:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_scheduled_action
+    ec2_eip:
+      redirect: amazon.aws.ec2_eip
+    ec2_eip_info:
+      redirect: amazon.aws.ec2_eip_info
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_metric_alarm:
@@ -455,13 +458,13 @@ plugin_routing:
       redirect: amazon.aws.ec2_vpc_route_table_info
     elb_classic_lb:
       redirect: amazon.aws.ec2_elb_lb
-    execute_lambda:
-      # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.lambda_execute
     elb_application_lb:
       redirect: amazon.aws.elb_application_lb
     elb_application_lb_info:
       redirect: amazon.aws.elb_application_lb_info
+    execute_lambda:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: community.aws.lambda_execute
     iam_policy:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
