@@ -37,6 +37,10 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
         ansible_collections.amazon.aws.rds_snapshot_info_module
+        ansible_collections.amazon.aws.route53_health_check_module
+        ansible_collections.amazon.aws.route53_info_module
+        ansible_collections.amazon.aws.route53_module
+        ansible_collections.amazon.aws.route53_zone_module
 
   build-docs:
     permissions:
@@ -65,6 +69,10 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
         ansible_collections.amazon.aws.rds_snapshot_info_module
+        ansible_collections.amazon.aws.route53_health_check_module
+        ansible_collections.amazon.aws.route53_info_module
+        ansible_collections.amazon.aws.route53_module
+        ansible_collections.amazon.aws.route53_zone_module
 
   comment:
     permissions:
