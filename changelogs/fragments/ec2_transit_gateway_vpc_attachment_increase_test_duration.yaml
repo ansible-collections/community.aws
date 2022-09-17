@@ -1,0 +1,3 @@
+---
+trivial:
+  - "ec2_transit_gateway_vpc_attachment - Increase the test duration (https://github.com/ansible-collections/community.aws/pull/1494)."
