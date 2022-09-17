@@ -10,6 +10,11 @@
       region: '{{ aws_region }}'
     ec2_eip:
       in_vpc: true
+      tags:
+        AnsibleEIPTestPrefix: '{{ resource_prefix }}'
+    ec2_eip_info:
+        filters:
+          tag:AnsibleEIPTestPrefix: '{{ resource_prefix }}'
 
   block:
     - name: Get the current caller identity facts
@@ -29,22 +34,6 @@
           AnsibleEIPTest: Pending
           AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: vpc_result
-
-    - name: Look for signs of concurrent EIP tests.  Pause if they are running or their prefix comes before ours.
-      vars:
-        running_query: vpcs[?tags.AnsibleEIPTest=='Running']
-        pending_query: vpcs[?tags.AnsibleEIPTest=='Pending'].tags.AnsibleEIPTestPrefix
-      ec2_vpc_net_info:
-        filters:
-          tag:AnsibleEIPTest:
-            - Pending
-            - Running
-      register: vpc_info
-      retries: 10
-      delay: 5
-      until:
-        - ( vpc_info.vpcs | map(attribute='tags') | selectattr('AnsibleEIPTest', 'equalto', 'Running') | length == 0 )
-        - ( vpc_info.vpcs | map(attribute='tags') | selectattr('AnsibleEIPTest', 'equalto', 'Pending') | map(attribute='AnsibleEIPTestPrefix') | sort | first == resource_prefix )
 
     - name: Create subnet
       ec2_vpc_subnet:
@@ -106,19 +95,11 @@
       ec2_eip_info:
       register: eip_info_start
 
-    - name: Require that there are no free IPs when we start, otherwise we can't test things properly
-      assert:
-        that:
-          - '"addresses" in eip_info_start'
-          - ( eip_info_start.addresses | length ) == ( eip_info_start.addresses | select('match', 'association_id') | length )
-
     # ------------------------------------------------------------------------------------------
 
     - name: Allocate a new EIP with no conditions - check_mode
       ec2_eip:
         state: present
-        tags:
-          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: eip
       check_mode: yes
 
@@ -129,8 +110,6 @@
     - name: Allocate a new EIP with no conditions
       ec2_eip:
         state: present
-        tags:
-          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: eip
 
     - ec2_eip_info:
@@ -334,6 +313,8 @@
         state: present
         reuse_existing_ip_allowed: true
         tag_name: Team
+        tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: no_tagged_eip
 
     - ec2_eip_info:
@@ -354,12 +335,20 @@
         public_ip: '{{ eip.public_ip }}'
         tags:
           Team: Frontend
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
+    - ec2_eip_info:
+      register: eip_info
+
 
     - name: Attempt reusing an existing EIP with a tag (Match available) - check_mode
       ec2_eip:
         state: present
         reuse_existing_ip_allowed: true
         tag_name: Team
+        tags:
+          Team: Frontend
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
+
       register: reallocate_eip
       check_mode: yes
 
@@ -372,6 +361,9 @@
         state: present
         reuse_existing_ip_allowed: true
         tag_name: Team
+        tags:
+          Team: Frontend
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: reallocate_eip
 
     - ec2_eip_info:
@@ -423,6 +415,7 @@
         public_ip: '{{ eip.public_ip }}'
         tags:
           Team: Backend
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
 
     - name: Attempt reusing an existing EIP with a tag and it's value (match available) - check_mode
       ec2_eip:
@@ -430,6 +423,9 @@
         reuse_existing_ip_allowed: true
         tag_name: Team
         tag_value: Backend
+        tags:
+          Team: Backend
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: reallocate_eip
       check_mode: yes
 
@@ -443,6 +439,9 @@
         reuse_existing_ip_allowed: true
         tag_name: Team
         tag_value: Backend
+        tags:
+          Team: Backend
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
       register: reallocate_eip
 
     - ec2_eip_info:
@@ -1161,6 +1160,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: False
       register: tag_eip
@@ -1175,6 +1175,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: False
       register: tag_eip
@@ -1200,6 +1201,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: False
       register: tag_eip
@@ -1214,6 +1216,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: False
       register: tag_eip
@@ -1240,6 +1243,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: True
       register: tag_eip
@@ -1254,6 +1258,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: True
       register: tag_eip
@@ -1262,11 +1267,9 @@
         filters:
           public-ip: '{{ eip.public_ip }}'
       register: eip_info
-
     - assert:
         that:
           - tag_eip is changed
-          - '"AnsibleEIPTestPrefix" not in eip_info.addresses[0].tags'
           - '"another_tag" not in eip_info.addresses[0].tags'
           - '"third tag" in eip_info.addresses[0].tags'
           - eip_info.addresses[0].tags['third tag'] == 'Third tag - ' + resource_prefix
@@ -1276,6 +1279,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: True
       register: tag_eip
@@ -1290,6 +1294,7 @@
         state: present
         public_ip: '{{ eip.public_ip }}'
         tags:
+          AnsibleEIPTestPrefix: '{{ resource_prefix }}'
           "third tag": 'Third tag - {{ resource_prefix }}'
         purge_tags: True
       register: tag_eip
@@ -1302,7 +1307,6 @@
     - assert:
         that:
           - tag_eip is not changed
-          - '"AnsibleEIPTestPrefix" not in eip_info.addresses[0].tags'
           - '"another_tag" not in eip_info.addresses[0].tags'
           - '"third tag" in eip_info.addresses[0].tags'
           - eip_info.addresses[0].tags['third tag'] == 'Third tag - ' + resource_prefix
