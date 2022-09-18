@@ -169,7 +169,7 @@ options:
               type: int
         connection_attempts:
           description: The number of times that CloudFront attempts to connect to the origin.
-                       The minimum number is 1, the maximum is 3
+                       The minimum number is C(1), the maximum is C(3).
           type: int
           default: 3
         connection_timeout:
