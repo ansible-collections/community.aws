@@ -174,7 +174,7 @@ options:
           default: 3
         connection_timeout:
           description: The number of seconds that CloudFront waits when trying to establish a connection to the origin.
-                       The minimum timeout is 1 second, the maximum is 10 seconds.
+                       The minimum timeout is C(1) second, the maximum is C(10) seconds.
           type: int
           default: 10
     purge_origins:
