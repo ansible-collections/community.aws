@@ -1,0 +1,2 @@
+minor_changes:
+  - efs - adds ``backup`` option to enable/disable automatic backups on the file system (https://github.com/ansible-collections/community.aws/issues/1266).
