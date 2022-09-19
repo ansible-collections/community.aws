@@ -79,6 +79,12 @@ options:
         description:
             - If the throughput_mode is provisioned, select the amount of throughput to provisioned in Mibps.
         type: float
+    backup:
+        description:
+            - Changes the file system backup policy. Use this option to start or stop automatic backups of the file system.
+            - By default, automatic backup of the file system is disabled.
+        choices: ['enabled', 'disabled']
+        type: str
     wait:
         description:
             - "In case of 'present' state should wait for EFS 'available' life cycle state (of course, if current state not 'deleting' or 'deleted')
@@ -274,6 +280,7 @@ class EFSConnection(object):
     STATE_AVAILABLE = 'available'
     STATE_DELETING = 'deleting'
     STATE_DELETED = 'deleted'
+    BACKUP_DISABLED = 'DISABLED'
 
     def __init__(self, module):
         self.connection = module.client('efs')
@@ -413,6 +420,24 @@ class EFSConnection(object):
         ))
         return info.get('ProvisionedThroughputInMibps', None)
 
+    def get_backup_policy(self, fs_id):
+        """
+         Returns the status of Filesystem backup policy
+        """
+        try:
+            info = self.connection.describe_backup_policy(FileSystemId=fs_id)
+            return info['BackupPolicy']['Status']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            # PolicyNotFound error returned whenever default backup policy is in effect
+            # In this case, we return disabled status
+            # By default, the automatic backup is disabled
+            if e.response['Error']['Code'] == 'PolicyNotFound':
+                return self.BACKUP_DISABLED
+            else:
+                self.module.fail_json_aws(e, msg="Unable to get file system backup policy.")
+
+        return self.BACKUP_DISABLED
+
     def create_file_system(self, name, performance_mode, encrypt, kms_key_id, throughput_mode, provisioned_throughput_in_mibps):
         """
          Creates new filesystem with selected name
@@ -500,6 +525,30 @@ class EFSConnection(object):
                     LifecyclePolicies=LifecyclePolicies,
                 )
                 changed = True
+        return changed
+
+    def change_backup_policy(self, name, status):
+        """
+        Enable/disable automatic backup policy of the FileSystem.
+        """
+        changed = False
+        state = self.get_file_system_state(name)
+        if state in [self.STATE_AVAILABLE, self.STATE_CREATING]:
+            wait_for(
+                lambda: self.get_file_system_state(name),
+                self.STATE_AVAILABLE,
+                self.wait_timeout
+            )
+            fs_id = self.get_file_system_id(name)
+            current_backup_policy = self.get_backup_policy(fs_id)
+            params = dict()
+            if status != current_backup_policy:
+                params['Status'] = status
+                try:
+                    self.connection.put_backup_policy(FileSystemId=fs_id, BackupPolicy=params)
+                    changed = True
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    self.module.fail_json_aws(e, msg="Unable to update backup policy status.")
         return changed
 
     def converge_file_system(self, name, tags, purge_tags, targets, throughput_mode, provisioned_throughput_in_mibps):
@@ -726,6 +775,7 @@ def main():
         transition_to_ia=dict(required=False, type='str', choices=["None", "7", "14", "30", "60", "90"], default=None),
         throughput_mode=dict(required=False, type='str', choices=["bursting", "provisioned"], default=None),
         provisioned_throughput_in_mibps=dict(required=False, type='float'),
+        backup=dict(required=False, type='str', choices=["enabled", "disabled"], default=None),
         wait=dict(required=False, type="bool", default=False),
         wait_timeout=dict(required=False, type="int", default=0)
     )
@@ -754,6 +804,7 @@ def main():
     transition_to_ia = module.params.get('transition_to_ia')
     throughput_mode = module.params.get('throughput_mode')
     provisioned_throughput_in_mibps = module.params.get('provisioned_throughput_in_mibps')
+    backup = module.params.get('backup')
     state = str(module.params.get('state')).lower()
     changed = False
 
@@ -767,6 +818,9 @@ def main():
                                                   throughput_mode=throughput_mode, provisioned_throughput_in_mibps=provisioned_throughput_in_mibps) or changed
         if transition_to_ia:
             changed |= connection.update_lifecycle_policy(name, transition_to_ia)
+        if backup:
+            backup = str(backup).upper()
+            changed = connection.change_backup_policy(name, backup)
         result = first_or_default(connection.get_file_systems(CreationToken=name))
 
     elif state == 'absent':

@@ -304,6 +304,74 @@
           - efs_result is not changed
 
     # ============================================================
+    - name: Efs enable automatic backup 
+      efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+            Name: "{{ efs_name }}-test-tag"
+            Purpose: file-storage
+        targets:
+            - subnet_id: "{{testing_subnet_a.subnet.id}}"
+            - subnet_id: "{{testing_subnet_b.subnet.id}}"
+        backup: 'enabled'
+      register: efs_result
+    
+    - assert:
+        that:
+          - efs_result is changed
+
+    - name: Efs enable automatic backup - idempotency
+      efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+            Name: "{{ efs_name }}-test-tag"
+            Purpose: file-storage
+        targets:
+            - subnet_id: "{{testing_subnet_a.subnet.id}}"
+            - subnet_id: "{{testing_subnet_b.subnet.id}}"
+        backup: 'enabled'
+      register: efs_result
+    
+    - assert:
+        that:
+          - efs_result is not changed
+
+    - name: Efs disable automatic backup 
+      efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+            Name: "{{ efs_name }}-test-tag"
+            Purpose: file-storage
+        targets:
+            - subnet_id: "{{testing_subnet_a.subnet.id}}"
+            - subnet_id: "{{testing_subnet_b.subnet.id}}"
+        backup: 'disabled'
+      register: efs_result
+
+    - assert:
+        that:
+          - efs_result is changed
+
+    - name: Efs disable automatic backup - idempotency
+      efs:
+        state: present
+        name: "{{ efs_name }}-test-efs"
+        tags:
+            Name: "{{ efs_name }}-test-tag"
+            Purpose: file-storage
+        targets:
+            - subnet_id: "{{testing_subnet_a.subnet.id}}"
+            - subnet_id: "{{testing_subnet_b.subnet.id}}"
+        backup: 'disabled'
+      register: efs_result
+
+    - assert:
+        that:
+          - efs_result is not changed
+    # ============================================================
     - name: Query unknown EFS by tag
       efs_info:
         tags:
