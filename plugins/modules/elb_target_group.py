@@ -581,7 +581,8 @@ def create_or_update_target_group(connection, module):
     params['TargetType'] = target_type
     if target_type != "lambda":
         params['Protocol'] = module.params.get("protocol").upper()
-        params['ProtocolVersion'] = module.params.get('protocol_version')
+        if module.params.get('protocol_version') is not None:
+            params['ProtocolVersion'] = module.params.get('protocol_version')
         params['Port'] = module.params.get("port")
         params['VpcId'] = module.params.get("vpc_id")
     tags = module.params.get("tags")
