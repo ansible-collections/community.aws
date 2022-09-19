@@ -1,0 +1,2 @@
+minor_changes:
+  - elb_target_group - add support for ProtocolVersion param (https://github.com/ansible-collections/community.aws/pull/1496).
