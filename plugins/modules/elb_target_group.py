@@ -89,6 +89,12 @@ options:
     required: false
     choices: [ 'http', 'https', 'tcp', 'tls', 'udp', 'tcp_udp', 'HTTP', 'HTTPS', 'TCP', 'TLS', 'UDP', 'TCP_UDP']
     type: str
+  protocol_version:
+    description:
+      - Specifies protocol version.
+    required: false
+    choices: ['GRPC', 'HTTP1', 'HTTP2']
+    type: str
   state:
     description:
       - Create or destroy the target group.
@@ -214,6 +220,15 @@ EXAMPLES = r'''
     protocol: http
     port: 80
     vpc_id: vpc-01234567
+    state: present
+
+- name: Create a target group with protocol_version 'GRPC'
+  community.aws.elb_target_group:
+    name: mytargetgroup
+    protocol: http
+    port: 80
+    vpc_id: vpc-01234567
+    protocol_version: GRPC
     state: present
 
 - name: Modify the target group with a custom health check
@@ -566,6 +581,7 @@ def create_or_update_target_group(connection, module):
     params['TargetType'] = target_type
     if target_type != "lambda":
         params['Protocol'] = module.params.get("protocol").upper()
+        params['ProtocolVersion'] = module.params.get('protocol_version')
         params['Port'] = module.params.get("port")
         params['VpcId'] = module.params.get("vpc_id")
     tags = module.params.get("tags")
@@ -912,6 +928,7 @@ def main():
         name=dict(required=True),
         port=dict(type='int'),
         protocol=dict(choices=protocols_list),
+        protocol_version=dict(type='str', choices=['GRPC', 'HTTP1', 'HTTP2']),
         purge_tags=dict(default=True, type='bool'),
         stickiness_enabled=dict(type='bool'),
         stickiness_type=dict(),
