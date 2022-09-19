@@ -1,0 +1,3 @@
+---
+trivial:
+  - "tests - dedicate more time to some slow test targets (https://github.com/ansible-collections/community.aws/pull/1501)."
