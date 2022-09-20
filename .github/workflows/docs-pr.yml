@@ -24,6 +24,8 @@ jobs:
         ansible_collections.amazon.aws.cloudtrail_module
         ansible_collections.amazon.aws.ec2_eip_info_module
         ansible_collections.amazon.aws.ec2_eip_module
+        ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.iam_policy_info_module
         ansible_collections.amazon.aws.iam_policy_module
         ansible_collections.amazon.aws.rds_cluster_info_module
@@ -47,6 +49,8 @@ jobs:
         ansible_collections.amazon.aws.cloudtrail_module
         ansible_collections.amazon.aws.ec2_eip_info_module
         ansible_collections.amazon.aws.ec2_eip_module
+        ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.iam_policy_info_module
         ansible_collections.amazon.aws.iam_policy_module
         ansible_collections.amazon.aws.rds_cluster_info_module
