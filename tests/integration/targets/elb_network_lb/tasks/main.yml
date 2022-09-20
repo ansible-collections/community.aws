@@ -237,7 +237,7 @@
 
     - name: destroy certificate
       iam_server_certificate:
-        name: 'ansible-test-{{ tiny_prefix }}'
+        name: 'ansible-test-nlb-{{ tiny_prefix }}'
         state: absent
       register: remove_cert
       ignore_errors: yes
