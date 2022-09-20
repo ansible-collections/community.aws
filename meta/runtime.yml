@@ -44,8 +44,6 @@ action_groups:
   - aws_glue_crawler
   - aws_glue_job
   - aws_inspector_target
-  - aws_kms
-  - aws_kms_info
   - aws_msk_cluster
   - aws_msk_config
   - aws_region_info
@@ -172,8 +170,6 @@ action_groups:
   - iam_user_info
   - inspector_target
   - kinesis_stream
-  - kms_key
-  - kms_key_info
   - lambda
   - lambda_alias
   - lambda_event
@@ -330,10 +326,10 @@ plugin_routing:
       redirect: community.aws.inspector_target
     aws_kms:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.kms_key
+      redirect: amazon.aws.kms_key
     aws_kms_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.kms_key_info
+      redirect: amazon.aws.kms_key_info
     aws_msk_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.msk_cluster
@@ -480,3 +476,7 @@ plugin_routing:
       redirect: amazon.aws.rds_cluster_snapshot
     rds_snapshot_info:
       redirect: amazon.aws.rds_snapshot_info
+    kms_key:
+      redirect: amazon.aws.kms_key
+    kms_key_info:
+      redirect: amazon.aws.kms_key_info
