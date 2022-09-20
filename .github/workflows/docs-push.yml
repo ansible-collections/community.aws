@@ -24,6 +24,8 @@ jobs:
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
       # Please also update docs-pr.yml
       provide-link-targets: |
+        ansible_collections.amazon.aws.autoscaling_group_info_module
+        ansible_collections.amazon.aws.autoscaling_group_module
         ansible_collections.amazon.aws.cloudtrail_module
         ansible_collections.amazon.aws.ec2_eip_info_module
         ansible_collections.amazon.aws.ec2_eip_module
