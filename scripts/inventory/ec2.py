@@ -313,7 +313,7 @@ class Ec2Inventory(object):
         if six.PY3:
             config = configparser.ConfigParser(DEFAULTS)
         else:
-            config = configparser.SafeConfigParser(DEFAULTS)
+            config = configparser.SafeConfigParser(DEFAULTS)  # pylint: disable=deprecated-class
         ec2_ini_path = os.environ.get('EC2_INI_PATH', defaults['ec2']['ini_path'])
         ec2_ini_path = os.path.expanduser(os.path.expandvars(ec2_ini_path))
 
