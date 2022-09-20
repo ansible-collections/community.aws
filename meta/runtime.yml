@@ -153,8 +153,6 @@ action_groups:
   - elasticache_parameter_group
   - elasticache_snapshot
   - elasticache_subnet_group
-  - elb_application_lb
-  - elb_application_lb_info
   - elb_classic_lb
   - elb_classic_lb_info
   - elb_instance
@@ -456,9 +454,13 @@ plugin_routing:
     ec2_vpc_route_table:
       redirect: amazon.aws.ec2_vpc_route_table
     ec2_vpc_route_table_info:
-       redirect: amazon.aws.ec2_vpc_route_table_info
+      redirect: amazon.aws.ec2_vpc_route_table_info
     elb_classic_lb:
       redirect: amazon.aws.ec2_elb_lb
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.lambda_execute
+    elb_application_lb:
+      redirect: amazon.aws.elb_application_lb
+    elb_application_lb_info:
+      redirect: amazon.aws.elb_application_lb_info
