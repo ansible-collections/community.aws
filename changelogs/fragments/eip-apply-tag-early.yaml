@@ -1,0 +1,4 @@
+---
+minor_changes:
+- "ec2_eip - Don't delay the tagging of new Elastic IP (https://github.com/ansible-collections/community.aws/pull/1495)."
+

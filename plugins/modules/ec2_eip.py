@@ -227,6 +227,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_er
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_filter_list
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ensure_ec2_tags
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_specifications
 
 
 def associate_ip_and_device(ec2, module, address, private_ip_address, device_id, allow_reassociation, check_mode, is_instance=True):
@@ -342,7 +343,7 @@ def address_is_associated_with_device(ec2, module, address, device_id, is_instan
     return False
 
 
-def allocate_address(ec2, module, domain, reuse_existing_ip_allowed, check_mode, tag_dict=None, public_ipv4_pool=None):
+def allocate_address(ec2, module, domain, reuse_existing_ip_allowed, check_mode, tag_dict=None, public_ipv4_pool=None, tags=None):
     """ Allocate a new elastic IP address (when needed) and return it """
     if not domain:
         domain = 'standard'
@@ -376,7 +377,12 @@ def allocate_address(ec2, module, domain, reuse_existing_ip_allowed, check_mode,
     try:
         if check_mode:
             return None, True
-        result = ec2.allocate_address(Domain=domain, aws_retry=True), True
+        kwargs = {}
+        if tags:
+            tag_specs = boto3_tag_specifications(tags, types=['elastic-ip'])
+            kwargs['TagSpecifications'] = tag_specs
+
+        result = ec2.allocate_address(Domain=domain, aws_retry=True, **kwargs), True
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Couldn't allocate Elastic IP address")
     return result
@@ -427,7 +433,7 @@ def find_device(ec2, module, device_id, is_instance=True):
 
 
 def ensure_present(ec2, module, domain, address, private_ip_address, device_id,
-                   reuse_existing_ip_allowed, allow_reassociation, check_mode, is_instance=True):
+                   reuse_existing_ip_allowed, allow_reassociation, check_mode, is_instance=True, tags=None):
     changed = False
 
     # Return the EIP object since we've been given a public IP
@@ -435,7 +441,7 @@ def ensure_present(ec2, module, domain, address, private_ip_address, device_id,
         if check_mode:
             return {'changed': True}
 
-        address, changed = allocate_address(ec2, module, domain, reuse_existing_ip_allowed, check_mode)
+        address, changed = allocate_address(ec2, module, domain, reuse_existing_ip_allowed, check_mode, tags=tags)
 
     if device_id:
         # Allocate an IP for instance since no public_ip was provided
@@ -594,7 +600,7 @@ def main():
                 result = ensure_present(
                     ec2, module, domain, address, private_ip_address, device_id,
                     reuse_existing_ip_allowed, allow_reassociation,
-                    module.check_mode, is_instance=is_instance
+                    module.check_mode, is_instance=is_instance, tags=tags
                 )
                 if 'allocation_id' not in result:
                     # Don't check tags on check_mode here - no EIP to pass through
@@ -609,7 +615,7 @@ def main():
                 else:
                     address, changed = allocate_address(
                         ec2, module, domain, reuse_existing_ip_allowed,
-                        module.check_mode, tag_dict, public_ipv4_pool
+                        module.check_mode, tag_dict, public_ipv4_pool, tags=tags
                     )
                     if address:
                         result = {
