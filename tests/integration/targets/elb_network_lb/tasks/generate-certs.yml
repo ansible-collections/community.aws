@@ -45,7 +45,7 @@
 
 - name: create certificate
   iam_server_certificate:
-    name: 'nlb_{{ tiny_prefix }}'
+    name: 'ansible-test-nlb-{{ tiny_prefix }}'
     state: present
     cert: "{{ lookup('file', path_cert_pem) }}"
     key: "{{ lookup('file', path_cert_key) }}"
