@@ -27,6 +27,9 @@ jobs:
         ansible_collections.amazon.aws.rds_cluster_module
         ansible_collections.amazon.aws.rds_cluster_info_module
         ansible_collections.amazon.aws.rds_cluster_snapshot_module
+        ansible_collections.amazon.aws.elb_application_lb_module
+        ansible_collections.amazon.aws.elb_application_lb_info_module
+
   build-docs:
     permissions:
       contents: read
@@ -44,6 +47,9 @@ jobs:
         ansible_collections.amazon.aws.rds_cluster_module
         ansible_collections.amazon.aws.rds_cluster_info_module
         ansible_collections.amazon.aws.rds_cluster_snapshot_module
+        ansible_collections.amazon.aws.elb_application_lb_module
+        ansible_collections.amazon.aws.elb_application_lb_info_module
+
   comment:
     permissions:
       pull-requests: write
