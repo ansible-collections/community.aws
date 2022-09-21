@@ -32,6 +32,8 @@ jobs:
         ansible_collections.amazon.aws.rds_cluster_snapshot_module
         ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.iam_user_module
+        ansible_collections.amazon.aws.iam_user_info_module
 
   publish-docs-gh-pages:
     # use to prevent running on forks
