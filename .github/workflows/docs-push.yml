@@ -30,6 +30,10 @@ jobs:
         ansible_collections.amazon.aws.rds_cluster_module
         ansible_collections.amazon.aws.rds_cluster_info_module
         ansible_collections.amazon.aws.rds_cluster_snapshot_module
+        ansible_collections.amazon.aws.cloudwatchlogs_log_group_module
+        ansible_collections.amazon.aws.cloudwatchlogs_log_group_info_module
+        ansible_collections.amazon.aws.cloudwatchlogs_log_group_metric_filter_module
+
   publish-docs-gh-pages:
     # use to prevent running on forks
     if: github.repository == 'ansible-collections/community.aws'
