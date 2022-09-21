@@ -35,7 +35,7 @@ Minor Changes
 - ec2_launch_template - Adds support for specifying the ``source_version`` upon which template updates are based (https://github.com/ansible-collections/community.aws/pull/239).
 - ec2_scaling_policy - add TargetTrackingScaling as a scaling policy option (https://github.com/ansible-collections/community.aws/pull/771)
 - ec2_vpc_vgw_info - updated to not throw an error when run in check_mode (https://github.com/ansible-collections/community.aws/issues/137).
-- ecs_ecr - add `force_absent` parameter for removing repositories that contain images (https://github.com/ansible-collections/community.aws/pull/1316).
+- ecs_ecr - add ``force_absent`` parameter for removing repositories that contain images (https://github.com/ansible-collections/community.aws/pull/1316).
 - ecs_service - add ``wait`` parameter and waiter for deleting services (https://github.com/ansible-collections/community.aws/pull/1209).
 - ecs_service - added ``tags`` and ``tag_propagation`` support to the module (https://github.com/ansible-collections/community.aws/pull/543).
 - ecs_service - added parameter ``deployment_controller`` so service can be controlled by Code Deploy (https://github.com/ansible-collections/community.aws/pull/340).
@@ -67,7 +67,7 @@ Bugfixes
 --------
 
 - aws_api_gateway_domain - added the ``aws_api_gateway_domain`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
-- aws_config_aggregator - Fix `KeyError` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
+- aws_config_aggregator - Fix ``KeyError`` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
 - aws_config_aggregator - Fix idempotency when ``account_sources`` parameter is not specified (https://github.com/ansible-collections/community.aws/pull/645).
 - aws_ssm - pull S3 bucket region for session generated for file transfer during playbooks (https://github.com/ansible-collections/community.aws/issues/1190).
 - aws_ssm_parameter_store - fixed bug where module wasn't consistently idempotent (https://github.com/ansible-collections/community.aws/pull/1309).
@@ -158,13 +158,13 @@ Minor Changes
 - iam_role - delete inline policies prior to deleting role (https://github.com/ansible-collections/community.aws/pull/1054).
 - iam_role - remove global vars and refactor accordingly (https://github.com/ansible-collections/community.aws/pull/1054).
 - iam_user - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
-- iam_user - add `user` value to return data structure to deprecate old `iam_user` (https://github.com/ansible-collections/community.aws/pull/1059).
+- iam_user - add ``user`` value to return data structure to deprecate old ``iam_user`` (https://github.com/ansible-collections/community.aws/pull/1059).
 - lambda - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1202).
 - lambda - add kms_key_arn parameter (https://github.com/ansible-collections/community.aws/pull/1108).
 - lambda - the behavior for ``tags`` has been updated, to remove all tags the ``tags`` parameter must be explicitly set to the empty dict ``{}`` and ``purge_tags`` to ``True`` (https://github.com/ansible-collections/community.aws/pull/1202).
 - rds_cluster - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
 - rds_instance - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1182).
-- rds_instance - add `deletion_protection` parameter (https://github.com/ansible-collections/community.aws/pull/1105).
+- rds_instance - add ``deletion_protection`` parameter (https://github.com/ansible-collections/community.aws/pull/1105).
 - rds_instance - add support for addition/removal of iam roles to db instance (https://github.com/ansible-collections/community.aws/pull/1002).
 - rds_instance_snapshot - ``resource_tags`` has been added as an alias for the ``tags`` parameter (https://github.com/ansible-collections/community.aws/pull/1200).
 - rds_instance_snapshot - add ``check_mode`` (https://github.com/ansible-collections/community.aws/pull/789).
@@ -238,7 +238,7 @@ Bugfixes
 
 - aws_ssm connection plugin - fix linting errors in documentation data (https://github.com/ansible-collections/community.aws/pull/965).
 - aws_ssm_parameter_store - fix exception when description was set without value (https://github.com/ansible-collections/community.aws/pull/1241).
-- don't require `db_instance_identifier` on state = present (https://github.com/ansible-collections/community.aws/pull/1078).
+- don't require ``db_instance_identifier`` on state = present (https://github.com/ansible-collections/community.aws/pull/1078).
 - dynamodb_table - fix an issue when creating secondary indexes with global_keys_only (https://github.com/ansible-collections/community.aws/issues/967).
 - ec2_asg - Change the default value of ``purge_tags`` to ``false``. Restores previous behaviour (https://github.com/ansible-collections/community.aws/pull/1064).
 - ec2_vpc_vpn - fix exception when no tags are passed in check mode (https://github.com/ansible-collections/community.aws/pull/1242).
@@ -250,7 +250,7 @@ Bugfixes
 - elb_target_group_info - Up default value AWS backoff retries for paginated calls. (https://github.com/ansible-collections/community.aws/pull/1113).
 - execute_lamba - add waiter for function_updated (https://github.com/ansible-collections/community.aws/pull/1108).
 - execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
-- iam_policy - require one of `policy_document` and `policy_json` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
+- iam_policy - require one of ``policy_document`` and ``policy_json`` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
 - iam_user - don't delete user login profile on check mode (https://github.com/ansible-collections/community.aws/pull/1059).
 - iam_user_info - gracefully handle when no users are found (https://github.com/ansible-collections/community.aws/pull/1059).
 - lambda - fix bug where tag keys were mangled in the return values (https://github.com/ansible-collections/community.aws/pull/1202).
@@ -293,7 +293,7 @@ Bugfixes
 --------
 
 - aws_api_gateway_domain - added the ``aws_api_gateway_domain`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
-- aws_config_aggregator - Fix `KeyError` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
+- aws_config_aggregator - Fix ``KeyError`` when updating existing aggregator (https://github.com/ansible-collections/community.aws/pull/645).
 - aws_config_aggregator - Fix idempotency when ``account_sources`` parameter is not specified (https://github.com/ansible-collections/community.aws/pull/645).
 - aws_ssm - pull S3 bucket region for session generated for file transfer during playbooks (https://github.com/ansible-collections/community.aws/issues/1190).
 - cloudfront_response_headers_policy - added the ``cloudfront_response_headers_policy`` module to the aws module_defaults group (https://github.com/ansible-collections/community.aws/pull/1283).
