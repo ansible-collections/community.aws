@@ -32,6 +32,8 @@ jobs:
         ansible_collections.amazon.aws.ec2_eip_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.execute_lambda_module
@@ -39,6 +41,8 @@ jobs:
         ansible_collections.amazon.aws.iam_policy_module
         ansible_collections.amazon.aws.iam_user_info_module
         ansible_collections.amazon.aws.iam_user_module
+        ansible_collections.amazon.aws.kms_key_info_module
+        ansible_collections.amazon.aws.kms_key_module
         ansible_collections.amazon.aws.lambda_alias_module
         ansible_collections.amazon.aws.lambda_event_module
         ansible_collections.amazon.aws.lambda_execute_module
@@ -79,6 +83,8 @@ jobs:
         ansible_collections.amazon.aws.ec2_eip_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.elb_application_lb_info_module
+        ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.execute_lambda_module
@@ -86,6 +92,8 @@ jobs:
         ansible_collections.amazon.aws.iam_policy_module
         ansible_collections.amazon.aws.iam_user_info_module
         ansible_collections.amazon.aws.iam_user_module
+        ansible_collections.amazon.aws.kms_key_info_module
+        ansible_collections.amazon.aws.kms_key_module
         ansible_collections.amazon.aws.lambda_alias_module
         ansible_collections.amazon.aws.lambda_event_module
         ansible_collections.amazon.aws.lambda_execute_module
