@@ -27,7 +27,9 @@ jobs:
         ansible_collections.amazon.aws.cloudtrail_module
         ansible_collections.amazon.aws.ec2_eip_module
         ansible_collections.amazon.aws.ec2_eip_info_module
-
+        ansible_collections.amazon.aws.rds_cluster_module
+        ansible_collections.amazon.aws.rds_cluster_info_module
+        ansible_collections.amazon.aws.rds_cluster_snapshot_module
   publish-docs-gh-pages:
     # use to prevent running on forks
     if: github.repository == 'ansible-collections/community.aws'
