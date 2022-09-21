@@ -1,5 +1,4 @@
 plugins/modules/aws_kms.py pylint:ansible-deprecated-no-version
 plugins/modules/aws_kms_info.py pylint:ansible-deprecated-no-version
-plugins/modules/iam_policy.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_role.py pylint:ansible-deprecated-no-version
 plugins/modules/iam_user.py pylint:ansible-deprecated-no-version
