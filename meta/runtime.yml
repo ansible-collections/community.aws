@@ -74,7 +74,6 @@ action_groups:
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
   - cloudfront_response_headers_policy
-  - cloudwatch_metric_alarm
   - codebuild_project
   - codecommit_repository
   - codepipeline
@@ -397,6 +396,8 @@ plugin_routing:
       redirect: amazon.aws.cloudwatchlogs_log_group_info
     cloudwatchlogs_log_group_metric_filter:
       redirect: amazon.aws.cloudwatchlogs_log_group_metric_filter
+    cloudwatch_metric_alarm:
+      redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_asg:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.autoscaling_group
@@ -423,7 +424,7 @@ plugin_routing:
       redirect: community.aws.elb_instance
     ec2_metric_alarm:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.cloudwatch_metric_alarm
+      redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_instance:
       redirect: amazon.aws.ec2_instance
     ec2_instance_info:
