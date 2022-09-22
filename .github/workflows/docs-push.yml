@@ -61,6 +61,7 @@ jobs:
         ansible_collections.amazon.aws.rds_option_group_info_module
         ansible_collections.amazon.aws.rds_option_group_module
         ansible_collections.amazon.aws.rds_snapshot_info_module
+        ansible_collections.amazon.aws.rds_subnet_group_module
         ansible_collections.amazon.aws.route53_health_check_module
         ansible_collections.amazon.aws.route53_info_module
         ansible_collections.amazon.aws.route53_module
