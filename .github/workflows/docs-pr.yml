@@ -36,6 +36,7 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_info_module
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
+        ansible_collections.amazon.aws.rds_subnet_group_module
 
   build-docs:
     permissions:
@@ -63,6 +64,7 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_info_module
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
+        ansible_collections.amazon.aws.rds_subnet_group_module
 
   comment:
     permissions:

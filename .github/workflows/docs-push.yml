@@ -39,6 +39,7 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_info_module
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
+        ansible_collections.amazon.aws.rds_subnet_group_module
 
   publish-docs-gh-pages:
     # use to prevent running on forks
