@@ -31,10 +31,6 @@ jobs:
         ansible_collections.amazon.aws.ec2_eip_info_module
         ansible_collections.amazon.aws.ec2_eip_module
         ansible_collections.amazon.aws.elb_application_lb_info_module
-        ansible_collections.amazon.aws.elb_application_lb_info_module
-        ansible_collections.amazon.aws.elb_application_lb_info_module
-        ansible_collections.amazon.aws.elb_application_lb_module
-        ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.elb_application_lb_module
         ansible_collections.amazon.aws.execute_lambda_module
         ansible_collections.amazon.aws.iam_policy_info_module
@@ -55,7 +51,11 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_info_module
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
+        ansible_collections.amazon.aws.rds_option_group_info_module
+        ansible_collections.amazon.aws.rds_option_group_module
+        ansible_collections.amazon.aws.rds_param_group_module
         ansible_collections.amazon.aws.rds_snapshot_info_module
+        ansible_collections.amazon.aws.rds_subnet_group_module
         ansible_collections.amazon.aws.route53_health_check_module
         ansible_collections.amazon.aws.route53_info_module
         ansible_collections.amazon.aws.route53_module
@@ -106,7 +106,11 @@ jobs:
         ansible_collections.amazon.aws.rds_instance_info_module
         ansible_collections.amazon.aws.rds_instance_module
         ansible_collections.amazon.aws.rds_instance_snapshot_module
+        ansible_collections.amazon.aws.rds_option_group_info_module
+        ansible_collections.amazon.aws.rds_option_group_module
+        ansible_collections.amazon.aws.rds_param_group_module
         ansible_collections.amazon.aws.rds_snapshot_info_module
+        ansible_collections.amazon.aws.rds_subnet_group_module
         ansible_collections.amazon.aws.route53_health_check_module
         ansible_collections.amazon.aws.route53_info_module
         ansible_collections.amazon.aws.route53_module
