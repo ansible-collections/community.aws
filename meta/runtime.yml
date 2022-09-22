@@ -190,7 +190,6 @@ action_groups:
   - opensearch_info
   - rds_option_group
   - rds_option_group_info
-  - rds_param_group
   - redshift
   - redshift_cross_region_snapshots
   - redshift_info
@@ -480,6 +479,8 @@ plugin_routing:
       redirect: amazon.aws.rds_instance_info
     rds_instance_snapshot:
       redirect: amazon.aws.rds_instance_snapshot
+    rds_param_group:
+      redirect: amazon.aws.rds_param_group
     rds_snapshot_info:
       redirect: amazon.aws.rds_snapshot_info
     rds_subnet_group:
