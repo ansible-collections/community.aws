@@ -205,7 +205,6 @@ action_groups:
   - rds_option_group
   - rds_option_group_info
   - rds_param_group
-  - rds_snapshot_info
   - rds_subnet_group
   - rds_cluster
   - rds_cluster_info
@@ -469,3 +468,5 @@ plugin_routing:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
       redirect: amazon.aws.iam_policy_info
+    rds_snapshot_info:
+      redirect: amazon.aws.rds_snapshot_info
