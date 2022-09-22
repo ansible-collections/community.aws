@@ -9,8 +9,6 @@ action_groups:
   - api_gateway_domain
   - application_autoscaling_policy
   - autoscaling_complete_lifecycle_action
-  - autoscaling_group_info
-  - autoscaling_group
   - autoscaling_instance_refresh_info
   - autoscaling_instance_refresh
   - autoscaling_launch_config_find
@@ -252,6 +250,10 @@ action_groups:
   - wafv2_web_acl_info
 plugin_routing:
   modules:
+    autoscaling_group_info:
+      redirect: amazon.aws.autoscaling_group_info
+    autoscaling_group:
+      redirect: amazon.aws.autoscaling_group
     aws_acm:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.acm_certificate
@@ -397,10 +399,10 @@ plugin_routing:
       redirect: amazon.aws.cloudwatchevent_rule
     ec2_asg:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_group
+      redirect: amazon.aws.autoscaling_group
     ec2_asg_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_group_info
+      redirect: amazon.aws.autoscaling_group_info
     ec2_asg_instance_refresh:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_instance_refresh
