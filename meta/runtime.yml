@@ -191,7 +191,6 @@ action_groups:
   - rds_option_group
   - rds_option_group_info
   - rds_param_group
-  - rds_subnet_group
   - redshift
   - redshift_cross_region_snapshots
   - redshift_info
@@ -465,6 +464,10 @@ plugin_routing:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
       redirect: amazon.aws.iam_policy_info
+    kms_key:
+      redirect: amazon.aws.kms_key
+    kms_key_info:
+      redirect: amazon.aws.kms_key_info
     rds_cluster:
       redirect: amazon.aws.rds_cluster
     rds_cluster_info:
@@ -479,7 +482,5 @@ plugin_routing:
       redirect: amazon.aws.rds_instance_snapshot
     rds_snapshot_info:
       redirect: amazon.aws.rds_snapshot_info
-    kms_key:
-      redirect: amazon.aws.kms_key
-    kms_key_info:
-      redirect: amazon.aws.kms_key_info
+    rds_subnet_group:
+      redirect: amazon.aws.rds_subnet_group
