@@ -74,7 +74,7 @@ or:
 
 ## Using this collection
 
-You can either call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
+You can either call modules by their Fully Qualified Collection Name (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
 
 ```yaml
 ---
