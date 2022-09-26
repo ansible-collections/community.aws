@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.s3_logging module – Manage logging facility of an s3 bucket in AWS" href="s3_logging_module.html" />
@@ -291,11 +292,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <td><div class="ansible-option-cell"><p>The storage class to which non-current versions are transitioned.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">glacier</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">onezone_ia</span></p></li>
-<li><p><span class="ansible-option-choices-entry">standard_ia</span></p></li>
-<li><p><span class="ansible-option-choices-entry">intelligent_tiering</span></p></li>
-<li><p><span class="ansible-option-choices-entry">deep_archive</span></p></li>
+<li><p><span class="ansible-option-default-bold">“glacier”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“onezone_ia”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“standard_ia”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“intelligent_tiering”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“deep_archive”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -384,8 +385,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <td><div class="ansible-option-cell"><p>Create or remove the lifecycle rule.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -397,8 +398,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>If <code class="docutils literal notranslate"><span class="pre">disabled</span></code>, the rule is not currently being applied.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">enabled</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">disabled</span></p></li>
+<li><p><span class="ansible-option-default-bold">“enabled”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“disabled”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -409,11 +410,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <td><div class="ansible-option-cell"><p>The storage class to transition to.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">glacier</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">onezone_ia</span></p></li>
-<li><p><span class="ansible-option-choices-entry">standard_ia</span></p></li>
-<li><p><span class="ansible-option-choices-entry">intelligent_tiering</span></p></li>
-<li><p><span class="ansible-option-choices-entry">deep_archive</span></p></li>
+<li><p><span class="ansible-option-default-bold">“glacier”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“onezone_ia”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“standard_ia”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“intelligent_tiering”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“deep_archive”</span></p></li>
 </ul>
 </div></td>
 </tr>

@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.waf_info module – Retrieve information for WAF ACLs, Rules, Conditions and Filters" href="waf_info_module.html" />
@@ -254,12 +255,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-waf-c
 <p>Only valid key when <em>type=size</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">EQ</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NE</span></p></li>
-<li><p><span class="ansible-option-choices-entry">LE</span></p></li>
-<li><p><span class="ansible-option-choices-entry">LT</span></p></li>
-<li><p><span class="ansible-option-choices-entry">GE</span></p></li>
-<li><p><span class="ansible-option-choices-entry">GT</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“EQ”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“NE”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“LE”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“LT”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“GE”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“GT”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -279,11 +280,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-waf-c
 <p>Valid when <em>type=byte</em>, <em>type=regex</em>, <em>type=sql</em> or <em>type=xss</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">uri</span></p></li>
-<li><p><span class="ansible-option-choices-entry">query_string</span></p></li>
-<li><p><span class="ansible-option-choices-entry">header</span></p></li>
-<li><p><span class="ansible-option-choices-entry">method</span></p></li>
-<li><p><span class="ansible-option-choices-entry">body</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“uri”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“query_string”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“header”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“method”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“body”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -312,11 +313,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-waf-c
 <p>Only valid when <em>type=byte</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">exactly</span></p></li>
-<li><p><span class="ansible-option-choices-entry">starts_with</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ends_with</span></p></li>
-<li><p><span class="ansible-option-choices-entry">contains</span></p></li>
-<li><p><span class="ansible-option-choices-entry">contains_word</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“exactly”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“starts_with”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ends_with”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“contains”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“contains_word”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -367,12 +368,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-waf-c
 <p>Valid when <em>type=byte</em>, <em>type=regex</em>, <em>type=sql</em> or <em>type=xss</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">none</span></p></li>
-<li><p><span class="ansible-option-choices-entry">compress_white_space</span></p></li>
-<li><p><span class="ansible-option-choices-entry">html_entity_decode</span></p></li>
-<li><p><span class="ansible-option-choices-entry">lowercase</span></p></li>
-<li><p><span class="ansible-option-choices-entry">cmd_line</span></p></li>
-<li><p><span class="ansible-option-choices-entry">url_decode</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“none”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“compress_white_space”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“html_entity_decode”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“lowercase”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“cmd_line”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“url_decode”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -435,8 +436,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-waf-c
 <td><div class="ansible-option-cell"><p>Whether the condition should be <code class="docutils literal notranslate"><span class="pre">present</span></code> or <code class="docutils literal notranslate"><span class="pre">absent</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -447,13 +448,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-waf-c
 <td><div class="ansible-option-cell"><p>The type of matching to perform.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">byte</span></p></li>
-<li><p><span class="ansible-option-choices-entry">geo</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ip</span></p></li>
-<li><p><span class="ansible-option-choices-entry">regex</span></p></li>
-<li><p><span class="ansible-option-choices-entry">size</span></p></li>
-<li><p><span class="ansible-option-choices-entry">sql</span></p></li>
-<li><p><span class="ansible-option-choices-entry">xss</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“byte”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“geo”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ip”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“regex”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“size”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“sql”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“xss”</span></p></li>
 </ul>
 </div></td>
 </tr>

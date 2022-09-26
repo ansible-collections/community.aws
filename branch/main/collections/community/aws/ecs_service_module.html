@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.ecs_service_info module – List or describe services in ECS" href="ecs_service_info_module.html" />
@@ -341,9 +342,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The deployment controller type to use.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">ECS</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CODE_DEPLOY</span></p></li>
-<li><p><span class="ansible-option-choices-entry">EXTERNAL</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ECS”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“CODE_DEPLOY”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“EXTERNAL”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -405,8 +406,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <td><div class="ansible-option-cell"><p>The launch type on which to run your service.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">EC2</span></p></li>
-<li><p><span class="ansible-option-choices-entry">FARGATE</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“EC2”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“FARGATE”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -530,8 +531,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <td><div class="ansible-option-cell"><p>Propagate tags from ECS task defintition or ECS service to ECS task.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">TASK_DEFINITION</span></p></li>
-<li><p><span class="ansible-option-choices-entry">SERVICE</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TASK_DEFINITION”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“SERVICE”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -569,8 +570,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">REPLICA</span></code> if not given to preserve previous behavior.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">DAEMON</span></p></li>
-<li><p><span class="ansible-option-choices-entry">REPLICA</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“DAEMON”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“REPLICA”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -623,9 +624,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <td><div class="ansible-option-cell"><p>The desired state of the service.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">present</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
-<li><p><span class="ansible-option-choices-entry">deleting</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“deleting”</span></p></li>
 </ul>
 </div></td>
 </tr>

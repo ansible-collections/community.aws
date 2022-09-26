@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.networkfirewall_rule_group_info module – describe AWS Network Firewall rule groups" href="networkfirewall_rule_group_info_module.html" />
@@ -265,8 +266,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Action to perform on traffic that matches the rule match settings.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">allow</span></p></li>
-<li><p><span class="ansible-option-choices-entry">deny</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“allow”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“deny”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -434,9 +435,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>What Network Firewall should do with the packets in a traffic flow when the flow matches.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">pass</span></p></li>
-<li><p><span class="ansible-option-choices-entry">drop</span></p></li>
-<li><p><span class="ansible-option-choices-entry">alert</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“pass”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“drop”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“alert”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -468,8 +469,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>If set to <code class="docutils literal notranslate"><span class="pre">forward</span></code>, the inspection only matches traffic going from the <em>source</em> to the <em>destination</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">forward</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">any</span></p></li>
+<li><p><span class="ansible-option-default-bold">“forward”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“any”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -533,8 +534,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p><em>rule_order</em> requires botocore&gt;=1.23.23.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">default</span></p></li>
-<li><p><span class="ansible-option-choices-entry">strict</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“default”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“strict”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -561,7 +562,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Required if <em>name</em> is set.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">stateful</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“stateful”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -586,8 +587,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <td><div class="ansible-option-cell"><p>Create or remove the Network Firewall rule group.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>

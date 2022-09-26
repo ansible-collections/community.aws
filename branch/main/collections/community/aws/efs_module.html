@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.efs_info module – Get information about Amazon EFS file systems" href="efs_info_module.html" />
@@ -270,8 +271,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-m
 <td><div class="ansible-option-cell"><p>File system’s performance mode to use. Only takes effect during creation.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">general_purpose</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">max_io</span></p></li>
+<li><p><span class="ansible-option-default-bold">“general_purpose”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“max_io”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -336,8 +337,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-m
 <td><div class="ansible-option-cell"><p>Allows to create, search and destroy Amazon EFS file system.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -385,8 +386,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-m
 <td><div class="ansible-option-cell"><p>The throughput_mode for the file system to be created.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">bursting</span></p></li>
-<li><p><span class="ansible-option-choices-entry">provisioned</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“bursting”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“provisioned”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -400,12 +401,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-m
 <p>If this parameter is absent, any existing lifecycle policy will not be affected.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">None</span></p></li>
-<li><p><span class="ansible-option-choices-entry">7</span></p></li>
-<li><p><span class="ansible-option-choices-entry">14</span></p></li>
-<li><p><span class="ansible-option-choices-entry">30</span></p></li>
-<li><p><span class="ansible-option-choices-entry">60</span></p></li>
-<li><p><span class="ansible-option-choices-entry">90</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“None”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“7”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“14”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“30”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“60”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“90”</span></p></li>
 </ul>
 </div></td>
 </tr>

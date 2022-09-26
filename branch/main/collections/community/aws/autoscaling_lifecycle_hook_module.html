@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.autoscaling_policy module – Create or delete AWS scaling policies for Autoscaling groups" href="autoscaling_policy_module.html" />
@@ -236,8 +237,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>Defines the action the Auto Scaling group should take when the lifecycle hook timeout elapses or if an unexpected failure occurs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">ABANDON</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CONTINUE</span></p></li>
+<li><p><span class="ansible-option-default-bold">“ABANDON”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“CONTINUE”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -331,8 +332,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <p>When <em>state=present</em> updates existing hook or creates a new hook if not found.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -344,8 +345,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <p>Required when <em>state=present</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">autoscaling:EC2_INSTANCE_TERMINATING</span></p></li>
-<li><p><span class="ansible-option-choices-entry">autoscaling:EC2_INSTANCE_LAUNCHING</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“autoscaling:EC2_INSTANCE_TERMINATING”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“autoscaling:EC2_INSTANCE_LAUNCHING”</span></p></li>
 </ul>
 </div></td>
 </tr>

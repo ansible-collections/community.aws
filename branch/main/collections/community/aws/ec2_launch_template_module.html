@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.ec2_placement_group module – Create or delete an EC2 Placement Group" href="ec2_placement_group_module.html" />
@@ -430,8 +431,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <td><div class="ansible-option-cell"><p>Indicates whether an instance stops or terminates when you initiate shutdown from the instance using the operating system shutdown command.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">stop</span></p></li>
-<li><p><span class="ansible-option-choices-entry">terminate</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“stop”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“terminate”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -470,9 +471,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The behavior when a Spot Instance is interrupted. The default is <code class="docutils literal notranslate"><span class="pre">terminate</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">hibernate</span></p></li>
-<li><p><span class="ansible-option-choices-entry">stop</span></p></li>
-<li><p><span class="ansible-option-choices-entry">terminate</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“hibernate”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“stop”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“terminate”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -490,8 +491,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The request type to send.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">one-time</span></p></li>
-<li><p><span class="ansible-option-choices-entry">persistent</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“one-time”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“persistent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -533,8 +534,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>This parameter enables or disables the HTTP metadata endpoint on your instances.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">enabled</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">disabled</span></p></li>
+<li><p><span class="ansible-option-default-bold">“enabled”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“disabled”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -548,8 +549,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 </ul>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">enabled</span></p></li>
-<li><p><span class="ansible-option-default-bold">disabled</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“enabled”</span></p></li>
+<li><p><span class="ansible-option-default-bold">“disabled”</span> <span class="ansible-option-default">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -568,8 +569,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The state of token usage for your instance metadata requests.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">optional</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">required</span></p></li>
+<li><p><span class="ansible-option-default-bold">“optional”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“required”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -582,8 +583,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <p>Requires botocore &gt;= 1.23.30</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">enabled</span></p></li>
-<li><p><span class="ansible-option-default-bold">disabled</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“enabled”</span></p></li>
+<li><p><span class="ansible-option-default-bold">“disabled”</span> <span class="ansible-option-default">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -806,8 +807,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 <p>Deleting specific versions of a launch template is not supported at this time.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
