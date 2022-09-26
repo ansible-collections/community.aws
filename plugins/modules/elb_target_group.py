@@ -624,7 +624,11 @@ def create_or_update_target_group(connection, module):
 
             if module.params.get("successful_response_codes") is not None:
                 params['Matcher'] = {}
-                params['Matcher']['HttpCode'] = module.params.get("successful_response_codes")
+                code_key = 'HttpCode'
+                protocol_version = module.params.get('protocol_version')
+                if protocol_version is not None and protocol_version.upper() == "GRPC":
+                    code_key = 'GrpcCode'
+                params['Matcher'][code_key] = module.params.get("successful_response_codes")
 
     # Get target group
     target_group = get_target_group(connection, module)
@@ -674,11 +678,14 @@ def create_or_update_target_group(connection, module):
                 # Matcher (successful response codes)
                 # TODO: required and here?
                 if 'Matcher' in params:
-                    current_matcher_list = target_group['Matcher']['HttpCode'].split(',')
-                    requested_matcher_list = params['Matcher']['HttpCode'].split(',')
+                    code_key = 'HttpCode'
+                    if target_group['ProtocolVersion'] == 'GRPC':
+                        code_key = 'GrpcCode'
+                    current_matcher_list = target_group['Matcher'][code_key].split(',')
+                    requested_matcher_list = params['Matcher'][code_key].split(',')
                     if set(current_matcher_list) != set(requested_matcher_list):
                         health_check_params['Matcher'] = {}
-                        health_check_params['Matcher']['HttpCode'] = ','.join(requested_matcher_list)
+                        health_check_params['Matcher'][code_key] = ','.join(requested_matcher_list)
 
             try:
                 if health_check_params:
