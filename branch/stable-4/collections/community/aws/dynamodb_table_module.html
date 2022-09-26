@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.dynamodb_ttl module – Set TTL for a given DynamoDB table" href="dynamodb_ttl_module.html" />
@@ -215,8 +216,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <td><div class="ansible-option-cell"><p>Controls whether provisoned pr on-demand tables are created.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">PROVISIONED</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PAY_PER_REQUEST</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PROVISIONED”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PAY_PER_REQUEST”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -258,9 +259,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">'STRING'</span></code> when creating a new table.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">STRING</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NUMBER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">BINARY</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STRING”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“NUMBER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“BINARY”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -292,9 +293,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <p>Can not be modified once the index has been created.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">STRING</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NUMBER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">BINARY</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STRING”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“NUMBER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“BINARY”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -329,9 +330,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <p>Can not be modified once the index has been created.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">STRING</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NUMBER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">BINARY</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STRING”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“NUMBER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“BINARY”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -349,12 +350,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of index.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">all</span></p></li>
-<li><p><span class="ansible-option-choices-entry">global_all</span></p></li>
-<li><p><span class="ansible-option-choices-entry">global_include</span></p></li>
-<li><p><span class="ansible-option-choices-entry">global_keys_only</span></p></li>
-<li><p><span class="ansible-option-choices-entry">include</span></p></li>
-<li><p><span class="ansible-option-choices-entry">keys_only</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“all”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“global_all”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“global_include”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“global_keys_only”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“include”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“keys_only”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -410,9 +411,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">'STRING'</span></code> when creating a new range key.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">STRING</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NUMBER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">BINARY</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STRING”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“NUMBER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“BINARY”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -455,8 +456,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <td><div class="ansible-option-cell"><p>Create or delete the table.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -469,8 +470,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dynam
 <p>Requires at least botocore version 1.23.18.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">STANDARD</span></p></li>
-<li><p><span class="ansible-option-choices-entry">STANDARD_INFREQUENT_ACCESS</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STANDARD”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STANDARD_INFREQUENT_ACCESS”</span></p></li>
 </ul>
 </div></td>
 </tr>

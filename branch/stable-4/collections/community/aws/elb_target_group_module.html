@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.elb_target_group_info module – Gather information about ELB target groups in AWS" href="elb_target_group_info_module.html" />
@@ -279,18 +280,18 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <td><div class="ansible-option-cell"><p>The protocol the load balancer uses when performing health checks on targets.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">http</span></p></li>
-<li><p><span class="ansible-option-choices-entry">https</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tcp</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tls</span></p></li>
-<li><p><span class="ansible-option-choices-entry">udp</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tcp_udp</span></p></li>
-<li><p><span class="ansible-option-choices-entry">HTTP</span></p></li>
-<li><p><span class="ansible-option-choices-entry">HTTPS</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TCP</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TLS</span></p></li>
-<li><p><span class="ansible-option-choices-entry">UDP</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TCP_UDP</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“http”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“https”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“tcp”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“tls”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“udp”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“tcp_udp”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“HTTP”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“HTTPS”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TCP”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TLS”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“UDP”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TCP_UDP”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -318,8 +319,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>If not set AWS will default to <code class="docutils literal notranslate"><span class="pre">round_robin</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">round_robin</span></p></li>
-<li><p><span class="ansible-option-choices-entry">least_outstanding_requests</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“round_robin”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“least_outstanding_requests”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -382,18 +383,18 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>Required when <em>state</em> is <code class="docutils literal notranslate"><span class="pre">present</span></code> and <em>target_type</em> is <code class="docutils literal notranslate"><span class="pre">instance</span></code>, <code class="docutils literal notranslate"><span class="pre">ip</span></code>, or <code class="docutils literal notranslate"><span class="pre">alb</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">http</span></p></li>
-<li><p><span class="ansible-option-choices-entry">https</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tcp</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tls</span></p></li>
-<li><p><span class="ansible-option-choices-entry">udp</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tcp_udp</span></p></li>
-<li><p><span class="ansible-option-choices-entry">HTTP</span></p></li>
-<li><p><span class="ansible-option-choices-entry">HTTPS</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TCP</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TLS</span></p></li>
-<li><p><span class="ansible-option-choices-entry">UDP</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TCP_UDP</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“http”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“https”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“tcp”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“tls”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“udp”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“tcp_udp”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“HTTP”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“HTTPS”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TCP”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TLS”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“UDP”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TCP_UDP”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -457,8 +458,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <td><div class="ansible-option-cell"><p>Create or destroy the target group.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">present</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -533,10 +534,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>The default behavior is <code class="docutils literal notranslate"><span class="pre">instance</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">instance</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ip</span></p></li>
-<li><p><span class="ansible-option-choices-entry">lambda</span></p></li>
-<li><p><span class="ansible-option-choices-entry">alb</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“instance”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ip”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“lambda”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“alb”</span></p></li>
 </ul>
 </div></td>
 </tr>

@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.s3_website module – Configure an s3 bucket as a website" href="s3_website_module.html" />
@@ -275,9 +276,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <p>force will always upload all files.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">force</span></p></li>
-<li><p><span class="ansible-option-choices-entry">checksum</span></p></li>
-<li><p><span class="ansible-option-default-bold">date_size</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“force”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“checksum”</span></p></li>
+<li><p><span class="ansible-option-default-bold">“date_size”</span> <span class="ansible-option-default">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -320,7 +321,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>sync direction.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">push</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-default-bold">“push”</span> <span class="ansible-option-default">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -332,13 +333,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <p>Changing this ACL only changes newly synced files, it does not trigger a full reupload.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">private</span></p></li>
-<li><p><span class="ansible-option-choices-entry">public-read</span></p></li>
-<li><p><span class="ansible-option-choices-entry">public-read-write</span></p></li>
-<li><p><span class="ansible-option-choices-entry">authenticated-read</span></p></li>
-<li><p><span class="ansible-option-choices-entry">aws-exec-read</span></p></li>
-<li><p><span class="ansible-option-choices-entry">bucket-owner-read</span></p></li>
-<li><p><span class="ansible-option-choices-entry">bucket-owner-full-control</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“private”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“public-read”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“public-read-write”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“authenticated-read”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“aws-exec-read”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“bucket-owner-read”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“bucket-owner-full-control”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -383,14 +384,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>Storage class to be associated to each object added to the S3 bucket.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">STANDARD</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">REDUCED_REDUNDANCY</span></p></li>
-<li><p><span class="ansible-option-choices-entry">STANDARD_IA</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ONEZONE_IA</span></p></li>
-<li><p><span class="ansible-option-choices-entry">INTELLIGENT_TIERING</span></p></li>
-<li><p><span class="ansible-option-choices-entry">GLACIER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">DEEP_ARCHIVE</span></p></li>
-<li><p><span class="ansible-option-choices-entry">OUTPOSTS</span></p></li>
+<li><p><span class="ansible-option-default-bold">“STANDARD”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“REDUCED_REDUNDANCY”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“STANDARD_IA”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ONEZONE_IA”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“INTELLIGENT_TIERING”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“GLACIER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“DEEP_ARCHIVE”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“OUTPOSTS”</span></p></li>
 </ul>
 </div></td>
 </tr>

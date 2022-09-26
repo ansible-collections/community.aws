@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.ec2_snapshot_copy module – Copies an EC2 snapshot and returns the new Snapshot ID" href="ec2_snapshot_copy_module.html" />
@@ -177,9 +178,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-s
 <p>Required if <em>state</em> is <code class="docutils literal notranslate"><span class="pre">present</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">ChangeInCapacity</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ExactCapacity</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PercentChangeInCapacity</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ChangeInCapacity”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ExactCapacity”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PercentChangeInCapacity”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -274,9 +275,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-s
 <p>Only used when <em>policy_type</em> is not <code class="docutils literal notranslate"><span class="pre">SimpleScaling</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">Minimum</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Maximum</span></p></li>
-<li><p><span class="ansible-option-default-bold">Average</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Minimum”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Maximum”</span></p></li>
+<li><p><span class="ansible-option-default-bold">“Average”</span> <span class="ansible-option-default">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -302,9 +303,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-s
 <td><div class="ansible-option-cell"><p>Auto scaling adjustment policy.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">StepScaling</span></p></li>
-<li><p><span class="ansible-option-default-bold">SimpleScaling</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TargetTrackingScaling</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“StepScaling”</span></p></li>
+<li><p><span class="ansible-option-default-bold">“SimpleScaling”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TargetTrackingScaling”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -358,8 +359,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-s
 <td><div class="ansible-option-cell"><p>Register or deregister the policy.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -440,11 +441,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-s
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The statistic of the metric.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">Average</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Minimum</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Maximum</span></p></li>
-<li><p><span class="ansible-option-choices-entry">SampleCount</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Sum</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Average”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Minimum”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Maximum”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“SampleCount”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Sum”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -481,10 +482,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-s
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Required if <code class="docutils literal notranslate"><span class="pre">predefined_metric_spec</span></code> is used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">ASGAverageCPUUtilization</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ASGAverageNetworkIn</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ASGAverageNetworkOut</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ALBRequestCountPerTarget</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ASGAverageCPUUtilization”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ASGAverageNetworkIn”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ASGAverageNetworkOut”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ALBRequestCountPerTarget”</span></p></li>
 </ul>
 </div></td>
 </tr>

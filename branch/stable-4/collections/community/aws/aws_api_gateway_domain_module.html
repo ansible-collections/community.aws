@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.aws_application_scaling_policy module – Manage Application Auto Scaling Scaling Policies" href="aws_application_scaling_policy_module.html" />
@@ -260,9 +261,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use <code class="docutils literal notranslate"><span class="pre">REGIONAL</span></code> or <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">EDGE</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">REGIONAL</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PRIVATE</span></p></li>
+<li><p><span class="ansible-option-default-bold">“EDGE”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“REGIONAL”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PRIVATE”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -292,8 +293,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>Set allowed TLS versions through AWS defined policies. Currently only <code class="docutils literal notranslate"><span class="pre">TLS_1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">TLS_1_2</span></code> are available.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">TLS_1_0</span></p></li>
-<li><p><span class="ansible-option-default-bold">TLS_1_2</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TLS_1_0”</span></p></li>
+<li><p><span class="ansible-option-default-bold">“TLS_1_2”</span> <span class="ansible-option-default">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -318,8 +319,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>Create or delete custom domain setup.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>

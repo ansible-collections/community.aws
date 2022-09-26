@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.aws_kms_info module – Gather information about AWS KMS keys" href="aws_kms_info_module.html" />
@@ -299,17 +300,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of operations that the grantee may perform using the CMK.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">Decrypt</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Encrypt</span></p></li>
-<li><p><span class="ansible-option-choices-entry">GenerateDataKey</span></p></li>
-<li><p><span class="ansible-option-choices-entry">GenerateDataKeyWithoutPlaintext</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ReEncryptFrom</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ReEncryptTo</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CreateGrant</span></p></li>
-<li><p><span class="ansible-option-choices-entry">RetireGrant</span></p></li>
-<li><p><span class="ansible-option-choices-entry">DescribeKey</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Verify</span></p></li>
-<li><p><span class="ansible-option-choices-entry">Sign</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Decrypt”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Encrypt”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“GenerateDataKey”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“GenerateDataKeyWithoutPlaintext”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ReEncryptFrom”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ReEncryptTo”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“CreateGrant”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“RetireGrant”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“DescribeKey”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Verify”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“Sign”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -341,14 +342,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <p>The specification is not changeable once the key is created.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">SYMMETRIC_DEFAULT</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">RSA_2048</span></p></li>
-<li><p><span class="ansible-option-choices-entry">RSA_3072</span></p></li>
-<li><p><span class="ansible-option-choices-entry">RSA_4096</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ECC_NIST_P256</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ECC_NIST_P384</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ECC_NIST_P521</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ECC_SECG_P256K1</span></p></li>
+<li><p><span class="ansible-option-default-bold">“SYMMETRIC_DEFAULT”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“RSA_2048”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“RSA_3072”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“RSA_4096”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ECC_NIST_P256”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ECC_NIST_P384”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ECC_NIST_P521”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ECC_SECG_P256K1”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -361,8 +362,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <p>The usage is not changeable once the key is created.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">ENCRYPT_DECRYPT</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">SIGN_VERIFY</span></p></li>
+<li><p><span class="ansible-option-default-bold">“ENCRYPT_DECRYPT”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“SIGN_VERIFY”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -427,8 +428,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <p>This option has been deprecated, and will be removed in a release after 2021-12-01. Use <em>policy</em> instead.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">grant</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">deny</span></p></li>
+<li><p><span class="ansible-option-default-bold">“grant”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“deny”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -523,8 +524,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-k
 <td><div class="ansible-option-cell"><p>Whether a key should be present or absent. Note that making an existing key absent only schedules a key for deletion.  Passing a key that is scheduled for deletion with state present will cancel key deletion.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>

@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.aws_batch_compute_environment module – Manage AWS Batch Compute Environments" href="aws_batch_compute_environment_module.html" />
@@ -269,8 +270,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>The policy type.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">StepScaling</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TargetTrackingScaling</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“StepScaling”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TargetTrackingScaling”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -307,14 +308,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>The scalable dimension associated with the scalable target.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">ecs:service:DesiredCount</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ec2:spot-fleet-request:TargetCapacity</span></p></li>
-<li><p><span class="ansible-option-choices-entry">elasticmapreduce:instancegroup:InstanceCount</span></p></li>
-<li><p><span class="ansible-option-choices-entry">appstream:fleet:DesiredCapacity</span></p></li>
-<li><p><span class="ansible-option-choices-entry">dynamodb:table:ReadCapacityUnits</span></p></li>
-<li><p><span class="ansible-option-choices-entry">dynamodb:table:WriteCapacityUnits</span></p></li>
-<li><p><span class="ansible-option-choices-entry">dynamodb:index:ReadCapacityUnits</span></p></li>
-<li><p><span class="ansible-option-choices-entry">dynamodb:index:WriteCapacityUnits</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ecs:service:DesiredCount”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ec2:spot-fleet-request:TargetCapacity”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“elasticmapreduce:instancegroup:InstanceCount”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“appstream:fleet:DesiredCapacity”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“dynamodb:table:ReadCapacityUnits”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“dynamodb:table:WriteCapacityUnits”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“dynamodb:index:ReadCapacityUnits”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“dynamodb:index:WriteCapacityUnits”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -339,11 +340,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>The namespace of the AWS service.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">ecs</span></p></li>
-<li><p><span class="ansible-option-choices-entry">elasticmapreduce</span></p></li>
-<li><p><span class="ansible-option-choices-entry">ec2</span></p></li>
-<li><p><span class="ansible-option-choices-entry">appstream</span></p></li>
-<li><p><span class="ansible-option-choices-entry">dynamodb</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ecs”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“elasticmapreduce”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“ec2”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“appstream”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“dynamodb”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -354,8 +355,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>Whether a policy should be <code class="docutils literal notranslate"><span class="pre">present</span></code> or <code class="docutils literal notranslate"><span class="pre">absent</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
-<li><p><span class="ansible-option-choices-entry">present</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
 </ul>
 </div></td>
 </tr>

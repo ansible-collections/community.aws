@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.aws_msk_config module – Manage Amazon MSK cluster configurations." href="aws_msk_config_module.html" />
@@ -301,9 +302,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-m
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicates the encryption setting for data in transit between clients and brokers. The following are the possible values. TLS means that client-broker communication is enabled with TLS only. TLS_PLAINTEXT means that client-broker communication is enabled for both TLS-encrypted, as well as plaintext data. PLAINTEXT means that client-broker communication is enabled in plaintext only.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">TLS</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TLS_PLAINTEXT</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PLAINTEXT</span></p></li>
+<li><p><span class="ansible-option-default-bold">“TLS”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“TLS_PLAINTEXT”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PLAINTEXT”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -333,10 +334,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-m
 <td><div class="ansible-option-cell"><p>Specifies the level of monitoring for the MSK cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">DEFAULT</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PER_BROKER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PER_TOPIC_PER_BROKER</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PER_TOPIC_PER_PARTITION</span></p></li>
+<li><p><span class="ansible-option-default-bold">“DEFAULT”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PER_BROKER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PER_TOPIC_PER_BROKER”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“PER_TOPIC_PER_PARTITION”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -347,11 +348,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-m
 <td><div class="ansible-option-cell"><p>The type of Amazon EC2 instances to use for Kafka brokers.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">kafka.t3.small</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">kafka.m5.large</span></p></li>
-<li><p><span class="ansible-option-choices-entry">kafka.m5.xlarge</span></p></li>
-<li><p><span class="ansible-option-choices-entry">kafka.m5.2xlarge</span></p></li>
-<li><p><span class="ansible-option-choices-entry">kafka.m5.4xlarge</span></p></li>
+<li><p><span class="ansible-option-default-bold">“kafka.t3.small”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“kafka.m5.large”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“kafka.m5.xlarge”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“kafka.m5.2xlarge”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“kafka.m5.4xlarge”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -554,8 +555,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-m
 <td><div class="ansible-option-cell"><p>Create (<code class="docutils literal notranslate"><span class="pre">present</span></code>) or delete (<code class="docutils literal notranslate"><span class="pre">absent</span></code>) cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>

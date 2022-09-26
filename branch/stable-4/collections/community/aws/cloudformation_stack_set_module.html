@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.cloudfront_distribution module – Create, update and delete AWS CloudFront distributions" href="cloudfront_distribution_module.html" />
@@ -235,8 +236,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey, AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">CAPABILITY_IAM</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CAPABILITY_NAMED_IAM</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“CAPABILITY_IAM”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“CAPABILITY_NAMED_IAM”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -401,8 +402,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <td><div class="ansible-option-cell"><p>If <em>state=present</em>, stack will be created.  If <em>state=present</em> and if stack exists and template has changed, it will be updated. If <em>state=absent</em>, stack will be removed.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>

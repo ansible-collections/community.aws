@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.dms_replication_subnet_group module – creates or destroys a data migration services subnet group" href="dms_replication_subnet_group_module.html" />
@@ -278,8 +279,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dms-e
 <p>Required when <em>state=present</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">source</span></p></li>
-<li><p><span class="ansible-option-choices-entry">target</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“source”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“target”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -291,19 +292,19 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dms-e
 <p>Required when <em>state=present</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">mysql</span></p></li>
-<li><p><span class="ansible-option-choices-entry">oracle</span></p></li>
-<li><p><span class="ansible-option-choices-entry">postgres</span></p></li>
-<li><p><span class="ansible-option-choices-entry">mariadb</span></p></li>
-<li><p><span class="ansible-option-choices-entry">aurora</span></p></li>
-<li><p><span class="ansible-option-choices-entry">redshift</span></p></li>
-<li><p><span class="ansible-option-choices-entry">s3</span></p></li>
-<li><p><span class="ansible-option-choices-entry">db2</span></p></li>
-<li><p><span class="ansible-option-choices-entry">azuredb</span></p></li>
-<li><p><span class="ansible-option-choices-entry">sybase</span></p></li>
-<li><p><span class="ansible-option-choices-entry">dynamodb</span></p></li>
-<li><p><span class="ansible-option-choices-entry">mongodb</span></p></li>
-<li><p><span class="ansible-option-choices-entry">sqlserver</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“mysql”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“oracle”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“postgres”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“mariadb”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“aurora”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“redshift”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“s3”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“db2”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“azuredb”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“sybase”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“dynamodb”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“mongodb”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“sqlserver”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -439,10 +440,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dms-e
 <td><div class="ansible-option-cell"><p>Mode used for the SSL connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">none</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">require</span></p></li>
-<li><p><span class="ansible-option-choices-entry">verify-ca</span></p></li>
-<li><p><span class="ansible-option-choices-entry">verify-full</span></p></li>
+<li><p><span class="ansible-option-default-bold">“none”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“require”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“verify-ca”</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“verify-full”</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -453,8 +454,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dms-e
 <td><div class="ansible-option-cell"><p>State of the endpoint.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
 </ul>
 </div></td>
 </tr>
