@@ -64,7 +64,7 @@ def test_warn_if_region_not_specified():
         "name": "api_gateway",
         "state": "present",
         "runtime": 'python2.7',
-        "role": 'arn:aws:iam::987654321012:role/lambda_basic_execution',
+        "role": 'arn:aws:iam::123456789012:role/lambda_basic_execution',
         "handler": 'lambda_python.my_handler'})
     with pytest.raises(SystemExit):
         print(agw.main())

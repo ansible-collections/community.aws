@@ -17,7 +17,7 @@
                         "key": "@sphere"
                     },
                     {
-                        "stringValue": "AIDAJKBIP5ANB55M7EUTC",
+                        "stringValue": "AIDA12345EXAMPLE54321C",
                         "key": "pipelineCreator"
                     },
                     {
@@ -33,7 +33,7 @@
                         "key": "@pipelineState"
                     },
                     {
-                        "stringValue": "448830907657",
+                        "stringValue": "123456789012",
                         "key": "@accountId"
                     },
                     {
@@ -41,7 +41,7 @@
                         "key": "uniqueId"
                     },
                     {
-                        "stringValue": "AIDAJKBIP5ANB55M7EUTC",
+                        "stringValue": "AIDA12345EXAMPLE54321C",
                         "key": "@userId"
                     }
                 ],

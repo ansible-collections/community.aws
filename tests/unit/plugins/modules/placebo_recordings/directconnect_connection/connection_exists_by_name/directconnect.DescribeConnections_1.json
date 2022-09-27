@@ -19,7 +19,7 @@
                 "location": "EqSe2",
                 "connectionName": "ansible-test-connection",
                 "bandwidth": "1Gbps",
-                "ownerAccount": "448830907657",
+                "ownerAccount": "123456789012",
                 "region": "us-west-2"
             },
             {
@@ -28,7 +28,7 @@
                 "location": "PEH51",
                 "connectionName": "test2shertel",
                 "bandwidth": "1Gbps",
-                "ownerAccount": "448830907657",
+                "ownerAccount": "123456789012",
                 "region": "us-west-2"
             },
             {
@@ -37,7 +37,7 @@
                 "location": "EqSe2",
                 "connectionName": "ansible-test-2",
                 "bandwidth": "1Gbps",
-                "ownerAccount": "448830907657",
+                "ownerAccount": "123456789012",
                 "region": "us-west-2"
             }
         ]
