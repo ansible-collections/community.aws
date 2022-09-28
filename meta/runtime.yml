@@ -151,7 +151,6 @@ action_groups:
   - elb_target_group
   - elb_target_group_info
   - elb_target_info
-  - execute_lambda
   - glue_connection
   - glue_crawler
   - glue_job
@@ -168,12 +167,6 @@ action_groups:
   - iam_server_certificate_info
   - inspector_target
   - kinesis_stream
-  - lambda
-  - lambda_alias
-  - lambda_event
-  - lambda_execute
-  - lambda_info
-  - lambda_policy
   - lightsail
   - lightsail_static_ip
   - msk_cluster
@@ -450,7 +443,7 @@ plugin_routing:
       redirect: amazon.aws.elb_application_lb_info
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.lambda_execute
+      redirect: amazon.aws.lambda_execute
     iam_policy:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
@@ -463,6 +456,18 @@ plugin_routing:
       redirect: amazon.aws.kms_key
     kms_key_info:
       redirect: amazon.aws.kms_key_info
+    lambda:
+      redirect: amazon.aws.lambda
+    lambda_alias:
+      redirect: amazon.aws.lambda_alias
+    lambda_event:
+      redirect: amazon.aws.lambda_event
+    lambda_execute:
+      redirect: amazon.aws.lambda_execute
+    lambda_info:
+      redirect: amazon.aws.lambda_info
+    lambda_policy:
+      redirect: amazon.aws.lambda_policy
     rds_cluster:
       redirect: amazon.aws.rds_cluster
     rds_cluster_info:
