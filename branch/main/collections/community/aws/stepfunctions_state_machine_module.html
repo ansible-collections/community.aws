@@ -133,9 +133,7 @@ You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-stepfunctions-state-machine-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.stepfunctions_state_machine</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -358,7 +356,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <span class="w">  </span><span class="nt">community.aws.stepfunctions_state_machine</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HelloWorldStateMachine&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;state_machine.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::987654321012:role/service-role/invokeLambdaStepFunctionsRole</span><span class="w"></span>
+<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456789012:role/service-role/invokeLambdaStepFunctionsRole</span><span class="w"></span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">project</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">helloWorld</span><span class="w"></span>
 
@@ -367,7 +365,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <span class="w">  </span><span class="nt">community.aws.stepfunctions_state_machine</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HelloWorldStateMachine</span><span class="w"></span>
 <span class="w">    </span><span class="nt">definition</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;state_machine.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::987654321012:role/service-role/anotherStepFunctionsRole</span><span class="w"></span>
+<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456789012:role/service-role/anotherStepFunctionsRole</span><span class="w"></span>
 <span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
 <span class="w">      </span><span class="nt">otherTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aDifferentTag</span><span class="w"></span>
 

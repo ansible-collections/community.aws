@@ -133,9 +133,7 @@ You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-sns-topic-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.sns_topic</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -555,7 +553,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </div></td>
 <td><div class="ansible-option-cell"><p>The ARN of the topic you are modifying</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:sns:us-east-2:111111111111:my_topic_name”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:sns:us-east-2:123456789012:my_topic_name”</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -617,7 +615,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>AWS account that owns the topic</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when topic is owned by this AWS account</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “111111111111”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “123456789012”</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -626,7 +624,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Policy for the SNS topic</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when topic is owned by this AWS account</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{\”Version\”:\”2012-10-17\”,\”Id\”:\”SomePolicyId\”,\”Statement\”:[{\”Sid\”:\”ANewSid\”,\”Effect\”:\”Allow\”,\”Principal\”:{\”AWS\”:\”arn:aws:iam::111111111111:root\”}, \”Action\”:\”sns:Subscribe\”,\”Resource\”:\”arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic\”,\”Condition\”:{\”StringEquals\”:{\”sns:Protocol\”:\”email\”}}}]}\n”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{\”Version\”:\”2012-10-17\”,\”Id\”:\”SomePolicyId\”,\”Statement\”:[{\”Sid\”:\”ANewSid\”,\”Effect\”:\”Allow\”,\”Principal\”:{\”AWS\”:\”arn:aws:iam::123456789012:root\”}, \”Action\”:\”sns:Subscribe\”,\”Resource\”:\”arn:aws:sns:us-east-2:123456789012:ansible-test-dummy-topic\”,\”Condition\”:{\”StringEquals\”:{\”sns:Protocol\”:\”email\”}}}]}\n”</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -716,7 +714,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ARN of the SNS topic (equivalent to sns_arn)</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when topic is owned by this AWS account</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:sns:us-east-2:111111111111:ansible-test-dummy-topic”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:sns:us-east-2:123456789012:ansible-test-dummy-topic”</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">

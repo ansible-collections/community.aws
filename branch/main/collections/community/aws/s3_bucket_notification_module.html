@@ -133,9 +133,7 @@ You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-s3-bucket-notification-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.s3_bucket_notification</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -407,7 +405,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
 <span class="w">    </span><span class="nt">event_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">on_file_add_or_remove</span><span class="w"></span>
 <span class="w">    </span><span class="nt">bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-bucket</span><span class="w"></span>
-<span class="w">    </span><span class="nt">lambda_function_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:lambda:us-east-2:526810320200:function:test-lambda</span><span class="w"></span>
+<span class="w">    </span><span class="nt">lambda_function_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:lambda:us-east-2:123456789012:function:test-lambda</span><span class="w"></span>
 <span class="w">    </span><span class="nt">events</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;s3:ObjectCreated:*&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;s3:ObjectRemoved:*&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">images/</span><span class="w"></span>
 <span class="w">    </span><span class="nt">suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.jpg</span><span class="w"></span>
@@ -417,7 +415,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
 <span class="w">    </span><span class="nt">event_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">on_file_add_or_remove</span><span class="w"></span>
 <span class="w">    </span><span class="nt">bucket_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test-bucket</span><span class="w"></span>
-<span class="w">    </span><span class="nt">queue_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:sqs:us-east-2:526810320200:test-queue</span><span class="w"></span>
+<span class="w">    </span><span class="nt">queue_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:sqs:us-east-2:123456789012:test-queue</span><span class="w"></span>
 <span class="w">    </span><span class="nt">events</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;s3:ObjectCreated:*&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;s3:ObjectRemoved:*&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
 <span class="w">    </span><span class="nt">prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">images/</span><span class="w"></span>
 <span class="w">    </span><span class="nt">suffix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.jpg</span><span class="w"></span>

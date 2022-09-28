@@ -133,9 +133,7 @@ You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-stepfunctions-state-machine-execution-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.stepfunctions_state_machine_execution</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -354,12 +352,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <span class="w">  </span><span class="nt">community.aws.stepfunctions_state_machine_execution</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">an_execution_name</span><span class="w"></span>
 <span class="w">    </span><span class="nt">execution_input</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;{</span><span class="nv"> </span><span class="s">&quot;IsHelloWorldExample&quot;:</span><span class="nv"> </span><span class="s">true</span><span class="nv"> </span><span class="s">}&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state_machine_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:states:us-west-2:682285639423:stateMachine:HelloWorldStateMachine&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state_machine_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:states:us-west-2:123456789012:stateMachine:HelloWorldStateMachine&quot;</span><span class="w"></span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stop an execution of a state machine</span><span class="w"></span>
 <span class="w">  </span><span class="nt">community.aws.stepfunctions_state_machine_execution</span><span class="p">:</span><span class="w"></span>
 <span class="w">    </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span><span class="w"></span>
-<span class="w">    </span><span class="nt">execution_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:states:us-west-2:682285639423:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="nt">execution_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">cause</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cause</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">task</span><span class="nv"> </span><span class="s">failure&quot;</span><span class="w"></span>
 <span class="w">    </span><span class="nt">error</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;error</span><span class="nv"> </span><span class="s">code</span><span class="nv"> </span><span class="s">of</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">failure&quot;</span><span class="w"></span>
 </pre></div>
@@ -381,7 +379,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 </div></td>
 <td><div class="ansible-option-cell"><p>ARN of the AWS Step Functions state machine execution.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> if action == start and changed == True</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:states:us-west-2:682285639423:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8”</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">

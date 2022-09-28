@@ -133,9 +133,7 @@ You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-wafv2-web-acl-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.wafv2_web_acl</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.5.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.5.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -578,7 +576,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <span class="w">          </span><span class="nt">allow</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
 <span class="w">        </span><span class="nt">statement</span><span class="p">:</span><span class="w"></span>
 <span class="w">          </span><span class="nt">ip_set_reference_statement</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="nt">arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:wafv2:us-east-1:520789123123:regional/ipset/own-public-ips/1c4bdfc4-0f77-3b23-5222-123123123&#39;</span><span class="w"></span>
+<span class="w">            </span><span class="nt">arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:wafv2:us-east-1:123456789012:regional/ipset/own-public-ips/1c4bdfc4-0f77-3b23-5222-123123123&#39;</span><span class="w"></span>
 <span class="w">        </span><span class="nt">visibility_config</span><span class="p">:</span><span class="w"></span>
 <span class="w">          </span><span class="nt">sampled_requests_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
 <span class="w">          </span><span class="nt">cloud_watch_metrics_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
@@ -624,7 +622,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>web acl arn</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:wafv2:eu-central-1:11111111:regional/webacl/test05/318c1ab9-fa74-4b3b-a974-f92e25106f61”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:wafv2:eu-central-1:123456789012:regional/webacl/test05/318c1ab9-fa74-4b3b-a974-f92e25106f61”</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">

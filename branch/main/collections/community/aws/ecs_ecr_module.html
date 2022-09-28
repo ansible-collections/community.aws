@@ -133,9 +133,7 @@ You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-ecs-ecr-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.ecs_ecr</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -422,7 +420,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cross account ecr-repo</span><span class="w"></span>
 <span class="w">  </span><span class="nt">community.aws.ecs_ecr</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">registry_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">999999999999</span><span class="w"></span>
+<span class="w">    </span><span class="nt">registry_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456789012</span><span class="w"></span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cross/account</span><span class="w"></span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-policy as object</span><span class="w"></span>
@@ -519,7 +517,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </div></td>
 <td><div class="ansible-option-cell"><p>The created or updated repository</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“createdAt”: “2017-01-17T08:41:32-06:00”, “registryId”: “999999999999”, “repositoryArn”: “arn:aws:ecr:us-east-1:999999999999:repository/ecr-test-1484664090”, “repositoryName”: “ecr-test-1484664090”, “repositoryUri”: “999999999999.dkr.ecr.us-east-1.amazonaws.com/ecr-test-1484664090”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“createdAt”: “2017-01-17T08:41:32-06:00”, “registryId”: “123456789012”, “repositoryArn”: “arn:aws:ecr:us-east-1:123456789012:repository/ecr-test-1484664090”, “repositoryName”: “ecr-test-1484664090”, “repositoryUri”: “123456789012.dkr.ecr.us-east-1.amazonaws.com/ecr-test-1484664090”}</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
