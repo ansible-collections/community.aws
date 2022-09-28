@@ -1,5 +1,0 @@
-time=5m
-cloud/aws
-
-lambda_execute
-lambda_info
