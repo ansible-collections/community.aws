@@ -7,6 +7,7 @@ sns_topic_subscriptions:
   - endpoint: "{{ sns_topic_subscriber_sqs_arn }}"
     protocol: sqs
     attributes: "{{ sns_sqs_subscription_attributes }}"
+# Amazon owned
 sns_topic_third_party_topic_arn: "arn:aws:sns:us-east-1:806199016981:AmazonIpSpaceChanged"
 sns_topic_third_party_region: "{{ sns_topic_third_party_topic_arn.split(':')[3] }}"
 

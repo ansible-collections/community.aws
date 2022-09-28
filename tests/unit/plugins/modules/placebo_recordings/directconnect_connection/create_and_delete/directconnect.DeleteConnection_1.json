@@ -17,7 +17,7 @@
         },
         "connectionName": "ansible-test-2",
         "bandwidth": "1Gbps",
-        "ownerAccount": "448830907657",
+        "ownerAccount": "123456789012",
         "region": "us-west-2"
     }
 }

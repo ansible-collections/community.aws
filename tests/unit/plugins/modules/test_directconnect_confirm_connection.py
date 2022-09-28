@@ -44,7 +44,7 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
                     "location": "EqSe2",
                     "connectionName": "ansible-test-connection",
                     "bandwidth": "1Gbps",
-                    "ownerAccount": "448830907657",
+                    "ownerAccount": "123456789012",
                     "region": "us-west-2"
                 }
             ]
@@ -72,7 +72,7 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
                     "location": "EqSe2",
                     "connectionName": "ansible-test-connection",
                     "bandwidth": "1Gbps",
-                    "ownerAccount": "448830907657",
+                    "ownerAccount": "123456789012",
                     "region": "us-west-2"
                 }
             ]
@@ -116,7 +116,7 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
                     "location": "EqSe2",
                     "connectionName": "ansible-test-connection",
                     "bandwidth": "1Gbps",
-                    "ownerAccount": "448830907657",
+                    "ownerAccount": "123456789012",
                     "region": "us-west-2"
                 }
             ]
@@ -142,7 +142,7 @@ class TestAWSDirectConnectConfirmConnection(ModuleTestCase):
                     "location": "EqSe2",
                     "connectionName": "ansible-test-connection",
                     "bandwidth": "1Gbps",
-                    "ownerAccount": "448830907657",
+                    "ownerAccount": "123456789012",
                     "region": "us-west-2"
                 }
             ]

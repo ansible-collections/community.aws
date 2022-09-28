@@ -21,7 +21,7 @@
                 "bandwidth": "1Gbps",
                 "connectionName": "Requested Connection 1 for Lag dxlag-fgytkicv",
                 "location": "EqSe2",
-                "ownerAccount": "448830907657",
+                "ownerAccount": "123456789012",
                 "lagId": "dxlag-fgytkicv",
                 "region": "us-west-2",
                 "connectionState": "requested",
@@ -30,7 +30,7 @@
         ],
         "connectionsBandwidth": "1Gbps",
         "minimumLinks": 0,
-        "ownerAccount": "448830907657",
+        "ownerAccount": "123456789012",
         "numberOfConnections": 1,
         "lagName": "ansible_lag_2_update"
     },

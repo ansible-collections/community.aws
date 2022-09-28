@@ -19,7 +19,7 @@
         "connections": [],
         "connectionsBandwidth": "1Gbps",
         "minimumLinks": 0,
-        "ownerAccount": "448830907657",
+        "ownerAccount": "123456789012",
         "numberOfConnections": 0,
         "lagName": "ansible_lag_1"
     },
