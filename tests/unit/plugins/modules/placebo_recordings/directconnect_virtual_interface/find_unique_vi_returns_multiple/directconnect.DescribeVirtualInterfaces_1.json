@@ -14,7 +14,7 @@
     },
     "virtualInterfaces": [
       {
-        "ownerAccount": "123412341234",
+        "ownerAccount": "123456789012",
         "virtualInterfaceId": "dxvif-aaaaaaaa",
         "location": "EqSe2",
         "connectionId": "dxcon-aaaaaaaa",
@@ -52,7 +52,7 @@
         "tags": []
       },
       {
-        "ownerAccount": "123412341234",
+        "ownerAccount": "123456789012",
         "virtualInterfaceId": "dxvif-bbbbbbbb",
         "location": "EqSe2",
         "connectionId": "dxcon-aaaaaaaa",
