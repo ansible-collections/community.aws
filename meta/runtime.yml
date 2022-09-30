@@ -498,3 +498,6 @@ plugin_routing:
       redirect: amazon.aws.route53_info
     route53_zone:
       redirect: amazon.aws.route53_zone
+  module_utils:
+    route53:
+      redirect: amazon.aws.route53
