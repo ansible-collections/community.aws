@@ -1,0 +1,2 @@
+breaking_changes:
+- community.aws collection - Support for ansible-core < 2.11 has been dropped (https://github.com/ansible-collections/community.aws/pull/1541).
