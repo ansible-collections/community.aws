@@ -133,6 +133,7 @@
         username: "{{ redshift_master_username }}"
         password: "{{ reshift_master_password }}"
         node_type: "{{ node_type }}"
+        wait_timeout: 600
         tags:
           foo: bar
           Tizio: Caio
