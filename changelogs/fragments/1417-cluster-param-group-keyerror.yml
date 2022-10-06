@@ -1,2 +1,0 @@
-bugfixes:
-- rds_cluster - fixes bug where specifiying an rds cluster parameter group raises a `KeyError` (https://github.com/ansible-collections/community.aws/pull/1417).
