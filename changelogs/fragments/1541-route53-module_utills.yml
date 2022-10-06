@@ -1,2 +1,0 @@
-trivial:
-- meta/runtime.yml - Add missing redirect for route53 module_utils (https://github.com/ansible-collections/community.aws/pull/1542).

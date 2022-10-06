@@ -1,5 +1,0 @@
-minor_changes:
-- aws_waf_condition - the ``aws_waf_condition`` module has been renamed to ``waf_condition``, ``aws_waf_condition`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1299).
-- aws_waf_info - the ``aws_waf_info`` module has been renamed to ``waf_info``, ``aws_waf_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1299).
-- aws_waf_rule - the ``aws_waf_rule`` module has been renamed to ``waf_rule``, ``aws_waf_rule`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1299).
-- aws_waf_web_acl - the ``aws_waf_web_acl`` module has been renamed to ``waf_web_acl``, ``aws_waf_web_acl`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1299).

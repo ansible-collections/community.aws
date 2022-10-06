@@ -1,9 +1,0 @@
-release_summary: |
-    In this release many community modules have been promoted to Red Hat
-    supported status. Those modules have been moved from the commuity.aws to amazon.aws
-    collection.
-
-    The community.aws collection has dropped support for ``botocore<1.21.0`` and ``boto3<1.18.0``.
-    Support for ``ansible-core<2.11`` has also been dropped.
-
-    This release also brings some new features, bugfixes, breaking changes and deprecated features.
