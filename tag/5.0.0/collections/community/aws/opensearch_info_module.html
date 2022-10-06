@@ -1,0 +1,1060 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>community.aws.opensearch_info module – obtain information about one or more OpenSearch or ElasticSearch domain &mdash; Ansible collections  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
+    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.svg"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="community.aws.redshift module – create, delete, or modify an Amazon Redshift instance" href="redshift_module.html" />
+    <link rel="prev" title="community.aws.opensearch module – Creates OpenSearch or ElasticSearch domain" href="opensearch_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
+    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
+    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
+    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.svg"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Ansible Collections Documentation</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+            <a href="../../../index.html" class="icon icon-home"> Ansible collections
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" class="st-default-search-input" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Community Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Community.Aws</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#communication">Communication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#changelog">Changelog</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ansible collections</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+          <li><a href="../../index.html">Collection Index</a> &raquo;</li>
+          <li><a href="../index.html">Collections in the Community Namespace</a> &raquo;</li>
+          <li><a href="index.html">Community.Aws</a> &raquo;</li>
+      <li>community.aws.opensearch_info module – obtain information about one or more OpenSearch or ElasticSearch domain</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/opensearch_info.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-community-aws-opensearch-info-module"></span><section id="community-aws-opensearch-info-module-obtain-information-about-one-or-more-opensearch-or-elasticsearch-domain">
+<h1>community.aws.opensearch_info module – obtain information about one or more OpenSearch or ElasticSearch domain<a class="headerlink" href="#community-aws-opensearch-info-module-obtain-information-about-one-or-more-opensearch-or-elasticsearch-domain" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 5.0.0).</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
+You need further requirements to be able to use this module,
+see <a class="reference internal" href="#ansible-collections-community-aws-opensearch-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.opensearch_info</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in community.aws 4.0.0</p>
+<div class="contents local topic" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id4">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id5">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id6">Return Values</a></p></li>
+</ul>
+</div>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Obtain information about one Amazon OpenSearch Service domain.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<span id="ansible-collections-community-aws-opensearch-info-module-requirements"></span><h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>The below requirements are needed on the host that executes this module.</p>
+<ul class="simple">
+<li><p>boto3 &gt;= 1.18.0</p></li>
+<li><p>botocore &gt;= 1.21.0</p></li>
+<li><p>botocore &gt;= 1.21.38</p></li>
+<li><p>python &gt;= 3.6</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id3">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-access-key"></span><strong>aws_access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_access_key, access_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">access</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable is used.</p>
+<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
+<p>Note: The CA Bundle is read ‘module’ side and may need to be explicitly copied from the controller if not run locally.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-config"><strong>aws_config</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
+<p>Parameters can be found at <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-secret-key"><span id="ansible-collections-community-aws-opensearch-info-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-secret-key"></span><strong>aws_secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_secret_key, secret_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">secret</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable is used.</p>
+<p>The <em>aws_secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
+<a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-domain_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-domain-name"><strong>domain_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-domain_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The name of the Amazon OpenSearch/ElasticSearch Service domain.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-s3-url"><span id="ansible-collections-community-aws-opensearch-info-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-profile"><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-profile"></span><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-region"><span id="ansible-collections-community-aws-opensearch-info-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-region"></span><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-session-token"><span id="ansible-collections-community-aws-opensearch-info-module-parameter-security-token"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-opensearch-info-module-parameter-access-token"></span><strong>security_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-security_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, session_token, aws_security_token, access_token</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">STS</span> <span class="pre">security</span> <span class="pre">token</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variable is used.</p>
+<p>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dict of tags that are used to filter OpenSearch domains that match all tag key, value pairs.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-parameter-validate-certs"><strong>validate_certs</strong></p>
+<a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><span class="ansible-option-choices-entry">false</span></p></li>
+<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id4">Notes</a><a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_DEFAULT_PROFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code></p></li>
+<li><p>When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get information about an OpenSearch domain instance</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.opensearch_info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">domain-name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-search-cluster</span><span class="w"></span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">new_cluster_info</span><span class="w"></span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all OpenSearch instances</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.opensearch_info</span><span class="p">:</span><span class="w"></span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all OpenSearch instances that have the specified Key, Value tags</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.opensearch_info</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
+<span class="w">      </span><span class="nt">Applications</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">search</span><span class="w"></span>
+<span class="w">      </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development</span><span class="w"></span>
+</pre></div>
+</div>
+</section>
+<section id="return-values">
+<h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances"><strong>instances</strong></p>
+<a class="ansibleOptionLink" href="#return-instances" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>List of OpenSearch domain instances</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-config"><strong>domain_config</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The OpenSearch domain configuration</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_config/domain_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-config-domain-name"><strong>domain_name</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_config/domain_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the OpenSearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status"><strong>domain_status</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The current status of the OpenSearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/access_policies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-access-policies"><strong>access_policies</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/access_policies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>IAM access policy as a JSON-formatted string.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options"><strong>advanced_security_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies advanced security options.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>True if advanced security is enabled.</p>
+<p>You must enable node-to-node encryption to use advanced security options.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/internal_user_database_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-internal-user-database-enabled"><strong>internal_user_database_enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/internal_user_database_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>True if the internal user database is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/master_user_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-master-user-options"><strong>master_user_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/master_user_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Credentials for the master user, username and password, ARN, or both.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/master_user_options/master_user_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-master-user-options-master-user-arn"><strong>master_user_arn</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/master_user_options/master_user_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ARN for the master user (if IAM is enabled).</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/master_user_options/master_user_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-master-user-options-master-user-name"><strong>master_user_name</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/master_user_options/master_user_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The username of the master user, which is stored in the Amazon OpenSearch Service domain internal database.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/master_user_options/master_user_password"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-master-user-options-master-user-password"><strong>master_user_password</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/master_user_options/master_user_password" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The password of the master user, which is stored in the Amazon OpenSearch Service domain internal database.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options"><strong>saml_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SAML application configuration for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>True if SAML is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/idp"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-idp"><strong>idp</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/idp" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SAML Identity Provider’s information.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/idp/entity_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-idp-entity-id"><strong>entity_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/idp/entity_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The unique entity ID of the application in SAML identity provider.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/idp/metadata_content"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-idp-metadata-content"><strong>metadata_content</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/idp/metadata_content" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The metadata of the SAML application in XML format.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/master_backend_role"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-master-backend-role"><strong>master_backend_role</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/master_backend_role" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The backend role that the SAML master user is mapped to.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/master_user_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-master-user-name"><strong>master_user_name</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/master_user_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SAML master username, which is stored in the Amazon OpenSearch Service domain internal database.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/roles_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-roles-key"><strong>roles_key</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/roles_key" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Element of the SAML assertion to use for backend roles. Default is roles.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/session_timeout_minutes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-session-timeout-minutes"><strong>session_timeout_minutes</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/session_timeout_minutes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The duration, in minutes, after which a user session becomes inactive. Acceptable values are between 1 and 1440, and the default value is 60.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/advanced_security_options/saml_options/subject_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-advanced-security-options-saml-options-subject-key"><strong>subject_key</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/advanced_security_options/saml_options/subject_key" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Element of the SAML assertion to use for username. Default is NameID.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-arn"><strong>arn</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ARN of the OpenSearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options"><strong>auto_tune_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies Auto-Tune options.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/desired_state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-desired-state"><strong>desired_state</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/desired_state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Auto-Tune desired state. Valid values are ENABLED and DISABLED.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/maintenance_schedules"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-maintenance-schedules"><strong>maintenance_schedules</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/maintenance_schedules" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of maintenance schedules.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/maintenance_schedules/cron_expression_for_recurrence"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-maintenance-schedules-cron-expression-for-recurrence"><strong>cron_expression_for_recurrence</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/maintenance_schedules/cron_expression_for_recurrence" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A cron expression for a recurring maintenance schedule.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/maintenance_schedules/duration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-maintenance-schedules-duration"><strong>duration</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/maintenance_schedules/duration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies maintenance schedule duration, duration value and duration unit.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/maintenance_schedules/duration/unit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-maintenance-schedules-duration-unit"><strong>unit</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/maintenance_schedules/duration/unit" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The unit of a maintenance schedule duration. Valid value is HOURS.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/maintenance_schedules/duration/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-maintenance-schedules-duration-value"><strong>value</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/maintenance_schedules/duration/value" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Integer to specify the value of a maintenance schedule duration.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/auto_tune_options/maintenance_schedules/start_at"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-auto-tune-options-maintenance-schedules-start-at"><strong>start_at</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/auto_tune_options/maintenance_schedules/start_at" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The timestamp at which the Auto-Tune maintenance schedule starts.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config"><strong>cluster_config</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Parameters for the cluster configuration of an OpenSearch Service domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/availability_zone_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-availability-zone-count"><strong>availability_zone_count</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/availability_zone_count" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An integer value to indicate the number of availability zones for a domain when zone awareness is enabled. This should be equal to number of subnets if VPC endpoints is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/cold_storage_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-cold-storage-options"><strong>cold_storage_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/cold_storage_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the ColdStorageOptions config for a Domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/cold_storage_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-cold-storage-options-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/cold_storage_options/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>True to enable cold storage. Supported on Elasticsearch 7.9 or above.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/dedicated_master_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-dedicated-master-count"><strong>dedicated_master_count</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/dedicated_master_count" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Total number of dedicated master nodes, active and on standby, for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/dedicated_master_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-dedicated-master-enabled"><strong>dedicated_master_enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/dedicated_master_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A boolean value to indicate whether a dedicated master node is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/dedicated_master_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-dedicated-master-type"><strong>dedicated_master_type</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/dedicated_master_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The instance type for a dedicated master node.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/instance_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-instance-count"><strong>instance_count</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/instance_count" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Number of instances for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/instance_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-instance-type"><strong>instance_type</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/instance_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Type of the instances to use for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/warm_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-warm-count"><strong>warm_count</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/warm_count" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of UltraWarm nodes in the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/warm_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-warm-enabled"><strong>warm_enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/warm_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>True to enable UltraWarm storage.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/warm_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-warm-type"><strong>warm_type</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/warm_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The instance type for the OpenSearch domain’s warm nodes.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/zone_awareness"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-zone-awareness"><strong>zone_awareness</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/zone_awareness" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A boolean value to indicate whether zone awareness is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/zone_awareness_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-zone-awareness-config"><strong>zone_awareness_config</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/zone_awareness_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The zone awareness configuration for a domain when zone awareness is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/zone_awareness_config/availability_zone_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-zone-awareness-config-availability-zone-count"><strong>availability_zone_count</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/zone_awareness_config/availability_zone_count" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An integer value to indicate the number of availability zones for a domain when zone awareness is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cluster_config/zone_awareness_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cluster-config-zone-awareness-enabled"><strong>zone_awareness_enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cluster_config/zone_awareness_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A boolean value to indicate whether zone awareness is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cognito_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cognito-options"><strong>cognito_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cognito_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Parameters to configure OpenSearch Service to use Amazon Cognito authentication for OpenSearch Dashboards.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cognito_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cognito-options-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cognito_options/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The option to enable Cognito for OpenSearch Dashboards authentication.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cognito_options/identity_pool_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cognito-options-identity-pool-id"><strong>identity_pool_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cognito_options/identity_pool_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Cognito identity pool ID for OpenSearch Dashboards authentication.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cognito_options/role_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cognito-options-role-arn"><strong>role_arn</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cognito_options/role_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The role ARN that provides OpenSearch permissions for accessing Cognito resources.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/cognito_options/user_pool_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-cognito-options-user-pool-id"><strong>user_pool_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/cognito_options/user_pool_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Cognito user pool ID for OpenSearch Dashboards authentication.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/created"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-created"><strong>created</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/created" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The domain creation status. True if the creation of a domain is complete. False if domain creation is still in progress.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/deleted"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-deleted"><strong>deleted</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/deleted" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The domain deletion status. True if a delete request has been received for the domain but resource cleanup is still in progress. False if the domain has not been deleted. Once domain deletion is complete, the status of the domain is no longer returned.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_endpoint_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-endpoint-options"><strong>domain_endpoint_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_endpoint_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Options to specify configuration that will be applied to the domain endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_endpoint_options/custom_endpoint"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-endpoint-options-custom-endpoint"><strong>custom_endpoint</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_endpoint_options/custom_endpoint" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The fully qualified domain for your custom endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_endpoint_options/custom_endpoint_certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-endpoint-options-custom-endpoint-certificate-arn"><strong>custom_endpoint_certificate_arn</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_endpoint_options/custom_endpoint_certificate_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ACM certificate ARN for your custom endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_endpoint_options/custom_endpoint_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-endpoint-options-custom-endpoint-enabled"><strong>custom_endpoint_enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_endpoint_options/custom_endpoint_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether to enable a custom endpoint for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_endpoint_options/enforce_https"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-endpoint-options-enforce-https"><strong>enforce_https</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_endpoint_options/enforce_https" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether only HTTPS endpoint should be enabled for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_endpoint_options/tls_security_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-endpoint-options-tls-security-policy"><strong>tls_security_policy</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_endpoint_options/tls_security_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specify the TLS security policy to apply to the HTTPS endpoint of the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-id"><strong>domain_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The unique identifier for the OpenSearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/domain_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-domain-name"><strong>domain_name</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/domain_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the OpenSearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/ebs_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-ebs-options"><strong>ebs_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/ebs_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Parameters to configure EBS-based storage for an OpenSearch Service domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/ebs_options/ebs_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-ebs-options-ebs-enabled"><strong>ebs_enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/ebs_options/ebs_enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies whether EBS-based storage is enabled.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/ebs_options/iops"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-ebs-options-iops"><strong>iops</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/ebs_options/iops" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IOPD for a Provisioned IOPS EBS volume (SSD).</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/ebs_options/volume_size"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-ebs-options-volume-size"><strong>volume_size</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/ebs_options/volume_size" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Integer to specify the size of an EBS volume.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/ebs_options/volume_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-ebs-options-volume-type"><strong>volume_type</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/ebs_options/volume_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the volume type for EBS-based storage. “standard”|”gp2”|”io1”</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/encryption_at_rest_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-encryption-at-rest-options"><strong>encryption_at_rest_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/encryption_at_rest_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Parameters to enable encryption at rest.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/encryption_at_rest_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-encryption-at-rest-options-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/encryption_at_rest_options/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Should data be encrypted while at rest.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/encryption_at_rest_options/kms_key_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-encryption-at-rest-options-kms-key-id"><strong>kms_key_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/encryption_at_rest_options/kms_key_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If encryption at rest enabled, this identifies the encryption key to use.</p>
+<p>The value should be a KMS key ARN. It can also be the KMS key id.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/endpoint"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-endpoint"><strong>endpoint</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/endpoint" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The domain endpoint that you use to submit index and search requests.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/endpoints"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-endpoints"><strong>endpoints</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/endpoints" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Map containing the domain endpoints used to submit index and search requests.</p>
+<p>When you create a domain attached to a VPC domain, this propery contains the DNS endpoint to which service requests are submitted.</p>
+<p>If you query the opensearch_info immediately after creating the OpenSearch cluster, the VPC endpoint may not be returned. It may take several minutes until the endpoints is available.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/engine_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-engine-version"><strong>engine_version</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/engine_version" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The version of the OpenSearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “OpenSearch_1.1”</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/node_to_node_encryption_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-node-to-node-encryption-options"><strong>node_to_node_encryption_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/node_to_node_encryption_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Node-to-node encryption options.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/node_to_node_encryption_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-node-to-node-encryption-options-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/node_to_node_encryption_options/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>True to enable node-to-node encryption.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/processing"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-processing"><strong>processing</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/processing" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The status of the domain configuration. True if Amazon OpenSearch Service is processing configuration changes. False if the configuration is active.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/snapshot_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-snapshot-options"><strong>snapshot_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/snapshot_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Option to set time, in UTC format, of the daily automated snapshot.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/snapshot_options/automated_snapshot_start_hour"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-snapshot-options-automated-snapshot-start-hour"><strong>automated_snapshot_start_hour</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/snapshot_options/automated_snapshot_start_hour" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Integer value from 0 to 23 specifying when the service takes a daily automated snapshot of the specified Elasticsearch domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/upgrade_processing"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-upgrade-processing"><strong>upgrade_processing</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/upgrade_processing" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>true if a domain upgrade operation is in progress.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/vpc_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-vpc-options"><strong>vpc_options</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/vpc_options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Options to specify the subnets and security groups for a VPC endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/vpc_options/availability_zones"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-vpc-options-availability-zones"><strong>availability_zones</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/vpc_options/availability_zones" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Availability Zones for the domain..</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/vpc_options/security_group_ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-vpc-options-security-group-ids"><strong>security_group_ids</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/vpc_options/security_group_ids" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the security group ids for VPC endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/vpc_options/subnet_ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-vpc-options-subnet-ids"><strong>subnet_ids</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/vpc_options/subnet_ids" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the subnet ids for VPC endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-instances/domain_status/vpc_options/vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-info-module-return-instances-domain-status-vpc-options-vpc-id"><strong>vpc_id</strong></p>
+<a class="ansibleOptionLink" href="#return-instances/domain_status/vpc_options/vpc_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The VPC ID for the domain.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+</tbody>
+</table>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Sebastien Rosset (&#64;sebastien-rosset)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Permalink to this heading"></a></h3>
+<p class="ansible-links">
+  <a href="https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" aria-role="button" target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://github.com/ansible-collections/community.aws" aria-role="button" target="_blank" rel="noopener external">Repository (Sources)</a>
+  <a href="./#communication-for-community-aws" aria-role="button" target="_blank">Communication</a>
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="opensearch_module.html" class="btn btn-neutral float-left" title="community.aws.opensearch module – Creates OpenSearch or ElasticSearch domain" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="redshift_module.html" class="btn btn-neutral float-right" title="community.aws.redshift module – create, delete, or modify an Amazon Redshift instance" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ansible contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
