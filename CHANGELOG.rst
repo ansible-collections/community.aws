@@ -5,6 +5,33 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v3.6.0
+======
+
+Release Summary
+---------------
+
+Following the release of community.aws 5.0.0, 3.6.0 is a bugfix release and the final planned release for the 3.x series.
+
+
+Minor Changes
+-------------
+
+- autoscaling_group_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudfront_distribution - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudfront_origin_access_identity - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudtrail - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- ec2_asg_lifecycle_hook - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- ec2_vpc_nacl - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- redshift - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- s3_bucket_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+
+Bugfixes
+--------
+
+- ec2_placement_group - Handle a potential race creation during the creation of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
+- s3_lifecycle - fix bug when deleting rules with an empty prefix (https://github.com/ansible-collections/community.aws/pull/1398).
+
 v3.5.0
 ======
 
