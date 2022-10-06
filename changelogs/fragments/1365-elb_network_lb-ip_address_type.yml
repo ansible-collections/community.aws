@@ -1,2 +1,0 @@
-bugfixes:
-- elb_network_lb - fixes bug where ``ip_address_type`` in return value was not updated (https://github.com/ansible-collections/community.aws/pull/1365).

@@ -1,8 +1,0 @@
-minor_changes:
-- acm_certificate_info - Move to jittered backoff (https://github.com/ansible-collections/amazon.aws/pull/946).
-- acm_certificate - Move to jittered backoff (https://github.com/ansible-collections/amazon.aws/pull/946).
-- api_gateway_domain - Move to jittered backoff (https://github.com/ansible-collections/community.aws/pull/1386).
-- waf_condition - Move to jittered backoff (https://github.com/ansible-collections/amazon.aws/pull/946).
-- waf_info - Move to jittered backoff (https://github.com/ansible-collections/amazon.aws/pull/946).
-- waf_rule - Move to jittered backoff (https://github.com/ansible-collections/amazon.aws/pull/946).
-- waf_web_acl - Move to jittered backoff (https://github.com/ansible-collections/amazon.aws/pull/946).
