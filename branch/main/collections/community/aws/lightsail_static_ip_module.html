@@ -213,8 +213,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -276,8 +276,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <td><div class="ansible-option-cell"><p>Describes the desired state.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -288,8 +288,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -338,7 +338,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 <td><div class="ansible-option-cell"><p>static_ipinstance data</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“arn”: “arn:aws:lightsail:ap-southeast-2:123456789012:StaticIp/d8f47672-c261-4443-a484-4a2ec983db9a”, “created_at”: “2021-02-28T00:04:05.202000+10:30”, “ip_address”: “192.0.2.5”, “is_attached”: false, “location”: {“availability_zone”: “all”, “region_name”: “ap-southeast-2”}, “name”: “static_ip”, “resource_type”: “StaticIp”, “support_code”: “123456789012/192.0.2.5”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;arn&quot;:</span> <span class="pre">&quot;arn:aws:lightsail:ap-southeast-2:123456789012:StaticIp/d8f47672-c261-4443-a484-4a2ec983db9a&quot;,</span> <span class="pre">&quot;created_at&quot;:</span> <span class="pre">&quot;2021-02-28T00:04:05.202000+10:30&quot;,</span> <span class="pre">&quot;ip_address&quot;:</span> <span class="pre">&quot;192.0.2.5&quot;,</span> <span class="pre">&quot;is_attached&quot;:</span> <span class="pre">false,</span> <span class="pre">&quot;location&quot;:</span> <span class="pre">{&quot;availability_zone&quot;:</span> <span class="pre">&quot;all&quot;,</span> <span class="pre">&quot;region_name&quot;:</span> <span class="pre">&quot;ap-southeast-2&quot;},</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">&quot;static_ip&quot;,</span> <span class="pre">&quot;resource_type&quot;:</span> <span class="pre">&quot;StaticIp&quot;,</span> <span class="pre">&quot;support_code&quot;:</span> <span class="pre">&quot;123456789012/192.0.2.5&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>

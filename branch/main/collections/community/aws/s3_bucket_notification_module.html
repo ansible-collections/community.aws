@@ -221,8 +221,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -252,17 +252,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <p>Required when <em>state=present</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectCreated:*”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectCreated:Put”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectCreated:Post”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectCreated:Copy”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectCreated:CompleteMultipartUpload”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectRemoved:*”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectRemoved:Delete”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectRemoved:DeleteMarkerCreated”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectRestore:Post”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ObjectRestore:Completed”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“s3:ReducedRedundancyLostObject”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectCreated:*&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectCreated:Put&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectCreated:Post&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectCreated:Copy&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectCreated:CompleteMultipartUpload&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectRemoved:*&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectRemoved:Delete&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectRemoved:DeleteMarkerCreated&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectRestore:Post&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectRestore:Completed&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ReducedRedundancyLostObject&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -348,8 +348,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <td><div class="ansible-option-cell"><p>Describes the desired state.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -376,8 +376,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>

@@ -228,8 +228,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -298,9 +298,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>Actions that will create, destroy, or copy a snapshot.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“copy”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;copy&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -318,8 +318,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -367,7 +367,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>if a snapshot has been created, deleted, or copied</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“changed”: true}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;changed&quot;:</span> <span class="pre">true}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -376,7 +376,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>response metadata about the snapshot</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“http_headers”: {“content-length”: 1490, “content-type”: “text/xml”, “date”: “Tue, 07 Feb 2017 16:43:04 GMT”, “x-amzn-requestid”: “7f436dea-ed54-11e6-a04c-ab2372a1f14d”}, “http_status_code”: 200, “request_id”: “7f436dea-ed54-11e6-a04c-ab2372a1f14d”, “retry_attempts”: 0}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;http_headers&quot;:</span> <span class="pre">{&quot;content-length&quot;:</span> <span class="pre">1490,</span> <span class="pre">&quot;content-type&quot;:</span> <span class="pre">&quot;text/xml&quot;,</span> <span class="pre">&quot;date&quot;:</span> <span class="pre">&quot;Tue,</span> <span class="pre">07</span> <span class="pre">Feb</span> <span class="pre">2017</span> <span class="pre">16:43:04</span> <span class="pre">GMT&quot;,</span> <span class="pre">&quot;x-amzn-requestid&quot;:</span> <span class="pre">&quot;7f436dea-ed54-11e6-a04c-ab2372a1f14d&quot;},</span> <span class="pre">&quot;http_status_code&quot;:</span> <span class="pre">200,</span> <span class="pre">&quot;request_id&quot;:</span> <span class="pre">&quot;7f436dea-ed54-11e6-a04c-ab2372a1f14d&quot;,</span> <span class="pre">&quot;retry_attempts&quot;:</span> <span class="pre">0}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -385,7 +385,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>snapshot data</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“auto_minor_version_upgrade”: true, “cache_cluster_create_time”: “2017-02-01T17:43:58.261000+00:00”, “cache_cluster_id”: “test-please-delete”, “cache_node_type”: “cache.m1.small”, “cache_parameter_group_name”: “default.redis3.2”, “cache_subnet_group_name”: “default”, “engine”: “redis”, “engine_version”: “3.2.4”, “node_snapshots”: {“cache_node_create_time”: “2017-02-01T17:43:58.261000+00:00”, “cache_node_id”: 1, “cache_size”: null}, “num_cache_nodes”: 1, “port”: 11211, “preferred_availability_zone”: “us-east-1d”, “preferred_maintenance_window”: “wed:03:00-wed:04:00”, “snapshot_name”: “deletesnapshot”, “snapshot_retention_limit”: 0, “snapshot_source”: “manual”, “snapshot_status”: “creating”, “snapshot_window”: “10:00-11:00”, “vpc_id”: “vpc-c248fda4”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;auto_minor_version_upgrade&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;cache_cluster_create_time&quot;:</span> <span class="pre">&quot;2017-02-01T17:43:58.261000+00:00&quot;,</span> <span class="pre">&quot;cache_cluster_id&quot;:</span> <span class="pre">&quot;test-please-delete&quot;,</span> <span class="pre">&quot;cache_node_type&quot;:</span> <span class="pre">&quot;cache.m1.small&quot;,</span> <span class="pre">&quot;cache_parameter_group_name&quot;:</span> <span class="pre">&quot;default.redis3.2&quot;,</span> <span class="pre">&quot;cache_subnet_group_name&quot;:</span> <span class="pre">&quot;default&quot;,</span> <span class="pre">&quot;engine&quot;:</span> <span class="pre">&quot;redis&quot;,</span> <span class="pre">&quot;engine_version&quot;:</span> <span class="pre">&quot;3.2.4&quot;,</span> <span class="pre">&quot;node_snapshots&quot;:</span> <span class="pre">{&quot;cache_node_create_time&quot;:</span> <span class="pre">&quot;2017-02-01T17:43:58.261000+00:00&quot;,</span> <span class="pre">&quot;cache_node_id&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;cache_size&quot;:</span> <span class="pre">null},</span> <span class="pre">&quot;num_cache_nodes&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;port&quot;:</span> <span class="pre">11211,</span> <span class="pre">&quot;preferred_availability_zone&quot;:</span> <span class="pre">&quot;us-east-1d&quot;,</span> <span class="pre">&quot;preferred_maintenance_window&quot;:</span> <span class="pre">&quot;wed:03:00-wed:04:00&quot;,</span> <span class="pre">&quot;snapshot_name&quot;:</span> <span class="pre">&quot;deletesnapshot&quot;,</span> <span class="pre">&quot;snapshot_retention_limit&quot;:</span> <span class="pre">0,</span> <span class="pre">&quot;snapshot_source&quot;:</span> <span class="pre">&quot;manual&quot;,</span> <span class="pre">&quot;snapshot_status&quot;:</span> <span class="pre">&quot;creating&quot;,</span> <span class="pre">&quot;snapshot_window&quot;:</span> <span class="pre">&quot;10:00-11:00&quot;,</span> <span class="pre">&quot;vpc_id&quot;:</span> <span class="pre">&quot;vpc-c248fda4&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>

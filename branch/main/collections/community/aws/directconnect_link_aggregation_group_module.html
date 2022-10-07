@@ -228,8 +228,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -240,8 +240,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>To be used with <em>state=absent</em> to delete connections after disassociating them with the LAG.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -263,8 +263,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>This allows the minimum number of links to be set to 0, any hosted connections disassociated, and any virtual interfaces associated to the LAG deleted.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -343,8 +343,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>The state of the Direct Connect link aggregation group.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -355,8 +355,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -369,8 +369,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <p>The time to wait can be controlled by setting <em>wait_timeout</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -379,7 +379,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The duration in seconds to wait if <em>wait=true</em>.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">120</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">120</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -423,7 +423,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </div></td>
 <td><div class="ansible-option-cell"><p>The AWS Direct Connection endpoint that hosts the LAG.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “EqSe2-1bwfvazist2k0”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;EqSe2-1bwfvazist2k0&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -440,7 +440,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of connections bundled by this LAG.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“connections”: [{“aws_device”: “EqSe2-1bwfvazist2k0”, “bandwidth”: “1Gbps”, “connection_id”: “dxcon-fgzjah5a”, “connection_name”: “Requested Connection 1 for Lag dxlag-fgtoh97h”, “connection_state”: “down”, “lag_id”: “dxlag-fgnsp4rq”, “location”: “EqSe2”, “owner_account”: “123456789012”, “region”: “us-west-2”}]}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;connections&quot;:</span> <span class="pre">[{&quot;aws_device&quot;:</span> <span class="pre">&quot;EqSe2-1bwfvazist2k0&quot;,</span> <span class="pre">&quot;bandwidth&quot;:</span> <span class="pre">&quot;1Gbps&quot;,</span> <span class="pre">&quot;connection_id&quot;:</span> <span class="pre">&quot;dxcon-fgzjah5a&quot;,</span> <span class="pre">&quot;connection_name&quot;:</span> <span class="pre">&quot;Requested</span> <span class="pre">Connection</span> <span class="pre">1</span> <span class="pre">for</span> <span class="pre">Lag</span> <span class="pre">dxlag-fgtoh97h&quot;,</span> <span class="pre">&quot;connection_state&quot;:</span> <span class="pre">&quot;down&quot;,</span> <span class="pre">&quot;lag_id&quot;:</span> <span class="pre">&quot;dxlag-fgnsp4rq&quot;,</span> <span class="pre">&quot;location&quot;:</span> <span class="pre">&quot;EqSe2&quot;,</span> <span class="pre">&quot;owner_account&quot;:</span> <span class="pre">&quot;123456789012&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-west-2&quot;}]}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -449,7 +449,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </div></td>
 <td><div class="ansible-option-cell"><p>The individual bandwidth of the physical connections bundled by the LAG.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “1Gbps”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;1Gbps&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -458,7 +458,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </div></td>
 <td><div class="ansible-option-cell"><p>Unique identifier for the link aggregation group.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “dxlag-fgnsp4rq”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;dxlag-fgnsp4rq&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -475,7 +475,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </div></td>
 <td><div class="ansible-option-cell"><p>State of the LAG.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “pending”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;pending&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -484,7 +484,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </div></td>
 <td><div class="ansible-option-cell"><p>Where the connection is located.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “EqSe2”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;EqSe2&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">

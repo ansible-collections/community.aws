@@ -213,8 +213,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -300,8 +300,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -360,7 +360,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>timestamp of creation date</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2015-11-16 07:30:57-05:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2015-11-16</span> <span class="pre">07:30:57-05:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -369,7 +369,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>EFS creation token</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “console-88609e04-9a0e-4a2e-912c-feaa99509961”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;console-88609e04-9a0e-4a2e-912c-feaa99509961&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -378,7 +378,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>ID of the file system</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “fs-xxxxxxxx”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;fs-xxxxxxxx&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -387,7 +387,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>url of file system</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “fs-xxxxxxxx.efs.us-west-2.amazonaws.com:/”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;fs-xxxxxxxx.efs.us-west-2.amazonaws.com:/&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -396,7 +396,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>state of the EFS file system</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “creating, available, deleting, deleted”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;creating,</span> <span class="pre">available,</span> <span class="pre">deleting,</span> <span class="pre">deleted&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -405,7 +405,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>url of file system with leading dot from the time AWS EFS required to add network suffix to EFS address</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “.fs-xxxxxxxx.efs.us-west-2.amazonaws.com:/”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;.fs-xxxxxxxx.efs.us-west-2.amazonaws.com:/&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -414,7 +414,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>list of mount targets</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“file_system_id”: “fs-a7ad440e”, “ip_address”: “172.31.17.173”, “life_cycle_state”: “available”, “mount_target_id”: “fsmt-d8907871”, “network_interface_id”: “eni-6e387e26”, “owner_id”: “123456789012”, “security_groups”: [“sg-a30b22c6”], “subnet_id”: “subnet-e265c895”}, “…”]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;file_system_id&quot;:</span> <span class="pre">&quot;fs-a7ad440e&quot;,</span> <span class="pre">&quot;ip_address&quot;:</span> <span class="pre">&quot;172.31.17.173&quot;,</span> <span class="pre">&quot;life_cycle_state&quot;:</span> <span class="pre">&quot;available&quot;,</span> <span class="pre">&quot;mount_target_id&quot;:</span> <span class="pre">&quot;fsmt-d8907871&quot;,</span> <span class="pre">&quot;network_interface_id&quot;:</span> <span class="pre">&quot;eni-6e387e26&quot;,</span> <span class="pre">&quot;owner_id&quot;:</span> <span class="pre">&quot;123456789012&quot;,</span> <span class="pre">&quot;security_groups&quot;:</span> <span class="pre">[&quot;sg-a30b22c6&quot;],</span> <span class="pre">&quot;subnet_id&quot;:</span> <span class="pre">&quot;subnet-e265c895&quot;},</span> <span class="pre">&quot;...&quot;]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -423,7 +423,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>name of the file system</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “my-efs”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;my-efs&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -432,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>the number of targets mounted</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 3</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">3</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -441,7 +441,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>AWS account ID of EFS owner</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “XXXXXXXXXXXX”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;XXXXXXXXXXXX&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -450,7 +450,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>performance mode of the file system</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “generalPurpose”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;generalPurpose&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -459,7 +459,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>throughput provisioned in Mibps</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when throughput_mode is set to “provisioned”</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 15.0</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">15.0</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -468,7 +468,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>size of the file system in bytes as of a timestamp</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“timestamp”: “2015-12-21 13:59:59-05:00”, “value”: 12288}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;timestamp&quot;:</span> <span class="pre">&quot;2015-12-21</span> <span class="pre">13:59:59-05:00&quot;,</span> <span class="pre">&quot;value&quot;:</span> <span class="pre">12288}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -477,7 +477,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>tags on the efs instance</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“key”: “Value”, “name”: “my-efs”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;key&quot;:</span> <span class="pre">&quot;Value&quot;,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">&quot;my-efs&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -486,7 +486,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>mode of throughput for the file system</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “bursting”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;bursting&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

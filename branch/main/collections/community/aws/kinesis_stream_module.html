@@ -216,8 +216,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -228,8 +228,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <td><div class="ansible-option-cell"><p>Enable or Disable encryption on the Kinesis Stream.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“enabled”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“disabled”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;enabled&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;disabled&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -241,8 +241,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">KMS</span></code></p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“KMS”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NONE”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;KMS&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NONE&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -329,8 +329,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <td><div class="ansible-option-cell"><p>Create or Delete the Kinesis Stream.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -350,8 +350,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -362,8 +362,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <td><div class="ansible-option-cell"><p>Wait for operation to complete before returning.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -372,7 +372,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>How many seconds to wait for an operation to complete before timing out.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">300</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">300</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -478,7 +478,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 </div></td>
 <td><div class="ansible-option-cell"><p>Number of hours messages will be kept for a Kinesis Stream.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state == present.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 24</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">24</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -487,7 +487,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 </div></td>
 <td><div class="ansible-option-cell"><p>The amazon resource identifier</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state == present.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:kinesis:east-side:123456789:stream/test-stream”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:kinesis:east-side:123456789:stream/test-stream&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -496,7 +496,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the Kinesis Stream.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state == present.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “test-stream”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test-stream&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -505,7 +505,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 </div></td>
 <td><div class="ansible-option-cell"><p>The current state of the Kinesis Stream.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state == present.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ACTIVE”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ACTIVE&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -514,7 +514,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-kines
 </div></td>
 <td><div class="ansible-option-cell"><p>Dictionary containing all the tags associated with the Kinesis stream.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state == present.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“Env”: “development”, “Name”: “Splunk”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Env&quot;:</span> <span class="pre">&quot;development&quot;,</span> <span class="pre">&quot;Name&quot;:</span> <span class="pre">&quot;Splunk&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>

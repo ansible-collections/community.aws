@@ -214,8 +214,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -244,13 +244,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>The name of the cache parameter group family that the cache parameter group can be used with. Required when creating a cache parameter group.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“memcached1.4”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“memcached1.5”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“redis2.6”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“redis2.8”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“redis3.2”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“redis4.0”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“redis5.0”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;memcached1.4&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;memcached1.5&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;redis2.6&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;redis2.8&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;redis3.2&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;redis4.0&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;redis5.0&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -301,9 +301,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>Idempotent actions that will create/modify, destroy, or reset a cache parameter group as needed.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“reset”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;reset&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -314,8 +314,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -388,7 +388,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>if the cache parameter group has changed</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“changed”: true}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;changed&quot;:</span> <span class="pre">true}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -397,7 +397,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>cache parameter group information and response metadata</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“cache_parameter_group”: {“cache_parameter_group_family”: “redis3.2”, “cache_parameter_group_name”: “test-please-delete”, “description”: “initial description”}, “response_metadata”: {“http_headers”: {“content-length”: “562”, “content-type”: “text/xml”, “date”: “Mon, 06 Feb 2017 22:14:08 GMT”, “x-amzn-requestid”: “947291f9-ecb9-11e6-85bd-3baa4eca2cc1”}, “http_status_code”: 200, “request_id”: “947291f9-ecb9-11e6-85bd-3baa4eca2cc1”, “retry_attempts”: 0}}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;cache_parameter_group&quot;:</span> <span class="pre">{&quot;cache_parameter_group_family&quot;:</span> <span class="pre">&quot;redis3.2&quot;,</span> <span class="pre">&quot;cache_parameter_group_name&quot;:</span> <span class="pre">&quot;test-please-delete&quot;,</span> <span class="pre">&quot;description&quot;:</span> <span class="pre">&quot;initial</span> <span class="pre">description&quot;},</span> <span class="pre">&quot;response_metadata&quot;:</span> <span class="pre">{&quot;http_headers&quot;:</span> <span class="pre">{&quot;content-length&quot;:</span> <span class="pre">&quot;562&quot;,</span> <span class="pre">&quot;content-type&quot;:</span> <span class="pre">&quot;text/xml&quot;,</span> <span class="pre">&quot;date&quot;:</span> <span class="pre">&quot;Mon,</span> <span class="pre">06</span> <span class="pre">Feb</span> <span class="pre">2017</span> <span class="pre">22:14:08</span> <span class="pre">GMT&quot;,</span> <span class="pre">&quot;x-amzn-requestid&quot;:</span> <span class="pre">&quot;947291f9-ecb9-11e6-85bd-3baa4eca2cc1&quot;},</span> <span class="pre">&quot;http_status_code&quot;:</span> <span class="pre">200,</span> <span class="pre">&quot;request_id&quot;:</span> <span class="pre">&quot;947291f9-ecb9-11e6-85bd-3baa4eca2cc1&quot;,</span> <span class="pre">&quot;retry_attempts&quot;:</span> <span class="pre">0}}</span></code></p>
 </div></td>
 </tr>
 </tbody>

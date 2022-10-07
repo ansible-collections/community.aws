@@ -213,8 +213,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sts-a
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -320,8 +320,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sts-a
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -386,7 +386,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sts-a
 </div></td>
 <td><div class="ansible-option-cell"><p>The temporary security credentials, which include an access key ID, a secret access key, and a security (or session) token</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“access_key”: “XXXXXXXXXXXXXXXXXXXX”, “expiration”: “2017-11-11T11:11:11+00:00”, “secret_key”: “XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX”, “session_token”: “XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;access_key&quot;:</span> <span class="pre">&quot;XXXXXXXXXXXXXXXXXXXX&quot;,</span> <span class="pre">&quot;expiration&quot;:</span> <span class="pre">&quot;2017-11-11T11:11:11+00:00&quot;,</span> <span class="pre">&quot;secret_key&quot;:</span> <span class="pre">&quot;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&quot;,</span> <span class="pre">&quot;session_token&quot;:</span> <span class="pre">&quot;XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -395,7 +395,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sts-a
 </div></td>
 <td><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) and the assumed role ID</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“arn”: “ARO123EXAMPLE123:Bob”, “assumed_role_id”: “arn:aws:sts::123456789012:assumed-role/demo/Bob”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;arn&quot;:</span> <span class="pre">&quot;ARO123EXAMPLE123:Bob&quot;,</span> <span class="pre">&quot;assumed_role_id&quot;:</span> <span class="pre">&quot;arn:aws:sts::123456789012:assumed-role/demo/Bob&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>

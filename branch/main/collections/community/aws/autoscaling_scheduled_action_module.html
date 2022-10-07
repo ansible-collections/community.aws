@@ -223,8 +223,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -329,8 +329,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>Create / update or delete scheduled action.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -348,8 +348,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -421,7 +421,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>ASG desired capacity.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 1</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -430,7 +430,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>End time for the action.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2021 October 25 08:00 UTC”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2021</span> <span class="pre">October</span> <span class="pre">25</span> <span class="pre">08:00</span> <span class="pre">UTC&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -439,7 +439,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>ASG max capacity.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 2</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -448,7 +448,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>ASG min capacity.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 1</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -457,7 +457,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Cron style schedule to repeat the action on.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “40 22 * * 1-5”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;40</span> <span class="pre">22</span> <span class="pre">*</span> <span class="pre">*</span> <span class="pre">1-5&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -466,7 +466,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the scheduled action.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “test_scheduled_action”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test_scheduled_action&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -475,7 +475,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Start time for the action.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2021 October 25 08:00 UTC”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2021</span> <span class="pre">October</span> <span class="pre">25</span> <span class="pre">08:00</span> <span class="pre">UTC&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -484,7 +484,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the Amazon Machine Image used by the launch configuration.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “Europe/London”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Europe/London&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

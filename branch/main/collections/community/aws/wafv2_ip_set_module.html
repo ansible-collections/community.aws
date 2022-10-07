@@ -222,8 +222,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -253,8 +253,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p>Required when <em>state=present</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“IPV4”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“IPV6”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IPV4&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IPV6&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -281,8 +281,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">no</span></code>, keep the existing addresses in place. Will modify and add, but will not delete.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -295,8 +295,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -317,8 +317,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Specifies whether this is for an AWS CloudFront distribution or for a regional application, such as API Gateway or Application LoadBalancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“CLOUDFRONT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“REGIONAL”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUDFRONT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REGIONAL&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -343,8 +343,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Whether the rule is present or absent.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -365,8 +365,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -419,7 +419,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Current addresses of the ip set</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the ip set exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“8.8.8.8/32”, “8.8.4.4/32”]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;8.8.8.8/32&quot;,</span> <span class="pre">&quot;8.8.4.4/32&quot;]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -428,7 +428,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>IP set arn</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the ip set exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:wafv2:eu-central-1:11111111:regional/ipset/test02/4b007330-2934-4dc5-af24-82dcb3aeb127”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:wafv2:eu-central-1:11111111:regional/ipset/test02/4b007330-2934-4dc5-af24-82dcb3aeb127&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -437,7 +437,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Description of the ip set</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the ip set exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “Some IP set description”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Some</span> <span class="pre">IP</span> <span class="pre">set</span> <span class="pre">description&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -446,7 +446,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>IP version of the ip set</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the ip set exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “IPV4”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;IPV4&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -455,7 +455,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>IP set name</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the ip set exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “test02”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test02&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

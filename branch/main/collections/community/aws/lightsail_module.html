@@ -230,8 +230,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -302,12 +302,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <p><em>rebooted</em> and <em>restarted</em> are aliases.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“running”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“restarted”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rebooted”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“stopped”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;running&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;restarted&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rebooted&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;stopped&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -325,8 +325,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -339,8 +339,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <p>Has no effect when <em>state=rebooted</em> or <em>state=absent</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -349,7 +349,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>How long before <em>wait</em> gives up, in seconds.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">300</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">300</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -412,7 +412,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 <td><div class="ansible-option-cell"><p>if a snapshot has been modified/created</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“changed”: true}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;changed&quot;:</span> <span class="pre">true}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -421,7 +421,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 <td><div class="ansible-option-cell"><p>instance data</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“arn”: “arn:aws:lightsail:us-east-1:123456789012:Instance/1fef0175-d6c8-480e-84fa-214f969cda87”, “blueprint_id”: “ubuntu_16_04”, “blueprint_name”: “Ubuntu”, “bundle_id”: “nano_1_0”, “created_at”: “2017-03-27T08:38:59.714000-04:00”, “hardware”: {“cpu_count”: 1, “ram_size_in_gb”: 0.5}, “is_static_ip”: false, “location”: {“availability_zone”: “us-east-1a”, “region_name”: “us-east-1”}, “name”: “my_instance”, “networking”: {“monthly_transfer”: {“gb_per_month_allocated”: 1024}, “ports”: [{“access_direction”: “inbound”, “access_from”: “Anywhere (0.0.0.0/0)”, “access_type”: “public”, “common_name”: “”, “from_port”: 80, “protocol”: “tcp”, “to_port”: 80}, {“access_direction”: “inbound”, “access_from”: “Anywhere (0.0.0.0/0)”, “access_type”: “public”, “common_name”: “”, “from_port”: 22, “protocol”: “tcp”, “to_port”: 22}]}, “private_ip_address”: “172.26.8.14”, “public_ip_address”: “34.207.152.202”, “resource_type”: “Instance”, “ssh_key_name”: “keypair”, “state”: {“code”: 16, “name”: “running”}, “support_code”: “123456789012/i-0997c97831ee21e33”, “username”: “ubuntu”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;arn&quot;:</span> <span class="pre">&quot;arn:aws:lightsail:us-east-1:123456789012:Instance/1fef0175-d6c8-480e-84fa-214f969cda87&quot;,</span> <span class="pre">&quot;blueprint_id&quot;:</span> <span class="pre">&quot;ubuntu_16_04&quot;,</span> <span class="pre">&quot;blueprint_name&quot;:</span> <span class="pre">&quot;Ubuntu&quot;,</span> <span class="pre">&quot;bundle_id&quot;:</span> <span class="pre">&quot;nano_1_0&quot;,</span> <span class="pre">&quot;created_at&quot;:</span> <span class="pre">&quot;2017-03-27T08:38:59.714000-04:00&quot;,</span> <span class="pre">&quot;hardware&quot;:</span> <span class="pre">{&quot;cpu_count&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;ram_size_in_gb&quot;:</span> <span class="pre">0.5},</span> <span class="pre">&quot;is_static_ip&quot;:</span> <span class="pre">false,</span> <span class="pre">&quot;location&quot;:</span> <span class="pre">{&quot;availability_zone&quot;:</span> <span class="pre">&quot;us-east-1a&quot;,</span> <span class="pre">&quot;region_name&quot;:</span> <span class="pre">&quot;us-east-1&quot;},</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">&quot;my_instance&quot;,</span> <span class="pre">&quot;networking&quot;:</span> <span class="pre">{&quot;monthly_transfer&quot;:</span> <span class="pre">{&quot;gb_per_month_allocated&quot;:</span> <span class="pre">1024},</span> <span class="pre">&quot;ports&quot;:</span> <span class="pre">[{&quot;access_direction&quot;:</span> <span class="pre">&quot;inbound&quot;,</span> <span class="pre">&quot;access_from&quot;:</span> <span class="pre">&quot;Anywhere</span> <span class="pre">(0.0.0.0/0)&quot;,</span> <span class="pre">&quot;access_type&quot;:</span> <span class="pre">&quot;public&quot;,</span> <span class="pre">&quot;common_name&quot;:</span> <span class="pre">&quot;&quot;,</span> <span class="pre">&quot;from_port&quot;:</span> <span class="pre">80,</span> <span class="pre">&quot;protocol&quot;:</span> <span class="pre">&quot;tcp&quot;,</span> <span class="pre">&quot;to_port&quot;:</span> <span class="pre">80},</span> <span class="pre">{&quot;access_direction&quot;:</span> <span class="pre">&quot;inbound&quot;,</span> <span class="pre">&quot;access_from&quot;:</span> <span class="pre">&quot;Anywhere</span> <span class="pre">(0.0.0.0/0)&quot;,</span> <span class="pre">&quot;access_type&quot;:</span> <span class="pre">&quot;public&quot;,</span> <span class="pre">&quot;common_name&quot;:</span> <span class="pre">&quot;&quot;,</span> <span class="pre">&quot;from_port&quot;:</span> <span class="pre">22,</span> <span class="pre">&quot;protocol&quot;:</span> <span class="pre">&quot;tcp&quot;,</span> <span class="pre">&quot;to_port&quot;:</span> <span class="pre">22}]},</span> <span class="pre">&quot;private_ip_address&quot;:</span> <span class="pre">&quot;172.26.8.14&quot;,</span> <span class="pre">&quot;public_ip_address&quot;:</span> <span class="pre">&quot;34.207.152.202&quot;,</span> <span class="pre">&quot;resource_type&quot;:</span> <span class="pre">&quot;Instance&quot;,</span> <span class="pre">&quot;ssh_key_name&quot;:</span> <span class="pre">&quot;keypair&quot;,</span> <span class="pre">&quot;state&quot;:</span> <span class="pre">{&quot;code&quot;:</span> <span class="pre">16,</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">&quot;running&quot;},</span> <span class="pre">&quot;support_code&quot;:</span> <span class="pre">&quot;123456789012/i-0997c97831ee21e33&quot;,</span> <span class="pre">&quot;username&quot;:</span> <span class="pre">&quot;ubuntu&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>

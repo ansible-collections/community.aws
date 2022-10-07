@@ -212,7 +212,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The type of VPN connection.</p>
 <p>At this time only <code class="docutils literal notranslate"><span class="pre">ipsec.1</span></code> is supported.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“ipsec.1”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;ipsec.1&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -229,8 +229,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -239,7 +239,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The time, in seconds, to wait before checking operation again.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">15</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">15</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -346,8 +346,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>Whether or not to delete VPN connections routes that are not specified in the task.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -360,8 +360,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -403,8 +403,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>The desired state of the VPN connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -415,8 +415,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>Indicates whether the VPN connection uses static routes only. Static routes must be used for devices that don’t support BGP.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -458,8 +458,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -482,7 +482,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>How long, in seconds, before wait gives up.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">600</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">600</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -590,7 +590,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>If the VPN connection has changed.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“changed”: true}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;changed&quot;:</span> <span class="pre">true}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -607,7 +607,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The customer gateway connected via the connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘customer_gateway_id’: ‘cgw-1220c87b’}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'customer_gateway_id':</span> <span class="pre">'cgw-1220c87b'}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -624,7 +624,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If the VPN connection only allows static routes.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘static_routes_only’: True}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'static_routes_only':</span> <span class="pre">True}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -633,7 +633,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The routes of the VPN connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“routes”: [{“destination_cidr_block”: “192.168.1.0/24”, “state”: “available”}]}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;routes&quot;:</span> <span class="pre">[{&quot;destination_cidr_block&quot;:</span> <span class="pre">&quot;192.168.1.0/24&quot;,</span> <span class="pre">&quot;state&quot;:</span> <span class="pre">&quot;available&quot;}]}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -642,7 +642,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The status of the VPN connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘state’: ‘available’}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'state':</span> <span class="pre">'available'}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -651,7 +651,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The tags associated with the connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“tags”: {“name”: “ansible-test”, “other”: “tag”}}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;tags&quot;:</span> <span class="pre">{&quot;name&quot;:</span> <span class="pre">&quot;ansible-test&quot;,</span> <span class="pre">&quot;other&quot;:</span> <span class="pre">&quot;tag&quot;}}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -660,7 +660,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The type of VPN connection (currently only ipsec.1 is available).</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘type’: ‘ipsec.1’}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'type':</span> <span class="pre">'ipsec.1'}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -669,7 +669,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The telemetry for the VPN tunnel.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“vgw_telemetry”: [{“accepted_route_count”: 123, “last_status_change”: “datetime(2015, 1, 1)”, “outside_ip_address”: “string”, “status”: “up”, “status_message”: “string”}]}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;vgw_telemetry&quot;:</span> <span class="pre">[{&quot;accepted_route_count&quot;:</span> <span class="pre">123,</span> <span class="pre">&quot;last_status_change&quot;:</span> <span class="pre">&quot;datetime(2015,</span> <span class="pre">1,</span> <span class="pre">1)&quot;,</span> <span class="pre">&quot;outside_ip_address&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;up&quot;,</span> <span class="pre">&quot;status_message&quot;:</span> <span class="pre">&quot;string&quot;}]}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -678,7 +678,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The identifier for the VPN connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘vpn_connection_id’: ‘vpn-781e0e19’}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'vpn_connection_id':</span> <span class="pre">'vpn-781e0e19'}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -687,7 +687,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The virtual private gateway connected via the connection.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘vpn_gateway_id’: ‘vgw-cb0ae2a2’}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'vpn_gateway_id':</span> <span class="pre">'vgw-cb0ae2a2'}&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>
