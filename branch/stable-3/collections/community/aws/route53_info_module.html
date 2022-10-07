@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.route53_zone module – add or delete Route53 zones" href="route53_zone_module.html" />
@@ -125,15 +126,13 @@
 <h1>community.aws.route53_info module – Retrieves route53 details using AWS methods<a class="headerlink" href="#community-aws-route53-info-module-retrieves-route53-details-using-aws-methods" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.5.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.6.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-route53-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.route53_info</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -225,8 +224,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -269,12 +268,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <td><div class="ansible-option-cell"><p>This is used in conjunction with query: health_check. It allows for listing details, counts or tags of various health check details.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">list</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">details</span></p></li>
-<li><p><span class="ansible-option-choices-entry">status</span></p></li>
-<li><p><span class="ansible-option-choices-entry">failure_reason</span></p></li>
-<li><p><span class="ansible-option-choices-entry">count</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tags</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;list&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;details&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;status&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;failure_reason&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;count&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;tags&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -294,11 +293,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <td><div class="ansible-option-cell"><p>This is used in conjunction with query: hosted_zone. It allows for listing details, counts or tags of various hosted zone details.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">details</span></p></li>
-<li><p><span class="ansible-option-default-bold">list</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">list_by_name</span></p></li>
-<li><p><span class="ansible-option-choices-entry">count</span></p></li>
-<li><p><span class="ansible-option-choices-entry">tags</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;details&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;list&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;list_by_name&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;count&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;tags&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -333,12 +332,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <td><div class="ansible-option-cell"><p>Specifies the query action to take.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">change</span></p></li>
-<li><p><span class="ansible-option-choices-entry">checker_ip_range</span></p></li>
-<li><p><span class="ansible-option-choices-entry">health_check</span></p></li>
-<li><p><span class="ansible-option-choices-entry">hosted_zone</span></p></li>
-<li><p><span class="ansible-option-choices-entry">record_sets</span></p></li>
-<li><p><span class="ansible-option-choices-entry">reusable_delegation_set</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;change&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;checker_ip_range&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;health_check&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;hosted_zone&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;record_sets&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;reusable_delegation_set&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -392,19 +391,19 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <td><div class="ansible-option-cell"><p>The type of DNS record.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">A</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CNAME</span></p></li>
-<li><p><span class="ansible-option-choices-entry">MX</span></p></li>
-<li><p><span class="ansible-option-choices-entry">AAAA</span></p></li>
-<li><p><span class="ansible-option-choices-entry">TXT</span></p></li>
-<li><p><span class="ansible-option-choices-entry">PTR</span></p></li>
-<li><p><span class="ansible-option-choices-entry">SRV</span></p></li>
-<li><p><span class="ansible-option-choices-entry">SPF</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CAA</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NS</span></p></li>
-<li><p><span class="ansible-option-choices-entry">NAPTR</span></p></li>
-<li><p><span class="ansible-option-choices-entry">SOA</span></p></li>
-<li><p><span class="ansible-option-choices-entry">DS</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;A&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CNAME&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MX&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AAAA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TXT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PTR&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SRV&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SPF&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CAA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NS&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NAPTR&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SOA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DS&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -415,8 +414,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-route
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>

@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.redshift_subnet_group module – manage Redshift cluster subnet groups" href="redshift_subnet_group_module.html" />
@@ -125,15 +126,13 @@
 <h1>community.aws.redshift_info module – Gather information about Redshift cluster(s)<a class="headerlink" href="#community-aws-redshift-info-module-gather-information-about-redshift-cluster-s" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.5.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.6.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-redshift-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.redshift_info</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -228,8 +227,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -292,8 +291,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -361,7 +360,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A Boolean value that, if true, indicates that major version upgrades will be applied automatically to the cluster during the maintenance window.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “true|false”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;true|false&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -370,7 +369,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of days that automatic cluster snapshots are retained.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 1</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -379,7 +378,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the Availability Zone in which the cluster is located.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “us-east-1b”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;us-east-1b&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -388,7 +387,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The date and time that the cluster was created.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2016-05-10T08:33:16.629000+00:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2016-05-10T08:33:16.629000+00:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -397,7 +396,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>Unique key to identify the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “redshift-identifier”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;redshift-identifier&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -406,7 +405,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The nodes in the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“node_role”: “LEADER”, “private_ip_address”: “10.0.0.1”, “public_ip_address”: “x.x.x.x”}, {“node_role”: “COMPUTE-1”, “private_ip_address”: “10.0.0.3”, “public_ip_address”: “x.x.x.x”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;node_role&quot;:</span> <span class="pre">&quot;LEADER&quot;,</span> <span class="pre">&quot;private_ip_address&quot;:</span> <span class="pre">&quot;10.0.0.1&quot;,</span> <span class="pre">&quot;public_ip_address&quot;:</span> <span class="pre">&quot;x.x.x.x&quot;},</span> <span class="pre">{&quot;node_role&quot;:</span> <span class="pre">&quot;COMPUTE-1&quot;,</span> <span class="pre">&quot;private_ip_address&quot;:</span> <span class="pre">&quot;10.0.0.3&quot;,</span> <span class="pre">&quot;public_ip_address&quot;:</span> <span class="pre">&quot;x.x.x.x&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -415,7 +414,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The list of cluster parameters that are associated with this cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“cluster_parameter_status_list”: [{“parameter_apply_status”: “in-sync”, “parameter_name”: “statement_timeout”}, {“parameter_apply_status”: “in-sync”, “parameter_name”: “require_ssl”}], “parameter_apply_status”: “in-sync”, “parameter_group_name”: “tuba”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;cluster_parameter_status_list&quot;:</span> <span class="pre">[{&quot;parameter_apply_status&quot;:</span> <span class="pre">&quot;in-sync&quot;,</span> <span class="pre">&quot;parameter_name&quot;:</span> <span class="pre">&quot;statement_timeout&quot;},</span> <span class="pre">{&quot;parameter_apply_status&quot;:</span> <span class="pre">&quot;in-sync&quot;,</span> <span class="pre">&quot;parameter_name&quot;:</span> <span class="pre">&quot;require_ssl&quot;}],</span> <span class="pre">&quot;parameter_apply_status&quot;:</span> <span class="pre">&quot;in-sync&quot;,</span> <span class="pre">&quot;parameter_group_name&quot;:</span> <span class="pre">&quot;tuba&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -424,7 +423,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The public key for the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ssh-rsa anjigfam Amazon-Redshift “</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ssh-rsa</span> <span class="pre">anjigfam</span> <span class="pre">Amazon-Redshift</span> <span class="pre">&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -433,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The specific revision number of the database in the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “1231”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;1231&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -442,7 +441,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of cluster security groups that are associated with the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> []</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -451,7 +450,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A value that returns the destination region and retention period that are configured for cross-region snapshot copy.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -460,7 +459,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>Current state of the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “available”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;available&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -469,7 +468,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the subnet group that is associated with the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “redshift-subnet”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;redshift-subnet&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -478,7 +477,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The version ID of the Amazon Redshift engine that is running on the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “1.0”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;1.0&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -487,7 +486,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the initial database that was created when the cluster was created.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “dev”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;dev&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -496,7 +495,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The status of the elastic IP (EIP) address.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -505,7 +504,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>Boolean value that, if true , indicates that data in the cluster is encrypted at rest.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “true|false”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;true|false&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -514,7 +513,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The connection endpoint.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘address’: ‘cluster-ds2.ocmugla0rf.us-east-1.redshift.amazonaws.com’, ‘port’: 5439}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'address':</span> <span class="pre">'cluster-ds2.ocmugla0rf.us-east-1.redshift.amazonaws.com',</span> <span class="pre">'port':</span> <span class="pre">5439}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -523,7 +522,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>An option that specifies whether to create the cluster with enhanced VPC routing enabled.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “true|false”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;true|false&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -532,7 +531,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A value that reports whether the Amazon Redshift cluster has finished applying any hardware security module (HSM) settings changes specified in a modify cluster command.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -541,7 +540,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>List of IAM roles attached to the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> []</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -550,7 +549,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The AWS Key Management Service (AWS KMS) key ID of the encryption key used to encrypt data in the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -559,7 +558,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The master user name for the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “admin”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;admin&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -568,7 +567,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The status of a modify operation.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> optional</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -577,7 +576,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The node type for nodes in the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ds2.xlarge”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ds2.xlarge&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -586,7 +585,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of compute nodes in the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 12</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">12</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -595,7 +594,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A value that, if present, indicates that changes to the cluster are pending.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -604,7 +603,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The weekly time range, in Universal Coordinated Time (UTC), during which system maintenance can occur.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “tue:07:30-tue:08:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;tue:07:30-tue:08:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -613,7 +612,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A Boolean value that, if true , indicates that the cluster can be accessed from a public network.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “true|false”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;true|false&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -622,7 +621,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A value that describes the status of a cluster restore action.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -631,7 +630,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The list of tags for the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> []</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -640,7 +639,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>The identifier of the VPC the cluster is in, if the cluster is in a VPC.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “vpc-1234567”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;vpc-1234567&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -649,7 +648,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-redsh
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of VPC security groups the are associated with the cluster.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“status”: “active”, “vpc_security_group_id”: “sg-12cghhg”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;status&quot;:</span> <span class="pre">&quot;active&quot;,</span> <span class="pre">&quot;vpc_security_group_id&quot;:</span> <span class="pre">&quot;sg-12cghhg&quot;}]</span></code></p>
 </div></td>
 </tr>
 </tbody>

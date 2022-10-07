@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.ec2_vpc_vpn module – Create, modify, and delete EC2 VPN connections." href="ec2_vpc_vpn_module.html" />
@@ -125,15 +126,13 @@
 <h1>community.aws.ec2_vpc_vgw_info module – Gather information about virtual gateways in AWS<a class="headerlink" href="#community-aws-ec2-vpc-vgw-info-module-gather-information-about-virtual-gateways-in-aws" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.5.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.6.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-vgw-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.ec2_vpc_vgw_info</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -217,8 +216,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -281,8 +280,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -351,7 +350,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>True if listing the virtual gateways succeeds.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> false</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -360,7 +359,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 <td><div class="ansible-option-cell"><p>The virtual gateways for the account.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“state”: “available”, “tags”: [{“key”: “Name”, “value”: “TEST-VGW”}], “type”: “ipsec.1”, “vpc_attachments”: [{“state”: “attached”, “vpc_id”: “vpc-22a93c74”}], “vpn_gateway_id”: “vgw-23e3d64e”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;state&quot;:</span> <span class="pre">&quot;available&quot;,</span> <span class="pre">&quot;tags&quot;:</span> <span class="pre">[{&quot;key&quot;:</span> <span class="pre">&quot;Name&quot;,</span> <span class="pre">&quot;value&quot;:</span> <span class="pre">&quot;TEST-VGW&quot;}],</span> <span class="pre">&quot;type&quot;:</span> <span class="pre">&quot;ipsec.1&quot;,</span> <span class="pre">&quot;vpc_attachments&quot;:</span> <span class="pre">[{&quot;state&quot;:</span> <span class="pre">&quot;attached&quot;,</span> <span class="pre">&quot;vpc_id&quot;:</span> <span class="pre">&quot;vpc-22a93c74&quot;}],</span> <span class="pre">&quot;vpn_gateway_id&quot;:</span> <span class="pre">&quot;vgw-23e3d64e&quot;}]</span></code></p>
 </div></td>
 </tr>
 </tbody>

@@ -19,6 +19,7 @@
         <script src="../../../_static/underscore.js"></script>
         <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="community.aws.cloudfront_distribution module – Create, update and delete AWS CloudFront distributions." href="cloudfront_distribution_module.html" />
@@ -125,15 +126,13 @@
 <h1>community.aws.cloudformation_stack_set module – Manage groups of CloudFormation stacks<a class="headerlink" href="#community-aws-cloudformation-stack-set-module-manage-groups-of-cloudformation-stacks" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.5.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 3.6.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-cloudformation-stack-set-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
 <p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.cloudformation_stack_set</span></code>.</p>
 </div>
-<div class="versionadded">
-<p><span class="versionmodified added">New in version community.aws: </span>1.0.0</p>
-</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
 <div class="contents local topic" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -239,8 +238,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey, AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">CAPABILITY_IAM</span></p></li>
-<li><p><span class="ansible-option-choices-entry">CAPABILITY_NAMED_IAM</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CAPABILITY_IAM&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CAPABILITY_NAMED_IAM&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -251,8 +250,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -341,7 +340,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of hashes of all the template variables for the stack. The value can be a string or a dict.</p>
 <p>Dict can be used to set additional template parameter attributes like UsePreviousValue (see example).</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">{}</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -362,8 +361,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>By default, instances will be deleted. To keep stacks when stack set is deleted set <em>purge_stacks=false</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -407,8 +406,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <td><div class="ansible-option-cell"><p>If <em>state=present</em>, stack will be created.  If <em>state=present</em> and if stack exists and template has changed, it will be updated. If <em>state=absent</em>, stack will be removed.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">present</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">absent</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -456,8 +455,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -469,8 +468,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>If you choose not to wait, this module will not notify when stack operations fail because it will not wait for them to finish.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -479,7 +478,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>How long to wait (in seconds) for stacks to complete create/update/delete operations.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">900</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">900</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -555,7 +554,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 <td><div class="ansible-option-cell"><p>All operations initiated by this run of the cloudformation_stack_set module</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“action”: “CREATE”, “administration_role_arn”: “arn:aws:iam::1234567890:role/AWSCloudFormationStackSetAdministrationRole”, “creation_timestamp”: “2018-06-18T17:40:46.372000+00:00”, “end_timestamp”: “2018-06-18T17:41:24.560000+00:00”, “execution_role_name”: “AWSCloudFormationStackSetExecutionRole”, “operation_id”: “Ansible-StackInstance-Create-0ff2af5b-251d-4fdb-8b89-1ee444eba8b8”, “operation_preferences”: {“region_order”: [“us-east-1”, “us-east-2”]}, “stack_set_id”: “TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929”, “status”: “FAILED”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;action&quot;:</span> <span class="pre">&quot;CREATE&quot;,</span> <span class="pre">&quot;administration_role_arn&quot;:</span> <span class="pre">&quot;arn:aws:iam::1234567890:role/AWSCloudFormationStackSetAdministrationRole&quot;,</span> <span class="pre">&quot;creation_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:40:46.372000+00:00&quot;,</span> <span class="pre">&quot;end_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:41:24.560000+00:00&quot;,</span> <span class="pre">&quot;execution_role_name&quot;:</span> <span class="pre">&quot;AWSCloudFormationStackSetExecutionRole&quot;,</span> <span class="pre">&quot;operation_id&quot;:</span> <span class="pre">&quot;Ansible-StackInstance-Create-0ff2af5b-251d-4fdb-8b89-1ee444eba8b8&quot;,</span> <span class="pre">&quot;operation_preferences&quot;:</span> <span class="pre">{&quot;region_order&quot;:</span> <span class="pre">[&quot;us-east-1&quot;,</span> <span class="pre">&quot;us-east-2&quot;]},</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;FAILED&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -564,7 +563,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 <td><div class="ansible-option-cell"><p>Most recent events in CloudFormation’s event log. This may be from a previous run in some cases.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“action”: “CREATE”, “creation_timestamp”: “2018-06-18T17:40:46.372000+00:00”, “end_timestamp”: “2018-06-18T17:41:24.560000+00:00”, “operation_id”: “Ansible-StackInstance-Create-0ff2af5b-251d-4fdb-8b89-1ee444eba8b8”, “stack_instances”: [{“account”: “1234567890”, “region”: “us-east-1”, “stack_set_id”: “TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929”, “status”: “OUTDATED”, “status_reason”: “Account 1234567890 should have ‘AWSCloudFormationStackSetAdministrationRole’ role with trust relationship to CloudFormation service.”}], “status”: “FAILED”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;action&quot;:</span> <span class="pre">&quot;CREATE&quot;,</span> <span class="pre">&quot;creation_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:40:46.372000+00:00&quot;,</span> <span class="pre">&quot;end_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:41:24.560000+00:00&quot;,</span> <span class="pre">&quot;operation_id&quot;:</span> <span class="pre">&quot;Ansible-StackInstance-Create-0ff2af5b-251d-4fdb-8b89-1ee444eba8b8&quot;,</span> <span class="pre">&quot;stack_instances&quot;:</span> <span class="pre">[{&quot;account&quot;:</span> <span class="pre">&quot;1234567890&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-east-1&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;OUTDATED&quot;,</span> <span class="pre">&quot;status_reason&quot;:</span> <span class="pre">&quot;Account</span> <span class="pre">1234567890</span> <span class="pre">should</span> <span class="pre">have</span> <span class="pre">'AWSCloudFormationStackSetAdministrationRole'</span> <span class="pre">role</span> <span class="pre">with</span> <span class="pre">trust</span> <span class="pre">relationship</span> <span class="pre">to</span> <span class="pre">CloudFormation</span> <span class="pre">service.&quot;}],</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;FAILED&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -573,7 +572,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 <td><div class="ansible-option-cell"><p>CloudFormation stack instances that are members of this stack set. This will also include their region and account ID.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> state == present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“account”: “1234567890”, “region”: “us-east-1”, “stack_set_id”: “TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929”, “status”: “OUTDATED”, “status_reason”: “Account 1234567890 should have ‘AWSCloudFormationStackSetAdministrationRole’ role with trust relationship to CloudFormation service.\n”}, {“account”: “1234567890”, “region”: “us-east-2”, “stack_set_id”: “TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929”, “status”: “OUTDATED”, “status_reason”: “Cancelled since failure tolerance has exceeded”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;account&quot;:</span> <span class="pre">&quot;1234567890&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-east-1&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;OUTDATED&quot;,</span> <span class="pre">&quot;status_reason&quot;:</span> <span class="pre">&quot;Account</span> <span class="pre">1234567890</span> <span class="pre">should</span> <span class="pre">have</span> <span class="pre">'AWSCloudFormationStackSetAdministrationRole'</span> <span class="pre">role</span> <span class="pre">with</span> <span class="pre">trust</span> <span class="pre">relationship</span> <span class="pre">to</span> <span class="pre">CloudFormation</span> <span class="pre">service.\n&quot;},</span> <span class="pre">{&quot;account&quot;:</span> <span class="pre">&quot;1234567890&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-east-2&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;OUTDATED&quot;,</span> <span class="pre">&quot;status_reason&quot;:</span> <span class="pre">&quot;Cancelled</span> <span class="pre">since</span> <span class="pre">failure</span> <span class="pre">tolerance</span> <span class="pre">has</span> <span class="pre">exceeded&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -582,7 +581,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 <td><div class="ansible-option-cell"><p>Facts about the currently deployed stack set, its parameters, and its tags</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> state == present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“administration_role_arn”: “arn:aws:iam::1234567890:role/AWSCloudFormationStackSetAdministrationRole”, “capabilities”: [], “description”: “test stack PRIME”, “execution_role_name”: “AWSCloudFormationStackSetExecutionRole”, “parameters”: [], “stack_set_arn”: “arn:aws:cloudformation:us-east-1:1234567890:stackset/TestStackPrime:19f3f684-aae9-467-ba36-e09f92cf5929”, “stack_set_id”: “TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929”, “stack_set_name”: “TestStackPrime”, “status”: “ACTIVE”, “tags”: {“Some”: “Thing”, “an”: “other”}, “template_body”: “AWSTemplateFormatVersion: \”2010-09-09\”\nParameters: {}\nResources:\n  Bukkit:\n    Type: \”AWS::S3::Bucket\”\n    Properties: {}\n  other:\n    Type: \”AWS::SNS::Topic\”\n    Properties: {}\n”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;administration_role_arn&quot;:</span> <span class="pre">&quot;arn:aws:iam::1234567890:role/AWSCloudFormationStackSetAdministrationRole&quot;,</span> <span class="pre">&quot;capabilities&quot;:</span> <span class="pre">[],</span> <span class="pre">&quot;description&quot;:</span> <span class="pre">&quot;test</span> <span class="pre">stack</span> <span class="pre">PRIME&quot;,</span> <span class="pre">&quot;execution_role_name&quot;:</span> <span class="pre">&quot;AWSCloudFormationStackSetExecutionRole&quot;,</span> <span class="pre">&quot;parameters&quot;:</span> <span class="pre">[],</span> <span class="pre">&quot;stack_set_arn&quot;:</span> <span class="pre">&quot;arn:aws:cloudformation:us-east-1:1234567890:stackset/TestStackPrime:19f3f684-aae9-467-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;stack_set_name&quot;:</span> <span class="pre">&quot;TestStackPrime&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;ACTIVE&quot;,</span> <span class="pre">&quot;tags&quot;:</span> <span class="pre">{&quot;Some&quot;:</span> <span class="pre">&quot;Thing&quot;,</span> <span class="pre">&quot;an&quot;:</span> <span class="pre">&quot;other&quot;},</span> <span class="pre">&quot;template_body&quot;:</span> <span class="pre">&quot;AWSTemplateFormatVersion:</span> <span class="pre">\&quot;2010-09-09\&quot;\nParameters:</span> <span class="pre">{}\nResources:\n</span>&#160; <span class="pre">Bukkit:\n</span>&#160;&#160;&#160; <span class="pre">Type:</span> <span class="pre">\&quot;AWS::S3::Bucket\&quot;\n</span>&#160;&#160;&#160; <span class="pre">Properties:</span> <span class="pre">{}\n</span>&#160; <span class="pre">other:\n</span>&#160;&#160;&#160; <span class="pre">Type:</span> <span class="pre">\&quot;AWS::SNS::Topic\&quot;\n</span>&#160;&#160;&#160; <span class="pre">Properties:</span> <span class="pre">{}\n&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>
