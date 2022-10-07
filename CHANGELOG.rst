@@ -44,7 +44,6 @@ Support for ``ansible-core<2.11`` has also been dropped.
 
 This release also brings some new features, bugfixes, breaking changes and deprecated features.
 
-
 Minor Changes
 -------------
 
@@ -197,6 +196,31 @@ New Modules
 -----------
 
 - accessanalyzer_validate_policy_info - Performs validation of IAM policies
+
+v4.3.0
+======
+
+The community.aws 4.3.0 release includes a number of minor bug fixes and improvements.
+Following the release of amazon.aws 5.0.0, backports to the 4.x series will be limited to
+security issues and bugfixes.
+
+Minor Changes
+-------------
+
+- autoscaling_group_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudfront_distribution - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudfront_origin_access_identity - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudtrail - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- ec2_vpc_nacl - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- eks_fargate_profile - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- redshift - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- s3_bucket_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+
+Bugfixes
+--------
+
+- ec2_placement_group - Handle a potential race creation during the creation of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
+- rds_cluster - fixes bug where specifiying an rds cluster parameter group raises a `KeyError` (https://github.com/ansible-collections/community.aws/pull/1417).
 
 v4.2.0
 ======
