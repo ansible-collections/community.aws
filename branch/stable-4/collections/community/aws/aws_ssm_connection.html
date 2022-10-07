@@ -126,7 +126,7 @@
 <h1>community.aws.aws_ssm connection – execute via AWS Systems Manager<a class="headerlink" href="#community-aws-aws-ssm-connection-execute-via-aws-systems-manager" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This connection plugin is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>This connection plugin is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.3.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this connection plugin,
 see <a class="reference internal" href="#ansible-collections-community-aws-aws-ssm-connection-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -207,8 +207,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <td><div class="ansible-option-cell"><p>Server-side encryption mode to use for uploads on the S3 bucket used for file transfer.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“AES256”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“aws:kms”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AES256&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;aws:kms&quot;</span></code></p></li>
 </ul>
 <p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
 <ul class="simple">
@@ -232,7 +232,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <a class="ansibleOptionLink" href="#parameter-plugin" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>This defines the location of the session-manager-plugin binary.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“/usr/local/bin/session-manager-plugin”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;/usr/local/bin/session-manager-plugin&quot;</span></code></p>
 <p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
 <ul class="simple">
 <li><p>Variable: ansible_aws_ssm_plugin</p></li>
@@ -256,7 +256,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <a class="ansibleOptionLink" href="#parameter-reconnection_retries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Number of attempts to connect.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">3</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">3</span></code></p>
 <p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
 <ul class="simple">
 <li><p>Variable: ansible_aws_ssm_retries</p></li>
@@ -268,7 +268,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The region the EC2 instance is located.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“us-east-1”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;us-east-1&quot;</span></code></p>
 <p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
 <ul class="simple">
 <li><p>Variable: ansible_aws_ssm_region</p></li>
@@ -304,7 +304,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <a class="ansibleOptionLink" href="#parameter-ssm_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Connection timeout seconds.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">60</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">60</span></code></p>
 <p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
 <ul class="simple">
 <li><p>Variable: ansible_aws_ssm_timeout</p></li>

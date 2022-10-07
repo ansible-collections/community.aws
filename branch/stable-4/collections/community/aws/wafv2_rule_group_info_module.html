@@ -126,7 +126,7 @@
 <h1>community.aws.wafv2_rule_group_info module – wafv2_web_acl_info<a class="headerlink" href="#community-aws-wafv2-rule-group-info-module-wafv2-web-acl-info" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.3.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-wafv2-rule-group-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -212,8 +212,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -260,8 +260,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Scope of wafv2 rule group.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“CLOUDFRONT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“REGIONAL”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUDFRONT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REGIONAL&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -293,8 +293,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -338,7 +338,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Rule group arn</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:wafv2:eu-central-1:11111111:regional/rulegroup/test02/6e90c01a-e4eb-43e5-b6aa-b1604cedf7d7”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:wafv2:eu-central-1:11111111:regional/rulegroup/test02/6e90c01a-e4eb-43e5-b6aa-b1604cedf7d7&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -347,7 +347,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Current capacity of the rule group</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the rule group exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 500</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">500</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -356,7 +356,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Description of the rule group</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “Some rule group description”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Some</span> <span class="pre">rule</span> <span class="pre">group</span> <span class="pre">description&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -365,7 +365,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Rule group name</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the rule group exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “test02”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test02&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -374,7 +374,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Current rules of the rule group</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the rule group exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“action”: {“allow”: {}}, “name”: “eins”, “priority”: 1, “statement”: {“ip_set_reference_statement”: {“arn”: “arn:aws:wafv2:eu-central-1:111111111:regional/ipset/test02/b6978915-c67b-4d1c-8832-2b1bb452143a”}}, “visibility_config”: {“cloud_watch_metrics_enabled”: true, “metric_name”: “fsd”, “sampled_requests_enabled”: true}}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;action&quot;:</span> <span class="pre">{&quot;allow&quot;:</span> <span class="pre">{}},</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">&quot;eins&quot;,</span> <span class="pre">&quot;priority&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;statement&quot;:</span> <span class="pre">{&quot;ip_set_reference_statement&quot;:</span> <span class="pre">{&quot;arn&quot;:</span> <span class="pre">&quot;arn:aws:wafv2:eu-central-1:111111111:regional/ipset/test02/b6978915-c67b-4d1c-8832-2b1bb452143a&quot;}},</span> <span class="pre">&quot;visibility_config&quot;:</span> <span class="pre">{&quot;cloud_watch_metrics_enabled&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;metric_name&quot;:</span> <span class="pre">&quot;fsd&quot;,</span> <span class="pre">&quot;sampled_requests_enabled&quot;:</span> <span class="pre">true}}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -383,7 +383,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Visibility config of the rule group</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the rule group exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“cloud_watch_metrics_enabled”: true, “metric_name”: “blub”, “sampled_requests_enabled”: false}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;cloud_watch_metrics_enabled&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;metric_name&quot;:</span> <span class="pre">&quot;blub&quot;,</span> <span class="pre">&quot;sampled_requests_enabled&quot;:</span> <span class="pre">false}</span></code></p>
 </div></td>
 </tr>
 </tbody>

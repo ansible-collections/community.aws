@@ -126,7 +126,7 @@
 <h1>community.aws.iam_managed_policy module – Manage User Managed IAM policies<a class="headerlink" href="#community-aws-iam-managed-policy-module-manage-user-managed-iam-policies" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.3.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-iam-managed-policy-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -212,8 +212,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -234,8 +234,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 <td><div class="ansible-option-cell"><p>Make this revision the default revision.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -246,8 +246,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 <td><div class="ansible-option-cell"><p>Remove all other non default revisions, if this is used with <code class="docutils literal notranslate"><span class="pre">make_default</span></code> it will result in all other versions of this policy being deleted.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -263,7 +263,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 <a class="ansibleOptionLink" href="#parameter-policy_description" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A helpful description of this policy, this value is immutable and only set when creating a new policy.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -313,8 +313,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 <td><div class="ansible-option-cell"><p>Should this managed policy be present or absent. Set to absent to detach all entities from this policy and remove it if found.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -325,8 +325,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -414,7 +414,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-m
 </div></td>
 <td><div class="ansible-option-cell"><p>Returns the policy json structure, when state == absent this will return the value of the removed policy.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{ \”arn\”: \”arn:aws:iam::aws:policy/AdministratorAccess \” \”attachment_count\”: 0, \”create_date\”: \”2017-03-01T15:42:55.981000+00:00\”, \”default_version_id\”: \”v1\”, \”is_attachable\”: true, \”path\”: \”/\”, \”policy_id\”: \”ANPALM4KLDMTFXGOOJIHL\”, \”policy_name\”: \”AdministratorAccess\”, \”update_date\”: \”2017-03-01T15:42:55.981000+00:00\” }”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{</span> <span class="pre">\&quot;arn\&quot;:</span> <span class="pre">\&quot;arn:aws:iam::aws:policy/AdministratorAccess</span> <span class="pre">\&quot;</span> <span class="pre">\&quot;attachment_count\&quot;:</span> <span class="pre">0,</span> <span class="pre">\&quot;create_date\&quot;:</span> <span class="pre">\&quot;2017-03-01T15:42:55.981000+00:00\&quot;,</span> <span class="pre">\&quot;default_version_id\&quot;:</span> <span class="pre">\&quot;v1\&quot;,</span> <span class="pre">\&quot;is_attachable\&quot;:</span> <span class="pre">true,</span> <span class="pre">\&quot;path\&quot;:</span> <span class="pre">\&quot;/\&quot;,</span> <span class="pre">\&quot;policy_id\&quot;:</span> <span class="pre">\&quot;ANPALM4KLDMTFXGOOJIHL\&quot;,</span> <span class="pre">\&quot;policy_name\&quot;:</span> <span class="pre">\&quot;AdministratorAccess\&quot;,</span> <span class="pre">\&quot;update_date\&quot;:</span> <span class="pre">\&quot;2017-03-01T15:42:55.981000+00:00\&quot;</span> <span class="pre">}&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

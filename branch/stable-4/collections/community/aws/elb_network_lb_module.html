@@ -126,7 +126,7 @@
 <h1>community.aws.elb_network_lb module – Manage a Network Load Balancer<a class="headerlink" href="#community-aws-elb-network-lb-module-manage-a-network-load-balancer" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.3.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-elb-network-lb-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -213,8 +213,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -225,8 +225,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -238,8 +238,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -260,8 +260,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <td><div class="ansible-option-cell"><p>Sets the type of IP addresses used by the subnets of the specified Application Load Balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“ipv4”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dualstack”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ipv4&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dualstack&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -361,8 +361,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>If the <em>listeners</em> parameter is not set then listeners will not be modified.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -375,8 +375,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -397,8 +397,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <td><div class="ansible-option-cell"><p>Internet-facing or internal load balancer. An ELB scheme can not be modified after creation.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“internet-facing”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“internal”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;internet-facing&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;internal&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -424,8 +424,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <p>The default changed from <code class="docutils literal notranslate"><span class="pre">'absent'</span></code> to <code class="docutils literal notranslate"><span class="pre">'present'</span></code> in release 4.0.0.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -463,8 +463,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -475,8 +475,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 <td><div class="ansible-option-cell"><p>Whether or not to wait for the network load balancer to reach the desired state.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -573,7 +573,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The Availability Zones for the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“[{‘subnet_id’: ‘subnet-aabbccddff’”, ” ‘zone_name’: ‘ap-southeast-2a’”, ” ‘load_balancer_addresses’: []}]”]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;[{'subnet_id':</span> <span class="pre">'subnet-aabbccddff'&quot;,</span> <span class="pre">&quot;</span> <span class="pre">'zone_name':</span> <span class="pre">'ap-southeast-2a'&quot;,</span> <span class="pre">&quot;</span> <span class="pre">'load_balancer_addresses':</span> <span class="pre">[]}]&quot;]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -582,7 +582,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the Amazon Route 53 hosted zone associated with the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ABCDEF12345678”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ABCDEF12345678&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -591,7 +591,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The date and time the load balancer was created.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2015-02-12T02:14:02+00:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2015-02-12T02:14:02+00:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -600,7 +600,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>Indicates whether deletion protection is enabled.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “True”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;True&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -609,7 +609,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The public DNS name of the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;internal-my-elb-123456789.ap-southeast-2.elb.amazonaws.com&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -618,7 +618,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The idle timeout value, in seconds.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “60”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;60&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -627,7 +627,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The type of IP addresses used by the subnets for the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ipv4”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ipv4&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -652,7 +652,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the certificate.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -669,7 +669,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the target group.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -678,7 +678,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of action.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -687,7 +687,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the listener.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -696,7 +696,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -705,7 +705,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The port on which the load balancer is listening.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 80</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">80</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -714,7 +714,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol for connections from clients to the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “HTTPS”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;HTTPS&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -723,7 +723,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The security policy that defines which ciphers and protocols are supported.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -732,7 +732,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:elasticloadbalancing:ap-southeast-2:0123456789:loadbalancer/app/my-elb/001122334455&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -741,7 +741,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “my-elb”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;my-elb&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -750,7 +750,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>Indicates whether cross-zone load balancing is enabled.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “True”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;True&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -759,7 +759,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>Internet-facing or internal load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “internal”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;internal&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -768,7 +768,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The state of the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“code”: “active”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;code&quot;:</span> <span class="pre">&quot;active&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -777,7 +777,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The tags attached to the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“Tag”: “Example”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Tag&quot;:</span> <span class="pre">&quot;Example&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -786,7 +786,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The type of load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “network”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;network&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -795,7 +795,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-n
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the VPC for the load balancer.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state is present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “vpc-0011223344”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;vpc-0011223344&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

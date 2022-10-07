@@ -126,7 +126,7 @@
 <h1>community.aws.aws_api_gateway_domain module – Manage AWS API Gateway custom domains<a class="headerlink" href="#community-aws-aws-api-gateway-domain-module-manage-aws-api-gateway-custom-domains" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.3.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-aws-api-gateway-domain-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -220,8 +220,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -259,9 +259,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use <code class="docutils literal notranslate"><span class="pre">REGIONAL</span></code> or <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“EDGE”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“REGIONAL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“PRIVATE”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;EDGE&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REGIONAL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PRIVATE&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -291,8 +291,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>Set allowed TLS versions through AWS defined policies. Currently only <code class="docutils literal notranslate"><span class="pre">TLS_1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">TLS_1_2</span></code> are available.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“TLS_1_0”</span></p></li>
-<li><p><span class="ansible-option-default-bold">“TLS_1_2”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TLS_1_0&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;TLS_1_2&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -317,8 +317,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>Create or delete custom domain setup.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -329,8 +329,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -391,7 +391,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-a
 </div></td>
 <td><div class="ansible-option-cell"><p>The data returned by create_domain_name (or update and delete) and create_base_path_mapping methods by boto3.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“domain”: {“certificate_arn”: “arn:aws:acm:xxxxxx”, “distribution_domain_name”: “xxxx.cloudfront.net”, “distribution_hosted_zone_id”: “ABC123123”, “domain_name”: “mydomain.com”, “domain_name_status”: “AVAILABLE”, “endpoint_configuration”: {“types”: [“EDGE”]}, “security_policy”: “TLS_1_2”, “tags”: {}}, “path_mappings”: [{“base_path”: “(empty)”, “rest_api_id”: “abcd123”, “stage”: “production”}]}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;domain&quot;:</span> <span class="pre">{&quot;certificate_arn&quot;:</span> <span class="pre">&quot;arn:aws:acm:xxxxxx&quot;,</span> <span class="pre">&quot;distribution_domain_name&quot;:</span> <span class="pre">&quot;xxxx.cloudfront.net&quot;,</span> <span class="pre">&quot;distribution_hosted_zone_id&quot;:</span> <span class="pre">&quot;ABC123123&quot;,</span> <span class="pre">&quot;domain_name&quot;:</span> <span class="pre">&quot;mydomain.com&quot;,</span> <span class="pre">&quot;domain_name_status&quot;:</span> <span class="pre">&quot;AVAILABLE&quot;,</span> <span class="pre">&quot;endpoint_configuration&quot;:</span> <span class="pre">{&quot;types&quot;:</span> <span class="pre">[&quot;EDGE&quot;]},</span> <span class="pre">&quot;security_policy&quot;:</span> <span class="pre">&quot;TLS_1_2&quot;,</span> <span class="pre">&quot;tags&quot;:</span> <span class="pre">{}},</span> <span class="pre">&quot;path_mappings&quot;:</span> <span class="pre">[{&quot;base_path&quot;:</span> <span class="pre">&quot;(empty)&quot;,</span> <span class="pre">&quot;rest_api_id&quot;:</span> <span class="pre">&quot;abcd123&quot;,</span> <span class="pre">&quot;stage&quot;:</span> <span class="pre">&quot;production&quot;}]}</span></code></p>
 </div></td>
 </tr>
 </tbody>

@@ -126,7 +126,7 @@
 <h1>community.aws.s3_sync module – Efficiently upload multiple files to S3<a class="headerlink" href="#community-aws-s3-sync-module-efficiently-upload-multiple-files-to-s3" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.2.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.3.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-s3-sync-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -227,8 +227,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -239,8 +239,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>Remove remote files that exist in bucket but are not present in the file root.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -261,7 +261,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>Shell pattern-style file matching.</p>
 <p>Used after include to remove files (for instance, skip <code class="docutils literal notranslate"><span class="pre">&quot;*.txt&quot;</span></code>)</p>
 <p>For multiple patterns, comma-separate them.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“.*”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;.*&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -274,9 +274,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <p>force will always upload all files.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“force”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“checksum”</span></p></li>
-<li><p><span class="ansible-option-default-bold">“date_size”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;force&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;checksum&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;date_size&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -295,7 +295,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>Shell pattern-style file matching.</p>
 <p>Used before exclude to determine eligible files (for instance, only <code class="docutils literal notranslate"><span class="pre">&quot;*.gif&quot;</span></code>)</p>
 <p>For multiple patterns, comma-separate them.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“*”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;*&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -319,7 +319,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>sync direction.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“push”</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;push&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -331,13 +331,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <p>Changing this ACL only changes newly synced files, it does not trigger a full reupload.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“private”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“public-read”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“public-read-write”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“authenticated-read”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“aws-exec-read”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“bucket-owner-read”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“bucket-owner-full-control”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;private&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;public-read&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;public-read-write&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;authenticated-read&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;aws-exec-read&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;bucket-owner-read&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;bucket-owner-full-control&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -382,14 +382,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>Storage class to be associated to each object added to the S3 bucket.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“STANDARD”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“REDUCED_REDUNDANCY”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“STANDARD_IA”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“ONEZONE_IA”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“INTELLIGENT_TIERING”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“GLACIER”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“DEEP_ARCHIVE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“OUTPOSTS”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;STANDARD&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REDUCED_REDUNDANCY&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;STANDARD_IA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ONEZONE_IA&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;INTELLIGENT_TIERING&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;GLACIER&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DEEP_ARCHIVE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;OUTPOSTS&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -400,8 +400,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -470,7 +470,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>file listing (dicts) of files that will be uploaded after the strategy decision</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“bytes”: 151, “chopped_path”: “policy.json”, “fullpath”: “roles/cf/files/policy.json”, “mime_type”: “application/json”, “modified_epoch”: 1477931256, “s3_path”: “s3sync/policy.json”, “whysize”: “151 / 151”, “whytime”: “1477931256 / 1477929260”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;bytes&quot;:</span> <span class="pre">151,</span> <span class="pre">&quot;chopped_path&quot;:</span> <span class="pre">&quot;policy.json&quot;,</span> <span class="pre">&quot;fullpath&quot;:</span> <span class="pre">&quot;roles/cf/files/policy.json&quot;,</span> <span class="pre">&quot;mime_type&quot;:</span> <span class="pre">&quot;application/json&quot;,</span> <span class="pre">&quot;modified_epoch&quot;:</span> <span class="pre">1477931256,</span> <span class="pre">&quot;s3_path&quot;:</span> <span class="pre">&quot;s3sync/policy.json&quot;,</span> <span class="pre">&quot;whysize&quot;:</span> <span class="pre">&quot;151</span> <span class="pre">/</span> <span class="pre">151&quot;,</span> <span class="pre">&quot;whytime&quot;:</span> <span class="pre">&quot;1477931256</span> <span class="pre">/</span> <span class="pre">1477929260&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -479,7 +479,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>file listing (dicts) from initial globbing</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“bytes”: 151, “chopped_path”: “policy.json”, “fullpath”: “roles/cf/files/policy.json”, “modified_epoch”: 1477416706}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;bytes&quot;:</span> <span class="pre">151,</span> <span class="pre">&quot;chopped_path&quot;:</span> <span class="pre">&quot;policy.json&quot;,</span> <span class="pre">&quot;fullpath&quot;:</span> <span class="pre">&quot;roles/cf/files/policy.json&quot;,</span> <span class="pre">&quot;modified_epoch&quot;:</span> <span class="pre">1477416706}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -488,7 +488,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>file listing (dicts) including calculated local etag</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“bytes”: 151, “chopped_path”: “policy.json”, “fullpath”: “roles/cf/files/policy.json”, “mime_type”: “application/json”, “modified_epoch”: 1477416706, “s3_path”: “s3sync/policy.json”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;bytes&quot;:</span> <span class="pre">151,</span> <span class="pre">&quot;chopped_path&quot;:</span> <span class="pre">&quot;policy.json&quot;,</span> <span class="pre">&quot;fullpath&quot;:</span> <span class="pre">&quot;roles/cf/files/policy.json&quot;,</span> <span class="pre">&quot;mime_type&quot;:</span> <span class="pre">&quot;application/json&quot;,</span> <span class="pre">&quot;modified_epoch&quot;:</span> <span class="pre">1477416706,</span> <span class="pre">&quot;s3_path&quot;:</span> <span class="pre">&quot;s3sync/policy.json&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -497,7 +497,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>file listing (dicts) including information about previously-uploaded versions</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“bytes”: 151, “chopped_path”: “policy.json”, “fullpath”: “roles/cf/files/policy.json”, “mime_type”: “application/json”, “modified_epoch”: 1477416706, “s3_path”: “s3sync/policy.json”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;bytes&quot;:</span> <span class="pre">151,</span> <span class="pre">&quot;chopped_path&quot;:</span> <span class="pre">&quot;policy.json&quot;,</span> <span class="pre">&quot;fullpath&quot;:</span> <span class="pre">&quot;roles/cf/files/policy.json&quot;,</span> <span class="pre">&quot;mime_type&quot;:</span> <span class="pre">&quot;application/json&quot;,</span> <span class="pre">&quot;modified_epoch&quot;:</span> <span class="pre">1477416706,</span> <span class="pre">&quot;s3_path&quot;:</span> <span class="pre">&quot;s3sync/policy.json&quot;}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -506,7 +506,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>file listing (dicts) with calculated or overridden mime types</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“bytes”: 151, “chopped_path”: “policy.json”, “fullpath”: “roles/cf/files/policy.json”, “mime_type”: “application/json”, “modified_epoch”: 1477416706}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;bytes&quot;:</span> <span class="pre">151,</span> <span class="pre">&quot;chopped_path&quot;:</span> <span class="pre">&quot;policy.json&quot;,</span> <span class="pre">&quot;fullpath&quot;:</span> <span class="pre">&quot;roles/cf/files/policy.json&quot;,</span> <span class="pre">&quot;mime_type&quot;:</span> <span class="pre">&quot;application/json&quot;,</span> <span class="pre">&quot;modified_epoch&quot;:</span> <span class="pre">1477416706}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -515,7 +515,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>file listing (dicts) of files that were actually uploaded</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“bytes”: 151, “chopped_path”: “policy.json”, “fullpath”: “roles/cf/files/policy.json”, “s3_path”: “s3sync/policy.json”, “whysize”: “151 / 151”, “whytime”: “1477931637 / 1477931489”}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;bytes&quot;:</span> <span class="pre">151,</span> <span class="pre">&quot;chopped_path&quot;:</span> <span class="pre">&quot;policy.json&quot;,</span> <span class="pre">&quot;fullpath&quot;:</span> <span class="pre">&quot;roles/cf/files/policy.json&quot;,</span> <span class="pre">&quot;s3_path&quot;:</span> <span class="pre">&quot;s3sync/policy.json&quot;,</span> <span class="pre">&quot;whysize&quot;:</span> <span class="pre">&quot;151</span> <span class="pre">/</span> <span class="pre">151&quot;,</span> <span class="pre">&quot;whytime&quot;:</span> <span class="pre">&quot;1477931637</span> <span class="pre">/</span> <span class="pre">1477931489&quot;}]</span></code></p>
 </div></td>
 </tr>
 </tbody>
