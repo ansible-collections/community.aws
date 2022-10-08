@@ -79,7 +79,6 @@
 - name: rule group info
   wafv2_rule_group_info:
     name: "{{ rule_group_name }}"
-    state: present
     scope: REGIONAL
   register: out
 
@@ -554,7 +553,6 @@
 - name: rule group info
   wafv2_rule_group_info:
     name: "{{ rule_group_name }}"
-    state: present
     scope: REGIONAL
   register: out
 
@@ -671,7 +669,6 @@
 - name: rule group info
   wafv2_rule_group_info:
     name: "{{ rule_group_name }}"
-    state: present
     scope: REGIONAL
   register: out
 
