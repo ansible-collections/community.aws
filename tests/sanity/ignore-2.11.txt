@@ -1,3 +1,2 @@
 plugins/modules/cloudfront_distribution_info.py pylint:unnecessary-comprehension # (new test) Should be an easy fix, but testing is a challenge - test are broken and aliases require a wildcard cert in ACM
 plugins/modules/codebuild_project.py pylint:collection-deprecated-version # https://github.com/ansible-collections/community.aws/issues/1546
-plugins/modules/wafv2_rule_group_info.py pylint:collection-deprecated-version # https://github.com/ansible-collections/community.aws/issues/1547
