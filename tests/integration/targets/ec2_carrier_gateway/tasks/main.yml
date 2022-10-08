@@ -36,6 +36,7 @@
         vpc_id: '{{ vpc_id_1 }}'
         name: "{{ cagw_name }}"
       register: cagw
+      check_mode: true
 
     - name: use set fact for cagw ids
       set_fact:
@@ -53,6 +54,7 @@
         vpc_id: '{{ vpc_id_1 }}'
         name: "{{ cagw_name }}"
       register: cagw
+      check_mode: true
 
     - assert:
         that:
@@ -124,6 +126,7 @@
         state: absent
         name: "{{ cagw_name }}"
       register: cagw
+      check_mode: true
 
     - assert:
         that:
@@ -134,6 +137,7 @@
         state: absent
         name: "{{ cagw_name }}"
       register: cagw
+      check_mode: true
 
     - assert:
         that:
@@ -148,6 +152,7 @@
         state: absent
         vpn_gateway_id: '{{ cagw.carrier_gateway_id }}'
       ignore_errors: true
+      check_mode: true
 
     - name: delete vpc
       ec2_vpc_net:

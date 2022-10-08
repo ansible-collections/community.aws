@@ -40,6 +40,7 @@
       tags: '{{ first_tags }}'
       state: 'present'
     register: tag_cagw
+    check_mode: true
 
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info: {}
@@ -58,6 +59,7 @@
       tags: '{{ first_tags }}'
       state: 'present'
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info: {}
     register: tag_carrier_gateway_info
@@ -93,6 +95,7 @@
       tags: '{{ second_tags }}'
       state: 'present'
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
@@ -110,6 +113,7 @@
       tags: '{{ second_tags }}'
       state: 'present'
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
@@ -130,6 +134,7 @@
       state: 'present'
       purge_tags: False
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
@@ -148,6 +153,7 @@
       state: 'present'
       purge_tags: False
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
@@ -166,6 +172,7 @@
     ec2_carrier_gateway:
       state: 'present'
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
@@ -185,6 +192,7 @@
       tags: {}
       state: 'present'
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
@@ -202,6 +210,7 @@
       tags: {}
       state: 'present'
     register: tag_cagw
+    check_mode: true
   - name: get VPC CAGW facts
     ec2_carrier_gateway_info:
     register: tag_cagw_info
