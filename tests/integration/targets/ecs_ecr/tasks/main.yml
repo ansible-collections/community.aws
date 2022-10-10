@@ -58,12 +58,12 @@
       ecs_ecr:
         name: '{{ ecr_name }}'
       register: result
-      
+
     - name: it should return the repo but without a policy and not create or change
       assert:
         that:
           - result.repository
-          - not result.policy
+          - '"policy" not in result'
           - not result.created
           - not result.changed
 
@@ -136,11 +136,11 @@
       ecs_ecr:
         name: '{{ ecr_name }}'
       register: result
-      
+
     - name: it should return the policy but not create or change
       assert:
         that:
-          - result.policy
+          - '"policy" in result'
           - not result.created
           - not result.changed
 
@@ -151,30 +151,12 @@
       register: result
       check_mode: yes
 
-    - name: it should skip, change but not create, have deprecations
+    - name: it should skip, change but not create
       assert:
         that:
           - result is skipped
           - result is changed
           - not result.created
-          - result.deprecations
-
-
-    - name: When in check mode, and purging a policy that exists
-      ecs_ecr:
-        name: '{{ ecr_name }}'
-        purge_policy: yes
-      register: result
-      check_mode: yes
-
-    - name: it should skip, change but not create, no deprecations
-      assert:
-        that:
-          - result is skipped
-          - result is changed
-          - not result.created
-          - result.deprecations is not defined
-
 
     - name: When purging a policy that exists
       ecs_ecr:
@@ -290,7 +272,7 @@
         that:
           - result is changed
           - not result.created
-          - result.lifecycle_policy is defined
+          - '"lifecycle_policy" in result'
           - result.lifecycle_policy.rules|length == 1
 
 
