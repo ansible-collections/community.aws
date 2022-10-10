@@ -225,8 +225,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -297,8 +297,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <p>Set <em>state=absent</em> to remove a resource.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -309,8 +309,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -326,7 +326,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>How long to wait for the association to be deleted.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">320</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">320</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -364,7 +364,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-direc
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>

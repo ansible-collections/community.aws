@@ -250,10 +250,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The dependency condition of the container.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“start”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“complete”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“success”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“healthy”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;start&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;complete&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;success&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;healthy&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -271,8 +271,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>When this parameter is <code class="docutils literal notranslate"><span class="pre">True</span></code>, networking is disabled within the container.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -363,8 +363,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If <em>essential=True</em>, and the container fails or stops for any reason, all other containers that are part of the task are stopped.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -419,8 +419,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>When <em>interactive=True</em>, it allows to deploy containerized applications that require stdin or a tty to be allocated.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -454,44 +454,44 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this parameter is not supported.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“ALL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“AUDIT_CONTROL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“AUDIT_WRITE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“BLOCK_SUSPEND”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“CHOWN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“DAC_OVERRIDE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“DAC_READ_SEARCH”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“FOWNER”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“FSETID”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“IPC_LOCK”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“IPC_OWNER”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“KILL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“LEASE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“LINUX_IMMUTABLE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“MAC_ADMIN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“MAC_OVERRIDE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“MKNOD”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_ADMIN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_BIND_SERVICE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_BROADCAST”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_RAW”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETFCAP”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETGID”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETPCAP”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETUID”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_ADMIN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_BOOT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_CHROOT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_MODULE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_NICE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_PACCT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_PTRACE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_RAWIO”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_RESOURCE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_TIME”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_TTY_CONFIG”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYSLOG”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“WAKE_ALARM”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ALL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AUDIT_CONTROL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AUDIT_WRITE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;BLOCK_SUSPEND&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CHOWN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DAC_OVERRIDE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DAC_READ_SEARCH&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;FOWNER&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;FSETID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IPC_LOCK&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IPC_OWNER&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;KILL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;LEASE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;LINUX_IMMUTABLE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MAC_ADMIN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MAC_OVERRIDE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MKNOD&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_ADMIN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_BIND_SERVICE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_BROADCAST&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_RAW&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETFCAP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETGID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETPCAP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETUID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_ADMIN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_BOOT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_CHROOT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_MODULE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_NICE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_PACCT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_PTRACE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_RAWIO&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_RESOURCE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_TIME&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_TTY_CONFIG&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYSLOG&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;WAKE_ALARM&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -502,44 +502,44 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Linux capabilities for the container that have been removed from the default configuration provided by Docker.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“ALL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“AUDIT_CONTROL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“AUDIT_WRITE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“BLOCK_SUSPEND”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“CHOWN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“DAC_OVERRIDE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“DAC_READ_SEARCH”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“FOWNER”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“FSETID”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“IPC_LOCK”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“IPC_OWNER”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“KILL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“LEASE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“LINUX_IMMUTABLE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“MAC_ADMIN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“MAC_OVERRIDE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“MKNOD”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_ADMIN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_BIND_SERVICE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_BROADCAST”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“NET_RAW”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETFCAP”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETGID”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETPCAP”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SETUID”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_ADMIN”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_BOOT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_CHROOT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_MODULE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_NICE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_PACCT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_PTRACE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_RAWIO”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_RESOURCE”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_TIME”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYS_TTY_CONFIG”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“SYSLOG”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“WAKE_ALARM”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ALL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AUDIT_CONTROL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;AUDIT_WRITE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;BLOCK_SUSPEND&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CHOWN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DAC_OVERRIDE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;DAC_READ_SEARCH&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;FOWNER&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;FSETID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IPC_LOCK&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;IPC_OWNER&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;KILL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;LEASE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;LINUX_IMMUTABLE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MAC_ADMIN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MAC_OVERRIDE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;MKNOD&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_ADMIN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_BIND_SERVICE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_BROADCAST&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;NET_RAW&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETFCAP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETGID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETPCAP&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SETUID&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_ADMIN&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_BOOT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_CHROOT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_MODULE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_NICE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_PACCT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_PTRACE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_RAWIO&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_RESOURCE&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_TIME&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYS_TTY_CONFIG&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SYSLOG&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;WAKE_ALARM&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -579,8 +579,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Run an init process inside the container that forwards signals and reaps processes.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -630,45 +630,45 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The list of tmpfs volume mount options.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“defaults”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“ro”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rw”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“suid”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nosuid”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dev”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nodev”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“exec”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“noexec”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“sync”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“async”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dirsync”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“remount”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“mand”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nomand”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“atime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“noatime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“diratime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nodiratime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“bind”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rbind”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“unbindable”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“runbindable”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“private”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rprivate”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“shared”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rshared”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“slave”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rslave”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“relatime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“norelatime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“strictatime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nostrictatime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“mode”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“uid”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“gid”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nr_inodes”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nr_blocks”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“mpol”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;defaults&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ro&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rw&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;suid&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nosuid&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dev&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nodev&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;exec&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;noexec&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;sync&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;async&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dirsync&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;remount&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;mand&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nomand&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;atime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;noatime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;diratime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nodiratime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;bind&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rbind&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;unbindable&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;runbindable&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;private&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rprivate&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;shared&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rshared&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;slave&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rslave&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;relatime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;norelatime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;strictatime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nostrictatime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;mode&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;uid&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;gid&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nr_inodes&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nr_blocks&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;mpol&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -731,8 +731,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If this value is <code class="docutils literal notranslate"><span class="pre">False</span></code>, then the container can write to the volume.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -785,8 +785,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol used for the port mapping.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“tcp”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“udp”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;tcp&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;udp&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -797,8 +797,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>When this parameter is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the container is given elevated privileges on the host container instance.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -809,8 +809,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>When this parameter is <code class="docutils literal notranslate"><span class="pre">True</span></code>, a TTY is allocated.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -821,8 +821,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>When this parameter is <code class="docutils literal notranslate"><span class="pre">True</span></code>, the container is given read-only access to its root file system.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -855,8 +855,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of resource to assign to a container.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“GPU”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“InferenceAccelerator”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;GPU&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;InferenceAccelerator&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -966,21 +966,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of the ulimit.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“core”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“cpu”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“data”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“fsize”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“locks”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“memlock”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“msgqueue”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nice”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nofile”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“nproc”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rss”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rtprio”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“rttime”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“sigpending”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“stack”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;core&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;cpu&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;data&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;fsize&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;locks&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;memlock&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;msgqueue&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nice&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nofile&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;nproc&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rss&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rtprio&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;rttime&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;sigpending&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;stack&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1014,8 +1014,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If this value is <code class="docutils literal notranslate"><span class="pre">False</span></code>, then the container can write to the volume.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1048,8 +1048,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1085,8 +1085,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-cell"><p>Always create new task definition.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1097,8 +1097,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-cell"><p>The launch type on which to run your task.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“EC2”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“FARGATE”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;EC2&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;FARGATE&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1119,11 +1119,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>Setting <em>network_mode=default</em> for a Linux container will use <code class="docutils literal notranslate"><span class="pre">bridge</span></code> mode.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“default”</span></p></li>
-<li><p><span class="ansible-option-default-bold">“bridge”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“host”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“none”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“awsvpc”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;bridge&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;host&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;none&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;awsvpc&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1198,8 +1198,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-cell"><p>State whether the task definition should exist or be deleted.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1217,8 +1217,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -1367,7 +1367,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>

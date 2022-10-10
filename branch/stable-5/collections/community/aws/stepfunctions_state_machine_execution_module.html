@@ -176,8 +176,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <td><div class="ansible-option-cell"><p>Desired action (<code class="docutils literal notranslate"><span class="pre">start</span></code> or <code class="docutils literal notranslate"><span class="pre">stop</span></code>) for a state machine execution.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“start”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“stop”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;start&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;stop&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -224,7 +224,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <a class="ansibleOptionLink" href="#parameter-cause" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A detailed explanation of the cause for stopping the execution.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -234,8 +234,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -255,7 +255,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <a class="ansibleOptionLink" href="#parameter-error" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The error code of the failure to pass in when stopping the execution.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -270,7 +270,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <a class="ansibleOptionLink" href="#parameter-execution_input" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">json</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The JSON input data for the execution.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“{}”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;{}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -327,8 +327,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -365,7 +365,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
@@ -379,7 +379,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 </div></td>
 <td><div class="ansible-option-cell"><p>ARN of the AWS Step Functions state machine execution.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> if action == start and changed == True</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -388,7 +388,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 </div></td>
 <td><div class="ansible-option-cell"><p>The date the execution is started.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> if action == start and changed == True</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2019-11-02T22:39:49.071000-07:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2019-11-02T22:39:49.071000-07:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -397,7 +397,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-stepf
 </div></td>
 <td><div class="ansible-option-cell"><p>The date the execution is stopped.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> if action == stop</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2019-11-02T22:39:49.071000-07:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2019-11-02T22:39:49.071000-07:00&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

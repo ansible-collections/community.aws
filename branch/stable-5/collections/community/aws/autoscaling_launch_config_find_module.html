@@ -216,8 +216,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -288,8 +288,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>Order in which to sort results.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“ascending”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“descending”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;ascending&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;descending&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -300,8 +300,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -333,7 +333,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
@@ -347,7 +347,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Name of the AMI</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:autoscaling:eu-west-1:12345:launchConfiguration:d82f050e-e315:launchConfigurationName/yourproject”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:autoscaling:eu-west-1:12345:launchConfiguration:d82f050e-e315:launchConfigurationName/yourproject&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -356,7 +356,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Assign public address or not</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> true</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">true</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -365,7 +365,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration block device mappings property</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> []</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -374,7 +374,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration classic link vpc security groups property</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> []</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -383,7 +383,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>When it was created</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2016-06-29T14:59:22.222000+00:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2016-06-29T14:59:22.222000+00:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -392,7 +392,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration EBS optimized property</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> false</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -401,7 +401,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>AMI id</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ami-0d75df7e”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ami-0d75df7e&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -410,7 +410,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration instance monitoring property</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “{‘Enabled’: False}”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'Enabled':</span> <span class="pre">False}&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -419,7 +419,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Type of ec2 instance</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “t2.small”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;t2.small&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -428,7 +428,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration kernel to use</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -437,7 +437,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration ssh key</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “mykey”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;mykey&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -446,7 +446,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Name of the Launch Configuration</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “myapp-v123”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;myapp-v123&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -455,7 +455,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration ram disk property</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -464,7 +464,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>Launch Configuration security groups</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> []</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -473,7 +473,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 </div></td>
 <td><div class="ansible-option-cell"><p>User data used to start instance</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when Launch Configuration was found</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ZXhwb3J0IENMT1VE”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ZXhwb3J0IENMT1VE&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>

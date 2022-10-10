@@ -223,8 +223,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>Enable API GW caching of backend responses.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -235,14 +235,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>Size in GB of the API GW cache, becomes effective when cache_enabled is true.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“0.5”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“1.6”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“6.1”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“13.5”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“28.4”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“58.2”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“118”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“237”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;0.5&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;1.6&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;6.1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;13.5&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;28.4&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;58.2&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;118&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;237&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -253,8 +253,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -264,7 +264,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 <td><div class="ansible-option-cell"><p>Description of the deployment.</p>
 <p>Recorded and visible in the AWS console.</p>
-<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <span class="ansible-option-default">“Automatic deployment by Ansible.”</span></p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;Automatic</span> <span class="pre">deployment</span> <span class="pre">by</span> <span class="pre">Ansible.&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -276,9 +276,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>This flag will only be used when creating a new API Gateway setup, not for updates.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“EDGE”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“REGIONAL”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“PRIVATE”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;EDGE&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REGIONAL&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PRIVATE&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -360,8 +360,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>Create or delete API Gateway.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">“present”</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -396,8 +396,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>Specifies whether active tracing with X-ray is enabled for the API GW stage.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -408,8 +408,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -464,7 +464,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
@@ -478,7 +478,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 <td><div class="ansible-option-cell"><p>API id of the API endpoint created</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “0ln4zq7p86”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;0ln4zq7p86&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -487,7 +487,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 <td><div class="ansible-option-cell"><p>AWS response from the API configure call</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“api_key_source”: “HEADER”, “created_at”: “2020-01-01T11:37:59+00:00”, “id”: “0ln4zq7p86”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;api_key_source&quot;:</span> <span class="pre">&quot;HEADER&quot;,</span> <span class="pre">&quot;created_at&quot;:</span> <span class="pre">&quot;2020-01-01T11:37:59+00:00&quot;,</span> <span class="pre">&quot;id&quot;:</span> <span class="pre">&quot;0ln4zq7p86&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -496,7 +496,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 <td><div class="ansible-option-cell"><p>AWS response from the API deploy call</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“created_date”: “2020-01-01T11:36:59+00:00”, “description”: “Automatic deployment by Ansible.”, “id”: “rptv4b”}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;created_date&quot;:</span> <span class="pre">&quot;2020-01-01T11:36:59+00:00&quot;,</span> <span class="pre">&quot;description&quot;:</span> <span class="pre">&quot;Automatic</span> <span class="pre">deployment</span> <span class="pre">by</span> <span class="pre">Ansible.&quot;,</span> <span class="pre">&quot;id&quot;:</span> <span class="pre">&quot;rptv4b&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -505,7 +505,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 <td><div class="ansible-option-cell"><p>Actions performed against AWS API</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [“apigateway:CreateRestApi”, “apigateway:CreateDeployment”, “apigateway:PutRestApi”]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;apigateway:CreateRestApi&quot;,</span> <span class="pre">&quot;apigateway:CreateDeployment&quot;,</span> <span class="pre">&quot;apigateway:PutRestApi&quot;]</span></code></p>
 </div></td>
 </tr>
 </tbody>

@@ -214,8 +214,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -252,8 +252,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <p>Defaults to <code class="docutils literal notranslate"><span class="pre">false</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -271,8 +271,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-cell"><p>The policy type.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“StepScaling”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“TargetTrackingScaling”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;StepScaling&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TargetTrackingScaling&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -309,14 +309,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-cell"><p>The scalable dimension associated with the scalable target.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“ecs:service:DesiredCount”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“ec2:spot-fleet-request:TargetCapacity”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“elasticmapreduce:instancegroup:InstanceCount”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“appstream:fleet:DesiredCapacity”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dynamodb:table:ReadCapacityUnits”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dynamodb:table:WriteCapacityUnits”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dynamodb:index:ReadCapacityUnits”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dynamodb:index:WriteCapacityUnits”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ecs:service:DesiredCount&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ec2:spot-fleet-request:TargetCapacity&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;elasticmapreduce:instancegroup:InstanceCount&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;appstream:fleet:DesiredCapacity&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dynamodb:table:ReadCapacityUnits&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dynamodb:table:WriteCapacityUnits&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dynamodb:index:ReadCapacityUnits&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dynamodb:index:WriteCapacityUnits&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -341,11 +341,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-cell"><p>The namespace of the AWS service.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“ecs”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“elasticmapreduce”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“ec2”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“appstream”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“dynamodb”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ecs&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;elasticmapreduce&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;ec2&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;appstream&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;dynamodb&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -356,8 +356,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-cell"><p>Whether a policy should be <code class="docutils literal notranslate"><span class="pre">present</span></code> or <code class="docutils literal notranslate"><span class="pre">absent</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“absent”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“present”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -391,8 +391,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether scaling-in should be disabled.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -431,8 +431,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -508,7 +508,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
@@ -546,7 +546,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The Unix timestamp for when the scalable target was created.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “2017-09-28T08:22:51.881000-03:00”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2017-09-28T08:22:51.881000-03:00&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -555,7 +555,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The maximum value to scale to in response to a scale out event. Required if <em>state</em> is <code class="docutils literal notranslate"><span class="pre">present</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 2</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">2</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -564,7 +564,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The minimum value to scale to in response to a scale in event. Required if <em>state</em> is <code class="docutils literal notranslate"><span class="pre">present</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 1</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -597,7 +597,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The identifier of the resource associated with the scalable target.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “service/cluster-name/service-name”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;service/cluster-name/service-name&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -606,7 +606,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The ARN of an IAM role that allows Application Auto Scaling to modify the scalable target on your behalf. Required if <em>state</em> is <code class="docutils literal notranslate"><span class="pre">present</span></code>.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:iam::123456789012:role/roleName”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:iam::123456789012:role/roleName&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -615,7 +615,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The scalable dimension associated with the scalable target.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ecs:service:DesiredCount”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ecs:service:DesiredCount&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -624,7 +624,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-cell"><p>The namespace of the AWS service.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ecs”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ecs&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -641,7 +641,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The adjustment type</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is StepScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ChangeInCapacity, PercentChangeInCapacity, ExactCapacity”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ChangeInCapacity,</span> <span class="pre">PercentChangeInCapacity,</span> <span class="pre">ExactCapacity&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -650,7 +650,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The amount of time, in seconds, after a scaling activity completes where previous trigger-related scaling activities can influence future scaling events</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is StepScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 60</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">60</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -659,7 +659,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The aggregation type for the CloudWatch metrics</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is StepScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “Average, Minimum, Maximum”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Average,</span> <span class="pre">Minimum,</span> <span class="pre">Maximum&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -692,7 +692,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The metric type</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is TargetTrackingScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “ECSServiceAverageCPUUtilization, ECSServiceAverageMemoryUtilization”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ECSServiceAverageCPUUtilization,</span> <span class="pre">ECSServiceAverageMemoryUtilization&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -709,7 +709,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The amount of time, in seconds, after a scale in activity completes before another scale in activity can start</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is TargetTrackingScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 60</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">60</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -718,7 +718,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The amount of time, in seconds, after a scale out activity completes before another scale out activity can start</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is TargetTrackingScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 60</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">60</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -727,7 +727,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The target value for the metric</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when state present and the policy type is TargetTrackingScaling</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 70</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">70</span></code></p>
 </div></td>
 </tr>
 </tbody>

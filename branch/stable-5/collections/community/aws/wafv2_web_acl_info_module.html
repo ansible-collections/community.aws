@@ -213,8 +213,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-default-bold">false</span> <span class="ansible-option-default">← (default)</span></p></li>
-<li><p><span class="ansible-option-choices-entry">true</span></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -262,8 +262,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>Scope of wafv2 web acl.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">“CLOUDFRONT”</span></p></li>
-<li><p><span class="ansible-option-choices-entry">“REGIONAL”</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CLOUDFRONT&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REGIONAL&quot;</span></code></p></li>
 </ul>
 </div></td>
 </tr>
@@ -288,8 +288,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 <td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
-<li><p><span class="ansible-option-choices-entry">false</span></p></li>
-<li><p><span class="ansible-option-default-bold">true</span> <span class="ansible-option-default">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -319,7 +319,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </section>
 <section id="return-values">
 <h2><a class="toc-backref" href="#id6">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
-<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
 <table class="colwidths-auto ansible-option-table docutils align-default" style="width: 100%">
 <thead>
 <tr class="row-odd"><th class="head"><p>Key</p></th>
@@ -333,7 +333,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>web acl arn</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “arn:aws:wafv2:eu-central-1:11111111:regional/webacl/test05/318c1ab9-fa74-4b3b-a974-f92e25106f61”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:wafv2:eu-central-1:11111111:regional/webacl/test05/318c1ab9-fa74-4b3b-a974-f92e25106f61&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -342,7 +342,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Current capacity of the web acl</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> 140</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">140</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -351,7 +351,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Description of the web acl</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “Some web acl description”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Some</span> <span class="pre">web</span> <span class="pre">acl</span> <span class="pre">description&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -360,7 +360,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Web acl name</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> “test02”</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test02&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -369,7 +369,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Current rules of the web acl</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> [{“name”: “admin_protect”, “override_action”: {“none”: {}}, “priority”: 1, “statement”: {“managed_rule_group_statement”: {“name”: “AWSManagedRulesAdminProtectionRuleSet”, “vendor_name”: “AWS”}}, “visibility_config”: {“cloud_watch_metrics_enabled”: true, “metric_name”: “admin_protect”, “sampled_requests_enabled”: true}}]</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;name&quot;:</span> <span class="pre">&quot;admin_protect&quot;,</span> <span class="pre">&quot;override_action&quot;:</span> <span class="pre">{&quot;none&quot;:</span> <span class="pre">{}},</span> <span class="pre">&quot;priority&quot;:</span> <span class="pre">1,</span> <span class="pre">&quot;statement&quot;:</span> <span class="pre">{&quot;managed_rule_group_statement&quot;:</span> <span class="pre">{&quot;name&quot;:</span> <span class="pre">&quot;AWSManagedRulesAdminProtectionRuleSet&quot;,</span> <span class="pre">&quot;vendor_name&quot;:</span> <span class="pre">&quot;AWS&quot;}},</span> <span class="pre">&quot;visibility_config&quot;:</span> <span class="pre">{&quot;cloud_watch_metrics_enabled&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;metric_name&quot;:</span> <span class="pre">&quot;admin_protect&quot;,</span> <span class="pre">&quot;sampled_requests_enabled&quot;:</span> <span class="pre">true}}]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -378,7 +378,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-wafv2
 </div></td>
 <td><div class="ansible-option-cell"><p>Visibility config of the web acl</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> Always, as long as the web acl exists</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> {“cloud_watch_metrics_enabled”: true, “metric_name”: “blub”, “sampled_requests_enabled”: false}</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;cloud_watch_metrics_enabled&quot;:</span> <span class="pre">true,</span> <span class="pre">&quot;metric_name&quot;:</span> <span class="pre">&quot;blub&quot;,</span> <span class="pre">&quot;sampled_requests_enabled&quot;:</span> <span class="pre">false}</span></code></p>
 </div></td>
 </tr>
 </tbody>
