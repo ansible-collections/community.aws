@@ -22,48 +22,9 @@ jobs:
       init-lenient: true
       init-fail-on-error: true
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
-      # Please also update docs-pr.yml
-      provide-link-targets: |
-        ansible_collections.amazon.aws.autoscaling_group_info_module
-        ansible_collections.amazon.aws.autoscaling_group_module
-        ansible_collections.amazon.aws.cloudtrail_module
-        ansible_collections.amazon.aws.cloudwatchevent_rule_module
-        ansible_collections.amazon.aws.cloudwatchlogs_log_group_info_module
-        ansible_collections.amazon.aws.cloudwatchlogs_log_group_metric_filter_module
-        ansible_collections.amazon.aws.cloudwatchlogs_log_group_module
-        ansible_collections.amazon.aws.cloudwatch_metric_alarm_module
-        ansible_collections.amazon.aws.ec2_eip_info_module
-        ansible_collections.amazon.aws.ec2_eip_module
-        ansible_collections.amazon.aws.elb_application_lb_info_module
-        ansible_collections.amazon.aws.elb_application_lb_module
-        ansible_collections.amazon.aws.execute_lambda_module
-        ansible_collections.amazon.aws.iam_policy_info_module
-        ansible_collections.amazon.aws.iam_policy_module
-        ansible_collections.amazon.aws.iam_user_info_module
-        ansible_collections.amazon.aws.iam_user_module
-        ansible_collections.amazon.aws.kms_key_info_module
-        ansible_collections.amazon.aws.kms_key_module
-        ansible_collections.amazon.aws.lambda_alias_module
-        ansible_collections.amazon.aws.lambda_event_module
-        ansible_collections.amazon.aws.lambda_execute_module
-        ansible_collections.amazon.aws.lambda_info_module
-        ansible_collections.amazon.aws.lambda_module
-        ansible_collections.amazon.aws.lambda_policy_module
-        ansible_collections.amazon.aws.rds_cluster_info_module
-        ansible_collections.amazon.aws.rds_cluster_module
-        ansible_collections.amazon.aws.rds_cluster_snapshot_module
-        ansible_collections.amazon.aws.rds_instance_info_module
-        ansible_collections.amazon.aws.rds_instance_module
-        ansible_collections.amazon.aws.rds_instance_snapshot_module
-        ansible_collections.amazon.aws.rds_option_group_info_module
-        ansible_collections.amazon.aws.rds_option_group_module
-        ansible_collections.amazon.aws.rds_param_group_module
-        ansible_collections.amazon.aws.rds_snapshot_info_module
-        ansible_collections.amazon.aws.rds_subnet_group_module
-        ansible_collections.amazon.aws.route53_health_check_module
-        ansible_collections.amazon.aws.route53_info_module
-        ansible_collections.amazon.aws.route53_module
-        ansible_collections.amazon.aws.route53_zone_module
+      intersphinx-links: |
+        amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
+        ansible_devel:https://docs.ansible.com/ansible-core/devel/
 
   publish-docs-gh-pages:
     # use to prevent running on forks
