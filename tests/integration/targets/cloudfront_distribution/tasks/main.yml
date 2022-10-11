@@ -126,6 +126,24 @@
       that:
         - update_origin_http_port.changed
 
+  - name: enable origin Origin Shield
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ cloudfront_hostname }}-origin.example.com"
+        custom_origin_config:
+          http_port: 8080
+        origin_shield:
+          enabled: true
+          origin_shield_region: '{{ aws_region }}'
+      state: present
+    register: update_origin_origin_shield
+
+  - name: ensure origin Origin Shield was updated
+    assert:
+      that:
+        - update_origin_origin_shield.changed
+
   - name: update restrictions
     cloudfront_distribution:
       distribution_id: "{{ distribution_id }}"
