@@ -1761,7 +1761,8 @@ class CloudFrontValidationManager(object):
                     if origin_shield['enabled']:
                         origin_shield_region = origin_shield.get('origin_shield_region').lower()
                         if origin_shield_region is None:
-                            self.module.fail_json(msg="origins[].origin_shield.origin_shield_region must be specified when origins[].origin_shield.enabled is true.")
+                            self.module.fail_json(msg="origins[].origin_shield.origin_shield_region must be specified"
+                                                  " when origins[].origin_shield.enabled is true.")
             if self.__s3_bucket_domain_identifier in origin.get('domain_name').lower():
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     if origin['s3_origin_access_identity_enabled']:
