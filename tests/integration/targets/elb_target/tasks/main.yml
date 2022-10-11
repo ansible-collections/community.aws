@@ -10,7 +10,7 @@
     - community.general
     - amazon.aws
   block:
+    - include_tasks: etg_protocol_version.yml
     - include_tasks: ec2_target.yml
     - include_tasks: lambda_target.yml
     - include_tasks: alb_target.yml
-    - include_tasks: etg_protocol_version.yml
