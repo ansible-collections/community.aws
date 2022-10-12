@@ -24,12 +24,13 @@
         state: present
       register: create_result
 
-    - debug: msg="{{ create_result }}"
-
     - assert:
         that:
           - create_result is changed
           - create_result is not failed
+          - create_result.protocol_version == "GRPC"
+          - create_result.protocol == "HTTP"
+          - create_result.port == 80
 
     - name: Create a target group with protocol_version 'GRPC' (idempotence)
       community.aws.elb_target_group:
@@ -41,12 +42,13 @@
         state: present
       register: create_result
 
-    - debug: msg="{{ create_result }}"
-
     - assert:
         that:
           - create_result is not changed
           - create_result is not failed
+          - create_result.protocol_version == "GRPC"
+          - create_result.protocol == "HTTP"
+          - create_result.port == 80
 
     # =====================================================================
 
