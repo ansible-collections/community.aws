@@ -16,7 +16,7 @@
     # =====================================================================
     - name: Create a target group with protocol_version 'GRPC'
       community.aws.elb_target_group:
-        name: "{{ elb_target_group_name }}-protocol_version_test"
+        name: "{{ elb_target_group_name }}"
         protocol: http
         port: 80
         vpc_id: "{{ vpc.vpc.id }}"
@@ -33,7 +33,7 @@
 
     - name: Create a target group with protocol_version 'GRPC' (idempotence)
       community.aws.elb_target_group:
-        name: "{{ elb_target_group_name }}-protocol_version_test"
+        name: "{{ elb_target_group_name }}"
         protocol: http
         port: 80
         vpc_id: "{{ vpc.vpc.id }}"
@@ -53,7 +53,7 @@
   always:
     - name: Remove elb target group
       elb_target_group:
-        name: "{{ elb_target_group_name }}-protocol_version_test"
+        name: "{{ elb_target_group_name }}"
         state: absent
       ignore_errors: true
       register: deletion_result
