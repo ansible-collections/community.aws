@@ -1,0 +1,2 @@
+minor_changes:
+  - cloudfront_distribution - add `origin_shield` options (https://github.com/ansible-collections/community.aws/pull/1557).
