@@ -95,7 +95,7 @@ options:
     required: false
     choices: ['GRPC', 'HTTP1', 'HTTP2']
     type: str
-    version_added: 4.3.0
+    version_added: 5.1.0
   state:
     description:
       - Create or destroy the target group.
