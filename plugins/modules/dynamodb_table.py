@@ -65,11 +65,16 @@ options:
       - Write throughput capacity (units) to provision.
       - Defaults to C(1) when creating a new table.
     type: int
+  ignore_capacity:
+    description:
+      - Ignore throughput capacity (read/write), for used with auto scaling..
+      - Defaults to no.
+    type: bool
   indexes:
     description:
       - list of dictionaries describing indexes to add to the table. global indexes can be updated. local indexes don't support updates or have throughput.
       - "required options: ['name', 'type', 'hash_key_name']"
-      - "other options: ['hash_key_type', 'range_key_name', 'range_key_type', 'includes', 'read_capacity', 'write_capacity']"
+      - "other options: ['hash_key_type', 'range_key_name', 'range_key_type', 'includes', 'read_capacity', 'write_capacity', 'ignore_capacity']"
     suboptions:
       name:
         description: The name of the index.
@@ -119,6 +124,10 @@ options:
         description:
           - Write throughput capacity (units) to provision for the index.
         type: int
+      ignore_capacity:
+        description:
+          - Ignore throughput capacity (read/write), for used with auto scaling.
+        type: bool
     default: []
     type: list
     elements: dict
@@ -262,7 +271,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_
 
 DYNAMO_TYPE_DEFAULT = 'STRING'
 INDEX_REQUIRED_OPTIONS = ['name', 'type', 'hash_key_name']
-INDEX_OPTIONS = INDEX_REQUIRED_OPTIONS + ['hash_key_type', 'range_key_name', 'range_key_type', 'includes', 'read_capacity', 'write_capacity']
+INDEX_OPTIONS = INDEX_REQUIRED_OPTIONS + ['hash_key_type', 'range_key_name', 'range_key_type', 'includes', 'read_capacity', 'write_capacity', 'ignore_capacity']
 INDEX_TYPE_OPTIONS = ['all', 'global_all', 'global_include', 'global_keys_only', 'include', 'keys_only']
 # Map in both directions
 DYNAMO_TYPE_MAP_LONG = {'STRING': 'S', 'NUMBER': 'N', 'BINARY': 'B'}
@@ -617,6 +626,9 @@ def _throughput_changes(current_table, params=None):
 
     if not params:
         params = module.params
+
+    if params.get('ignore_capacity'):
+      return dict()
 
     throughput = current_table.get('provisioned_throughput', {})
     read_capacity = throughput.get('read_capacity_units', None)
@@ -1020,6 +1032,7 @@ def main():
         includes=dict(type='list', required=False, elements='str'),
         read_capacity=dict(type='int', required=False),
         write_capacity=dict(type='int', required=False),
+        ignore_capacity=dict(type='bool'),
     )
 
     argument_spec = dict(
@@ -1032,6 +1045,7 @@ def main():
         billing_mode=dict(type='str', choices=['PROVISIONED', 'PAY_PER_REQUEST']),
         read_capacity=dict(type='int'),
         write_capacity=dict(type='int'),
+        ignore_capacity=dict(type='bool'),
         indexes=dict(default=[], type='list', elements='dict', options=index_options),
         table_class=dict(type='str', choices=['STANDARD', 'STANDARD_INFREQUENT_ACCESS']),
         tags=dict(type='dict', aliases=['resource_tags']),
