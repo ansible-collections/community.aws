@@ -169,20 +169,37 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-access-key"></span><strong>access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS access key ID.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_access_key_id</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_access_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-access_policies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-access-policies"><strong>access_policies</strong></p>
 <a class="ansibleOptionLink" href="#parameter-access_policies" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>IAM access policy as a JSON-formatted string.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options"><strong>advanced_security_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Specifies advanced security options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -195,7 +212,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/internal_user_database_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-internal-user-database-enabled"><strong>internal_user_database_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/internal_user_database_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -207,42 +224,42 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/master_user_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-master-user-options"><strong>master_user_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/master_user_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Credentials for the master user, username and password, ARN, or both.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/master_user_options/master_user_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-master-user-options-master-user-arn"><strong>master_user_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/master_user_options/master_user_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ARN for the master user (if IAM is enabled).</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/master_user_options/master_user_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-master-user-options-master-user-name"><strong>master_user_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/master_user_options/master_user_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The username of the master user, which is stored in the Amazon OpenSearch Service domain internal database.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/master_user_options/master_user_password"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-master-user-options-master-user-password"><strong>master_user_password</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/master_user_options/master_user_password" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The password of the master user, which is stored in the Amazon OpenSearch Service domain internal database.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options"><strong>saml_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SAML application configuration for the domain.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -257,63 +274,63 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/idp"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-idp"><strong>idp</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/idp" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SAML Identity Provider’s information.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/idp/entity_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-idp-entity-id"><strong>entity_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/idp/entity_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The unique entity ID of the application in SAML identity provider.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/idp/metadata_content"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-idp-metadata-content"><strong>metadata_content</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/idp/metadata_content" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The metadata of the SAML application in XML format.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/master_backend_role"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-master-backend-role"><strong>master_backend_role</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/master_backend_role" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The backend role that the SAML master user is mapped to.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/master_user_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-master-user-name"><strong>master_user_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/master_user_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The SAML master username, which is stored in the Amazon OpenSearch Service domain internal database.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/roles_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-roles-key"><strong>roles_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/roles_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Element of the SAML assertion to use for backend roles. Default is roles.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/session_timeout_minutes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-session-timeout-minutes"><strong>session_timeout_minutes</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/session_timeout_minutes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The duration, in minutes, after which a user session becomes inactive. Acceptable values are between 1 and 1440, and the default value is 60.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-advanced_security_options/saml_options/subject_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-advanced-security-options-saml-options-subject-key"><strong>subject_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-advanced_security_options/saml_options/subject_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Element of the SAML assertion to use for username. Default is NameID.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-allow_intermediate_upgrades"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-allow-intermediate-upgrades"><strong>allow_intermediate_upgrades</strong></p>
 <a class="ansibleOptionLink" href="#parameter-allow_intermediate_upgrades" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -326,14 +343,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options"><strong>auto_tune_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Specifies Auto-Tune options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/desired_state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-desired-state"><strong>desired_state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/desired_state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -345,28 +362,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/maintenance_schedules"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-maintenance-schedules"><strong>maintenance_schedules</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/maintenance_schedules" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of maintenance schedules.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/maintenance_schedules/cron_expression_for_recurrence"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-maintenance-schedules-cron-expression-for-recurrence"><strong>cron_expression_for_recurrence</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/maintenance_schedules/cron_expression_for_recurrence" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A cron expression for a recurring maintenance schedule.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/maintenance_schedules/duration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-maintenance-schedules-duration"><strong>duration</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/maintenance_schedules/duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies maintenance schedule duration, duration value and duration unit.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/maintenance_schedules/duration/unit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-maintenance-schedules-duration-unit"><strong>unit</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/maintenance_schedules/duration/unit" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -377,29 +394,18 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/maintenance_schedules/duration/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-maintenance-schedules-duration-value"><strong>value</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/maintenance_schedules/duration/value" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Integer to specify the value of a maintenance schedule duration.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-auto_tune_options/maintenance_schedules/start_at"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-auto-tune-options-maintenance-schedules-start-at"><strong>start_at</strong></p>
 <a class="ansibleOptionLink" href="#parameter-auto_tune_options/maintenance_schedules/start_at" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The timestamp at which the Auto-Tune maintenance schedule starts.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-access-key"></span><strong>aws_access_key</strong></p>
-<a class="ansibleOptionLink" href="#parameter-aws_access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_access_key, access_key</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">access</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable is used.</p>
-<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -407,7 +413,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
-<p>Note: The CA Bundle is read ‘module’ side and may need to be explicitly copied from the controller if not run locally.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code> environment variable may also be used.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -415,42 +421,31 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
-<p>Parameters can be found at <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
+<p>Parameters can be found in the AWS documentation <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-secret-key"><span id="ansible-collections-community-aws-opensearch-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-secret-key"></span><strong>aws_secret_key</strong></p>
-<a class="ansibleOptionLink" href="#parameter-aws_secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_secret_key, secret_key</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">secret</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable is used.</p>
-<p>The <em>aws_secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config"><strong>cluster_config</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Parameters for the cluster configuration of an OpenSearch Service domain.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/availability_zone_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-availability-zone-count"><strong>availability_zone_count</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/availability_zone_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>An integer value to indicate the number of availability zones for a domain when zone awareness is enabled. This should be equal to number of subnets if VPC endpoints is enabled.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/cold_storage_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-cold-storage-options"><strong>cold_storage_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/cold_storage_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the ColdStorageOptions config for a Domain.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/cold_storage_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-cold-storage-options-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/cold_storage_options/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -462,7 +457,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/dedicated_master"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-dedicated-master"><strong>dedicated_master</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/dedicated_master" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -474,42 +469,42 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/dedicated_master_instance_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-dedicated-master-instance-count"><strong>dedicated_master_instance_count</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/dedicated_master_instance_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Total number of dedicated master nodes, active and on standby, for the domain.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/dedicated_master_instance_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-dedicated-master-instance-type"><strong>dedicated_master_instance_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/dedicated_master_instance_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The instance type for a dedicated master node.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/instance_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-instance-count"><strong>instance_count</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/instance_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Number of instances for the domain.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/instance_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-instance-type"><strong>instance_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/instance_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Type of the instances to use for the domain.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/warm_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-warm-count"><strong>warm_count</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/warm_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of UltraWarm nodes in the domain.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/warm_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-warm-enabled"><strong>warm_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/warm_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -521,14 +516,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/warm_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-warm-type"><strong>warm_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/warm_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The instance type for the OpenSearch domain’s warm nodes.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cluster_config/zone_awareness"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cluster-config-zone-awareness"><strong>zone_awareness</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cluster_config/zone_awareness" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -540,14 +535,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cognito_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cognito-options"><strong>cognito_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cognito_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Parameters to configure OpenSearch Service to use Amazon Cognito authentication for OpenSearch Dashboards.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cognito_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cognito-options-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cognito_options/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -559,32 +554,33 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cognito_options/identity_pool_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cognito-options-identity-pool-id"><strong>identity_pool_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cognito_options/identity_pool_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Cognito identity pool ID for OpenSearch Dashboards authentication.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cognito_options/role_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cognito-options-role-arn"><strong>role_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cognito_options/role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The role ARN that provides OpenSearch permissions for accessing Cognito resources.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cognito_options/user_pool_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-cognito-options-user-pool-id"><strong>user_pool_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cognito_options/user_pool_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Cognito user pool ID for OpenSearch Dashboards authentication.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
+<td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ANSIBLE_DEBUG_BOTOCORE_LOGS</span></code> environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -592,28 +588,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_endpoint_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-endpoint-options"><strong>domain_endpoint_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_endpoint_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Options to specify configuration that will be applied to the domain endpoint.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_endpoint_options/custom_endpoint"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-endpoint-options-custom-endpoint"><strong>custom_endpoint</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_endpoint_options/custom_endpoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The fully qualified domain for your custom endpoint.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_endpoint_options/custom_endpoint_certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-endpoint-options-custom-endpoint-certificate-arn"><strong>custom_endpoint_certificate_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_endpoint_options/custom_endpoint_certificate_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The ACM certificate ARN for your custom endpoint.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_endpoint_options/custom_endpoint_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-endpoint-options-custom-endpoint-enabled"><strong>custom_endpoint_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_endpoint_options/custom_endpoint_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -625,7 +621,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_endpoint_options/enforce_https"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-endpoint-options-enforce-https"><strong>enforce_https</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_endpoint_options/enforce_https" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -637,14 +633,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_endpoint_options/tls_security_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-endpoint-options-tls-security-policy"><strong>tls_security_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_endpoint_options/tls_security_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specify the TLS security policy to apply to the HTTPS endpoint of the domain.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-domain-name"><strong>domain_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -652,14 +648,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <p>Domain names are unique across the domains owned by an account within an AWS region.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-ebs_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ebs-options"><strong>ebs_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ebs_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Parameters to configure EBS-based storage for an OpenSearch Service domain.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-ebs_options/ebs_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ebs-options-ebs-enabled"><strong>ebs_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ebs_options/ebs_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -671,35 +667,35 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-ebs_options/iops"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ebs-options-iops"><strong>iops</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ebs_options/iops" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IOPD for a Provisioned IOPS EBS volume (SSD).</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-ebs_options/volume_size"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ebs-options-volume-size"><strong>volume_size</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ebs_options/volume_size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Integer to specify the size of an EBS volume.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-ebs_options/volume_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-ebs-options-volume-type"><strong>volume_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ebs_options/volume_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies the volume type for EBS-based storage. “standard”|”gp2”|”io1”</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption_at_rest_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-encryption-at-rest-options"><strong>encryption_at_rest_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption_at_rest_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Parameters to enable encryption at rest.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption_at_rest_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-encryption-at-rest-options-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption_at_rest_options/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -711,7 +707,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-encryption_at_rest_options/kms_key_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-encryption-at-rest-options-kms-key-id"><strong>kms_key_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-encryption_at_rest_options/kms_key_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -719,7 +715,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <p>The value should be a KMS key ARN. It can also be the KMS key id.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -727,24 +723,27 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
+<td><div class="ansible-option-cell"><p>URL to connect to instead of the default AWS endpoints.  While this can be used to connection to other AWS-compatible services the amazon.aws and community.aws collections are only tested against AWS.</p>
+<p>The  <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variables may also be used, in decreasing order of preference.</p>
+<p>The <em>ec2_url</em> and <em>s3_url</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-engine_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-engine-version"><strong>engine_version</strong></p>
 <a class="ansibleOptionLink" href="#parameter-engine_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>-&gt; The engine version to use. For example, ‘ElasticSearch_7.10’ or ‘OpenSearch_1.1’. -&gt; If the currently running version is not equal to <em>engine_version</em>, a cluster upgrade is triggered. -&gt; It may not be possible to upgrade directly from the currently running version to <em>engine_version</em>. In that case, the upgrade is performed incrementally by upgrading to the highest compatible version, then repeat the operation until the cluster is running at the target version. -&gt; The upgrade operation fails if there is no path from current version to <em>engine_version</em>. -&gt; See OpenSearch documentation for upgrade compatibility.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-node_to_node_encryption_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-node-to-node-encryption-options"><strong>node_to_node_encryption_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-node_to_node_encryption_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Node-to-node encryption options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-node_to_node_encryption_options/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-node-to-node-encryption-options-enabled"><strong>enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-node_to_node_encryption_options/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -756,16 +755,19 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-profile"><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+<td><div class="ansible-option-cell"><p>A named AWS profile to use for authentication.</p>
+<p>See the AWS documentation for more information about named profiles <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> environment variable may also be used.</p>
+<p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-purge-tags"><strong>purge_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -779,28 +781,54 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-region"><span id="ansible-collections-community-aws-opensearch-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-region"></span><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></p>
+<td><div class="ansible-option-cell"><p>The AWS region to use.</p>
+<p>For global services such as IAM, Route53 and CloudFront, <em>region</em> is ignored.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variables may also be used.</p>
+<p>See the Amazon AWS documentation for more information <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ec2_region</span></code> alias has been deprecated and will be removed in a release after 2024-12-01</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-secret-key"><span id="ansible-collections-community-aws-opensearch-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS secret access key.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_secret_access_key</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_secret_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-session-token"><span id="ansible-collections-community-aws-opensearch-module-parameter-security-token"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-access-token"></span><strong>security_token</strong></p>
-<a class="ansibleOptionLink" href="#parameter-security_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, session_token, aws_security_token, access_token</span></p>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-session-token"><span id="ansible-collections-community-aws-opensearch-module-parameter-security-token"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-opensearch-module-parameter-access-token"></span><strong>session_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">STS</span> <span class="pre">security</span> <span class="pre">token</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variable is used.</p>
+<td><div class="ansible-option-cell"><p>AWS STS session token for use with temporary credentials.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variables may also be used in decreasing order of preference.</p>
 <p>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</p>
-<p>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</p>
+<p>Aliases <em>aws_session_token</em> and <em>session_token</em> were added in release 3.2.0, with the parameter being renamed from <em>security_token</em> to <em>session_token</em> in release 6.0.0.</p>
+<p>The <em>security_token</em>, <em>aws_security_token</em>, and <em>access_token</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -844,7 +872,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-opensearch-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<p>Setting <em>validate_certs=false</em> is strongly discouraged, as an alternative, consider setting <em>aws_ca_bundle</em> instead.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
@@ -901,9 +930,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_DEFAULT_PROFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code></p></li>
-<li><p>When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.</p></li>
+<li><p><strong>Caution:</strong> Environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context.  Files may need to be explicitly copied to the ‘host’.</p></li>
+<li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
 </div>
 </section>
