@@ -128,6 +128,7 @@ options:
             origin_shield_region:
               description: Specify which AWS region will be used for Origin Shield. Required if Origin Shield is enabled.
               type: str
+          version_added: 5.1.0
         custom_headers:
           description:
             - Custom headers you wish to add to the request before passing it to the origin.
@@ -1321,6 +1322,7 @@ origins:
               returned: when enabled is true
               type: str
               sample: us-east-1
+          version_added: 5.1.0
         s3_origin_config:
           description: Origin access identity configuration for S3 Origin.
           returned: when s3_origin_access_identity_enabled is true
