@@ -355,7 +355,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-me
 <li><p>This modules manages single metrics configuration, the s3 bucket might have up to 1,000 metrics configurations</p></li>
 <li><p>To request metrics for the entire bucket, create a metrics configuration without a filter</p></li>
 <li><p>Metrics configurations are necessary only to enable request metric, bucket-level daily storage metrics are always turned on</p></li>
-<li><p><strong>Caution:</strong> Environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context.  Files may need to be explicitly copied to the ‘host’.</p></li>
+<li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
 <li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
 </div>
