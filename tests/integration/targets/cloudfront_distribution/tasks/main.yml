@@ -146,6 +146,44 @@
         - update_origin_origin_shield.origins.items[0].origin_shield.enabled
         - update_origin_origin_shield.origins.items[0].origin_shield.origin_shield_region == '{{ aws_region }}'
 
+  - name: enable origin Origin Shield again to test idempotency
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ cloudfront_hostname }}-origin.example.com"
+        custom_origin_config:
+          http_port: 8080
+        origin_shield:
+          enabled: true
+          origin_shield_region: '{{ aws_region }}'
+      state: present
+    register: update_origin_origin_shield_idempotency
+
+  - name: test idempotency for Origin Shield
+    assert:
+      that:
+        - not update_origin_origin_shield_idempotency.changed
+        - update_origin_origin_shield_idempotency.origins.items[0].origin_shield.enabled
+        - update_origin_origin_shield_idempotency.origins.items[0].origin_shield.origin_shield_region == '{{ aws_region }}'
+
+  - name: disable origin Origin Shield
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ cloudfront_hostname }}-origin.example.com"
+        custom_origin_config:
+          http_port: 8080
+        origin_shield:
+          enabled: false
+      state: present
+    register: update_origin_origin_shield_disable
+
+  - name: ensure origin Origin Shield was disabled
+    assert:
+      that:
+        - update_origin_origin_shield_disable.changed
+        - not update_origin_origin_shield_disable.origins.items[0].origin_shield.enabled
+
   - name: update restrictions
     cloudfront_distribution:
       distribution_id: "{{ distribution_id }}"
