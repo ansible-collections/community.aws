@@ -39,6 +39,14 @@
         privatekey_path: "{{ role_path }}/files/caPrivateKey.key"
         provider: selfsigned
 
+    - name: Create CloudHSM Cluster - Check Mode
+      community.aws.cloudhsm_cluster:
+        backup_retention_days: 90
+        subnet_ids: "{{ aws_subnets.subnets[0].subnet_id }}"
+        state: present
+        name: "{{ name }}"
+      check_mode: yes
+
     - name: Create CloudHSM Cluster
       community.aws.cloudhsm_cluster:
         backup_retention_days: 90
@@ -72,6 +80,13 @@
       fail:
         msg: The CloudHSM Cluster was not created
       when: cluster_id.data|length != 1
+
+    - name: Create CloudHSM HSM Device - Check Mode
+      community.aws.cloudhsm_hsm:
+        state: present
+        availability_zone: "{{ aws_subnets.subnets[0].availability_zone }}"
+        cluster_id: "{{ cluster_id.data[0].cluster_id }}"
+      check_mode: yes
 
     - name: Create CloudHSM HSM Device
       community.aws.cloudhsm_hsm:
