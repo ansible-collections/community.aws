@@ -87,7 +87,7 @@ class CloudHsmCluster:
                 )
         except Exception as catch_all:
             self.module.fail_json(
-                msg=f"Exception raised while describing cluster: {str(catch_all)}"
+                msg=f"Exception raised while obtaining cluster information: {str(catch_all)}"
             )
         if name:
             clusters = []

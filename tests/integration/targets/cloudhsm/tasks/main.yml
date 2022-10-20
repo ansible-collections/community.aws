@@ -23,7 +23,7 @@
       register: new_cluster
 
     - name: Ensure CloudHSM Cluster is Ready
-      community.aws.cloudhsm_describe_cluster:
+      community.aws.cloudhsm_cluster_info:
         name: "{{ name }}"
       register: cluster_id
       until: cluster_id.data[0].state == "UNINITIALIZED"
@@ -43,7 +43,7 @@
       register: new_hsm
 
     - name: Ensure CloudHSM HSM Device is Ready
-      community.aws.cloudhsm_describe_hsm:
+      community.aws.cloudhsm_hsm_info:
       register: hsm
       until: hsm.data[0].state == "ACTIVE"
       retries: 20
@@ -55,7 +55,7 @@
       when: hsm.data|length != 1
 
     - name: Register Cluster Certificates
-      community.aws.cloudhsm_describe_cluster:
+      community.aws.cloudhsm_cluster_info:
         name: "{{ name }}"
       register: cluster_cert
 
@@ -83,7 +83,7 @@
 
 
     - name: Register Cluster State
-      community.aws.cloudhsm_describe_cluster:
+      community.aws.cloudhsm_cluster_info:
         name: "{{ name }}"
       register: cluster_state
       until: cluster_state.data[0].state == "INITIALIZED"
@@ -96,7 +96,7 @@
         name: "{{ name }}"
 
     - name: Ensure CloudHSM HSM Device is Removed
-      community.aws.cloudhsm_describe_cluster:
+      community.aws.cloudhsm_cluster_info:
         name: "{{ name }}"
       register: no_hsms
       until: no_hsms.data[0].hsms|length == 0
