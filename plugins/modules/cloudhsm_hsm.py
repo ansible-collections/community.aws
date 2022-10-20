@@ -224,6 +224,7 @@ def main():
                     results["data"].append(
                         camel_dict_to_snake_dict(cluster_mgr.create_hsm(hsm_body))
                     )
+                    results["changed"] = True
                 else:
                     if ip_addr:
                         for ip_addr in ip_addr[count - (count - len(existing_hsms)):]:

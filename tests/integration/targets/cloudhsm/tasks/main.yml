@@ -14,6 +14,31 @@
       amazon.aws.ec2_vpc_subnet_info:
       register: aws_subnets
 
+    - name: Generate an OpenSSL Private Key
+      community.crypto.openssl_privatekey:
+        path: "{{ role_path }}/files/caPrivateKey.key"
+        size: 2048
+
+    - name: Create CSR for CA certificate
+      community.crypto.openssl_csr_pipe:
+        privatekey_path: "{{ role_path }}/files/caPrivateKey.key"
+        common_name: '{{ aws_region }}-CloudHSM'
+        use_common_name_for_san: false
+        basic_constraints:
+          - 'CA:TRUE'
+        basic_constraints_critical: true
+        key_usage:
+          - keyCertSign
+        key_usage_critical: true
+      register: ca_csr
+
+    - name: Create Self-Signed CA Certificate
+      community.crypto.x509_certificate:
+        path: "{{ role_path }}/files/caCertificate.crt"
+        csr_content: "{{ ca_csr.csr }}"
+        privatekey_path: "{{ role_path }}/files/caPrivateKey.key"
+        provider: selfsigned
+
     - name: Create CloudHSM Cluster
       community.aws.cloudhsm_cluster:
         backup_retention_days: 90
@@ -29,6 +54,19 @@
       until: cluster_id.data[0].state == "UNINITIALIZED"
       retries: 10
       delay: 30
+
+    - name: Attempt to Create a New Cluster With the Same Name
+      community.aws.cloudhsm_cluster:
+        backup_retention_days: 90
+        subnet_ids: "{{ aws_subnets.subnets[0].subnet_id }}"
+        state: present
+        name: "{{ name }}"
+      register: another_cluster
+
+    - name: Confirm That No New Cluster Exits
+      fail:
+        msg: "{{new_cluster}} is not the same as {{ another_cluster }}"
+      when: new_cluster.data[0]['cluster_id'] != another_cluster.data[0]['cluster_id']
 
     - name: Check CloudHSM Cluster Count
       fail:
@@ -49,6 +87,13 @@
       retries: 20
       delay: 30
 
+    - name: Attempt to Create Another CloudHSM HSM Device
+      community.aws.cloudhsm_hsm:
+        state: present
+        availability_zone: "{{ aws_subnets.subnets[0].availability_zone }}"
+        cluster_id: "{{ cluster_id.data[0].cluster_id }}"
+      register: another_hsm
+
     - name: Check HSMs Count
       fail:
         msg: The HSM device was not created
@@ -59,17 +104,12 @@
         name: "{{ name }}"
       register: cluster_cert
 
-    - name: Write CSR to the File
-      ansible.builtin.copy:
-        content: "{{ cluster_cert.data[0].certificates.cluster_csr }}"
-        dest: "{{ role_path }}/files/cloudhsm_cluster.csr"
-
     - name: Sign certificate with CA
       community.crypto.x509_certificate_pipe:
-        csr_content: "{{ lookup('file', 'cloudhsm_cluster.csr') }}"
+        csr_content: "{{ cluster_cert.data[0].certificates.cluster_csr }}"
         provider: ownca
-        ownca_path: "{{ role_path }}/files/signingCA.crt"
-        ownca_privatekey_path: "{{ role_path }}/files/signingCA.key"
+        ownca_path: "{{ role_path }}/files/caCertificate.crt"
+        ownca_privatekey_path: "{{ role_path }}/files/caPrivateKey.key"
         ownca_not_after: +365d
         ownca_not_before: "-1d"
       register: signed_cert
@@ -78,9 +118,8 @@
       community.aws.cloudhsm_initialize_cluster:
         cluster_id: "{{ cluster_cert.data[0].cluster_id }}"
         signed_cert: "{{ signed_cert.certificate }}"
-        trust_anchor: "{{ role_path }}/files/signingCA.crt"
+        trust_anchor: "{{ role_path }}/files/caCertificate.crt"
       when: cluster_cert.data[0].state == 'UNINITIALIZED'
-
 
     - name: Register Cluster State
       community.aws.cloudhsm_cluster_info:
@@ -90,6 +129,7 @@
       retries: 20
       delay: 30
 
+  always:
     - name: Delete CloudHSM HSM Device
       community.aws.cloudhsm_hsm:
         state: absent
@@ -103,7 +143,17 @@
       retries: 20
       delay: 30
 
+    - name: Attempt to Delete CloudHSM HSM Device Again
+      community.aws.cloudhsm_hsm:
+        state: absent
+        name: "{{ name }}"
+
     - name: Delete CloudHSM Cluster
+      community.aws.cloudhsm_cluster:
+        state: absent
+        name: "{{ name }}"
+
+    - name: Attempt to Delete CloudHSM Cluster Again
       community.aws.cloudhsm_cluster:
         state: absent
         name: "{{ name }}"
