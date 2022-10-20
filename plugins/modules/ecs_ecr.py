@@ -90,6 +90,7 @@ author:
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
+- amazon.aws.boto3
 
 '''
 
@@ -107,7 +108,7 @@ EXAMPLES = '''
 
 - name: Cross account ecr-repo
   community.aws.ecs_ecr:
-    registry_id: 999999999999
+    registry_id: 123456789012
     name: cross/account
 
 - name: set-policy as object
@@ -186,10 +187,10 @@ repository:
     returned: I(state=present)
     sample:
         createdAt: '2017-01-17T08:41:32-06:00'
-        registryId: '999999999999'
-        repositoryArn: arn:aws:ecr:us-east-1:999999999999:repository/ecr-test-1484664090
+        registryId: '123456789012'
+        repositoryArn: arn:aws:ecr:us-east-1:123456789012:repository/ecr-test-1484664090
         repositoryName: ecr-test-1484664090
-        repositoryUri: 999999999999.dkr.ecr.us-east-1.amazonaws.com/ecr-test-1484664090
+        repositoryUri: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecr-test-1484664090
 '''
 
 import json
@@ -206,7 +207,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import sort_json_policy_dict
 
 
 def build_kwargs(registry_id):
@@ -245,7 +245,7 @@ class EcsEcr:
                 repositoryName=name, **build_kwargs(registry_id))
             text = res.get('policyText')
             return text and json.loads(text)
-        except is_boto3_error_code('RepositoryPolicyNotFoundException'):
+        except is_boto3_error_code(['RepositoryNotFoundException', 'RepositoryPolicyNotFoundException']):
             return None
 
     def create_repository(self, registry_id, name, image_tag_mutability):
@@ -333,7 +333,7 @@ class EcsEcr:
                 repositoryName=name, **build_kwargs(registry_id))
             text = res.get('lifecyclePolicyText')
             return text and json.loads(text)
-        except is_boto3_error_code('LifecyclePolicyNotFoundException'):
+        except is_boto3_error_code(['LifecyclePolicyNotFoundException', 'RepositoryNotFoundException']):
             return None
 
     def put_lifecycle_policy(self, registry_id, name, policy_text):
@@ -456,17 +456,11 @@ def run(ecr, params):
 
             elif lifecycle_policy_text is not None:
                 try:
-                    lifecycle_policy = sort_json_policy_dict(lifecycle_policy)
                     result['lifecycle_policy'] = lifecycle_policy
-
                     original_lifecycle_policy = ecr.get_lifecycle_policy(
                         registry_id, name)
 
-                    if original_lifecycle_policy:
-                        original_lifecycle_policy = sort_json_policy_dict(
-                            original_lifecycle_policy)
-
-                    if original_lifecycle_policy != lifecycle_policy:
+                    if compare_policies(original_lifecycle_policy, lifecycle_policy):
                         ecr.put_lifecycle_policy(registry_id, name,
                                                  lifecycle_policy_text)
                         result['changed'] = True

@@ -1,2 +1,0 @@
-minor_changes:
-- aws_application_scaling_policy - the ``aws_application_scaling_policy`` module has been renamed to ``application_autoscaling_policy``, ``aws_application_scaling_policy`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1314).

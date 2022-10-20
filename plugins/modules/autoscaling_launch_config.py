@@ -184,6 +184,7 @@ options:
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
+  - amazon.aws.boto3
 '''
 
 EXAMPLES = r'''
@@ -259,7 +260,7 @@ arn:
   description: The Amazon Resource Name of the launch configuration.
   returned: when I(state=present)
   type: str
-  sample: arn:aws:autoscaling:us-east-1:148830907657:launchConfiguration:888d9b58-d93a-40c4-90cf-759197a2621a:launchConfigurationName/launch_config_name
+  sample: arn:aws:autoscaling:us-east-1:123456789012:launchConfiguration:888d9b58-d93a-40c4-90cf-759197a2621a:launchConfigurationName/launch_config_name
 changed:
   description: Whether the state of the launch configuration has changed.
   returned: always
@@ -391,7 +392,7 @@ result:
       description: The Amazon Resource Name (ARN) of the launch configuration.
       returned: when I(state=present)
       type: str
-      sample: arn:aws:autoscaling:us-east-1:148830907657:launchConfiguration:888d9b58-d93a-40c4-90cf-759197a2621a:launchConfigurationName/launch_config_name
+      sample: arn:aws:autoscaling:us-east-1:123456789012:launchConfiguration:888d9b58-d93a-40c4-90cf-759197a2621a:launchConfigurationName/launch_config_name
     member:
       description: ""
       returned: when I(state=present)

@@ -199,6 +199,7 @@ options:
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
+  - amazon.aws.boto3
   - amazon.aws.tags
 
 notes:
@@ -403,7 +404,7 @@ target_group_arn:
     description: The Amazon Resource Name (ARN) of the target group.
     returned: when state present
     type: str
-    sample: "arn:aws:elasticloadbalancing:ap-southeast-2:01234567890:targetgroup/mytargetgroup/aabbccddee0044332211"
+    sample: "arn:aws:elasticloadbalancing:ap-southeast-2:123456789012:targetgroup/mytargetgroup/aabbccddee0044332211"
 target_group_name:
     description: The name of the target group.
     returned: when state present

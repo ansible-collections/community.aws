@@ -43,6 +43,7 @@ author: "Mark Chappell (@tremble)"
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
+  - amazon.aws.boto3
 '''
 
 EXAMPLES = '''
@@ -142,7 +143,7 @@ transit_gateway_attachments:
         - The ID of the account that the VPC belongs to.
       type: str
       returned: success
-      example: '012345678901'
+      example: '123456789012'
 '''
 
 

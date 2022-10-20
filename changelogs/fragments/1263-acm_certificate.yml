@@ -1,3 +1,0 @@
-minor_changes:
-- aws_acm - the ``aws_acm`` module has been renamed to ``acm_certificate``, ``aws_acm`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1263).
-- aws_acm_info - the ``aws_acm_info`` module has been renamed to ``acm_certificate_info``, ``aws_acm_info`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1263).

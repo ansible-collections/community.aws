@@ -1,4 +1,5 @@
-requires_ansible: '>=2.9.10'
+---
+requires_ansible: '>=2.11.0'
 action_groups:
   aws:
   - accessanalyzer_validate_policy_info
@@ -8,8 +9,6 @@ action_groups:
   - api_gateway_domain
   - application_autoscaling_policy
   - autoscaling_complete_lifecycle_action
-  - autoscaling_group_info
-  - autoscaling_group
   - autoscaling_instance_refresh_info
   - autoscaling_instance_refresh
   - autoscaling_launch_config_find
@@ -45,8 +44,6 @@ action_groups:
   - aws_glue_crawler
   - aws_glue_job
   - aws_inspector_target
-  - aws_kms
-  - aws_kms_info
   - aws_msk_cluster
   - aws_msk_config
   - aws_region_info
@@ -113,8 +110,6 @@ action_groups:
   - ec2_asg_lifecycle_hook
   - ec2_customer_gateway
   - ec2_customer_gateway_info
-  - ec2_eip
-  - ec2_eip_info
   - ec2_elb
   - ec2_launch_template
   - ec2_lc
@@ -159,8 +154,6 @@ action_groups:
   - elasticache_parameter_group
   - elasticache_snapshot
   - elasticache_subnet_group
-  - elb_application_lb
-  - elb_application_lb_info
   - elb_classic_lb
   - elb_classic_lb_info
   - elb_instance
@@ -169,7 +162,6 @@ action_groups:
   - elb_target_group
   - elb_target_group_info
   - elb_target_info
-  - execute_lambda
   - glue_connection
   - glue_crawler
   - glue_job
@@ -179,25 +171,13 @@ action_groups:
   - iam_managed_policy
   - iam_mfa_device_info
   - iam_password_policy
-  - iam_policy
-  - iam_policy_info
   - iam_role
   - iam_role_info
   - iam_saml_federation
   - iam_server_certificate
   - iam_server_certificate_info
-  - iam_user
-  - iam_user_info
   - inspector_target
   - kinesis_stream
-  - kms_key
-  - kms_key_info
-  - lambda
-  - lambda_alias
-  - lambda_event
-  - lambda_execute
-  - lambda_info
-  - lambda_policy
   - lightsail
   - lightsail_static_ip
   - msk_cluster
@@ -210,25 +190,10 @@ action_groups:
   - networkfirewall_rule_group_info
   - opensearch
   - opensearch_info
-  - rds_instance
-  - rds_instance_info
-  - rds_instance_snapshot
-  - rds_option_group
-  - rds_option_group_info
-  - rds_param_group
-  - rds_snapshot_info
-  - rds_subnet_group
-  - rds_cluster
-  - rds_cluster_info
-  - rds_cluster_snapshot
   - redshift
   - redshift_cross_region_snapshots
   - redshift_info
   - redshift_subnet_group
-  - route53
-  - route53_health_check
-  - route53_info
-  - route53_zone
   - s3_bucket_notification
   - s3_bucket_info
   - s3_cors
@@ -265,6 +230,10 @@ action_groups:
   - wafv2_web_acl_info
 plugin_routing:
   modules:
+    autoscaling_group_info:
+      redirect: amazon.aws.autoscaling_group_info
+    autoscaling_group:
+      redirect: amazon.aws.autoscaling_group
     aws_acm:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.acm_certificate
@@ -348,10 +317,10 @@ plugin_routing:
       redirect: community.aws.inspector_target
     aws_kms:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.kms_key
+      redirect: amazon.aws.kms_key
     aws_kms_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.kms_key_info
+      redirect: amazon.aws.kms_key_info
     aws_msk_cluster:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.msk_cluster
@@ -406,12 +375,22 @@ plugin_routing:
     cloudfront_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.cloudfront_distribution_info
+    cloudwatchevent_rule:
+      redirect: amazon.aws.cloudwatchevent_rule
+    cloudwatchlogs_log_group:
+      redirect: amazon.aws.cloudwatchlogs_log_group
+    cloudwatchlogs_log_group_info:
+      redirect: amazon.aws.cloudwatchlogs_log_group_info
+    cloudwatchlogs_log_group_metric_filter:
+      redirect: amazon.aws.cloudwatchlogs_log_group_metric_filter
+    cloudwatch_metric_alarm:
+      redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_asg:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_group
+      redirect: amazon.aws.autoscaling_group
     ec2_asg_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.autoscaling_group_info
+      redirect: amazon.aws.autoscaling_group_info
     ec2_asg_instance_refresh:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_instance_refresh
@@ -424,11 +403,15 @@ plugin_routing:
     ec2_asg_scheduled_action:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_scheduled_action
+    ec2_eip:
+      redirect: amazon.aws.ec2_eip
+    ec2_eip_info:
+      redirect: amazon.aws.ec2_eip_info
     ec2_elb:
       redirect: community.aws.elb_instance
     ec2_metric_alarm:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.cloudwatch_metric_alarm
+      redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_instance:
       redirect: amazon.aws.ec2_instance
     ec2_instance_info:
@@ -462,9 +445,70 @@ plugin_routing:
     ec2_vpc_route_table:
       redirect: amazon.aws.ec2_vpc_route_table
     ec2_vpc_route_table_info:
-       redirect: amazon.aws.ec2_vpc_route_table_info
+      redirect: amazon.aws.ec2_vpc_route_table_info
     elb_classic_lb:
       redirect: amazon.aws.ec2_elb_lb
+    elb_application_lb:
+      redirect: amazon.aws.elb_application_lb
+    elb_application_lb_info:
+      redirect: amazon.aws.elb_application_lb_info
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: community.aws.lambda_execute
+      redirect: amazon.aws.lambda_execute
+    iam_policy:
+      redirect: amazon.aws.iam_policy
+    iam_policy_info:
+      redirect: amazon.aws.iam_policy_info
+    iam_user:
+      redirect: amazon.aws.iam_user
+    iam_user_info:
+      redirect: amazon.aws.iam_user_info
+    kms_key:
+      redirect: amazon.aws.kms_key
+    kms_key_info:
+      redirect: amazon.aws.kms_key_info
+    lambda:
+      redirect: amazon.aws.lambda
+    lambda_alias:
+      redirect: amazon.aws.lambda_alias
+    lambda_event:
+      redirect: amazon.aws.lambda_event
+    lambda_execute:
+      redirect: amazon.aws.lambda_execute
+    lambda_info:
+      redirect: amazon.aws.lambda_info
+    lambda_policy:
+      redirect: amazon.aws.lambda_policy
+    rds_cluster:
+      redirect: amazon.aws.rds_cluster
+    rds_cluster_info:
+      redirect: amazon.aws.rds_cluster_info
+    rds_cluster_snapshot:
+      redirect: amazon.aws.rds_cluster_snapshot
+    rds_instance:
+      redirect: amazon.aws.rds_instance
+    rds_instance_info:
+      redirect: amazon.aws.rds_instance_info
+    rds_instance_snapshot:
+      redirect: amazon.aws.rds_instance_snapshot
+    rds_option_group:
+      redirect: amazon.aws.rds_option_group
+    rds_option_group_info:
+      redirect: amazon.aws.rds_option_group_info
+    rds_param_group:
+      redirect: amazon.aws.rds_param_group
+    rds_snapshot_info:
+      redirect: amazon.aws.rds_snapshot_info
+    rds_subnet_group:
+      redirect: amazon.aws.rds_subnet_group
+    route53:
+      redirect: amazon.aws.route53
+    route53_health_check:
+      redirect: amazon.aws.route53_health_check
+    route53_info:
+      redirect: amazon.aws.route53_info
+    route53_zone:
+      redirect: amazon.aws.route53_zone
+  module_utils:
+    route53:
+      redirect: amazon.aws.route53

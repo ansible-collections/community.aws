@@ -1,2 +1,0 @@
-minor_changes:
-- aws_ssm_parameter_store - the ``aws_ssm_parameter_store`` module has been renamed to ``ssm_parameter``, ``aws_ssm_parameter_store`` remains as an alias (https://github.com/ansible-collections/community.aws/pull/1313).

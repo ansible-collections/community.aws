@@ -1,2 +1,0 @@
-minor_changes:
-- lambda - Adds support for setting Architectures (https://github.com/ansible-collections/community.aws/issues/744).

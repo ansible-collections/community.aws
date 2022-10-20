@@ -29,6 +29,7 @@ options:
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
+- amazon.aws.boto3
 
 '''
 
@@ -136,7 +137,7 @@ transit_gateways:
             description: The AWS account number ID which owns the transit gateway.
             returned: always
             type: str
-            sample: "1234567654323"
+            sample: "123456789012"
         state:
             description: The state of the transit gateway.
             returned: always
@@ -153,7 +154,7 @@ transit_gateways:
             description: The Amazon Resource Name (ARN) of the transit gateway.
             returned: always
             type: str
-            sample: "arn:aws:ec2:us-west-2:1234567654323:transit-gateway/tgw-02c42332e6b7da829"
+            sample: "arn:aws:ec2:us-west-2:123456789012:transit-gateway/tgw-02c42332e6b7da829"
         transit_gateway_id:
             description: The ID of the transit gateway.
             returned: always

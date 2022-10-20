@@ -1,0 +1,2 @@
+bugfixes:
+- ecs_ecr - fix a ``RepositoryNotFound`` exception when trying to create repositories in check mode (https://github.com/ansible-collections/community.aws/pull/1550).

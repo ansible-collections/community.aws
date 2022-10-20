@@ -44,6 +44,7 @@ options:
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
+- amazon.aws.boto3
 
 '''
 
@@ -78,12 +79,12 @@ clusterArn:
     description: the ARN of the cluster just created
     type: str
     returned: 0 if a new cluster
-    sample: arn:aws:ecs:us-west-2:172139249013:cluster/test-cluster-mfshcdok
+    sample: arn:aws:ecs:us-west-2:123456789012:cluster/test-cluster
 clusterName:
     description: name of the cluster just created (should match the input argument)
     type: str
     returned: always
-    sample: test-cluster-mfshcdok
+    sample: test-cluster
 pendingTasksCount:
     description: how many tasks are waiting to run in this cluster
     returned: 0 if a new cluster

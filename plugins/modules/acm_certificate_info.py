@@ -45,6 +45,7 @@ author:
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
+  - amazon.aws.boto3
 '''
 
 EXAMPLES = r'''
@@ -70,7 +71,7 @@ EXAMPLES = r'''
 # The output is still a list of certificates, just one item long.
 - name: obtain information about a certificate with a particular ARN
   community.aws.aws_acm_info:
-    certificate_arn:  "arn:aws:acm:ap-southeast-2:123456789876:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12"
+    certificate_arn:  "arn:aws:acm:ap-southeast-2:123456789012:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12"
 
 '''
 

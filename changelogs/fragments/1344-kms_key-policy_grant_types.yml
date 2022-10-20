@@ -1,2 +1,0 @@
-breaking_changes:
-- kms_key - managing the KMS IAM Policy via ``policy_mode`` and ``policy_grant_types`` was previously deprecated and has been removed in favor of the ``policy`` option (https://github.com/ansible-collections/community.aws/pull/1344).

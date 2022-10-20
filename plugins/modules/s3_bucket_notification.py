@@ -102,6 +102,7 @@ options:
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
+  - amazon.aws.boto3
 '''
 
 EXAMPLES = r'''
@@ -112,7 +113,7 @@ EXAMPLES = r'''
     state: present
     event_name: on_file_add_or_remove
     bucket_name: test-bucket
-    lambda_function_arn: arn:aws:lambda:us-east-2:526810320200:function:test-lambda
+    lambda_function_arn: arn:aws:lambda:us-east-2:123456789012:function:test-lambda
     events: ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
     prefix: images/
     suffix: .jpg
@@ -122,7 +123,7 @@ EXAMPLES = r'''
     state: present
     event_name: on_file_add_or_remove
     bucket_name: test-bucket
-    queue_arn: arn:aws:sqs:us-east-2:526810320200:test-queue
+    queue_arn: arn:aws:sqs:us-east-2:123456789012:test-queue
     events: ["s3:ObjectCreated:*", "s3:ObjectRemoved:*"]
     prefix: images/
     suffix: .jpg

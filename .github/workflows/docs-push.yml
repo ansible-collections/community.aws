@@ -5,12 +5,12 @@ concurrency:
 on:
   push:
     branches:
-      - main
-      - stable-*
+    - main
+    - stable-*
     tags:
-      - '*'
+    - '*'
   schedule:
-    - cron: '0 13 * * *'
+  - cron: '0 13 * * *'
 
 jobs:
   build-docs:
@@ -22,9 +22,9 @@ jobs:
       init-lenient: true
       init-fail-on-error: true
       extra-collections: 'git+https://github.com/ansible-collections/amazon.aws.git,main'
-      # Please also update docs-pr.yml
-      provide-link-targets: |
-        ansible_collections.amazon.aws.cloudtrail_module
+      intersphinx-links: |
+        amazon_aws:https://ansible-collections.github.io/amazon.aws/branch/main/
+        ansible_devel:https://docs.ansible.com/ansible-core/devel/
 
   publish-docs-gh-pages:
     # use to prevent running on forks

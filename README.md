@@ -4,15 +4,11 @@ The Ansible Community AWS collection includes a variety of Ansible content to he
 
 AWS related modules and plugins supported by the Ansible Cloud team are in the [amazon.aws](https://github.com/ansible-collections/amazon.aws) collection.
 
-<!--start requires_ansible-->
 ## Ansible version compatibility
 
-This collection has been tested against following Ansible versions: **>=2.9.10**.
+Tested with the Ansible Core 2.12, and 2.13 releases, and the current development version of Ansible. Ansible Core versions before 2.11.0 are not supported. In particular, Ansible Core 2.10 and Ansible 2.9 are not supported.
 
-Plugins and modules within a collection may be tested with only specific Ansible versions.
-A collection may contain metadata that identifies these versions.
-PEP440 is the schema used to describe the versions of Ansible.
-<!--end requires_ansible-->
+Use community.aws 4.x.y if you are using Ansible 2.9 or Ansible Core 2.10.
 
 ## Python version compatibility
 
@@ -66,7 +62,7 @@ collections:
 The python module dependencies are not installed by `ansible-galaxy`.  They can
 be manually installed using pip:
 
-    pip install requirements.txt
+    pip install -r requirements.txt
 
 or:
 
@@ -74,7 +70,7 @@ or:
 
 ## Using this collection
 
-You can either call modules by their Fully Qualified Collection Namespace (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
+You can either call modules by their Fully Qualified Collection Name (FQCN), such as `community.aws.ec2_instance`, or you can call modules by their short name if you list the `community.aws` collection in the playbook's `collections` keyword:
 
 ```yaml
 ---
@@ -114,7 +110,8 @@ You can also join us on:
 - [Getting Started With AWS Ansible Module Development and Community Contribution](https://www.ansible.com/blog/getting-started-with-aws-ansible-module-development)
 
 ## Release notes
-<!--Add a link to a changelog.rst file or an external docsite to cover this information. -->
+
+See the [rendered changelog](https://ansible-collections.github.io/community.aws/branch/main/collections/community/aws/docsite/CHANGELOG.html) or the [raw generated changelog](https://github.com/ansible-collections/community.aws/tree/main/CHANGELOG.rst).
 
 ## Roadmap
 
