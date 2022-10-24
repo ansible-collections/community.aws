@@ -51,6 +51,43 @@
           - create_result.port == 80
 
     # =====================================================================
+    - name: Update target group to protocol_version 'HTTP1'
+      community.aws.elb_target_group:
+        name: "{{ elb_target_group_name }}"
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
+        protocol_version: HTTP1
+        state: present
+      register: update_result
+
+    - assert:
+        that:
+          - update_result is changed
+          - update_result is not failed
+          - update_result.protocol_version == "HTTP1"
+          - update_result.protocol == "HTTP"
+          - update_result.port == 80
+
+    - name: Update target group to protocol_version 'HTTP1' (idempotence)
+      community.aws.elb_target_group:
+        name: "{{ elb_target_group_name }}"
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
+        protocol_version: HTTP1
+        state: present
+      register: update_result
+
+    - assert:
+        that:
+          - update_result is not changed
+          - update_result is not failed
+          - update_result.protocol_version == "HTTP1"
+          - update_result.protocol == "HTTP"
+          - update_result.port == 80
+
+    # =====================================================================
 
   always:
     - name: Remove elb target group
