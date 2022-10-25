@@ -6,6 +6,7 @@ python-dateutil # Used by autoscaling_scheduled_action
 coverage==4.5.4
 placebo
 mock
+pytest-forked
 pytest-xdist
 # We should avoid these two modules with py3
 pytest-mock
