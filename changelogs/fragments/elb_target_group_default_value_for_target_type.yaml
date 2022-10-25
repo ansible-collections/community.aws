@@ -1,0 +1,3 @@
+---
+minor_changes:
+- "elb_target_group - Document the fact target_type default value is ``instance`` (https://github.com/ansible-collections/community.aws/pull/1567)."

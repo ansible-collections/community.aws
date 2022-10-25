@@ -150,6 +150,7 @@ options:
       - The default behavior is C(instance).
     required: false
     choices: ['instance', 'ip', 'lambda', 'alb']
+    default: instance
     type: str
   targets:
     description:
@@ -923,7 +924,7 @@ def main():
         state=dict(required=True, choices=['present', 'absent']),
         successful_response_codes=dict(),
         tags=dict(type='dict', aliases=['resource_tags']),
-        target_type=dict(choices=['instance', 'ip', 'lambda', 'alb']),
+        target_type=dict(choices=['instance', 'ip', 'lambda', 'alb'], default="instance"),
         targets=dict(type='list', elements='dict'),
         unhealthy_threshold_count=dict(type='int'),
         vpc_id=dict(),
@@ -943,9 +944,6 @@ def main():
     ]
 
     module = AnsibleAWSModule(argument_spec=argument_spec, required_by=required_by, required_if=required_if)
-
-    if module.params.get('target_type') is None:
-        module.params['target_type'] = 'instance'
 
     connection = module.client('elbv2', retry_decorator=AWSRetry.jittered_backoff(retries=10))
 
