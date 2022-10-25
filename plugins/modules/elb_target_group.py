@@ -92,6 +92,7 @@ options:
   protocol_version:
     description:
       - Specifies protocol version.
+      - The protocol_version parameter is immutable and cannot be changed when updating an elb_target_group.
     required: false
     choices: ['GRPC', 'HTTP1', 'HTTP2']
     type: str
