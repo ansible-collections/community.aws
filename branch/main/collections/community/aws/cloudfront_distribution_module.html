@@ -847,6 +847,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-origins/connection_attempts"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-connection-attempts"><strong>connection_attempts</strong></p>
+<a class="ansibleOptionLink" href="#parameter-origins/connection_attempts" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of times that CloudFront attempts to connect to the origin. The minimum number is <code class="docutils literal notranslate"><span class="pre">1</span></code>, the maximum is <code class="docutils literal notranslate"><span class="pre">3</span></code>.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">3</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-origins/connection_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-connection-timeout"><strong>connection_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-origins/connection_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of seconds that CloudFront waits when trying to establish a connection to the origin. The minimum timeout is <code class="docutils literal notranslate"><span class="pre">1</span></code> second, the maximum is <code class="docutils literal notranslate"><span class="pre">10</span></code> seconds.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">10</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-origins/custom_headers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-custom-headers"><strong>custom_headers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-origins/custom_headers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -2263,6 +2279,24 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>List of origins.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/items/connection_attempts"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-connection-attempts"><strong>connection_attempts</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/items/connection_attempts" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of times that CloudFront attempts to connect to the origin.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">3</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/items/connection_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-connection-timeout"><strong>connection_timeout</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/items/connection_timeout" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of seconds that CloudFront waits when trying to establish a connection to the origin.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">10</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
