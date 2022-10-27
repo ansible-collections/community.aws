@@ -351,50 +351,54 @@ def _wait_deleted(client, module, name):
 def tag_parameter(client, module, parameter_name, tags):
     try:
         return client.add_tags_to_resource(aws_retry=True, ResourceType='Parameter',
-            ResourceId=parameter_name, Tags=tags)
+                                           ResourceId=parameter_name, Tags=tags)
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Failed to add tag(s) to parameter")
 
+
 def untag_parameter(client, module, parameter_name, tag_keys):
     try:
-        return client.remove_tags_from_resource(aws_retry=True, ResourceType='Parameter', 
-            ResourceId=parameter_name, TagKeys=tag_keys)
+        return client.remove_tags_from_resource(aws_retry=True, ResourceType='Parameter',
+                                                ResourceId=parameter_name, TagKeys=tag_keys)
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Failed to remove tag(s) from parameter")
 
+
 def get_parameter_tags(client, module, parameter_name):
     try:
-        tags = client.list_tags_for_resource(aws_retry=True, ResourceType='Parameter', 
-              ResourceId=parameter_name)['TagList']
+        tags = client.list_tags_for_resource(aws_retry=True, ResourceType='Parameter',
+                                             ResourceId=parameter_name)['TagList']
         tags_dict = boto3_tag_list_to_ansible_dict(tags)
         return tags_dict, tags
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Unable to retrieve parameter tags")
 
+
 def update_parameter_tags(client, module, parameter_name, supplied_tags):
     changed = False
     response = {}
-    
+
     if supplied_tags is None:
       return False, response
 
     current_tags, _ = get_parameter_tags(client, module, parameter_name)
-    tags_to_add, tags_to_remove = compare_aws_tags(current_tags, supplied_tags, 
-                                                  module.params.get('purge_tags'))
-    
+    tags_to_add, tags_to_remove = compare_aws_tags(current_tags, supplied_tags,
+                                                   module.params.get('purge_tags'))
+
     if tags_to_add:
         if module.check_mode:
           return True, response
         response = tag_parameter(client, module, parameter_name,
-                ansible_dict_to_boto3_tag_list(tags_to_add))
+                                 ansible_dict_to_boto3_tag_list(tags_to_add))
         changed = True
     if tags_to_remove:
         if module.check_mode:
           return True, response
         response = untag_parameter(client, module, parameter_name, tags_to_remove)
         changed = True
-    
+
     return changed, response
+
 
 def update_parameter(client, module, **args):
     changed = False
@@ -489,14 +493,14 @@ def create_update_parameter(client, module):
             # import time
             # time.sleep(300)
 
-        # Handle tag updates for existing parameters 
+        # Handle tag updates for existing parameters
         if (module.params.get('overwrite_value') != 'never'):
-            tags_changed, tags_response = update_parameter_tags(client, module, 
+            tags_changed, tags_response = update_parameter_tags(client, module,
                 existing_parameter['Parameter']['Name'], module.params.get('tags'))
 
             changed = changed or tags_changed
 
-            if tags_response:     
+            if tags_response:
                 response['tag_updates'] = tags_response
 
 
