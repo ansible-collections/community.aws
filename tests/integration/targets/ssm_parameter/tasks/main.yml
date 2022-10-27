@@ -1493,4 +1493,3 @@
     with_items:
       - '{{ simple_name }}'
       - '{{ simple_tag_param_name }}'
-

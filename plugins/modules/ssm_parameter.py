@@ -488,7 +488,7 @@ def create_update_parameter(client, module):
             _wait_updated(client, module, module.params.get('name'), original_version)
             # import time
             # time.sleep(300)
-                
+
         # Handle tag updates for existing parameters 
         if (module.params.get('overwrite_value') != 'never'):
             tags_changed, tags_response = update_parameter_tags(client, module, 
@@ -500,12 +500,12 @@ def create_update_parameter(client, module):
                 response['tag_updates'] = tags_response
 
 
-    else:    
+    else:
         # Add tags in initial creation request
         if (module.params.get('tags')):
-          args.update(Tags=ansible_dict_to_boto3_tag_list(module.params.get('tags')))
-          # Overwrite=True conflicts with tags and is not needed for new param
-          args.update(Overwrite=False) 
+            args.update(Tags=ansible_dict_to_boto3_tag_list(module.params.get('tags')))
+            # Overwrite=True conflicts with tags and is not needed for new param
+            args.update(Overwrite=False)
 
         (changed, response) = update_parameter(client, module, **args)
         _wait_exists(client, module, module.params.get('name'))
