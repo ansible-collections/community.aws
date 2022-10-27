@@ -76,6 +76,19 @@ options:
     default: Standard
     type: str
     version_added: 1.5.0
+  tags:
+    description:
+      - A dictionary of tags to add or remove from the resource.
+    type: dict
+  purge_tags:
+        description:
+            - If I(purge_tags=true) and I(tags) is set, existing tags will be purged
+              from the resource to match exactly what is defined by I(tags) parameter.
+            - If the I(tags) parameter is not set then tags will not be modified, even
+              if I(purge_tags=True).
+        type: bool
+        default: true
+        required: false
 seealso:
   - ref: amazon.aws.aws_ssm lookup <ansible_collections.amazon.aws.aws_ssm_lookup>
     description: The documentation for the C(amazon.aws.aws_ssm) lookup plugin.
