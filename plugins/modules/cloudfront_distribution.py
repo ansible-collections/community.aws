@@ -1759,12 +1759,13 @@ class CloudFrontValidationManager(object):
                 origin['custom_headers'] = ansible_list_to_cloudfront_list()
             if 'origin_shield' in origin:
                 origin_shield = origin.get('origin_shield')
-                if origin_shield.get('enabled') is not None:
-                    if origin_shield['enabled']:
-                        origin_shield_region = origin_shield.get('origin_shield_region').lower()
-                        if origin_shield_region is None:
-                            self.module.fail_json(msg="origins[].origin_shield.origin_shield_region must be specified"
+                if origin_shield.get('enabled'):
+                    origin_shield_region = origin_shield.get('origin_shield_region')
+                    if origin_shield_region is None:
+                        self.module.fail_json(msg="origins[].origin_shield.origin_shield_region must be specified"
                                                   " when origins[].origin_shield.enabled is true.")
+                    else:
+                        origin_shield_region = origin_shield_region.lower()
             if self.__s3_bucket_domain_identifier in origin.get('domain_name').lower():
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     if origin['s3_origin_access_identity_enabled']:
