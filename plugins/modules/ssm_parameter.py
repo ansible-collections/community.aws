@@ -392,7 +392,7 @@ def update_parameter_tags(client, module, parameter_name, supplied_tags):
     response = {}
 
     if supplied_tags is None:
-      return False, response
+        return False, response
 
     current_tags = get_parameter_tags(client, module, parameter_name)[0]
     tags_to_add, tags_to_remove = compare_aws_tags(current_tags, supplied_tags,
@@ -400,13 +400,13 @@ def update_parameter_tags(client, module, parameter_name, supplied_tags):
 
     if tags_to_add:
         if module.check_mode:
-          return True, response
+            return True, response
         response = tag_parameter(client, module, parameter_name,
                                  ansible_dict_to_boto3_tag_list(tags_to_add))
         changed = True
     if tags_to_remove:
         if module.check_mode:
-          return True, response
+            return True, response
         response = untag_parameter(client, module, parameter_name, tags_to_remove)
         changed = True
 
@@ -422,8 +422,8 @@ def update_parameter(client, module, **args):
     try:
         response = client.put_parameter(aws_retry=True, **args)
         changed = True
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="setting parameter")
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as exc:
+        module.fail_json_aws(exc, msg="setting parameter")
 
     return changed, response
 
@@ -508,18 +508,18 @@ def create_update_parameter(client, module):
 
         # Handle tag updates for existing parameters
         if (module.params.get('overwrite_value') != 'never'):
-            tags_changed, tags_response = update_parameter_tags(client, module,
-                existing_parameter['Parameter']['Name'], module.params.get('tags'))
+            tags_changed, tags_response = update_parameter_tags(
+                client, module, existing_parameter['Parameter']['Name'],
+                module.params.get('tags'))
 
             changed = changed or tags_changed
 
             if tags_response:
                 response['tag_updates'] = tags_response
 
-
     else:
         # Add tags in initial creation request
-        if (module.params.get('tags')):
+        if module.params.get('tags'):
             args.update(Tags=ansible_dict_to_boto3_tag_list(module.params.get('tags')))
             # Overwrite=True conflicts with tags and is not needed for new param
             args.update(Overwrite=False)
