@@ -165,7 +165,7 @@ EXAMPLES = '''
 - name: Add or update a tag on an existing parameter w/o removing existing tags
   community.aws.ssm_paramater:
     name: "Hello"
-    purge_tags: False    
+    purge_tags: false
     tags:
       Contact: "person1"
 
