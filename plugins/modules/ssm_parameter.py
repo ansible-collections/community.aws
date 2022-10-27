@@ -568,7 +568,7 @@ def setup_module_object():
         key_id=dict(default="alias/aws/ssm"),
         overwrite_value=dict(default='changed', choices=['never', 'changed', 'always']),
         tier=dict(default='Standard', choices=['Standard', 'Advanced', 'Intelligent-Tiering']),
-        tags=dict(type='dict'),
+        tags=dict(type='dict', aliases=['resource_tags']),
         purge_tags=dict(type='bool', default=True),
     )
 
