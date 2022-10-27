@@ -394,7 +394,7 @@ def update_parameter_tags(client, module, parameter_name, supplied_tags):
     if supplied_tags is None:
       return False, response
 
-    current_tags, _ = get_parameter_tags(client, module, parameter_name)
+    current_tags = get_parameter_tags(client, module, parameter_name)[0]
     tags_to_add, tags_to_remove = compare_aws_tags(current_tags, supplied_tags,
                                                    module.params.get('purge_tags'))
 
