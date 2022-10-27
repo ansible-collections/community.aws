@@ -1483,6 +1483,84 @@
     with_items:
       - '{{ simple_tag_param_name }}'
 
+  # ============================================================
+  # Test tags - No tags parameter (purge_tags=true) case # should be no change
+
+  - name: No tags parameter (purge_tags=true) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: No tags parameter (purge_tags=true) - Change tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_updated_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: No tags parameter (purge_tags=true) - Change tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_updated_description }}'
+    register: result
+
+  - name: No tags parameter (purge_tags=true) - Ensure expected tags_dict is correct
+    assert:
+      that:
+        - >
+          result.parameter_metadata.tags_dict['{{ item.key }}']
+           == simple_tags_orig['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | dict2items }}
+    loop_control:
+      extended: true
+
+  - name: No tags parameter (purge_tags=true) - Ensure no missing or additional tags
+    assert:
+      that:
+        - >
+          result.parameter_metadata.tags_dict | length 
+          == {{ simple_tags_orig | dict2items }} | length
+
+  - name: No tags parameter (purge_tags=true) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+        - result is changed
+        - lookup_value == simple_tag_param_value
+        - '"parameter_metadata" in result'
+        - '"data_type" in result.parameter_metadata'
+        - '"description" in result.parameter_metadata'
+        - '"last_modified_date" in result.parameter_metadata'
+        - '"last_modified_user" in result.parameter_metadata'
+        - '"name" in result.parameter_metadata'
+        - '"policies" in result.parameter_metadata'
+        - '"tier" in result.parameter_metadata'
+        - '"type" in result.parameter_metadata'
+        - '"version" in result.parameter_metadata'
+        - '"tags" in result.parameter_metadata'
+        - result.parameter_metadata.data_type == 'text'
+        - result.parameter_metadata.description == simple_tag_param_updated_description
+        - result.parameter_metadata.name == simple_tag_param_name
+        - result.parameter_metadata.policies | length == 0
+        - result.parameter_metadata.tier == 'Standard'
+        - result.parameter_metadata.type == 'String'
+
+  - name: No tags parameter (purge_tags=true) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: true
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
   always:
   # ============================================================
   - name: Delete remaining key/value pairs in aws parameter store
