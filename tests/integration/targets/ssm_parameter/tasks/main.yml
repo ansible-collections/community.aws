@@ -23,6 +23,64 @@
     simple_value: 'A simple VALue'
     updated_description: 'This is an updated example'
     updated_value: 'A simple VALue **UPDATED**'
+    simple_tag_param_name: '/{{ ssm_key_prefix }}/SimpleWithTags'
+    simple_tag_param_description: 'This is a simple example with tags'
+    simple_tag_param_updated_description: 'This is a simple example with tags (updated description)'
+    simple_tag_param_value: 'A simple VALue (w/ tags)'
+    single_tag:
+      Contact: "non-existent@ansible.com"
+    simple_tags_orig:
+      Contact: "non-existent@ansible.com"
+      Environment: "dev"
+      Version: "1.0"
+      Confidentiality: "low"
+      Tag With Space: "tag value with spaces"
+    simple_tags_add_owner:
+      Contact: "non-existent@ansible.com"
+      Environment: "dev"
+      Version: "1.0"
+      Confidentiality: "low"
+      Tag With Space: "foo"
+      Owner: "AWS"
+    simple_tags_change_environment:
+      Contact: "non-existent@ansible.com"
+      Environment: "test"
+      Version: "1.0"
+      Confidentiality: "low"
+      Tag With Space: "foo"
+    simple_tags_delete_version:
+      Contact: "non-existent@ansible.com"
+      Environment: "dev"
+      Confidentiality: "low"
+      Tag With Space: "foo"
+    simple_tags_delete_tag_with_space:
+      Contact: "non-existent@ansible.com"
+      Environment: "dev"
+      Version: "1.0"
+      Confidentiality: "low"
+    simple_tags_add_delete_change: 
+      Contact: "non-existent@ansible.com"
+      Environment: "test"
+      Confidentiality: "low"
+      Tag With Space: "foo"
+      Owner: "AWS"
+    simple_tags_delete_all_tags: {}
+    simple_tags_purge_false_add_owner:
+      Owner: "AWS"
+    simple_tags_purge_false_add_multiple:
+      Contact1: "person1"
+      Contact2: "person2"
+      Contact3: "person3"
+    simple_tags_purge_false_change_environment:
+      Environment: "test"
+    simple_tags_purge_false_change_multiple:
+      Environment: "test"
+      Version: "2.0"
+      Confidentiality: "med"
+      Tag With Space: "tag value even more spaces"
+    simple_tags_purge_false_add_and_change:
+      Owner: "AWS"
+      Environment: "test"
   block:
 
   # ============================================================
@@ -438,6 +496,1093 @@
         - result is changed
         - '"description" in result.parameter_metadata'
         - result.parameter_metadata.description == simple_description
+  # ============================================================
+  # Test tags - Create parameter with tags case
+
+  - name: Create parameter with tags case - Create parameter (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Create parameter with tags case - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Create parameter with tags case - Ensure tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+    loop: "{{ simple_tags_orig | dict2items }}"
+  
+  - name: Create parameter with tags case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_orig | length
+
+  - name: Create parameter with tags case - Ensure only tags have changed
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  # ============================================================
+  # Test tags - Update description only case
+
+  - name: Update description only case - Update parameter (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_updated_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Update description only case - Update parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_updated_description }}'
+    register: result
+
+  - name: Update description only case - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+    loop: "{{ simple_tags_orig | dict2items }}"
+  
+  - name: Update description only case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_orig | length
+
+  - name: Update description only case - Ensure only description changed
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_updated_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+  
+  # ============================================================
+  # Test tags - Add tag to existing parameter case
+
+  - name: Add tag to existing parameter case - Update parameter (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_add_owner }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Add tag to existing parameter case - Update parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_add_owner }}'
+    register: result
+
+  - name: Add tag to existing parameter case - Ensure tags_dict correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_add_owner['{{ item.key }}']
+    loop: "{{ simple_tags_add_owner | dict2items }}"
+  
+  - name: Add tag to existing parameter case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_add_owner | length
+
+  - name: Add tag to existing parameter case - Ensure only tags changed
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_updated_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Add tag to existing parameter case - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+  
+  # ============================================================
+  # Test tags - update tags only - change tag
+
+  - name: Change single tag case - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Change single tag case - Update tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_change_environment }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+  
+  - name: Change single tag case - Update tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_change_environment }}'
+    register: result
+
+  - name: Change single tag case - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_change_environment['{{ item.key }}']
+    loop: "{{ simple_tags_change_environment | dict2items }}"
+  
+  - name: Change single tag case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_change_environment | length
+
+  - name: Change single tag case - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Change single tag case - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - delete tag case
+
+  - name: Delete single tag case - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Delete single tag case - Update tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_delete_version }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Delete single tag case - Update tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_delete_version }}'
+    register: result
+
+  - name: Delete single tag case - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_delete_version['{{ item.key }}']
+    loop: "{{ simple_tags_delete_version | dict2items }}"
+  
+  - name: Delete single tag case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_delete_version | length
+
+  - name: Delete single tag case - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Delete single tag case - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - delete tag w/ spaces case
+
+  - name: Delete single tag w/ spaces case - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Delete single tag w/ spaces case - Update tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_delete_tag_with_space }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Delete single tag w/ spaces case - Update tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_delete_tag_with_space }}'
+    register: result
+
+  - name: Delete single tag w/ spaces case - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_delete_tag_with_space['{{ item.key }}']
+    loop: "{{ simple_tags_delete_tag_with_space | dict2items }}"
+  
+  - name: Delete single tag w/ spaces case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_delete_tag_with_space | length
+
+  - name: Delete single tag w/ spaces case - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Delete single tag w/ spaces case - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Add/delete/change tags case
+
+  - name: Add/delete/change tags case - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Add/delete/change tags case - Update tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_add_delete_change }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Add/delete/change tags case - Update tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_add_delete_change }}'
+    register: result
+
+  - name: Add/delete/change tags case - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_add_delete_change['{{ item.key }}']
+    loop: "{{ simple_tags_add_delete_change | dict2items }}"
+  
+  - name: Add/delete/change tags case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_add_delete_change | length
+
+  - name: Add/delete/change tags case - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Add/delete/change tags case - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Delete all tags case
+
+  - name: Delete all tags case - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Delete all tags case - Update tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_delete_all_tags }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Delete all tags case - Update tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_delete_all_tags }}'
+    register: result
+
+  - name: Delete all tags case - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_delete_all_tags['{{ item.key }}']
+    loop: "{{ simple_tags_delete_all_tags | dict2items }}"
+  
+  - name: Delete all tags case - Ensure no missing or additional tags
+    assert:
+      that:
+      - result.parameter_metadata.tags_dict | length  == simple_tags_delete_all_tags | length
+
+  - name: Delete all tags case - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Delete all tags case - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Add tag case (purge_tags=false)
+
+  - name: Add tag case (purge_tags=false) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Add tag case (purge_tags=false) - Add tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_add_owner }}'
+      purge_tags: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Add tag case (purge_tags=false) - Add tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_add_owner }}'
+      purge_tags: False
+    register: result
+
+  - name: Add tag case (purge_tags=false) - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        (simple_tags_orig | combine(simple_tags_purge_false_add_owner))['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | combine(simple_tags_purge_false_add_owner) | dict2items }}
+  
+  - name: Add tag case (purge_tags=false) - Ensure no missing or additional tags
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        combine(simple_tags_purge_false_add_owner) | dict2items }} | length
+
+  - name: Add tag case (purge_tags=false) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Add tag case (purge_tags=false) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Add multiple tags case (purge_tags=false)
+
+  - name: Add multiple tags case (purge_tags=false) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Add multiple tags case (purge_tags=false) - Add tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_add_multiple }}'
+      purge_tags: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Add multiple tags case (purge_tags=false) - Add tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_add_multiple }}'
+      purge_tags: False
+    register: result
+
+  - name: Add multiple tags case (purge_tags=false) - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        (simple_tags_orig | combine(simple_tags_purge_false_add_multiple))['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | combine(simple_tags_purge_false_add_multiple) | dict2items }}
+  
+  - name: Add multiple tags case (purge_tags=false) - Ensure no missing or additional tags
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        combine(simple_tags_purge_false_add_multiple) | dict2items }} | length
+
+  - name: Add multiple tags case (purge_tags=false) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Add multiple tags case (purge_tags=false) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Change tag case (purge_tags=false)
+
+  - name: Change tag case (purge_tags=false) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Change tag case (purge_tags=false) - Change tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_change_environment}}'
+      purge_tags: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Change tag case (purge_tags=false) - Change tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_change_environment }}'
+      purge_tags: False
+    register: result
+
+  - name: Change tag case (purge_tags=false) - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        (simple_tags_orig | combine(simple_tags_purge_false_change_environment))['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | combine(simple_tags_purge_false_change_environment) | dict2items }}
+    loop_control:
+      extended: yes
+
+  
+  - name: Change tag case (purge_tags=false) - Ensure no missing or additional tags
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        combine(simple_tags_purge_false_change_environment) | dict2items }} | length
+
+  - name: Change tag case (purge_tags=false) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Change tag case (purge_tags=false) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Change multiple tags case (purge_tags=false)
+
+  - name: Change multiple tags (purge_tags=false) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Change multiple tags (purge_tags=false) - Change tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_change_multiple}}'
+      purge_tags: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Change multiple tags (purge_tags=false) - Change tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_change_multiple }}'
+      purge_tags: False
+    register: result
+
+  - name: Change multiple tags (purge_tags=false) - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        (simple_tags_orig | combine(simple_tags_purge_false_change_multiple))['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | combine(simple_tags_purge_false_change_multiple) | dict2items }}
+    loop_control:
+      extended: yes
+
+  
+  - name: Change multiple tags (purge_tags=false) - Ensure no missing or additional tags
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        combine(simple_tags_purge_false_change_multiple) | dict2items }} | length
+
+  - name: Change multiple tags (purge_tags=false) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Change multiple tags (purge_tags=false) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Add/Change multiple tags case (purge_tags=false)
+
+  - name: Add/Change multiple tags (purge_tags=false) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Add/Change multiple tags (purge_tags=false) - Change tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_add_and_change}}'
+      purge_tags: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: Add/Change multiple tags (purge_tags=false) - Change tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: '{{ simple_tags_purge_false_add_and_change }}'
+      purge_tags: False
+    register: result
+
+  - name: Add/Change multiple tags (purge_tags=false) - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        (simple_tags_orig | combine(simple_tags_purge_false_add_and_change))['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | combine(simple_tags_purge_false_add_and_change) | dict2items }}
+    loop_control:
+      extended: yes
+
+  
+  - name: Add/Change multiple tags (purge_tags=false) - Ensure no missing or additional tags
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        combine(simple_tags_purge_false_add_and_change) | dict2items }} | length
+
+  - name: Add/Change multiple tags (purge_tags=false) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result is changed
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Add/Change multiple tags (purge_tags=false) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - Empty tags dict case (purge_tags=false) # should be no change
+
+  - name: Empty tags dict (purge_tags=false) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: Empty tags dict (purge_tags=false) - Change tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: {}
+      purge_tags: False
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result != 'changed'
+
+  - name: Empty tags dict (purge_tags=false) - Change tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      tags: {}
+      purge_tags: False
+    register: result
+
+  - name: Empty tags dict (purge_tags=false) - Ensure expected tags_dict is correct
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | dict2items }}
+    loop_control:
+      extended: yes
+  
+  - name: Empty tags dict (purge_tags=false) - Ensure no missing or additional tags
+    assert:
+      that:
+      - >
+        result.parameter_metadata.tags_dict | length 
+        == {{ simple_tags_orig | dict2items }} | length
+
+  - name: Empty tags dict (purge_tags=false) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+      - result != 'changed'
+      - lookup_value == simple_tag_param_value
+      - '"parameter_metadata" in result'
+      - '"data_type" in result.parameter_metadata'
+      - '"description" in result.parameter_metadata'
+      - '"last_modified_date" in result.parameter_metadata'
+      - '"last_modified_user" in result.parameter_metadata'
+      - '"name" in result.parameter_metadata'
+      - '"policies" in result.parameter_metadata'
+      - '"tier" in result.parameter_metadata'
+      - '"type" in result.parameter_metadata'
+      - '"version" in result.parameter_metadata'
+      - '"tags" in result.parameter_metadata'
+      - result.parameter_metadata.data_type == 'text'
+      - result.parameter_metadata.description == simple_tag_param_description
+      - result.parameter_metadata.name == simple_tag_param_name
+      - result.parameter_metadata.policies | length == 0
+      - result.parameter_metadata.tier == 'Standard'
+      - result.parameter_metadata.type == 'String'
+
+  - name: Empty tags dict (purge_tags=false) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: True
+    with_items:
+      - '{{ simple_tag_param_name }}'
+
+  # ============================================================
+  # Test tags - No tags parameter (purge_tags=true) case # should be no change
+
+  - name: No tags parameter (purge_tags=true) - Create parameter
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_description }}'
+      value: '{{ simple_tag_param_value }}'
+      tags: '{{ simple_tags_orig }}'
+    register: result
+
+  - name: No tags parameter (purge_tags=true) - Change tag (CHECK)
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_updated_description }}'
+    register: result
+    check_mode: True
+  - assert:
+      that:
+      - result is changed
+
+  - name: No tags parameter (purge_tags=true) - Change tag
+    aws_ssm_parameter_store:
+      name: '{{ simple_tag_param_name }}'
+      description: '{{ simple_tag_param_updated_description }}'
+    register: result
+
+  - name: No tags parameter (purge_tags=true) - Ensure expected tags_dict is correct
+    assert:
+      that:
+        - >
+          result.parameter_metadata.tags_dict['{{ item.key }}']
+           == simple_tags_orig['{{ item.key }}']
+    loop: >
+      {{ simple_tags_orig | dict2items }}
+    loop_control:
+      extended: true
+
+  - name: No tags parameter (purge_tags=true) - Ensure no missing or additional tags
+    assert:
+      that:
+        - >
+          result.parameter_metadata.tags_dict | length 
+          == {{ simple_tags_orig | dict2items }} | length
+
+  - name: No tags parameter (purge_tags=true) - Lookup a tagged parameter
+    set_fact:
+      lookup_value: "{{ lookup('amazon.aws.aws_ssm', simple_tag_param_name, **connection_args) }}"
+  - assert:
+      that:
+        - result is changed
+        - lookup_value == simple_tag_param_value
+        - '"parameter_metadata" in result'
+        - '"data_type" in result.parameter_metadata'
+        - '"description" in result.parameter_metadata'
+        - '"last_modified_date" in result.parameter_metadata'
+        - '"last_modified_user" in result.parameter_metadata'
+        - '"name" in result.parameter_metadata'
+        - '"policies" in result.parameter_metadata'
+        - '"tier" in result.parameter_metadata'
+        - '"type" in result.parameter_metadata'
+        - '"version" in result.parameter_metadata'
+        - '"tags" in result.parameter_metadata'
+        - result.parameter_metadata.data_type == 'text'
+        - result.parameter_metadata.description == simple_tag_param_updated_description
+        - result.parameter_metadata.name == simple_tag_param_name
+        - result.parameter_metadata.policies | length == 0
+        - result.parameter_metadata.tier == 'Standard'
+        - result.parameter_metadata.type == 'String'
+
+  - name: No tags parameter (purge_tags=true) - Delete parameter
+    aws_ssm_parameter_store:
+      name: "{{item}}"
+      state: absent
+    ignore_errors: true
+    with_items:
+      - '{{ simple_tag_param_name }}'
 
   always:
   # ============================================================
@@ -448,3 +1593,4 @@
     ignore_errors: True
     with_items:
       - '{{ simple_name }}'
+      - '{{ simple_tag_param_name }}'
