@@ -249,11 +249,13 @@ parameter_metadata:
           type: str
           example: Some value.
           returned: success
+      version_added: 5.1.0
     tags_dict:
       description: A dictionary representing the tags associated with the parameter.
       type: dict
       returned: when the parameter has tags
       example: {'MyTagName': 'Some Value'}
+      version_added: 5.1.0
 '''
 
 import time
