@@ -1,0 +1,77 @@
+---
+- name: Run elb_target_group protocol_version tests
+  block:
+
+    # =====================================================================
+    - name: set up testing VPC
+      ec2_vpc_net:
+        name: "{{ resource_prefix }}-etg-protocol-version-vpc"
+        state: present
+        cidr_block: 20.0.0.0/16
+        tags:
+          Name: "{{ resource_prefix }}-etg-protocol-version-vpc"
+          Description: "Created by ansible-test"
+      register: vpc
+
+    # =====================================================================
+    - name: Create a target group with protocol_version 'GRPC'
+      community.aws.elb_target_group:
+        name: "{{ elb_target_group_name }}"
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
+        protocol_version: GRPC
+        state: present
+      register: create_result
+
+    - assert:
+        that:
+          - create_result is changed
+          - create_result is not failed
+          - create_result.protocol_version == "GRPC"
+          - create_result.protocol == "HTTP"
+          - create_result.port == 80
+
+    - name: Create a target group with protocol_version 'GRPC' (idempotence)
+      community.aws.elb_target_group:
+        name: "{{ elb_target_group_name }}"
+        protocol: http
+        port: 80
+        vpc_id: "{{ vpc.vpc.id }}"
+        protocol_version: GRPC
+        state: present
+      register: create_result
+
+    - assert:
+        that:
+          - create_result is not changed
+          - create_result is not failed
+          - create_result.protocol_version == "GRPC"
+          - create_result.protocol == "HTTP"
+          - create_result.port == 80
+
+    # =====================================================================
+
+  always:
+    - name: Remove elb target group
+      elb_target_group:
+        name: "{{ elb_target_group_name }}"
+        state: absent
+      ignore_errors: true
+      register: deletion_result
+
+    - name: remove testing VPC
+      ec2_vpc_net:
+        name: "{{ resource_prefix }}-etg-protocol-version-vpc"
+        cidr_block: 20.0.0.0/16
+        state: absent
+      register: removed
+      retries: 10
+      until: removed is not failed
+      ignore_errors: true
+
+    - name: Ensure elb_target_group deletion
+      assert:
+        that:
+          - deletion_result is changed
+          - deletion_result is not failed
