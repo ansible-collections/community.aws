@@ -58,6 +58,7 @@ options:
         to 2.4, for VPC instances, specify security group IDs and for EC2-Classic, specify either security group names or IDs.
     type: list
     elements: str
+    default: []
   volumes:
     description:
       - A list dictionaries defining the volumes to create.
