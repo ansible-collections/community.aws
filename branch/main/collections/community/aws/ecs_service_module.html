@@ -208,6 +208,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <p><span class="ansible-option-versionadded">added in community.aws 4.0.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The capacity provider strategy to use with your service. You can specify a maximum of 6 providers per strategy.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -236,6 +237,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-client_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Unique, case-sensitive identifier you provide to ensure the idempotency of the request. Up to 32 ASCII characters are allowed.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -274,6 +276,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>Optional parameters that control the deployment_configuration.</p>
 <p>Format is ‘{“maximum_percent”:&lt;integer&gt;, “minimum_healthy_percent”:&lt;integer&gt;}</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -327,6 +330,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The deployment controller to use for the service. If no deploymenet controller is specified, the ECS controller is used.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -415,6 +419,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <td><div class="ansible-option-cell"><p>The list of ELBs defined for this service.</p>
 <p>Load balancers for an existing service cannot be updated, and it is an error to do so.</p>
 <p>When the deployment controller is CODE_DEPLOY changes to this value are simply ignored, and do not cause an error.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -465,6 +470,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>The placement constraints for the tasks in the service.</p>
 <p>See <a class="reference external" href="https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PlacementConstraint.html">https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PlacementConstraint.html</a> for more details.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -486,6 +492,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-placement_strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The placement strategy objects to use for tasks in your service. You can specify a maximum of 5 strategy rules per service.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -565,6 +572,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 </div></td>
 <td><div class="ansible-option-cell"><p>The name or full Amazon Resource Name (ARN) of the IAM role that allows your Amazon ECS container agent to make calls to your load balancer on your behalf.</p>
 <p>This parameter is only required if you are using a load balancer with your service in a network mode other than <code class="docutils literal notranslate"><span class="pre">awsvpc</span></code>.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -602,6 +610,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-service_registries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Describes service discovery registries this service will register with.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
