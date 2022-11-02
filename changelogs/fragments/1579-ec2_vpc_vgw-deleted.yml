@@ -1,0 +1,2 @@
+trivial:
+- ec2_vpc_vgw - update integration tests to allow for attachments being removed from the list once deleted (https://github.com/ansible-collections/community.aws/pull/1579).
