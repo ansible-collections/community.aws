@@ -106,11 +106,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Collection Index</a> &raquo;</li>
-          <li><a href="../index.html">Collections in the Community Namespace</a> &raquo;</li>
-          <li><a href="index.html">Community.Aws</a> &raquo;</li>
-      <li>community.aws.networkfirewall_rule_group module – create, delete and modify AWS Network Firewall rule groups</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
+      <li class="breadcrumb-item active">community.aws.networkfirewall_rule_group module – create, delete and modify AWS Network Firewall rule groups</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/networkfirewall_rule_group.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
@@ -171,6 +171,23 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-access-key"></span><strong>access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS access key ID.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_access_key_id</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_access_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-arn"><strong>arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -178,23 +195,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Exactly one of <em>arn</em> and <em>name</em> must be provided.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-access-key"></span><strong>aws_access_key</strong></p>
-<a class="ansibleOptionLink" href="#parameter-aws_access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_access_key, access_key</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">access</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable is used.</p>
-<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
-</div></td>
-</tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
-<p>Note: The CA Bundle is read ‘module’ side and may need to be explicitly copied from the controller if not run locally.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code> environment variable may also be used.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -202,21 +208,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
-<p>Parameters can be found at <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
+<p>Parameters can be found in the AWS documentation <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-secret-key"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-secret-key"></span><strong>aws_secret_key</strong></p>
-<a class="ansibleOptionLink" href="#parameter-aws_secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_secret_key, secret_key</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">secret</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable is used.</p>
-<p>The <em>aws_secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-capacity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-capacity"><strong>capacity</strong></p>
 <a class="ansibleOptionLink" href="#parameter-capacity" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -226,11 +221,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>This option is mandatory when creating a new rule group.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
+<td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ANSIBLE_DEBUG_BOTOCORE_LOGS</span></code> environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -238,14 +234,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-description"><strong>description</strong></p>
 <a class="ansibleOptionLink" href="#parameter-description" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A description of the AWS Network Firewall rule group.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_list"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list"><strong>domain_list</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_list" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -257,7 +253,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Exactly one of <em>rule_strings</em>, <em>domain_list</em> or <em>rule_list</em> must be specified at creation time.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_list/action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-action"><strong>action</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_list/action" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -269,14 +265,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_list/domain_names"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-domain-names"><strong>domain_names</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_list/domain_names" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of domain names to look for in the traffic flow.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_list/filter_http"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-filter-http"><strong>filter_http</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_list/filter_http" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -288,7 +284,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_list/filter_https"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-filter-https"><strong>filter_https</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_list/filter_https" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -300,14 +296,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-domain_list/source_ips"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-domain-list-source-ips"><strong>source_ips</strong></p>
 <a class="ansibleOptionLink" href="#parameter-domain_list/source_ips" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Used to expand the local network definition beyond the CIDR range of the VPC where you deploy Network Firewall.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -315,10 +311,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
+<td><div class="ansible-option-cell"><p>URL to connect to instead of the default AWS endpoints.  While this can be used to connection to other AWS-compatible services the amazon.aws and community.aws collections are only tested against AWS.</p>
+<p>The  <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variables may also be used, in decreasing order of preference.</p>
+<p>The <em>ec2_url</em> and <em>s3_url</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-ip_variables"></div>
 <div class="ansibleOptionAnchor" id="parameter-ip_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ip-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ip-set-variables"></span><strong>ip_variables</strong></p>
 <a class="ansibleOptionLink" href="#parameter-ip_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ip_set_variables</span></p>
@@ -329,7 +328,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Mutually exclusive with <em>domain_list</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -337,7 +336,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>When <em>name</em> is set, <em>rule_type</em> must also be set.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-port_variables"></div>
 <div class="ansibleOptionAnchor" id="parameter-port_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-port-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-port-set-variables"></span><strong>port_variables</strong></p>
 <a class="ansibleOptionLink" href="#parameter-port_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: port_set_variables</span></p>
@@ -347,16 +346,19 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>For example <code class="docutils literal notranslate"><span class="pre">{SECURE_PORTS:[&quot;22&quot;,</span> <span class="pre">&quot;443&quot;]}</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-profile"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+<td><div class="ansible-option-cell"><p>A named AWS profile to use for authentication.</p>
+<p>See the AWS documentation for more information about named profiles <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> environment variable may also be used.</p>
+<p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_ip_variables"></div>
 <div class="ansibleOptionAnchor" id="parameter-purge_ip_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-ip-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-ip-set-variables"></span><strong>purge_ip_variables</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_ip_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: purge_ip_set_variables</span></p>
@@ -371,7 +373,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_port_variables"></div>
 <div class="ansibleOptionAnchor" id="parameter-purge_port_set_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-port-variables"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-port-set-variables"></span><strong>purge_port_variables</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_port_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: purge_port_set_variables</span></p>
@@ -386,7 +388,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-purge-tags"><strong>purge_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -400,17 +402,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-region"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-region"></span><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></p>
+<td><div class="ansible-option-cell"><p>The AWS region to use.</p>
+<p>For global services such as IAM, Route53 and CloudFront, <em>region</em> is ignored.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variables may also be used.</p>
+<p>See the Amazon AWS documentation for more information <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ec2_region</span></code> alias has been deprecated and will be removed in a release after 2024-12-01</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list"></span><strong>rule_list</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: stateful_rule_list</span></p>
@@ -425,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Note: Idempotency when comparing AWS Web UI and Ansiible managed rules can not be guaranteed</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/action"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/action"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-action"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-action"></span><strong>action</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/action" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
@@ -439,7 +446,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/destination"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/destination"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-destination"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-destination"></span><strong>destination</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/destination" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
@@ -448,7 +455,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>To match with any address, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/destination_port"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/destination_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-destination-port"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-destination-port"></span><strong>destination_port</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/destination_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
@@ -457,7 +464,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>To match with any port, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/direction"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/direction"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-direction"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-direction"></span><strong>direction</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/direction" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
@@ -472,7 +479,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/protocol"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-protocol"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-protocol"></span><strong>protocol</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
@@ -480,7 +487,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The protocol to inspect for. To specify all, you can use <code class="docutils literal notranslate"><span class="pre">IP</span></code>, because all traffic on AWS is <code class="docutils literal notranslate"><span class="pre">IP</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/rule_options"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/rule_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-rule-options"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-rule-options"></span><strong>rule_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/rule_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
@@ -492,7 +499,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>For more information read the AWS documentation <a class="reference external" href="https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-limitations-caveats.html">https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-limitations-caveats.html</a> and the Suricata documentation <a class="reference external" href="https://suricata.readthedocs.io/en/suricata-6.0.0/rules/intro.html">https://suricata.readthedocs.io/en/suricata-6.0.0/rules/intro.html</a>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/sid"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/sid"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-sid"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-sid"></span><strong>sid</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/sid" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
@@ -501,7 +508,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>A unique <em>sid</em> must be passed for all rules.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/source"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-source"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-source"></span><strong>source</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/source" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
@@ -510,7 +517,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>To match with any address, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_list/source_port"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_list/source_port"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-list-source-port"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-list-source-port"></span><strong>source_port</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_list/source_port" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
@@ -519,7 +526,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>To match with any port, specify <code class="docutils literal notranslate"><span class="pre">ANY</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_order"></div>
 <div class="ansibleOptionAnchor" id="parameter-stateful_rule_order"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-stateful-rule-order"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-order"></span><strong>rule_order</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_order" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: stateful_rule_order</span></p>
@@ -537,7 +544,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_strings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-strings"><strong>rule_strings</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_strings" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -549,7 +556,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Exactly one of <em>rule_strings</em>, <em>domain_list</em> or <em>rule_list</em> must be specified at creation time.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_type"></div>
 <div class="ansibleOptionAnchor" id="parameter-type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-type"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-rule-type"></span><strong>rule_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: type</span></p>
@@ -564,18 +571,39 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-session-token"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-security-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-access-token"></span><strong>security_token</strong></p>
-<a class="ansibleOptionLink" href="#parameter-security_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, session_token, aws_security_token, access_token</span></p>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-secret-key"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">STS</span> <span class="pre">security</span> <span class="pre">token</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variable is used.</p>
+<td><div class="ansible-option-cell"><p>AWS secret access key.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_secret_access_key</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_secret_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-session-token"><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-security-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-access-token"></span><strong>session_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS STS session token for use with temporary credentials.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variables may also be used in decreasing order of preference.</p>
 <p>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</p>
-<p>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</p>
+<p>Aliases <em>aws_session_token</em> and <em>session_token</em> were added in release 3.2.0, with the parameter being renamed from <em>security_token</em> to <em>session_token</em> in release 6.0.0.</p>
+<p>The <em>security_token</em>, <em>aws_security_token</em>, and <em>access_token</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -604,7 +632,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-networkfirewall-rule-group-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<p>Setting <em>validate_certs=false</em> is strongly discouraged, as an alternative, consider setting <em>aws_ca_bundle</em> instead.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
@@ -640,9 +669,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_DEFAULT_PROFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code></p></li>
-<li><p>When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.</p></li>
+<li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
+<li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
 </div>
 </section>

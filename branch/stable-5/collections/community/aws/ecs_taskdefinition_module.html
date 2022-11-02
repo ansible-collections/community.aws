@@ -106,11 +106,11 @@
         <div class="rst-content">
           <div role="navigation" aria-label="Page navigation">
   <ul class="wy-breadcrumbs">
-      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
-          <li><a href="../../index.html">Collection Index</a> &raquo;</li>
-          <li><a href="../index.html">Collections in the Community Namespace</a> &raquo;</li>
-          <li><a href="index.html">Community.Aws</a> &raquo;</li>
-      <li>community.aws.ecs_taskdefinition module – register a task definition in ecs</li>
+      <li><a href="../../../index.html" class="icon icon-home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
+      <li class="breadcrumb-item active">community.aws.ecs_taskdefinition module – register a task definition in ecs</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/ecs_taskdefinition.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
@@ -169,21 +169,27 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-access-key"></span><strong>access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS access key ID.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_access_key_id</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_access_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-arn"><strong>arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The ARN of the task description to delete.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-access-key"></span><strong>aws_access_key</strong></p>
-<a class="ansibleOptionLink" href="#parameter-aws_access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_access_key, access_key</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">access</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable is used.</p>
-<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -191,7 +197,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
-<p>Note: The CA Bundle is read ‘module’ side and may need to be explicitly copied from the controller if not run locally.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code> environment variable may also be used.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -199,21 +205,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
-<p>Parameters can be found at <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
+<p>Parameters can be found in the AWS documentation <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-secret-key"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-secret-key"></span><strong>aws_secret_key</strong></p>
-<a class="ansibleOptionLink" href="#parameter-aws_secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_secret_key, secret_key</span></p>
-<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">secret</span> <span class="pre">key</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable is used.</p>
-<p>The <em>aws_secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers"><strong>containers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -221,21 +216,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html">https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/ecs.html</a> for a complete list of parameters.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/command"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-command"><strong>command</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/command" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The command that is passed to the container. If there are multiple arguments, each argument is a separated string in the array.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/cpu"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-cpu"><strong>cpu</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/cpu" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of cpu units reserved for the container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dependsOn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dependson"><strong>dependsOn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dependsOn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -243,7 +238,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>When a dependency is defined for container startup, for container shutdown it is reversed.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dependsOn/condition"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dependson-condition"><strong>condition</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dependsOn/condition" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -257,14 +252,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dependsOn/containerName"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dependson-containername"><strong>containerName</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dependsOn/containerName" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of a container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/disableNetworking"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-disablenetworking"><strong>disableNetworking</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/disableNetworking" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -276,7 +271,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dnsSearchDomains"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dnssearchdomains"><strong>dnsSearchDomains</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dnsSearchDomains" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -284,7 +279,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported for Windows containers.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dnsServers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dnsservers"><strong>dnsServers</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dnsServers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -292,14 +287,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported for Windows containers.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dockerLabels"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dockerlabels"><strong>dockerLabels</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dockerLabels" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A key/value map of labels to add to the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/dockerSecurityOptions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-dockersecurityoptions"><strong>dockerSecurityOptions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/dockerSecurityOptions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -307,56 +302,56 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported for Windows containers.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/entryPoint"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-entrypoint"><strong>entryPoint</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/entryPoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The entry point that is passed to the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/environment"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-environment"><strong>environment</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/environment" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The environment variables to pass to a container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/environment/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-environment-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/environment/name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the key-value pair.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/environment/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-environment-value"><strong>value</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/environment/value" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value of the key-value pair.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/environmentFiles"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-environmentfiles"><strong>environmentFiles</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/environmentFiles" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of files containing the environment variables to pass to a container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/environmentFiles/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-environmentfiles-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/environmentFiles/type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The file type to use. The only supported value is <code class="docutils literal notranslate"><span class="pre">s3</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/environmentFiles/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-environmentfiles-value"><strong>value</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/environmentFiles/value" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the Amazon S3 object containing the environment variable file.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/essential"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-essential"><strong>essential</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/essential" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -368,7 +363,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/extraHosts"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-extrahosts"><strong>extraHosts</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/extraHosts" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -376,28 +371,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported for Windows containers or tasks that use <em>network_mode=awsvpc</em>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/extraHosts/hostname"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-extrahosts-hostname"><strong>hostname</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/extraHosts/hostname" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The hostname to use in the /etc/hosts entry.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/extraHosts/ipAddress"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-extrahosts-ipaddress"><strong>ipAddress</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/extraHosts/ipAddress" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The IP address to use in the /etc/hosts entry.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/healthCheck"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-healthcheck"><strong>healthCheck</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/healthCheck" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The health check command and associated configuration parameters for the container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/hostname"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-hostname"><strong>hostname</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/hostname" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -405,14 +400,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported if <em>network_mode=awsvpc</em>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/image"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-image"><strong>image</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/image" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The image used to start a container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/interactive"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-interactive"><strong>interactive</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/interactive" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -424,7 +419,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/links"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-links"><strong>links</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/links" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -432,21 +427,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is only supported if <em>network_mode=bridge</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters"><strong>linuxParameters</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Linux-specific modifications that are applied to the container, such as Linux kernel capabilities.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/capabilities"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-capabilities"><strong>capabilities</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/capabilities" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Linux capabilities for the container that are added to or dropped from the default configuration provided by Docker.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/capabilities/add"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-capabilities-add"><strong>add</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/capabilities/add" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -495,7 +490,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/capabilities/drop"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-capabilities-drop"><strong>drop</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/capabilities/drop" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -543,7 +538,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/devices"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-devices"><strong>devices</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/devices" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -551,28 +546,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this parameter is not supported.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/devices/containerPath"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-devices-containerpath"><strong>containerPath</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/devices/containerPath" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The path inside the container at which to expose the host device.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/devices/hostPath"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-devices-hostpath"><strong>hostPath</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/devices/hostPath" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The path for the device on the host container instance.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/devices/permissions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-devices-permissions"><strong>permissions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/devices/permissions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The explicit permissions to provide to the container for the device.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/initProcessEnabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-initprocessenabled"><strong>initProcessEnabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/initProcessEnabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -584,7 +579,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/maxSwap"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-maxswap"><strong>maxSwap</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/maxSwap" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -592,7 +587,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this parameter is not supported.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/sharedMemorySize"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-sharedmemorysize"><strong>sharedMemorySize</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/sharedMemorySize" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -600,7 +595,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this parameter is not supported.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/swappiness"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-swappiness"><strong>swappiness</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/swappiness" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -608,7 +603,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this parameter is not supported.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/tmpfs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-tmpfs"><strong>tmpfs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/tmpfs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -616,14 +611,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this parameter is not supported.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/tmpfs/containerPath"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-tmpfs-containerpath"><strong>containerPath</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/tmpfs/containerPath" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The absolute file path where the tmpfs volume is to be mounted.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/tmpfs/mountOptions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-tmpfs-mountoptions"><strong>mountOptions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/tmpfs/mountOptions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -672,21 +667,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/linuxParameters/tmpfs/size"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-linuxparameters-tmpfs-size"><strong>size</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/linuxParameters/tmpfs/size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The size (in MiB) of the tmpfs volume.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/logConfiguration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-logconfiguration"><strong>logConfiguration</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/logConfiguration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The log configuration specification for the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/logConfiguration/logDriver"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-logconfiguration-logdriver"><strong>logDriver</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/logConfiguration/logDriver" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -695,35 +690,35 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>For tasks hosted on Amazon EC2 instances, the supported log drivers are <code class="docutils literal notranslate"><span class="pre">awslogs</span></code>, <code class="docutils literal notranslate"><span class="pre">fluentd</span></code>, <code class="docutils literal notranslate"><span class="pre">gelf</span></code>, <code class="docutils literal notranslate"><span class="pre">json-file</span></code>, <code class="docutils literal notranslate"><span class="pre">journald</span></code>, <code class="docutils literal notranslate"><span class="pre">logentries</span></code>, <code class="docutils literal notranslate"><span class="pre">syslog</span></code>, <code class="docutils literal notranslate"><span class="pre">splunk</span></code>, and <code class="docutils literal notranslate"><span class="pre">awsfirelens</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/memory"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-memory"><strong>memory</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/memory" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The amount (in MiB) of memory to present to the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/memoryReservation"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-memoryreservation"><strong>memoryReservation</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/memoryReservation" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The soft limit (in MiB) of memory to reserve for the container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/mountPoints"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-mountpoints"><strong>mountPoints</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/mountPoints" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The mount points for data volumes in your container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/mountPoints/containerPath"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-mountpoints-containerpath"><strong>containerPath</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/mountPoints/containerPath" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The path on the container to mount the host volume at.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/mountPoints/readOnly"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-mountpoints-readonly"><strong>readOnly</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/mountPoints/readOnly" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -736,49 +731,49 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/mountPoints/sourceVolume"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-mountpoints-sourcevolume"><strong>sourceVolume</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/mountPoints/sourceVolume" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the volume to mount.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of a container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-options"><strong>options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The configuration options to send to the log driver.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/portMappings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-portmappings"><strong>portMappings</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/portMappings" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The list of port mappings for the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/portMappings/containerPort"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-portmappings-containerport"><strong>containerPort</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/portMappings/containerPort" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The port number on the container that is bound to the user-specified or automatically assigned host port.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/portMappings/hostPort"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-portmappings-hostport"><strong>hostPort</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/portMappings/hostPort" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The port number on the container instance to reserve for your container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/portMappings/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-portmappings-protocol"><strong>protocol</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/portMappings/protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -790,7 +785,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/privileged"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-privileged"><strong>privileged</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/privileged" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -802,7 +797,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/pseudoTerminal"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-pseudoterminal"><strong>pseudoTerminal</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/pseudoTerminal" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -814,7 +809,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/readonlyRootFilesystem"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-readonlyrootfilesystem"><strong>readonlyRootFilesystem</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/readonlyRootFilesystem" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -826,21 +821,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/repositoryCredentials"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-repositorycredentials"><strong>repositoryCredentials</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/repositoryCredentials" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The private repository authentication credentials to use.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/repositoryCredentials/credentialsParameter"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-repositorycredentials-credentialsparameter"><strong>credentialsParameter</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/repositoryCredentials/credentialsParameter" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the secret containing the private repository credentials.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/resourceRequirements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-resourcerequirements"><strong>resourceRequirements</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/resourceRequirements" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -848,7 +843,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>The only supported resources are <code class="docutils literal notranslate"><span class="pre">GPU</span></code> and <code class="docutils literal notranslate"><span class="pre">InferenceAccelerator</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/resourceRequirements/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-resourcerequirements-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/resourceRequirements/type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -860,91 +855,91 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/resourceRequirements/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-resourcerequirements-value"><strong>value</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/resourceRequirements/value" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value for the specified resource type.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/secretOptions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-secretoptions"><strong>secretOptions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/secretOptions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The secrets to pass to the log configuration.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/secretOptions/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-secretoptions-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/secretOptions/name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the secret.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/secretOptions/valueFrom"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-secretoptions-valuefrom"><strong>valueFrom</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/secretOptions/valueFrom" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The secret to expose to the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/secrets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-secrets"><strong>secrets</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/secrets" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The secrets to pass to the container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/secrets/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-secrets-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/secrets/name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value to set as the environment variable on the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/secrets/size"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-secrets-size"><strong>size</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/secrets/size" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The secret to expose to the container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/startTimeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-starttimeout"><strong>startTimeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/startTimeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Time duration (in seconds) to wait before giving up on resolving dependencies for a container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/stopTimeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-stoptimeout"><strong>stopTimeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/stopTimeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Time duration (in seconds) to wait before the container is forcefully killed if it doesn’t exit normally on its own.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/systemControls"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-systemcontrols"><strong>systemControls</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/systemControls" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of namespaced kernel parameters to set in the container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/systemControls/namespace"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-systemcontrols-namespace"><strong>namespace</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/systemControls/namespace" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The namespaced kernel parameter to set a <code class="docutils literal notranslate"><span class="pre">value</span></code> for.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/systemControls/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-systemcontrols-value"><strong>value</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/systemControls/value" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value for the namespaced kernel parameter that’s specified in <code class="docutils literal notranslate"><span class="pre">namespace</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/ulimits"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-ulimits"><strong>ulimits</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/ulimits" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -952,14 +947,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported for Windows containers.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/ulimits/hardLimit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-ulimits-hardlimit"><strong>hardLimit</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/ulimits/hardLimit" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The hard limit for the ulimit type.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/ulimits/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-ulimits-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/ulimits/name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -984,14 +979,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/ulimits/softLimit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-ulimits-softlimit"><strong>softLimit</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/ulimits/softLimit" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The soft limit for the ulimit type.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/user"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-user"><strong>user</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/user" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -999,14 +994,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>This parameter is not supported for Windows containers.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/volumesFrom"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-volumesfrom"><strong>volumesFrom</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/volumesFrom" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Data volumes to mount from another container.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/volumesFrom/readOnly"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-volumesfrom-readonly"><strong>readOnly</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/volumesFrom/readOnly" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1019,21 +1014,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/volumesFrom/sourceContainer"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-volumesfrom-sourcecontainer"><strong>sourceContainer</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/volumesFrom/sourceContainer" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of another container within the same task definition from which to mount volumes.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-containers/workingDirectory"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-containers-workingdirectory"><strong>workingDirectory</strong></p>
 <a class="ansibleOptionLink" href="#parameter-containers/workingDirectory" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The working directory in which to run commands inside the container.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-cpu"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-cpu"><strong>cpu</strong></p>
 <a class="ansibleOptionLink" href="#parameter-cpu" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1041,11 +1036,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this field is required and you must use one of <code class="docutils literal notranslate"><span class="pre">256</span></code>, <code class="docutils literal notranslate"><span class="pre">512</span></code>, <code class="docutils literal notranslate"><span class="pre">1024</span></code>, <code class="docutils literal notranslate"><span class="pre">2048</span></code>, <code class="docutils literal notranslate"><span class="pre">4096</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Use a botocore.endpoint logger to parse the unique (rather than total) “resource:action” API calls made during a task, outputing the set to the resource_actions key in the task results. Use the aws_resource_action callback to output to total list made during a playbook. The ANSIBLE_DEBUG_BOTOCORE_LOGS environment variable may also be used.</p>
+<td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ANSIBLE_DEBUG_BOTOCORE_LOGS</span></code> environment variable may also be used.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -1053,7 +1049,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -1061,24 +1057,27 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>URL to use to connect to EC2 or your Eucalyptus cloud (by default the module will use EC2 endpoints). Ignored for modules where region is required. Must be specified for all other modules if region is not used. If not set then the value of the EC2_URL environment variable, if any, is used.</p>
+<td><div class="ansible-option-cell"><p>URL to connect to instead of the default AWS endpoints.  While this can be used to connection to other AWS-compatible services the amazon.aws and community.aws collections are only tested against AWS.</p>
+<p>The  <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variables may also be used, in decreasing order of preference.</p>
+<p>The <em>ec2_url</em> and <em>s3_url</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-execution_role_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-execution-role-arn"><strong>execution_role_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-execution_role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the task execution role that the Amazon ECS container agent and the Docker daemon can assume.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-family"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-family"><strong>family</strong></p>
 <a class="ansibleOptionLink" href="#parameter-family" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A Name that would be given to the task definition.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-force_create"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-force-create"><strong>force_create</strong></p>
 <a class="ansibleOptionLink" href="#parameter-force_create" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1090,7 +1089,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-launch_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-launch-type"><strong>launch_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-launch_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1102,7 +1101,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-memory"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-memory"><strong>memory</strong></p>
 <a class="ansibleOptionLink" href="#parameter-memory" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1110,7 +1109,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>If <em>launch_type=FARGATE</em>, this field is required and is limited by the CPU.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-network_mode"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-network-mode"><strong>network_mode</strong></p>
 <a class="ansibleOptionLink" href="#parameter-network_mode" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1127,7 +1126,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-placement_constraints"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-placement-constraints"><strong>placement_constraints</strong></p>
 <a class="ansibleOptionLink" href="#parameter-placement_constraints" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
@@ -1137,58 +1136,87 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p>Task placement constraints are not supported for tasks run on Fargate.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-placement_constraints/expression"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-placement-constraints-expression"><strong>expression</strong></p>
 <a class="ansibleOptionLink" href="#parameter-placement_constraints/expression" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A cluster query language expression to apply to the constraint.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-placement_constraints/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-placement-constraints-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-placement_constraints/type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of constraint.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-profile"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+<td><div class="ansible-option-cell"><p>A named AWS profile to use for authentication.</p>
+<p>See the AWS documentation for more information about named profiles <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> environment variable may also be used.</p>
+<p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-region"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-region"></span><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The AWS region to use. If not specified then the value of the AWS_REGION or EC2_REGION environment variable, if any, is used. See <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a></p>
+<td><div class="ansible-option-cell"><p>The AWS region to use.</p>
+<p>For global services such as IAM, Route53 and CloudFront, <em>region</em> is ignored.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variables may also be used.</p>
+<p>See the Amazon AWS documentation for more information <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ec2_region</span></code> alias has been deprecated and will be removed in a release after 2024-12-01</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-revision"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-revision"><strong>revision</strong></p>
 <a class="ansibleOptionLink" href="#parameter-revision" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A revision number for the task definition.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-session-token"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-security-token"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-access-token"></span><strong>security_token</strong></p>
-<a class="ansibleOptionLink" href="#parameter-security_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, session_token, aws_security_token, access_token</span></p>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-secret-key"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p><code class="docutils literal notranslate"><span class="pre">AWS</span> <span class="pre">STS</span> <span class="pre">security</span> <span class="pre">token</span></code>. If not set then the value of the <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variable is used.</p>
+<td><div class="ansible-option-cell"><p>AWS secret access key.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_secret_access_key</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_secret_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-session-token"><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-security-token"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-access-token"></span><strong>session_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS STS session token for use with temporary credentials.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variables may also be used in decreasing order of preference.</p>
 <p>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</p>
-<p>Aliases <em>aws_session_token</em> and <em>session_token</em> have been added in version 3.2.0.</p>
+<p>Aliases <em>aws_session_token</em> and <em>session_token</em> were added in release 3.2.0, with the parameter being renamed from <em>security_token</em> to <em>session_token</em> in release 6.0.0.</p>
+<p>The <em>security_token</em>, <em>aws_security_token</em>, and <em>access_token</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -1214,7 +1242,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>When set to “no”, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<p>Setting <em>validate_certs=false</em> is strongly discouraged, as an alternative, consider setting <em>aws_ca_bundle</em> instead.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
@@ -1244,9 +1273,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>If parameters are not set within the module, the following environment variables can be used in decreasing order of precedence <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_DEFAULT_PROFILE</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code></p></li>
-<li><p>When no credentials are explicitly provided the AWS SDK (boto3) that Ansible uses will fall back to its configuration files (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
-<li><p><code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> can be typically be used to specify the AWS region, when required, but this can also be defined in the configuration files.</p></li>
+<li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
+<li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
 </div>
 </section>
