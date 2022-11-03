@@ -73,7 +73,7 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 08:00 UTC
+        start_time: 2027 November 9 08:00 UTC
         recurrence: 40 22 * * 1-5
         desired_capacity: 2
         state: present
@@ -90,7 +90,7 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 08:00 UTC
+        start_time: 2027 November 9 08:00 UTC
         recurrence: 40 22 * * 1-5
         desired_capacity: 2
         state: present
@@ -108,7 +108,7 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 08:00 UTC
+        start_time: 2027 November 9 08:00 UTC
         recurrence: 40 22 * * 1-5
         desired_capacity: 2
         state: present
@@ -125,7 +125,7 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 08:00 UTC
+        start_time: 2027 November 9 08:00 UTC
         recurrence: 40 22 * * 1-5
         desired_capacity: 3
         min_size: 3
@@ -143,7 +143,7 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 08:00 UTC
+        start_time: 2027 November 9 08:00 UTC
         recurrence: 40 22 * * 1-5
         desired_capacity: 3
         min_size: 3
@@ -163,7 +163,7 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 08:00 UTC
+        start_time: 2027 November 9 08:00 UTC
         recurrence: 40 22 * * 1-5
         desired_capacity: 3
         min_size: 3
@@ -181,8 +181,8 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test"
-        start_time: 2022 October 25 09:00 UTC
-        end_time: 2022 October 25 10:00 UTC
+        start_time: 2027 November 9 09:00 UTC
+        end_time: 2027 November 9 10:00 UTC
         time_zone: Europe/London
         recurrence: 40 22 * * 1-5
         min_size: 2
@@ -202,8 +202,8 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
-        start_time: 2022 October 25 09:00 UTC
-        end_time: 2022 October 25 10:00 UTC
+        start_time: 2027 November 9 09:00 UTC
+        end_time: 2027 November 9 10:00 UTC
         time_zone: Europe/London
         recurrence: 40 22 * * 1-5
         min_size: 2
@@ -227,8 +227,8 @@
       ec2_asg_scheduled_action:
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         scheduled_action_name: "{{ resource_prefix }}-test1"
-        start_time: 2022 October 25 09:00 UTC
-        end_time: 2022 October 25 10:00 UTC
+        start_time: 2027 November 9 09:00 UTC
+        end_time: 2027 November 9 10:00 UTC
         time_zone: Europe/London
         recurrence: 40 22 * * 1-5
         min_size: 2
