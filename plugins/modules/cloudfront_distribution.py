@@ -1838,7 +1838,7 @@ class CloudFrontValidationManager(object):
                                                                 config.get('max_t_t_l', self.__default_cache_behavior_max_ttl))
               cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'default_ttl', 'default_t_t_l',
                                                                 config.get('default_t_t_l', self.__default_cache_behavior_default_ttl))
-            cache_behavior = self.add_missing_key(cache_behavior, 'compress', config.get('compress', self.__default_cache_behavior_compress))
+              cache_behavior = self.add_missing_key(cache_behavior, 'compress', config.get('compress', self.__default_cache_behavior_compress))
             target_origin_id = cache_behavior.get('target_origin_id', config.get('target_origin_id'))
             if not target_origin_id:
                 target_origin_id = self.get_first_origin_id_for_default_cache_behavior(valid_origins)
