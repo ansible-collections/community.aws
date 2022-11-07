@@ -499,6 +499,22 @@
         - update_distribution_with_specific_access_identity.changed
         - update_distribution_with_specific_access_identity.origins.items[0].s3_origin_config.origin_access_identity == 'origin-access-identity/cloudfront/ANYTHING'
 
+  - name: update distribution to use cache_policy_id and origin_request_policy_id
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      default_cache_behavior:
+        cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
+        origin_request_policy_id: "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
+      state: present
+    register: update_distribution_with_cache_policies
+
+  - name: ensure that the cache_policy_id and origin_request_policy_id was set
+    assert:
+      that:
+        - update_distribution_with_cache_policies.changed
+        - update_distribution_with_cache_policies.default_cache_behavior.cache_policy_id == '658327ea-f89d-4fab-a63d-7e88639e58f6'
+        - update_distribution_with_cache_policies.default_cache_behavior.origin_request_policy_id == '88a5eaf4-2fd4-4709-b370-b4c650ea3fcf'
+
   always:
   # TEARDOWN STARTS HERE
   - name: delete the s3 bucket

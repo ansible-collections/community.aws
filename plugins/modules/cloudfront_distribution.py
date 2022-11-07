@@ -200,9 +200,17 @@ options:
           description:
             - The ID of the header policy that CloudFront adds to responses that it sends to viewers.
           type: str
+        cache_policy_id:
+          description:
+            - The ID of the cache policy for CloudFront to use for the default cache behavior.  A behavior should use either a cache_policy_id or forwarded_values.
+          type: str
+        origin_request_policy_id:
+          description:
+            - The ID of the origin request policy for CloudFront to use for the default cache behavior.
+          type: str
         forwarded_values:
           description:
-            - A dict that specifies how CloudFront handles query strings and cookies.
+            - A dict that specifies how CloudFront handles query strings and cookies.  A behavior should use either a cache_policy_id or forwarded_values.
           type: dict
           suboptions:
             query_string:
@@ -321,9 +329,17 @@ options:
           description:
             - The ID of the header policy that CloudFront adds to responses that it sends to viewers.
           type: str
+        cache_policy_id:
+          description:
+            - The ID of the cache policy for CloudFront to use for the default cache behavior.  A behavior should use either a cache_policy_id or forwarded_values.
+          type: str
+        origin_request_policy_id:
+          description:
+            - The ID of the origin request policy for CloudFront to use for the default cache behavior.
+          type: str
         forwarded_values:
           description:
-            - A dict that specifies how CloudFront handles query strings and cookies.
+            - A dict that specifies how CloudFront handles query strings and cookies.  A behavior should use either a cache_policy_id or forwarded_values.
           type: dict
           suboptions:
             query_string:
@@ -1798,7 +1814,8 @@ class CloudFrontValidationManager(object):
         if cache_behavior is None and valid_origins is not None:
             return config
         cache_behavior = self.validate_cache_behavior_first_level_keys(config, cache_behavior, valid_origins, is_default_cache)
-        cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
+        if cache_behavior.get('forwarded_values') is not None:
+          cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
         cache_behavior = self.validate_allowed_methods(config, cache_behavior.get('allowed_methods'), cache_behavior)
         cache_behavior = self.validate_lambda_function_associations(config, cache_behavior.get('lambda_function_associations'), cache_behavior)
         cache_behavior = self.validate_trusted_signers(config, cache_behavior.get('trusted_signers'), cache_behavior)
@@ -1806,13 +1823,21 @@ class CloudFrontValidationManager(object):
         return cache_behavior
 
     def validate_cache_behavior_first_level_keys(self, config, cache_behavior, valid_origins, is_default_cache):
+        if cache_behavior.get('cache_policy_id') is not None and cache_behavior.get('forwarded_values') is not None:
+          if is_default_cache:
+              cache_behavior_name = 'Default cache behavior'
+          else:
+              cache_behavior_name = 'Cache behavior for path %s' % cache_behavior['path_pattern']
+          self.module.fail_json(msg="%s cannot have both a cache_policy_id and a forwarded_values value." %
+                                cache_behavior_name)
         try:
-            cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'min_ttl', 'min_t_t_l',
-                                                               config.get('min_t_t_l', self.__default_cache_behavior_min_ttl))
-            cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'max_ttl', 'max_t_t_l',
-                                                               config.get('max_t_t_l', self.__default_cache_behavior_max_ttl))
-            cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'default_ttl', 'default_t_t_l',
-                                                               config.get('default_t_t_l', self.__default_cache_behavior_default_ttl))
+            if cache_behavior.get('forwarded_values') is not None:
+              cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'min_ttl', 'min_t_t_l',
+                                                                config.get('min_t_t_l', self.__default_cache_behavior_min_ttl))
+              cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'max_ttl', 'max_t_t_l',
+                                                                config.get('max_t_t_l', self.__default_cache_behavior_max_ttl))
+              cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'default_ttl', 'default_t_t_l',
+                                                                config.get('default_t_t_l', self.__default_cache_behavior_default_ttl))
             cache_behavior = self.add_missing_key(cache_behavior, 'compress', config.get('compress', self.__default_cache_behavior_compress))
             target_origin_id = cache_behavior.get('target_origin_id', config.get('target_origin_id'))
             if not target_origin_id:
