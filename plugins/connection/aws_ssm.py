@@ -572,11 +572,18 @@ class Connection(ConnectionBase):
         if profile_name:
             session_args['profile_name'] = profile_name
         session = boto3.session.Session(**session_args)
-
-        client = session.client(
-            service,
-            config=Config(signature_version="s3v4")
-        )
+        
+        if service == 's3' and region_name:
+            client = session.client(
+                service,
+                endpoint_url=('https://s3.' + region_name + '.amazonaws.com'),
+                config=Config(signature_version="s3v4")
+            )
+        else:
+            client = session.client(
+                service,
+                config=Config(signature_version="s3v4")
+            )
         return client
 
     @_ssm_retry
