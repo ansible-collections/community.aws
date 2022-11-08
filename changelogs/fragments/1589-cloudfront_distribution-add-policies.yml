@@ -1,2 +1,2 @@
 minor_changes:
-  - cloudfront_distribution - added support for cache_policy_id and origin_request_policy_id for behaviors (https://github.com/ansible-collections/community.aws/pull/1589)
+  - cloudfront_distribution - added support for ``cache_policy_id`` and ``origin_request_policy_id`` for behaviors (https://github.com/ansible-collections/community.aws/pull/1589)
