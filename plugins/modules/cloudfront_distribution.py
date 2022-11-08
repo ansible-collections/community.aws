@@ -202,7 +202,8 @@ options:
           type: str
         cache_policy_id:
           description:
-            - The ID of the cache policy for CloudFront to use for the default cache behavior.  A behavior should use either a cache_policy_id or forwarded_values.
+            - The ID of the cache policy for CloudFront to use for the default cache behavior.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values).
           type: str
         origin_request_policy_id:
           description:
@@ -210,7 +211,8 @@ options:
           type: str
         forwarded_values:
           description:
-            - A dict that specifies how CloudFront handles query strings and cookies.  A behavior should use either a cache_policy_id or forwarded_values.
+            - A dict that specifies how CloudFront handles query strings and cookies.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values).
           type: dict
           suboptions:
             query_string:
@@ -331,7 +333,8 @@ options:
           type: str
         cache_policy_id:
           description:
-            - The ID of the cache policy for CloudFront to use for the default cache behavior.  A behavior should use either a cache_policy_id or forwarded_values.
+            - The ID of the cache policy for CloudFront to use for the default cache behavior.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values).
           type: str
         origin_request_policy_id:
           description:
@@ -339,7 +342,8 @@ options:
           type: str
         forwarded_values:
           description:
-            - A dict that specifies how CloudFront handles query strings and cookies.  A behavior should use either a cache_policy_id or forwarded_values.
+            - A dict that specifies how CloudFront handles query strings and cookies.
+            - A behavior should use either a C(cache_policy_id) or a C(forwarded_values).
           type: dict
           suboptions:
             query_string:
@@ -1815,7 +1819,7 @@ class CloudFrontValidationManager(object):
             return config
         cache_behavior = self.validate_cache_behavior_first_level_keys(config, cache_behavior, valid_origins, is_default_cache)
         if cache_behavior.get('forwarded_values') is not None:
-          cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
+            cache_behavior = self.validate_forwarded_values(config, cache_behavior.get('forwarded_values'), cache_behavior)
         cache_behavior = self.validate_allowed_methods(config, cache_behavior.get('allowed_methods'), cache_behavior)
         cache_behavior = self.validate_lambda_function_associations(config, cache_behavior.get('lambda_function_associations'), cache_behavior)
         cache_behavior = self.validate_trusted_signers(config, cache_behavior.get('trusted_signers'), cache_behavior)
@@ -1824,12 +1828,12 @@ class CloudFrontValidationManager(object):
 
     def validate_cache_behavior_first_level_keys(self, config, cache_behavior, valid_origins, is_default_cache):
         if cache_behavior.get('cache_policy_id') is not None and cache_behavior.get('forwarded_values') is not None:
-          if is_default_cache:
-              cache_behavior_name = 'Default cache behavior'
-          else:
-              cache_behavior_name = 'Cache behavior for path %s' % cache_behavior['path_pattern']
-          self.module.fail_json(msg="%s cannot have both a cache_policy_id and a forwarded_values value." %
-                                cache_behavior_name)
+            if is_default_cache:
+                cache_behavior_name = 'Default cache behavior'
+            else:
+                cache_behavior_name = 'Cache behavior for path %s' % cache_behavior['path_pattern']
+            self.module.fail_json(msg="%s cannot have both a cache_policy_id and a forwarded_values value." %
+                                  cache_behavior_name)
         try:
             if cache_behavior.get('forwarded_values') is not None:
               cache_behavior = self.add_key_else_change_dict_key(cache_behavior, 'min_ttl', 'min_t_t_l',
