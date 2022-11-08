@@ -503,6 +503,7 @@
     cloudfront_distribution:
       distribution_id: "{{ distribution_id }}"
       default_cache_behavior:
+        target_origin_id: "{{ cloudfront_hostname }}-origin.example.com"
         cache_policy_id: "658327ea-f89d-4fab-a63d-7e88639e58f6"
         origin_request_policy_id: "88a5eaf4-2fd4-4709-b370-b4c650ea3fcf"
       state: present
