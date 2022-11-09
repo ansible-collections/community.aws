@@ -204,10 +204,14 @@ options:
           description:
             - The ID of the cache policy for CloudFront to use for the default cache behavior.
             - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html)
           type: str
         origin_request_policy_id:
           description:
             - The ID of the origin request policy for CloudFront to use for the default cache behavior.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)
           type: str
         forwarded_values:
           description:
@@ -335,10 +339,14 @@ options:
           description:
             - The ID of the cache policy for CloudFront to use for the cache behavior.
             - A behavior should use either a C(cache_policy_id) or a C(forwarded_values) option.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-the-cache-key.html)
           type: str
         origin_request_policy_id:
           description:
             - The ID of the origin request policy for CloudFront to use for the cache behavior.
+            - For more information see the CloudFront documentation
+              at U(https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/controlling-origin-requests.html)
           type: str
         forwarded_values:
           description:
