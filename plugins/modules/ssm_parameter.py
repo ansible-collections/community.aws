@@ -493,11 +493,9 @@ def create_update_parameter(client, module):
                     (changed, response) = update_parameter(client, module, **args)
         if changed:
             _wait_updated(client, module, module.params.get('name'), original_version)
-            # import time
-            # time.sleep(300)
 
         # Handle tag updates for existing parameters
-        if (module.params.get('overwrite_value') != 'never'):
+        if module.params.get('overwrite_value') != 'never':
             tags_changed, tags_response = update_parameter_tags(
                 client, module, existing_parameter['Parameter']['Name'],
                 module.params.get('tags'))
