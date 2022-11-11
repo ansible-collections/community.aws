@@ -513,7 +513,6 @@ def main():
         if result.get('tags', None) is not None:
             result['tags_dict'] = boto3_tag_list_to_ansible_dict(result.get('tags', []))
         result.pop("response_metadata")
-
     module.exit_json(changed=changed, secret=result)
 
 
