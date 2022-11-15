@@ -1,0 +1,2 @@
+minor_changes:
+  - elasticache_parameter_group - add ``redis6.x`` group family on the module input choices (https://github.com/ansible-collections/community.aws/pull/1476).
