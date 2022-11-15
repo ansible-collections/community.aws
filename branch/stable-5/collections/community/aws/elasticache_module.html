@@ -207,6 +207,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <a class="ansibleOptionLink" href="#parameter-cache_engine_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The version number of the cache engine.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -216,6 +217,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the cache parameter group to associate with this cache cluster. If this argument is omitted, the default cache parameter group for the specified engine will be used.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -231,6 +233,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of cache security group names to associate with this cache cluster.</p>
 <p>Don’t use if your Cache is inside a VPC. In that case use <em>security_group_ids</em> instead!</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -239,6 +242,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 </div></td>
 <td><div class="ansible-option-cell"><p>The subnet group name to associate with. Only use if inside a VPC.</p>
 <p>Required if inside a VPC.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -363,6 +367,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elast
 <a class="ansibleOptionLink" href="#parameter-security_group_ids" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of VPC security group IDs to associate with this cache cluster. Only use if inside a VPC.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
