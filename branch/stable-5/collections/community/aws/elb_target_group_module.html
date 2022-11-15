@@ -9,7 +9,7 @@
       <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
-    <link rel="shortcut icon" href="_static/images/Ansible-Mark-RGB_Black.svg"/>
+    <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
   <!--[if lt IE 9]>
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
@@ -45,7 +45,7 @@
 <a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
 
   <img class="DocSiteNav-logo"
-    src="../../../_static/images/Ansible-Mark-RGB_White.svg"
+    src="../../../_static/images/Ansible-Mark-RGB_White.png"
     alt="Ansible Logo">
   <div class="DocSiteNav-title">Ansible Collections Documentation</div>
 </a>
@@ -63,7 +63,8 @@
 </div>
 <div role="search">
   <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
-    <input type="text" class="st-default-search-input" name="q" placeholder="Search docs" />
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
     <input type="hidden" name="check_keywords" value="yes" />
     <input type="hidden" name="area" value="default" />
   </form>
@@ -401,6 +402,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-protocol_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-protocol-version"><strong>protocol_version</strong></p>
+<a class="ansibleOptionLink" href="#parameter-protocol_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.1.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Specifies protocol version.</p>
+<p>The protocol_version parameter is immutable and cannot be changed when updating an elb_target_group.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;GRPC&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP1&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;HTTP2&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-proxy_protocol_v2_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-proxy-protocol-v2-enabled"><strong>proxy_protocol_v2_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-proxy_protocol_v2_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 2.1.0</span></p>
@@ -415,7 +431,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-purge-tags"><strong>purge_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -429,7 +445,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-region"><span id="ansible-collections-community-aws-elb-target-group-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-elb-target-group-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -444,7 +460,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -461,7 +477,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -479,7 +495,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -491,7 +507,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_app_cookie_duration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-app-cookie-duration"><strong>stickiness_app_cookie_duration</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_app_cookie_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
@@ -499,7 +515,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <td><div class="ansible-option-cell"><p>The time period, in seconds, during which requests from a client should be routed to the same target. After this time period expires, the application-generated cookie is considered stale. The range is 1 second to 1 week (604800 seconds).</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_app_cookie_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-app-cookie-name"><strong>stickiness_app_cookie_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_app_cookie_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
@@ -507,7 +523,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <td><div class="ansible-option-cell"><p>The name of the application cookie. Required if <em>stickiness_type=app_cookie</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-enabled"><strong>stickiness_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -519,14 +535,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_lb_cookie_duration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-lb-cookie-duration"><strong>stickiness_lb_cookie_duration</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_lb_cookie_duration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The time period, in seconds, during which requests from a client should be routed to the same target. After this time period expires, the load balancer-generated cookie is considered stale. The range is 1 second to 1 week (604800 seconds).</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stickiness_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-stickiness-type"><strong>stickiness_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stickiness_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -535,7 +551,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>If not set AWS will default to <code class="docutils literal notranslate"><span class="pre">lb_cookie</span></code> for Application Load Balancers or <code class="docutils literal notranslate"><span class="pre">source_ip</span></code> for Network Load Balancers.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-successful_response_codes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-successful-response-codes"><strong>successful_response_codes</strong></p>
 <a class="ansibleOptionLink" href="#parameter-successful_response_codes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -544,7 +560,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>Requires the <em>health_check_protocol</em> parameter to be set.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div>
 <div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-tags"><span id="ansible-collections-community-aws-elb-target-group-module-parameter-resource-tags"></span><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
@@ -554,7 +570,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-target_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-target-type"><strong>target_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-target_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -569,21 +585,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-targets"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-targets"><strong>targets</strong></p>
 <a class="ansibleOptionLink" href="#parameter-targets" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A list of targets to assign to the target group. This parameter defaults to an empty list. Unless you set the ‘modify_targets’ parameter then all existing targets will be removed from the group. The list should be an Id and a Port parameter. See the Examples for detail.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-unhealthy_threshold_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-unhealthy-threshold-count"><strong>unhealthy_threshold_count</strong></p>
 <a class="ansibleOptionLink" href="#parameter-unhealthy_threshold_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of consecutive health check failures required before considering a target unhealthy.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -596,7 +612,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-vpc-id"><strong>vpc_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vpc_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -604,7 +620,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <p>Required when <em>state</em> is <code class="docutils literal notranslate"><span class="pre">present</span></code> and <em>target_type</em> is <code class="docutils literal notranslate"><span class="pre">instance</span></code>, <code class="docutils literal notranslate"><span class="pre">ip</span></code>, or <code class="docutils literal notranslate"><span class="pre">alb</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -616,7 +632,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-elb-target-group-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -648,6 +664,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 <span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span><span class="w"></span>
 <span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w"></span>
 <span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-01234567</span><span class="w"></span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a target group with protocol_version &#39;GRPC&#39;</span><span class="w"></span>
+<span class="w">  </span><span class="nt">community.aws.elb_target_group</span><span class="p">:</span><span class="w"></span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">http</span><span class="w"></span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">80</span><span class="w"></span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-01234567</span><span class="w"></span>
+<span class="w">    </span><span class="nt">protocol_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GRPC</span><span class="w"></span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Modify the target group with a custom health check</span><span class="w"></span>
