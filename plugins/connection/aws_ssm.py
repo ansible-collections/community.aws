@@ -463,7 +463,7 @@ class Connection(ConnectionBase):
         else:
             if sudoable:
                 cmd = "sudo " + cmd
-            cmd = "echo " + mark_start + "\n" + cmd + "\necho $'\\n'$?\n" + "echo " + mark_end + "\n"
+            cmd = " echo " + mark_start + "; " + cmd + "; echo $'\\n'$?; " + " echo " + mark_end + ";\n"
 
         display.vvvv(u"_wrap_command: '{0}'".format(to_text(cmd)), host=self.host)
         return cmd
