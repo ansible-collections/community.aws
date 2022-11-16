@@ -1,0 +1,2 @@
+bugfixes:
+  - aws_ssm - format commands in a way that is executable on Ubuntu dash shell (https://github.com/ansible-collections/community.aws/pull/1597).
