@@ -665,6 +665,7 @@ DEPLOYMENT_CONFIGURATION_TYPE_MAP = {
     'minimum_healthy_percent': 'int',
     'deployment_circuit_breaker': 'dict',
 }
+
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
