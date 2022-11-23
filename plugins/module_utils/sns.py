@@ -54,10 +54,10 @@ def list_topics(client, module):
     return [t['TopicArn'] for t in topics]
 
 
-def topic_arn_lookup(client, module, name, isfifo: bool):
+def topic_arn_lookup(client, module, name, is_fifo: bool):
     # topic names cannot have colons, so this captures the full topic name
     all_topics = list_topics(client, module)
-    lookup_topic = ':%s' % (name + ".fifo" if isfifo else name)
+    lookup_topic = ':%s' % (name + ".fifo" if is_fifo else name)
     for topic in all_topics:
         if topic.endswith(lookup_topic):
             return topic
