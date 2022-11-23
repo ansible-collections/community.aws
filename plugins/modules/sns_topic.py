@@ -149,6 +149,12 @@ options:
         Blame Amazon."
     default: true
     type: bool
+  content_based_deduplication:
+    description:
+      - Whether to enable content-based deduplication for this topic. 
+        Ignored if topic_type is not "fifo".
+    default: false
+    type: bool
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -227,6 +233,11 @@ sns_topic:
       returned: always
       type: bool
       sample: false
+    content_based_deduplication:
+      description: Whether or not content_based_deduplication was set
+      returned: always
+      type: bool
+      sample: true
     delivery_policy:
       description: Delivery policy for the SNS topic
       returned: when topic is owned by this AWS account
@@ -349,6 +360,7 @@ class SnsTopicManager(object):
                  delivery_policy,
                  subscriptions,
                  purge_subscriptions,
+                 content_based_deduplication: bool,
                  check_mode):
 
         self.connection = module.client('sns')
@@ -366,6 +378,7 @@ class SnsTopicManager(object):
         self.subscriptions_attributes_set = []
         self.desired_subscription_attributes = dict()
         self.purge_subscriptions = purge_subscriptions
+        self.content_based_deduplication = content_based_deduplication
         self.check_mode = check_mode
         self.topic_created = False
         self.topic_deleted = False
@@ -419,6 +432,18 @@ class SnsTopicManager(object):
                                                          AttributeValue=json.dumps(self.policy))
                 except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     self.module.fail_json_aws(e, msg="Couldn't set topic policy")
+
+        # Set content-based deduplication attribute. Ignore if topic_type is not fifo.
+        if ("FifoTopic" in topic_attributes and topic_attributes["FifoTopic"] == "true") and \
+            (self.content_based_deduplication != (topic_attributes['ContentBasedDeduplication'] in 'true')):
+            changed = True
+            self.attributes_set.append('content_based_deduplication')
+            if not self.check_mode:
+                try:
+                    self.connection.set_topic_attributes(TopicArn=self.topic_arn, AttributeName='ContentBasedDeduplication',
+                                                         AttributeValue=str(self.content_based_deduplication).lower())
+                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                    self.module.fail_json_aws(e, msg="Couldn't set content-based deduplication")
 
         if self.delivery_policy and ('DeliveryPolicy' not in topic_attributes or
                                      compare_delivery_policies(self.delivery_policy, json.loads(topic_attributes['DeliveryPolicy']))):
@@ -531,10 +556,7 @@ class SnsTopicManager(object):
 
     def ensure_ok(self):
         changed = False
-        if self._name_is_arn():
-            self.topic_arn = self.name
-        else:
-            self.topic_arn = topic_arn_lookup(self.connection, self.module, self.name)
+        self.populate_topic_arn()
         if not self.topic_arn:
             changed = self._create_topic()
         if self.topic_arn in list_topics(self.connection, self.module):
@@ -553,10 +575,7 @@ class SnsTopicManager(object):
 
     def ensure_gone(self):
         changed = False
-        if self._name_is_arn():
-            self.topic_arn = self.name
-        else:
-            self.topic_arn = topic_arn_lookup(self.connection, self.module, self.name)
+        self.populate_topic_arn()
         if self.topic_arn:
             if self.topic_arn not in list_topics(self.connection, self.module):
                 self.module.fail_json(msg="Cannot use state=absent with third party ARN. Use subscribers=[] to unsubscribe")
@@ -564,6 +583,11 @@ class SnsTopicManager(object):
             changed |= self._delete_topic()
         return changed
 
+    def populate_topic_arn(self):
+        if self._name_is_arn():
+            self.topic_arn = self.name
+        else:
+            self.topic_arn = topic_arn_lookup(self.connection, self.module, self.name)
 
 def main():
     # We're kinda stuck with CamelCase here, it would be nice to switch to
@@ -600,6 +624,7 @@ def main():
         delivery_policy=dict(type='dict', options=delivery_args),
         subscriptions=dict(default=[], type='list', elements='dict'),
         purge_subscriptions=dict(type='bool', default=True),
+        content_based_deduplication=dict(type='bool', default=False)
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
@@ -613,6 +638,7 @@ def main():
     delivery_policy = module.params.get('delivery_policy')
     subscriptions = module.params.get('subscriptions')
     purge_subscriptions = module.params.get('purge_subscriptions')
+    content_based_deduplication = module.params.get('content_based_deduplication')
     check_mode = module.check_mode
 
     sns_topic = SnsTopicManager(module,
@@ -624,11 +650,11 @@ def main():
                                 delivery_policy,
                                 subscriptions,
                                 purge_subscriptions,
+                                content_based_deduplication,
                                 check_mode)
 
     if state == 'present':
         changed = sns_topic.ensure_ok()
-
     elif state == 'absent':
         changed = sns_topic.ensure_gone()
 
