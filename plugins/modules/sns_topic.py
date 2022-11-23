@@ -151,7 +151,7 @@ options:
     type: bool
   content_based_deduplication:
     description:
-      - Whether to enable content-based deduplication for this topic. 
+      - Whether to enable content-based deduplication for this topic.
         Ignored if topic_type is not "fifo".
     default: false
     type: bool
@@ -435,7 +435,7 @@ class SnsTopicManager(object):
 
         # Set content-based deduplication attribute. Ignore if topic_type is not fifo.
         if ("FifoTopic" in topic_attributes and topic_attributes["FifoTopic"] == "true") and \
-            (self.content_based_deduplication != (topic_attributes['ContentBasedDeduplication'] in 'true')):
+                (self.content_based_deduplication != (topic_attributes['ContentBasedDeduplication'] in 'true')):
             changed = True
             self.attributes_set.append('content_based_deduplication')
             if not self.check_mode:

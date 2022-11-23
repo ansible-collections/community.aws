@@ -62,6 +62,7 @@ def topic_arn_lookup(client, module, name, is_fifo: bool):
         if topic.endswith(lookup_topic):
             return topic
 
+
 def compare_delivery_policies(policy_a, policy_b):
     _policy_a = copy.deepcopy(policy_a)
     _policy_b = copy.deepcopy(policy_b)
