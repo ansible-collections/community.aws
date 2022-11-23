@@ -1,0 +1,2 @@
+bugfixes:
+  - ecs_service supports constraints and strategy update (https://github.com/ansible-collections/community.aws/pull/1601).
