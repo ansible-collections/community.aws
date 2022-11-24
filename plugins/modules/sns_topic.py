@@ -587,7 +587,11 @@ class SnsTopicManager(object):
         if self._name_is_arn():
             self.topic_arn = self.name
         else:
-            self.topic_arn = topic_arn_lookup(self.connection, self.module, self.name)
+            name = self.name
+            if self.topic_type == 'fifo':
+              name += ".fifo"
+            self.topic_arn = topic_arn_lookup(self.connection, self.module, name)
+
 
 def main():
     # We're kinda stuck with CamelCase here, it would be nice to switch to
