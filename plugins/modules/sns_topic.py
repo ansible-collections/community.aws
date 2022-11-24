@@ -435,6 +435,7 @@ class SnsTopicManager(object):
 
         # Set content-based deduplication attribute. Ignore if topic_type is not fifo.
         if ("FifoTopic" in topic_attributes and topic_attributes["FifoTopic"] == "true") and \
+                self.content_based_deduplication and \
                 (self.content_based_deduplication != (topic_attributes['ContentBasedDeduplication'] in 'true')):
             changed = True
             self.attributes_set.append('content_based_deduplication')
