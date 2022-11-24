@@ -153,8 +153,9 @@ options:
     description:
       - Whether to enable content-based deduplication for this topic.
         Ignored if topic_type is not "fifo".
-    default: false
-    type: bool
+    default: disabled
+    choices: ["disabled", "enabled"]
+    type: str
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -236,8 +237,8 @@ sns_topic:
     content_based_deduplication:
       description: Whether or not content_based_deduplication was set
       returned: always
-      type: bool
-      sample: true
+      type: str
+      sample: disabled
     delivery_policy:
       description: Delivery policy for the SNS topic
       returned: when topic is owned by this AWS account
@@ -360,7 +361,7 @@ class SnsTopicManager(object):
                  delivery_policy,
                  subscriptions,
                  purge_subscriptions,
-                 content_based_deduplication: bool,
+                 content_based_deduplication,
                  check_mode):
 
         self.connection = module.client('sns')
@@ -435,16 +436,17 @@ class SnsTopicManager(object):
 
         # Set content-based deduplication attribute. Ignore if topic_type is not fifo.
         if ("FifoTopic" in topic_attributes and topic_attributes["FifoTopic"] == "true") and \
-                self.content_based_deduplication and \
-                (self.content_based_deduplication != (topic_attributes['ContentBasedDeduplication'] in 'true')):
-            changed = True
-            self.attributes_set.append('content_based_deduplication')
-            if not self.check_mode:
-                try:
-                    self.connection.set_topic_attributes(TopicArn=self.topic_arn, AttributeName='ContentBasedDeduplication',
-                                                         AttributeValue=str(self.content_based_deduplication).lower())
-                except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                    self.module.fail_json_aws(e, msg="Couldn't set content-based deduplication")
+                self.content_based_deduplication:
+            enabled = "true" if self.content_based_deduplication in 'enabled' else "false"
+            if enabled != topic_attributes['ContentBasedDeduplication']:
+                changed = True
+                self.attributes_set.append('content_based_deduplication')
+                if not self.check_mode:
+                    try:
+                        self.connection.set_topic_attributes(TopicArn=self.topic_arn, AttributeName='ContentBasedDeduplication',
+                                                             AttributeValue=enabled)
+                    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+                        self.module.fail_json_aws(e, msg="Couldn't set content-based deduplication")
 
         if self.delivery_policy and ('DeliveryPolicy' not in topic_attributes or
                                      compare_delivery_policies(self.delivery_policy, json.loads(topic_attributes['DeliveryPolicy']))):
@@ -590,7 +592,7 @@ class SnsTopicManager(object):
         else:
             name = self.name
             if self.topic_type == 'fifo':
-              name += ".fifo"
+                name += ".fifo"
             self.topic_arn = topic_arn_lookup(self.connection, self.module, name)
 
 
@@ -629,7 +631,7 @@ def main():
         delivery_policy=dict(type='dict', options=delivery_args),
         subscriptions=dict(default=[], type='list', elements='dict'),
         purge_subscriptions=dict(type='bool', default=True),
-        content_based_deduplication=dict(type='bool', default=False)
+        content_based_deduplication=dict(choices=['enabled', 'disabled'])
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
