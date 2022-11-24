@@ -57,8 +57,8 @@ result:
             content_based_deduplication:
               description: Whether or not content_based_deduplication was set
               returned: always
-              type: bool
-              sample: true
+              type: str
+              sample: "true"
             delivery_policy:
                 description: Delivery policy for the SNS topic.
                 returned: when topic is owned by this AWS account
