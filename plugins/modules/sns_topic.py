@@ -153,6 +153,7 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
+- amazon.aws.tags
 '''
 
 EXAMPLES = r"""
@@ -328,6 +329,7 @@ except ImportError:
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_parameters
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
 from ansible_collections.community.aws.plugins.module_utils.sns import list_topics
 from ansible_collections.community.aws.plugins.module_utils.sns import topic_arn_lookup
 from ansible_collections.community.aws.plugins.module_utils.sns import compare_delivery_policies
@@ -345,6 +347,8 @@ class SnsTopicManager(object):
                  topic_type,
                  state,
                  display_name,
+                 tags,
+                 purge_tags,
                  policy,
                  delivery_policy,
                  subscriptions,
@@ -357,6 +361,8 @@ class SnsTopicManager(object):
         self.topic_type = topic_type
         self.state = state
         self.display_name = display_name
+        self.tags = tags
+        self.purge_tags = purge_tags
         self.policy = policy
         self.delivery_policy = scrub_none_parameters(delivery_policy) if delivery_policy else None
         self.subscriptions = subscriptions
@@ -549,6 +555,8 @@ class SnsTopicManager(object):
         elif any(self.desired_subscription_attributes.values()):
             self.module.fail_json(msg="Cannot set subscription attributes for SNS topics not owned by this account")
 
+        changed |= self._set_topic_tags()
+
         return changed
 
     def ensure_gone(self):
@@ -562,6 +570,34 @@ class SnsTopicManager(object):
                 self.module.fail_json(msg="Cannot use state=absent with third party ARN. Use subscribers=[] to unsubscribe")
             changed = self._delete_subscriptions()
             changed |= self._delete_topic()
+        return changed
+
+    def _set_topic_tags(self):
+        changed = False
+        new_tags = self.tags
+        purge_tags = self.purge_tags
+        if new_tags is None:
+            return changed
+        try:
+            tags_list = self.connection.list_tags_for_resource(ResourceArn=self.topic_arn)['Tags']
+            existing_tags = {}
+            for key in tags_list:
+                existing_tags[key['Key']] = key['Value']
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError, KeyError) as e:
+            existing_tags = {}
+
+        tags_to_add, tags_to_remove = compare_aws_tags(existing_tags, new_tags, purge_tags=purge_tags)
+
+        if not self.check_mode:
+            if tags_to_remove:
+                self.connection.untag_resource(ResourceArn=self.topic_arn, TagKeys=tags_to_remove)
+            if tags_to_add:
+                tags_to_add_list = []
+                for key in tags_to_add.keys():
+                    tags_to_add_list.append({"Key": key, "Value": tags_to_add[key]})
+                self.connection.tag_resource(ResourceArn=self.topic_arn, Tags=tags_to_add_list)
+
+        changed = bool(tags_to_remove) or bool(tags_to_add)
         return changed
 
 
@@ -599,6 +635,8 @@ def main():
         policy=dict(type='dict'),
         delivery_policy=dict(type='dict', options=delivery_args),
         subscriptions=dict(default=[], type='list', elements='dict'),
+        tags=dict(type='dict', aliases=['resource_tags']),
+        purge_tags=dict(type='bool', default=True),
         purge_subscriptions=dict(type='bool', default=True),
     )
 
@@ -613,6 +651,8 @@ def main():
     delivery_policy = module.params.get('delivery_policy')
     subscriptions = module.params.get('subscriptions')
     purge_subscriptions = module.params.get('purge_subscriptions')
+    tags = module.params.get('tags')
+    purge_tags = module.params.get('purge_tags')
     check_mode = module.check_mode
 
     sns_topic = SnsTopicManager(module,
@@ -620,6 +660,8 @@ def main():
                                 topic_type,
                                 state,
                                 display_name,
+                                tags,
+                                purge_tags,
                                 policy,
                                 delivery_policy,
                                 subscriptions,
