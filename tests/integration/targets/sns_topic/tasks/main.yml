@@ -114,7 +114,7 @@
       that:
       - sns_fifo_topic.changed
       - sns_fifo_topic.sns_topic.topic_type == 'fifo'
-      - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo'
+      - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo.fifo'
 
   - name: Run create a FIFO topic again for idempotence test
     sns_topic:

@@ -590,7 +590,7 @@ class SnsTopicManager(object):
             self.topic_arn = self.name
         else:
             name = self.name
-            if self.topic_type == 'fifo':
+            if self.topic_type == 'fifo' and not name.endswith('.fifo'):
                 name += ".fifo"
             self.topic_arn = topic_arn_lookup(self.connection, self.module, name)
 

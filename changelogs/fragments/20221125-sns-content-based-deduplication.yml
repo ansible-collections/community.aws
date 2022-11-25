@@ -1,3 +1,6 @@
+major_changes:
+- sns_topic - facts now report `sns_topic.name` for fifo queues including ".fifo" reflecting reality in AWS (https://github.com/ansible-collections/community.aws/pull/1602).
+
 minor_changes:
 - sns_topic - add support for `content_based_deduplication` parameter (https://github.com/ansible-collections/community.aws/pull/1602).
 

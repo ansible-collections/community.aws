@@ -124,4 +124,7 @@ def get_info(connection, module, topic_arn):
             info['delivery_policy'] = info.pop('effective_delivery_policy')
         info['subscriptions'] = [camel_dict_to_snake_dict(sub) for sub in list_topic_subscriptions(connection, module, topic_arn)]
 
+    if info['topic_type'] == 'fifo' and not name.endswith('.fifo'):
+        info['name'] += '.fifo'
+
     return info
