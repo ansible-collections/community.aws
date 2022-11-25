@@ -153,7 +153,6 @@ options:
     description:
       - Whether to enable content-based deduplication for this topic.
         Ignored if topic_type is not "fifo".
-    default: disabled
     choices: ["disabled", "enabled"]
     type: str
 extends_documentation_fragment:
