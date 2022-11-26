@@ -65,6 +65,11 @@ options:
       - The number of days after which non-current versions should be deleted.
     required: false
     type: int
+  noncurrent_version_keep_newer:
+    description:
+      - The minimum number of non-current versions to retain.
+    required: false
+    type: int
   noncurrent_version_storage_class:
     description:
       - The storage class to which non-current versions are transitioned.
@@ -269,6 +274,7 @@ def build_rule(client, module):
     noncurrent_version_transition_days = module.params.get("noncurrent_version_transition_days")
     noncurrent_version_transitions = module.params.get("noncurrent_version_transitions")
     noncurrent_version_storage_class = module.params.get("noncurrent_version_storage_class")
+    noncurrent_version_keep_newer = module.params.get("noncurrent_version_keep_newer")
     prefix = module.params.get("prefix") or ""
     rule_id = module.params.get("rule_id")
     status = module.params.get("status")
@@ -294,10 +300,12 @@ def build_rule(client, module):
         rule['Expiration'] = dict(Date=expiration_date.isoformat())
     elif expire_object_delete_marker is not None:
         rule['Expiration'] = dict(ExpiredObjectDeleteMarker=expire_object_delete_marker)
-
+    if noncurrent_version_expiration_days or noncurrent_version_keep_newer:
+        rule['NoncurrentVersionExpiration'] = dict()
     if noncurrent_version_expiration_days is not None:
-        rule['NoncurrentVersionExpiration'] = dict(NoncurrentDays=noncurrent_version_expiration_days)
-
+        rule['NoncurrentVersionExpiration']['NoncurrentDays'] = noncurrent_version_expiration_days
+    if noncurrent_version_keep_newer is not None:
+        rule['NoncurrentVersionExpiration']['NewerNoncurrentVersions'] = noncurrent_version_keep_newer
     if transition_days is not None:
         rule['Transitions'] = [dict(Days=transition_days, StorageClass=storage_class.upper()), ]
 
@@ -572,6 +580,7 @@ def main():
         expiration_date=dict(),
         expire_object_delete_marker=dict(type='bool'),
         noncurrent_version_expiration_days=dict(type='int'),
+        noncurrent_version_keep_newer=dict(type='int'),
         noncurrent_version_storage_class=dict(default='glacier', type='str', choices=s3_storage_class),
         noncurrent_version_transition_days=dict(type='int'),
         noncurrent_version_transitions=dict(type='list', elements='dict'),
