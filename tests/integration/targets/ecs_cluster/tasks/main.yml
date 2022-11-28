@@ -598,6 +598,104 @@
         that:
           - ecs_task_definition_constraints_delete is not changed
 
+    - name: Create ecs service with placement constraints
+      ecs_service:
+        name: "{{ ecs_service_name }}-constraint"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        placement_constraints:
+          - type: distinctInstance
+        desired_count: 1
+        state: present
+      register: ecs_service_creation_constraints
+
+    - name: Assert ecs service constraint
+      assert:
+       that:
+          - ecs_service_creation_constraints.changed
+          - "{{ ecs_service_creation_constraints.service.placementConstraints | length }} == 1"
+          - "{{ ecs_service_creation_constraints.service.placementConstraints[0].type }} == distinctInstance"
+
+    - name: Update ecs service's placement constraints
+      ecs_service:
+        name: "{{ ecs_service_name }}-constraint"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        placement_constraints:
+          - type: memberOf
+            expression: 'attribute:ecs.instance-type == t3.micro'
+        desired_count: 1
+        state: present
+      register: ecs_service_update_constraints
+
+    - name: Assert ecs service constraint
+      assert:
+       that:
+          - ecs_service_update_constraints.changed
+          - "{{ ecs_service_update_constraints.service.placementConstraints | length }} == 1"
+          - "{{ ecs_service_update_constraints.service.placementConstraints[0].type }} == memberOf"
+          - "{{ ecs_service_update_constraints.service.placementConstraints[0].expression }} == 'attribute:ecs.instance-type == t3.micro'"
+
+    - name: Create ecs service with placement strategy
+      ecs_service:
+        name: "{{ ecs_service_name }}-strategy"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        placement_strategy:
+          - type: binpack
+            field: MEMORY
+        desired_count: 1
+        state: present
+      register: ecs_service_creation_strategy
+
+    - name: Assert ecs service strategy
+      assert:
+       that:
+          - ecs_service_creation_strategy.changed
+          - "{{ ecs_service_creation_strategy.service.placementplacementStrategy | length }} == 1"
+          - "{{ ecs_service_creation_strategy.service.placementConstraints[0].type }} == binpack"
+          - "{{ ecs_service_creation_strategy.service.placementConstraints[0].field }} == MEMORY"
+
+    - name: Update ecs service's placement strategy
+      ecs_service:
+        name: "{{ ecs_service_name }}-strategy"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        placement_strategy:
+          - type: spread
+            field: instanceId
+        desired_count: 1
+        state: present
+      register: ecs_service_update_strategy
+
+    - name: Assert ecs service strategy
+      assert:
+       that:
+          - ecs_service_update_strategy.changed
+          - "{{ ecs_service_update_strategy.service.placementplacementStrategy | length }} == 1"
+          - "{{ ecs_service_update_strategy.service.placementConstraints[0].type }} == spread"
+          - "{{ ecs_service_update_strategy.service.placementConstraints[0].field }} == instanceId"
+
     # ============================================================
     # Begin tests for Fargate
 
@@ -981,6 +1079,24 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-mft"
+        force_deletion: yes
+        wait: yes
+      ignore_errors: yes
+
+    - name: remove constraints ecs service
+      ecs_service:
+        state: absent
+        cluster: "{{ ecs_cluster_name }}"
+        name: "{{ ecs_service_name }}-constraint"
+        force_deletion: yes
+        wait: yes
+      ignore_errors: yes
+
+    - name: remove strategy ecs service
+      ecs_service:
+        state: absent
+        cluster: "{{ ecs_cluster_name }}"
+        name: "{{ ecs_service_name }}-strategy"
         force_deletion: yes
         wait: yes
       ignore_errors: yes
