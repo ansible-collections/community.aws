@@ -48,7 +48,8 @@ options:
   tags:
     description:
       - A dictionary of tags to add the EKS cluster.
-    type: dict    
+    type: dict
+    version_added: 5.1.0
   wait:
     description: >-
       Specifies whether the module waits until the cluster is active or deleted
