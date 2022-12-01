@@ -706,6 +706,29 @@ EXAMPLES = r'''
     memory: 1GB
     state: present
     network_mode: awsvpc
+
+# Create Task Definition with health check
+- name: Create task definition
+  community.aws.ecs_taskdefinition:
+    family: nginx
+    containers:
+    - name: nginx
+      essential: true
+      image: "nginx"
+      portMappings:
+      - containerPort: 8080
+        hostPort: 8080
+      cpu: 512
+      memory: 1024
+      healthCheck:
+        command:
+            - CMD-SHELL
+            - /app/healthcheck.py
+        interval: 60
+        retries: 3
+        startPeriod: 15
+        timeout: 15
+    state: present
 '''
 RETURN = r'''
 taskdefinition:
