@@ -90,6 +90,7 @@
         that:
           - eks_create is changed
           - eks_create.name == eks_cluster_name
+          - eks_create.tags.another == "foobar"
 
     - name: create EKS cluster with same details but wait for it to become active
       aws_eks_cluster:
