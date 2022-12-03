@@ -9,10 +9,10 @@ __metaclass__ = type
 DOCUMENTATION = r'''
 ---
 module: eks_nodegroup
-version_added: 4.0.0
+version_added: 5.1.0
 short_description: Manage EKS Nodegroup module
 description:
-  - Manage EKS Nodegroup
+  - Manage EKS Nodegroup.
 author:
   - Tiago Jarra (@tjarra)
 options:
@@ -51,12 +51,12 @@ options:
   disk_size:
     description:
       - Size of disk in nodegroup nodes.
-        If you specify launch_template, then don't specify disk_size, or the node group deployment will fail.
+        If you specify I(launch_template), then don't specify I(disk_size), or the node group deployment will fail.
     type: int
   instance_types:
     description:
       - Specify the instance types for a node group.
-        If you specify launch_template , then don't specify instance_types , or the node group deployment will fail.
+        If you specify I(launch_template), then don't specify I(instance_types), or the node group deployment will fail.
     type: list
     elements: str
   ami_type:
@@ -72,7 +72,7 @@ options:
   remote_access:
     description:
       - The remote access (SSH) configuration to use with your node group.
-        If you specify launch_template , then don't specify remote_access , or the node group deployment will fail.
+        If you specify I(launch_template), then don't specify I(remote_access), or the node group deployment will fail.
     type: dict
     suboptions:
       ec2_ssh_key:
@@ -118,7 +118,7 @@ options:
   launch_template:
     description:
       - An object representing a node group's launch template specification.
-      - If specified, then do not specify instanceTypes , diskSize , or remoteAccess.
+      - If specified, then do not specify I(instanceTypes), I(diskSize), or I(remoteAccess).
     type: dict
     suboptions:
       name:
@@ -163,7 +163,7 @@ options:
     type: bool
     default: false
   wait_timeout:
-    description: The duration in seconds to wait for the nodegroup to become active. Defaults to 1200 seconds.
+    description: The duration in seconds to wait for the nodegroup to become active. Defaults to C(1200) seconds.
     default: 1200
     type: int
 extends_documentation_fragment:
