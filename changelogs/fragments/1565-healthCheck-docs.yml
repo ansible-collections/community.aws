@@ -1,0 +1,3 @@
+---
+trivial:
+  - "ecs_taskdefinition - Adds documentation for the healthCheck dict (https://github.com/ansible-collections/community.aws/pull/1610)" 
