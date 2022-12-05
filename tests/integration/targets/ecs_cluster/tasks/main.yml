@@ -108,19 +108,21 @@
         vpc_id: '{{ setup_vpc.vpc.id }}'
         rules: # allow all ssh traffic but nothing else
         - ports: 22
-          cidr: 0.0.0.0/0
+          cidr_ip: 0.0.0.0/0
       register: setup_sg
 
-    - name: find a suitable AMI
-      ec2_ami_info:
-        owner: amazon
-        filters:
-          description: "Amazon Linux AMI* ECS *"
-      register: ec2_ami_info
+    - set_fact:
+        # As a lookup plugin we don't have access to module_defaults
+        connection_args:
+          region: "{{ aws_region }}"
+          aws_access_key: "{{ aws_access_key }}"
+          aws_secret_key: "{{ aws_secret_key }}"
+          aws_security_token: "{{ security_token | default(omit) }}"
+      no_log: True
 
     - name: set image id fact
       set_fact:
-        ecs_image_id: "{{ (ec2_ami_info.images|last).image_id }}"
+        ecs_image_id: "{{ lookup('aws_ssm', '/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id', **connection_args) }}"
 
     - name: provision ec2 instance to create an image
       ec2_instance:
@@ -146,6 +148,10 @@
         modify_targets: no
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: instance
+        health_check_interval: 5
+        health_check_timeout: 2
+        healthy_threshold_count: 2
+        unhealthy_threshold_count: 2
       register: elb_target_group_instance
 
     - name: create second target group to use ip target_type
@@ -157,6 +163,10 @@
         modify_targets: no
         vpc_id: '{{ setup_vpc.vpc.id }}'
         target_type: ip
+        health_check_interval: 5
+        health_check_timeout: 2
+        healthy_threshold_count: 2
+        unhealthy_threshold_count: 2
       register: elb_target_group_ip
 
     - name: create load balancer
@@ -618,8 +628,8 @@
       assert:
        that:
           - ecs_service_creation_constraints.changed
-          - "{{ ecs_service_creation_constraints.service.placementConstraints | length }} == 1"
-          - "{{ ecs_service_creation_constraints.service.placementConstraints[0].type }} == distinctInstance"
+          - "ecs_service_creation_constraints.service.placementConstraints | length == 1"
+          - "ecs_service_creation_constraints.service.placementConstraints[0].type == distinctInstance"
 
     - name: Update ecs service's placement constraints
       ecs_service:
@@ -642,9 +652,9 @@
       assert:
        that:
           - ecs_service_update_constraints.changed
-          - "{{ ecs_service_update_constraints.service.placementConstraints | length }} == 1"
-          - "{{ ecs_service_update_constraints.service.placementConstraints[0].type }} == memberOf"
-          - "{{ ecs_service_update_constraints.service.placementConstraints[0].expression }} == 'attribute:ecs.instance-type == t3.micro'"
+          - "ecs_service_update_constraints.service.placementConstraints | length == 1"
+          - "ecs_service_update_constraints.service.placementConstraints[0].type == memberOf"
+          - "ecs_service_update_constraints.service.placementConstraints[0].expression == 'attribute:ecs.instance-type == t3.micro'"
 
     - name: Create ecs service with placement strategy
       ecs_service:
@@ -667,9 +677,9 @@
       assert:
        that:
           - ecs_service_creation_strategy.changed
-          - "{{ ecs_service_creation_strategy.service.placementplacementStrategy | length }} == 1"
-          - "{{ ecs_service_creation_strategy.service.placementConstraints[0].type }} == binpack"
-          - "{{ ecs_service_creation_strategy.service.placementConstraints[0].field }} == MEMORY"
+          - "ecs_service_creation_strategy.service.placementplacementStrategy | length == 1"
+          - "ecs_service_creation_strategy.service.placementConstraints[0].type == binpack"
+          - "ecs_service_creation_strategy.service.placementConstraints[0].field == MEMORY"
 
     - name: Update ecs service's placement strategy
       ecs_service:
@@ -692,9 +702,9 @@
       assert:
        that:
           - ecs_service_update_strategy.changed
-          - "{{ ecs_service_update_strategy.service.placementplacementStrategy | length }} == 1"
-          - "{{ ecs_service_update_strategy.service.placementConstraints[0].type }} == spread"
-          - "{{ ecs_service_update_strategy.service.placementConstraints[0].field }} == instanceId"
+          - "ecs_service_update_strategy.service.placementplacementStrategy | length == 1"
+          - "ecs_service_update_strategy.service.placementConstraints[0].type == spread"
+          - "ecs_service_update_strategy.service.placementConstraints[0].field == instanceId"
 
     # ============================================================
     # Begin tests for Fargate
