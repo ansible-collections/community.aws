@@ -1,0 +1,3 @@
+---
+trivial:
+  - "ecs_taskdefinition - Add input documentation for the ``healthCheck`` parameter (https://github.com/ansible-collections/community.aws/pull/1610)" 
