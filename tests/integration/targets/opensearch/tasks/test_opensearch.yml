@@ -996,6 +996,11 @@
           - "opensearch_domain.domain_endpoint_options.tls_security_policy == 'Policy-Min-TLS-1-2-2019-07'"
           - opensearch_domain is changed
 
+- name: Set common facts for advanced security tests
+  set_fact:
+    test_master_user_name: my_custom_admin_username
+    test_master_user_password: "{{ lookup('ansible.builtin.password', '/dev/null chars=ascii_lowercase,digits length=16') }}"
+
 - name: Configure advanced security
   block:
     - name: Enable advanced security, check mode
@@ -1003,6 +1008,10 @@
         domain_name: "es-{{ tiny_prefix }}-vpc"
         advanced_security_options:
           enabled: true
+          internal_user_database_enabled: false
+          master_user_options:
+            master_user_name: "{{ test_master_user_name }}"
+            master_user_password: "{{ test_master_user_password }}"
         wait: true
       check_mode: true
       register: opensearch_domain
@@ -1019,12 +1028,20 @@
         domain_name: "es-{{ tiny_prefix }}-vpc"
         advanced_security_options:
           enabled: true
+          internal_user_database_enabled: false
+          master_user_options:
+            master_user_name: "{{ test_master_user_name }}"
+            master_user_password: "{{ test_master_user_password }}"
         wait: true
         wait_timeout: "{{ 60 * 60 }}"
       register: opensearch_domain
     - assert:
         that:
           - "opensearch_domain.advanced_security_options.enabled == True"
+          - "opensearch_domain.advanced_security_options.internal_user_database_enabled == False"
+          - "opensearch_domain.advanced_security_options.master_user_options is defined"
+          - "opensearch_domain.advanced_security_options.master_user_options.master_user_name is test_master_user_name"
+          - "opensearch_domain.advanced_security_options.master_user_options.master_user_password is test_master_user_password"
           - opensearch_domain is changed
 
     - name: Enable advanced security, check mode again
@@ -1032,6 +1049,10 @@
         domain_name: "es-{{ tiny_prefix }}-vpc"
         advanced_security_options:
           enabled: true
+          internal_user_database_enabled: false
+          master_user_options:
+            master_user_name: "{{ test_master_user_name }}"
+            master_user_password: "{{ test_master_user_password }}"
         wait: true
       check_mode: true
       register: opensearch_domain
@@ -1044,11 +1065,19 @@
         domain_name: "es-{{ tiny_prefix }}-vpc"
         advanced_security_options:
           enabled: true
+          internal_user_database_enabled: false
+          master_user_options:
+            master_user_name: "{{ test_master_user_name }}"
+            master_user_password: "{{ test_master_user_password }}"
         wait: true
       register: opensearch_domain
     - assert:
         that:
           - "opensearch_domain.advanced_security_options.enabled == True"
+          - "opensearch_domain.advanced_security_options.internal_user_database_enabled == False"
+          - "opensearch_domain.advanced_security_options.master_user_options is defined"
+          - "opensearch_domain.advanced_security_options.master_user_options.master_user_name is test_master_user_name"
+          - "opensearch_domain.advanced_security_options.master_user_options.master_user_password is test_master_user_password"
           - opensearch_domain is not changed
 
 - name: Configure warm and cold storage
