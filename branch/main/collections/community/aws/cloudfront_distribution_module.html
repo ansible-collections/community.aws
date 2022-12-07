@@ -958,6 +958,33 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-origins/origin_shield"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-origin-shield"><strong>origin_shield</strong></p>
+<a class="ansibleOptionLink" href="#parameter-origins/origin_shield" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.1.0</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specify origin shield options for the origin.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-origins/origin_shield/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-origin-shield-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#parameter-origins/origin_shield/enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Indicate whether you want the origin to have Origin Shield enabled or not.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-origins/origin_shield/origin_shield_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-origin-shield-origin-shield-region"><strong>origin_shield_region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-origins/origin_shield/origin_shield_region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specify which AWS region will be used for Origin Shield. Required if Origin Shield is enabled.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-origins/s3_origin_access_identity_enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-s3-origin-access-identity-enabled"><strong>s3_origin_access_identity_enabled</strong></p>
 <a class="ansibleOptionLink" href="#parameter-origins/s3_origin_access_identity_enabled" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -971,21 +998,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-origins/s3_origin_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-s3-origin-config"><strong>s3_origin_config</strong></p>
 <a class="ansibleOptionLink" href="#parameter-origins/s3_origin_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specify origin access identity for S3 origins.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-origins/s3_origin_config/origin_access_identity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-origins-s3-origin-config-origin-access-identity"><strong>origin_access_identity</strong></p>
 <a class="ansibleOptionLink" href="#parameter-origins/s3_origin_config/origin_access_identity" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Existing origin access identity in the format <code class="docutils literal notranslate"><span class="pre">origin-access-identity/cloudfront/OID_ID</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-price_class"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-price-class"><strong>price_class</strong></p>
 <a class="ansibleOptionLink" href="#parameter-price_class" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -997,7 +1024,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">PriceClass_100</span></code>, <code class="docutils literal notranslate"><span class="pre">PriceClass_200</span></code> and <code class="docutils literal notranslate"><span class="pre">PriceClass_All</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-profile"><span id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -1009,7 +1036,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_aliases"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-purge-aliases"><strong>purge_aliases</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_aliases" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1022,7 +1049,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_cache_behaviors"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-purge-cache-behaviors"><strong>purge_cache_behaviors</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_cache_behaviors" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1035,7 +1062,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_custom_error_responses"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-purge-custom-error-responses"><strong>purge_custom_error_responses</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_custom_error_responses" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1047,7 +1074,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_origins"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-purge-origins"><strong>purge_origins</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_origins" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1059,7 +1086,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-purge-tags"><strong>purge_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1073,7 +1100,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-region"><span id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -1088,21 +1115,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-restrictions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-restrictions"><strong>restrictions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-restrictions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A config element that is a complex object that describes how a distribution should restrict it’s content.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-restrictions/geo_restriction"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-restrictions-geo-restriction"><strong>geo_restriction</strong></p>
 <a class="ansibleOptionLink" href="#parameter-restrictions/geo_restriction" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Apply a restriction based on the location of the requester.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-restrictions/geo_restriction/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-restrictions-geo-restriction-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#parameter-restrictions/geo_restriction/items" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -1110,7 +1137,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>See the ISO website for a full list of codes <a class="reference external" href="https://www.iso.org/obp/ui/#search/code/">https://www.iso.org/obp/ui/#search/code/</a>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-restrictions/geo_restriction/restriction_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-restrictions-geo-restriction-restriction-type"><strong>restriction_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-restrictions/geo_restriction/restriction_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1118,7 +1145,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">none</span></code>, <code class="docutils literal notranslate"><span class="pre">whitelist</span></code>, <code class="docutils literal notranslate"><span class="pre">blacklist</span></code>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -1135,7 +1162,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -1153,7 +1180,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1167,7 +1194,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div>
 <div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-tags"><span id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-resource-tags"></span><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
@@ -1177,7 +1204,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1190,14 +1217,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-viewer_certificate"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-viewer-certificate"><strong>viewer_certificate</strong></p>
 <a class="ansibleOptionLink" href="#parameter-viewer_certificate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dict that specifies the encryption details of the distribution.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-viewer_certificate/acm_certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-viewer-certificate-acm-certificate-arn"><strong>acm_certificate_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-viewer_certificate/acm_certificate_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1205,7 +1232,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>If <em>acm_certificate_id</em> is set then you must also specify <em>ssl_support_method</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-viewer_certificate/cloudfront_default_certificate"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-viewer-certificate-cloudfront-default-certificate"><strong>cloudfront_default_certificate</strong></p>
 <a class="ansibleOptionLink" href="#parameter-viewer_certificate/cloudfront_default_certificate" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1218,7 +1245,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-viewer_certificate/iam_certificate_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-viewer-certificate-iam-certificate-id"><strong>iam_certificate_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-viewer_certificate/iam_certificate_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1226,7 +1253,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>If <em>iam_certificate_id</em> is set then you must also specify <em>ssl_support_method</em>.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-viewer_certificate/minimum_protocol_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-viewer-certificate-minimum-protocol-version"><strong>minimum_protocol_version</strong></p>
 <a class="ansibleOptionLink" href="#parameter-viewer_certificate/minimum_protocol_version" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1234,7 +1261,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>See <a class="reference external" href="https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html">https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/secure-connections-supported-viewer-protocols-ciphers.html</a> for supported security policies.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-viewer_certificate/ssl_support_method"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-viewer-certificate-ssl-support-method"><strong>ssl_support_method</strong></p>
 <a class="ansibleOptionLink" href="#parameter-viewer_certificate/ssl_support_method" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -1242,7 +1269,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p>Valid values are <code class="docutils literal notranslate"><span class="pre">sni-only</span></code> for SNI, and <code class="docutils literal notranslate"><span class="pre">vip</span></code> if CloudFront is configured to use a dedicated IP for your content.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -1254,7 +1281,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -1262,7 +1289,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">1800</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-web_acl_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-parameter-web-acl-id"><strong>web_acl_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-web_acl_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2425,6 +2452,33 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/items/origin_shield"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-origin-shield"><strong>origin_shield</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/items/origin_shield" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.1.0</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Configuration of the origin Origin Shield.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/items/origin_shield/enabled"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-origin-shield-enabled"><strong>enabled</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/items/origin_shield/enabled" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether Origin Shield is enabled or not.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-origins/items/origin_shield/origin_shield_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-origin-shield-origin-shield-region"><strong>origin_shield_region</strong></p>
+<a class="ansibleOptionLink" href="#return-origins/items/origin_shield/origin_shield_region" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Which region is used by Origin Shield.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when enabled is true</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;us-east-1&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-origins/items/s3_origin_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-s3-origin-config"><strong>s3_origin_config</strong></p>
 <a class="ansibleOptionLink" href="#return-origins/items/s3_origin_config" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -2432,7 +2486,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when s3_origin_access_identity_enabled is true</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-origins/items/s3_origin_config/origin_access_identity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-items-s3-origin-config-origin-access-identity"><strong>origin_access_identity</strong></p>
 <a class="ansibleOptionLink" href="#return-origins/items/s3_origin_config/origin_access_identity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2441,7 +2495,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;origin-access-identity/cloudfront/EXAMPLEID&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-origins/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-origins-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-origins/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -2450,7 +2504,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-price_class"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-price-class"><strong>price_class</strong></p>
 <a class="ansibleOptionLink" href="#return-price_class" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2459,7 +2513,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;PriceClass_All&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions"><strong>restrictions</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -2467,7 +2521,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction"><strong>geo_restriction</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions/geo_restriction" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -2475,7 +2529,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/items"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-items"><strong>items</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/items" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -2484,7 +2538,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[&quot;xy&quot;]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/quantity"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-quantity"><strong>quantity</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/quantity" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -2493,7 +2547,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">1</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-restrictions/geo_restriction/restriction_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-restrictions-geo-restriction-restriction-type"><strong>restriction_type</strong></p>
 <a class="ansibleOptionLink" href="#return-restrictions/geo_restriction/restriction_type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2502,7 +2556,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;blacklist&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-status"><strong>status</strong></p>
 <a class="ansibleOptionLink" href="#return-status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2511,7 +2565,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;InProgress&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -2520,7 +2574,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Hello&quot;:</span> <span class="pre">&quot;World&quot;}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate"><strong>viewer_certificate</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -2528,7 +2582,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/acm_certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-acm-certificate-arn"><strong>acm_certificate_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/acm_certificate_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2537,7 +2591,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-1234-1234-abcd-123456abcdef&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/certificate"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-certificate"><strong>certificate</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/certificate" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2546,7 +2600,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:acm:us-east-1:123456789012:certificate/abcd1234-1234-1234-abcd-123456abcdef&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/certificate_source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-certificate-source"><strong>certificate_source</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/certificate_source" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2555,7 +2609,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;acm&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/minimum_protocol_version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-minimum-protocol-version"><strong>minimum_protocol_version</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/minimum_protocol_version" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2564,7 +2618,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;TLSv1&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-viewer_certificate/ssl_support_method"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-viewer-certificate-ssl-support-method"><strong>ssl_support_method</strong></p>
 <a class="ansibleOptionLink" href="#return-viewer_certificate/ssl_support_method" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -2573,7 +2627,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;sni-only&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-web_acl_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudfront-distribution-module-return-web-acl-id"><strong>web_acl_id</strong></p>
 <a class="ansibleOptionLink" href="#return-web_acl_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
