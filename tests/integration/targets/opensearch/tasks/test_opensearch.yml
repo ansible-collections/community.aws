@@ -3,7 +3,7 @@
     - name: test without specifying required module options
       opensearch:
         engine_version: "Elasticsearch_7.1"
-      ignore_errors: yes
+      ignore_errors: true
       register: result
 
     - name: assert domain_name is a required module option
@@ -959,7 +959,7 @@
         wait_timeout: "{{ 60 * 60 }}"
       register: opensearch_domain
       until: opensearch_domain is not failed
-      ignore_errors: yes
+      ignore_errors: true
       retries: 10
       # After enabling at rest encryption, there is a period during which the API fails, so retry.
       delay: 30
