@@ -1,0 +1,2 @@
+bugfixes:
+  - opensearch - Fix cluster creation when using advanced security options (https://github.com/ansible-collections/community.aws/pull/1613).
