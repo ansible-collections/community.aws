@@ -197,6 +197,28 @@ New Modules
 
 - accessanalyzer_validate_policy_info - Performs validation of IAM policies
 
+v4.4.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+This changelog contains all changes to the modules and plugins in this collection
+that have been made after the previous release.
+
+Minor Changes
+-------------
+
+- elasticache_parameter_group - add ``redis6.x`` group family on the module input choices (https://github.com/ansible-collections/community.aws/pull/1476).
+
+Bugfixes
+--------
+
+- aws_ssm - fixes S3 bucket region detection by ensuring boto client has correct credentials and exists in correct partition (https://github.com/ansible-collections/community.aws/pull/1428).
+- ecs_ecr - fix a ``RepositoryNotFound`` exception when trying to create repositories in check mode (https://github.com/ansible-collections/community.aws/pull/1550).
+- opensearch - Fix cluster creation when using advanced security options (https://github.com/ansible-collections/community.aws/pull/1613).
+
 v4.3.0
 ======
 
