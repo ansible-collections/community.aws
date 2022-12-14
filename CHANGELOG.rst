@@ -5,6 +5,30 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v5.1.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+This changelog contains all changes to the modules and plugins in this collection
+that have been made after the previous release.
+
+Minor Changes
+-------------
+
+- elasticache_parameter_group - add ``redis6.x`` group family on the module input choices (https://github.com/ansible-collections/community.aws/pull/1476).
+- elb_target_group - add support for ``protocol_version`` parameter (https://github.com/ansible-collections/community.aws/pull/1496).
+
+Bugfixes
+--------
+
+- aws_ssm - fixes S3 bucket region detection by ensuring boto client has correct credentials and exists in correct partition (https://github.com/ansible-collections/community.aws/pull/1428).
+- ec2_snapshot_copy - including tags caused the erorr "Tag specification resource type must have a value". Fix sets the ResourceType to snapshot to resolve this issue (https://github.com/ansible-collections/community.aws/pull/1419).
+- ecs_ecr - fix a ``RepositoryNotFound`` exception when trying to create repositories in check mode (https://github.com/ansible-collections/community.aws/pull/1550).
+- opensearch - Fix cluster creation when using advanced security options (https://github.com/ansible-collections/community.aws/pull/1613).
+
 v5.0.0
 ======
 
