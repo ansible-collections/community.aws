@@ -656,6 +656,26 @@
           - "ecs_service_update_constraints.service.placementConstraints[0].type == memberOf"
           - "ecs_service_update_constraints.service.placementConstraints[0].expression == 'attribute:ecs.instance-type == t3.micro'"
 
+    - name: Remove ecs service's placement constraints
+      ecs_service:
+        name: "{{ ecs_service_name }}-constraint"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        desired_count: 1
+        state: present
+      register: ecs_service_remove_constraints
+
+    - name: Assert ecs service constraint
+      assert:
+       that:
+          - ecs_service_remove_constraints.changed
+          - "ecs_service_remove_constraints.service.placementConstraints | length == 0"
+
     - name: Create ecs service with placement strategy
       ecs_service:
         name: "{{ ecs_service_name }}-strategy"
@@ -706,6 +726,25 @@
           - "ecs_service_update_strategy.service.placementStrategy[0].type == spread"
           - "ecs_service_update_strategy.service.placementStrategy[0].field == instanceId"
 
+    - name: Remove ecs service's placement strategy
+      ecs_service:
+        name: "{{ ecs_service_name }}-strategy"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        desired_count: 1
+        state: present
+      register: ecs_service_remove_strategy
+
+    - name: Assert ecs service strategy
+      assert:
+       that:
+          - ecs_service_remove_strategy.changed
+          - "ecs_service_remove_strategy.service.placementStrategy | length == 0"
     # ============================================================
     # Begin tests for Fargate
 
