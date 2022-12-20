@@ -85,6 +85,23 @@ options:
         default: false
         type: bool
         version_added: 1.3.0
+    encryption_configuration:
+        description:
+            - The encryption configuration for the repository.
+        required: false
+        suboptions:
+            encryptionType:
+                description:
+                    - The encryption type to use.
+                choices: [AES256, KMS]
+                default: 'AES256'
+                type: str
+            kmsKey:
+                description:
+                    - If I(encryption_type=KMS), specify the KMS key to use for encryption.
+                    - The alias, key ID, or full ARN of the KMS key can be specified.
+                type: str
+        type: dict
 author:
  - David M. Lee (@leedm777)
 extends_documentation_fragment:
@@ -161,6 +178,13 @@ EXAMPLES = '''
   community.aws.ecs_ecr:
     name: needs-no-lifecycle-policy
     purge_lifecycle_policy: true
+
+- name: set-encryption-configuration
+  community.aws.ecs_ecr:
+    name: uses-custom-kms-key
+    encryption_configuration:
+      encryptionType: KMS
+      kmsKey: custom-kms-key-alias
 '''
 
 RETURN = '''
@@ -248,17 +272,21 @@ class EcsEcr:
         except is_boto3_error_code(['RepositoryNotFoundException', 'RepositoryPolicyNotFoundException']):
             return None
 
-    def create_repository(self, registry_id, name, image_tag_mutability):
+    def create_repository(self, registry_id, name, image_tag_mutability, encryption_configuration):
         if registry_id:
             default_registry_id = self.sts.get_caller_identity().get('Account')
             if registry_id != default_registry_id:
                 raise Exception('Cannot create repository in registry {0}.'
                                 'Would be created in {1} instead.'.format(registry_id, default_registry_id))
 
+        if encryption_configuration is None:
+            encryption_configuration = dict(encryptionType='AES256')
+
         if not self.check_mode:
             repo = self.ecr.create_repository(
                 repositoryName=name,
-                imageTagMutability=image_tag_mutability).get('repository')
+                imageTagMutability=image_tag_mutability,
+                encryptionConfiguration=encryption_configuration).get('repository')
             self.changed = True
             return repo
         else:
@@ -411,6 +439,7 @@ def run(ecr, params):
         lifecycle_policy_text = params['lifecycle_policy']
         purge_lifecycle_policy = params['purge_lifecycle_policy']
         scan_on_push = params['scan_on_push']
+        encryption_configuration = params['encryption_configuration']
 
         # Parse policies, if they are given
         try:
@@ -437,7 +466,8 @@ def run(ecr, params):
             result['created'] = False
 
             if not repo:
-                repo = ecr.create_repository(registry_id, name, image_tag_mutability)
+                repo = ecr.create_repository(
+                    registry_id, name, image_tag_mutability, encryption_configuration)
                 result['changed'] = True
                 result['created'] = True
             else:
@@ -550,7 +580,8 @@ def main():
         purge_policy=dict(required=False, type='bool'),
         lifecycle_policy=dict(required=False, type='json'),
         purge_lifecycle_policy=dict(required=False, type='bool'),
-        scan_on_push=(dict(required=False, type='bool', default=False))
+        scan_on_push=(dict(required=False, type='bool', default=False)),
+        encryption_configuration=(dict(required=False, type='dict'))
     )
     mutually_exclusive = [
         ['policy', 'purge_policy'],
