@@ -677,9 +677,9 @@
       assert:
        that:
           - ecs_service_creation_strategy.changed
-          - "ecs_service_creation_strategy.service.placementplacementStrategy | length == 1"
-          - "ecs_service_creation_strategy.service.placementConstraints[0].type == binpack"
-          - "ecs_service_creation_strategy.service.placementConstraints[0].field == MEMORY"
+          - "ecs_service_creation_strategy.service.placementStrategy | length == 1"
+          - "ecs_service_creation_strategy.service.placementStrategy[0].type == binpack"
+          - "ecs_service_creation_strategy.service.placementStrategy[0].field == MEMORY"
 
     - name: Update ecs service's placement strategy
       ecs_service:
@@ -702,9 +702,9 @@
       assert:
        that:
           - ecs_service_update_strategy.changed
-          - "ecs_service_update_strategy.service.placementplacementStrategy | length == 1"
-          - "ecs_service_update_strategy.service.placementConstraints[0].type == spread"
-          - "ecs_service_update_strategy.service.placementConstraints[0].field == instanceId"
+          - "ecs_service_update_strategy.service.placementStrategy | length == 1"
+          - "ecs_service_update_strategy.service.placementStrategy[0].type == spread"
+          - "ecs_service_update_strategy.service.placementStrategy[0].field == instanceId"
 
     # ============================================================
     # Begin tests for Fargate
