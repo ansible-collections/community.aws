@@ -1,2 +1,0 @@
-minor_changes:
-  - elb_target_group - add support for ``protocol_version`` parameter (https://github.com/ansible-collections/community.aws/pull/1496).
