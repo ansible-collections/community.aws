@@ -253,7 +253,7 @@ parameter_metadata:
           type: str
           example: Some value.
           returned: success
-      version_added: 5.1.0
+      version_added: 5.2.0
     tags_dict:
       description: A dictionary representing the tags associated with the parameter.
       type: dict
