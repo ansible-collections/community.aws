@@ -102,6 +102,7 @@ options:
                     - The alias, key ID, or full ARN of the KMS key can be specified.
                 type: str
         type: dict
+        version_added: 5.2.0
 author:
  - David M. Lee (@leedm777)
 extends_documentation_fragment:
