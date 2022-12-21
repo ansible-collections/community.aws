@@ -93,7 +93,7 @@ extends_documentation_fragment:
   - amazon.aws.tags
 
 notes:
-  - Support for I(tags) and I(purge_tags) was added in release 5.1.0.
+  - Support for I(tags) and I(purge_tags) was added in release 5.2.0.
 
 '''
 
