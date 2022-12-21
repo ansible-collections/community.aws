@@ -10,6 +10,24 @@
     - set_fact:
         ecr_name: '{{ resource_prefix }}-ecr'
 
+    - name: get ARN of calling user
+      aws_caller_info:
+      register: aws_caller_info
+
+    - name: create KMS key for testing
+      aws_kms:
+        alias: "{{ resource_prefix }}-kms"
+        description: a key used for testing ECR
+        state: present
+        enabled: yes
+        key_spec: SYMMETRIC_DEFAULT
+        key_usage: ENCRYPT_DECRYPT
+        policy: "{{ lookup('template', 'kms_policy.j2') }}"
+        tags:
+          Name: "{{ resource_prefix }}-kms"
+          AnsibleTest: AnsibleTestVpc
+      register: kms_test_key
+
     - name: When creating with check mode
       ecs_ecr:
         name: '{{ ecr_name }}'
@@ -53,6 +71,11 @@
       assert:
         that:
           - result.repository.imageTagMutability == "MUTABLE"
+
+    - name: it should use AES256 encryption by default
+      assert:
+        that:
+          - result.repository.encryptionConfiguration.encryptionType == "AES256"
 
     - name: When pulling an existing repository that has no existing policy
       ecs_ecr:
@@ -538,9 +561,38 @@
           - result is changed
           - not result.repository.imageScanningConfiguration.scanOnPush
 
+    - name: delete repository
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+        state: absent
+
+    - name: When creating a repo using KMS encryption
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+        encryption_configuration:
+          encryptionType: KMS
+          kmsKey: '{{ kms_test_key.key_arn }}'
+      register: result
+
+    - name: it should create the repo and use KMS encryption
+      assert:
+        that:
+          - result is changed
+          - result.repository.encryptionConfiguration.encryptionType == "KMS"
+
+    - name: it should use the provided KMS key
+      assert:
+        that:
+          - result.repository.encryptionConfiguration.kmsKey == '{{ kms_test_key.key_arn }}'
+
   always:
 
     - name: Delete lingering ECR repository
       ecs_ecr:
         name: '{{ ecr_name }}'
+        state: absent
+
+    - name: Delete KMS key
+      aws_kms:
+        key_id: '{{ kms_test_key.key_arn }}'
         state: absent
