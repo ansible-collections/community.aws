@@ -1,0 +1,2 @@
+minor_changes:
+  - ecs_service - support load balancer update for existing ecs services(https://github.com/ansible-collections/community.aws/pull/1625).
