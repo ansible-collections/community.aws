@@ -561,6 +561,20 @@
           - result is changed
           - not result.repository.imageScanningConfiguration.scanOnPush
 
+    - name: When modifying the encryption setting of an existing repository
+      ecs_ecr:
+        name: '{{ ecr_name }}'
+        encryption_configuration:
+          encryption_type: KMS
+          kms_key: '{{ kms_test_key.key_arn }}'
+      register: result
+      ignore_errors: true
+
+    - name: it should fail
+      assert:
+        that:
+          - result is failed
+
     - name: delete repository
       ecs_ecr:
         name: '{{ ecr_name }}'
@@ -570,8 +584,8 @@
       ecs_ecr:
         name: '{{ ecr_name }}'
         encryption_configuration:
-          encryptionType: KMS
-          kmsKey: '{{ kms_test_key.key_arn }}'
+          encryption_type: KMS
+          kms_key: '{{ kms_test_key.key_arn }}'
       register: result
 
     - name: it should create the repo and use KMS encryption
