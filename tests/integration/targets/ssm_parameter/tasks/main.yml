@@ -415,6 +415,30 @@
       that:
       - result is not changed
 
+  - name: Create key/value pair in aws parameter store with no description
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ simple_value }}'
+    register: result
+
+  - assert:
+      that:
+      - result is changed
+      - '"description" not in result.parameter_metadata'
+
+  - name: Add a description
+    aws_ssm_parameter_store:
+      name: '{{ simple_name }}'
+      value: '{{ simple_value }}'
+      description: '{{ simple_description }}'
+    register: result
+
+  - assert:
+      that:
+        - result is changed
+        - '"description" in result.parameter_metadata'
+        - result.parameter_metadata.description == simple_description
+
   always:
   # ============================================================
   - name: Delete remaining key/value pairs in aws parameter store
