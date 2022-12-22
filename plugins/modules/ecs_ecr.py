@@ -90,13 +90,13 @@ options:
             - The encryption configuration for the repository.
         required: false
         suboptions:
-            encryptionType:
+            encryption_type:
                 description:
                     - The encryption type to use.
                 choices: [AES256, KMS]
                 default: 'AES256'
                 type: str
-            kmsKey:
+            kms_key:
                 description:
                     - If I(encryption_type=KMS), specify the KMS key to use for encryption.
                     - The alias, key ID, or full ARN of the KMS key can be specified.
@@ -184,8 +184,8 @@ EXAMPLES = '''
   community.aws.ecs_ecr:
     name: uses-custom-kms-key
     encryption_configuration:
-      encryptionType: KMS
-      kmsKey: custom-kms-key-alias
+      encryption_type: KMS
+      kms_key: custom-kms-key-alias
 '''
 
 RETURN = '''
@@ -226,6 +226,7 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 from ansible.module_utils.six import string_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
@@ -440,7 +441,7 @@ def run(ecr, params):
         lifecycle_policy_text = params['lifecycle_policy']
         purge_lifecycle_policy = params['purge_lifecycle_policy']
         scan_on_push = params['scan_on_push']
-        encryption_configuration = params['encryption_configuration']
+        encryption_configuration = snake_dict_to_camel_dict(params['encryption_configuration'])
 
         # Parse policies, if they are given
         try:
