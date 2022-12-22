@@ -583,7 +583,17 @@ def main():
         lifecycle_policy=dict(required=False, type='json'),
         purge_lifecycle_policy=dict(required=False, type='bool'),
         scan_on_push=(dict(required=False, type='bool', default=False)),
-        encryption_configuration=(dict(required=False, type='dict'))
+        encryption_configuration=dict(
+            required=False,
+            type='dict',
+            options=dict(
+                encryption_type=dict(required=True, type='str', choices=['AES256', 'KMS']),
+                kms_key=dict(required=False, type='str'),
+            ),
+            required_if=[
+                ['encryption_type', 'KMS', ['kms_key']],
+            ],
+        ),
     )
     mutually_exclusive = [
         ['policy', 'purge_policy'],
