@@ -3,10 +3,10 @@
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.common import set_collection_info
-
-
-COMMUNITY_AWS_COLLECTION_NAME = "community.aws"
-COMMUNITY_AWS_COLLECTION_VERSION = "6.0.0-dev0"
+from ansible_collections.community.aws.plugins.module_utils.common import (
+    COMMUNITY_AWS_COLLECTION_NAME,
+    COMMUNITY_AWS_COLLECTION_VERSION,
+)
 
 
 class AnsibleCommunityAWSModule(AnsibleAWSModule):
