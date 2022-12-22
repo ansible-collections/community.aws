@@ -1,2 +1,2 @@
 bugfixes:
-  - ssm_parameter - Fix a `KeyError` when adding a description to an existing parameter (https://github.com/ansible-collections/community.aws/issues/1471).
+  - ssm_parameter - Fix a ``KeyError`` when adding a description to an existing parameter (https://github.com/ansible-collections/community.aws/issues/1471).
