@@ -473,6 +473,11 @@ def run(ecr, params):
                 result['changed'] = True
                 result['created'] = True
             else:
+                if encryption_configuration is not None:
+                    if repo.get('encryptionConfiguration') != encryption_configuration:
+                        result['msg'] = 'Cannot modify repository encryption type'
+                        return False, result
+
                 repo = ecr.put_image_tag_mutability(registry_id, name, image_tag_mutability)
             result['repository'] = repo
 
