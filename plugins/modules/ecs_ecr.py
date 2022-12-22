@@ -96,6 +96,7 @@ options:
                 choices: [AES256, KMS]
                 default: 'AES256'
                 type: str
+                required: true
             kms_key:
                 description:
                     - If I(encryption_type=KMS), specify the KMS key to use for encryption.
@@ -592,8 +593,8 @@ def main():
             required=False,
             type='dict',
             options=dict(
-                encryption_type=dict(required=True, type='str', choices=['AES256', 'KMS']),
-                kms_key=dict(required=False, type='str'),
+                encryption_type=dict(required=True, type='str', default='AES256', choices=['AES256', 'KMS']),
+                kms_key=dict(required=False, type='str', no_log=False),
             ),
             required_if=[
                 ['encryption_type', 'KMS', ['kms_key']],
