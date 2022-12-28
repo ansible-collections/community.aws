@@ -20,10 +20,13 @@ options:
     description:
       - A dict of filters to apply. Each dict item consists of a filter key and a filter value.
         See U(https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeCarrierGateways.html) for possible filters.
+    required: false
+    default: {}
     type: dict
   carrier_gateway_ids:
     description:
       - Get details of specific Carrier Gateway ID.
+    required: false
     type: list
     elements: str
 extends_documentation_fragment:
@@ -130,8 +133,8 @@ def list_carrier_gateways(connection, module):
 
 def main():
     argument_spec = dict(
-        filters=dict(type='dict', default=dict()),
-        carrier_gateway_ids=dict(type='list', default=None, elements='str'),
+        carrier_gateway_ids=dict(default=None, elements='str', type='list'),
+        filters=dict(default={}, type='dict')
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
@@ -142,7 +145,6 @@ def main():
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg='Failed to connect to AWS')
 
-    # call your function here
     results = list_carrier_gateways(connection, module)
 
     module.exit_json(carrier_gateways=results)
