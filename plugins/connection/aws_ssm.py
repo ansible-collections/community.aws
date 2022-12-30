@@ -87,6 +87,13 @@ options:
     vars:
     - name: ansible_aws_ssm_document
     version_added: 5.2.0
+  s3_addressing_style:
+    description: The addressing style to use when using S3 URLs
+    choices: [ 'path', 'virtual', 'auto' ]
+    default: 'auto'
+    version_added: 5.2.0
+    vars:
+    - name: ansible_aws_ssm_s3_addressing_style
 '''
 
 EXAMPLES = r'''
@@ -708,7 +715,10 @@ class Connection(ConnectionBase):
 
         client = session.client(
             service,
-            config=Config(signature_version="s3v4")
+            config=Config(
+                signature_version="s3v4",
+                s3={'addressing_style': self.get_option('s3_addressing_style')}
+            )
         )
         return client
 

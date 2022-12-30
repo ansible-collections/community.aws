@@ -1,0 +1,2 @@
+minor_changes:
+  - aws_ssm - add `ansible_aws_ssm_s3_addressing_style` to allow setting the S3 addressing style (https://github.com/ansible-collections/community.aws/pull/1633)
