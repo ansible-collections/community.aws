@@ -374,59 +374,59 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Creationg a Cloudfront header policy using all predefined header features and a custom header for demonstration</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_response_headers_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-header-policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My header policy for all the headers</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cors_config</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">access_control_allow_origins</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;https://foo.com/bar&#39;</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;https://bar.com/foo&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">access_control_allow_headers</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;X-Session-Id&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">access_control_allow_methods</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GET</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OPTIONS</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HEAD</span><span class="w"></span>
-<span class="w">      </span><span class="nt">access_control_allow_credentials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">access_control_expose_headers</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;X-Session-Id&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">access_control_max_age_sec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1800</span><span class="w"></span>
-<span class="w">      </span><span class="nt">origin_override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">security_headers_config</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">xss_protection</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">protection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">        </span><span class="nt">report_uri</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;https://my.report-uri.com/foo/bar&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">frame_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">frame_option</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;SAMEORIGIN&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">referrer_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">referrer_policy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;same-origin&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">content_security_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">content_security_policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;frame-ancestors</span><span class="nv"> </span><span class="s">&#39;none&#39;;</span><span class="nv"> </span><span class="s">report-uri</span><span class="nv"> </span><span class="s">https://my.report-uri.com/r/d/csp/enforce;&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">content_type_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">strict_transport_security</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">include_subdomains</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">        </span><span class="nt">preload</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">        </span><span class="nt">access_control_max_age_sec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">63072000</span><span class="w"></span>
-<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">custom_headers_config</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">items</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;X-Test-Header&#39;</span><span class="p p-Indicator">,</span><span class="nt"> value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Foo&#39;</span><span class="p p-Indicator">,</span><span class="nt"> override</span><span class="p">:</span><span class="w"> </span><span class="nv">true</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Creationg a Cloudfront header policy using all predefined header features and a custom header for demonstration</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_response_headers_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-header-policy</span>
+<span class="w">    </span><span class="nt">comment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My header policy for all the headers</span>
+<span class="w">    </span><span class="nt">cors_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">access_control_allow_origins</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;https://foo.com/bar&#39;</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;https://bar.com/foo&#39;</span>
+<span class="w">      </span><span class="nt">access_control_allow_headers</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;X-Session-Id&#39;</span>
+<span class="w">      </span><span class="nt">access_control_allow_methods</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GET</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OPTIONS</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">HEAD</span>
+<span class="w">      </span><span class="nt">access_control_allow_credentials</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">access_control_expose_headers</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;X-Session-Id&#39;</span>
+<span class="w">      </span><span class="nt">access_control_max_age_sec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1800</span>
+<span class="w">      </span><span class="nt">origin_override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">security_headers_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">xss_protection</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">protection</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">report_uri</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;https://my.report-uri.com/foo/bar&#39;</span>
+<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">frame_options</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">frame_option</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;SAMEORIGIN&#39;</span>
+<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">referrer_policy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">referrer_policy</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;same-origin&#39;</span>
+<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">content_security_policy</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">content_security_policy</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;frame-ancestors</span><span class="nv"> </span><span class="s">&#39;none&#39;;</span><span class="nv"> </span><span class="s">report-uri</span><span class="nv"> </span><span class="s">https://my.report-uri.com/r/d/csp/enforce;&quot;</span>
+<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">content_type_options</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">strict_transport_security</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">include_subdomains</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">preload</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">        </span><span class="nt">access_control_max_age_sec</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">63072000</span>
+<span class="w">        </span><span class="nt">override</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">custom_headers_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">items</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> header</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;X-Test-Header&#39;</span><span class="p p-Indicator">,</span><span class="nt"> value</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Foo&#39;</span><span class="p p-Indicator">,</span><span class="nt"> override</span><span class="p">:</span><span class="w"> </span><span class="nv">true</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete header policy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_response_headers_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-header-policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete header policy</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_response_headers_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-header-policy</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>

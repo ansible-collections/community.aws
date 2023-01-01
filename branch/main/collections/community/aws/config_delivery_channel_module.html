@@ -378,13 +378,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Delivery Channel for AWS Config</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.config_delivery_channel</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_delivery_channel</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">s3_bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;test_aws_config_bucket&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">sns_topic_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">delivery_frequency</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Twelve_Hours&#39;</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Delivery Channel for AWS Config</span>
+<span class="w">  </span><span class="nt">community.aws.config_delivery_channel</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_delivery_channel</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">s3_bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;test_aws_config_bucket&#39;</span>
+<span class="w">    </span><span class="nt">sns_topic_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no&#39;</span>
+<span class="w">    </span><span class="nt">delivery_frequency</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Twelve_Hours&#39;</span>
 </pre></div>
 </div>
 <section id="authors">

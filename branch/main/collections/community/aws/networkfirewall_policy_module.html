@@ -509,34 +509,34 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an AWS Network Firewall Policy with default rule order</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateful_rule_order</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExamplePolicy&#39;</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create an AWS Network Firewall Policy with default rule order</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stateful_rule_order</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;default&#39;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExamplePolicy&#39;</span>
 
-<span class="c1"># Create an AWS Network Firewall Policy with strict rule order</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateful_rule_order</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;strict&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleStrictPolicy&#39;</span><span class="w"></span>
+<span class="c1"># Create an AWS Network Firewall Policy with strict rule order</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stateful_rule_order</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;strict&#39;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleStrictPolicy&#39;</span>
 
 
-<span class="c1"># Create an AWS Network Firewall Policy that defaults to dropping all packets</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateful_rule_order</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;strict&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDropPolicy&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateful_default_actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;aws:drop_strict&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stateful_rule_groups</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;ExampleStrictRuleGroup&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;arn:aws:network-firewall:us-east-1:aws-managed:stateful-rulegroup/BotNetCommandAndControlDomainsStrictOrder&#39;</span><span class="w"></span>
+<span class="c1"># Create an AWS Network Firewall Policy that defaults to dropping all packets</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">stateful_rule_order</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;strict&#39;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDropPolicy&#39;</span>
+<span class="w">    </span><span class="nt">stateful_default_actions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;aws:drop_strict&#39;</span>
+<span class="w">    </span><span class="nt">stateful_rule_groups</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;ExampleStrictRuleGroup&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;arn:aws:network-firewall:us-east-1:aws-managed:stateful-rulegroup/BotNetCommandAndControlDomainsStrictOrder&#39;</span>
 
-<span class="c1"># Delete an AWS Network Firewall Policy</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDropPolicy&#39;</span><span class="w"></span>
+<span class="c1"># Delete an AWS Network Firewall Policy</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDropPolicy&#39;</span>
 </pre></div>
 </div>
 </section>

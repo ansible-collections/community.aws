@@ -402,72 +402,72 @@ see <a class="reference internal" href="#ansible-collections-community-aws-codep
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Example for creating a pipeline for continuous deploy of Github code to an ECS cluster (container)</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_codepipeline</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_deploy_pipeline</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456:role/AWS-CodePipeline-Service</span><span class="w"></span>
-<span class="w">    </span><span class="nt">artifact_store</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">S3</span><span class="w"></span>
-<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_s3_codepipline_bucket</span><span class="w"></span>
-<span class="w">    </span><span class="nt">stages</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get_source</span><span class="w"></span>
-<span class="w">        </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"></span>
-<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Git_pull</span><span class="w"></span>
-<span class="w">            </span><span class="nt">actionTypeId</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Source</span><span class="w"></span>
-<span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ThirdParty</span><span class="w"></span>
-<span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GitHub</span><span class="w"></span>
-<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">outputArtifacts</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-source</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">            </span><span class="nt">configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mediapeers</span><span class="w"></span>
-<span class="w">              </span><span class="nt">Repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_gh_repo</span><span class="w"></span>
-<span class="w">              </span><span class="nt">PollForSourceChanges</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span><span class="w"></span>
-<span class="w">              </span><span class="nt">Branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">master</span><span class="w"></span>
-<span class="w">              </span><span class="c1"># Generate token like this:</span><span class="w"></span>
-<span class="w">              </span><span class="c1"># https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-rotate-personal-token-CLI.html</span><span class="w"></span>
-<span class="w">              </span><span class="c1"># GH Link: https://github.com/settings/tokens</span><span class="w"></span>
-<span class="w">              </span><span class="nt">OAuthToken</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;abc123def456&#39;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">runOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build</span><span class="w"></span>
-<span class="w">        </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"></span>
-<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuild</span><span class="w"></span>
-<span class="w">            </span><span class="nt">actionTypeId</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build</span><span class="w"></span>
-<span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span><span class="w"></span>
-<span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuild</span><span class="w"></span>
-<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">inputArtifacts</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-source</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">            </span><span class="nt">outputArtifacts</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-build</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">            </span><span class="nt">configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="c1"># A project with that name needs to be setup on AWS CodeBuild already (use code_build module).</span><span class="w"></span>
-<span class="w">              </span><span class="nt">ProjectName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codebuild-project-name</span><span class="w"></span>
-<span class="w">            </span><span class="nt">runOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS_deploy</span><span class="w"></span>
-<span class="w">        </span><span class="nt">actions</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="p p-Indicator">-</span><span class="w"></span>
-<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS_deploy</span><span class="w"></span>
-<span class="w">            </span><span class="nt">actionTypeId</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy</span><span class="w"></span>
-<span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span><span class="w"></span>
-<span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS</span><span class="w"></span>
-<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span><span class="w"></span>
-<span class="w">            </span><span class="nt">inputArtifacts</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">vod-api-app-build</span><span class="w"> </span><span class="p p-Indicator">}</span><span class="w"></span>
-<span class="w">            </span><span class="nt">configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">              </span><span class="c1"># an ECS cluster with that name needs to be setup on AWS ECS already (use ecs_cluster and ecs_service module)</span><span class="w"></span>
-<span class="w">              </span><span class="nt">ClusterName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs-cluster-name</span><span class="w"></span>
-<span class="w">              </span><span class="nt">ServiceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs-cluster-service-name</span><span class="w"></span>
-<span class="w">              </span><span class="nt">FileName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">imagedefinitions.json</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="c1"># Example for creating a pipeline for continuous deploy of Github code to an ECS cluster (container)</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_codepipeline</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_deploy_pipeline</span>
+<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456:role/AWS-CodePipeline-Service</span>
+<span class="w">    </span><span class="nt">artifact_store</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">S3</span>
+<span class="w">      </span><span class="nt">location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_s3_codepipline_bucket</span>
+<span class="w">    </span><span class="nt">stages</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get_source</span>
+<span class="w">        </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Git_pull</span>
+<span class="w">            </span><span class="nt">actionTypeId</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Source</span>
+<span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ThirdParty</span>
+<span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GitHub</span>
+<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">            </span><span class="nt">outputArtifacts</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-source</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">            </span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">Owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mediapeers</span>
+<span class="w">              </span><span class="nt">Repo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_gh_repo</span>
+<span class="w">              </span><span class="nt">PollForSourceChanges</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;true&#39;</span>
+<span class="w">              </span><span class="nt">Branch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">master</span>
+<span class="w">              </span><span class="c1"># Generate token like this:</span>
+<span class="w">              </span><span class="c1"># https://docs.aws.amazon.com/codepipeline/latest/userguide/GitHub-rotate-personal-token-CLI.html</span>
+<span class="w">              </span><span class="c1"># GH Link: https://github.com/settings/tokens</span>
+<span class="w">              </span><span class="nt">OAuthToken</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;abc123def456&#39;</span>
+<span class="w">            </span><span class="nt">runOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build</span>
+<span class="w">        </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuild</span>
+<span class="w">            </span><span class="nt">actionTypeId</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Build</span>
+<span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
+<span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CodeBuild</span>
+<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">            </span><span class="nt">inputArtifacts</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-source</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">            </span><span class="nt">outputArtifacts</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">my-app-build</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">            </span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">              </span><span class="c1"># A project with that name needs to be setup on AWS CodeBuild already (use code_build module).</span>
+<span class="w">              </span><span class="nt">ProjectName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">codebuild-project-name</span>
+<span class="w">            </span><span class="nt">runOrder</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS_deploy</span>
+<span class="w">        </span><span class="nt">actions</span><span class="p">:</span>
+<span class="w">          </span><span class="p p-Indicator">-</span>
+<span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS_deploy</span>
+<span class="w">            </span><span class="nt">actionTypeId</span><span class="p">:</span>
+<span class="w">              </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy</span>
+<span class="w">              </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
+<span class="w">              </span><span class="nt">provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECS</span>
+<span class="w">              </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;1&#39;</span>
+<span class="w">            </span><span class="nt">inputArtifacts</span><span class="p">:</span>
+<span class="w">              </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> name</span><span class="p">:</span><span class="w"> </span><span class="nv">vod-api-app-build</span><span class="w"> </span><span class="p p-Indicator">}</span>
+<span class="w">            </span><span class="nt">configuration</span><span class="p">:</span>
+<span class="w">              </span><span class="c1"># an ECS cluster with that name needs to be setup on AWS ECS already (use ecs_cluster and ecs_service module)</span>
+<span class="w">              </span><span class="nt">ClusterName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs-cluster-name</span>
+<span class="w">              </span><span class="nt">ServiceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs-cluster-service-name</span>
+<span class="w">              </span><span class="nt">FileName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">imagedefinitions.json</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 </pre></div>
 </div>
 </section>

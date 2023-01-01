@@ -532,48 +532,48 @@ see <a class="reference internal" href="#ansible-collections-community-aws-cloud
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get a summary of distributions</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get a summary of distributions</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">summary</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get information about a distribution</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">distribution_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-distribution-id</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result_did</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result_did</span><span class="o">[</span><span class="s1">&#39;cloudfront&#39;</span><span class="o">][</span><span class="s1">&#39;my-cloudfront-distribution-id&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get information about a distribution</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">distribution_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-distribution-id</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result_did</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result_did</span><span class="o">[</span><span class="s1">&#39;cloudfront&#39;</span><span class="o">][</span><span class="s1">&#39;my-cloudfront-distribution-id&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get information about a distribution using the CNAME of the cloudfront distribution.</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">domain_name_alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.my-website.com</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result_website</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result_website</span><span class="o">[</span><span class="s1">&#39;cloudfront&#39;</span><span class="o">][</span><span class="s1">&#39;www.my-website.com&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get information about a distribution using the CNAME of the cloudfront distribution.</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">distribution</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">domain_name_alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">www.my-website.com</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result_website</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result_website</span><span class="o">[</span><span class="s1">&#39;cloudfront&#39;</span><span class="o">][</span><span class="s1">&#39;www.my-website.com&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about an invalidation for a distribution.</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">invalidation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">distribution_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-distribution-id</span><span class="w"></span>
-<span class="w">    </span><span class="nt">invalidation_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-invalidation-id</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about an invalidation for a distribution.</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">invalidation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">distribution_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-distribution-id</span>
+<span class="w">    </span><span class="nt">invalidation_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-invalidation-id</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about a CloudFront origin access identity.</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">origin_access_identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">origin_access_identity_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-origin-access-identity-id</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about a CloudFront origin access identity.</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">origin_access_identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">origin_access_identity_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-origin-access-identity-id</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about lists not requiring parameters (ie. list_origin_access_identities, list_distributions, list_streaming_distributions)</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">origin_access_identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">origin_access_identity_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-origin-access-identity-id</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about lists not requiring parameters (ie. list_origin_access_identities, list_distributions, list_streaming_distributions)</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">origin_access_identity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">origin_access_identity_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-cloudfront-origin-access-identity-id</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about lists not requiring parameters (ie. list_origin_access_identities, list_distributions, list_streaming_distributions)</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">all_lists</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Get all information about lists not requiring parameters (ie. list_origin_access_identities, list_distributions, list_streaming_distributions)</span>
+<span class="w">  </span><span class="nt">community.aws.cloudfront_distribution_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">all_lists</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
 </section>
