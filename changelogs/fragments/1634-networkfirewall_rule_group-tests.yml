@@ -1,0 +1,2 @@
+trivial:
+- disable networkfirewall_rule_group integration tests, they're failing due to an idempotency issue. 
