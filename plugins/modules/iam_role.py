@@ -448,8 +448,6 @@ def create_or_update_role(module, client):
     purge_tags = module.params.get('purge_tags')
     tags = ansible_dict_to_boto3_tag_list(module.params.get('tags')) if module.params.get('tags') else None
     purge_policies = module.params.get('purge_policies')
-    if purge_policies is None:
-        purge_policies = True
     managed_policies = module.params.get('managed_policies')
     if managed_policies:
         # Attempt to list the policies early so we don't leave things behind if we can't find them.
