@@ -1,0 +1,2 @@
+minor_changes:
+  - iam_role - Drop deprecation warning, because the standard value for purge parametes is ``true`` (https://github.com/ansible-collections/community.aws/pull/1636).
