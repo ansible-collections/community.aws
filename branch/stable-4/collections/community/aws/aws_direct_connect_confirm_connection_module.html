@@ -310,15 +310,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-d
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># confirm a Direct Connect by name</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">confirm the connection id</span><span class="w"></span>
-<span class="w">  </span><span class="nt">aws_direct_connect_confirm_connection</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_host_direct_connect</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># confirm a Direct Connect by name</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">confirm the connection id</span>
+<span class="w">  </span><span class="nt">aws_direct_connect_confirm_connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_host_direct_connect</span>
 
-<span class="c1"># confirm a Direct Connect by connection_id</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">confirm the connection id</span><span class="w"></span>
-<span class="w">  </span><span class="nt">aws_direct_connect_confirm_connection</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxcon-xxxxxxxx</span><span class="w"></span>
+<span class="c1"># confirm a Direct Connect by connection_id</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">confirm the connection id</span>
+<span class="w">  </span><span class="nt">aws_direct_connect_confirm_connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxcon-xxxxxxxx</span>
 </pre></div>
 </div>
 </section>

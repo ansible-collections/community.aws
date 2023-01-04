@@ -347,20 +347,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-d
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a new direct connect gateway attached to virtual private gateway</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_gateway</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-dx-gateway</span><span class="w"></span>
-<span class="w">    </span><span class="nt">amazon_asn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7224</span><span class="w"></span>
-<span class="w">    </span><span class="nt">virtual_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpg-12345</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">created_dxgw</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a new direct connect gateway attached to virtual private gateway</span>
+<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-dx-gateway</span>
+<span class="w">    </span><span class="nt">amazon_asn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7224</span>
+<span class="w">    </span><span class="nt">virtual_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpg-12345</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">created_dxgw</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a new unattached dxgw</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_gateway</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-dx-gateway</span><span class="w"></span>
-<span class="w">    </span><span class="nt">amazon_asn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7224</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">created_dxgw</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a new unattached dxgw</span>
+<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-dx-gateway</span>
+<span class="w">    </span><span class="nt">amazon_asn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">7224</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">created_dxgw</span>
 </pre></div>
 </div>
 </section>

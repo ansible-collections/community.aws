@@ -358,23 +358,23 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-i
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># basic pre_task and post_task example</span><span class="w"></span>
-<span class="nt">pre_tasks</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Instance De-register</span><span class="w"></span>
-<span class="w">    </span><span class="nt">community.aws.elb_instance</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">ansible_ec2_instance_id</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deregister_instances</span><span class="w"></span>
-<span class="w">    </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span><span class="w"></span>
-<span class="nt">roles</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myrole</span><span class="w"></span>
-<span class="nt">post_tasks</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Instance Register</span><span class="w"></span>
-<span class="w">    </span><span class="nt">community.aws.elb_instance</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">ansible_ec2_instance_id</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ec2_elbs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">deregister_instances.updated_elbs</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># basic pre_task and post_task example</span>
+<span class="nt">pre_tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Instance De-register</span>
+<span class="w">    </span><span class="nt">community.aws.elb_instance</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">ansible_ec2_instance_id</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">deregister_instances</span>
+<span class="w">    </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
+<span class="nt">roles</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myrole</span>
+<span class="nt">post_tasks</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Instance Register</span>
+<span class="w">    </span><span class="nt">community.aws.elb_instance</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">ansible_ec2_instance_id</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">ec2_elbs</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">deregister_instances.updated_elbs</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
 </pre></div>
 </div>
 </section>

@@ -449,22 +449,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-g
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Create an AWS Glue job</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_job</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">command_script_location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3://s3bucket/script.py&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">default_arguments</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="s">&quot;--extra-py-files&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucket/script-package.zip</span><span class="w"></span>
-<span class="w">      </span><span class="s">&quot;--TempDir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;s3://s3bucket/temp/&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-job</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-iam-role</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="c1"># Create an AWS Glue job</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_job</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">command_script_location</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3://s3bucket/script.py&quot;</span>
+<span class="w">    </span><span class="nt">default_arguments</span><span class="p">:</span>
+<span class="w">      </span><span class="s">&quot;--extra-py-files&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">s3://s3bucket/script-package.zip</span>
+<span class="w">      </span><span class="s">&quot;--TempDir&quot;</span><span class="p p-Indicator">:</span><span class="w"> </span><span class="s">&quot;s3://s3bucket/temp/&quot;</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-job</span>
+<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-iam-role</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="c1"># Delete an AWS Glue job</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_job</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-job</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="c1"># Delete an AWS Glue job</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_job</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-job</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>

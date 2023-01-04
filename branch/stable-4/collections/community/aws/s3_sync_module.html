@@ -426,36 +426,36 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic upload</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span><span class="w"></span>
-<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files/</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic upload</span>
+<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span>
+<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files/</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic upload using the glacier storage class</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span><span class="w"></span>
-<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files/</span><span class="w"></span>
-<span class="w">    </span><span class="nt">storage_class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GLACIER</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic upload using the glacier storage class</span>
+<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span>
+<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files/</span>
+<span class="w">    </span><span class="nt">storage_class</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">GLACIER</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic individual file upload</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span><span class="w"></span>
-<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files/file_name</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">basic individual file upload</span>
+<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span>
+<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files/file_name</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all the options</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span><span class="w"></span>
-<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files</span><span class="w"></span>
-<span class="w">    </span><span class="nt">mime_map</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">.yml</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application/text</span><span class="w"></span>
-<span class="w">      </span><span class="nt">.json</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application/text</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config_files/web</span><span class="w"></span>
-<span class="w">    </span><span class="nt">file_change_strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">force</span><span class="w"></span>
-<span class="w">    </span><span class="nt">permission</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public-read</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cache_control</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;public,</span><span class="nv"> </span><span class="s">max-age=31536000&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">storage_class</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;GLACIER&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">exclude</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*.txt,.*&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">all the options</span>
+<span class="w">  </span><span class="nt">community.aws.s3_sync</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">bucket</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tedder</span>
+<span class="w">    </span><span class="nt">file_root</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">roles/s3/files</span>
+<span class="w">    </span><span class="nt">mime_map</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">.yml</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application/text</span>
+<span class="w">      </span><span class="nt">.json</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">application/text</span>
+<span class="w">    </span><span class="nt">key_prefix</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">config_files/web</span>
+<span class="w">    </span><span class="nt">file_change_strategy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">force</span>
+<span class="w">    </span><span class="nt">permission</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">public-read</span>
+<span class="w">    </span><span class="nt">cache_control</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;public,</span><span class="nv"> </span><span class="s">max-age=31536000&quot;</span>
+<span class="w">    </span><span class="nt">storage_class</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;GLACIER&quot;</span>
+<span class="w">    </span><span class="nt">include</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*&quot;</span>
+<span class="w">    </span><span class="nt">exclude</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;*.txt,.*&quot;</span>
 </pre></div>
 </div>
 </section>

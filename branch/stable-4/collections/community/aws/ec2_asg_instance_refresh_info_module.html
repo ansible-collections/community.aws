@@ -323,29 +323,29 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-a
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name and one or more refresh-IDs</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;some-id-123&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asgs</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name and one or more refresh-IDs</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span>
+<span class="w">    </span><span class="nt">ids</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;some-id-123&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asgs</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name and set max_records</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span><span class="w"></span>
-<span class="w">    </span><span class="nt">max_records</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asgs</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name and set max_records</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span>
+<span class="w">    </span><span class="nt">max_records</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">4</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asgs</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name and NextToken, if received from a previous call</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span><span class="w"></span>
-<span class="w">    </span><span class="nt">next_token</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;some-token-123&#39;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asgs</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Find an refresh by ASG name and NextToken, if received from a previous call</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_asg_instance_refresh_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">somename-asg</span>
+<span class="w">    </span><span class="nt">next_token</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;some-token-123&#39;</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">asgs</span>
 </pre></div>
 </div>
 </section>

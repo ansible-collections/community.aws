@@ -300,35 +300,35 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-c
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
-<span class="c1"># Output format tries to match amazon.aws.ec2_elb_lb module input parameters</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
+<span class="c1"># Output format tries to match amazon.aws.ec2_elb_lb module input parameters</span>
 
-<span class="c1"># Gather information about all ELBs</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span><span class="w"></span>
+<span class="c1"># Gather information about all ELBs</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item.dns_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">loop</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">elb_info.elbs</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item.dns_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">loop</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">elb_info.elbs</span> <span class="cp">}}</span><span class="s">&quot;</span>
 
-<span class="c1"># Gather information about a particular ELB</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-prod-elb</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span><span class="w"></span>
+<span class="c1"># Gather information about a particular ELB</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">names</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-prod-elb</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">elb_info.elbs.0.dns_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">elb_info.elbs.0.dns_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
 
-<span class="c1"># Gather information about a set of ELBs</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">names</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-prod-elb</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-prod-elb</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span><span class="w"></span>
+<span class="c1"># Gather information about a set of ELBs</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.elb_classic_lb_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">names</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">frontend-prod-elb</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">backend-prod-elb</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">elb_info</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item.dns_name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">loop</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">elb_info.elbs</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item.dns_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">loop</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">elb_info.elbs</span> <span class="cp">}}</span><span class="s">&quot;</span>
 </pre></div>
 </div>
 </section>

@@ -411,31 +411,31 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-g
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Create an AWS Glue crawler</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_crawler</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-crawler</span><span class="w"></span>
-<span class="w">    </span><span class="nt">database_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_database</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-iam-role</span><span class="w"></span>
-<span class="w">    </span><span class="nt">schema_change_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">delete_behavior</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DELETE_FROM_DATABASE</span><span class="w"></span>
-<span class="w">      </span><span class="nt">update_behavior</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UPDATE_IN_DATABASE</span><span class="w"></span>
-<span class="w">    </span><span class="nt">recrawl_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">recrawl_ehavior</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CRAWL_EVERYTHING</span><span class="w"></span>
-<span class="w">    </span><span class="nt">targets</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">S3Targets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3://my-bucket/prefix/folder/&quot;</span><span class="w"></span>
-<span class="w">          </span><span class="nt">ConnectionName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-connection</span><span class="w"></span>
-<span class="w">          </span><span class="nt">Exclusions</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**.json&quot;</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**.yml&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="c1"># Create an AWS Glue crawler</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_crawler</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-crawler</span>
+<span class="w">    </span><span class="nt">database_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_database</span>
+<span class="w">    </span><span class="nt">role</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-iam-role</span>
+<span class="w">    </span><span class="nt">schema_change_policy</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">delete_behavior</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">DELETE_FROM_DATABASE</span>
+<span class="w">      </span><span class="nt">update_behavior</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">UPDATE_IN_DATABASE</span>
+<span class="w">    </span><span class="nt">recrawl_policy</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">recrawl_ehavior</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">CRAWL_EVERYTHING</span>
+<span class="w">    </span><span class="nt">targets</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">S3Targets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">Path</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;s3://my-bucket/prefix/folder/&quot;</span>
+<span class="w">          </span><span class="nt">ConnectionName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-connection</span>
+<span class="w">          </span><span class="nt">Exclusions</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**.json&quot;</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;**.yml&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="c1"># Delete an AWS Glue crawler</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_crawler</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-crawler</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="c1"># Delete an AWS Glue crawler</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_crawler</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-crawler</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>

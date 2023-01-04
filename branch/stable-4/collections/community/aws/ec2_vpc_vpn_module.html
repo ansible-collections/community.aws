@@ -505,76 +505,76 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: None of these examples set aws_access_key, aws_secret_key, or region.</span><span class="w"></span>
-<span class="c1"># It is assumed that their matching environment variables are set.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: None of these examples set aws_access_key, aws_secret_key, or region.</span>
+<span class="c1"># It is assumed that their matching environment variables are set.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a VPN connection</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">vpn_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">customer_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cgw-XXXXXXXX</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a VPN connection</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">vpn_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">customer_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cgw-XXXXXXXX</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modify VPN connection tags</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">vpn_connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible-tag-1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Other</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible-tag-2</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modify VPN connection tags</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">vpn_connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible-tag-1</span>
+<span class="w">      </span><span class="nt">Other</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible-tag-2</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete a connection</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">vpn_connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete a connection</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpn_connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modify VPN tags (identifying VPN by filters)</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">cidr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">194.168.1.0/24</span><span class="w"></span>
-<span class="w">      </span><span class="nt">tag-keys</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ansible</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Other</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">New</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tag</span><span class="w"></span>
-<span class="w">    </span><span class="nt">purge_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">static_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modify VPN tags (identifying VPN by filters)</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">cidr</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">194.168.1.0/24</span>
+<span class="w">      </span><span class="nt">tag-keys</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Ansible</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Other</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">New</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tag</span>
+<span class="w">    </span><span class="nt">purge_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">static_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set up VPN with tunnel options utilizing &#39;TunnelInsideCidr&#39; only</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">vpn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">static_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tunnel_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"></span>
-<span class="w">        </span><span class="nt">TunnelInsideCidr</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;169.254.100.1/30&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"></span>
-<span class="w">        </span><span class="nt">TunnelInsideCidr</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;169.254.100.5/30&#39;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set up VPN with tunnel options utilizing &#39;TunnelInsideCidr&#39; only</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">vpn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">static_only</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">tunnel_options</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span>
+<span class="w">        </span><span class="nt">TunnelInsideCidr</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;169.254.100.1/30&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span>
+<span class="w">        </span><span class="nt">TunnelInsideCidr</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;169.254.100.5/30&#39;</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">add routes and remove any preexisting ones</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">vpn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">routes</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">195.168.2.0/24</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">196.168.2.0/24</span><span class="w"></span>
-<span class="w">    </span><span class="nt">purge_routes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">add routes and remove any preexisting ones</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">vpn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">routes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">195.168.2.0/24</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">196.168.2.0/24</span>
+<span class="w">    </span><span class="nt">purge_routes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove all routes</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">vpn_connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">routes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">purge_routes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove all routes</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">vpn_connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpn-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">routes</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
+<span class="w">    </span><span class="nt">purge_routes</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete a VPN identified by filters</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">filters</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">Ansible</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tag</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete a VPN identified by filters</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Ansible</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tag</span>
 </pre></div>
 </div>
 </section>

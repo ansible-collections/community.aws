@@ -526,20 +526,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-dms-e
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Endpoint Creation</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.dms_endpoint</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">endpointidentifier</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;testsource&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">endpointtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source</span><span class="w"></span>
-<span class="w">    </span><span class="nt">enginename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aurora</span><span class="w"></span>
-<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testint1234</span><span class="w"></span>
-<span class="w">    </span><span class="nt">servername</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing.domain.com</span><span class="w"></span>
-<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span><span class="w"></span>
-<span class="w">    </span><span class="nt">databasename</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;testdb&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">sslmode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span><span class="w"></span>
-<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Endpoint Creation</span>
+<span class="w">  </span><span class="nt">community.aws.dms_endpoint</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">endpointidentifier</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;testsource&#39;</span>
+<span class="w">    </span><span class="nt">endpointtype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">source</span>
+<span class="w">    </span><span class="nt">enginename</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">aurora</span>
+<span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing1</span>
+<span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testint1234</span>
+<span class="w">    </span><span class="nt">servername</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">testing.domain.com</span>
+<span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3306</span>
+<span class="w">    </span><span class="nt">databasename</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;testdb&#39;</span>
+<span class="w">    </span><span class="nt">sslmode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">none</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 </pre></div>
 </div>
 </section>

@@ -335,11 +335,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 <p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>When <em>purge_policies=true</em> any managed policies not listed in <em>managed_policies</em> will be detatched.</p>
-<p>By default <em>purge_policies=true</em>.  In a release after 2022-06-01 this will be changed to <em>purge_policies=false</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
 </ul>
 </div></td>
 </tr>
@@ -451,34 +450,34 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a role with description and tags</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span><span class="w"></span>
-<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This is My New Role</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a role with description and tags</span>
+<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span>
+<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">This is My New Role</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dev</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Create</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">role</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">attach</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">managed</span><span class="nv"> </span><span class="s">policy</span><span class="nv"> </span><span class="s">called</span><span class="nv"> </span><span class="s">&#39;PowerUserAccess&#39;&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span><span class="w"></span>
-<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">managed_policies</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::aws:policy/PowerUserAccess</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Create</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">role</span><span class="nv"> </span><span class="s">and</span><span class="nv"> </span><span class="s">attach</span><span class="nv"> </span><span class="s">a</span><span class="nv"> </span><span class="s">managed</span><span class="nv"> </span><span class="s">policy</span><span class="nv"> </span><span class="s">called</span><span class="nv"> </span><span class="s">&#39;PowerUserAccess&#39;&quot;</span>
+<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span>
+<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">managed_policies</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::aws:policy/PowerUserAccess</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Keep the role created above but remove all managed policies</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span><span class="w"></span>
-<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">managed_policies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Keep the role created above but remove all managed policies</span>
+<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span>
+<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span><span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">managed_policies</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[]</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete the role</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span><span class="w"></span>
-<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete the role</span>
+<span class="w">  </span><span class="nt">community.aws.iam_role</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mynewrole</span>
+<span class="w">    </span><span class="nt">assume_role_policy_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>

@@ -312,14 +312,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Ensure that the VPC has an Internet Gateway.</span><span class="w"></span>
-<span class="c1"># The Internet Gateway ID is can be accessed via </span><span class="cp">{{</span><span class="nv">eigw.gateway_id</span><span class="cp">}}</span><span class="c1"> for use in setting up NATs etc.</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_vpc_egress_igw</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-abcdefgh</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eigw</span><span class="w"></span>
+<span class="c1"># Ensure that the VPC has an Internet Gateway.</span>
+<span class="c1"># The Internet Gateway ID is can be accessed via </span><span class="cp">{{</span><span class="nv">eigw.gateway_id</span><span class="cp">}}</span><span class="c1"> for use in setting up NATs etc.</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_vpc_egress_igw</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-abcdefgh</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eigw</span>
 </pre></div>
 </div>
 </section>

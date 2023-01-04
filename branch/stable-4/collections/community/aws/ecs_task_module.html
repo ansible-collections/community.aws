@@ -428,77 +428,77 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple example of run task</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run task</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span><span class="w"></span>
-<span class="w">    </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span><span class="w"></span>
-<span class="w">    </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simple example of run task</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run task</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span>
+<span class="w">    </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
+<span class="w">    </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
+<span class="w">    </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span>
 
-<span class="c1"># Simple example of start task</span><span class="w"></span>
+<span class="c1"># Simple example of start task</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Start a task</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">start</span><span class="w"></span>
-<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">resourceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a_task_for_ansible_to_run</span><span class="w"></span>
-<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">long_running_task</span><span class="w"></span>
-<span class="w">        </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal</span><span class="w"></span>
-<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.4</span><span class="w"></span>
-<span class="w">      </span><span class="nt">container_instances</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:ecs:us-west-2:172139249013:container-instance/79c23f22-876c-438a-bddf-55c98a3538a8</span><span class="w"></span>
-<span class="w">      </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span><span class="w"></span>
-<span class="w">      </span><span class="nt">network_configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subnets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span><span class="w"></span>
-<span class="w">        </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_security_group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Start a task</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">start</span>
+<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
+<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
+<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span>
+<span class="w">      </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">resourceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">a_task_for_ansible_to_run</span>
+<span class="w">        </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">long_running_task</span>
+<span class="w">        </span><span class="nt">network</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">internal</span>
+<span class="w">        </span><span class="nt">version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.4</span>
+<span class="w">      </span><span class="nt">container_instances</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:ecs:us-west-2:172139249013:container-instance/79c23f22-876c-438a-bddf-55c98a3538a8</span>
+<span class="w">      </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span>
+<span class="w">      </span><span class="nt">network_configuration</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">subnets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span>
+<span class="w">        </span><span class="nt">security_groups</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_security_group</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RUN a task on Fargate</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span><span class="w"></span>
-<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span><span class="w"></span>
-<span class="w">      </span><span class="nt">launch_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span><span class="w"></span>
-<span class="w">      </span><span class="nt">network_configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subnets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span><span class="w"></span>
-<span class="w">        </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_security_group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RUN a task on Fargate</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span>
+<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
+<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
+<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span>
+<span class="w">      </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span>
+<span class="w">      </span><span class="nt">launch_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span>
+<span class="w">      </span><span class="nt">network_configuration</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">subnets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span>
+<span class="w">        </span><span class="nt">security_groups</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-aaaa1111</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_security_group</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RUN a task on Fargate with public ip assigned</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span><span class="w"></span>
-<span class="w">      </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span><span class="w"></span>
-<span class="w">      </span><span class="nt">launch_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span><span class="w"></span>
-<span class="w">      </span><span class="nt">network_configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">assign_public_ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w"></span>
-<span class="w">        </span><span class="nt">subnets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">RUN a task on Fargate with public ip assigned</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">run</span>
+<span class="w">      </span><span class="nt">count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
+<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
+<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span>
+<span class="w">      </span><span class="nt">started_by</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible_user</span>
+<span class="w">      </span><span class="nt">launch_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span>
+<span class="w">      </span><span class="nt">network_configuration</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">assign_public_ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
+<span class="w">        </span><span class="nt">subnets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-abcd1234</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">task_output</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stop a task</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span><span class="w"></span>
-<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span><span class="w"></span>
-<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Stop a task</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_task</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">operation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stop</span>
+<span class="w">      </span><span class="nt">cluster</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-cluster</span>
+<span class="w">      </span><span class="nt">task_definition</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">console-sample-app-static-taskdef</span>
+<span class="w">      </span><span class="nt">task</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:ecs:us-west-2:172139249013:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a&quot;</span>
 </pre></div>
 </div>
 </section>

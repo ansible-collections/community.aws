@@ -385,53 +385,53 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-a
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Basic AMI Copy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Basic AMI Copy</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span>
+<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AMI copy wait until available</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span><span class="w"></span>
-<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w"></span>
-<span class="w">    </span><span class="nt">wait_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1200</span><span class="w">  </span><span class="c1"># Default timeout is 600</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image_id</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AMI copy wait until available</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span>
+<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
+<span class="w">    </span><span class="nt">wait_timeout</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1200</span><span class="w">  </span><span class="c1"># Default timeout is 600</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">image_id</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named AMI copy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My-Awesome-AMI</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest patch</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Named AMI copy</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span>
+<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My-Awesome-AMI</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">latest patch</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tagged AMI copy (will not copy the same AMI twice)</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My-Super-AMI</span><span class="w"></span>
-<span class="w">        </span><span class="nt">Patch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.3</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tag_equality</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Tagged AMI copy (will not copy the same AMI twice)</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span>
+<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">My-Super-AMI</span>
+<span class="w">        </span><span class="nt">Patch</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.3</span>
+<span class="w">    </span><span class="nt">tag_equality</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Encrypted AMI copy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span><span class="w"></span>
-<span class="w">    </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Encrypted AMI copy</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span>
+<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span>
+<span class="w">    </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Encrypted AMI copy with specified key</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span><span class="w"></span>
-<span class="w">    </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w"></span>
-<span class="w">    </span><span class="nt">kms_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:kms:us-east-1:XXXXXXXXXXXX:key/746de6ea-50a4-4bcb-8fbc-e3b29f2d367b</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Encrypted AMI copy with specified key</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_ami_copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">source_region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">eu-west-1</span>
+<span class="w">    </span><span class="nt">source_image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxxxxx</span>
+<span class="w">    </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
+<span class="w">    </span><span class="nt">kms_key_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:kms:us-east-1:XXXXXXXXXXXX:key/746de6ea-50a4-4bcb-8fbc-e3b29f2d367b</span>
 </pre></div>
 </div>
 </section>

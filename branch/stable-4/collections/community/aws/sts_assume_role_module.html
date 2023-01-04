@@ -345,23 +345,23 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sts-a
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Assume an existing role (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.sts_assume_role</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::123456789012:role/someRole&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">role_session_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;someRoleSession&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">assumed_role</span><span class="w"></span>
+<span class="c1"># Assume an existing role (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.sts_assume_role</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:iam::123456789012:role/someRole&quot;</span>
+<span class="w">    </span><span class="nt">role_session_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;someRoleSession&quot;</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">assumed_role</span>
 
-<span class="c1"># Use the assumed role above to tag an instance in account 123456789012</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amazon.aws.ec2_tag</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">aws_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">assumed_role.sts_creds.access_key</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">aws_secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">assumed_role.sts_creds.secret_key</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">security_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">assumed_role.sts_creds.session_token</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-xyzxyz01</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">MyNewTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span><span class="w"></span>
+<span class="c1"># Use the assumed role above to tag an instance in account 123456789012</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">amazon.aws.ec2_tag</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">aws_access_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">assumed_role.sts_creds.access_key</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">aws_secret_key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">assumed_role.sts_creds.secret_key</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">security_token</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">assumed_role.sts_creds.session_token</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">resource</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-xyzxyz01</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">MyNewTag</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">value</span>
 </pre></div>
 </div>
 </section>

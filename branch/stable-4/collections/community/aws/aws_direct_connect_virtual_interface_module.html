@@ -408,19 +408,19 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-d
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create an association between a LAG and connection</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_virtual_interface</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">name</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">link_aggregation_group_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LAG-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxcon-XXXXXXXX</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create an association between a LAG and connection</span>
+<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_virtual_interface</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">name</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">link_aggregation_group_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">LAG-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxcon-XXXXXXXX</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove an association between a connection and virtual interface</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_virtual_interface</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxcon-XXXXXXXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">virtual_interface_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxv-XXXXXXXX</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove an association between a connection and virtual interface</span>
+<span class="w">  </span><span class="nt">community.aws.aws_direct_connect_virtual_interface</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">connection_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxcon-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">virtual_interface_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dxv-XXXXXXXX</span>
 </pre></div>
 </div>
 </section>

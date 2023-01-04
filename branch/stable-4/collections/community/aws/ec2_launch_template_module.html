@@ -880,29 +880,29 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create an ec2 launch template</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_launch_template</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_template&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ami-04b762b4289fba92b&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_ssh_key</span><span class="w"></span>
-<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t2.micro</span><span class="w"></span>
-<span class="w">    </span><span class="nt">iam_instance_profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myTestProfile</span><span class="w"></span>
-<span class="w">    </span><span class="nt">disable_api_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create an ec2 launch template</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_launch_template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_template&quot;</span>
+<span class="w">    </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ami-04b762b4289fba92b&quot;</span>
+<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_ssh_key</span>
+<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t2.micro</span>
+<span class="w">    </span><span class="nt">iam_instance_profile</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myTestProfile</span>
+<span class="w">    </span><span class="nt">disable_api_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
-<span class="w">    </span><span class="no">Create a new version of an existing ec2 launch template with a different instance type,</span><span class="w"></span>
-<span class="w">    </span><span class="no">while leaving an older version as the default version</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_launch_template</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_template&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">default_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c5.4xlarge</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">    </span><span class="no">Create a new version of an existing ec2 launch template with a different instance type,</span>
+<span class="w">    </span><span class="no">while leaving an older version as the default version</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_launch_template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_template&quot;</span>
+<span class="w">    </span><span class="nt">default_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">c5.4xlarge</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete an ec2 launch template</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_launch_template</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_template&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete an ec2 launch template</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_launch_template</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_template&quot;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
-<span class="c1"># This module does not yet allow deletion of specific versions of launch templates</span><span class="w"></span>
+<span class="c1"># This module does not yet allow deletion of specific versions of launch templates</span>
 </pre></div>
 </div>
 </section>

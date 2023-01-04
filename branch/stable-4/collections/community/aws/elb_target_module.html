@@ -380,33 +380,33 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register an IP address target to a target group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myiptargetgroup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register an IP address target to a target group</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myiptargetgroup</span>
+<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register an instance target to a target group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register an instance target to a target group</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span>
+<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deregister a target from a target group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deregister a target from a target group</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span>
+<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
-<span class="c1"># Modify a target to use a different port</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register a target to a target group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="c1"># Modify a target to use a different port</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register a target to a target group</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">target_group_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mytargetgroup</span>
+<span class="w">    </span><span class="nt">target_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-1234567</span>
+<span class="w">    </span><span class="nt">target_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">8080</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 </pre></div>
 </div>
 <section id="authors">

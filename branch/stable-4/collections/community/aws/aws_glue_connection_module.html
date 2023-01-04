@@ -382,34 +382,34 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-g
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Create an AWS Glue connection</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_connection</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-connection</span><span class="w"></span>
-<span class="w">    </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">JDBC_CONNECTION_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jdbc:mysql://mydb:3306/databasename</span><span class="w"></span>
-<span class="w">      </span><span class="nt">USERNAME</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-username</span><span class="w"></span>
-<span class="w">      </span><span class="nt">PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-password</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="c1"># Create an AWS Glue connection</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-connection</span>
+<span class="w">    </span><span class="nt">connection_properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">JDBC_CONNECTION_URL</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">jdbc:mysql://mydb:3306/databasename</span>
+<span class="w">      </span><span class="nt">USERNAME</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-username</span>
+<span class="w">      </span><span class="nt">PASSWORD</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-password</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="c1"># Create an AWS Glue network connection</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_connection</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-network-connection</span><span class="w"></span>
-<span class="w">    </span><span class="nt">availability_zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1a</span><span class="w"></span>
-<span class="w">    </span><span class="nt">connection_properties</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">JDBC_ENFORCE_SSL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">connection_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NETWORK</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test connection</span><span class="w"></span>
-<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-glue</span><span class="w"></span>
-<span class="w">    </span><span class="nt">subnet_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-123abc</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
+<span class="c1"># Create an AWS Glue network connection</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-network-connection</span>
+<span class="w">    </span><span class="nt">availability_zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1a</span>
+<span class="w">    </span><span class="nt">connection_properties</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">JDBC_ENFORCE_SSL</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;false&quot;</span>
+<span class="w">    </span><span class="nt">connection_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NETWORK</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test connection</span>
+<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg-glue</span>
+<span class="w">    </span><span class="nt">subnet_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet-123abc</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="c1"># Delete an AWS Glue connection</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_connection</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-connection</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="c1"># Delete an AWS Glue connection</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_glue_connection</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-glue-connection</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>

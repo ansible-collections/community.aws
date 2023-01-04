@@ -563,70 +563,70 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-l
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a launch configuration with an encrypted volume</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">special</span><span class="w"></span>
-<span class="w">    </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-XXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;group&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;group2&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t1.micro</span><span class="w"></span>
-<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sda1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">io1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">iops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span><span class="w"></span>
-<span class="w">      </span><span class="nt">delete_on_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sdb</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ephemeral</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ephemeral0</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a launch configuration with an encrypted volume</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">special</span>
+<span class="w">    </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-XXX</span>
+<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;group&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;group2&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sda1</span>
+<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">io1</span>
+<span class="w">      </span><span class="nt">iops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">      </span><span class="nt">delete_on_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sdb</span>
+<span class="w">      </span><span class="nt">ephemeral</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ephemeral0</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a launch configuration using a running instance id as a basis</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">special</span><span class="w"></span>
-<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-00a48b207ec59e948</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;launch-wizard-2&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sda1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">io1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">iops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span><span class="w"></span>
-<span class="w">      </span><span class="nt">delete_on_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a launch configuration using a running instance id as a basis</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">special</span>
+<span class="w">    </span><span class="nt">instance_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">i-00a48b207ec59e948</span>
+<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;launch-wizard-2&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sda1</span>
+<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">120</span>
+<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">io1</span>
+<span class="w">      </span><span class="nt">iops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3000</span>
+<span class="w">      </span><span class="nt">delete_on_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a launch configuration to omit the /dev/sdf EBS device that is included in the AMI image</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">special</span><span class="w"></span>
-<span class="w">    </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-XXX</span><span class="w"></span>
-<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;group&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;group2&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t1.micro</span><span class="w"></span>
-<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sdf</span><span class="w"></span>
-<span class="w">      </span><span class="nt">no_device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a launch configuration to omit the /dev/sdf EBS device that is included in the AMI image</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">special</span>
+<span class="w">    </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-XXX</span>
+<span class="w">    </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;group&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;group2&#39;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t1.micro</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sdf</span>
+<span class="w">      </span><span class="nt">no_device</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use EBS snapshot ID for volume</span><span class="w"></span>
-<span class="w">  </span><span class="nt">block</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set Volume Facts</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ansible.builtin.set_fact</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sda1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span><span class="w"></span>
-<span class="w">        </span><span class="nt">ebs</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">snapshot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">snap-XXXX</span><span class="w"></span>
-<span class="w">          </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gp2</span><span class="w"></span>
-<span class="w">          </span><span class="nt">delete_on_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">          </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Use EBS snapshot ID for volume</span>
+<span class="w">  </span><span class="nt">block</span><span class="p">:</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set Volume Facts</span>
+<span class="w">    </span><span class="nt">ansible.builtin.set_fact</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">device_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/sda1</span>
+<span class="w">        </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">20</span>
+<span class="w">        </span><span class="nt">ebs</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">snapshot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">snap-XXXX</span>
+<span class="w">          </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">gp2</span>
+<span class="w">          </span><span class="nt">delete_on_termination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">          </span><span class="nt">encrypted</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">no</span>
 
-<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create launch configuration</span><span class="w"></span>
-<span class="w">    </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lc1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxx</span><span class="w"></span>
-<span class="w">      </span><span class="nt">assign_public_ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t2.medium</span><span class="w"></span>
-<span class="w">      </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-key</span><span class="w"></span>
-<span class="w">      </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[&#39;sg-xxxx&#39;]&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">volumes</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lc_info</span><span class="w"></span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create launch configuration</span>
+<span class="w">    </span><span class="nt">community.aws.ec2_lc</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lc1</span>
+<span class="w">      </span><span class="nt">image_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ami-xxxx</span>
+<span class="w">      </span><span class="nt">assign_public_ip</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">yes</span>
+<span class="w">      </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">t2.medium</span>
+<span class="w">      </span><span class="nt">key_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-key</span>
+<span class="w">      </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;[&#39;sg-xxxx&#39;]&quot;</span>
+<span class="w">      </span><span class="nt">volumes</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">volumes</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lc_info</span>
 </pre></div>
 </div>
 </section>

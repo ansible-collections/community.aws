@@ -651,128 +651,128 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a rule group</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a minimal AWS Network Firewall Rule Group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rule_strings</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">tcp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">(sid:1000001;)&#39;</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a rule group</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a minimal AWS Network Firewall Rule Group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">    </span><span class="nt">rule_strings</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">tcp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">(sid:1000001;)&#39;</span>
 
-<span class="c1"># Create an example rule group using rule_list</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create 5-tuple Rule List based rule group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rule_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rule_list</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">direction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forward</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span><span class="w"></span>
-<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IP</span><span class="w"></span>
-<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
+<span class="c1"># Create an example rule group using rule_list</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create 5-tuple Rule List based rule group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span>
+<span class="w">    </span><span class="nt">rule_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">rule_list</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">direction</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">forward</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IP</span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
 
-<span class="c1"># Create an example rule group using rule_list</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create 5-tuple Rule List based rule group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">SOURCE_IPS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">      </span><span class="nt">DESTINATION_IPS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.48&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">port_variables</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">HTTP_PORTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">80</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8080</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rule_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span><span class="w"></span>
-<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rule_list</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># Allow &#39;Destination Unreachable&#39; traffic</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span><span class="w"></span>
-<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icmp</span><span class="w"></span>
-<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">rule_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">itype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">drop</span><span class="w"></span>
-<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span><span class="w"></span>
-<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$SOURCE_IPS&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span><span class="w"></span>
-<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$DESTINATION_IPS&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$HTTP_PORTS&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">rule_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">urilen</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;20&lt;&gt;40&quot;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">          </span><span class="c1"># Where only a keyword is needed, add the keword, but no value</span><span class="w"></span>
-<span class="w">          </span><span class="nt">http_uri</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="c1"># Settings where Suricata expects raw strings (like the content</span><span class="w"></span>
-<span class="w">          </span><span class="c1"># keyword) will need to have the double-quotes explicitly escaped and</span><span class="w"></span>
-<span class="w">          </span><span class="c1"># passed because there&#39;s no practical way to distinguish between them</span><span class="w"></span>
-<span class="w">          </span><span class="c1"># and flags.</span><span class="w"></span>
-<span class="w">          </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&quot;index.php&quot;&#39;</span><span class="w"></span>
+<span class="c1"># Create an example rule group using rule_list</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create 5-tuple Rule List based rule group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span>
+<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">SOURCE_IPS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">DESTINATION_IPS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.48&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">port_variables</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">HTTP_PORTS</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">80</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">8080</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">rule_order</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">rule_list</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># Allow &#39;Destination Unreachable&#39; traffic</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pass</span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">icmp</span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">rule_options</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">itype</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">sid</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">        </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">drop</span>
+<span class="w">        </span><span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tcp</span>
+<span class="w">        </span><span class="nt">source</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$SOURCE_IPS&quot;</span>
+<span class="w">        </span><span class="nt">source_port</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">any</span>
+<span class="w">        </span><span class="nt">destination</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$DESTINATION_IPS&quot;</span>
+<span class="w">        </span><span class="nt">destination_port</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;$HTTP_PORTS&quot;</span>
+<span class="w">        </span><span class="nt">rule_options</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">urilen</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&quot;20&lt;&gt;40&quot;</span><span class="p p-Indicator">]</span>
+<span class="w">          </span><span class="c1"># Where only a keyword is needed, add the keword, but no value</span>
+<span class="w">          </span><span class="nt">http_uri</span><span class="p">:</span>
+<span class="w">          </span><span class="c1"># Settings where Suricata expects raw strings (like the content</span>
+<span class="w">          </span><span class="c1"># keyword) will need to have the double-quotes explicitly escaped and</span>
+<span class="w">          </span><span class="c1"># passed because there&#39;s no practical way to distinguish between them</span>
+<span class="w">          </span><span class="c1"># and flags.</span>
+<span class="w">          </span><span class="nt">content</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;&quot;index.php&quot;&#39;</span>
 
-<span class="c1"># Create an example rule group using Suricata rule strings</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Suricata rule string based rule group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleSuricata&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">EXAMPLE_IP</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ANOTHER_EXAMPLE</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.48&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">port_variables</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">EXAMPLE_PORT</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">443</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">22</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">rule_strings</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">tcp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">$EXAMPLE_IP</span><span class="nv"> </span><span class="s">$EXAMPLE_PORT</span><span class="nv"> </span><span class="s">(sid:1000001;)&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">udp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">$ANOTHER_EXAMPLE</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">(sid:1000002;)&#39;</span><span class="w"></span>
+<span class="c1"># Create an example rule group using Suricata rule strings</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Suricata rule string based rule group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleSuricata&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">200</span>
+<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">EXAMPLE_IP</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">      </span><span class="nt">ANOTHER_EXAMPLE</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.48&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">port_variables</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">EXAMPLE_PORT</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="nv">443</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="nv">22</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">rule_strings</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">tcp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">$EXAMPLE_IP</span><span class="nv"> </span><span class="s">$EXAMPLE_PORT</span><span class="nv"> </span><span class="s">(sid:1000001;)&#39;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;pass</span><span class="nv"> </span><span class="s">udp</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">-&gt;</span><span class="nv"> </span><span class="s">$ANOTHER_EXAMPLE</span><span class="nv"> </span><span class="s">any</span><span class="nv"> </span><span class="s">(sid:1000002;)&#39;</span>
 
-<span class="c1"># Create an example Domain List based rule group</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Domain List based rule group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDomainList&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span><span class="w"></span>
-<span class="w">    </span><span class="nt">domain_list</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">domain_names</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;example.com&#39;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;.example.net&#39;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">filter_https</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
-<span class="w">      </span><span class="nt">filter_http</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span><span class="w"></span>
-<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span><span class="w"></span>
-<span class="w">      </span><span class="nt">source_ips</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="w"></span>
+<span class="c1"># Create an example Domain List based rule group</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Domain List based rule group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleDomainList&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;My</span><span class="nv"> </span><span class="s">description&#39;</span>
+<span class="w">    </span><span class="nt">capacity</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">domain_list</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">domain_names</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;example.com&#39;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;.example.net&#39;</span>
+<span class="w">      </span><span class="nt">filter_https</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">      </span><span class="nt">filter_http</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+<span class="w">      </span><span class="nt">action</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow</span>
+<span class="w">      </span><span class="nt">source_ips</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;192.0.2.0/24&#39;</span>
 
-<span class="c1"># Update the description of a rule group</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update the description of a rule group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Another</span><span class="nv"> </span><span class="s">description&#39;</span><span class="w"></span>
+<span class="c1"># Update the description of a rule group</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update the description of a rule group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Another</span><span class="nv"> </span><span class="s">description&#39;</span>
 
-<span class="c1"># Update IP Variables for a rule group</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update IP Variables</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">EXAMPLE_IP</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span><span class="w"></span>
-<span class="w">    </span><span class="nt">purge_ip_variables</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
+<span class="c1"># Update IP Variables for a rule group</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Update IP Variables</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ExampleGroup&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">ip_variables</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">EXAMPLE_IP</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="s">&#39;192.0.2.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;203.0.113.0/24&#39;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&#39;198.51.100.42&#39;</span><span class="p p-Indicator">]</span>
+<span class="w">    </span><span class="nt">purge_ip_variables</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 
-<span class="c1"># Delete a rule group</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete a rule group</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<span class="c1"># Delete a rule group</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete a rule group</span>
+<span class="w">  </span><span class="nt">community.aws.networkfirewall_rule_group</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;MinimalGroup&#39;</span>
+<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;stateful&#39;</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>
