@@ -41,6 +41,16 @@ options:
         required: false
         type: int
         default: 10
+    capacity_providers:
+        description:
+            - List of capacity providers to use for the cluster.
+        required: false
+        type: list
+    capacity_provider_strategy:
+        description:
+            - List of capacity provider strategies to use for the cluster.
+        required: false
+        type: list
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -55,6 +65,20 @@ EXAMPLES = '''
   community.aws.ecs_cluster:
     name: default
     state: present
+
+- name: Cluster creation with capacity providers and strategies.
+  community.aws.ecs_cluster:
+    name: default
+    state: present
+    capacity_providers:
+      - FARGATE
+      - FARGATE_SPOT
+    capacity_provider_strategy:
+      - capacity_provider: FARGATE
+        base: 1
+        weight: 1
+      - capacity_provider: FARGATE_SPOT
+        weight: 100
 
 - name: Cluster deletion
   community.aws.ecs_cluster:
@@ -75,6 +99,14 @@ activeServicesCount:
     description: how many services are active in this cluster
     returned: 0 if a new cluster
     type: int
+capacityProviders:
+    description: list of capacity providers used in this cluster
+    returned: always
+    type: list
+defaultCapacityProviderStrategy:
+    description: list of capacity provider strategies used in this cluster
+    returned: always
+    type: list
 clusterArn:
     description: the ARN of the cluster just created
     type: str
@@ -112,7 +144,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 class EcsClusterManager:
     """Handles ECS Clusters"""
@@ -145,8 +177,26 @@ class EcsClusterManager:
                 return c
         raise Exception("Unknown problem describing cluster %s." % cluster_name)
 
-    def create_cluster(self, clusterName='default'):
-        response = self.ecs.create_cluster(clusterName=clusterName)
+    def create_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy):
+        params = dict(clusterName=cluster_name)
+        if capacity_providers:
+            params['capacityProviders'] = snake_dict_to_camel_dict(capacity_providers)
+        if capacity_provider_strategy:
+            params['defaultCapacityProviderStrategy'] = snake_dict_to_camel_dict(capacity_provider_strategy)
+        response = self.ecs.create_cluster(**params)
+        return response['cluster']
+
+    def update_cluster(self, cluster_name, capacity_providers, capacity_provider_strategy):
+        params = dict(cluster=cluster_name)
+        if capacity_providers:
+            params['capacityProviders'] = snake_dict_to_camel_dict(capacity_providers)
+        else:
+            params['capacityProviders'] = []
+        if capacity_provider_strategy:
+            params['defaultCapacityProviderStrategy'] = snake_dict_to_camel_dict(capacity_provider_strategy)
+        else:
+            params['defaultCapacityProviderStrategy'] = []
+        response = self.ecs.put_cluster_capacity_providers(**params)
         return response['cluster']
 
     def delete_cluster(self, clusterName):
@@ -159,7 +209,9 @@ def main():
         state=dict(required=True, choices=['present', 'absent', 'has_instances']),
         name=dict(required=True, type='str'),
         delay=dict(required=False, type='int', default=10),
-        repeat=dict(required=False, type='int', default=10)
+        repeat=dict(required=False, type='int', default=10),
+        capacity_providers=dict(required=False, type='list'),
+        capacity_provider_strategy=dict(required=False, type='list'),
     )
     required_together = [['state', 'name']]
 
@@ -178,11 +230,15 @@ def main():
     results = dict(changed=False)
     if module.params['state'] == 'present':
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
-            results['cluster'] = existing
+            if module.params['capacity_providers'] != existing['capacityProviders'] or module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
+                results = cluster_mgr.update_cluster(cluster_name=module.params['name'], capacity_providers=module.params['capacity_providers'], capacity_provider_strategy=module.params['capacity_provider_strategy'])
+                results['changed'] = True
+            else:
+              results['cluster'] = existing
         else:
             if not module.check_mode:
                 # doesn't exist. create it.
-                results['cluster'] = cluster_mgr.create_cluster(module.params['name'])
+                results['cluster'] = cluster_mgr.create_cluster(cluster_name=module.params['name'], capacity_providers=module.params['capacity_providers'], capacity_provider_strategy=module.params['capacity_provider_strategy'])
             results['changed'] = True
 
     # delete the cluster
