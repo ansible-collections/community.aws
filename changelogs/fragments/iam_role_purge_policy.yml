@@ -1,0 +1,2 @@
+breaking_changes:
+  - iam_role - As announced since community.aws 2.1.0, ``purge_policies`` default value is changed to ``false`` now.
