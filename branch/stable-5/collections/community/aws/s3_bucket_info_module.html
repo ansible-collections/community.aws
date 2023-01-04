@@ -559,43 +559,43 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Note: Only AWS S3 is currently supported</span><span class="w"></span>
+<span class="c1"># Note: Only AWS S3 is currently supported</span>
 
-<span class="c1"># Lists all S3 buckets</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.s3_bucket_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span><span class="w"></span>
+<span class="c1"># Lists all S3 buckets</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.s3_bucket_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
-<span class="c1"># Retrieve detailed bucket information</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.s3_bucket_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="c1"># Show only buckets with name matching</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name_filter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your.testing</span><span class="w"></span>
-<span class="w">    </span><span class="c1"># Choose facts to retrieve</span><span class="w"></span>
-<span class="w">    </span><span class="nt">bucket_facts</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_accelerate_configuration: true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">bucket_acl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">bucket_cors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">bucket_encryption</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_lifecycle_configuration: true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">bucket_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_logging: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_notification_configuration: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_ownership_controls: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_policy: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_policy_status: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_replication: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_request_payment: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_tagging: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># bucket_website: true</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># public_access_block: true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">transform_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span><span class="w"></span>
+<span class="c1"># Retrieve detailed bucket information</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.s3_bucket_info</span><span class="p">:</span>
+<span class="w">    </span><span class="c1"># Show only buckets with name matching</span>
+<span class="w">    </span><span class="nt">name_filter</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">your.testing</span>
+<span class="w">    </span><span class="c1"># Choose facts to retrieve</span>
+<span class="w">    </span><span class="nt">bucket_facts</span><span class="p">:</span>
+<span class="w">      </span><span class="c1"># bucket_accelerate_configuration: true</span>
+<span class="w">      </span><span class="nt">bucket_acl</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">bucket_cors</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">bucket_encryption</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="c1"># bucket_lifecycle_configuration: true</span>
+<span class="w">      </span><span class="nt">bucket_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="c1"># bucket_logging: true</span>
+<span class="w">      </span><span class="c1"># bucket_notification_configuration: true</span>
+<span class="w">      </span><span class="c1"># bucket_ownership_controls: true</span>
+<span class="w">      </span><span class="c1"># bucket_policy: true</span>
+<span class="w">      </span><span class="c1"># bucket_policy_status: true</span>
+<span class="w">      </span><span class="c1"># bucket_replication: true</span>
+<span class="w">      </span><span class="c1"># bucket_request_payment: true</span>
+<span class="w">      </span><span class="c1"># bucket_tagging: true</span>
+<span class="w">      </span><span class="c1"># bucket_website: true</span>
+<span class="w">      </span><span class="c1"># public_access_block: true</span>
+<span class="w">    </span><span class="nt">transform_location</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
-<span class="c1"># Print out result</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List buckets</span><span class="w"></span>
-<span class="w">  </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result</span><span class="o">[</span><span class="s1">&#39;buckets&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<span class="c1"># Print out result</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List buckets</span>
+<span class="w">  </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result</span><span class="o">[</span><span class="s1">&#39;buckets&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span>
 </pre></div>
 </div>
 </section>

@@ -349,27 +349,27 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-s
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
-<span class="c1"># It is assumed that their matching environment variables are set.</span><span class="w"></span>
-<span class="c1"># Creates a new iam saml identity provider if not present</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saml provider</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example1</span><span class="w"></span>
-<span class="w">      </span><span class="c1"># the &gt; below opens an indented block, so no escaping/quoting is needed when in the indentation level under this key</span><span class="w"></span>
-<span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span><span class="w"></span>
-<span class="w">          </span><span class="no">&lt;?xml version=&quot;1.0&quot;?&gt;...</span><span class="w"></span>
-<span class="w">          </span><span class="no">&lt;md:EntityDescriptor</span><span class="w"></span>
-<span class="c1"># Creates a new iam saml identity provider if not present</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saml provider</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example2</span><span class="w"></span>
-<span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">with_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/idp/metdata.xml</span><span class="w"></span>
-<span class="c1"># Removes iam saml identity provider</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove saml provider</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example3</span><span class="w"></span>
-<span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
+<span class="c1"># It is assumed that their matching environment variables are set.</span>
+<span class="c1"># Creates a new iam saml identity provider if not present</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saml provider</span>
+<span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example1</span>
+<span class="w">      </span><span class="c1"># the &gt; below opens an indented block, so no escaping/quoting is needed when in the indentation level under this key</span>
+<span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">&gt;</span>
+<span class="w">          </span><span class="no">&lt;?xml version=&quot;1.0&quot;?&gt;...</span>
+<span class="w">          </span><span class="no">&lt;md:EntityDescriptor</span>
+<span class="c1"># Creates a new iam saml identity provider if not present</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">saml provider</span>
+<span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example2</span>
+<span class="w">      </span><span class="nt">saml_metadata_document</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">item</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">  </span><span class="nt">with_file</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/path/to/idp/metdata.xml</span>
+<span class="c1"># Removes iam saml identity provider</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove saml provider</span>
+<span class="w">  </span><span class="nt">community.aws.iam_saml_federation</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">example3</span>
+<span class="w">      </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>

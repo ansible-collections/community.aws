@@ -356,20 +356,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-elb-t
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about all target groups</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target_group_info</span><span class="p">:</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about all target groups</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target_group_info</span><span class="p">:</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about the target group attached to a particular ELB</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target_group_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">load_balancer_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:elasticloadbalancing:ap-southeast-2:123456789012:loadbalancer/app/my-elb/aabbccddeeff&quot;</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about the target group attached to a particular ELB</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target_group_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">load_balancer_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;arn:aws:elasticloadbalancing:ap-southeast-2:123456789012:loadbalancer/app/my-elb/aabbccddeeff&quot;</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a target groups named &#39;tg1&#39; and &#39;tg2&#39;</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.elb_target_group_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">names</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tg1</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tg2</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Gather information about a target groups named &#39;tg1&#39; and &#39;tg2&#39;</span>
+<span class="w">  </span><span class="nt">community.aws.elb_target_group_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">names</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tg1</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tg2</span>
 </pre></div>
 </div>
 </section>

@@ -438,17 +438,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Config Rule for AWS Config</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.config_rule</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_config_rule</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;This</span><span class="nv"> </span><span class="s">AWS</span><span class="nv"> </span><span class="s">Config</span><span class="nv"> </span><span class="s">rule</span><span class="nv"> </span><span class="s">checks</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">public</span><span class="nv"> </span><span class="s">write</span><span class="nv"> </span><span class="s">access</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">S3</span><span class="nv"> </span><span class="s">buckets&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">scope</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">compliance_types</span><span class="p">:</span><span class="w"></span>
-<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;AWS::S3::Bucket&#39;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">source</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span><span class="w"></span>
-<span class="w">        </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;S3_BUCKET_PUBLIC_WRITE_PROHIBITED&#39;</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Config Rule for AWS Config</span>
+<span class="w">  </span><span class="nt">community.aws.config_rule</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_config_rule</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;This</span><span class="nv"> </span><span class="s">AWS</span><span class="nv"> </span><span class="s">Config</span><span class="nv"> </span><span class="s">rule</span><span class="nv"> </span><span class="s">checks</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">public</span><span class="nv"> </span><span class="s">write</span><span class="nv"> </span><span class="s">access</span><span class="nv"> </span><span class="s">on</span><span class="nv"> </span><span class="s">S3</span><span class="nv"> </span><span class="s">buckets&#39;</span>
+<span class="w">    </span><span class="nt">scope</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">compliance_types</span><span class="p">:</span>
+<span class="w">            </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&#39;AWS::S3::Bucket&#39;</span>
+<span class="w">    </span><span class="nt">source</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">AWS</span>
+<span class="w">        </span><span class="nt">identifier</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;S3_BUCKET_PUBLIC_WRITE_PROHIBITED&#39;</span>
 </pre></div>
 </div>
 <section id="authors">

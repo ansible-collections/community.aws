@@ -942,88 +942,88 @@ see <a class="reference internal" href="#ansible-collections-community-aws-opens
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create OpenSearch domain for dev environment, no zone awareness, no dedicated masters</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev-cluster&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">engine_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Elasticsearch_1.1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cluster_config</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t2.small.search&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="w">      </span><span class="nt">zone_awareness</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">      </span><span class="nt">dedicated_master</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ebs_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ebs_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gp2&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="w">    </span><span class="nt">access_policies</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="o">|</span> <span class="nf">from_json</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create OpenSearch domain for dev environment, no zone awareness, no dedicated masters</span>
+<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev-cluster&quot;</span>
+<span class="w">    </span><span class="nt">engine_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Elasticsearch_1.1</span>
+<span class="w">    </span><span class="nt">cluster_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t2.small.search&quot;</span>
+<span class="w">      </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">zone_awareness</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">      </span><span class="nt">dedicated_master</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">ebs_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ebs_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;gp2&quot;</span>
+<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">    </span><span class="nt">access_policies</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="o">|</span> <span class="nf">from_json</span> <span class="cp">}}</span><span class="s">&quot;</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create OpenSearch domain with dedicated masters</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-domain&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">engine_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OpenSearch_1.1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cluster_config</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t2.small.search&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span><span class="w"></span>
-<span class="w">      </span><span class="nt">dedicated_master</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">zone_awareness</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">availability_zone_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="w">      </span><span class="nt">dedicated_master_instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t2.small.search&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">dedicated_master_instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span><span class="w"></span>
-<span class="w">      </span><span class="nt">warm_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">warm_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ultrawarm1.medium.search&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">warm_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">      </span><span class="nt">cold_storage_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ebs_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ebs_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;io1&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span><span class="w"></span>
-<span class="w">      </span><span class="nt">iops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span><span class="w"></span>
-<span class="w">    </span><span class="nt">vpc_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">subnets</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-e537d64a&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-e537d64b&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="nt">security_groups</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;sg-dd2f13cb&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;sg-dd2f13cc&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">snapshot_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">automated_snapshot_start_hour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13</span><span class="w"></span>
-<span class="w">    </span><span class="nt">access_policies</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="o">|</span> <span class="nf">from_json</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">encryption_at_rest_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">node_to_node_encryption_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"></span>
-<span class="w">    </span><span class="nt">auto_tune_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
-<span class="w">      </span><span class="nt">maintenance_schedules</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">start_at</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2025-01-12&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">duration</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">          </span><span class="nt">unit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HOURS&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">cron_expression_for_recurrence</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cron(0</span><span class="nv"> </span><span class="s">12</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">?</span><span class="nv"> </span><span class="s">*)&quot;</span><span class="w"></span>
-<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">start_at</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2032-01-12&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">duration</span><span class="p">:</span><span class="w"></span>
-<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="w">          </span><span class="nt">unit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HOURS&quot;</span><span class="w"></span>
-<span class="w">        </span><span class="nt">cron_expression_for_recurrence</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cron(0</span><span class="nv"> </span><span class="s">12</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">?</span><span class="nv"> </span><span class="s">*)&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Application</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Search</span><span class="w"></span>
-<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create OpenSearch domain with dedicated masters</span>
+<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-domain&quot;</span>
+<span class="w">    </span><span class="nt">engine_version</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">OpenSearch_1.1</span>
+<span class="w">    </span><span class="nt">cluster_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t2.small.search&quot;</span>
+<span class="w">      </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12</span>
+<span class="w">      </span><span class="nt">dedicated_master</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">zone_awareness</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">availability_zone_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">      </span><span class="nt">dedicated_master_instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;t2.small.search&quot;</span>
+<span class="w">      </span><span class="nt">dedicated_master_instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">3</span>
+<span class="w">      </span><span class="nt">warm_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">warm_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ultrawarm1.medium.search&quot;</span>
+<span class="w">      </span><span class="nt">warm_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="nt">cold_storage_options</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">ebs_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">ebs_enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">volume_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;io1&quot;</span>
+<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">10</span>
+<span class="w">      </span><span class="nt">iops</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1000</span>
+<span class="w">    </span><span class="nt">vpc_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">subnets</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-e537d64a&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;subnet-e537d64b&quot;</span>
+<span class="w">      </span><span class="nt">security_groups</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;sg-dd2f13cb&quot;</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">&quot;sg-dd2f13cc&quot;</span>
+<span class="w">    </span><span class="nt">snapshot_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">automated_snapshot_start_hour</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">13</span>
+<span class="w">    </span><span class="nt">access_policies</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;policy.json&#39;</span><span class="o">)</span> <span class="o">|</span> <span class="nf">from_json</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">encryption_at_rest_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">node_to_node_encryption_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">auto_tune_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">enabled</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">      </span><span class="nt">maintenance_schedules</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">start_at</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2025-01-12&quot;</span>
+<span class="w">        </span><span class="nt">duration</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">          </span><span class="nt">unit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HOURS&quot;</span>
+<span class="w">        </span><span class="nt">cron_expression_for_recurrence</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cron(0</span><span class="nv"> </span><span class="s">12</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">?</span><span class="nv"> </span><span class="s">*)&quot;</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">start_at</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;2032-01-12&quot;</span>
+<span class="w">        </span><span class="nt">duration</span><span class="p">:</span>
+<span class="w">          </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">          </span><span class="nt">unit</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;HOURS&quot;</span>
+<span class="w">        </span><span class="nt">cron_expression_for_recurrence</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cron(0</span><span class="nv"> </span><span class="s">12</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">?</span><span class="nv"> </span><span class="s">*)&quot;</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Development</span>
+<span class="w">      </span><span class="nt">Application</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Search</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Increase size of EBS volumes for existing cluster</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-domain&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">ebs_options</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span><span class="w"></span>
-<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Increase size of EBS volumes for existing cluster</span>
+<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-domain&quot;</span>
+<span class="w">    </span><span class="nt">ebs_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">volume_size</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">5</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Increase instance count for existing cluster</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-domain&quot;</span><span class="w"></span>
-<span class="w">    </span><span class="nt">cluster_config</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span><span class="w"></span>
-<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"></span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Increase instance count for existing cluster</span>
+<span class="w">  </span><span class="nt">community.aws.opensearch</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my-domain&quot;</span>
+<span class="w">    </span><span class="nt">cluster_config</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">instance_count</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">40</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 </pre></div>
 </div>
 <section id="authors">

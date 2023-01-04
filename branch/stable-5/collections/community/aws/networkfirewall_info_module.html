@@ -350,16 +350,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Describe all firewalls in an account</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Describe all firewalls in an account</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_info</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
 
-<span class="c1"># Describe a firewall by ARN</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:network-firewall:us-east-1:123456789012:firewall/ExampleFirewall</span><span class="w"></span>
+<span class="c1"># Describe a firewall by ARN</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:network-firewall:us-east-1:123456789012:firewall/ExampleFirewall</span>
 
-<span class="c1"># Describe a firewall by name</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_info</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExampleFirewall</span><span class="w"></span>
+<span class="c1"># Describe a firewall by name</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.networkfirewall_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ExampleFirewall</span>
 </pre></div>
 </div>
 </section>

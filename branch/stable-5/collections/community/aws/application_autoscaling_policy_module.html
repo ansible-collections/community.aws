@@ -486,56 +486,56 @@ see <a class="reference internal" href="#ansible-collections-community-aws-appli
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span><span class="w"></span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="c1"># Create step scaling policy for ECS Service</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaling_policy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.application_autoscaling_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">service_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service/poc-pricing/test-as</span><span class="w"></span>
-<span class="w">    </span><span class="nt">scalable_dimension</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs:service:DesiredCount</span><span class="w"></span>
-<span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StepScaling</span><span class="w"></span>
-<span class="w">    </span><span class="nt">minimum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">maximum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span><span class="w"></span>
-<span class="w">    </span><span class="nt">step_scaling_policy_configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">AdjustmentType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChangeInCapacity</span><span class="w"></span>
-<span class="w">      </span><span class="nt">StepAdjustments</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricIntervalUpperBound</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123</span><span class="w"></span>
-<span class="w">          </span><span class="nt">ScalingAdjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span><span class="w"></span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricIntervalLowerBound</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123</span><span class="w"></span>
-<span class="w">          </span><span class="nt">ScalingAdjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-2</span><span class="w"></span>
-<span class="w">      </span><span class="nt">Cooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123</span><span class="w"></span>
-<span class="w">      </span><span class="nt">MetricAggregationType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Average</span><span class="w"></span>
+<span class="c1"># Create step scaling policy for ECS Service</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaling_policy</span>
+<span class="w">  </span><span class="nt">community.aws.application_autoscaling_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_policy</span>
+<span class="w">    </span><span class="nt">service_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs</span>
+<span class="w">    </span><span class="nt">resource_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service/poc-pricing/test-as</span>
+<span class="w">    </span><span class="nt">scalable_dimension</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs:service:DesiredCount</span>
+<span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StepScaling</span>
+<span class="w">    </span><span class="nt">minimum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">maximum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">step_scaling_policy_configuration</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">AdjustmentType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ChangeInCapacity</span>
+<span class="w">      </span><span class="nt">StepAdjustments</span><span class="p">:</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricIntervalUpperBound</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123</span>
+<span class="w">          </span><span class="nt">ScalingAdjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">2</span>
+<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">MetricIntervalLowerBound</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123</span>
+<span class="w">          </span><span class="nt">ScalingAdjustment</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">-2</span>
+<span class="w">      </span><span class="nt">Cooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123</span>
+<span class="w">      </span><span class="nt">MetricAggregationType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Average</span>
 
-<span class="c1"># Create target tracking scaling policy for ECS Service</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaling_policy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.application_autoscaling_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span><span class="w"></span>
-<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">service_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service/poc-pricing/test-as</span><span class="w"></span>
-<span class="w">    </span><span class="nt">scalable_dimension</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs:service:DesiredCount</span><span class="w"></span>
-<span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span><span class="w"></span>
-<span class="w">    </span><span class="nt">minimum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span><span class="w"></span>
-<span class="w">    </span><span class="nt">maximum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span><span class="w"></span>
-<span class="w">    </span><span class="nt">target_tracking_scaling_policy_configuration</span><span class="p">:</span><span class="w"></span>
-<span class="w">      </span><span class="nt">TargetValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"></span>
-<span class="w">      </span><span class="nt">PredefinedMetricSpecification</span><span class="p">:</span><span class="w"></span>
-<span class="w">        </span><span class="nt">PredefinedMetricType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECSServiceAverageCPUUtilization</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ScaleOutCooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"></span>
-<span class="w">      </span><span class="nt">ScaleInCooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span><span class="w"></span>
+<span class="c1"># Create target tracking scaling policy for ECS Service</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaling_policy</span>
+<span class="w">  </span><span class="nt">community.aws.application_autoscaling_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_policy</span>
+<span class="w">    </span><span class="nt">service_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs</span>
+<span class="w">    </span><span class="nt">resource_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service/poc-pricing/test-as</span>
+<span class="w">    </span><span class="nt">scalable_dimension</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs:service:DesiredCount</span>
+<span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
+<span class="w">    </span><span class="nt">minimum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">    </span><span class="nt">maximum_tasks</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">6</span>
+<span class="w">    </span><span class="nt">target_tracking_scaling_policy_configuration</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">TargetValue</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">      </span><span class="nt">PredefinedMetricSpecification</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">PredefinedMetricType</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ECSServiceAverageCPUUtilization</span>
+<span class="w">      </span><span class="nt">ScaleOutCooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+<span class="w">      </span><span class="nt">ScaleInCooldown</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">60</span>
 
-<span class="c1"># Remove scalable target for ECS Service</span><span class="w"></span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaling_policy</span><span class="w"></span>
-<span class="w">  </span><span class="nt">community.aws.application_autoscaling_policy</span><span class="p">:</span><span class="w"></span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span><span class="w"></span>
-<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_policy</span><span class="w"></span>
-<span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StepScaling</span><span class="w"></span>
-<span class="w">    </span><span class="nt">service_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs</span><span class="w"></span>
-<span class="w">    </span><span class="nt">resource_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service/cluster-name/service-name</span><span class="w"></span>
-<span class="w">    </span><span class="nt">scalable_dimension</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs:service:DesiredCount</span><span class="w"></span>
+<span class="c1"># Remove scalable target for ECS Service</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">scaling_policy</span>
+<span class="w">  </span><span class="nt">community.aws.application_autoscaling_policy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
+<span class="w">    </span><span class="nt">policy_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_policy</span>
+<span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">StepScaling</span>
+<span class="w">    </span><span class="nt">service_namespace</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs</span>
+<span class="w">    </span><span class="nt">resource_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">service/cluster-name/service-name</span>
+<span class="w">    </span><span class="nt">scalable_dimension</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ecs:service:DesiredCount</span>
 </pre></div>
 </div>
 </section>
