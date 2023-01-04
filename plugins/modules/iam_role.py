@@ -60,7 +60,7 @@ options:
       - When I(purge_policies=true) any managed policies not listed in I(managed_policies) will be detatched.
     type: bool
     aliases: ['purge_policy', 'purge_managed_policies']
-    default: false
+    default: true
   state:
     description:
       - Create or remove the IAM role.
@@ -665,7 +665,7 @@ def main():
         boundary=dict(type='str', aliases=['boundary_policy_arn']),
         create_instance_profile=dict(type='bool', default=True),
         delete_instance_profile=dict(type='bool', default=False),
-        purge_policies=dict(default=False, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
+        purge_policies=dict(default=True, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
         tags=dict(type='dict', aliases=['resource_tags']),
         purge_tags=dict(type='bool', default=True),
         wait=dict(type='bool', default=True),
