@@ -260,8 +260,8 @@ def main():
             existing_cps = existing['defaultCapacityProviderStrategy']
             if requested_cp != existing_cp or requested_cps != existing_cps:
                 results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
-                                                    capacity_providers=requested_cp,
-                                                    capacity_provider_strategy=requested_cps)
+                                                     capacity_providers=requested_cp,
+                                                     capacity_provider_strategy=requested_cps)
                 results['changed'] = True
             else:
                 results['cluster'] = existing
