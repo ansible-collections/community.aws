@@ -46,11 +46,26 @@ options:
             - List of capacity providers to use for the cluster.
         required: false
         type: list
+        elements: str
     capacity_provider_strategy:
         description:
             - List of capacity provider strategies to use for the cluster.
         required: false
         type: list
+        elements: dict
+        suboptions:
+            capacity_provider:
+                description:
+                  - Name of capacity provider.
+                type: str
+            weight:
+                description:
+                  - The relative percentage of the total number of launched tasks that should use the specified provider.
+                type: int
+            base:
+                description:
+                  - How many tasks, at a minimum, should use the specified provider.
+                type: int
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -211,8 +226,16 @@ def main():
         name=dict(required=True, type='str'),
         delay=dict(required=False, type='int', default=10),
         repeat=dict(required=False, type='int', default=10),
-        capacity_providers=dict(required=False, type='list'),
-        capacity_provider_strategy=dict(required=False, type='list'),
+        capacity_providers=dict(required=False, type='list', elements='str'),
+        capacity_provider_strategy=dict(required=False,
+                                        type='list',
+                                        elements='dict',
+                                        options=dict(
+                                            capacity_provider=dict(type='str'),
+                                            weight=dict(type='int'),
+                                            base=dict(type='int')
+                                            )
+                                        ),
     )
     required_together = [['state', 'name']]
 
@@ -233,10 +256,10 @@ def main():
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
             if module.params['capacity_providers'] != existing['capacityProviders'] or \
                module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
-                results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
-                                                     capacity_providers=module.params['capacity_providers'],
-                                                     capacity_provider_strategy=module.params['capacity_provider_strategy'])
-                results['changed'] = True
+                 results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
+                                                      capacity_providers=module.params['capacity_providers'],
+                                                      capacity_provider_strategy=module.params['capacity_provider_strategy'])
+                 results['changed'] = True
             else:
               results['cluster'] = existing
         else:
