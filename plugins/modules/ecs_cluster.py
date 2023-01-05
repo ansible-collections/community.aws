@@ -254,12 +254,11 @@ def main():
     results = dict(changed=False)
     if module.params['state'] == 'present':
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
-            if module.params['capacity_providers'] != existing['capacityProviders'] or \
-                module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
-                    results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
-                                                         capacity_providers=module.params['capacity_providers'],
-                                                         capacity_provider_strategy=module.params['capacity_provider_strategy'])
-                    results['changed'] = True
+            if module.params['capacity_providers'] != existing['capacityProviders'] or module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
+                results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
+                                                     capacity_providers=module.params['capacity_providers'],
+                                                     capacity_provider_strategy=module.params['capacity_provider_strategy'])
+                results['changed'] = True
             else:
                 results['cluster'] = existing
         else:
