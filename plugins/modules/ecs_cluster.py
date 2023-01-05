@@ -230,11 +230,10 @@ def main():
         capacity_provider_strategy=dict(required=False,
                                         type='list',
                                         elements='dict',
-                                        options=dict(
-                                            capacity_provider=dict(type='str'),
-                                            weight=dict(type='int'),
-                                            base=dict(type='int')
-                                            )
+                                        options=dict(capacity_provider=dict(type='str'),
+                                                     weight=dict(type='int'),
+                                                     base=dict(type='int')
+                                                     )
                                         ),
     )
     required_together = [['state', 'name']]
