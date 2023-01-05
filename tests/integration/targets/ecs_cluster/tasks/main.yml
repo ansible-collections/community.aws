@@ -82,8 +82,9 @@
       assert:
         that:
           - ecs_cluster_update.changed
-          - ecs_cluster_update.capacityProviders
-          - "'FARGATE' in ecs_cluster_update.capacityProviders"
+          - ecs_cluster_update.cluster is defined
+          - ecs_cluster_update.cluster.capacityProviders is defined
+          - "'FARGATE' in ecs_cluster_update.cluster.capacityProviders"
 
     - name: create a VPC to work in
       ec2_vpc_net:

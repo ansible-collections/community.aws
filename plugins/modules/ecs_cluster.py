@@ -253,14 +253,27 @@ def main():
     results = dict(changed=False)
     if module.params['state'] == 'present':
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
+            # Pull requested and existing capacity providers and strategies.
             requested_cp = module.params['capacity_providers']
             requested_cps = module.params['capacity_provider_strategy']
             existing_cp = existing['capacityProviders']
             existing_cps = existing['defaultCapacityProviderStrategy']
-            if requested_cp != existing_cp or requested_cps != existing_cps:
-                results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
-                                                     capacity_providers=requested_cp,
-                                                     capacity_provider_strategy=requested_cps)
+            if requested_cp is None:
+                requested_cp = []
+
+            # Check if capacity providers or strategy need to trigger an update.
+            cps_update_needed = False
+            if requested_cps is not None:
+                try:
+                    assert [strategy for strategy in requested_cps if snake_dict_to_camel_dict(strategy) not in existing_cps] == []
+                except AssertionError:
+                    cps_update_needed = True
+
+            # If either the providers or strategy differ, update the cluster.
+            if requested_cp != existing_cp or cps_update_needed:
+                results['cluster'] = cluster_mgr.update_cluster(cluster_name=module.params['name'],
+                                                                capacity_providers=requested_cp,
+                                                                capacity_provider_strategy=requested_cps)
                 results['changed'] = True
             else:
                 results['cluster'] = existing
