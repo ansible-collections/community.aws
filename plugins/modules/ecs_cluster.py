@@ -255,13 +255,13 @@ def main():
     if module.params['state'] == 'present':
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
             if module.params['capacity_providers'] != existing['capacityProviders'] or \
-               module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
+                module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
                     results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
                                                          capacity_providers=module.params['capacity_providers'],
                                                          capacity_provider_strategy=module.params['capacity_provider_strategy'])
                     results['changed'] = True
             else:
-              results['cluster'] = existing
+                results['cluster'] = existing
         else:
             if not module.check_mode:
                 # doesn't exist. create it.
