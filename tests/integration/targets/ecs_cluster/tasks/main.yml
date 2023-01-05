@@ -82,6 +82,7 @@
       assert:
         that:
           - ecs_cluster_update.changed
+          - ecs_cluster_update.capacityProviders
           - "'FARGATE' in ecs_cluster_update.capacityProviders"
 
     - name: create a VPC to work in
