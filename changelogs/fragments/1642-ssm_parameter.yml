@@ -1,0 +1,2 @@
+minor_changes:
+- ssm_parameter - fix typo in examples ``paramater`` (https://github.com/ansible-collections/community.aws/issues/1642).
