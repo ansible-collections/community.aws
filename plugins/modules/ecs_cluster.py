@@ -268,7 +268,6 @@ def main():
                     if snake_dict_to_camel_dict(strategy) not in existing_cps:
                         cps_update_needed = True
 
-            
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
                 if not module.check_mode:
