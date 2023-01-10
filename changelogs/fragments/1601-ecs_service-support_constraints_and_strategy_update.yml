@@ -1,2 +1,2 @@
 bugfixes:
-  - ecs_service - respect ``placement_constraints`` for existing ecs services(https://github.com/ansible-collections/community.aws/pull/1601).
+  - ecs_service - respect ``placement_constraints`` for existing ecs services (https://github.com/ansible-collections/community.aws/pull/1601).
