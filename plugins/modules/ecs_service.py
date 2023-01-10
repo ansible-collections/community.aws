@@ -833,12 +833,10 @@ class EcsServiceManager:
         if placement_constraints:
             params['placementConstraints'] = [{key: value for key, value in constraint.items() if value is not None}
                                               for constraint in placement_constraints]
-        else:
-            params['placementConstraints'] = []
+
         if placement_strategy:
             params['placementStrategy'] = placement_strategy
-        else:
-            params['placementStrategy'] = []
+
         if network_configuration:
             params['networkConfiguration'] = network_configuration
         if force_new_deployment:
