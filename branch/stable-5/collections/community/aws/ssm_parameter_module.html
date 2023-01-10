@@ -433,25 +433,25 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <section id="examples">
 <h2><a class="toc-backref" href="#id6">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create or update key/value pair in AWS SSM parameter store</span>
-<span class="w">  </span><span class="nt">community.aws.ssm_paramater</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">your</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">key&quot;</span>
 <span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;World&quot;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete the key</span>
-<span class="w">  </span><span class="nt">community.aws.ssm_paramater</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create or update secure key/value pair with default KMS key (aws/ssm)</span>
-<span class="w">  </span><span class="nt">community.aws.ssm_paramater</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">your</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">key&quot;</span>
 <span class="w">    </span><span class="nt">string_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SecureString&quot;</span>
 <span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;World&quot;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create or update secure key/value pair with nominated KMS key</span>
-<span class="w">  </span><span class="nt">community.aws.ssm_paramater</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">your</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">key&quot;</span>
 <span class="w">    </span><span class="nt">string_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;SecureString&quot;</span>
@@ -459,7 +459,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;World&quot;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Always update a parameter store value and create a new version</span>
-<span class="w">  </span><span class="nt">community.aws.ssm_paramater</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;overwrite_example&quot;</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">example</span><span class="nv"> </span><span class="s">will</span><span class="nv"> </span><span class="s">always</span><span class="nv"> </span><span class="s">overwrite</span><span class="nv"> </span><span class="s">the</span><span class="nv"> </span><span class="s">value&quot;</span>
 <span class="w">    </span><span class="nt">string_type</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;String&quot;</span>
@@ -467,7 +467,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <span class="w">    </span><span class="nt">overwrite_value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;always&quot;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create or update key/value pair in AWS SSM parameter store with tier</span>
-<span class="w">  </span><span class="nt">community.aws.ssm_paramater</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
 <span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">your</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">key&quot;</span>
 <span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;World&quot;</span>
