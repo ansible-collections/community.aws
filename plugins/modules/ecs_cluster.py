@@ -226,20 +226,16 @@ def main():
         name=dict(required=True, type='str'),
         delay=dict(required=False, type='int', default=10),
         repeat=dict(required=False, type='int', default=10),
-<<<<<<< HEAD
         capacity_providers=dict(required=False, type='list', elements='str'),
         capacity_provider_strategy=dict(required=False,
                                         type='list',
                                         elements='dict',
-                                        options=dict(capacity_provider=dict(type='str'),
-                                                     weight=dict(type='int'),
-                                                     base=dict(type='int')
-                                                     )
+                                        options=dict(
+                                            capacity_provider=dict(type='str'),
+                                            weight=dict(type='int'),
+                                            base=dict(type='int')
+                                            )
                                         ),
-=======
-        capacity_providers=dict(required=False, type='list'),
-        capacity_provider_strategy=dict(required=False, type='list'),
->>>>>>> b4d98bd4 (770 - ecs_cluster - Add Capacity Providers and Capacity Provider Strategy.)
     )
     required_together = [['state', 'name']]
 
@@ -258,8 +254,6 @@ def main():
     results = dict(changed=False)
     if module.params['state'] == 'present':
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
-<<<<<<< HEAD
-<<<<<<< HEAD
             # Pull requested and existing capacity providers and strategies.
             requested_cp = module.params['capacity_providers']
             requested_cps = module.params['capacity_provider_strategy']
@@ -275,11 +269,13 @@ def main():
                     if snake_dict_to_camel_dict(strategy) not in existing_cps:
                         cps_update_needed = True
 
+            
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
-                results['cluster'] = cluster_mgr.update_cluster(cluster_name=module.params['name'],
-                                                                capacity_providers=requested_cp,
-                                                                capacity_provider_strategy=requested_cps)
+                if not module.check_mode:
+                    results['cluster'] = cluster_mgr.update_cluster(cluster_name=module.params['name'],
+                                                                    capacity_providers=requested_cp,
+                                                                    capacity_provider_strategy=requested_cps)
                 results['changed'] = True
             else:
                 results['cluster'] = existing
@@ -289,30 +285,6 @@ def main():
                 results['cluster'] = cluster_mgr.create_cluster(cluster_name=module.params['name'],
                                                                 capacity_providers=module.params['capacity_providers'],
                                                                 capacity_provider_strategy=module.params['capacity_provider_strategy'])
-=======
-            if module.params['capacity_providers'] != existing['capacityProviders'] or module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
-                results = cluster_mgr.update_cluster(cluster_name=module.params['name'], capacity_providers=module.params['capacity_providers'], capacity_provider_strategy=module.params['capacity_provider_strategy'])
-=======
-            if module.params['capacity_providers'] != existing['capacityProviders'] or \
-               module.params['capacity_provider_strategy'] != existing['defaultCapacityProviderStrategy']:
-                results = cluster_mgr.update_cluster(cluster_name=module.params['name'],
-                                                     capacity_providers=module.params['capacity_providers'],
-                                                     capacity_provider_strategy=module.params['capacity_provider_strategy'])
->>>>>>> a8c40fa5 (Some lines are too long.)
-                results['changed'] = True
-            else:
-              results['cluster'] = existing
-        else:
-            if not module.check_mode:
-                # doesn't exist. create it.
-<<<<<<< HEAD
-                results['cluster'] = cluster_mgr.create_cluster(cluster_name=module.params['name'], capacity_providers=module.params['capacity_providers'], capacity_provider_strategy=module.params['capacity_provider_strategy'])
->>>>>>> b4d98bd4 (770 - ecs_cluster - Add Capacity Providers and Capacity Provider Strategy.)
-=======
-                results['cluster'] = cluster_mgr.create_cluster(cluster_name=module.params['name'],
-                                                                capacity_providers=module.params['capacity_providers'],
-                                                                capacity_provider_strategy=module.params['capacity_provider_strategy'])
->>>>>>> a8c40fa5 (Some lines are too long.)
             results['changed'] = True
 
     # delete the cluster
