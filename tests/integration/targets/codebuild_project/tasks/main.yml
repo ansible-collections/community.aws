@@ -48,7 +48,7 @@
           environment_variables:
             - { name: 'FOO_ENV', value: 'other' }
         tags:
-          - { key: 'purpose', value: 'ansible-test' }
+          purpose: 'ansible-test'
         state: present
       register: output
       retries: 10
@@ -83,7 +83,7 @@
           environment_variables:
             - { name: 'FOO_ENV', value: 'other' }
         tags:
-          - { key: 'purpose', value: 'ansible-test' }
+          purpose: 'ansible-test'
         state: present
       register: rerun_test_output
 
