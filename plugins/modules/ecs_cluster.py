@@ -266,6 +266,11 @@ def main():
         if requested_cp is None:
             requested_cp = []
 
+        # Unless purge_capacity_providers is true, we use the existing providers and strategy.
+        if purge_capacity_providers:
+            requested_cp = existing_cp
+            requested_cps = existing_cps
+
         # Check if capacity provider strategy needs to trigger an update.
         cps_update_needed = False
         if requested_cps is not None:
@@ -278,13 +283,6 @@ def main():
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
-                if purge_capacity_providers is None:
-                    module.warn('Cluster exists and purge_capacity_providers argument not provided. The capacity providers will not be updated.')
-                    capacity_providers = existing_cp
-                    capacity_provider_strategy = existing_cps
-                elif purge_capacity_providers != True:
-                    capacity_providers = existing_cp
-                    capacity_provider_strategy = existing_cps
                 if not module.check_mode:
                     results['cluster'] = cluster_mgr.update_cluster(cluster_name=module.params['name'],
                                                                     capacity_providers=requested_cp,
