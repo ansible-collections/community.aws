@@ -230,6 +230,7 @@ def main():
         name=dict(required=True, type='str'),
         delay=dict(required=False, type='int', default=10),
         repeat=dict(required=False, type='int', default=10),
+        purge_capacity_providers=dict(required=False, type='bool', default=False),
         capacity_providers=dict(required=False, type='list', elements='str'),
         capacity_provider_strategy=dict(required=False,
                                         type='list',
@@ -256,24 +257,34 @@ def main():
 
     results = dict(changed=False)
     if module.params['state'] == 'present':
+        # Pull requested and existing capacity providers and strategies.
+        purge_capacity_providers = module.params['purge_capacity_providers']
+        requested_cp = module.params['capacity_providers']
+        requested_cps = module.params['capacity_provider_strategy']
+        existing_cp = existing['capacityProviders']
+        existing_cps = existing['defaultCapacityProviderStrategy']
+        if requested_cp is None:
+            requested_cp = []
+
+        # Check if capacity provider strategy needs to trigger an update.
+        cps_update_needed = False
+        if requested_cps is not None:
+            for strategy in requested_cps:
+                if strategy['base'] is None:
+                    strategy['base'] = 0
+                if snake_dict_to_camel_dict(strategy) not in existing_cps:
+                    cps_update_needed = True
+
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
-            # Pull requested and existing capacity providers and strategies.
-            requested_cp = module.params['capacity_providers']
-            requested_cps = module.params['capacity_provider_strategy']
-            existing_cp = existing['capacityProviders']
-            existing_cps = existing['defaultCapacityProviderStrategy']
-            if requested_cp is None:
-                requested_cp = []
-
-            # Check if capacity provider strategy needs to trigger an update.
-            cps_update_needed = False
-            if requested_cps is not None:
-                for strategy in requested_cps:
-                    if snake_dict_to_camel_dict(strategy) not in existing_cps:
-                        cps_update_needed = True
-
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
+                if purge_capacity_providers is None:
+                    module.warn('Cluster exists and purge_capacity_providers argument not provided. The capacity providers will not be updated.')
+                    capacity_providers = existing_cp
+                    capacity_provider_strategy = existing_cps
+                elif purge_capacity_providers != True:
+                    capacity_providers = existing_cp
+                    capacity_provider_strategy = existing_cps
                 if not module.check_mode:
                     results['cluster'] = cluster_mgr.update_cluster(cluster_name=module.params['name'],
                                                                     capacity_providers=requested_cp,
