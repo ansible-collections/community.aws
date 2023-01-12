@@ -74,6 +74,7 @@ options:
             - Toggle overwriting of existing capacity providers or strategy. This is needed for backwards compatibility.
         required: false
         type: bool
+        default: false
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -276,7 +277,7 @@ def main():
                 requested_cp = []
 
             # Unless purge_capacity_providers is true, we use the existing providers and strategy.
-            if purge_capacity_providers == False:
+            if not purge_capacity_providers:
                 requested_cp = existing_cp
                 requested_cps = existing_cps
 
