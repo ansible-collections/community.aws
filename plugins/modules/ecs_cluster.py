@@ -245,7 +245,7 @@ def main():
                                         elements='dict',
                                         options=dict(capacity_provider=dict(type='str'),
                                                      weight=dict(type='int'),
-                                                     base=dict(type='int')
+                                                     base=dict(type='int', default=0)
                                                      )
                                         ),
     )
@@ -284,8 +284,6 @@ def main():
             cps_update_needed = False
             if requested_cps is not None:
                 for strategy in requested_cps:
-                    if strategy['base'] is None:
-                        strategy['base'] = 0
                     if snake_dict_to_camel_dict(strategy) not in existing_cps:
                         cps_update_needed = True
                 for strategy in existing_cps:
