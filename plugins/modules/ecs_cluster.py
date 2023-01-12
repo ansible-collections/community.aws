@@ -267,7 +267,7 @@ def main():
             requested_cp = []
 
         # Unless purge_capacity_providers is true, we use the existing providers and strategy.
-        if purge_capacity_providers:
+        if purge_capacity_providers == False:
             requested_cp = existing_cp
             requested_cps = existing_cps
 
@@ -279,6 +279,9 @@ def main():
                     strategy['base'] = 0
                 if snake_dict_to_camel_dict(strategy) not in existing_cps:
                     cps_update_needed = True
+        for strategy in existing_cps:
+            if camel_dict_to_snake_dict(strategy) not in requested_cps:
+                cps_update_needed = True
 
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
             # If either the providers or strategy differ, update the cluster.
