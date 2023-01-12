@@ -264,27 +264,29 @@ def main():
         requested_cps = module.params['capacity_provider_strategy']
         existing_cp = existing['capacityProviders']
         existing_cps = existing['defaultCapacityProviderStrategy']
-        if requested_cp is None:
-            requested_cp = []
-
-        # Unless purge_capacity_providers is true, we use the existing providers and strategy.
-        if purge_capacity_providers == False:
-            requested_cp = existing_cp
-            requested_cps = existing_cps
-
-        # Check if capacity provider strategy needs to trigger an update.
-        cps_update_needed = False
-        if requested_cps is not None:
-            for strategy in requested_cps:
-                if strategy['base'] is None:
-                    strategy['base'] = 0
-                if snake_dict_to_camel_dict(strategy) not in existing_cps:
-                    cps_update_needed = True
-            for strategy in existing_cps:
-                if camel_dict_to_snake_dict(strategy) not in requested_cps:
-                    cps_update_needed = True
-
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
+            if requested_cp is None:
+                requested_cp = []
+
+            # Unless purge_capacity_providers is true, we use the existing providers and strategy.
+            if purge_capacity_providers == False:
+                requested_cp = existing_cp
+                requested_cps = existing_cps
+
+            # Check if capacity provider strategy needs to trigger an update.
+            cps_update_needed = False
+            if requested_cps is not None:
+                for strategy in requested_cps:
+                    if strategy['base'] is None:
+                        strategy['base'] = 0
+                    if snake_dict_to_camel_dict(strategy) not in existing_cps:
+                        cps_update_needed = True
+                for strategy in existing_cps:
+                    if camel_dict_to_snake_dict(strategy) not in requested_cps:
+                        cps_update_needed = True
+            elif requested_cps is None and existing_cps != []:
+                cps_update_needed = True
+
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
                 if not module.check_mode:
