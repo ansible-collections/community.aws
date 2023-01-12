@@ -278,6 +278,8 @@ def main():
 
             # Unless purge_capacity_providers is true, we use the existing providers and strategy.
             if not purge_capacity_providers:
+                module.warn('In order to maintain backwards compatibility, the capacity providers and strategy will not be changed by default.')
+                module.warn('Set purge_capacity_providers to True to override this behavior.')
                 requested_cp = existing_cp
                 requested_cps = existing_cps
 
