@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+PLAYBOOK_DIR=$(pwd)
 set -eux
 
 CMD_ARGS=("$@")
@@ -7,8 +8,7 @@ CMD_ARGS=("$@")
 # Destroy Environment
 cleanup() {
 
-    cd ../connection_aws_ssm
-
+    cd "${PLAYBOOK_DIR}"
     ansible-playbook -c local aws_ssm_integration_test_teardown.yml "${CMD_ARGS[@]}"
 
 }
@@ -26,6 +26,6 @@ set -x
 cd ../connection
 
 # Execute Integration tests
-INVENTORY=../connection_aws_ssm/ssm_inventory ./test.sh \
+INVENTORY="${PLAYBOOK_DIR}/ssm_inventory" ./test.sh \
     -e target_hosts=aws_ssm \
     "$@"

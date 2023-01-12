@@ -11,3 +11,6 @@
     state: present
     disable_gpg_check: true
   tags: setup_infra
+- name: Check the SSM Plugin
+  shell: /usr/local/sessionmanagerplugin/bin/session-manager-plugin --version
+  tags: setup_infra

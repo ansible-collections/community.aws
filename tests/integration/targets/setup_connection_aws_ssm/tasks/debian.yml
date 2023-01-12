@@ -4,15 +4,10 @@
     dest: /tmp/session-manager-plugin.deb
     mode: '0440'
   tags: setup_infra
-- name: Extract SSM plugin Deb File
-  shell: ar x session-manager-plugin.deb
-  args:
-    chdir: /tmp
-  tags: setup_infra
-- name: Extract SSM Plugin Control File
-  shell: tar -zxvf data.tar.gz -C /
-  args:
-    chdir: /tmp
+- name: Install SSM Plugin
+  become: true
+  apt:
+    deb: /tmp/session-manager-plugin.deb
   tags: setup_infra
 - name: Check the SSM Plugin
   shell: /usr/local/sessionmanagerplugin/bin/session-manager-plugin --version
