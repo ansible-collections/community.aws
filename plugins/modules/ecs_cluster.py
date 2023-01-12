@@ -49,6 +49,7 @@ options:
         type: list
         elements: str
     capacity_provider_strategy:
+        version_added: 5.2.0
         description:
             - List of capacity provider strategies to use for the cluster.
         required: false
