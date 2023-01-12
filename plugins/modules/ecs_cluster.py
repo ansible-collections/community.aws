@@ -117,10 +117,12 @@ activeServicesCount:
     returned: 0 if a new cluster
     type: int
 capacityProviders:
+    version_added: 5.2.0
     description: list of capacity providers used in this cluster
     returned: always
     type: list
 defaultCapacityProviderStrategy:
+    version_added: 5.2.0
     description: list of capacity provider strategies used in this cluster
     returned: always
     type: list
