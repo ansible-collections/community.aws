@@ -525,7 +525,7 @@ class Connection(ConnectionBase):
             if disable_prompt_complete is False:
                 match = disable_prompt_reply.search(stdout)
                 if match:
-                    stdout = stdout[match.end() :]
+                    stdout = stdout[match.end():]
                     disable_prompt_complete = True
 
         if not disable_prompt_complete:
