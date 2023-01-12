@@ -10,23 +10,14 @@
       region: '{{ aws_region }}'
   block:
 
-    - name: Check if ec2_linux_vars_to_delete.yml is present
+    - name: Check if instance_vars_to_delete.yml is present
       stat:
-        path: "{{playbook_dir}}/ec2_linux_vars_to_delete.yml"
-      register: ec2_linux_vars_file
+        path: "{{ playbook_dir }}/instance_vars_to_delete.yml"
+      register: ec2_vars_file
 
-    - name: Include variable file to delete EC2 Linux infra
-      include_vars: "{{playbook_dir}}/ec2_linux_vars_to_delete.yml"
-      when: ec2_linux_vars_file.stat.exists == true
-
-    - name: Check if ec2_windows_vars_to_delete.yml is present
-      stat:
-        path: "{{playbook_dir}}/ec2_windows_vars_to_delete.yml"
-      register: ec2_windows_vars_file
-
-    - name: Include variable file to delete EC2 Windows infra
-      include_vars: "{{playbook_dir}}/ec2_windows_vars_to_delete.yml"
-      when: ec2_windows_vars_file.stat.exists == true
+    - name: Include variable file to delete EC2 infra
+      include_vars: "{{ playbook_dir }}/instance_vars_to_delete.yml"
+      when: ec2_vars_file.stat.exists == true
 
     - name: Check if s3_vars_to_delete.yml is present
       stat:
@@ -39,41 +30,31 @@
 
     - name: Check if iam_role_vars_to_delete.yml is present
       stat:
-        path: "{{playbook_dir}}/iam_role_vars_to_delete.yml"
+        path: "{{ playbook_dir }}/iam_role_vars_to_delete.yml"
       register: iam_role_vars_file
 
     - name: Include variable file to delete IAM Role infra
-      include_vars: "{{playbook_dir}}/iam_role_vars_to_delete.yml"
+      include_vars: "{{ playbook_dir }}/iam_role_vars_to_delete.yml"
       when: iam_role_vars_file.stat.exists == true
-
-    - name: Terminate Windows EC2 instances that were previously launched
-      ec2_instance:
-        instance_ids:
-          - "{{windows_instance_id}}"
-        state: absent
-        wait: True
-      ignore_errors: yes
-      when: ec2_windows_vars_file.stat.exists == true
 
     - name: Terminate Linux EC2 instances that were previously launched
       ec2_instance:
-        instance_ids:
-          - "{{linux_instance_id}}"
+        instance_ids: "{{ created_instance_ids }}"
         state: absent
         wait: True
       ignore_errors: yes
-      when: ec2_linux_vars_file.stat.exists == true
+      when: ec2_vars_file.stat.exists == true
 
     - name: Delete S3 bucket
-      aws_s3:
-        bucket: "{{bucket_name}}"
-        mode: delete
+      s3_bucket:
+        state: absent
+        name: "{{ bucket_name }}"
       ignore_errors: yes
       when: s3_vars_file.stat.exists == true
 
     - name: Delete IAM role
       iam_role:
-        name: "{{iam_role_name}}"
+        name: "{{ iam_role_name }}"
         state: absent
       ignore_errors: yes
       when: iam_role_vars_file.stat.exists == true
@@ -81,10 +62,10 @@
     - name: Delete the KMS key
       aws_kms:
         state: absent
-        alias: '{{ resource_prefix }}-kms'
+        alias: '{{ kms_key_name }}'
 
     - name: Delete AWS keys environement
       file:
-        path: "{{playbook_dir}}/aws-env-vars.sh"
+        path: "{{ playbook_dir }}/aws-env-vars.sh"
         state: absent
       ignore_errors: yes
