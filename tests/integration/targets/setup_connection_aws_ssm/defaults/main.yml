@@ -15,7 +15,7 @@ ami_details:
         name: amzn2-ami-kernel-5.10-hvm-*-x86_64-gp2
         user_data: |
             #!/bin/sh
-            # Pre-Installed ?
+            # Pre-Installed just needs started
             sudo systemctl start amazon-ssm-agent
         os_type: linux
     ubuntu:
@@ -23,7 +23,7 @@ ami_details:
         name: ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server*
         user_data: |
             #!/bin/sh
-            # Pre-Installed ?
+            # Pre-Installed just needs started
             sudo systemctl start amazon-ssm-agent
         os_type: linux
     windows:

@@ -37,7 +37,7 @@
       include_vars: "{{ playbook_dir }}/iam_role_vars_to_delete.yml"
       when: iam_role_vars_file.stat.exists == true
 
-    - name: Terminate Linux EC2 instances that were previously launched
+    - name: Terminate EC2 instances that were previously launched
       ec2_instance:
         instance_ids: "{{ created_instance_ids }}"
         state: absent

@@ -19,6 +19,7 @@
         create_instance_profile: yes
         managed_policy:
         - AmazonSSMManagedInstanceCore
+        wait: True
       register: role_output
 
     - name: Lookup AMI configuration
@@ -41,7 +42,7 @@
     # (Local installation of the SSM **client** which is then used by the plugin)
     - name: Install Session Manager Client for Debian/Ubuntu
       include_tasks: debian.yml
-      when: ansible_distribution == "Ubuntu" or ansible_distribution == "Debian"
+      when: ansible_distribution in ["Ubuntu", "Debian"]
       register: install_plugin_debian
 
     - name: Install Session Manager Client for RedHat/Amazon
@@ -59,10 +60,6 @@
       always:
         - debug:
             var: ansible_distribution
-
-    - name: Wait for IAM Role creation
-      pause:
-        seconds: 10
 
     - name: Create EC2 instance
       ec2_instance:
