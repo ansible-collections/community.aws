@@ -68,6 +68,12 @@ options:
                 description:
                   - How many tasks, at a minimum, should use the specified provider.
                 type: int
+    purge_capacity_providers:
+        version_added: 5.2.0
+        description:
+            - Toggle overwriting of existing capacity providers or strategy. This is needed for backwards compatibility.
+        required: false
+        type: bool
 extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
@@ -96,6 +102,7 @@ EXAMPLES = '''
         weight: 1
       - capacity_provider: FARGATE_SPOT
         weight: 100
+    purge_capacity_providers: True
 
 - name: Cluster deletion
   community.aws.ecs_cluster:
