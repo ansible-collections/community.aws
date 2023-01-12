@@ -294,8 +294,8 @@ def main():
             if not module.check_mode:
                 # doesn't exist. create it.
                 results['cluster'] = cluster_mgr.create_cluster(cluster_name=module.params['name'],
-                                                                capacity_providers=module.params['capacity_providers'],
-                                                                capacity_provider_strategy=module.params['capacity_provider_strategy'])
+                                                                capacity_providers=requested_cp,
+                                                                capacity_provider_strategy=requested_cps)
             results['changed'] = True
 
     # delete the cluster
