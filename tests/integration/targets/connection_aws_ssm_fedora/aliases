@@ -1,7 +1,4 @@
 time=10m
 
-# Historically very unstable, work ongoing to improve this
-unstable
-
 cloud/aws
 connection_aws_ssm
