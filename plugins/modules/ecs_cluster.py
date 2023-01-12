@@ -42,6 +42,7 @@ options:
         type: int
         default: 10
     capacity_providers:
+        version_added: 5.2.0
         description:
             - List of capacity providers to use for the cluster.
         required: false
