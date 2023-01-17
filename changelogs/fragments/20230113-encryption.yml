@@ -1,0 +1,2 @@
+trivial:
+- aws_ssm - add initial integration tests for encrypted aws_ssm connections
