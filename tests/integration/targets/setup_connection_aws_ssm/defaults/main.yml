@@ -11,7 +11,7 @@ ami_details:
             sudo systemctl start amazon-ssm-agent
         os_type: linux
     amazon:
-        ssm_parameter: /aws/service/ami-amazon-linux-latest/amzn-ami-hvm-x86_64-gp2
+        ssm_parameter: /aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2
         # owner: amazon
         # name: amzn2-ami-kernel-5.10-hvm-*-x86_64-gp2
         user_data: |
