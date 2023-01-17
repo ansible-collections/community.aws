@@ -144,7 +144,7 @@ EXAMPLES = '''
     msg: "{{ lookup('amazon.aws.aws_ssm', 'Hello') }}"
 
 - name: Create or update key/value pair in AWS SSM parameter store w/ tags
-  community.aws.ssm_paramater:
+  community.aws.ssm_parameter:
     name: "Hello"
     description: "This is your first key"
     value: "World"
@@ -155,14 +155,14 @@ EXAMPLES = '''
       Tag With Space: "foo bar"
 
 - name: Add or update a tag on an existing parameter w/o removing existing tags
-  community.aws.ssm_paramater:
+  community.aws.ssm_parameter:
     name: "Hello"
     purge_tags: false
     tags:
       Contact: "person1"
 
 - name: Delete all tags on an existing parameter
-  community.aws.ssm_paramater:
+  community.aws.ssm_parameter:
     name: "Hello"
     tags: {}
 '''
