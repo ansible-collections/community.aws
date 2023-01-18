@@ -325,6 +325,10 @@ class Connection(ConnectionBase):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        if not HAS_BOTO3:
+            raise AnsibleError(missing_required_lib("boto3"))
+
         self.host = self._play_context.remote_addr
 
         if getattr(self._shell, "SHELL_FAMILY", '') == 'powershell':
