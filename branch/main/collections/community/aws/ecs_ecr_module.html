@@ -220,6 +220,34 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-encryption_configuration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-encryption-configuration"><strong>encryption_configuration</strong></p>
+<a class="ansibleOptionLink" href="#parameter-encryption_configuration" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The encryption configuration for the repository.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-encryption_configuration/encryption_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-encryption-configuration-encryption-type"><strong>encryption_type</strong></p>
+<a class="ansibleOptionLink" href="#parameter-encryption_configuration/encryption_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The encryption type to use.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;AES256&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;KMS&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-encryption_configuration/kms_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-encryption-configuration-kms-key"><strong>kms_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-encryption_configuration/kms_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>If <em>encryption_type=KMS</em>, specify the KMS key to use for encryption.</p>
+<p>The alias, key ID, or full ARN of the KMS key can be specified.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -233,7 +261,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-force_absent"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-force-absent"><strong>force_absent</strong></p>
 <a class="ansibleOptionLink" href="#parameter-force_absent" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
@@ -246,7 +274,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-force_set_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-force-set-policy"><strong>force_set_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-force_set_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -258,7 +286,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-image_tag_mutability"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-image-tag-mutability"><strong>image_tag_mutability</strong></p>
 <a class="ansibleOptionLink" href="#parameter-image_tag_mutability" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -270,28 +298,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-lifecycle_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-lifecycle-policy"><strong>lifecycle_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-lifecycle_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">json</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>JSON or dict that represents the new lifecycle policy.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the repository.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-policy"><strong>policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">json</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>JSON or dict that represents the new policy.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-profile"><span id="ansible-collections-community-aws-ecs-ecr-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -303,7 +331,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_lifecycle_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-purge-lifecycle-policy"><strong>purge_lifecycle_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_lifecycle_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -316,7 +344,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-purge-policy"><strong>purge_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -329,7 +357,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-region"><span id="ansible-collections-community-aws-ecs-ecr-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-ecs-ecr-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -344,7 +372,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-registry_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-registry-id"><strong>registry_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-registry_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -352,7 +380,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <p>If not specified, the default registry is assumed.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-scan_on_push"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-scan-on-push"><strong>scan_on_push</strong></p>
 <a class="ansibleOptionLink" href="#parameter-scan_on_push" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 1.3.0</span></p>
@@ -365,7 +393,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -382,7 +410,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -400,7 +428,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -412,7 +440,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-ecr-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -506,6 +534,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-e
 <span class="w">  </span><span class="nt">community.aws.ecs_ecr</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">needs-no-lifecycle-policy</span>
 <span class="w">    </span><span class="nt">purge_lifecycle_policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">set-encryption-configuration</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_ecr</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">uses-custom-kms-key</span>
+<span class="w">    </span><span class="nt">encryption_configuration</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">encryption_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">KMS</span>
+<span class="w">      </span><span class="nt">kms_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">custom-kms-key-alias</span>
 </pre></div>
 </div>
 </section>
