@@ -378,7 +378,7 @@ class Connection(ConnectionBase):
         document_name = self.get_option('ssm_document')
         if document_name is not None:
             start_session_args['DocumentName'] = document_name
-        response =client.start_session(**start_session_args)
+        response = client.start_session(**start_session_args)
         self._session_id = response['SessionId']
 
         cmd = [
