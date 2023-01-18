@@ -1,2 +1,2 @@
 minor_changes:
-- ecs_cluster now supports capacity_providers and capacity_provider_strategy features (https://github.com/ansible-collections/community.aws/pull/1640).
+- ecs_cluster - add support for ``capacity_providers`` and ``capacity_provider_strategy`` features (https://github.com/ansible-collections/community.aws/pull/1640).
