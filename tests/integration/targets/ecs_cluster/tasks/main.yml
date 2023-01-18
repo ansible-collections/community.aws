@@ -67,6 +67,7 @@
       ecs_cluster:
         name: "{{ ecs_cluster_name }}"
         state: present
+        purge_capacity_providers: True
         capacity_providers:
           - FARGATE
           - FARGATE_SPOT
