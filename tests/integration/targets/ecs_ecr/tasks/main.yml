@@ -16,7 +16,7 @@
 
     - name: create KMS key for testing
       aws_kms:
-        alias: "{{ resource_prefix }}-kms"
+        alias: "{{ resource_prefix }}-ecr"
         description: a key used for testing ECR
         state: present
         enabled: yes
@@ -24,7 +24,7 @@
         key_usage: ENCRYPT_DECRYPT
         policy: "{{ lookup('template', 'kms_policy.j2') }}"
         tags:
-          Name: "{{ resource_prefix }}-kms"
+          Name: "{{ resource_prefix }}-ecr"
           AnsibleTest: AnsibleTestVpc
       register: kms_test_key
 
