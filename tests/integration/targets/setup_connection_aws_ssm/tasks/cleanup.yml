@@ -10,6 +10,9 @@
       region: '{{ aws_region }}'
   block:
 
+    - name: setup connection argments fact
+      include_tasks: 'connection_args.yml'
+
     - name: Check if instance_vars_to_delete.yml is present
       stat:
         path: "{{ playbook_dir }}/instance_vars_to_delete.yml"
@@ -75,11 +78,8 @@
 
     - name: Delete SSM document
       command: "aws ssm delete-document --name {{ ssm_document_name }}"
-      environment:
-        AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
-        AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
-        AWS_SESSION_TOKEN: "{{ security_token | default('') }}"
-        AWS_DEFAULT_REGION: "{{ aws_region }}"
+      environment: "{{ connection_env }}"
+      ignore_errors: yes
 
     - name: Delete AWS keys environement
       file:
