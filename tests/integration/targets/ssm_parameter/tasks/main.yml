@@ -496,6 +496,7 @@
         - result is changed
         - '"description" in result.parameter_metadata'
         - result.parameter_metadata.description == simple_description
+
   # ============================================================
   # Test tags - Create parameter with tags case
 

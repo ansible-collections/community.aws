@@ -259,7 +259,7 @@ parameter_metadata:
       type: dict
       returned: when the parameter has tags
       example: {'MyTagName': 'Some Value'}
-      version_added: 5.1.0
+      version_added: 5.2.0
 '''
 
 import time
