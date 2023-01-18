@@ -270,9 +270,10 @@ def main():
         purge_capacity_providers = module.params['purge_capacity_providers']
         requested_cp = module.params['capacity_providers']
         requested_cps = module.params['capacity_provider_strategy']
-        existing_cp = existing['capacityProviders']
-        existing_cps = existing['defaultCapacityProviderStrategy']
         if existing and 'status' in existing and existing['status'] == "ACTIVE":
+            existing_cp = existing['capacityProviders']
+            existing_cps = existing['defaultCapacityProviderStrategy']
+
             if requested_cp is None:
                 requested_cp = []
 
