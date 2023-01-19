@@ -277,13 +277,6 @@ def main():
             if requested_cp is None:
                 requested_cp = []
 
-            # Unless purge_capacity_providers is true, we use the existing providers and strategy.
-            if not purge_capacity_providers:
-                module.warn('In order to maintain backwards compatibility, the capacity providers and strategy will not be changed by default.')
-                module.warn('Set purge_capacity_providers to True to override this behavior.')
-                requested_cp = existing_cp
-                requested_cps = existing_cps
-
             # Check if capacity provider strategy needs to trigger an update.
             cps_update_needed = False
             if requested_cps is not None:
@@ -295,6 +288,14 @@ def main():
                         cps_update_needed = True
             elif requested_cps is None and existing_cps != []:
                 cps_update_needed = True
+
+            # Unless purge_capacity_providers is true, we will not be updating the providers or strategy.
+            if not purge_capacity_providers:
+                module.warn('In order to maintain backwards compatibility, the capacity providers and strategy will not be changed by default.')
+                module.warn('Set purge_capacity_providers to True to override this behavior.')
+                cps_update_needed = False
+                requested_cp = existing_cp
+                requested_cps = existing_cps
 
             # If either the providers or strategy differ, update the cluster.
             if requested_cp != existing_cp or cps_update_needed:
