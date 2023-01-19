@@ -721,7 +721,7 @@ class Connection(ConnectionBase):
             put_command_headers = "; ".join([f"'{h}' = '{v}'" for h, v in put_headers.items()])
             put_command = (
                 "Invoke-WebRequest -Method PUT "
-                f"-Headers @{{{put_command_headers}}} " # @{'key' = 'value'; 'key2' = 'value2'}
+                f"-Headers @{{{put_command_headers}}} "  # @{'key' = 'value'; 'key2' = 'value2'}
                 f"-InFile '{in_path}' "
                 f"-Uri '{put_url}' "
                 f"-UseBasicParsing"
