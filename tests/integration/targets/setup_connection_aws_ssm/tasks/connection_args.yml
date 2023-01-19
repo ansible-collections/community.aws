@@ -5,7 +5,7 @@
       region: "{{ aws_region }}"
       aws_access_key: "{{ aws_access_key }}"
       aws_secret_key: "{{ aws_secret_key }}"
-      aws_session_token: "{{ security_token | default(omit) }}"
+      aws_security_token: "{{ security_token | default(omit) }}"
     connection_env:
       AWS_DEFAULT_REGION: "{{ aws_region }}"
       AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
