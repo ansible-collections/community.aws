@@ -1,0 +1,2 @@
+minor_changes:
+- aws_ssm - refactor boto3 client initialization (https://github.com/ansible-collections/community.aws/pull/1663).
