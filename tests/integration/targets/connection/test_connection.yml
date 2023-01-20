@@ -10,7 +10,7 @@
 
   ### test wait_for_connection plugin
   - wait_for_connection:
-      timeout: 100
+      timeout: '{{ wait_for_timeout | default(100) }}'
 
   - name: Gather facts
     ansible.builtin.setup:
