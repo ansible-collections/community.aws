@@ -98,6 +98,20 @@ options:
 
 EXAMPLES = r'''
 
+# Wait for SSM Agent to be available on the Instance
+- name: Wait for connection to be available
+  vars:
+    ansible_connection: aws_ssm
+    ansible_aws_ssm_bucket_name: nameofthebucket
+    ansible_aws_ssm_region: us-west-2
+    # When the S3 bucket isn't in the same region as the Instance
+    # Explicitly setting the addressing style to 'virtual' may be necessary
+    # https://repost.aws/knowledge-center/s3-http-307-response
+    ansible_aws_ssm_s3_addressing_style: virtual
+  tasks:
+    - name: Wait for connection
+      wait_for_connection:
+
 # Stop Spooler Process on Windows Instances
 - name: Stop Spooler Service on Windows Instances
   vars:
