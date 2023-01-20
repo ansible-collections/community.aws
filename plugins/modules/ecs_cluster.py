@@ -72,6 +72,7 @@ options:
         version_added: 5.2.0
         description:
             - Toggle overwriting of existing capacity providers or strategy. This is needed for backwards compatibility.
+            - By default I(purge_capacity_providers=false).  In a release after 2024-06-01 this will be changed to I(purge_capacity_providers=true).
         required: false
         type: bool
         default: false
