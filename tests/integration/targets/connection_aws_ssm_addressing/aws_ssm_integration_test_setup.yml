@@ -6,3 +6,4 @@
         encrypted_bucket: False
         s3_bucket_region: 'eu-central-1'
         s3_addressing_style: virtual
+        test_suffix: addressing
