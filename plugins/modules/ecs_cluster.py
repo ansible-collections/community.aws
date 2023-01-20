@@ -292,8 +292,9 @@ def main():
 
             # Unless purge_capacity_providers is true, we will not be updating the providers or strategy.
             if not purge_capacity_providers:
-                module.warn('In order to maintain backwards compatibility, the capacity providers and strategy will not be changed by default.')
-                module.warn('Set purge_capacity_providers to True to override this behavior.')
+                module.deprecate('After 2024-06-01 the default value of purge_capacity_providers will change from false to true.'
+                                 ' To maintain the existing behaviour explicitly set purge_capacity_providers=true',
+                                 date='2024-06-01', collection_name='community.aws')
                 cps_update_needed = False
                 requested_cp = existing_cp
                 requested_cps = existing_cps
