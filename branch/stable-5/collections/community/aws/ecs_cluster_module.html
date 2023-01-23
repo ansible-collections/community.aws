@@ -207,6 +207,44 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capacity_provider_strategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-capacity-provider-strategy"><strong>capacity_provider_strategy</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capacity_provider_strategy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>List of capacity provider strategies to use for the cluster.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capacity_provider_strategy/base"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-capacity-provider-strategy-base"><strong>base</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capacity_provider_strategy/base" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>How many tasks, at a minimum, should use the specified provider.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">0</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capacity_provider_strategy/capacity_provider"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-capacity-provider-strategy-capacity-provider"><strong>capacity_provider</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capacity_provider_strategy/capacity_provider" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Name of capacity provider.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capacity_provider_strategy/weight"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-capacity-provider-strategy-weight"><strong>weight</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capacity_provider_strategy/weight" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The relative percentage of the total number of launched tasks that should use the specified provider.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capacity_providers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-capacity-providers"><strong>capacity_providers</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capacity_providers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>List of capacity providers to use for the cluster.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -219,7 +257,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delay"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-delay"><strong>delay</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delay" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -227,7 +265,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">10</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -241,14 +279,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The cluster name.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-profile"><span id="ansible-collections-community-aws-ecs-cluster-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -258,6 +296,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 <p>See the AWS documentation for more information about named profiles <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html</a>.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> environment variable may also be used.</p>
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_capacity_providers"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-parameter-purge-capacity-providers"><strong>purge_capacity_providers</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_capacity_providers" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Toggle overwriting of existing capacity providers or strategy. This is needed for backwards compatibility.</p>
+<p>By default <em>purge_capacity_providers=false</em>.  In a release after 2024-06-01 this will be changed to <em>purge_capacity_providers=true</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -368,6 +420,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cluster creation with capacity providers and strategies.</span>
+<span class="w">  </span><span class="nt">community.aws.ecs_cluster</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">capacity_providers</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE_SPOT</span>
+<span class="w">    </span><span class="nt">capacity_provider_strategy</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">capacity_provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE</span>
+<span class="w">        </span><span class="nt">base</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">        </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">capacity_provider</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">FARGATE_SPOT</span>
+<span class="w">        </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">100</span>
+<span class="w">    </span><span class="nt">purge_capacity_providers</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">True</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Cluster deletion</span>
 <span class="w">  </span><span class="nt">community.aws.ecs_cluster</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">default</span>
@@ -402,6 +469,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-capacityProviders"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-return-capacityproviders"><strong>capacityProviders</strong></p>
+<a class="ansibleOptionLink" href="#return-capacityProviders" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>list of capacity providers used in this cluster</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-clusterArn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-return-clusterarn"><strong>clusterArn</strong></p>
 <a class="ansibleOptionLink" href="#return-clusterArn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -410,13 +486,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-c
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:ecs:us-west-2:123456789012:cluster/test-cluster&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-clusterName"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-return-clustername"><strong>clusterName</strong></p>
 <a class="ansibleOptionLink" href="#return-clusterName" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>name of the cluster just created (should match the input argument)</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;test-cluster&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-defaultCapacityProviderStrategy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-cluster-module-return-defaultcapacityproviderstrategy"><strong>defaultCapacityProviderStrategy</strong></p>
+<a class="ansibleOptionLink" href="#return-defaultCapacityProviderStrategy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>list of capacity provider strategies used in this cluster</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
