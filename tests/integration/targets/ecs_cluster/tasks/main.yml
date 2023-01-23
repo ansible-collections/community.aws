@@ -607,6 +607,44 @@
       assert:
         that:
           - ecs_task_definition_constraints_delete is not changed
+    
+    - name: Create ecs_service without load balancer
+      ecs_service:
+        name: "{{ ecs_service_name }}-lb"
+        cluster: "{{ ecs_cluster_name }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        scheduling_strategy: "REPLICA"
+        desired_count: 1
+        state: present
+      register: ecs_service_create_no_load_balancer
+
+    - name: Check ecs_service does not have load balancer
+      assert:
+        that:
+          - ecs_service_create_no_load_balancer.changed
+          - "ecs_service_create_no_load_balancer.service.loadBalancers | length == 0"
+
+    - name: Update ecs_service load balancer
+      ecs_service:
+        name: "{{ ecs_service_name }}-lb"
+        cluster: "{{ ecs_cluster_name }}"
+        load_balancers:
+          - targetGroupArn: "{{ elb_target_group_ip.target_group_arn }}"
+            containerName: "{{ ecs_task_name }}"
+            containerPort: "{{ ecs_task_container_port }}"
+        task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+        desired_count: 1
+        state: present
+      register: ecs_service_update_load_balancer
+
+    - name: Check ecs_service load balancer updated
+      assert:
+        that:
+          - ecs_service_update_load_balancer.changed
+          - "ecs_service_update_load_balancer.service.loadBalancers | length == 1"
+          - "ecs_service_update_load_balancer.service.loadBalancers[0].containerName == {{ ecs_task_name }}"
+          - "ecs_service_update_load_balancer.service.loadBalancers[0].containerPort == {{ ecs_task_container_port }}"
+          - "ecs_service_update_load_balancer.service.loadBalancers[0].loadBalancerName == {{ ecs_load_balancer_name }}"
 
     - name: Create ecs service with placement constraints
       ecs_service:
@@ -1155,6 +1193,15 @@
         state: absent
         cluster: "{{ ecs_cluster_name }}"
         name: "{{ ecs_service_name }}-replica"
+        force_deletion: yes
+        wait: yes
+      ignore_errors: yes
+    
+    - name: remove load balancer ecs service
+      ecs_service:
+        state: absent
+        cluster: "{{ ecs_cluster_name }}"
+        name: "{{ ecs_service_name }}-lb"
         force_deletion: yes
         wait: yes
       ignore_errors: yes
