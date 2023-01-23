@@ -1,0 +1,2 @@
+trivial:
+- aws_ssm - Added gather_facts to connection plugin tests.
