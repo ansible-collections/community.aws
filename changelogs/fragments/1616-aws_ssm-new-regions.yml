@@ -1,0 +1,2 @@
+bugfixes:
+- aws_ssm - fixes bug with presigned S3 URLs in post-2019 AWS regions (https://github.com/ansible-collections/community.aws/issues/1616).
