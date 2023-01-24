@@ -1,0 +1,2 @@
+minor_changes:
+- ecs_service - When force_new_deployment is True, task_definition is no longer required. (https://github.com/ansible-collections/community.aws/pull/1680)
