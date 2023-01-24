@@ -1,0 +1,6 @@
+release_summary: |
+  A minor release containing bugfixes for the ``aws_ssm`` connection
+  plugin and the ``ecs_service``, ``s3_lifecycle`` and  `ssm_parameter``
+  modules.
+  As well as improvements to the ``ecs_cluster``, ``ec2_ecr``,
+  ``ecs_service``, ``iam_role`` and ``ssm_parameter`` plugins.
