@@ -1,2 +1,0 @@
-bugfixes:
-- s3_lifecycle - module no longer calls ``put_lifecycle_configuration`` if there is no change (https://github.com/ansible-collections/community.aws/issues/1624).

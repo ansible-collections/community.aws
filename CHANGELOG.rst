@@ -5,6 +5,45 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v5.2.0
+======
+
+Release Summary
+---------------
+
+A minor release containing bugfixes for the ``aws_ssm`` connection
+plugin and the ``ecs_service``, ``s3_lifecycle`` and  ``ssm_parameter``
+modules.
+As well as improvements to the ``ecs_cluster``, ``ec2_ecr``,
+``ecs_service``, ``iam_role`` and ``ssm_parameter`` plugins.
+
+
+Minor Changes
+-------------
+
+- aws_ssm - add ``ansible_aws_ssm_s3_addressing_style`` to allow setting the S3 addressing style (https://github.com/ansible-collections/community.aws/pull/1633).
+- aws_ssm - add support for custom SSM documents (https://github.com/ansible-collections/community.aws/pull/876).
+- aws_ssm - avoid overloading ``subprocess`` (https://github.com/ansible-collections/community.aws/pull/1660).
+- aws_ssm - cleanup logging output (https://github.com/ansible-collections/community.aws/pull/1660).
+- aws_ssm - minor refactoring (https://github.com/ansible-collections/community.aws/pull/1660).
+- aws_ssm - refactor boto3 client initialization (https://github.com/ansible-collections/community.aws/pull/1663).
+- aws_ssm - refactor remote command generation (https://github.com/ansible-collections/community.aws/pull/1664).
+- ecs_cluster - add support for ``capacity_providers`` and ``capacity_provider_strategy`` features (https://github.com/ansible-collections/community.aws/pull/1640).
+- ecs_cluster - append default value to documentation (https://github.com/ansible-collections/community.aws/pull/1636).
+- ecs_ecr - add ``encryption_configuration`` option (https://github.com/ansible-collections/community.aws/pull/1623).
+- ecs_service - support load balancer update for existing ECS services (https://github.com/ansible-collections/community.aws/pull/1625).
+- iam_role - Drop deprecation warning, because the standard value for purge parameters is ``true`` (https://github.com/ansible-collections/community.aws/pull/1636).
+- ssm_parameter - fix typo in examples ``paramater`` (https://github.com/ansible-collections/community.aws/issues/1642).
+
+Bugfixes
+--------
+
+- aws_ssm - fix ``invalid literal for int`` error on some operating systems (https://github.com/ansible-collections/community.aws/issues/113).
+- aws_ssm - fixes bug with presigned S3 URLs in post-2019 AWS regions (https://github.com/ansible-collections/community.aws/issues/1616).
+- ecs_service - respect ``placement_constraints`` for existing ECS services (https://github.com/ansible-collections/community.aws/pull/1601).
+- s3_lifecycle - module no longer calls ``put_lifecycle_configuration`` if there is no change (https://github.com/ansible-collections/community.aws/issues/1624).
+- ssm_parameter - fix a ``KeyError`` when adding a description to an existing parameter (https://github.com/ansible-collections/community.aws/issues/1471).
+
 v5.1.0
 ======
 
