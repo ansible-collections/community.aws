@@ -1,2 +1,2 @@
 minor_changes:
-- aws_ssm - Refactor remote command generation (https://github.com/ansible-collections/community.aws/pull/1664).
+- aws_ssm - refactor remote command generation (https://github.com/ansible-collections/community.aws/pull/1664).

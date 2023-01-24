@@ -1,2 +1,2 @@
 trivial:
-- aws_ssm - Rework and enable aws_ssm integration tests
+- aws_ssm - rework and enable aws_ssm integration tests

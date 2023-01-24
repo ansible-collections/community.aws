@@ -1,2 +1,2 @@
 minor_changes:
-- aws_ssm - add support for custom SSM documents (https://github.com/ansible-collections/community.aws/pull/876)
+- aws_ssm - add support for custom SSM documents (https://github.com/ansible-collections/community.aws/pull/876).

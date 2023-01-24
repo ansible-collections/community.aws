@@ -1,2 +1,2 @@
 minor_changes:
-- ecs_ecr - add `encryption_configuration` option (https://github.com/ansible-collections/community.aws/pull/1623).
+- ecs_ecr - add ``encryption_configuration`` option (https://github.com/ansible-collections/community.aws/pull/1623).
