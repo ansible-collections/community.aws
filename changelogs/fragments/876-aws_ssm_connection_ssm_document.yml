@@ -1,2 +1,0 @@
-minor_changes:
-- aws_ssm_connection - add support for custom SSM document (https://github.com/ansible-collections/community.aws/pull/876)
