@@ -2607,3 +2607,29 @@ releases:
     - 20221026-pytest-forked.yml
     - 4.4.0.yml
     release_date: '2022-12-08'
+  4.5.0:
+    changes:
+      bugfixes:
+      - aws_ssm - fix ``invalid literal for int`` error on some operating systems
+        (https://github.com/ansible-collections/community.aws/issues/113).
+      - ecs_service - respect ``placement_constraints`` for existing ecs services
+        (https://github.com/ansible-collections/community.aws/pull/1601).
+      - s3_lifecycle - Module no longer calls `put_lifecycle_configuration` if there
+        is no change. (https://github.com/ansible-collections/community.aws/issues/1624)
+      - ssm_parameter - Fix a ``KeyError`` when adding a description to an existing
+        parameter (https://github.com/ansible-collections/community.aws/issues/1471).
+      minor_changes:
+      - ecs_service - support load balancer update for existing ecs services(https://github.com/ansible-collections/community.aws/pull/1625).
+      - iam_role - Drop deprecation warning, because the standard value for purge
+        parametes is ``true`` (https://github.com/ansible-collections/community.aws/pull/1636).
+      release_summary: This is the minor release of the ``community.aws`` collection.
+    fragments:
+    - 1601-ecs_service-support_constraints_and_strategy_update.yml
+    - 1624-s3-lifecycle-idempotent.yml
+    - 1625-ecs_service-support-load-balancer-update.yml
+    - 1627-ssm_parameter-KeyError-when-adding-description.yml
+    - 20230112-aws_ssm-tests.yml
+    - 4.5.0.yml
+    - 558-ssm_connection-invalid-literal.yml
+    - iam_role_purge_policy.yml
+    release_date: '2023-01-25'
