@@ -1,2 +1,0 @@
-bugfixes:
-- aws_ssm - fix ``invalid literal for int`` error on some operating systems (https://github.com/ansible-collections/community.aws/issues/113).

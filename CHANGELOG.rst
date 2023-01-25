@@ -5,6 +5,28 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v4.5.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+
+Minor Changes
+-------------
+
+- ecs_service - support load balancer update for existing ecs services(https://github.com/ansible-collections/community.aws/pull/1625).
+- iam_role - Drop deprecation warning, because the standard value for purge parametes is ``true`` (https://github.com/ansible-collections/community.aws/pull/1636).
+
+Bugfixes
+--------
+
+- aws_ssm - fix ``invalid literal for int`` error on some operating systems (https://github.com/ansible-collections/community.aws/issues/113).
+- ecs_service - respect ``placement_constraints`` for existing ecs services (https://github.com/ansible-collections/community.aws/pull/1601).
+- s3_lifecycle - Module no longer calls `put_lifecycle_configuration` if there is no change. (https://github.com/ansible-collections/community.aws/issues/1624)
+- ssm_parameter - Fix a ``KeyError`` when adding a description to an existing parameter (https://github.com/ansible-collections/community.aws/issues/1471).
+
 v4.4.0
 ======
 
