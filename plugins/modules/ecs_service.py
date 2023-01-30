@@ -44,7 +44,7 @@ options:
     task_definition:
         description:
           - The task definition the service will run.
-          - This parameter is required when I(state=present).
+          - This parameter is required when I(state=present) unless I(force_new_deployment=True).
           - This parameter is ignored when updating a service with a C(CODE_DEPLOY) deployment controller in which case
             the task definition is managed by Code Pipeline and cannot be updated.
         required: false
