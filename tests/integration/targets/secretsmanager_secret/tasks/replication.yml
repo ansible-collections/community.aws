@@ -21,9 +21,9 @@
         - result.changed
         - result.arn is not none
         - result.name is not none
-        - result.replication_status[0]["region"] == 'us-east-2'
-        - result.replication_status[1]["region"] == 'us-west-2'
-        - result.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
+        - result.secret.replication_status[0]["region"] == 'us-east-2'
+        - result.secret.replication_status[1]["region"] == 'us-west-2'
+        - result.secret.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
         - result.tags is not none
         - result.version_ids_to_stages is not none
 
@@ -31,7 +31,6 @@
     aws_secret:
       name: "{{ secret_name }}"
       state: present
-      secret_type: 'string'
       secret: "{{ super_secret_string }}"
       replica:
        - region: 'us-east-2'
@@ -49,19 +48,22 @@
     aws_secret:
       name: "{{ secret_name }}"
       description: 'this is a change to remove replication'
+      secret: "{{ super_secret_string }}"
       state: present
+      replica: []
     register: result
 
   - name: assert that replica was removed
     assert:
       that:
         - not result.failed
-        - result.replication_status is none
+        - '"replication_status" not in result.secret'
 
   - name: add region replica to an existing secret
     aws_secret:
       name: "{{ secret_name }}"
       description: 'this is a change add replication'
+      secret: "{{ super_secret_string }}"
       state: present
       replica:
        - region: 'us-east-2'
@@ -73,15 +75,14 @@
     assert:
       that:
         - not result.failed
-        - result.replication_status[0]["region"] == 'us-east-2'
-        - result.replication_status[1]["region"] == 'us-west-2'
-        - result.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
+        - result.secret.replication_status[0]["region"] == 'us-east-2'
+        - result.secret.replication_status[1]["region"] == 'us-west-2'
+        - result.secret.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
 
   - name: change replica regions
     aws_secret:
       name: "{{ secret_name }}"
       state: present
-      secret_type: 'string'
       secret: "{{ super_secret_string }}"
       replica:
        - region: 'us-east-2'
@@ -93,9 +94,9 @@
     assert:
       that:
         - not result.failed
-        - result.replication_status[0]["region"] == 'us-east-2'
-        - result.replication_status[1]["region"] == 'eu-central-1'
-        - result.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
+        - result.secret.replication_status[0]["region"] == 'us-east-2'
+        - result.secret.replication_status[1]["region"] == 'eu-central-1'
+        - result.secret.replication_status[1]["kms_key_id"] == 'alias/aws/secretsmanager'
 
   always:
   - name: remove region replica
@@ -103,7 +104,9 @@
       name: "{{ secret_name }}"
       description: 'this is a change to remove replication'
       state: present
+      secret: "{{ super_secret_string }}"
     register: result
+    ignore_errors: yes
 
   - name: remove secret
     aws_secret:
