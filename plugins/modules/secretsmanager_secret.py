@@ -44,7 +44,6 @@ options:
   replica:
     description:
     - Specifies a list of regions and kms_key_ids (optional) to replicate the secret to
-    - Requires botocore version >= 1.20.20.
     type: list
     elements: dict
     version_added: 5.3.0
