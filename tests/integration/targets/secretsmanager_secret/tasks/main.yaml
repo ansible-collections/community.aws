@@ -12,3 +12,5 @@
   - include_tasks: 'basic.yml'
   # Permissions missing
   #- include_tasks: 'rotation.yml'
+  # Multi-Region CI not supported (yet)
+  #- include_tasks: 'replication.yml'
