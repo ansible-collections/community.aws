@@ -248,7 +248,7 @@ class Secret(object):
         if self.replica_regions:
             add_replica_regions = []
             for replica in self.replica_regions:
-                if self.replica_regions["kms_key_id"]:
+                if replica["kms_key_id"]:
                     add_replica_regions.append({'Region': replica["region"],
                                                 'KmsKeyId': replica["kms_key_id"]})
                 else:
