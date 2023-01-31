@@ -9,8 +9,11 @@
   tasks:
 
   ### test wait_for_connection plugin
+
   - wait_for_connection:
       timeout: '{{ wait_for_timeout | default(100) }}'
+
+  ### Try to gather the default facts from the host
 
   - name: Gather facts
     ansible.builtin.setup:
@@ -50,3 +53,27 @@
     local_action: file path={{ local_file }} state=absent
   - name: remove remote temp file
     action: "{{ action_prefix }}file path={{ remote_file }} state=absent"
+
+  ### Test that we're the user we expect to be and can change where appropriate
+  # Regression - https://github.com/ansible-collections/community.aws/issues/853
+
+  - name: Test user manipulaton
+    when:
+      - '"aws_ssm_linux" in group_names'
+    block:
+      - name: 'Find ID when become=False'
+        become: False
+        command: 'id -u -n'
+        register: id_cmd
+
+      - assert:
+          that:
+            - id_cmd.stdout == 'ssm-user'
+
+      - include_tasks: 'test_assume.yml'
+        loop:
+          - ssm-agent
+          - zuul
+          - root
+        loop_control:
+          loop_var: user_name
