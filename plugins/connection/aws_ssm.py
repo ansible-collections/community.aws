@@ -49,10 +49,10 @@ options:
     vars:
     - name: ansible_aws_ssm_bucket_name
   bucket_endpoint_url:
-    description: The endpoint URL of tht S3 bucket used for file transfers.
+    description: The S3 endpoint URL of the bucket used for file transfers.
     vars:
     - name: ansible_aws_ssm_bucket_endpoint_url
-    version_added: 5.2.0
+    version_added: 5.3.0
   plugin:
     description: This defines the location of the session-manager-plugin binary.
     vars:
