@@ -493,9 +493,13 @@ def compare_regions(desired_secret, current_secret):
     Returns: bool
     """
     regions_to_set_replication = []
+    regions_to_remove_replication = []
+
+    if desired_secret.replica_regions is None:
+        return regions_to_set_replication, regions_to_remove_replication
+
     if desired_secret.replica_regions:
         regions_to_set_replication = desired_secret.replica_regions
-    regions_to_remove_replication = []
 
     for current_secret_region in current_secret.get("ReplicationStatus", []):
         if regions_to_set_replication:
