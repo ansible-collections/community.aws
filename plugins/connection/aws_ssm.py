@@ -356,11 +356,12 @@ class Connection(ConnectionBase):
         self._display(display.vvvv, message)
 
     def _get_bucket_endpoint(self):
-
-        # Fetch the correct S3 endpoint for use with our bucket.
-        # If we don't explicitly set the endpoint then some commands will use the global
-        # endpoint and fail
-        # (new AWS regions and new buckets in a region other than the one we're running in)
+        """
+        Fetches the correct S3 endpoint and region for use with our bucket.
+        If we don't explicitly set the endpoint then some commands will use the global
+        endpoint and fail
+        (new AWS regions and new buckets in a region other than the one we're running in)
+        """
 
         region_name = self.get_option('region') or 'us-east-1'
         profile_name = self.get_option('profile') or ''
