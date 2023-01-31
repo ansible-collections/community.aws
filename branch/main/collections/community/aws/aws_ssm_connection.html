@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.17.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>community.aws.aws_ssm connection – execute via AWS Systems Manager &mdash; Ansible collections  documentation</title>
+  <title>community.aws.aws_ssm connection – connect to EC2 instances via AWS Systems Manager &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
@@ -115,7 +115,7 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
-      <li class="breadcrumb-item active">community.aws.aws_ssm connection – execute via AWS Systems Manager</li>
+      <li class="breadcrumb-item active">community.aws.aws_ssm connection – connect to EC2 instances via AWS Systems Manager</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
               <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/connection/aws_ssm.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
@@ -128,8 +128,8 @@
   
            <div itemprop="articleBody">
              
-  <span class="target" id="ansible-collections-community-aws-aws-ssm-connection"></span><section id="community-aws-aws-ssm-connection-execute-via-aws-systems-manager">
-<h1>community.aws.aws_ssm connection – execute via AWS Systems Manager<a class="headerlink" href="#community-aws-aws-ssm-connection-execute-via-aws-systems-manager" title="Permalink to this heading"></a></h1>
+  <span class="target" id="ansible-collections-community-aws-aws-ssm-connection"></span><section id="community-aws-aws-ssm-connection-connect-to-ec2-instances-via-aws-systems-manager">
+<h1>community.aws.aws_ssm connection – connect to EC2 instances via AWS Systems Manager<a class="headerlink" href="#community-aws-aws-ssm-connection-connect-to-ec2-instances-via-aws-systems-manager" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This connection plugin is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 6.0.0-dev0).</p>
@@ -143,22 +143,23 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
 <li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
 <li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
-<li><p><a class="reference internal" href="#examples" id="id4">Examples</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id4">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id5">Examples</a></p></li>
 </ul>
 </div>
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>This connection plugin allows ansible to execute tasks on an EC2 instance via the aws ssm CLI.</p></li>
+<li><p>This connection plugin allows Ansible to execute tasks on an EC2 instance via an AWS SSM Session.</p></li>
 </ul>
 </section>
 <section id="requirements">
 <span id="ansible-collections-community-aws-aws-ssm-connection-requirements"></span><h2><a class="toc-backref" href="#id2">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <p>The below requirements are needed on the local controller node that executes this connection.</p>
 <ul class="simple">
-<li><p>The remote EC2 instance must be running the AWS Systems Manager Agent (SSM Agent).</p></li>
-<li><p>The control machine must have the aws session manager plugin installed.</p></li>
-<li><p>The remote EC2 linux instance must have the curl installed.</p></li>
+<li><p>The remote EC2 instance must be running the AWS Systems Manager Agent (SSM Agent). <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-getting-started.html</a></p></li>
+<li><p>The control machine must have the AWS session manager plugin installed. <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-working-with-install-plugin.html</a></p></li>
+<li><p>The remote EC2 Linux instance must have curl installed.</p></li>
 </ul>
 </section>
 <section id="parameters">
@@ -347,7 +348,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 <a class="ansibleOptionLink" href="#parameter-ssm_document" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 5.2.0</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>SSM document to use when connecting.</p>
+<td><div class="ansible-option-cell"><p>SSM Session document to use when connecting.</p>
+<p>To configure the remote_user (when <code class="docutils literal notranslate"><span class="pre">become=False</span></code>, it is possible to use an SSM Session document and define the <code class="docutils literal notranslate"><span class="pre">runAsEnabled</span></code> and <code class="docutils literal notranslate"><span class="pre">runAsDefaultUser</span></code> parameters.  See also <a class="reference external" href="https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-schema.html">https://docs.aws.amazon.com/systems-manager/latest/userguide/session-manager-schema.html</a></p>
 <p class="ansible-option-line"><span class="ansible-option-configuration">Configuration:</span></p>
 <ul class="simple">
 <li><p>Variable: ansible_aws_ssm_document</p></li>
@@ -369,8 +371,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-aws-s
 </tbody>
 </table>
 </section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id4">Notes</a><a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>The <code class="docutils literal notranslate"><span class="pre">community.aws.aws_ssm</span></code> connection plugin does not support using the ``remote_user`` and ``ansible_user`` variables to configure the remote user.  The ``become_user`` parameter should be used to configure which user to run commands as.  Remote commands will often default to running as the ``ssm-agent`` user, however this will also depend on how SSM has been configured.</p></li>
+</ul>
+</div>
+</section>
 <section id="examples">
-<h2><a class="toc-backref" href="#id4">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<h2><a class="toc-backref" href="#id5">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Wait for SSM Agent to be available on the Instance</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Wait for connection to be available</span>
 <span class="w">  </span><span class="nt">vars</span><span class="p">:</span>
