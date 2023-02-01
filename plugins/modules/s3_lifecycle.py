@@ -63,13 +63,17 @@ options:
   noncurrent_version_expiration_days:
     description:
       - The number of days after which non-current versions should be deleted.
+      - Must be set if I(noncurrent_version_keep_newer) is set.
     required: false
     type: int
   noncurrent_version_keep_newer:
     description:
       - The minimum number of non-current versions to retain.
+      - Requires C(botocore >= 1.23.12)
+      - Requres I(noncurrent_version_expiration_days).
     required: false
     type: int
+    version_added: 5.3.0
   noncurrent_version_storage_class:
     description:
       - The storage class to which non-current versions are transitioned.
@@ -596,16 +600,21 @@ def main():
         wait=dict(type='bool', default=False)
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              mutually_exclusive=[
-                                  ['expiration_days', 'expiration_date', 'expire_object_delete_marker'],
-                                  ['expiration_days', 'transition_date'],
-                                  ['transition_days', 'transition_date'],
-                                  ['transition_days', 'expiration_date'],
-                                  ['transition_days', 'transitions'],
-                                  ['transition_date', 'transitions'],
-                                  ['noncurrent_version_transition_days', 'noncurrent_version_transitions'],
-                              ],)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[
+            ["expiration_days", "expiration_date", "expire_object_delete_marker"],
+            ["expiration_days", "transition_date"],
+            ["transition_days", "transition_date"],
+            ["transition_days", "expiration_date"],
+            ["transition_days", "transitions"],
+            ["transition_date", "transitions"],
+            ["noncurrent_version_transition_days", "noncurrent_version_transitions"],
+        ],
+        required_by={
+            "noncurrent_version_keep_newer": ["noncurrent_version_expiration_days"],
+        },
+    )
 
     client = module.client('s3', retry_decorator=AWSRetry.jittered_backoff())
 
@@ -613,12 +622,19 @@ def main():
     transition_date = module.params.get("transition_date")
     state = module.params.get("state")
 
+    if module.params.get("noncurrent_version_keep_newer"):
+        module.require_botocore_at_least(
+            "1.23.12",
+            reason="to set number of versions to keep with noncurrent_version_keep_newer"
+        )
+
     if state == 'present' and module.params["status"] == "enabled":  # allow deleting/disabling a rule by id/prefix
 
         required_when_present = ('abort_incomplete_multipart_upload_days',
                                  'expiration_date', 'expiration_days', 'expire_object_delete_marker',
                                  'transition_date', 'transition_days', 'transitions',
                                  'noncurrent_version_expiration_days',
+                                 'noncurrent_version_keep_newer',
                                  'noncurrent_version_transition_days',
                                  'noncurrent_version_transitions')
         for param in required_when_present:
