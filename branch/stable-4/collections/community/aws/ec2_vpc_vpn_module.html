@@ -131,7 +131,7 @@
 <h1>community.aws.ec2_vpc_vpn module – Create, modify, and delete EC2 VPN connections<a class="headerlink" href="#community-aws-ec2-vpc-vpn-module-create-modify-and-delete-ec2-vpn-connections" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.4.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.5.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-ec2-vpc-vpn-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -261,6 +261,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-filters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>An alternative to using <em>vpn_connection_id</em>. If multiple matches are found, vpn_connection_id is required. If one of the following suboptions is a list of items to filter by, only one item needs to match to find the VPN that correlates. e.g. if the filter <em>cidr</em> is <code class="docutils literal notranslate"><span class="pre">['194.168.2.0/24',</span> <span class="pre">'192.168.2.0/24']</span></code> and the VPN route only has the destination cidr block of <code class="docutils literal notranslate"><span class="pre">192.168.2.0/24</span></code> it will be found with this filter (assuming there are not multiple VPNs that are matched). Another example, if the filter <em>vpn</em> is equal to <code class="docutils literal notranslate"><span class="pre">['vpn-ccf7e7ad',</span> <span class="pre">'vpn-cb0ae2a2']</span></code> and one of of the VPNs has the state deleted (exists but is unmodifiable) and the other exists and is not deleted, it will be found via this filter. See examples.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
@@ -384,6 +385,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-routes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Routes to add to the connection.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -439,6 +441,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <a class="ansibleOptionLink" href="#parameter-tunnel_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>An optional list object containing no more than two dict members, each of which may contain <em>TunnelInsideCidr</em> and/or <em>PreSharedKey</em> keys with appropriate string values.  AWS defaults will apply in absence of either of the aforementioned keys.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">

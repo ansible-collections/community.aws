@@ -131,7 +131,7 @@
 <h1>community.aws.s3_sync module – Efficiently upload multiple files to S3<a class="headerlink" href="#community-aws-s3-sync-module-efficiently-upload-multiple-files-to-s3" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.4.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.5.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-s3-sync-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -223,6 +223,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 </div></td>
 <td><div class="ansible-option-cell"><p>Cache-Control header set on uploaded objects.</p>
 <p>Directives are separated by commas.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -308,6 +309,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-sy
 <a class="ansibleOptionLink" href="#parameter-key_prefix" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>In addition to file path, prepend s3 path with this prefix. Module will add slash at end of prefix if necessary.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">

@@ -131,7 +131,7 @@
 <h1>community.aws.efs_info module – Get information about Amazon EFS file systems<a class="headerlink" href="#community-aws-efs-info-module-get-information-about-amazon-efs-file-systems" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.4.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.5.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-efs-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -286,6 +286,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>List of tags of Amazon EFS. Should be defined as dictionary.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -294,6 +295,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-efs-i
 </div></td>
 <td><div class="ansible-option-cell"><p>List of targets on which to filter the returned results.</p>
 <p>Result must match all of the specified targets, each of which can be a security group ID, a subnet ID or an IP address.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">

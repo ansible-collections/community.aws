@@ -131,7 +131,7 @@
 <h1>community.aws.s3_bucket_notification module – Creates, updates or deletes S3 Bucket notifications targeting Lambda functions, SNS or SQS.<a class="headerlink" href="#community-aws-s3-bucket-notification-module-creates-updates-or-deletes-s3-bucket-notifications-targeting-lambda-functions-sns-or-sqs" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.4.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.5.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-s3-bucket-notification-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -267,6 +267,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ObjectRestore:Completed&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;s3:ReducedRedundancyLostObject&quot;</span></code></p></li>
 </ul>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -293,6 +294,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 </div></td>
 <td><div class="ansible-option-cell"><p>Version of the Lambda function.</p>
 <p>Mutually exclusive with <em>lambda_alias</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">0</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -300,6 +302,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <a class="ansibleOptionLink" href="#parameter-prefix" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Optional prefix to limit the notifications to objects with keys that start with matching characters.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -361,6 +364,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-bu
 <a class="ansibleOptionLink" href="#parameter-suffix" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Optional suffix to limit the notifications to objects with keys that end with matching characters.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">&quot;&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">

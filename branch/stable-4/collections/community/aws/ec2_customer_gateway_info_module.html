@@ -131,7 +131,7 @@
 <h1>community.aws.ec2_customer_gateway_info module – Gather information about customer gateways in AWS<a class="headerlink" href="#community-aws-ec2-customer-gateway-info-module-gather-information-about-customer-gateways-in-aws" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.4.0).</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 4.5.0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
 see <a class="reference internal" href="#ansible-collections-community-aws-ec2-customer-gateway-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
@@ -215,6 +215,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <a class="ansibleOptionLink" href="#parameter-customer_gateway_ids" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Get details of a specific customer gateways using customer gateway ID/IDs. This value should be provided as a list.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -244,6 +245,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <a class="ansibleOptionLink" href="#parameter-filters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dict of filters to apply. Each dict item consists of a filter key and a filter value. See <a class="reference external" href="https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeCustomerGateways.html">https://docs.aws.amazon.com/AWSEC2/latest/APIReference/API_DescribeCustomerGateways.html</a> for possible filters.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
