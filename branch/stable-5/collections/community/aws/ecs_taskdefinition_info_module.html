@@ -477,6 +477,78 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/firelensConfiguration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-firelensconfiguration"><strong>firelensConfiguration</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/firelensConfiguration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The FireLens configuration for the container.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/firelensConfiguration/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-firelensconfiguration-options"><strong>options</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/firelensConfiguration/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The options to use when configuring the log router.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/firelensConfiguration/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-firelensconfiguration-type"><strong>type</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/firelensConfiguration/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The log router.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/healthCheck"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-healthcheck"><strong>healthCheck</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/healthCheck" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The container health check command and associated configuration parameters for the container.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/healthCheck/command"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-healthcheck-command"><strong>command</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/healthCheck/command" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A string array representing the command that the container runs to determine if it is healthy.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/healthCheck/interval"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-healthcheck-interval"><strong>interval</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/healthCheck/interval" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The time period in seconds between each health check execution.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/healthCheck/retries"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-healthcheck-retries"><strong>retries</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/healthCheck/retries" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of times to retry a failed health check before the container is considered unhealthy.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/healthCheck/startPeriod"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-healthcheck-startperiod"><strong>startPeriod</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/healthCheck/startPeriod" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The optional grace period to provide containers time to bootstrap before failed.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/healthCheck/timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-healthcheck-timeout"><strong>timeout</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/healthCheck/timeout" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The time period in seconds to wait for a health check to succeed before it is considered a failure.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/hostname"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-hostname"><strong>hostname</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/hostname" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -484,7 +556,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/image"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-image"><strong>image</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/image" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -492,7 +564,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/links"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-links"><strong>links</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/links" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -500,7 +572,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/logConfiguration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-logconfiguration"><strong>logConfiguration</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/logConfiguration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -508,7 +580,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/memoryReservation"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-memoryreservation"><strong>memoryReservation</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/memoryReservation" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -516,7 +588,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/mountPoints"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-mountpoints"><strong>mountPoints</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/mountPoints" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -524,7 +596,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/mountPoints/containerPath"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-mountpoints-containerpath"><strong>containerPath</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/mountPoints/containerPath" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -532,7 +604,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/mountPoints/readOnly"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-mountpoints-readonly"><strong>readOnly</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/mountPoints/readOnly" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -540,7 +612,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/mountPoints/sourceVolume"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-mountpoints-sourcevolume"><strong>sourceVolume</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/mountPoints/sourceVolume" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -548,7 +620,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -556,7 +628,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-options"><strong>options</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/options" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -564,7 +636,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/portMappings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-portmappings"><strong>portMappings</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/portMappings" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -572,7 +644,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/portMappings/containerPort"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-portmappings-containerport"><strong>containerPort</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/portMappings/containerPort" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -580,7 +652,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/portMappings/hostPort"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-portmappings-hostport"><strong>hostPort</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/portMappings/hostPort" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -588,7 +660,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/portMappings/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-portmappings-protocol"><strong>protocol</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/portMappings/protocol" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -596,7 +668,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/privileged"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-privileged"><strong>privileged</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/privileged" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -604,7 +676,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/readonlyRootFilesystem"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-readonlyrootfilesystem"><strong>readonlyRootFilesystem</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/readonlyRootFilesystem" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -612,7 +684,55 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/resourceRequirements"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-resourcerequirements"><strong>resourceRequirements</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/resourceRequirements" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type and amount of a resource to assign to a container.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/resourceRequirements/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-resourcerequirements-type"><strong>type</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/resourceRequirements/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The type of resource to assign to a container.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/resourceRequirements/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-resourcerequirements-value"><strong>value</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/resourceRequirements/value" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value for the specified resource type.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/systemControls"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-systemcontrols"><strong>systemControls</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/systemControls" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A list of namespaced kernel parameters to set in the container.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/systemControls/namespace"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-systemcontrols-namespace"><strong>namespace</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/systemControls/namespace" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>TThe namespaced kernel.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-container_definitions/systemControls/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-systemcontrols-value"><strong>value</strong></p>
+<a class="ansibleOptionLink" href="#return-container_definitions/systemControls/value" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The value for the namespaced kernel.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/ulimits"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-ulimits"><strong>ulimits</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/ulimits" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -620,7 +740,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/ulimits/hardLimit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-ulimits-hardlimit"><strong>hardLimit</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/ulimits/hardLimit" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -628,7 +748,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/ulimits/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-ulimits-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/ulimits/name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -636,7 +756,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/ulimits/softLimit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-ulimits-softlimit"><strong>softLimit</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/ulimits/softLimit" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -644,7 +764,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/user"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-user"><strong>user</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/user" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -652,7 +772,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/volumesFrom"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-volumesfrom"><strong>volumesFrom</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/volumesFrom" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -660,7 +780,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/volumesFrom/readOnly"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-volumesfrom-readonly"><strong>readOnly</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/volumesFrom/readOnly" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -668,7 +788,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/volumesFrom/sourceContainer"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-volumesfrom-sourcecontainer"><strong>sourceContainer</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/volumesFrom/sourceContainer" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -676,7 +796,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-container_definitions/workingDirectory"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-container-definitions-workingdirectory"><strong>workingDirectory</strong></p>
 <a class="ansibleOptionLink" href="#return-container_definitions/workingDirectory" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -684,7 +804,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-family"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-family"><strong>family</strong></p>
 <a class="ansibleOptionLink" href="#return-family" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -692,7 +812,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-network_mode"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-network-mode"><strong>network_mode</strong></p>
 <a class="ansibleOptionLink" href="#return-network_mode" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -700,7 +820,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-placement_constraints"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-placement-constraints"><strong>placement_constraints</strong></p>
 <a class="ansibleOptionLink" href="#return-placement_constraints" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -708,7 +828,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-placement_constraints/expression"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-placement-constraints-expression"><strong>expression</strong></p>
 <a class="ansibleOptionLink" href="#return-placement_constraints/expression" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -716,7 +836,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-placement_constraints/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-placement-constraints-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#return-placement_constraints/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -724,7 +844,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-requires_attributes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-requires-attributes"><strong>requires_attributes</strong></p>
 <a class="ansibleOptionLink" href="#return-requires_attributes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -732,7 +852,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-requires_attributes/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-requires-attributes-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#return-requires_attributes/name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -740,7 +860,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-requires_attributes/targetId"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-requires-attributes-targetid"><strong>targetId</strong></p>
 <a class="ansibleOptionLink" href="#return-requires_attributes/targetId" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -748,7 +868,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-requires_attributes/targetType"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-requires-attributes-targettype"><strong>targetType</strong></p>
 <a class="ansibleOptionLink" href="#return-requires_attributes/targetType" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -756,7 +876,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-requires_attributes/value"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-requires-attributes-value"><strong>value</strong></p>
 <a class="ansibleOptionLink" href="#return-requires_attributes/value" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -764,7 +884,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-revision"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-revision"><strong>revision</strong></p>
 <a class="ansibleOptionLink" href="#return-revision" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -772,7 +892,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-status"><strong>status</strong></p>
 <a class="ansibleOptionLink" href="#return-status" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -780,7 +900,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-task_definition_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-task-definition-arn"><strong>task_definition_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-task_definition_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -788,7 +908,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-task_role_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-task-role-arn"><strong>task_role_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-task_role_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -796,7 +916,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when role is set</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-volumes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-volumes"><strong>volumes</strong></p>
 <a class="ansibleOptionLink" href="#return-volumes" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
@@ -804,7 +924,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-volumes/host"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-volumes-host"><strong>host</strong></p>
 <a class="ansibleOptionLink" href="#return-volumes/host" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -812,7 +932,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-volumes/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-volumes-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#return-volumes/name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -820,7 +940,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-t
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when present</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-volumes/source_path"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ecs-taskdefinition-info-module-return-volumes-source-path"><strong>source_path</strong></p>
 <a class="ansibleOptionLink" href="#return-volumes/source_path" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
