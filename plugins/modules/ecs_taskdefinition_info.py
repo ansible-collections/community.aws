@@ -264,6 +264,7 @@ container_definitions:
         firelensConfiguration:
             description: The FireLens configuration for the container.
             returned: when present
+            type: dict
             contains:
                 type:
                     description: The log router.
