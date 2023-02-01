@@ -1,0 +1,2 @@
+minor_changes:
+- sns_topic - add support for ``tags`` and ``purge_tags`` (https://github.com/ansible-collections/community.aws/pull/972).
