@@ -38,6 +38,7 @@ options:
   objects:
     type: list
     elements: dict
+    default: []
     description:
       - A list of pipeline object definitions, each of which is a dict that takes the keys I(id), I(name) and I(fields).
     suboptions:
@@ -76,6 +77,7 @@ options:
       - A list of parameter objects (dicts) in the pipeline definition.
     type: list
     elements: dict
+    default: []
     suboptions:
       id:
         description:
@@ -98,6 +100,7 @@ options:
       - A list of parameter values (dicts) in the pipeline definition.
     type: list
     elements: dict
+    default: []
     suboptions:
       id:
         description: The ID of the parameter value
@@ -120,6 +123,7 @@ options:
     description:
       - A dict of key:value pair(s) to add to the pipeline.
     type: dict
+    default: {}
     aliases: ['resource_tags']
 '''
 
