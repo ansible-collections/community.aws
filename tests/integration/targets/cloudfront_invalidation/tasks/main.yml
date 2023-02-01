@@ -1,0 +1,85 @@
+- module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+
+  collections:
+    - amazon.aws
+
+  block:
+  - name: create cloudfront distribution using defaults
+    cloudfront_distribution:
+      origins:
+      - domain_name: "{{ cloudfront_hostname }}-origin.example.com"
+        id: "{{ cloudfront_hostname }}-origin.example.com"
+      default_cache_behavior:
+        target_origin_id: "{{ cloudfront_hostname }}-origin.example.com"
+      state: present
+    register: _distribution
+
+  - set_fact:
+      distribution_id: '{{ _distribution.id }}'
+      caller_reference: '{{ _distribution.caller_reference }}'
+
+  - name: create cloudfront invalidation
+    cloudfront_invalidation:
+      distribution_id: '{{ distribution_id }}'
+      target_paths:
+        - '/path/invalidation'
+
+  - name: get cloudfront invalidation
+    cloudfront_distribution_info:
+      distribution_id: '{{ distribution_id }}'
+      list_invalidations: true
+    register: distribution_info
+
+  - name: Ensure cloudfront distribution has 1 invalidation
+    assert:
+      that:
+        - distribution_info.cloudfront.invalidations | length == 1
+
+  - name: create cloudfront invalidation with caller reference
+    cloudfront_invalidation:
+      distribution_id: '{{ distribution_id }}'
+      target_paths:
+        - '/invalidation/*'
+      caller_reference: '{{ caller_reference }}'
+    register: _invalidation
+
+  - name: Ensure invalidation was created with expected caller reference
+    assert:
+      that:
+        - _invalidation.invalidation.invalidation_batch.caller_reference == caller_reference
+
+  - name: get cloudfront invalidation
+    cloudfront_distribution_info:
+      distribution_id: '{{ distribution_id }}'
+      list_invalidations: true
+    register: distribution_info
+
+  - name: Ensure cloudfront distribution has 2 invalidations
+    assert:
+      that:
+        - distribution_info.cloudfront.invalidations | length == 2
+
+  - name: get cloudfront invalidation
+    cloudfront_distribution_info:
+      distribution_id: '{{ distribution_id }}'
+      invalidation_id: '{{ _invalidation.invalidation.id }}'
+      invalidation: true
+    register: invalidation_info
+
+  - name: Ensure invalidation info was retrieved
+    assert:
+      that:
+        - _invalidation.invalidation.id in invalidation_info.cloudfront
+
+  always:
+  - name: clean up cloudfront distribution
+    cloudfront_distribution:
+      distribution_id: "{{ _distribution.id }}"
+      enabled: false
+      wait: false
+      state: absent
+    ignore_errors: true
