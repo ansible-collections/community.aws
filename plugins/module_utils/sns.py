@@ -144,8 +144,7 @@ def update_tags(client, module, topic_arn):
         return False
 
     existing_tags = get_tags(client, module, topic_arn)
-    to_update, to_delete = compare_aws_tags(boto3_tag_list_to_ansible_dict(existing_tags),
-                                            module.params['tags'], module.params['purge_tags'])
+    to_update, to_delete = compare_aws_tags(existing_tags, module.params['tags'], module.params['purge_tags'])
     changed = bool(to_update or to_delete)
 
     if to_update:
