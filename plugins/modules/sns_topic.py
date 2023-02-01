@@ -151,9 +151,9 @@ options:
 notes:
   - Support for I(tags) and I(purge_tags) was added in release 5.3.0.
 extends_documentation_fragment:
-  - amazon.aws.common.modules
-  - amazon.aws.region.modules
-  - amazon.aws.tags.modules
+  - amazon.aws.aws
+  - amazon.aws.ec2
+  - amazon.aws.tags
   - amazon.aws.boto3
 '''
 
