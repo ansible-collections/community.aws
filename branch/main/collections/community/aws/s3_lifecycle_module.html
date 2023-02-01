@@ -285,9 +285,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <a class="ansibleOptionLink" href="#parameter-noncurrent_version_expiration_days" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of days after which non-current versions should be deleted.</p>
+<p>Must be set if <em>noncurrent_version_keep_newer</em> is set.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-noncurrent_version_keep_newer"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-noncurrent-version-keep-newer"><strong>noncurrent_version_keep_newer</strong></p>
+<a class="ansibleOptionLink" href="#parameter-noncurrent_version_keep_newer" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The minimum number of non-current versions to retain.</p>
+<p>Requires <code class="docutils literal notranslate"><span class="pre">botocore</span> <span class="pre">&gt;=</span> <span class="pre">1.23.12</span></code></p>
+<p>Requres <em>noncurrent_version_expiration_days</em>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-noncurrent_version_storage_class"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-noncurrent-version-storage-class"><strong>noncurrent_version_storage_class</strong></p>
 <a class="ansibleOptionLink" href="#parameter-noncurrent_version_storage_class" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -302,14 +313,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-noncurrent_version_transition_days"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-noncurrent-version-transition-days"><strong>noncurrent_version_transition_days</strong></p>
 <a class="ansibleOptionLink" href="#parameter-noncurrent_version_transition_days" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The number of days after which non-current versions will be transitioned to the storage class specified in <em>noncurrent_version_storage_class</em>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-noncurrent_version_transitions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-noncurrent-version-transitions"><strong>noncurrent_version_transitions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-noncurrent_version_transitions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -317,7 +328,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>Each storage class may be used only once. Each transition behavior contains these elements <em>transition_days</em> <em>storage_class</em></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-prefix"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-prefix"><strong>prefix</strong></p>
 <a class="ansibleOptionLink" href="#parameter-prefix" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -325,7 +336,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>If no prefix is specified, the rule will apply to the whole bucket.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-profile"><span id="ansible-collections-community-aws-s3-lifecycle-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -337,7 +348,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_transitions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-purge-transitions"><strong>purge_transitions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_transitions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -350,7 +361,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-region"><span id="ansible-collections-community-aws-s3-lifecycle-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-s3-lifecycle-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -365,7 +376,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-rule_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-rule-id"><strong>rule_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-rule_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -374,7 +385,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>A unique value for the rule will be generated if no value is provided.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -391,7 +402,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -409,7 +420,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -421,7 +432,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-status"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-status"><strong>status</strong></p>
 <a class="ansibleOptionLink" href="#parameter-status" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -434,7 +445,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-storage_class"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-storage-class"><strong>storage_class</strong></p>
 <a class="ansibleOptionLink" href="#parameter-storage_class" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -449,7 +460,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-transition_date"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-transition-date"><strong>transition_date</strong></p>
 <a class="ansibleOptionLink" href="#parameter-transition_date" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -458,7 +469,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>If (transition_days) is not specified, this parameter is required.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-transition_days"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-transition-days"><strong>transition_days</strong></p>
 <a class="ansibleOptionLink" href="#parameter-transition_days" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -466,7 +477,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>If <em>transition_date</em> is not specified, this parameter is required.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-transitions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-transitions"><strong>transitions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-transitions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -474,7 +485,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 <p>Each storage class may be used only once. Each transition behavior may contain these elements <em>transition_days</em> <em>transition_date</em> <em>storage_class</em></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -487,7 +498,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-s3-li
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-s3-lifecycle-module-parameter-wait"><strong>wait</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 1.5.0</span></p>
