@@ -1,0 +1,153 @@
+- module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+
+  collections:
+    - amazon.aws
+
+  block:
+    - name: create cloudfront distribution using defaults
+      cloudfront_distribution:
+        origins:
+        - domain_name: "{{ cloudfront_hostname }}-origin.example.com"
+          id: "{{ cloudfront_hostname }}-origin.example.com"
+        default_cache_behavior:
+          target_origin_id: "{{ cloudfront_hostname }}-origin.example.com"
+        state: present
+      register: _distribution
+
+    - set_fact:
+        distribution_id: '{{ _distribution.id }}'
+        caller_reference: '{{ _distribution.caller_reference }}'
+
+    - name: create cloudfront distribution origin access identity
+      cloudfront_origin_access_identity:
+        state: present
+        comment: "this is a sample origin access identity"
+      register: _origin_access_id
+
+    - name: get cloudfront distribution origin access
+      cloudfront_distribution_info:
+        distribution_id: '{{ distribution_id }}'
+        list_origin_access_identities: true
+      register: distribution_info
+
+    - name: Ensure cloudfront distribution origin access identity exists
+      assert:
+        that:
+          - oid in origin_access_ids
+      vars:
+        origin_access_ids: '{{ distribution_info.cloudfront.origin_access_identities | map(attribute="Id") | list }}'
+        oid: '{{ _origin_access_id.cloud_front_origin_access_identity.id }}'
+
+    - name: Update cloudfront origin access identity
+      cloudfront_origin_access_identity:
+        state: present
+        comment: "this origin access identity comment has been updated"
+        origin_access_identity_id: '{{ _origin_access_id.cloud_front_origin_access_identity.id }}'
+      register: _updated_origin_access_id
+
+    - name: Ensure cloudfront origin access was updated
+      assert:
+        that:
+          - _updated_origin_access_id is changed
+          - orig_access_config.comment == "this origin access identity comment has been updated"
+      vars:
+        orig_access_config: '{{ _updated_origin_access_id.cloud_front_origin_access_identity.cloud_front_origin_access_identity_config }}'
+
+    - name: Update cloudfront origin access identity once again
+      cloudfront_origin_access_identity:
+        state: present
+        comment: "this origin access identity comment has been updated"
+        origin_access_identity_id: '{{ _origin_access_id.cloud_front_origin_access_identity.id }}'
+      register: _update_idempotency
+
+    - name: Ensure idempotency did not report change
+      assert:
+        that:
+          - _update_idempotency is not changed
+
+    - name: create another cloudfront distribution origin access identity with caller reference
+      cloudfront_origin_access_identity:
+        state: present
+        comment: "this is another origin access identity"
+        caller_reference: '{{ caller_reference }}'
+      register: _another_origin_access_id
+
+    - name: Ensure invalidation was created with expected caller reference
+      assert:
+        that:
+          - _another_origin_access_id.cloud_front_origin_access_identity.cloud_front_origin_access_identity_config.caller_reference == caller_reference
+
+    - name: get cloudfront origin access identities
+      cloudfront_distribution_info:
+        distribution_id: '{{ distribution_id }}'
+        list_origin_access_identities: true
+      register: distribution_info
+
+    - name: Ensure cloudfront distribution origin access identity exists
+      assert:
+        that:
+          - first_oid in origin_access_ids
+          - another_oid in origin_access_ids
+      vars:
+        origin_access_ids: '{{ distribution_info.cloudfront.origin_access_identities | map(attribute="Id") | list }}'
+        first_oid: '{{ _origin_access_id.cloud_front_origin_access_identity.id }}'
+        another_oid: '{{ _another_origin_access_id.cloud_front_origin_access_identity.id }}'
+
+    - name: get cloudfront origin access
+      cloudfront_distribution_info:
+        distribution_id: '{{ distribution_id }}'
+        origin_access_identity_id: '{{ _another_origin_access_id.cloud_front_origin_access_identity.id }}'
+        origin_access_identity: true
+      register: invalidation_info
+
+    - name: Ensure invalidation info was retrieved
+      assert:
+        that:
+          - _another_origin_access_id.cloud_front_origin_access_identity.id in invalidation_info.cloudfront
+
+    - name: Delete cloudfront origin access
+      cloudfront_origin_access_identity:
+        state: absent
+        origin_access_identity_id: '{{ _another_origin_access_id.cloud_front_origin_access_identity.id }}'
+      register: _delete_origin_access
+
+    - name: Ensure origin access identity was deleted
+      assert:
+        that:
+          - _delete_origin_access is changed
+
+    - name: list cloudfront origin access identities
+      cloudfront_distribution_info:
+        list_origin_access_identities: true
+      register: origin_access_identities
+
+    - name: Ensure deleted origin access identity is not part of the list
+      assert:
+        that:
+          - _another_origin_access_id.cloud_front_origin_access_identity.id not in origin_access_ids
+      vars:
+        origin_access_ids: '{{ origin_access_identities.cloudfront.origin_access_identities | map(attribute="Id") | list}}'
+
+    - name: Delete cloudfront origin access once again
+      cloudfront_origin_access_identity:
+        state: absent
+        origin_access_identity_id: '{{ _another_origin_access_id.cloud_front_origin_access_identity.id }}'
+      register: _delete_origin_access
+
+    - name: Ensure origin access identity was deleted
+      assert:
+        that:
+          - _delete_origin_access is not changed
+
+  always:
+  - name: clean up cloudfront distribution
+    cloudfront_distribution:
+      distribution_id: "{{ _distribution.id }}"
+      enabled: false
+      wait: false
+      state: absent
+    ignore_errors: true
