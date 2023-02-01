@@ -94,6 +94,9 @@ def canonicalize_endpoint(protocol, endpoint):
 def get_tags(client, module, topic_arn):
     try:
         return boto3_tag_list_to_ansible_dict(client.list_tags_for_resource(ResourceArn=topic_arn)['Tags'])
+    except is_boto3_error_code('AuthorizationError'):
+        module.warn("Permission denied accessing tags")
+        return {}
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't obtain topic tags")
 
