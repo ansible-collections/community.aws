@@ -58,7 +58,7 @@
       Environment: "dev"
       Version: "1.0"
       Confidentiality: "low"
-    simple_tags_add_delete_change: 
+    simple_tags_add_delete_change:
       Contact: "non-existent@ansible.com"
       Environment: "test"
       Confidentiality: "low"
@@ -520,16 +520,16 @@
       tags: '{{ simple_tags_orig }}'
     register: result
 
-  - name: Create parameter with tags case - Ensure tags_dict is correct
+  - name: Create parameter with tags case - Ensure tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
     loop: "{{ simple_tags_orig | dict2items }}"
-  
+
   - name: Create parameter with tags case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_orig | length
+      - result.parameter_metadata.tags | length  == simple_tags_orig | length
 
   - name: Create parameter with tags case - Ensure only tags have changed
     set_fact:
@@ -575,16 +575,16 @@
       description: '{{ simple_tag_param_updated_description }}'
     register: result
 
-  - name: Update description only case - Ensure expected tags_dict is correct
+  - name: Update description only case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
     loop: "{{ simple_tags_orig | dict2items }}"
-  
+
   - name: Update description only case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_orig | length
+      - result.parameter_metadata.tags | length  == simple_tags_orig | length
 
   - name: Update description only case - Ensure only description changed
     set_fact:
@@ -610,7 +610,7 @@
       - result.parameter_metadata.policies | length == 0
       - result.parameter_metadata.tier == 'Standard'
       - result.parameter_metadata.type == 'String'
-  
+
   # ============================================================
   # Test tags - Add tag to existing parameter case
 
@@ -630,16 +630,16 @@
       tags: '{{ simple_tags_add_owner }}'
     register: result
 
-  - name: Add tag to existing parameter case - Ensure tags_dict correct
+  - name: Add tag to existing parameter case - Ensure tags correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_add_owner['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_add_owner['{{ item.key }}']
     loop: "{{ simple_tags_add_owner | dict2items }}"
-  
+
   - name: Add tag to existing parameter case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_add_owner | length
+      - result.parameter_metadata.tags | length  == simple_tags_add_owner | length
 
   - name: Add tag to existing parameter case - Ensure only tags changed
     set_fact:
@@ -673,7 +673,7 @@
     ignore_errors: True
     with_items:
       - '{{ simple_tag_param_name }}'
-  
+
   # ============================================================
   # Test tags - update tags only - change tag
 
@@ -694,23 +694,23 @@
   - assert:
       that:
       - result is changed
-  
+
   - name: Change single tag case - Update tag
     aws_ssm_parameter_store:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_change_environment }}'
     register: result
 
-  - name: Change single tag case - Ensure expected tags_dict is correct
+  - name: Change single tag case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_change_environment['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_change_environment['{{ item.key }}']
     loop: "{{ simple_tags_change_environment | dict2items }}"
-  
+
   - name: Change single tag case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_change_environment | length
+      - result.parameter_metadata.tags | length  == simple_tags_change_environment | length
 
   - name: Change single tag case - Lookup a tagged parameter
     set_fact:
@@ -772,16 +772,16 @@
       tags: '{{ simple_tags_delete_version }}'
     register: result
 
-  - name: Delete single tag case - Ensure expected tags_dict is correct
+  - name: Delete single tag case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_delete_version['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_delete_version['{{ item.key }}']
     loop: "{{ simple_tags_delete_version | dict2items }}"
-  
+
   - name: Delete single tag case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_delete_version | length
+      - result.parameter_metadata.tags | length  == simple_tags_delete_version | length
 
   - name: Delete single tag case - Lookup a tagged parameter
     set_fact:
@@ -843,16 +843,16 @@
       tags: '{{ simple_tags_delete_tag_with_space }}'
     register: result
 
-  - name: Delete single tag w/ spaces case - Ensure expected tags_dict is correct
+  - name: Delete single tag w/ spaces case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_delete_tag_with_space['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_delete_tag_with_space['{{ item.key }}']
     loop: "{{ simple_tags_delete_tag_with_space | dict2items }}"
-  
+
   - name: Delete single tag w/ spaces case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_delete_tag_with_space | length
+      - result.parameter_metadata.tags | length  == simple_tags_delete_tag_with_space | length
 
   - name: Delete single tag w/ spaces case - Lookup a tagged parameter
     set_fact:
@@ -914,16 +914,16 @@
       tags: '{{ simple_tags_add_delete_change }}'
     register: result
 
-  - name: Add/delete/change tags case - Ensure expected tags_dict is correct
+  - name: Add/delete/change tags case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_add_delete_change['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_add_delete_change['{{ item.key }}']
     loop: "{{ simple_tags_add_delete_change | dict2items }}"
-  
+
   - name: Add/delete/change tags case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_add_delete_change | length
+      - result.parameter_metadata.tags | length  == simple_tags_add_delete_change | length
 
   - name: Add/delete/change tags case - Lookup a tagged parameter
     set_fact:
@@ -985,16 +985,16 @@
       tags: '{{ simple_tags_delete_all_tags }}'
     register: result
 
-  - name: Delete all tags case - Ensure expected tags_dict is correct
+  - name: Delete all tags case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_delete_all_tags['{{ item.key }}']
+      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_delete_all_tags['{{ item.key }}']
     loop: "{{ simple_tags_delete_all_tags | dict2items }}"
-  
+
   - name: Delete all tags case - Ensure no missing or additional tags
     assert:
       that:
-      - result.parameter_metadata.tags_dict | length  == simple_tags_delete_all_tags | length
+      - result.parameter_metadata.tags | length  == simple_tags_delete_all_tags | length
 
   - name: Delete all tags case - Lookup a tagged parameter
     set_fact:
@@ -1058,20 +1058,20 @@
       purge_tags: False
     register: result
 
-  - name: Add tag case (purge_tags=false) - Ensure expected tags_dict is correct
+  - name: Add tag case (purge_tags=false) - Ensure expected tags is correct
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        result.parameter_metadata.tags['{{ item.key }}'] ==
         (simple_tags_orig | combine(simple_tags_purge_false_add_owner))['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_add_owner) | dict2items }}
-  
+
   - name: Add tag case (purge_tags=false) - Ensure no missing or additional tags
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        result.parameter_metadata.tags | length == {{ simple_tags_orig |
         combine(simple_tags_purge_false_add_owner) | dict2items }} | length
 
   - name: Add tag case (purge_tags=false) - Lookup a tagged parameter
@@ -1136,20 +1136,20 @@
       purge_tags: False
     register: result
 
-  - name: Add multiple tags case (purge_tags=false) - Ensure expected tags_dict is correct
+  - name: Add multiple tags case (purge_tags=false) - Ensure expected tags is correct
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        result.parameter_metadata.tags['{{ item.key }}'] ==
         (simple_tags_orig | combine(simple_tags_purge_false_add_multiple))['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_add_multiple) | dict2items }}
-  
+
   - name: Add multiple tags case (purge_tags=false) - Ensure no missing or additional tags
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        result.parameter_metadata.tags | length == {{ simple_tags_orig |
         combine(simple_tags_purge_false_add_multiple) | dict2items }} | length
 
   - name: Add multiple tags case (purge_tags=false) - Lookup a tagged parameter
@@ -1214,23 +1214,23 @@
       purge_tags: False
     register: result
 
-  - name: Change tag case (purge_tags=false) - Ensure expected tags_dict is correct
+  - name: Change tag case (purge_tags=false) - Ensure expected tags is correct
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        result.parameter_metadata.tags['{{ item.key }}'] ==
         (simple_tags_orig | combine(simple_tags_purge_false_change_environment))['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_change_environment) | dict2items }}
     loop_control:
       extended: yes
 
-  
+
   - name: Change tag case (purge_tags=false) - Ensure no missing or additional tags
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        result.parameter_metadata.tags | length == {{ simple_tags_orig |
         combine(simple_tags_purge_false_change_environment) | dict2items }} | length
 
   - name: Change tag case (purge_tags=false) - Lookup a tagged parameter
@@ -1295,23 +1295,23 @@
       purge_tags: False
     register: result
 
-  - name: Change multiple tags (purge_tags=false) - Ensure expected tags_dict is correct
+  - name: Change multiple tags (purge_tags=false) - Ensure expected tags is correct
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        result.parameter_metadata.tags['{{ item.key }}'] ==
         (simple_tags_orig | combine(simple_tags_purge_false_change_multiple))['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_change_multiple) | dict2items }}
     loop_control:
       extended: yes
 
-  
+
   - name: Change multiple tags (purge_tags=false) - Ensure no missing or additional tags
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        result.parameter_metadata.tags | length == {{ simple_tags_orig |
         combine(simple_tags_purge_false_change_multiple) | dict2items }} | length
 
   - name: Change multiple tags (purge_tags=false) - Lookup a tagged parameter
@@ -1376,23 +1376,23 @@
       purge_tags: False
     register: result
 
-  - name: Add/Change multiple tags (purge_tags=false) - Ensure expected tags_dict is correct
+  - name: Add/Change multiple tags (purge_tags=false) - Ensure expected tags is correct
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict['{{ item.key }}'] == 
+        result.parameter_metadata.tags['{{ item.key }}'] ==
         (simple_tags_orig | combine(simple_tags_purge_false_add_and_change))['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_add_and_change) | dict2items }}
     loop_control:
       extended: yes
 
-  
+
   - name: Add/Change multiple tags (purge_tags=false) - Ensure no missing or additional tags
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict | length == {{ simple_tags_orig | 
+        result.parameter_metadata.tags | length == {{ simple_tags_orig |
         combine(simple_tags_purge_false_add_and_change) | dict2items }} | length
 
   - name: Add/Change multiple tags (purge_tags=false) - Lookup a tagged parameter
@@ -1457,21 +1457,21 @@
       purge_tags: False
     register: result
 
-  - name: Empty tags dict (purge_tags=false) - Ensure expected tags_dict is correct
+  - name: Empty tags dict (purge_tags=false) - Ensure expected tags is correct
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+        result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | dict2items }}
     loop_control:
       extended: yes
-  
+
   - name: Empty tags dict (purge_tags=false) - Ensure no missing or additional tags
     assert:
       that:
       - >
-        result.parameter_metadata.tags_dict | length 
+        result.parameter_metadata.tags | length
         == {{ simple_tags_orig | dict2items }} | length
 
   - name: Empty tags dict (purge_tags=false) - Lookup a tagged parameter
@@ -1534,11 +1534,11 @@
       description: '{{ simple_tag_param_updated_description }}'
     register: result
 
-  - name: No tags parameter (purge_tags=true) - Ensure expected tags_dict is correct
+  - name: No tags parameter (purge_tags=true) - Ensure expected tags is correct
     assert:
       that:
         - >
-          result.parameter_metadata.tags_dict['{{ item.key }}']
+          result.parameter_metadata.tags['{{ item.key }}']
            == simple_tags_orig['{{ item.key }}']
     loop: >
       {{ simple_tags_orig | dict2items }}
@@ -1549,7 +1549,7 @@
     assert:
       that:
         - >
-          result.parameter_metadata.tags_dict | length 
+          result.parameter_metadata.tags | length
           == {{ simple_tags_orig | dict2items }} | length
 
   - name: No tags parameter (purge_tags=true) - Lookup a tagged parameter

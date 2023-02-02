@@ -93,7 +93,7 @@ extends_documentation_fragment:
   - amazon.aws.tags
 
 notes:
-  - Support for I(tags) and I(purge_tags) was added in release 5.2.0.
+  - Support for I(tags) and I(purge_tags) was added in release 5.3.0.
 
 '''
 
@@ -237,29 +237,11 @@ parameter_metadata:
       example: 3
       returned: success
     tags:
-      description:
-        - A list of dictionaries representing the tags associated with the parameter in the standard boto3 format.
-      returned: when the parameter has tags
-      type: list
-      elements: dict
-      contains:
-        key:
-          description: The name or key of the tag.
-          type: str
-          example: MyTag
-          returned: success
-        value:
-          description: The value of the tag.
-          type: str
-          example: Some value.
-          returned: success
-      version_added: 5.2.0
-    tags_dict:
       description: A dictionary representing the tags associated with the parameter.
       type: dict
       returned: when the parameter has tags
       example: {'MyTagName': 'Some Value'}
-      version_added: 5.2.0
+      version_added: 5.3.0
 '''
 
 import time
@@ -276,7 +258,9 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
 from ansible_collections.community.aws.plugins.module_utils.base import BaseWaiterFactory
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict, compare_aws_tags, ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
 
 class ParameterWaiterFactory(BaseWaiterFactory):
@@ -376,7 +360,7 @@ def get_parameter_tags(client, module, parameter_name):
         tags = client.list_tags_for_resource(aws_retry=True, ResourceType='Parameter',
                                              ResourceId=parameter_name)['TagList']
         tags_dict = boto3_tag_list_to_ansible_dict(tags)
-        return tags_dict, tags
+        return tags_dict
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg="Unable to retrieve parameter tags")
 
@@ -388,7 +372,7 @@ def update_parameter_tags(client, module, parameter_name, supplied_tags):
     if supplied_tags is None:
         return False, response
 
-    current_tags = get_parameter_tags(client, module, parameter_name)[0]
+    current_tags = get_parameter_tags(client, module, parameter_name)
     tags_to_add, tags_to_remove = compare_aws_tags(current_tags, supplied_tags,
                                                    module.params.get('purge_tags'))
 
@@ -430,9 +414,8 @@ def describe_parameter(client, module, **args):
     if not existing_parameter['Parameters']:
         return None
 
-    tags_dict, tags = get_parameter_tags(client, module, module.params.get('name'))
-    existing_parameter['Parameters'][0]['tags'] = tags
-    existing_parameter['Parameters'][0]['tags_dict'] = tags_dict
+    tags_dict = get_parameter_tags(client, module, module.params.get('name'))
+    existing_parameter['Parameters'][0]['tags'] = tags_dict
 
     return existing_parameter['Parameters'][0]
 
@@ -605,7 +588,7 @@ def main():
         module.fail_json_aws(e, msg="to describe parameter")
     if parameter_metadata:
         result['parameter_metadata'] = camel_dict_to_snake_dict(parameter_metadata,
-                                                                ignore_list=['tags', 'tags_dict'])
+                                                                ignore_list=['tags'])
 
     module.exit_json(changed=changed, **result)
 
