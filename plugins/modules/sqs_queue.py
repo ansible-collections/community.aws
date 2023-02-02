@@ -46,6 +46,7 @@ options:
       - Defaults to C(queue) on creation.
     choices: ['queue', 'messageGroup']
     type: str
+    version_added: 5.3.0
   fifo_throughput_limit:
     description:
       - Throughput limit for FIFO queues.
@@ -53,6 +54,7 @@ options:
       - Defaults to C(perQueue) on creation.
     choices: ['perQueue', 'perMessageGroupId']
     type: str
+    version_added: 5.3.0
   visibility_timeout:
     description:
       - The default visibility timeout in seconds.
