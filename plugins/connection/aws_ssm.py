@@ -817,33 +817,41 @@ class Connection(ConnectionBase):
 
         if self.is_windows:
             put_command_headers = "; ".join([f"'{h}' = '{v}'" for h, v in put_headers.items()])
-            put_command = (
-                "Invoke-WebRequest -Method PUT "
-                f"-Headers @{{{put_command_headers}}} "  # @{'key' = 'value'; 'key2' = 'value2'}
-                f"-InFile '{in_path}' "
-                f"-Uri '{put_url}' "
-                f"-UseBasicParsing"
-            )
-            get_command = (
-                "Invoke-WebRequest "
-                f"'{get_url}' "
-                f"-OutFile '{out_path}'"
-            )
+            put_commands = [
+                (
+                    "Invoke-WebRequest -Method PUT "
+                    f"-Headers @{{{put_command_headers}}} "  # @{'key' = 'value'; 'key2' = 'value2'}
+                    f"-InFile '{in_path}' "
+                    f"-Uri '{put_url}' "
+                    f"-UseBasicParsing"
+                ),
+            ]
+            get_commands = [
+                (
+                    "Invoke-WebRequest "
+                    f"'{get_url}' "
+                    f"-OutFile '{out_path}'"
+                ),
+            ]
         else:
             put_command_headers = " ".join([f"-H '{h}: {v}'" for h, v in put_headers.items()])
-            put_command = (
-                "curl --request PUT "
-                f"{put_command_headers} "
-                f"--upload-file '{in_path}' "
-                f"'{put_url}'"
-            )
-            get_command = (
-                "curl "
-                f"-o '{out_path}' "
-                f"'{get_url}'"
-            )
+            put_commands = [
+                (
+                    "curl --request PUT "
+                    f"{put_command_headers} "
+                    f"--upload-file '{in_path}' "
+                    f"'{put_url}'"
+                ),
+            ]
+            get_commands = [
+                (
+                    "curl "
+                    f"-o '{out_path}' "
+                    f"'{get_url}'"
+                ),
+            ]
 
-        return get_command, put_command, put_args
+        return get_commands, put_commands, put_args
 
     @_ssm_retry
     def _file_transport_command(self, in_path, out_path, ssm_action):
@@ -852,7 +860,7 @@ class Connection(ConnectionBase):
         bucket_name = self.get_option("bucket_name")
         s3_path = self._escape_path(f"{self.instance_id}/{out_path}")
 
-        get_command, put_command, put_args = self._generate_commands(
+        get_commands, put_commands, put_args = self._generate_commands(
             bucket_name, s3_path, in_path, out_path,
         )
 
@@ -875,13 +883,13 @@ class Connection(ConnectionBase):
 
         try:
             if ssm_action == 'get':
-                (returncode, stdout, stderr) = exec_transport_commands([put_command])
+                (returncode, stdout, stderr) = exec_transport_commands(put_commands)
                 with open(to_bytes(out_path, errors='surrogate_or_strict'), 'wb') as data:
                     client.download_fileobj(bucket_name, s3_path, data)
             else:
                 with open(to_bytes(in_path, errors='surrogate_or_strict'), 'rb') as data:
                     client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-                (returncode, stdout, stderr) = exec_transport_commands([get_command])
+                (returncode, stdout, stderr) = exec_transport_commands(get_commands)
             return (returncode, stdout, stderr)
         finally:
             # Remove the files from the bucket after they've been transferred
