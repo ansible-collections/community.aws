@@ -1,0 +1,2 @@
+minor_changes:
+- sns_topic - add support for ``content_based_deduplication`` parameter (https://github.com/ansible-collections/community.aws/pull/1693).
