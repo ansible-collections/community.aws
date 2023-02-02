@@ -540,14 +540,26 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/assume_role_policy_document"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-assume-role-policy-document"><strong>assume_role_policy_document</strong></p>
-<a class="ansibleOptionLink" href="#return-iam_role/assume_role_policy_document" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<a class="ansibleOptionLink" href="#return-iam_role/assume_role_policy_document" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>the policy that grants an entity permission to assume the role</p>
+<p>note: the case of keys in this dictionary are currently converted from CamelCase to
+snake_case.  In a release after 2023-12-01 this behaviour will change</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'statement':</span> <span class="pre">[{'action':</span> <span class="pre">'sts:AssumeRole',</span> <span class="pre">'effect':</span> <span class="pre">'Allow',</span> <span class="pre">'principal':</span> <span class="pre">{'service':</span> <span class="pre">'ec2.amazonaws.com'},</span> <span class="pre">'sid':</span> <span class="pre">''}],</span> <span class="pre">'version':</span> <span class="pre">'2012-10-17'}&quot;</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;statement&quot;:</span> <span class="pre">[{&quot;action&quot;:</span> <span class="pre">&quot;sts:AssumeRole&quot;,</span> <span class="pre">&quot;effect&quot;:</span> <span class="pre">&quot;Allow&quot;,</span> <span class="pre">&quot;principal&quot;:</span> <span class="pre">{&quot;service&quot;:</span> <span class="pre">&quot;ec2.amazonaws.com&quot;},</span> <span class="pre">&quot;sid&quot;:</span> <span class="pre">&quot;&quot;}],</span> <span class="pre">&quot;version&quot;:</span> <span class="pre">&quot;2012-10-17&quot;}</span></code></p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-iam_role/assume_role_policy_document_raw"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-assume-role-policy-document-raw"><strong>assume_role_policy_document_raw</strong></p>
+<a class="ansibleOptionLink" href="#return-iam_role/assume_role_policy_document_raw" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>the policy that grants an entity permission to assume the role</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;Statement&quot;:</span> <span class="pre">[{&quot;Action&quot;:</span> <span class="pre">&quot;sts:AssumeRole&quot;,</span> <span class="pre">&quot;Effect&quot;:</span> <span class="pre">&quot;Allow&quot;,</span> <span class="pre">&quot;Principal&quot;:</span> <span class="pre">{&quot;Service&quot;:</span> <span class="pre">&quot;ec2.amazonaws.com&quot;},</span> <span class="pre">&quot;Sid&quot;:</span> <span class="pre">&quot;&quot;}],</span> <span class="pre">&quot;Version&quot;:</span> <span class="pre">&quot;2012-10-17&quot;}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/attached_policies"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-attached-policies"><strong>attached_policies</strong></p>
 <a class="ansibleOptionLink" href="#return-iam_role/attached_policies" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -556,7 +568,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;policy_arn&quot;:</span> <span class="pre">&quot;arn:aws:iam::aws:policy/PowerUserAccess&quot;,</span> <span class="pre">&quot;policy_name&quot;:</span> <span class="pre">&quot;PowerUserAccess&quot;}]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/create_date"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-create-date"><strong>create_date</strong></p>
 <a class="ansibleOptionLink" href="#return-iam_role/create_date" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -565,7 +577,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2016-08-14T04:36:28+00:00&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/path"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-path"><strong>path</strong></p>
 <a class="ansibleOptionLink" href="#return-iam_role/path" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -574,7 +586,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;/&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/role_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-role-id"><strong>role_id</strong></p>
 <a class="ansibleOptionLink" href="#return-iam_role/role_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -583,7 +595,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ABCDEFF4EZ4ABCDEFV4ZC&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/role_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-role-name"><strong>role_name</strong></p>
 <a class="ansibleOptionLink" href="#return-iam_role/role_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -592,7 +604,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-iam-r
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;myrole&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-iam_role/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-iam-role-module-return-iam-role-tags"><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#return-iam_role/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
