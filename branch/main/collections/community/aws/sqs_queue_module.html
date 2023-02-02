@@ -234,6 +234,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-deduplication_scope"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sqs-queue-module-parameter-deduplication-scope"><strong>deduplication_scope</strong></p>
+<a class="ansibleOptionLink" href="#parameter-deduplication_scope" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Deduplication scope for FIFO queues.</p>
+<p><code class="docutils literal notranslate"><span class="pre">messageGroup</span></code> is required for high throughput FIFO.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">queue</span></code> on creation.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;queue&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;messageGroup&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delay_seconds"></div>
 <div class="ansibleOptionAnchor" id="parameter-delivery_delay"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sqs-queue-module-parameter-delivery-delay"><span id="ansible-collections-community-aws-sqs-queue-module-parameter-delay-seconds"></span><strong>delay_seconds</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delay_seconds" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: delivery_delay</span></p>
@@ -242,7 +257,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 <td><div class="ansible-option-cell"><p>The delivery delay in seconds.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -254,6 +269,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 <p>The  <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variables may also be used, in decreasing order of preference.</p>
 <p>The <em>ec2_url</em> and <em>s3_url</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-fifo_throughput_limit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sqs-queue-module-parameter-fifo-throughput-limit"><strong>fifo_throughput_limit</strong></p>
+<a class="ansibleOptionLink" href="#parameter-fifo_throughput_limit" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Throughput limit for FIFO queues.</p>
+<p><code class="docutils literal notranslate"><span class="pre">perMessageGroupId</span></code> is required for high throughput FIFO.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">perQueue</span></code> on creation.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;perQueue&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;perMessageGroupId&quot;</span></code></p></li>
+</ul>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -559,12 +589,30 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sqs-q
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-deduplication_scope"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sqs-queue-module-return-deduplication-scope"><strong>deduplication_scope</strong></p>
+<a class="ansibleOptionLink" href="#return-deduplication_scope" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The deduplication setting.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;messageGroup&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-delay_seconds"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sqs-queue-module-return-delay-seconds"><strong>delay_seconds</strong></p>
 <a class="ansibleOptionLink" href="#return-delay_seconds" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The delivery delay in seconds.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">0</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-fifo_throughput_limit"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sqs-queue-module-return-fifo-throughput-limit"><strong>fifo_throughput_limit</strong></p>
+<a class="ansibleOptionLink" href="#return-fifo_throughput_limit" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Which throughput limit strategy is applied.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;perQueue&quot;</span></code></p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
