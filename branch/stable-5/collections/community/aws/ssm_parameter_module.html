@@ -296,6 +296,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-parameter-purge-tags"><strong>purge_tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</p>
+<p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-parameter-region"><span id="ansible-collections-community-aws-ssm-parameter-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-ssm-parameter-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -310,7 +324,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -327,7 +341,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -345,7 +359,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -358,7 +372,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-string_type"></div>
 <div class="ansibleOptionAnchor" id="parameter-type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-parameter-type"><span id="ansible-collections-community-aws-ssm-parameter-module-parameter-string-type"></span><strong>string_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-string_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: type</span></p>
@@ -371,6 +385,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;StringList&quot;</span></code></p></li>
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;SecureString&quot;</span></code></p></li>
 </ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div>
+<div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-parameter-tags"><span id="ansible-collections-community-aws-ssm-parameter-module-parameter-resource-tags"></span><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary representing the tags to be applied to the resource.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -415,6 +439,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
+<li><p>Support for <em>tags</em> and <em>purge_tags</em> was added in release 5.3.0.</p></li>
 <li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
 <li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
@@ -476,6 +501,29 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">recommend to use with aws_ssm lookup plugin</span>
 <span class="w">  </span><span class="nt">ansible.builtin.debug</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;amazon.aws.aws_ssm&#39;</span><span class="o">,</span> <span class="s1">&#39;Hello&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create or update key/value pair in AWS SSM parameter store w/ tags</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;This</span><span class="nv"> </span><span class="s">is</span><span class="nv"> </span><span class="s">your</span><span class="nv"> </span><span class="s">first</span><span class="nv"> </span><span class="s">key&quot;</span>
+<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;World&quot;</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Environment</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;dev&quot;</span>
+<span class="w">      </span><span class="nt">Version</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;1.0&quot;</span>
+<span class="w">      </span><span class="nt">Confidentiality</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;low&quot;</span>
+<span class="w">      </span><span class="nt">Tag With Space</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;foo</span><span class="nv"> </span><span class="s">bar&quot;</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add or update a tag on an existing parameter w/o removing existing tags</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
+<span class="w">    </span><span class="nt">purge_tags</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">Contact</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;person1&quot;</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete all tags on an existing parameter</span>
+<span class="w">  </span><span class="nt">community.aws.ssm_parameter</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Hello&quot;</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{}</span>
 </pre></div>
 </div>
 </section>
@@ -578,6 +626,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-parameter_metadata/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-return-parameter-metadata-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#return-parameter_metadata/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>A dictionary representing the tags associated with the parameter.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when the parameter has tags</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;MyTagName&quot;:</span> <span class="pre">&quot;Some</span> <span class="pre">Value&quot;}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-parameter_metadata/tier"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-return-parameter-metadata-tier"><strong>tier</strong></p>
 <a class="ansibleOptionLink" href="#return-parameter_metadata/tier" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -586,7 +644,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Standard&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-parameter_metadata/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-return-parameter-metadata-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#return-parameter_metadata/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -595,7 +653,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ssm-p
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;String&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-parameter_metadata/version"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ssm-parameter-module-return-parameter-metadata-version"><strong>version</strong></p>
 <a class="ansibleOptionLink" href="#return-parameter_metadata/version" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
