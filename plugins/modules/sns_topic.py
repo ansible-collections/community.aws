@@ -151,7 +151,7 @@ options:
   content_based_deduplication:
     description:
       - Whether to enable content-based deduplication for this topic.
-        Ignored if topic_type is not "fifo".
+      - Ignored unless I(topic_type=fifo).
     default: disabled
     choices: ["disabled", "enabled"]
     type: str
