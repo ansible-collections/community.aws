@@ -107,6 +107,7 @@ def get_info(connection, module, topic_arn):
     state = module.params.get('state')
     subscriptions = module.params.get('subscriptions')
     purge_subscriptions = module.params.get('purge_subscriptions')
+    content_based_deduplication = module.params.get('content_based_deduplication')
     subscriptions_existing = module.params.get('subscriptions_existing', [])
     subscriptions_deleted = module.params.get('subscriptions_deleted', [])
     subscriptions_added = module.params.get('subscriptions_added', [])
@@ -125,6 +126,7 @@ def get_info(connection, module, topic_arn):
         'subscriptions_deleted': subscriptions_deleted,
         'subscriptions_added': subscriptions_added,
         'subscriptions_purge': purge_subscriptions,
+        'content_based_deduplication': content_based_deduplication,
         'check_mode': check_mode,
         'topic_created': topic_created,
         'topic_deleted': topic_deleted,

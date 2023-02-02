@@ -112,11 +112,49 @@
       - sns_fifo_topic.sns_topic.topic_type == 'fifo'
       - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo'
 
+  - name: Run create a FIFO topic again for idempotence test (with .fifo)
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}-fifo.fifo'
+      topic_type: fifo
+      display_name: My FIFO topic
+    register: sns_fifo_topic
+
+  - name: assert that FIFO SNS topic creation worked (without .fifo)
+    assert:
+      that:
+      - not sns_fifo_topic.changed
+
   - name: Run create a FIFO topic again for idempotence test
     sns_topic:
       name: '{{ sns_topic_topic_name }}-fifo.fifo'
       topic_type: fifo
       display_name: My FIFO topic
+    register: sns_fifo_topic
+
+  - name: assert that FIFO SNS topic creation worked
+    assert:
+      that:
+      - not sns_fifo_topic.changed
+
+  - name: set content_based_deduplication
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}-fifo'
+      topic_type: fifo
+      display_name: My FIFO topic
+      content_based_deduplication: "enabled"
+    register: sns_fifo_topic
+
+  - name: assert that FIFO SNS topic creation worked
+    assert:
+      that:
+      - sns_fifo_topic.changed
+
+  - name: set content_based_deduplication (idemopotence)
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}-fifo'
+      topic_type: fifo
+      display_name: My FIFO topic
+      content_based_deduplication: "enabled"
     register: sns_fifo_topic
 
   - name: assert that FIFO SNS topic creation worked
