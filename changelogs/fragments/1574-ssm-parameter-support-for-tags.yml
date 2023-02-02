@@ -1,0 +1,2 @@
+minor_changes:
+  - ssm_parameter - add support for tags in ssm parameters (https://github.com/ansible-collections/community.aws/issues/1573).
