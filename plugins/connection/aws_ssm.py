@@ -872,7 +872,7 @@ class Connection(ConnectionBase):
                 raise AnsibleError(
                     f"failed to transfer file to {in_path} {out_path}:\n"
                     f"{stdout}\n{stderr}")
-            
+
             stdout_combined += stdout
             stderr_combined += stderr
 
@@ -904,7 +904,6 @@ class Connection(ConnectionBase):
         finally:
             # Remove the files from the bucket after they've been transferred
             client.delete_object(Bucket=bucket_name, Key=s3_path)
-
 
     def put_file(self, in_path, out_path):
         ''' transfer a file from local to remote '''
