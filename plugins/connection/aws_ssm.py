@@ -857,25 +857,36 @@ class Connection(ConnectionBase):
         )
 
         client = self._s3_client
-        if ssm_action == 'get':
-            (returncode, stdout, stderr) = self.exec_command(put_command, in_data=None, sudoable=False)
-            with open(to_bytes(out_path, errors='surrogate_or_strict'), 'wb') as data:
-                client.download_fileobj(bucket_name, s3_path, data)
-        else:
-            with open(to_bytes(in_path, errors='surrogate_or_strict'), 'rb') as data:
-                client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-            (returncode, stdout, stderr) = self.exec_command(get_command, in_data=None, sudoable=False)
+        def exec_transport_commands(commands):
+            stdout_combined, stderr_combined = '', ''
+            for command in commands:
+                (returncode, stdout, stderr) = self.exec_command(command, in_data=None, sudoable=False)
 
-        # Remove the files from the bucket after they've been transferred
-        client.delete_object(Bucket=bucket_name, Key=s3_path)
+                # Check the return code
+                if returncode != 0:
+                    raise AnsibleError(
+                        f"failed to transfer file to {in_path} {out_path}:\n"
+                        f"{stdout}\n{stderr}")
+                
+                stdout_combined += stdout
+                stderr_combined += stderr
 
-        # Check the return code
-        if returncode == 0:
+            return (returncode, stdout_combined, stderr_combined)
+
+        try:
+            if ssm_action == 'get':
+                (returncode, stdout, stderr) = exec_transport_commands([put_command])
+                with open(to_bytes(out_path, errors='surrogate_or_strict'), 'wb') as data:
+                    client.download_fileobj(bucket_name, s3_path, data)
+            else:
+                with open(to_bytes(in_path, errors='surrogate_or_strict'), 'rb') as data:
+                    client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
+                (returncode, stdout, stderr) = exec_transport_commands([get_command])
             return (returncode, stdout, stderr)
+        finally:
+            # Remove the files from the bucket after they've been transferred
+            client.delete_object(Bucket=bucket_name, Key=s3_path)
 
-        raise AnsibleError(
-            f"failed to transfer file to {in_path} {out_path}:\n"
-            f"{stdout}\n{stderr}")
 
     def put_file(self, in_path, out_path):
         ''' transfer a file from local to remote '''
