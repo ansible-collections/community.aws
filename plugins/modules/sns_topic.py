@@ -155,6 +155,7 @@ options:
     default: disabled
     choices: ["disabled", "enabled"]
     type: str
+    version_added: 5.3.0
 notes:
   - Support for I(tags) and I(purge_tags) was added in release 5.3.0.
 extends_documentation_fragment:
@@ -241,6 +242,7 @@ sns_topic:
       returned: always
       type: str
       sample: disabled
+      version_added: 5.3.0
     delivery_policy:
       description: Delivery policy for the SNS topic
       returned: when topic is owned by this AWS account
