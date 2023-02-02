@@ -152,7 +152,7 @@ options:
     description:
       - Whether to enable content-based deduplication for this topic.
       - Ignored unless I(topic_type=fifo).
-    default: disabled
+      - Defaults to C(disabled).
     choices: ["disabled", "enabled"]
     type: str
     version_added: 5.3.0
