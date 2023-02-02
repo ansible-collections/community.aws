@@ -207,6 +207,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-content_based_deduplication"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-content-based-deduplication"><strong>content_based_deduplication</strong></p>
+<a class="ansibleOptionLink" href="#parameter-content_based_deduplication" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether to enable content-based deduplication for this topic.</p>
+<p>Ignored unless <em>topic_type=fifo</em>.</p>
+<p>Defaults to <code class="docutils literal notranslate"><span class="pre">disabled</span></code>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;disabled&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;enabled&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -219,14 +234,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy"><strong>delivery_policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Delivery policy to apply to the SNS topic.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http"><strong>http</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -234,14 +249,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>See <a class="reference external" href="https://docs.aws.amazon.com/sns/latest/dg/sns-message-delivery-retries.html">https://docs.aws.amazon.com/sns/latest/dg/sns-message-delivery-retries.html</a> for more information.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy"><strong>defaultHealthyRetryPolicy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Retry policy for HTTP(S) messages.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/backoffFunction"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-backofffunction"><strong>backoffFunction</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/backoffFunction" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
@@ -255,63 +270,63 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/maxDelayTarget"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-maxdelaytarget"><strong>maxDelayTarget</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/maxDelayTarget" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum delay for a retry.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/minDelayTarget"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-mindelaytarget"><strong>minDelayTarget</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/minDelayTarget" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The minimum delay for a retry.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/numMaxDelayRetries"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-nummaxdelayretries"><strong>numMaxDelayRetries</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/numMaxDelayRetries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of retries with the maximum delay between them.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/numMinDelayRetries"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-nummindelayretries"><strong>numMinDelayRetries</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/numMinDelayRetries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of retries with just the minimum delay between them.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/numNoDelayRetries"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-numnodelayretries"><strong>numNoDelayRetries</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/numNoDelayRetries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of retries to be performmed immediately.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultHealthyRetryPolicy/numRetries"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaulthealthyretrypolicy-numretries"><strong>numRetries</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultHealthyRetryPolicy/numRetries" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The total number of retries.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultThrottlePolicy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaultthrottlepolicy"><strong>defaultThrottlePolicy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultThrottlePolicy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Throttle the rate of messages sent to subsriptions.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/defaultThrottlePolicy/maxReceivesPerSecond"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-defaultthrottlepolicy-maxreceivespersecond"><strong>maxReceivesPerSecond</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/defaultThrottlePolicy/maxReceivesPerSecond" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum number of deliveries per second per subscription.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-delivery_policy/http/disableSubscriptionOverrides"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-delivery-policy-http-disablesubscriptionoverrides"><strong>disableSubscriptionOverrides</strong></p>
 <a class="ansibleOptionLink" href="#parameter-delivery_policy/http/disableSubscriptionOverrides" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -323,14 +338,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-display_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-display-name"><strong>display_name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-display_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Display name of the topic.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
@@ -344,14 +359,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name or ARN of the SNS topic to manage.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-policy"><strong>policy</strong></p>
 <a class="ansibleOptionLink" href="#parameter-policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -360,7 +375,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>This is required for certain use cases for example with S3 bucket notifications.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-profile"><span id="ansible-collections-community-aws-sns-topic-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -372,7 +387,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_subscriptions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-purge-subscriptions"><strong>purge_subscriptions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_subscriptions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -384,7 +399,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-purge-tags"><strong>purge_tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -398,7 +413,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-region"><span id="ansible-collections-community-aws-sns-topic-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-sns-topic-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -413,7 +428,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -430,7 +445,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -448,7 +463,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -460,7 +475,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subscriptions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-subscriptions"><strong>subscriptions</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subscriptions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -468,7 +483,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subscriptions/attributes"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-subscriptions-attributes"><strong>attributes</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subscriptions/attributes" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 4.1.0</span></p>
@@ -477,21 +492,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subscriptions/endpoint"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-subscriptions-endpoint"><strong>endpoint</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subscriptions/endpoint" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Endpoint of subscription.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-subscriptions/protocol"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-subscriptions-protocol"><strong>protocol</strong></p>
 <a class="ansibleOptionLink" href="#parameter-subscriptions/protocol" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Protocol of subscription.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tags"></div>
 <div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-tags"><span id="ansible-collections-community-aws-sns-topic-module-parameter-resource-tags"></span><strong>tags</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
@@ -501,7 +516,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-topic_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-topic-type"><strong>topic_type</strong></p>
 <a class="ansibleOptionLink" href="#parameter-topic_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 <p><span class="ansible-option-versionadded">added in community.aws 2.0.0</span></p>
@@ -515,7 +530,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -640,6 +655,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-sns_topic/content_based_deduplication"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-content-based-deduplication"><strong>content_based_deduplication</strong></p>
+<a class="ansibleOptionLink" href="#return-sns_topic/content_based_deduplication" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.3.0</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Whether or not content_based_deduplication was set</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;disabled&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/delivery_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-delivery-policy"><strong>delivery_policy</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/delivery_policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -648,7 +673,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{\&quot;http\&quot;:{\&quot;defaultHealthyRetryPolicy\&quot;:{\&quot;minDelayTarget\&quot;:20,\&quot;maxDelayTarget\&quot;:20,\&quot;numRetries\&quot;:3,\&quot;numMaxDelayRetries\&quot;:0,</span> <span class="pre">\&quot;numNoDelayRetries\&quot;:0,\&quot;numMinDelayRetries\&quot;:0,\&quot;backoffFunction\&quot;:\&quot;linear\&quot;},\&quot;disableSubscriptionOverrides\&quot;:false}}\n&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/display_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-display-name"><strong>display_name</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/display_name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -657,7 +682,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;My</span> <span class="pre">topic</span> <span class="pre">name&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -666,7 +691,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ansible-test-dummy-topic&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/owner"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-owner"><strong>owner</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/owner" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -675,7 +700,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;123456789012&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-policy"><strong>policy</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/policy" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -684,7 +709,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{\&quot;Version\&quot;:\&quot;2012-10-17\&quot;,\&quot;Id\&quot;:\&quot;SomePolicyId\&quot;,\&quot;Statement\&quot;:[{\&quot;Sid\&quot;:\&quot;ANewSid\&quot;,\&quot;Effect\&quot;:\&quot;Allow\&quot;,\&quot;Principal\&quot;:{\&quot;AWS\&quot;:\&quot;arn:aws:iam::123456789012:root\&quot;},</span> <span class="pre">\&quot;Action\&quot;:\&quot;sns:Subscribe\&quot;,\&quot;Resource\&quot;:\&quot;arn:aws:sns:us-east-2:123456789012:ansible-test-dummy-topic\&quot;,\&quot;Condition\&quot;:{\&quot;StringEquals\&quot;:{\&quot;sns:Protocol\&quot;:\&quot;email\&quot;}}}]}\n&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -693,7 +718,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions"><strong>subscriptions</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -702,7 +727,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_added"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-added"><strong>subscriptions_added</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_added" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -711,7 +736,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_confirmed"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-confirmed"><strong>subscriptions_confirmed</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_confirmed" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -720,7 +745,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;0&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_deleted"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-deleted"><strong>subscriptions_deleted</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_deleted" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -729,7 +754,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;0&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_existing"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-existing"><strong>subscriptions_existing</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_existing" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -738,7 +763,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_new"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-new"><strong>subscriptions_new</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_new" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -747,7 +772,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_pending"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-pending"><strong>subscriptions_pending</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_pending" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -756,7 +781,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;0&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/subscriptions_purge"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-subscriptions-purge"><strong>subscriptions_purge</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/subscriptions_purge" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -765,7 +790,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">true</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/topic_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-topic-arn"><strong>topic_arn</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/topic_arn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -774,7 +799,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;arn:aws:sns:us-east-2:123456789012:ansible-test-dummy-topic&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/topic_created"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-topic-created"><strong>topic_created</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/topic_created" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -783,7 +808,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-t
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-sns_topic/topic_deleted"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-topic-module-return-sns-topic-topic-deleted"><strong>topic_deleted</strong></p>
 <a class="ansibleOptionLink" href="#return-sns_topic/topic_deleted" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
