@@ -893,13 +893,13 @@ class Connection(ConnectionBase):
 
         try:
             if ssm_action == 'get':
-                (returncode, stdout, stderr) = self._exec_transport_commands(put_commands)
+                (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, put_commands)
                 with open(to_bytes(out_path, errors='surrogate_or_strict'), 'wb') as data:
                     client.download_fileobj(bucket_name, s3_path, data)
             else:
                 with open(to_bytes(in_path, errors='surrogate_or_strict'), 'rb') as data:
                     client.upload_fileobj(data, bucket_name, s3_path, ExtraArgs=put_args)
-                (returncode, stdout, stderr) = self._exec_transport_commands(get_commands)
+                (returncode, stdout, stderr) = self._exec_transport_commands(in_path, out_path, get_commands)
             return (returncode, stdout, stderr)
         finally:
             # Remove the files from the bucket after they've been transferred
