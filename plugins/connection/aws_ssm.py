@@ -849,6 +849,15 @@ class Connection(ConnectionBase):
                     f"-o '{out_path}' "
                     f"'{get_url}'"
                 ),
+                # Due to https://github.com/curl/curl/issues/183 earlier
+                # versions of curl did not create the output file, when the
+                # response was empty. Although this issue was fixed in 2015,
+                # some actively maintained operating systems still use older
+                # versions of it (e.g. CentOS 7)
+                (
+                    "touch "
+                    f"'{out_path}'"
+                )
             ]
 
         return get_commands, put_commands, put_args
