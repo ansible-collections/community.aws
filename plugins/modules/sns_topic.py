@@ -603,11 +603,12 @@ class SnsTopicManager(object):
     def populate_topic_arn(self):
         if self._name_is_arn():
             self.topic_arn = self.name
-        else:
-            name = self.name
-            if self.topic_type == 'fifo':
-                name += ".fifo"
-            self.topic_arn = topic_arn_lookup(self.connection, self.module, name)
+            return
+
+        name = self.name
+        if self.topic_type == 'fifo' and not name.endswith('.fifo'):
+            name += ".fifo"
+        self.topic_arn = topic_arn_lookup(self.connection, self.module, name)
 
 
 def main():
