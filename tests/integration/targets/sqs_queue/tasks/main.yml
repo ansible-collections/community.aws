@@ -184,6 +184,20 @@
           that:
             - create_result.changed
 
+      - name: Update FIFO queue
+        sqs_queue:
+          name: "{{ resource_prefix }}{{ 1000 | random }}"
+          queue_type: fifo
+          content_based_deduplication: yes
+          fifo_throughput_limit: perMessageGroupId
+          deduplication_scope: messageGroup
+        register: update_result
+
+      - name: Assert queue updated with configuration
+        assert:
+          that:
+            - update_result.changed
+
     always:
       - name: Cleaning up queue
         sqs_queue:
