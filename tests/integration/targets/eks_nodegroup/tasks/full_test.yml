@@ -1,0 +1,554 @@
+# Test - Try Create Nodegroup in non existent EKS
+- name: Test - attempt to create Nodegroup in non existent eks
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: fake_cluster
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 2
+      desired_size: 1
+    disk_size: 20
+    instance_types: 't3.micro'
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels:
+      'test': 'test'
+    taints:
+      - key: 'test'
+        value: 'test'
+        effect: 'NO_SCHEDULE'
+    capacity_type: 'on_demand'
+  register: eks_nodegroup_result
+  ignore_errors: 'yes'
+
+- name: check that eks_nodegroup did nothing
+  assert:
+    that:
+      - eks_nodegroup_result is failed
+      - '"msg" in eks_nodegroup_result'
+
+# Test - Try Create Nodegroup with parameters conflict
+
+- name: Test - attempt to create Nodegroup with parameters conflict
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    wait: True
+    launch_template: 
+      id: 'lt-0824c69cafa69ac81'
+    disk_size: 30
+  register: eks_nodegroup_result
+  ignore_errors: 'yes'
+
+- name: check that eks_nodegroup did nothing
+  assert:
+    that:
+      - eks_nodegroup_result is failed
+
+###############################################
+## CREATE NODEGROUP
+
+- name: create nodegroup (check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 3
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'test'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is created (check mode)
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: create nodegroup
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 3
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'test'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup is created
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: create nodegroup (idempotency)(check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 3
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'test'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_nodegroup_result.changed
+
+- name: create nodegroup (idempotency)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 3
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'test'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)
+  assert:
+    that:
+      - not eks_nodegroup_result.changed
+
+#########################################################
+## TRY UPDATE PARAMETERS
+
+- name: Test - attempt to update Nodegroup with not permited parameter (disk_size)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    wait: True
+    disk_size: 40
+  ignore_errors: 'yes'
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup did nothing
+  assert:
+    that:
+      - eks_nodegroup_result is failed
+
+- name: Test - attempt to update Nodegroup with not permited parameter (instance_types)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    wait: True
+    instance_types: ['t3.small']
+  ignore_errors: 'yes'
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup did nothing
+  assert:
+    that:
+      - eks_nodegroup_result is failed
+
+#########################################################
+## UPDATE NODEGROUP
+
+- name: update nodegroup (check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 4
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'changeit'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is updated (check mode)
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: update nodegroup
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 4
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'changeit'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup is updated
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: update nodegroup (idempotency)(check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 4
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'changeit'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_nodegroup_result.changed
+
+- name: update nodegroup (idempotency)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    scaling_config:
+      min_size: 1
+      max_size: 4
+      desired_size: 2
+    disk_size: 30    
+    instance_types: ['t3.small']
+    ami_type: 'AL2_x86_64'
+    update_config:
+      max_unavailable_percentage: 50
+    labels: 
+      'env': 'changeit'
+    taints:
+      - key: 'env'
+        value: 'test'
+        effect: 'PREFER_NO_SCHEDULE'
+    capacity_type: 'SPOT'
+    tags:
+      'foo': 'bar'
+    wait: True
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup is not changed (idempotency)
+  assert:
+    that:
+      - not eks_nodegroup_result.changed
+
+
+#########################################################
+## DELETE NODEGROUP
+
+- name: delete nodegroup (check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is delete (check mode)
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: delete nodegroup
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup is deleted
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: delete nodegroup (idempotency)(check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - eks_nodegroup_result is not changed
+
+- name: delete nodegroup (idempotency)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)
+  assert:
+    that:
+      - eks_nodegroup_result is not changed
+
+#########################################################
+## CREATE WITH LAUCH_TEMPLATE
+
+- name: create nodegroup with Lauch Template (check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    launch_template:
+      name: '{{ lt.template.launch_template_name }}'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is created (check mode)
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: create nodegroup with Lauch Template
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    launch_template:
+      name: '{{ lt.template.launch_template_name }}'
+    wait: True
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup is created
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: create nodegroup with Lauch Template (idempotency)(check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    launch_template:
+      name: '{{ lt.template.launch_template_name }}'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - not eks_nodegroup_result.changed
+
+- name: create nodegroup with Lauch Template (idempotency)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: present
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    subnets: '{{ setup_subnets.results | map(attribute=''subnet.id'') }}'
+    launch_template:
+      name: '{{ lt.template.launch_template_name }}'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)
+  assert:
+    that:
+      - not eks_nodegroup_result.changed
+
+#########################################################
+## DELETE NODEGROUP
+
+- name: delete launch_template nodegroup (check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+    node_role: '{{ iam_role_eks_nodegroup.arn }}'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is delete (check mode)
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: delete launch_template nodegroup
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+    wait: True
+  register: eks_nodegroup_result
+
+- name: check that eks_nodegroup is deleted
+  assert:
+    that:
+      - eks_nodegroup_result.changed
+
+- name: delete launch_template nodegroup (idempotency)(check mode)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)(check mode)
+  assert:
+    that:
+      - eks_nodegroup_result is not changed
+
+- name: delete launch_template nodegroup (idempotency)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_lt }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+    wait: True
+  register: eks_nodegroup_result
+  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)
+  assert:
+    that:
+      - eks_nodegroup_result is not changed
