@@ -6,6 +6,7 @@
     local_file: '{{ local_dir }}/汉语.txt'
     remote_dir: '{{ remote_tmp }}-汉语'
     remote_file: '{{ remote_dir }}/汉语.txt'
+    remote_empty_file: '{{ remote_dir }}/empty.txt'
   tasks:
 
   ### test wait_for_connection plugin
@@ -77,3 +78,15 @@
           - root
         loop_control:
           loop_var: user_name
+  
+  ### copy an empty file
+  - name: copy an empty file
+    action: "{{ action_prefix }}copy content= dest={{ remote_empty_file }}"
+  - name: stat empty file
+    action: "{{ action_prefix }}stat path={{ remote_empty_file }}"
+    register: stat_empty_file_cmd
+  - name: check that empty file exists
+    assert:
+      that:
+        - stat_empty_file_cmd.stat.isreg # it is a regular file
+        - stat_empty_file_cmd.stat.size == 0
