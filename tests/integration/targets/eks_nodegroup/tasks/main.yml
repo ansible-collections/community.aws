@@ -1,0 +1,16 @@
+---
+- name: 'eks_nodegroup integration tests'
+  collections:
+    - amazon.aws
+    - amozon.community
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+    - include_tasks: dependecies.yml
+    - include_tasks: full_test.yml
+  always:
+    - include_tasks: cleanup.yml

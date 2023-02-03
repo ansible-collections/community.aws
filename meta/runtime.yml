@@ -137,6 +137,7 @@ action_groups:
   - eks_cluster
   - efs_tag
   - eks_fargate_profile
+  - eks_nodegroup
   - elasticbeanstalk_app
   - elasticache
   - elasticache_info
