@@ -1,0 +1,2 @@
+bugfixes:
+  - aws_ssm - fix copying empty file with older curl versions (https://github.com/ansible-collections/community.aws/issues/1686).
