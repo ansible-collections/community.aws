@@ -1,0 +1,2 @@
+trivial:
+  - iam_access_key - Use correct parameter names in the docs example section (https://github.com/ansible-collections/community.aws/pull/1711).
