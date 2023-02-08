@@ -689,6 +689,68 @@
         - result is not changed
 
   # ============================================================
+  # Overwrite testing
+  # ============================================================
+
+  - name: Create secret with overwrite = False (Check mode)
+    aws_secret:
+      name: "{{ secret_name }}-2"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      overwrite: False
+    register: result
+    check_mode: True
+
+  - name: assert key is changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Create secret with overwrite = False
+    aws_secret:
+      name: "{{ secret_name }}-2"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}"
+      overwrite: False
+    register: result
+
+  - name: assert key is changed
+    assert:
+      that:
+        - result is changed
+
+  - name: Update secret with overwrite = False (Check mode)
+    aws_secret:
+      name: "{{ secret_name }}-2"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}-2"
+      overwrite: False
+    register: result
+    check_mode: True
+
+  - name: assert key is not changed
+    assert:
+      that:
+        - result is not changed
+
+  - name: Create secret with overwrite = False
+    aws_secret:
+      name: "{{ secret_name }}-2"
+      state: present
+      secret_type: 'string'
+      secret: "{{ super_secret_string }}-2"
+      overwrite: False
+    register: result
+
+  - name: assert key is not changed
+    assert:
+      that:
+        - result is not changed
+
+  # ============================================================
   # Removal testing
   # ============================================================
 
@@ -746,6 +808,13 @@
   - name: remove secret
     aws_secret:
       name: "{{ secret_name }}"
+      state: absent
+      recovery_window: 0
+    ignore_errors: yes
+
+  - name: remove secret 2
+    aws_secret:
+      name: "{{ secret_name }}-2"
       state: absent
       recovery_window: 0
     ignore_errors: yes
