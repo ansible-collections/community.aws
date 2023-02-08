@@ -32,10 +32,11 @@ options:
   overwrite:
     description:
     - Whether to overwrite an existing secret with the same name.
-    - If set to True, an existing secret with the same I(name) will be overwritten.
-    - If set to False, a secret with the given I(name) will only be created if none exists.
+    - If set to C(True), an existing secret with the same I(name) will be overwritten.
+    - If set to C(False), a secret with the given I(name) will only be created if none exists.
     type: bool
     default: True
+    version_added: 5.3.0
   recovery_window:
     description:
     - Only used if state is absent.
