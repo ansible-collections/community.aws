@@ -412,7 +412,9 @@ service:
             returned: always
             type: int
         loadBalancers:
-            description: A list of load balancer objects
+            description:
+                - A list of load balancer objects
+                - Updating the loadbalancer configuration of an existing service requires botocore>=1.24.14.
             returned: always
             type: complex
             contains:
