@@ -1,0 +1,5 @@
+minor_changes:
+  - ecs_service - new parameter ``purge_placement_strategy`` to have the ability to remove the placement strategy of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
+  - ecs_service - new parameter ``purge_placement_constraints``  to have the ability to remove the placement constraints of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
+trivial:
+  - ecs_cluster - rework and repair ecs_cluster integration test.
