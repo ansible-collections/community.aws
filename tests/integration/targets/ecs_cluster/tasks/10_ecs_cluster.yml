@@ -1,0 +1,76 @@
+# cluster "{{ ecs_cluster_name }}" is used for ecs_service tests
+- name: create an ECS cluster
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+  register: ecs_cluster
+
+- name: check that ecs_cluster changed
+  assert:
+    that:
+      - ecs_cluster.changed
+
+- name: immutable create same ECS cluster
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}"
+    state: present
+  register: ecs_cluster_again
+
+- name: check that ecs_cluster did not change
+  assert:
+    that:
+      - not ecs_cluster_again.changed
+
+- name: create an ECS cluster to test capacity provider strategy
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}-cps"
+    state: present
+  register: ecs_cluster
+
+- name: add capacity providers and strategy
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}-cps"
+    state: present
+    purge_capacity_providers: True
+    capacity_providers:
+      - FARGATE
+      - FARGATE_SPOT
+    capacity_provider_strategy:
+      - capacity_provider: FARGATE
+        base: 1
+        weight: 1
+      - capacity_provider: FARGATE_SPOT
+        weight: 100
+  register: ecs_cluster_update
+
+- name: check that ecs_cluster was correctly updated
+  assert:
+    that:
+      - ecs_cluster_update.changed
+      - ecs_cluster_update.cluster is defined
+      - ecs_cluster_update.cluster.capacityProviders is defined
+      - "'FARGATE' in ecs_cluster_update.cluster.capacityProviders"
+
+- name: immutable add capacity providers and strategy
+  ecs_cluster:
+    name: "{{ ecs_cluster_name }}-cps"
+    state: present
+    purge_capacity_providers: True
+    capacity_providers:
+      - FARGATE
+      - FARGATE_SPOT
+    capacity_provider_strategy:
+      - capacity_provider: FARGATE
+        base: 1
+        weight: 1
+      - capacity_provider: FARGATE_SPOT
+        weight: 100
+  register: ecs_cluster_update
+
+- name: check that ecs_cluster was correctly updated
+  assert:
+    that:
+      - not ecs_cluster_update.changed
+      - ecs_cluster_update.cluster is defined
+      - ecs_cluster_update.cluster.capacityProviders is defined
+      - "'FARGATE' in ecs_cluster_update.cluster.capacityProviders"
