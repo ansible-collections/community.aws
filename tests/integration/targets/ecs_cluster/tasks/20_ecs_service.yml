@@ -86,6 +86,8 @@
       - not ecs_service_again.changed
 
 - name: create same ECS service definition via force_new_deployment
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     force_new_deployment: true
@@ -111,6 +113,8 @@
       - ecs_service_again.changed
 
 - name: attempt to use ECS network configuration on task definition without awsvpc network_mode (expected to fail)
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}3"
@@ -136,6 +140,8 @@
       - ecs_service_network_without_awsvpc_task is failed
 
 - name: scale down ECS service
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}"
@@ -159,6 +165,8 @@
       - ecs_service_scale_down.service.desiredCount == 0
 
 - name: scale down ECS service again
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}"
@@ -241,6 +249,8 @@
       - "ecs_taskdefinition_info.network_mode == 'awsvpc'"
 
 - name: create ECS service definition with network configuration
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}2"
@@ -268,6 +278,8 @@
       - "create_ecs_service_with_vpc.service.networkConfiguration.awsvpcConfiguration.securityGroups|length == 1"
 
 - name: create ecs_service using health_check_grace_period_seconds
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-mft"
     cluster: "{{ ecs_cluster_name }}"
@@ -289,6 +301,8 @@
       - "{{ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds}} == 30"
 
 - name: update ecs_service using health_check_grace_period_seconds
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-mft"
     cluster: "{{ ecs_cluster_name }}"
@@ -309,6 +323,8 @@
       - "{{ecs_service_creation_hcgp2.service.healthCheckGracePeriodSeconds}} == 10"
 
 - name: update ecs_service using REPLICA scheduling_strategy
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-replica"
     cluster: "{{ ecs_cluster_name }}"
@@ -435,6 +451,8 @@
       - "ecs_service_create_no_load_balancer.service.loadBalancers | length == 0"
 
 - name: Update ecs_service load balancer
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-lb"
     cluster: "{{ ecs_cluster_name }}"
@@ -457,6 +475,8 @@
       - "ecs_service_update_load_balancer.service.loadBalancers[0].targetGroupArn == elb_target_group_instance.target_group_arn"
 
 - name: Create ecs service with placement constraints
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-constraint"
     cluster: "{{ ecs_cluster_name }}"
@@ -507,6 +527,8 @@
   until: "ECS.services[0].deployments[0].rolloutState == 'COMPLETED'"
 
 - name: Update ecs service's placement constraints
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-constraint"
     cluster: "{{ ecs_cluster_name }}"
@@ -533,6 +555,8 @@
       - "ecs_service_update_constraints.service.placementConstraints[0].expression == 'attribute:ecs.instance-type == t3.micro'"
 
 - name: Remove ecs service's placement constraints
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-constraint"
     cluster: "{{ ecs_cluster_name }}"
@@ -555,6 +579,8 @@
       - "ecs_service_remove_constraints.service.placementConstraints | length == 0"
 
 - name: Create ecs service with placement strategy
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-strategy"
     cluster: "{{ ecs_cluster_name }}"
@@ -580,6 +606,8 @@
       - "ecs_service_creation_strategy.service.placementStrategy[0].field == 'MEMORY'"
 
 - name: Update ecs service's placement strategy
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-strategy"
     cluster: "{{ ecs_cluster_name }}"
@@ -606,6 +634,8 @@
       - "ecs_service_update_strategy.service.placementStrategy[0].field == 'instanceId'"
 
 - name: Remove ecs service's placement strategy
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-strategy"
     cluster: "{{ ecs_cluster_name }}"

@@ -3,3 +3,6 @@ minor_changes:
   - ecs_service - new parameter ``purge_placement_constraints``  to have the ability to remove the placement constraints of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
 trivial:
   - ecs_cluster - rework and repair ecs_cluster integration test.
+deprecated_features:
+  - ecs_service -  In a release after 2024-06-01, tha default value of ``purge_placement_strategy`` will be change from ``false`` to ``true`` (https://github.com/ansible-collections/community.aws/pull/1716).
+  - ecs_service -  In a release after 2024-06-01, tha default value of ``purge_placement_constraints`` will be change from ``false`` to ``true`` (https://github.com/ansible-collections/community.aws/pull/1716).
