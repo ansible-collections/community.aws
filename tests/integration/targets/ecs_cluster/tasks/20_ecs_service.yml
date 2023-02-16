@@ -42,7 +42,7 @@
       - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
         containerName: "{{ ecs_task_name }}"
         containerPort: "{{ ecs_task_container_port }}"
-    role: "ecsServiceRole"
+    role: "{{ ecs_service_role_name }}"
   register: ecs_service
 
 - name: check that ECS service creation changed
@@ -77,7 +77,7 @@
       - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
         containerName: "{{ ecs_task_name }}"
         containerPort: "{{ ecs_task_container_port }}"
-    role: "ecsServiceRole"
+    role: "{{ ecs_service_role_name }}"
   register: ecs_service_again
 
 - name: check that ECS service recreation changed nothing
@@ -104,7 +104,7 @@
       - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
         containerName: "{{ ecs_task_name }}"
         containerPort: "{{ ecs_task_container_port }}"
-    role: "ecsServiceRole"
+    role: "{{ ecs_service_role_name }}"
   register: ecs_service_again
 
 - name: check that ECS service recreation changed again due force_new_deployment
@@ -154,7 +154,7 @@
       - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
         containerName: "{{ ecs_task_name }}"
         containerPort: "{{ ecs_task_container_port }}"
-    role: "ecsServiceRole"
+    role: "{{ ecs_service_role_name }}"
     wait: true
   register: ecs_service_scale_down
 
@@ -179,7 +179,7 @@
       - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
         containerName: "{{ ecs_task_name }}"
         containerPort: "{{ ecs_task_container_port }}"
-    role: "ecsServiceRole"
+    role: "{{ ecs_service_role_name }}"
   register: ecs_service_scale_down
 
 - name: assert no change
@@ -661,13 +661,14 @@
 
 - name: ensure AmazonECSTaskExecutionRolePolicy exists
   iam_role:
-    name: ecsTaskExecutionRole
+    name: "{{ ecs_task_role_name }}"
     assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
     description: "Allows ECS containers to make calls to ECR"
     state: present
     create_instance_profile: false
     managed_policy:
     - AmazonEC2ContainerServiceRole
+    wait: True
   register: iam_execution_role
 
 - name: create Fargate VPC-networked task definition with host port set to 8080 and unsupported network mode (expected to fail)

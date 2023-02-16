@@ -9,25 +9,26 @@
 
 - name: ensure IAM service role exists
   iam_role:
-    name: ecsServiceRole
+    name: "{{ ecs_service_role_name }}"
     assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
     state: present
-    create_instance_profile: no
+    create_instance_profile: yes
     managed_policy:
     - AmazonEC2ContainerServiceRole
+    wait: True
 
 - name: ensure AWSServiceRoleForECS role exists
   iam_role_info:
     name: AWSServiceRoleForECS
   register: iam_role_result
 
-  # FIXME: come up with a way to automate this
-- name: fail if AWSServiceRoleForECS role does not exist
-  fail:
-    msg: >
-      Run `aws iam create-service-linked-role --aws-service-name=ecs.amazonaws.com ` to create
-      a linked role for AWS VPC load balancer management
-  when: not iam_role_result.iam_roles
+#  # This should happen automatically with the right permissions...
+#- name: fail if AWSServiceRoleForECS role does not exist
+#  fail:
+#    msg: >
+#      Run `aws iam create-service-linked-role --aws-service-name=ecs.amazonaws.com ` to create
+#      a linked role for AWS VPC load balancer management
+#  when: not iam_role_result.iam_roles
 
 - name: create a VPC to work in
   ec2_vpc_net:
@@ -98,7 +99,7 @@
     image_id: '{{ ecs_image_id }}'
     wait: yes
     user_data: "{{ user_data }}"
-    instance_role: ecsInstanceRole
+    instance_role: "{{ ecs_service_role_name }}"
     tags:
       Name: '{{ resource_prefix }}_ecs_agent'
     security_group: '{{ setup_sg.group_id }}'
