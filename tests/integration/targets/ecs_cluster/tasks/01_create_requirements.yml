@@ -1,12 +1,3 @@
-- name: ensure IAM instance role exists
-  iam_role:
-    name: ecsInstanceRole
-    assume_role_policy_document: "{{ lookup('file','ec2-trust-policy.json') }}"
-    state: present
-    create_instance_profile: yes
-    managed_policy:
-    - AmazonEC2ContainerServiceforEC2Role
-
 - name: ensure IAM service role exists
   iam_role:
     name: "{{ ecs_service_role_name }}"
