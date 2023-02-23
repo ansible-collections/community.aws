@@ -1,5 +1,8 @@
-
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+# Copyright: Ansible Project
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
+
 from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
@@ -8,44 +11,45 @@ DOCUMENTATION = '''
 module: lightsail_snapshot
 version_added: "1.0.0"
 short_description: Creates snapshots of AWS Lightsail instances
-description: 
+description:
     - Creates snapshots of AWS Lightsail instances
 author:
     - "Nuno Saavedra (@Nfsaavedra)"
 options:
-    state:
-      description:
-        - Indicate desired state of the target.
-      default: present
-      choices: ['present', 'absent']
-      type: str
-    region:
-      description: AWS region in which to create the instance snapshot.
-      required: true
-      type: str
-    snapshot_name:
-      description: Name of the new instance snapshot
-      required: true
-      type: str
-    instance_name:
-      description: 
-        - Name of the instance to create the snapshot
-        - Required when I(state=present)
-      type: str
-    wait:
-      description:
-        - Wait for the instance snapshot to be created before returning.
-      type: bool
-      default: true
-    wait_timeout:
-      description:
-        - How long before I(wait) gives up, in seconds.
-      default: 300
-      type: int
+  state:
+    description:
+      - Indicate desired state of the target.
+    default: present
+    choices: ['present', 'absent']
+    type: str
+  region:
+    description: AWS region in which to create the instance snapshot.
+    required: true
+    type: str
+  snapshot_name:
+    description: Name of the new instance snapshot
+    required: true
+    type: str
+  instance_name:
+    description:
+      - Name of the instance to create the snapshot
+      - Required when I(state=present)
+    type: str
+  wait:
+    description:
+      - Wait for the instance snapshot to be created before returning.
+    type: bool
+    default: true
+  wait_timeout:
+    description:
+      - How long before I(wait) gives up, in seconds.
+    default: 300
+    type: int
+
 extends_documentation_fragment:
 - amazon.aws.aws
-- amazon.aws.ec2
 - amazon.aws.boto3
+
 '''
 
 EXAMPLES = '''
@@ -73,24 +77,23 @@ snapshot:
   description: instance snapshot data
   type: dict
   returned: always
-  sample: 
-    arn: "arn:aws:lightsail:us-east-1:070807442430:InstanceSnapshot/54b0f785-7132-443d-9e32-95a6825636a4",
-    created_at: "2023-02-23T18:46:11.183000+00:00",
-    from_attached_disks: [],
-    from_blueprint_id: "amazon_linux_2",
-    from_bundle_id: "nano_2_0",
-    from_instance_arn: "arn:aws:lightsail:us-east-1:070807442430:Instance/5ca1e7ca-a994-4e19-bb82-deb9d79e9ca3",
-    from_instance_name: "my_instance",
-    is_from_auto_snapshot: false,
-    location: {
-        "availability_zone": "all",
-        "region_name": "us-east-1"
-    },
-    name: "my_instance_snapshot",
-    resource_type: "InstanceSnapshot",
-    size_in_gb: 20,
-    state: "available",
-    support_code: "351201681302/ami-06b48e5589f1e248b",
+  sample:
+    arn: "arn:aws:lightsail:us-east-1:070807442430:InstanceSnapshot/54b0f785-7132-443d-9e32-95a6825636a4"
+    created_at: "2023-02-23T18:46:11.183000+00:00"
+    from_attached_disks: []
+    from_blueprint_id: "amazon_linux_2"
+    from_bundle_id: "nano_2_0"
+    from_instance_arn: "arn:aws:lightsail:us-east-1:070807442430:Instance/5ca1e7ca-a994-4e19-bb82-deb9d79e9ca3"
+    from_instance_name: "my_instance"
+    is_from_auto_snapshot: false
+    location:
+      availability_zone: "all"
+      region_name: "us-east-1"
+    name: "my_instance_snapshot"
+    resource_type: "InstanceSnapshot"
+    size_in_gb: 20
+    state: "available"
+    support_code: "351201681302/ami-06b48e5589f1e248b"
     tags: []
 '''
 
@@ -135,31 +138,31 @@ def wait_for_instance_snapshot(module, client, instance_snapshot_name):
         time.sleep(5)
     else:
         module.fail_json(msg='Timed out waiting for instance snapshot "{0}" to be created.'
-                                .format(instance_snapshot_name))
-    
+                         .format(instance_snapshot_name))
+
     return snapshot
 
 
 def create_snapshot(module, client):
     snapshot = find_instance_snapshot_info(module, client, module.params.get('snapshot_name'))
-    new_instance = (snapshot == None)
+    new_instance = (snapshot is None)
 
     if module.check_mode or not new_instance:
-        snapshot = snapshot if snapshot != None else {}
-        module.exit_json(changed=new_instance, 
+        snapshot = snapshot if snapshot is not None else {}
+        module.exit_json(changed=new_instance,
                          instance_snapshot=camel_dict_to_snake_dict(snapshot))
 
     try:
         snapshot = client.create_instance_snapshot(instanceSnapshotName=module.params.get('snapshot_name'),
                                                    instanceName=module.params.get('instance_name'))
     except botocore.exceptions.ClientError as e:
-            module.fail_json_aws(e)
-    
+        module.fail_json_aws(e)
+
     if module.params.get('wait'):
         snapshot = wait_for_instance_snapshot(module, client, module.params.get('snapshot_name'))
 
-    module.exit_json(changed=new_instance, 
-        instance_snapshot=camel_dict_to_snake_dict(snapshot))
+    module.exit_json(changed=new_instance,
+                     instance_snapshot=camel_dict_to_snake_dict(snapshot))
 
 
 def delete_snapshot(module, client):
@@ -187,13 +190,13 @@ def main():
         wait_timeout=dict(default=300, type='int'),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, 
-                              required_if=[['state', 'present', ('instance_name',)]], 
+    module = AnsibleAWSModule(argument_spec=argument_spec,
+                              required_if=[['state', 'present', ('instance_name',)]],
                               supports_check_mode=True)
     client = module.client('lightsail')
 
     state = module.params.get('state')
-    
+
     if state == 'present':
         create_snapshot(module, client)
     elif state == 'absent':

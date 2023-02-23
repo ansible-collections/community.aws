@@ -7,7 +7,7 @@
 DOCUMENTATION = r"""
 ---
 module: lightsail
-version_added: 1.0.0
+version_added: 1.1.0
 short_description: Manage instances in AWS Lightsail
 description:
   - Manage instances in AWS Lightsail.
@@ -51,6 +51,7 @@ options:
     description:
       - A list of dictionaries to describe the ports to open for the specified instance.
     type: list
+    elements: dict
     default:
       - fromPort: 22
         toPort: 22
@@ -218,8 +219,8 @@ def wait_for_instance_state(module, client, instance_name, states):
 def update_public_ports(module, client, instance_name):
     try:
         client.put_instance_public_ports(
-          portInfos=module.params.get('public_ports_info'),
-          instanceName=instance_name
+            portInfos=module.params.get('public_ports_info'),
+            instanceName=instance_name
         )
     except botocore.exceptions.ClientError as e:
         module.fail_json_aws(e)
@@ -230,11 +231,13 @@ def create_or_update_instance(module, client, instance_name):
     inst = find_instance_info(module, client, instance_name)
 
     if not inst:
-        create_params = {'instanceNames': [instance_name],
-                        'availabilityZone': module.params.get('zone'),
-                        'blueprintId': module.params.get('blueprint_id'),
-                        'bundleId': module.params.get('bundle_id'),
-                        'userData': module.params.get('user_data')}
+        create_params = {
+            'instanceNames': [instance_name],
+            'availabilityZone': module.params.get('zone'),
+            'blueprintId': module.params.get('blueprint_id'),
+            'bundleId': module.params.get('bundle_id'),
+            'userData': module.params.get('user_data')
+        }
 
         key_pair_name = module.params.get('key_pair_name')
         if key_pair_name:
@@ -254,7 +257,7 @@ def create_or_update_instance(module, client, instance_name):
     after_update_inst = find_instance_info(module, client, instance_name, fail_if_not_found=True)
 
     module.exit_json(
-        changed=after_update_inst != inst, 
+        changed=after_update_inst != inst,
         instance=camel_dict_to_snake_dict(after_update_inst)
     )
 
@@ -347,22 +350,21 @@ def main():
         user_data=dict(type='str', default=''),
         wait=dict(type='bool', default=True),
         wait_timeout=dict(default=300, type='int'),
-
-        public_ports_info=dict(type='list', default=[
-          {
-            'fromPort': 22,
-            'toPort': 22,
-            'protocol': 'tcp',
-            'cidrs': ['0.0.0.0/0'],
-            'ipv6Cidrs': ['::/0'],
-          },
-          {
-            'fromPort': 80,
-            'toPort': 80,
-            'protocol': 'tcp',
-            'cidrs': ['0.0.0.0/0'],
-            'ipv6Cidrs': ['::/0'],
-          },
+        public_ports_info=dict(type='list', elements='dict', default=[
+            {
+                'fromPort': 22,
+                'toPort': 22,
+                'protocol': 'tcp',
+                'cidrs': ['0.0.0.0/0'],
+                'ipv6Cidrs': ['::/0'],
+            },
+            {
+                'fromPort': 80,
+                'toPort': 80,
+                'protocol': 'tcp',
+                'cidrs': ['0.0.0.0/0'],
+                'ipv6Cidrs': ['::/0'],
+            },
         ])
     )
 
