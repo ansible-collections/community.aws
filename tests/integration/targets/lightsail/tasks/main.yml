@@ -34,9 +34,6 @@
           - "result.instance.networking.ports[0].from_port == 50"
           - "{{ result.instance.networking.ports|length }} == 1"
 
-    - debug:
-        msg: "{{ result }}"
-
     - name: Make sure create is idempotent
       lightsail:
         name: "{{ instance_name }}"

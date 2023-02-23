@@ -51,7 +51,7 @@ options:
     description:
       - A list of dictionaries to describe the ports to open for the specified instance.
     type: list
-    default
+    default:
       - fromPort: 22
         toPort: 22
         protocol: 'tcp'
