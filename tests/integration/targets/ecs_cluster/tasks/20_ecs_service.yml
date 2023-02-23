@@ -667,7 +667,7 @@
     state: present
     create_instance_profile: false
     managed_policy:
-    - AmazonEC2ContainerServiceRole
+      - AmazonECSTaskExecutionRolePolicy
     wait: True
   register: iam_execution_role
 
