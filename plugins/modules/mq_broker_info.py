@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: mq_broker_info
-version_added: 4.1.0
+version_added: 6.0.0
 short_description: Retrieve MQ Broker details
 description:
   - Get details about a broker.
@@ -25,8 +25,9 @@ options:
       - Is ignored if I(broker_id) is specified.
     type: str
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
 '''
 
 

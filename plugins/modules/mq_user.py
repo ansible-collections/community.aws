@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: mq_user
-version_added: 4.1.0
+version_added: 6.0.0
 short_description: Manage users in existing Amazon MQ broker
 description:
   - Manage Amazon MQ users.
@@ -57,8 +57,9 @@ options:
     default: false
     type: bool
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
 '''
 
 EXAMPLES = '''

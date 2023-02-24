@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: mq_broker_config
-version_added: 4.1.0
+version_added: 6.0.0
 short_description: Update Amazon MQ broker configuration
 description:
   - Update configuration for an MQ broker.
@@ -39,8 +39,9 @@ options:
     type: bool
     default: false
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
 '''
 
 EXAMPLES = '''

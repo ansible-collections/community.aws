@@ -9,7 +9,7 @@ __metaclass__ = type
 DOCUMENTATION = '''
 ---
 module: mq_user_info
-version_added: 4.1.0
+version_added: 6.0.0
 short_description: List users of an Amazon MQ broker
 description:
   - List users for the specified broker ID.
@@ -44,8 +44,9 @@ options:
     default: false
 
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
 '''
 
 
