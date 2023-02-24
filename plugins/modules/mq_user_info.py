@@ -2,11 +2,7 @@
 #
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: mq_user_info
 version_added: 6.0.0
@@ -47,10 +43,10 @@ extends_documentation_fragment:
   - amazon.aws.boto3
   - amazon.aws.common.modules
   - amazon.aws.region.modules
-'''
+"""
 
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: get all users as list - relying on environment for API credentials
   amazon.aws.mq_user_info:
     broker_id: "aws-mq-broker-id"
@@ -68,16 +64,16 @@ EXAMPLES = '''
   amazon.aws.mq_user_info:
     broker_id: "aws-mq-broker-id"
     skip_pending_create: true
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 users:
     type: dict
     returned: success
     description:
     - dict key is username
     - each entry is the record for a user as returned by API but converted to snake yaml
-'''
+"""
 
 try:
     import botocore
@@ -89,64 +85,56 @@ from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSM
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
 
-DEFAULTS = {
-    'max_results': 100,
-    'skip_pending_create': False,
-    'skip_pending_delete': False,
-    'as_dict': True
-}
+DEFAULTS = {"max_results": 100, "skip_pending_create": False, "skip_pending_delete": False, "as_dict": True}
 
 
 def get_user_info(conn, module):
     try:
-        response = conn.list_users(BrokerId=module.params['broker_id'],
-                                   MaxResults=module.params['max_results'])
+        response = conn.list_users(BrokerId=module.params["broker_id"], MaxResults=module.params["max_results"])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         if module.check_mode:
             # return empty set for unknown broker in check mode
-            if DEFAULTS['as_dict']:
+            if DEFAULTS["as_dict"]:
                 return {}
-            else:
-                return []
-        else:
-            module.fail_json_aws(e, msg='Failed to describe users')
+            return []
+        module.fail_json_aws(e, msg="Failed to describe users")
     #
-    if not module.params['skip_pending_create'] and not module.params['skip_pending_delete']:
+    if not module.params["skip_pending_create"] and not module.params["skip_pending_delete"]:
         # we can simply return the sub-object from the response
-        records = response['Users']
+        records = response["Users"]
     else:
         records = []
-        for record in response['Users']:
-            if 'PendingChange' in record:
-                if record['PendingChange'] == 'CREATE' and module.params['skip_pending_create']:
+        for record in response["Users"]:
+            if "PendingChange" in record:
+                if record["PendingChange"] == "CREATE" and module.params["skip_pending_create"]:
                     continue
-                if record['PendingChange'] == 'DELETE' and module.params['skip_pending_delete']:
+                if record["PendingChange"] == "DELETE" and module.params["skip_pending_delete"]:
                     continue
             #
             records.append(record)
     #
-    if DEFAULTS['as_dict']:
+    if DEFAULTS["as_dict"]:
         user_records = {}
         for record in records:
-            user_records[record['Username']] = record
+            user_records[record["Username"]] = record
         #
-        return camel_dict_to_snake_dict(user_records, ignore_list=['Tags'])
-    else:
-        return camel_dict_to_snake_dict(records, ignore_list=['Tags'])
+        return camel_dict_to_snake_dict(user_records, ignore_list=["Tags"])
+
+    return camel_dict_to_snake_dict(records, ignore_list=["Tags"])
 
 
 def main():
     argument_spec = dict(
-        broker_id=dict(required=True, type='str'),
-        max_results=dict(required=False, type='int', default=DEFAULTS['max_results']),
-        skip_pending_create=dict(required=False, type='bool', default=DEFAULTS['skip_pending_create']),
-        skip_pending_delete=dict(required=False, type='bool', default=DEFAULTS['skip_pending_delete']),
-        as_dict=dict(required=False, type='bool', default=False),
+        broker_id=dict(required=True, type="str"),
+        max_results=dict(required=False, type="int", default=DEFAULTS["max_results"]),
+        skip_pending_create=dict(required=False, type="bool", default=DEFAULTS["skip_pending_create"]),
+        skip_pending_delete=dict(required=False, type="bool", default=DEFAULTS["skip_pending_delete"]),
+        as_dict=dict(required=False, type="bool", default=False),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
-    connection = module.client('mq')
+    connection = module.client("mq")
 
     try:
         user_records = get_user_info(connection, module)
@@ -156,5 +144,5 @@ def main():
     module.exit_json(users=user_records)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

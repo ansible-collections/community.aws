@@ -2,11 +2,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: mq_user
 version_added: 6.0.0
@@ -60,9 +56,9 @@ extends_documentation_fragment:
   - amazon.aws.boto3
   - amazon.aws.common.modules
   - amazon.aws.region.modules
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: create/update user - set provided password if user doesn't exist, yet
   amazon.aws.mq_user:
     state: present
@@ -83,19 +79,18 @@ EXAMPLES = '''
     state: absent
     broker_id: "aws-mq-broker-id"
     username: "other_user"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 user:
     description:
       - just echos the username
       - "only present when state=present"
     type: str
     returned: success
-'''
+"""
 
 import secrets
-import sys
 
 try:
     import botocore
@@ -103,23 +98,24 @@ except ImportError as ex:
     # handled by AnsibleAWSModule
     pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-CREATE_DEFAULTS = {
-    'console_access': False,
-    'groups': [],
+from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 
+CREATE_DEFAULTS = {
+    "console_access": False,
+    "groups": [],
 }
 
 
 def _group_change_required(user_response, requested_groups):
     current_groups = []
-    if 'Groups' in user_response:
-        current_groups = user_response['Groups']
-    elif 'Pending' in user_response:
+    if "Groups" in user_response:
+        current_groups = user_response["Groups"]
+    elif "Pending" in user_response:
         # to support automatic testing without broker reboot
-        current_groups = user_response['Pending']['Groups']
+        current_groups = user_response["Pending"]["Groups"]
     if len(current_groups) != len(requested_groups):
         return True
     if len(current_groups) != len(set(current_groups) & set(requested_groups)):
@@ -129,12 +125,12 @@ def _group_change_required(user_response, requested_groups):
 
 
 def _console_access_change_required(user_response, requested_boolean):
-    current_boolean = CREATE_DEFAULTS['console_access']
-    if 'ConsoleAccess' in user_response:
-        current_boolean = user_response['ConsoleAccess']
-    elif 'Pending' in user_response:
+    current_boolean = CREATE_DEFAULTS["console_access"]
+    if "ConsoleAccess" in user_response:
+        current_boolean = user_response["ConsoleAccess"]
+    elif "Pending" in user_response:
         # to support automatic testing without broker reboot
-        current_boolean = user_response['Pending']['ConsoleAccess']
+        current_boolean = user_response["Pending"]["ConsoleAccess"]
     #
     return current_boolean != requested_boolean
 
@@ -145,22 +141,19 @@ def generate_password():
 
 # returns API response object
 def _create_user(conn, module):
-    kwargs = {
-        'BrokerId': module.params['broker_id'],
-        'Username': module.params['username']
-    }
-    if 'groups' in module.params and module.params['groups'] is not None:
-        kwargs['Groups'] = module.params['groups']
+    kwargs = {"BrokerId": module.params["broker_id"], "Username": module.params["username"]}
+    if "groups" in module.params and module.params["groups"] is not None:
+        kwargs["Groups"] = module.params["groups"]
     else:
-        kwargs['Groups'] = CREATE_DEFAULTS['groups']
-    if 'password' in module.params and module.params['password']:
-        kwargs['Password'] = module.params['password']
+        kwargs["Groups"] = CREATE_DEFAULTS["groups"]
+    if "password" in module.params and module.params["password"]:
+        kwargs["Password"] = module.params["password"]
     else:
-        kwargs['Password'] = generate_password()
-    if 'console_access' in module.params and module.params['console_access'] is not None:
-        kwargs['ConsoleAccess'] = module.params['console_access']
+        kwargs["Password"] = generate_password()
+    if "console_access" in module.params and module.params["console_access"] is not None:
+        kwargs["ConsoleAccess"] = module.params["console_access"]
     else:
-        kwargs['ConsoleAccess'] = CREATE_DEFAULTS['console_access']
+        kwargs["ConsoleAccess"] = CREATE_DEFAULTS["console_access"]
     try:
         response = conn.create_user(**kwargs)
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -179,90 +172,90 @@ def _update_user(conn, module, kwargs):
 
 def get_matching_user(conn, module, broker_id, username):
     try:
-        return conn.describe_user(BrokerId=broker_id, Username=username)
-    except botocore.exceptions.ClientError as e:
-        if e.response['Error']['Code'] == 'NotFoundException':
-            return None
-        else:
-            module.fail_json_aws(e, msg="Couldn't get user details")
-    except botocore.exceptions.BotoCoreError as e:
+        response = conn.describe_user(BrokerId=broker_id, Username=username)
+    except is_boto3_error_code("NotFoundException"):
+        return None
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't get user details")
+    return response
 
 
 def ensure_user_present(conn, module):
-    user = get_matching_user(conn, module, module.params['broker_id'], module.params['username'])
+    user = get_matching_user(conn, module, module.params["broker_id"], module.params["username"])
     changed = False
 
     if user is None:
         if not module.check_mode:
-            response = _create_user(conn, module)
+            _response = _create_user(conn, module)
         changed = True
     else:
         kwargs = {}
-        if 'groups' in module.params and module.params['groups'] is not None:
-            if _group_change_required(user, module.params['groups']):
-                kwargs['Groups'] = module.params['groups']
-        if 'console_access' in module.params and module.params['console_access'] is not None:
-            if _console_access_change_required(user, module.params['console_access']):
-                kwargs['ConsoleAccess'] = module.params['console_access']
-        if 'password' in module.params and module.params['password']:
-            if 'allow_pw_update' in module.params and module.params['allow_pw_update']:
-                kwargs['Password'] = module.params['password']
+        if "groups" in module.params and module.params["groups"] is not None:
+            if _group_change_required(user, module.params["groups"]):
+                kwargs["Groups"] = module.params["groups"]
+        if "console_access" in module.params and module.params["console_access"] is not None:
+            if _console_access_change_required(user, module.params["console_access"]):
+                kwargs["ConsoleAccess"] = module.params["console_access"]
+        if "password" in module.params and module.params["password"]:
+            if "allow_pw_update" in module.params and module.params["allow_pw_update"]:
+                kwargs["Password"] = module.params["password"]
         if len(kwargs) == 0:
             changed = False
         else:
             if not module.check_mode:
-                kwargs['BrokerId'] = module.params['broker_id']
-                kwargs['Username'] = module.params['username']
+                kwargs["BrokerId"] = module.params["broker_id"]
+                kwargs["Username"] = module.params["username"]
                 response = _update_user(conn, module, kwargs)
             #
             changed = True
     #
-    user = get_matching_user(conn, module, module.params['broker_id'], module.params['username'])
+    user = get_matching_user(conn, module, module.params["broker_id"], module.params["username"])
 
-    return {
-        'changed': changed,
-        'user': camel_dict_to_snake_dict(user, ignore_list=['Tags'])
-    }
+    return {"changed": changed, "user": camel_dict_to_snake_dict(user, ignore_list=["Tags"])}
 
 
 def ensure_user_absent(conn, module):
-    user = get_matching_user(conn, module, module.params['broker_id'], module.params['username'])
+    user = get_matching_user(conn, module, module.params["broker_id"], module.params["username"])
+    result = {"changed": False}
     if user is None:
-        return {'changed': False}
+        return result
     # better support for testing
-    if 'Pending' in user and 'PendingChange' in user['Pending'] \
-            and user['Pending']['PendingChange'] == 'DELETE':
-        return {'changed': False}
+    if "Pending" in user and "PendingChange" in user["Pending"] and user["Pending"]["PendingChange"] == "DELETE":
+        return result
+
+    result = {"changed": True}
+    if module.check_mode:
+        return result
+
     try:
-        if not module.check_mode:
-            conn.delete_user(BrokerId=user['BrokerId'], Username=user['Username'])
-        return {'changed': True}
+        conn.delete_user(BrokerId=user["BrokerId"], Username=user["Username"])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Couldn't delete user")
+
+    return result
 
 
 def main():
     argument_spec = dict(
-        broker_id=dict(required=True, type='str'),
-        username=dict(required=True, type='str'),
-        console_access=dict(required=False, type='bool'),
-        groups=dict(required=False, type='list', elements='str'),
-        password=dict(required=False, type='str', no_log=True),
-        allow_pw_update=dict(default=False, required=False, type='bool'),
-        state=dict(default='present', choices=['present', 'absent'])
+        broker_id=dict(required=True, type="str"),
+        username=dict(required=True, type="str"),
+        console_access=dict(required=False, type="bool"),
+        groups=dict(required=False, type="list", elements="str"),
+        password=dict(required=False, type="str", no_log=True),
+        allow_pw_update=dict(default=False, required=False, type="bool"),
+        state=dict(default="present", choices=["present", "absent"]),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
-    connection = module.client('mq')
+    connection = module.client("mq")
 
-    state = module.params.get('state')
+    state = module.params.get("state")
 
     try:
-        if state == 'present':
+        if state == "present":
             result = ensure_user_present(connection, module)
-        elif state == 'absent':
+        elif state == "absent":
             result = ensure_user_absent(connection, module)
     except botocore.exceptions.ClientError as e:
         module.fail_json_aws(e)
@@ -270,5 +263,5 @@ def main():
     module.exit_json(**result)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
