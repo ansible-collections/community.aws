@@ -403,6 +403,19 @@
             - "'bounce_topic' not in result.notification_attributes"
             - "'delivery_topic' not in result.notification_attributes"
             - "'complaint_topic' not in result.notification_attributes"
+    always:
+      - name: cleanup topics
+        sns_topic:
+          name: "{{ notification_queue_name }}-{{ item }}"
+          state: absent
+        with_items:
+          - bounce
+          - complaint
+          - delivery
+      - name: cleanup email identity
+        aws_ses_identity:
+          identity: "{{ email_identity }}"
+          state: absent
   # ============================================================
   - name: test change notification settings check mode
     block:
