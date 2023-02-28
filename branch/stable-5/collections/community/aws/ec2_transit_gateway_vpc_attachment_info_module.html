@@ -365,18 +365,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-t
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Describe a specific Transit Gateway attachment.</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment_info</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;tgw-attach-0123456789abcdef0&#39;</span>
 
 <span class="c1"># Describe all attachments attached to a transit gateway.</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment_info</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">transit-gateway-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tgw-0fedcba9876543210&#39;</span>
 
 <span class="c1"># Describe all attachments in an account.</span>
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.ec2_transit_gateway_vpc_attachment_info</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">filters</span><span class="p">:</span>
 <span class="w">      </span><span class="nt">transit-gateway-id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tgw-0fedcba9876543210&#39;</span>
 </pre></div>
