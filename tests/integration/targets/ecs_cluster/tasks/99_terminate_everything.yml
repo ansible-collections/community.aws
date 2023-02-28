@@ -18,6 +18,8 @@
   ignore_errors: true
 
 - name: scale down ECS service
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}"
@@ -42,6 +44,8 @@
   register: ecs_service_info
 
 - name: scale down second ECS service
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}2"
@@ -58,6 +62,8 @@
   register: ecs_service_scale_down
 
 - name: scale down multifunction-test service
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-mft"
     cluster: "{{ ecs_cluster_name }}"
@@ -72,6 +78,8 @@
   register: ecs_service_scale_down
 
 - name: scale down scheduling_strategy service
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     name: "{{ ecs_service_name }}-replica"
     cluster: "{{ ecs_cluster_name }}"
@@ -86,6 +94,8 @@
   register: ecs_service_scale_down
 
 - name: scale down Fargate ECS service
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}4"
