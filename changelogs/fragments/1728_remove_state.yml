@@ -1,0 +1,2 @@
+trivial: 
+- ec2_transit_gateway_vpc_attachement_info - removed incorrect ``state`` keyword from example (https://github.com/ansible-collections/community.aws/pull/1728).
