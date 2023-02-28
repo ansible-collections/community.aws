@@ -370,6 +370,40 @@
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
+  - name: test clear notification settings
+    block:
+      - name: test topic
+        sns_topic:
+          name: "{{ notification_queue_name }}-{{ item }}"
+          state: present
+        register: topic_info
+        with_items:
+          - bounce
+          - complaint
+          - delivery
+      - name: register email identity
+        aws_ses_identity:
+          identity: "{{ email_identity }}"
+          state: present
+          bounce_notifications:
+            topic: "{{ topic_info.results[0].sns_arn }}"
+          complaint_notifications:
+            topic: "{{ topic_info.results[1].sns_arn }}"
+          delivery_notifications:
+            topic: "{{ topic_info.results[2].sns_arn }}"
+      - name: clear notification settings
+        aws_ses_identity:
+          identity: "{{ email_identity }}"
+          state: present
+        register: result
+      - name: assert notification settings
+        assert:
+          that:
+            - result.changed == True
+            - "'bounce_topic' not in result.notification_attributes"
+            - "'delivery_topic' not in result.notification_attributes"
+            - "'complaint_topic' not in result.notification_attributes"
+  # ============================================================
   - name: test change notification settings check mode
     block:
       - name: test topic
