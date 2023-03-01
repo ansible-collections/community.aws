@@ -291,6 +291,10 @@ def get_identity_notifications(connection, module, identity, retries=0, retryDel
     return notification_attributes[identity]
 
 
+def has_notification_configuration(module, notification_type):
+    return f'{notification_type.lower()}_notifications' in module.params
+
+
 def desired_topic(module, notification_type):
     arg_dict = module.params.get(notification_type.lower() + '_notifications')
     if arg_dict:
@@ -300,6 +304,10 @@ def desired_topic(module, notification_type):
 
 
 def update_notification_topic(connection, module, identity, identity_notifications, notification_type):
+    # Not passing the parameter should not cause any changes.
+    if not has_notification_configuration(module, notification_type):
+        return False
+
     topic_key = notification_type + 'Topic'
     if identity_notifications is None:
         # If there is no configuration for notifications cannot be being sent to topics

@@ -370,7 +370,7 @@
           identity: "{{ email_identity }}"
           state: absent
   # ============================================================
-  - name: test clear notification settings
+  - name: test clear notification configuration
     block:
       - name: test topic
         sns_topic:
@@ -395,6 +395,9 @@
         aws_ses_identity:
           identity: "{{ email_identity }}"
           state: present
+          bounce_notifications: {}
+          complaint_notifications: {}
+          delivery_notifications: {}
         register: result
       - name: assert notification settings
         assert:
