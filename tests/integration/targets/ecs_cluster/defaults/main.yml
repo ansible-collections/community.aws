@@ -4,6 +4,8 @@ user_data: |
   echo ECS_CLUSTER={{ ecs_cluster_name }} >> /etc/ecs/ecs.config
 
 ecs_service_name: "{{ resource_prefix }}-service"
+ecs_service_role_name: "ansible-test-ecsServiceRole-{{ tiny_prefix }}"
+ecs_task_role_name: "ansible-test-ecsServiceRole-task-{{ tiny_prefix }}"
 ecs_task_image_path: nginx
 ecs_task_name: "{{ resource_prefix }}-task"
 ecs_task_memory: 128
