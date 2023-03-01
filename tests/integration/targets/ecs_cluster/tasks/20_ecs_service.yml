@@ -671,6 +671,10 @@
     wait: True
   register: iam_execution_role
 
+- name: pause for iam availability
+  ansible.builtin.pause:
+    seconds: 20
+
 - name: create Fargate VPC-networked task definition with host port set to 8080 and unsupported network mode (expected to fail)
   ecs_taskdefinition:
     containers: "{{ ecs_fargate_task_containers }}"
