@@ -113,6 +113,8 @@
       - ecs_service_again.changed
 
 - name: force_new_deployment should work without providing a task_definition
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     force_new_deployment: yes
