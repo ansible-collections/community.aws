@@ -80,7 +80,7 @@ options:
       - Has to be included when publishing a message to a fifo topic.
       - Can contain up to 128 alphanumeric characters and punctuation.
     type: str
-  message_group_id:
+  message_deduplication_id:
     description:
       - Only in connection with the message_group_id.
       - Overwrites the auto generated MessageDeduplicationId.
