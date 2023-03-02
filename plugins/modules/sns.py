@@ -88,7 +88,7 @@ options:
       - Messages with the same deduplication id getting recognized as the same message.
       - Gets overwritten by an auto generated token, if the topic has ContentBasedDeduplication set.
     type: str
-    
+
 extends_documentation_fragment:
   - amazon.aws.region.modules
   - amazon.aws.common.modules
@@ -130,8 +130,7 @@ EXAMPLES = r"""
     msg: "Message with message group id"
     subject: Deploy complete!
     message_group_id: "deploy-1"
-  delegate_to: localhost
-    
+  delegate_to: localhost    
 """
 
 RETURN = r"""
