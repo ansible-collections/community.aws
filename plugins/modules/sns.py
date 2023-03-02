@@ -79,6 +79,7 @@ options:
       - A tag which is used to process messages that belong to the same group in a FIFO manner.
       - Has to be included when publishing a message to a fifo topic.
       - Can contain up to 128 alphanumeric characters and punctuation.
+    type: str
   message_group_id:
     description:
       - Only in connection with the message_group_id.
@@ -86,6 +87,8 @@ options:
       - Can contain up to 128 alphanumeric characters and punctuation.
       - Messages with the same deduplication id getting recognized as the same message.
       - Gets overwritten by an auto generated token, if the topic has ContentBasedDeduplication set.
+    type: str
+    
 extends_documentation_fragment:
   - amazon.aws.region.modules
   - amazon.aws.common.modules
@@ -180,7 +183,7 @@ def main():
         message_attributes=dict(type='dict'),
         message_structure=dict(choices=['json', 'string'], default='json'),
         message_group_id=dict(),
-        message_deduplication_d=dict(),
+        message_deduplication_id=dict(),
     )
 
     for p in protocols:
