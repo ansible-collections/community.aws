@@ -74,6 +74,18 @@ options:
     default: json
     choices: ['json', 'string']
     type: str
+  message_group_id:
+    description:
+      - A tag which is used to process messages that belong to the same group in a FIFO manner.
+      - Has to be included when publishing a message to a fifo topic.
+      - Can contain up to 128 alphanumeric characters and punctuation.
+  message_group_id:
+    description:
+      - Only in connection with the message_group_id.
+      - Overwrites the auto generated MessageDeduplicationId.
+      - Can contain up to 128 alphanumeric characters and punctuation.
+      - Messages with the same deduplication id getting recognized as the same message.
+      - Gets overwritten by an auto generated token, if the topic has ContentBasedDeduplication set.
 extends_documentation_fragment:
   - amazon.aws.region.modules
   - amazon.aws.common.modules
@@ -108,6 +120,15 @@ EXAMPLES = r"""
         data_type: String
         string_value: "green"
   delegate_to: localhost
+
+- name: Send message to a fifo topic
+  community.aws.sns:
+    topic: "deploy"
+    msg: "Message with message group id"
+    subject: Deploy complete!
+    message_group_id: "deploy-1"
+  delegate_to: localhost
+    
 """
 
 RETURN = r"""
@@ -121,6 +142,10 @@ message_id:
   returned: when success
   type: str
   sample: 2f681ef0-6d76-5c94-99b2-4ae3996ce57b
+sequence_number:
+  description: A 128 bits long sequence number which gets assigned to the message in fifo topics
+  returned: when success
+  type: str
 """
 
 import json
@@ -154,6 +179,8 @@ def main():
         topic=dict(required=True),
         message_attributes=dict(type='dict'),
         message_structure=dict(choices=['json', 'string'], default='json'),
+        message_group_id=dict(),
+        message_deduplication_d=dict(),
     )
 
     for p in protocols:
@@ -171,6 +198,11 @@ def main():
         if module.params['message_structure'] != 'string':
             module.fail_json(msg='message_attributes is only supported when the message_structure is "string".')
         sns_kwargs['MessageAttributes'] = module.params['message_attributes']
+
+    if module.params['message_group_id']:
+        sns_kwargs['MessageGroupId'] = module.params['message_group_id']
+        if module.params['message_deduplication_id']:
+            sns_kwargs['MessageDeduplicationId'] = module.params['message_deduplication_id']
 
     dict_msg = {
         'default': sns_kwargs['Message']
@@ -202,7 +234,15 @@ def main():
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to publish message')
 
-    module.exit_json(msg='OK', message_id=result['MessageId'])
+    sns_result = dict(
+        msg='OK',
+        message_id=result['MessageId']
+    )
+
+    if sns_kwargs['MessageGroupId']:
+        sns_result['sequence_number'] = result['SequenceNumber']
+
+    module.exit_json(**sns_result)
 
 
 if __name__ == '__main__':

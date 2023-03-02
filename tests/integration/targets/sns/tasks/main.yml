@@ -42,9 +42,36 @@
         subject: Second test message
         msg: Simple test message
 
+    - name: Create an FIFO SNS topic
+      sns_topic:
+        name: "{{ sns_fifo_topic_name }}"
+        display_name: "Test fifo topic"
+        topic_type: "fifo"
+      register: sns_topic
+
+    - name: Publish to the fifo topic
+      sns:
+        topic: "{{ sns_fifo_topic_name }}"
+        subject: Fifo test message
+        msg: Simple test message
+        message_group_id: group-id
+        message_deduplication_id: deduplication-id
+      register: result
+
+    - name: Check for expected result structure
+      assert:
+        that:
+          - result is not changed
+          - "'sequence_number' in result"
   always:
     - name: Remove topic
       sns_topic:
         name: "{{ sns_topic_name }}"
+        state: absent
+      ignore_errors: yes
+
+    - name: Remove topic
+      sns_topic:
+        name: "{{ sns_fifo_topic_name }}"
         state: absent
       ignore_errors: yes
