@@ -242,7 +242,7 @@ def main():
         message_id=result['MessageId']
     )
 
-    if module.params['message_attributes']:
+    if module.params['message_group_id']:
         sns_result['sequence_number'] = result['SequenceNumber']
 
     module.exit_json(**sns_result)
