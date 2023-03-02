@@ -713,7 +713,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ecs-s
 <a class="ansibleOptionLink" href="#parameter-task_definition" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The task definition the service will run.</p>
-<p>This parameter is required when <em>state=present</em>.</p>
+<p>This parameter is required when <em>state=present</em> unless <em>force_new_deployment=True</em>.</p>
 <p>This parameter is ignored when updating a service with a <code class="docutils literal notranslate"><span class="pre">CODE_DEPLOY</span></code> deployment controller in which case the task definition is managed by Code Pipeline and cannot be updated.</p>
 </div></td>
 </tr>
