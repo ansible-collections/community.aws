@@ -1,0 +1,2 @@
+minor-change:
+  - sns - Add support for ``message_group_id`` and ``message_deduplication_id`` (https://github.com/ansible-collections/community.aws/pull/1733).
