@@ -130,7 +130,7 @@ EXAMPLES = r"""
     msg: "Message with message group id"
     subject: Deploy complete!
     message_group_id: "deploy-1"
-  delegate_to: localhost    
+  delegate_to: localhost
 """
 
 RETURN = r"""
