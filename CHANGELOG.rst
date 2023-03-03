@@ -176,7 +176,7 @@ Breaking Changes / Porting Guide
 - cloudwatchlogs_log_group_info - The module has been migrated from the ``community.aws`` collection. Playbooks using the Fully Qualified Collection Name for this module should be updated to use ``amazon.aws.cloudwatchlogs_log_group_info``.
 - cloudwatchlogs_log_group_metric_filter - The module has been migrated from the ``community.aws`` collection. Playbooks using the Fully Qualified Collection Name for this module should be updated to use ``amazon.aws.cloudwatchlogs_log_group_metric_filter``.
 - community.aws collection - Support for ansible-core < 2.11 has been dropped (https://github.com/ansible-collections/community.aws/pull/1541).
-- community.aws collection - The community.aws collection has dropped support for ``botocore<1.21.0`` and ``boto3<1.18.0``. Most modules will continue to work with older versions of the AWS SDK, however compatability with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/1362).
+- community.aws collection - The community.aws collection has dropped support for ``botocore<1.21.0`` and ``boto3<1.18.0``. Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/1362).
 - ec2_eip - The module has been migrated from the ``community.aws`` collection. Playbooks using the Fully Qualified Collection Name for this module should be updated to use ``amazon.aws.ec2_eip``.
 - ec2_eip_info - The module has been migrated from the ``community.aws`` collection. Playbooks using the Fully Qualified Collection Name for this module should be updated to use ``amazon.aws.ec2_eip_info``.
 - ec2_vpc_vpn - the previously deprecated default value of ``purge_tags=False`` has been updated to ``purge_tags=True`` (https://github.com/ansible-collections/community.aws/pull/1343).
@@ -323,7 +323,7 @@ v4.0.0
 Major Changes
 -------------
 
-- community.aws collection - The amazon.aws collection has dropped support for ``botocore<1.20.0`` and ``boto3<1.17.0``. Most modules will continue to work with older versions of the AWS SDK, however compatability with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/956).
+- community.aws collection - The amazon.aws collection has dropped support for ``botocore<1.20.0`` and ``boto3<1.17.0``. Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/956).
 
 Minor Changes
 -------------
@@ -757,7 +757,7 @@ v3.0.0
 Major Changes
 -------------
 
-- community.aws collection - The community.aws collection has dropped support for ``botocore<1.19.0`` and ``boto3<1.16.0``. Most modules will continue to work with older versions of the AWS SDK, however compatability with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/809).
+- community.aws collection - The community.aws collection has dropped support for ``botocore<1.19.0`` and ``boto3<1.16.0``. Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/809).
 
 Minor Changes
 -------------
@@ -970,7 +970,7 @@ Bugfixes
 - cloudfront_info - Switch to native boto3 paginators to fix reported bug when over 100 distributions exist (https://github.com/ansible-collections/community.aws/issues/769).
 - ec2_eip - fix bug when allocating an EIP but not associating it to a VPC (https://github.com/ansible-collections/community.aws/pull/731).
 - elb_classic_lb_info - fix empty list returned when names not defined (https://github.com/ansible-collections/community.aws/pull/693).
-- elb_instance - Python 3 compatability fix (https://github.com/ansible-collections/community.aws/issues/384).
+- elb_instance - Python 3 compatibility fix (https://github.com/ansible-collections/community.aws/issues/384).
 - iam_role_info - switch to jittered backoff to reduce rate limiting failures (https://github.com/ansible-collections/community.aws/pull/748).
 - rds_instance - Fixed issue with enabling enhanced monitoring on a pre-existing RDS instance (https://github.com/ansible-collections/community.aws/pull/747).
 - route53 - add missing set identifier in resource_record_set (https://github.com/ansible-collections/community.aws/pull/595).
@@ -992,41 +992,41 @@ v2.0.0
 Major Changes
 -------------
 
-- community.aws collection - The community.aws collection has dropped support for ``botocore<1.18.0`` and ``boto3<1.15.0`` (https://github.com/ansible-collections/community.aws/pull/711). Most modules will continue to work with older versions of the AWS SDK, however compatability with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/amazon.aws/pull/442).
+- community.aws collection - The community.aws collection has dropped support for ``botocore<1.18.0`` and ``boto3<1.15.0`` (https://github.com/ansible-collections/community.aws/pull/711). Most modules will continue to work with older versions of the AWS SDK, however compatibility with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/amazon.aws/pull/442).
 
 Minor Changes
 -------------
 
-- aws_eks_cluster - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- aws_eks_cluster - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - aws_kms_info - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - aws_s3_bucket_info - added test for botocore>=1.18.11 when attempting to fetch bucket ownership controls (https://github.com/ansible-collections/community.aws/pull/682)
 - aws_ses_rule_set - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - aws_sgw_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
 - cloudformation_exports_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
-- cloudformation_stack_set - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- cloudformation_stack_set - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - cloudfront_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
 - cloudwatchevent_rule - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
-- dynamodb_table - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- dynamodb_ttl - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- ec2_ami_copy - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- ec2_asg - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- dynamodb_table - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- dynamodb_ttl - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ec2_ami_copy - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ec2_asg - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - ec2_asg_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
-- ec2_launch_template - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ec2_launch_template - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - ec2_lc_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
-- ec2_transit_gateway - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- ec2_transit_gateway_info - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- ec2_vpc_peer - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ec2_transit_gateway - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ec2_transit_gateway_info - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ec2_vpc_peer - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - ec2_vpc_peer - use shared code for tagging peering connections (https://github.com/ansible-collections/community.aws/pull/614).
 - ec2_vpc_route_table - use shared code for tagging route tables (https://github.com/ansible-collections/community.aws/pull/616).
 - ec2_vpc_vgw - fix arguments-renamed pylint issue (https://github.com/ansible-collections/community.aws/pull/686).
 - ec2_vpc_vpn - fix arguments-renamed pylint issue (https://github.com/ansible-collections/community.aws/pull/686).
-- ecs_ecr - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- ecs_service - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- ecs_task - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ecs_ecr - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ecs_service - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ecs_task - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - ecs_task - remove unused import (https://github.com/ansible-collections/community.aws/pull/686).
-- ecs_taskdefinition - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- efs - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- efs_info - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- ecs_taskdefinition - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- efs - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- efs_info - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - elasticache_subnet_group - add return values (https://github.com/ansible-collections/community.aws/pull/723).
 - elasticache_subnet_group - add support for check_mode (https://github.com/ansible-collections/community.aws/pull/723).
 - elasticache_subnet_group - module migrated to boto3 AWS SDK (https://github.com/ansible-collections/community.aws/pull/723).
@@ -1034,25 +1034,25 @@ Minor Changes
 - elb_application_lb_info - added ``ip_address_type`` in output when gathering application load balancer parameters (https://github.com/ansible-collections/community.aws/pull/499).
 - elb_instance - make elb_instance idempotent when deregistering instances.  Merged from ec2_elb U(https://github.com/ansible/ansible/pull/31660).
 - elb_network_lb - added ``ip_address_type`` parameter to support changing network load balancer configuration (https://github.com/ansible-collections/community.aws/pull/499).
-- elb_target_group - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- elb_target_group - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - elb_target_group - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - iam - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - iam_group - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - iam_mfa_device_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
-- iam_role - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- iam_role - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - iam_role - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - iam_server_certificate_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
 - iam_user - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - kms_info - added a new ``keys_attr`` parameter to continue returning the key details in the ``keys`` attribute as well as the ``kms_keys`` attribute (https://github.com/ansible-collections/community.aws/pull/648).
-- lambda - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
-- rds_instance - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- lambda - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- rds_instance - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - rds_instance - convert ``preferred_maintenance_window`` days into lowercase so changed returns properly (https://github.com/ansible-collections/community.aws/pull/516).
 - rds_instance - use a generator rather than list comprehension (https://github.com/ansible-collections/community.aws/pull/688).
 - route53 - add rate-limiting retries while waiting for changes to propagate (https://github.com/ansible-collections/community.aws/pull/564).
 - route53 - add retries on ``PriorRequestNotComplete`` errors (https://github.com/ansible-collections/community.aws/pull/564).
 - route53 - update retry ``max_delay`` setting so that it can be set above 60 seconds (https://github.com/ansible-collections/community.aws/pull/564).
 - sns_topic - Added ``topic_type`` parameter to select type of SNS topic (either FIFO or Standard) (https://github.com/ansible-collections/community.aws/pull/599).
-- sqs_queue - Tests for compatability with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
+- sqs_queue - Tests for compatibility with older versions of the AWS SDKs have been removed (https://github.com/ansible-collections/community.aws/pull/675).
 - various community.aws modules - remove unused imports (https://github.com/ansible-collections/community.aws/pull/629)
 - wafv2_resources_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
 - wafv2_web_acl_info - ensure module runs in check_mode (https://github.com/ansible-collections/community.aws/issues/659).
@@ -1404,7 +1404,7 @@ Minor Changes
 - iam_role, iam_user and iam_group - the managed_policy option has been renamed to managed_policies (with an alias added)
 - iam_role, iam_user and iam_group - the purge_policy option has been renamed to purge_policies (with an alias added)
 - lambda - add a tracing_mode parameter to set the TracingConfig for AWS X-Ray. Also allow updating Lambda runtime.
-- purefa_volume - Change I(qos) parameter to I(bw_iops), but retain I(qos) as an alias for backwards compatability (https://github.com/ansible/ansible/pull/61577).
+- purefa_volume - Change I(qos) parameter to I(bw_iops), but retain I(qos) as an alias for backwards compatibility (https://github.com/ansible/ansible/pull/61577).
 - redshift - Add AWSRetry calls for errors outside our control
 - route53 - the module now has diff support.
 - sns_topic - Add backoff when we get Topic ``NotFound`` exceptions while listing the subscriptions.
