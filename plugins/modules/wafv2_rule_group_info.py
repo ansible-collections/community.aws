@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: wafv2_rule_group_info
 version_added: 1.5.0
@@ -31,16 +31,16 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: rule group info
   community.aws.wafv2_rule_group_info:
     name: test02
     scope: REGIONAL
-'''
+"""
 
-RETURN = """
+RETURN = r"""
 arn:
     description: Rule group arn
     sample: arn:aws:wafv2:eu-central-1:11111111:regional/rulegroup/test02/6e90c01a-e4eb-43e5-b6aa-b1604cedf7d7

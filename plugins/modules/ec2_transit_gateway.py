@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: ec2_transit_gateway
 short_description: Create and delete AWS Transit Gateways
 version_added: 1.0.0
@@ -76,9 +76,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create a new transit gateway using defaults
   community.aws.ec2_transit_gateway:
     state: present
@@ -112,9 +112,9 @@ EXAMPLES = '''
     region: ap-southeast-2
     transit_gateway_id: tgw-3a9aa123
   register: deleted_tgw
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 transit_gateway:
   description: The attributes of the transit gateway.
   type: complex
@@ -208,7 +208,7 @@ transit_gateway:
       returned: always
       type: str
       sample: tgw-3a9aa123
-'''
+"""
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError

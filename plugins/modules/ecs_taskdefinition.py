@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ecs_taskdefinition
 version_added: 1.0.0
@@ -631,9 +631,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create task definition
   community.aws.ecs_taskdefinition:
     containers:
@@ -767,13 +767,13 @@ EXAMPLES = r'''
         startPeriod: 15
         timeout: 15
     state: present
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 taskdefinition:
     description: a reflection of the input parameters
     type: dict
     returned: always
-'''
+"""
 
 try:
     import botocore

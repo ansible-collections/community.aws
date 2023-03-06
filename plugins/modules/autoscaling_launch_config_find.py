@@ -4,7 +4,7 @@
 # (c) 2015, Jose Armesto <jose@armesto.net>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: autoscaling_launch_config_find
 version_added: 1.0.0
@@ -39,9 +39,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.aws
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Search for the Launch Configurations that start with "app"
@@ -49,9 +49,9 @@ EXAMPLES = '''
     name_regex: app.*
     sort_order: descending
     limit: 2
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 image_id:
     description: AMI id
     returned: when Launch Configuration was found
@@ -128,7 +128,7 @@ associate_public_address:
     type: bool
     sample: True
 ...
-'''
+"""
 import re
 
 try:

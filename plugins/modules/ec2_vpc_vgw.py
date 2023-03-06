@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: ec2_vpc_vgw
 short_description: Create and delete AWS VPN Virtual Gateways
 version_added: 1.0.0
@@ -57,9 +57,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create a new VGW attached to a specific VPC
   community.aws.ec2_vpc_vgw:
     state: present
@@ -98,9 +98,9 @@ EXAMPLES = '''
     profile: personal
     vpn_gateway_id: vgw-3a9aa123
   register: deleted_vgw
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 vgw:
   description: A description of the VGW
   returned: success
@@ -131,7 +131,7 @@ vgw:
       type: str
       returned: success
       example: vpc-123456789abcdef01
-'''
+"""
 
 import time
 

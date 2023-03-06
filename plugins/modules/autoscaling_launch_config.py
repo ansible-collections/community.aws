@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: autoscaling_launch_config
 version_added: 1.0.0
@@ -183,9 +183,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 
 - name: create a launch configuration with an encrypted volume
   community.aws.autoscaling_launch_config:
@@ -251,9 +251,9 @@ EXAMPLES = r'''
       security_groups: "['sg-xxxx']"
       volumes: "{{ volumes }}"
     register: lc_info
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 arn:
   description: The Amazon Resource Name of the launch configuration.
   returned: when I(state=present)
@@ -437,7 +437,7 @@ security_groups:
   type: list
   sample:
   - sg-5e27db2f
-'''
+"""
 
 
 import traceback

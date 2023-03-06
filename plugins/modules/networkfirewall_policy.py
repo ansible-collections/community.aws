@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: networkfirewall_policy
 short_description: manage AWS Network Firewall policies
 version_added: 4.0.0
@@ -145,9 +145,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Create an AWS Network Firewall Policy with default rule order
 - community.aws.networkfirewall_policy:
     stateful_rule_order: 'default'
@@ -176,9 +176,9 @@ EXAMPLES = '''
 - community.aws.networkfirewall_policy:
     state: absent
     name: 'ExampleDropPolicy'
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 policy:
   description: The details of the policy
   type: dict
@@ -334,7 +334,7 @@ policy:
           type: dict
           returned: success
           example: {'tagName': 'Some Value'}
-'''
+"""
 
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule

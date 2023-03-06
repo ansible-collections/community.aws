@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, REY Remi
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: secretsmanager_secret
 version_added: 1.0.0
@@ -112,9 +112,9 @@ extends_documentation_fragment:
   - amazon.aws.tags
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Add string to AWS Secrets Manager
   community.aws.secretsmanager_secret:
     name: 'test_secret_string'
@@ -144,9 +144,9 @@ EXAMPLES = r'''
     secret_type: 'string'
     secret: "{{ lookup('community.general.random_string', length=16, special=false) }}"
     overwrite: false
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 secret:
   description: The secret information
   returned: always
@@ -210,7 +210,7 @@ secret:
       returned: when the secret has tags
       example: {'MyTagName': 'Some Value'}
       version_added: 4.0.0
-'''
+"""
 
 from ansible.module_utils._text import to_bytes
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

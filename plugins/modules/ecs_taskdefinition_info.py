@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ecs_taskdefinition_info
 version_added: 1.0.0
@@ -29,16 +29,16 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - community.aws.ecs_taskdefinition_info:
     task_definition: test-td
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 container_definitions:
     description: Returns a list of complex objects representing the containers
     returned: success
@@ -346,7 +346,7 @@ placement_constraints:
             description: A cluster query language expression to apply to the constraint.
             returned: when present
             type: str
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict

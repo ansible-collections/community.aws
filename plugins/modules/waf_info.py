@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: waf_info
 short_description: Retrieve information for WAF ACLs, Rules, Conditions and Filters
 version_added: 1.0.0
@@ -30,9 +30,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: obtain all WAF information
   community.aws.waf_info:
 
@@ -44,9 +44,9 @@ EXAMPLES = '''
   community.aws.waf_info:
     name: test_waf
     waf_regional: true
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 wafs:
   description: The WAFs that match the passed arguments.
   returned: success
@@ -112,7 +112,7 @@ wafs:
                 "type": "ByteMatch"
               }
             ]
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.waf import list_web_acls, get_web_acl

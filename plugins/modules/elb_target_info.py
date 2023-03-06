@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Yaakov Kuperman <ykuperman@gmail.com>
 # GNU General Public License v3.0+ # (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: elb_target_info
 version_added: 1.0.0
@@ -30,9 +30,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 # practical use case - dynamically de-registering and re-registering nodes
 
   - name: Get EC2 Metadata
@@ -127,7 +127,7 @@ EXAMPLES = """
 
 """
 
-RETURN = """
+RETURN = r"""
 instance_target_groups:
     description: a list of target groups to which the instance is registered to
     returned: always

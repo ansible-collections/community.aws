@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Shuang Wang <ooocamel@icloud.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: codecommit_repository
 version_added: 1.0.0
@@ -39,9 +39,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 repository_metadata:
   description: "Information about the repository."
   returned: always
@@ -117,9 +117,9 @@ response_metadata:
       returned: always
       type: str
       sample: "0"
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Create a new repository
 - community.aws.codecommit_repository:
     name: repo
@@ -129,7 +129,7 @@ EXAMPLES = '''
 - community.aws.codecommit_repository:
     name: repo
     state: absent
-'''
+"""
 
 try:
     import botocore

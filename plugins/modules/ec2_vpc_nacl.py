@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: ec2_vpc_nacl
 short_description: create and delete Network ACLs
 version_added: 1.0.0
@@ -79,9 +79,9 @@ extends_documentation_fragment:
   - amazon.aws.tags
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 
 # Complete example to create and delete a network ACL
 # that allows SSH, HTTP and ICMP in, and all traffic out.
@@ -139,8 +139,8 @@ EXAMPLES = r'''
   community.aws.ec2_vpc_nacl:
     nacl_id: acl-33b4ee5b
     state: absent
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 task:
   description: The result of the create, or delete action.
   returned: success
@@ -150,7 +150,7 @@ nacl_id:
   returned: success
   type: str
   sample: acl-123456789abcdef01
-'''
+"""
 
 try:
     import botocore

@@ -4,7 +4,7 @@
 # Copyright: (c) 2017, Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ssm_parameter
 version_added: 1.0.0
@@ -93,9 +93,9 @@ extends_documentation_fragment:
 notes:
   - Support for I(tags) and I(purge_tags) was added in release 5.3.0.
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create or update key/value pair in AWS SSM parameter store
   community.aws.ssm_parameter:
     name: "Hello"
@@ -163,9 +163,9 @@ EXAMPLES = '''
   community.aws.ssm_parameter:
     name: "Hello"
     tags: {}
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 parameter_metadata:
   type: dict
   description:
@@ -240,7 +240,7 @@ parameter_metadata:
       returned: when the parameter has tags
       example: {'MyTagName': 'Some Value'}
       version_added: 5.3.0
-'''
+"""
 
 import time
 

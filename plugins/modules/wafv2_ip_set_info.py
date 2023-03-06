@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: wafv2_ip_set_info
 version_added: 1.5.0
@@ -31,16 +31,16 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: test ip set
   wafv2_ip_set_info:
     name: test02
     scope: REGIONAL
-'''
+"""
 
-RETURN = """
+RETURN = r"""
 addresses:
   description: Current addresses of the ip set
   sample:

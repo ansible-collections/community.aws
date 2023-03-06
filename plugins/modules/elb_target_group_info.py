@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: elb_target_group_info
 version_added: 1.0.0
@@ -42,9 +42,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all target groups
@@ -60,9 +60,9 @@ EXAMPLES = r'''
       - tg1
       - tg2
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 target_groups:
     description: a list of target groups
     returned: always
@@ -202,7 +202,7 @@ target_groups:
             returned: always
             type: str
             sample: vpc-0123456
-'''
+"""
 
 try:
     import botocore

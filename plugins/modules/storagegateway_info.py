@@ -6,7 +6,7 @@
 
 # This module is sponsored by E.T.A.I. (www.etai.fr)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: storagegateway_info
 version_added: 1.0.0
@@ -46,9 +46,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 gateways:
   description: list of gateway objects
   returned: always
@@ -159,9 +159,9 @@ gateways:
           returned: always
           type: str
           sample: "present"
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: "Get AWS storage gateway information"
@@ -170,7 +170,7 @@ EXAMPLES = '''
 - name: "Get AWS storage gateway information for region eu-west-3"
   community.aws.aws_sgw_info:
     region: eu-west-3
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict

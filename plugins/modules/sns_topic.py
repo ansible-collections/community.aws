@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: sns_topic
 short_description: Manages AWS SNS topics and subscriptions
 version_added: 1.0.0
@@ -160,7 +160,7 @@ extends_documentation_fragment:
   - amazon.aws.region.modules
   - amazon.aws.tags.modules
   - amazon.aws.boto3
-'''
+"""
 
 EXAMPLES = r"""
 
@@ -213,7 +213,7 @@ EXAMPLES = r"""
     state: absent
 """
 
-RETURN = r'''
+RETURN = r"""
 sns_arn:
     description: The ARN of the topic you are modifying
     type: str
@@ -329,7 +329,7 @@ sns_topic:
       returned: always
       type: bool
       sample: false
-'''
+"""
 
 import json
 

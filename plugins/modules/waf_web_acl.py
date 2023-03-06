@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: waf_web_acl
 short_description: Create and delete WAF Web ACLs
 version_added: 1.0.0
@@ -83,9 +83,9 @@ options:
     default: false
     required: false
     type: bool
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
   - name: create web ACL
     community.aws.waf_web_acl:
       name: my_web_acl
@@ -101,9 +101,9 @@ EXAMPLES = r'''
     community.aws.waf_web_acl:
       name: my_web_acl
       state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 web_acl:
   description: contents of the Web ACL.
   returned: always
@@ -156,7 +156,7 @@ web_acl:
       returned: always
       type: str
       sample: 10fff965-4b6b-46e2-9d78-24f6d2e2d21c
-'''
+"""
 
 try:
     import botocore

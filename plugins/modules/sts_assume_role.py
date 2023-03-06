@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: sts_assume_role
 version_added: 1.0.0
@@ -54,9 +54,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 sts_creds:
     description: The temporary security credentials, which include an access key ID, a secret access key, and a security (or session) token
     returned: always
@@ -77,9 +77,9 @@ changed:
     description: True if obtaining the credentials succeeds
     type: bool
     returned: always
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Assume an existing role (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_AssumeRole.html)
@@ -98,7 +98,7 @@ EXAMPLES = '''
     tags:
       MyNewTag: value
 
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict

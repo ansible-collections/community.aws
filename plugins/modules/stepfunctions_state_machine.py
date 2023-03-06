@@ -4,7 +4,7 @@
 # Copyright (c) 2019, Tom De Keyser (@tdekeyser)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: stepfunctions_state_machine
 version_added: 1.0.0
@@ -48,9 +48,9 @@ extends_documentation_fragment:
     - amazon.aws.tags
 author:
     - Tom De Keyser (@tdekeyser)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Create a new AWS Step Functions state machine
 - name: Setup HelloWorld state machine
   community.aws.stepfunctions_state_machine:
@@ -74,14 +74,14 @@ EXAMPLES = '''
   community.aws.stepfunctions_state_machine:
     name: HelloWorldStateMachine
     state: absent
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 state_machine_arn:
     description: ARN of the AWS Step Functions state machine
     type: str
     returned: always
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (ansible_dict_to_boto3_tag_list,

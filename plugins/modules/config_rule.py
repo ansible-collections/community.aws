@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Aaron Smith <ajsmith10381@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: config_rule
 version_added: 1.0.0
@@ -86,9 +86,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create Config Rule for AWS Config
   community.aws.config_rule:
     name: test_config_rule
@@ -101,9 +101,9 @@ EXAMPLES = '''
         owner: AWS
         identifier: 'S3_BUCKET_PUBLIC_WRITE_PROHIBITED'
 
-'''
+"""
 
-RETURN = '''#'''
+RETURN = r"""#"""
 
 
 try:

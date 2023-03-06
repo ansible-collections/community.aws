@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: networkfirewall_rule_group_info
 short_description: describe AWS Network Firewall rule groups
 version_added: 4.0.0
@@ -46,9 +46,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 
 # Describe all Rule Groups in an account (excludes managed groups)
 - community.aws.networkfirewall_rule_group_info: {}
@@ -67,9 +67,9 @@ EXAMPLES = '''
     name: ExampleRuleGroup
     type: stateful
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 rule_list:
   description: A list of ARNs of the matching rule groups.
   type: list
@@ -385,7 +385,7 @@ rule_groups:
           type: str
           returned: success
           example: 'STATEFUL'
-'''
+"""
 
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule

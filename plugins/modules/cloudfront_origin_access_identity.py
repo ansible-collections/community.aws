@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 
 version_added: 1.0.0
@@ -52,9 +52,9 @@ options:
 notes:
   - Does not support check mode.
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 
 - name: create an origin access identity
   community.aws.cloudfront_origin_access_identity:
@@ -74,9 +74,9 @@ EXAMPLES = '''
      caller_reference: this is an example reference
      comment: this is a new comment
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 cloud_front_origin_access_identity:
   description: The origin access identity's information.
   returned: always
@@ -112,7 +112,7 @@ location:
   returned: when initially created
   type: str
 
-'''
+"""
 
 import datetime
 

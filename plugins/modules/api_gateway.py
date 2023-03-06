@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: api_gateway
 version_added: 1.0.0
@@ -110,9 +110,9 @@ notes:
     ID so that an API can be created only once.
   - As an early work around an intermediate version will probably do
     the same using a tag embedded in the API name.
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Setup AWS API Gateway setup on AWS and deploy API definition
   community.aws.api_gateway:
     swagger_file: my_api.yml
@@ -141,9 +141,9 @@ EXAMPLES = '''
     cache_size: '6.1'
     canary_settings: { percentTraffic: 50.0, deploymentId: '123', useStageCache: True }
     state: present
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 api_id:
     description: API id of the API endpoint created
     returned: success
@@ -164,7 +164,7 @@ resource_actions:
     returned: always
     type: list
     sample: ["apigateway:CreateRestApi", "apigateway:CreateDeployment", "apigateway:PutRestApi"]
-'''
+"""
 
 import json
 import traceback

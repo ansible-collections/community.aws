@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: elb_instance
 version_added: 1.0.0
@@ -59,7 +59,7 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
 EXAMPLES = r"""
 # basic pre_task and post_task example
@@ -81,13 +81,13 @@ post_tasks:
     delegate_to: localhost
 """
 
-RETURN = '''
+RETURN = r"""
 updated_elbs:
   description: A list of ELB names that the instance has been added to or removed from.
   returned: always
   type: list
   elements: str
-'''
+"""
 
 try:
     import botocore

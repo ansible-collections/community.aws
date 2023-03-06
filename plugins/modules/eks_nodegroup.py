@@ -4,7 +4,7 @@
 # Copyright (c) 2022 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: eks_nodegroup
 version_added: 5.3.0
@@ -170,9 +170,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: create nodegroup
@@ -205,9 +205,9 @@ EXAMPLES = r'''
     cluster_name: test_cluster
     wait: yes
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 nodegroup_name:
   description: The name associated with an Amazon EKS managed node group.
   returned: when state is present
@@ -343,7 +343,7 @@ tags:
   type: dict
   sample:
     foo: bar
-'''
+"""
 
 from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags

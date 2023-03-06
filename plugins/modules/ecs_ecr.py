@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ecs_ecr
 version_added: 1.0.0
@@ -105,9 +105,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # If the repository does not exist, it is created. If it does exist, would not
 # affect any policies already on it.
 - name: ecr-repo
@@ -181,9 +181,9 @@ EXAMPLES = '''
     encryption_configuration:
       encryption_type: KMS
       kms_key: custom-kms-key-alias
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 state:
     type: str
     description: The asserted state of the repository (present, absent)
@@ -211,7 +211,7 @@ repository:
         repositoryArn: arn:aws:ecr:us-east-1:123456789012:repository/ecr-test-1484664090
         repositoryName: ecr-test-1484664090
         repositoryUri: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecr-test-1484664090
-'''
+"""
 
 import json
 import traceback

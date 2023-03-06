@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Aaron Smith <ajsmith10381@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: config_aggregator
 version_added: 1.0.0
@@ -71,9 +71,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create cross-account aggregator
   community.aws.config_aggregator:
     name: test_config_rule
@@ -84,9 +84,9 @@ EXAMPLES = r'''
       - 0123456789
       - 9012345678
       all_aws_regions: true
-'''
+"""
 
-RETURN = r'''#'''
+RETURN = r"""#"""
 
 
 try:

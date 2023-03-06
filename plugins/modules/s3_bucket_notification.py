@@ -5,7 +5,7 @@
 # (c) 2019, XLAB d.o.o <www.xlab.si>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: s3_bucket_notification
 version_added: 1.0.0
@@ -103,9 +103,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 ---
 # Examples adding notification target configs to a S3 bucket
 - name: Setup bucket event notification to a Lambda function
@@ -134,9 +134,9 @@ EXAMPLES = r'''
     state: absent
     event_name: on_file_add_or_remove
     bucket_name: test-bucket
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 notification_configuration:
   description: dictionary of currently applied notifications
   returned: success
@@ -154,7 +154,7 @@ notification_configuration:
       description:
       - List of current SNS notification configurations applied to the bucket.
       type: list
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict

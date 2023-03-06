@@ -4,7 +4,7 @@
 # Copyright: (c) 2017, Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: autoscaling_lifecycle_hook
 version_added: 1.0.0
@@ -74,9 +74,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create / Update lifecycle hook
   community.aws.autoscaling_lifecycle_hook:
     region: eu-central-1
@@ -93,9 +93,9 @@ EXAMPLES = '''
     state: absent
     autoscaling_group_name: example
     lifecycle_hook_name: example
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 ---
 auto_scaling_group_name:
     description: The unique name of the auto scaling group.
@@ -127,7 +127,7 @@ lifecycle_transition:
     returned: success
     type: str
     sample: "autoscaling:EC2_INSTANCE_LAUNCHING"
-'''
+"""
 
 
 try:

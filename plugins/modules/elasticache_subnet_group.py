@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: elasticache_subnet_group
 version_added: 1.0.0
@@ -41,9 +41,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Add or change a subnet group
   community.aws.elasticache_subnet_group:
     state: present
@@ -57,9 +57,9 @@ EXAMPLES = r'''
   community.aws.elasticache_subnet_group:
     state: absent
     name: norwegian-blue
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 cache_subnet_group:
   description: Description of the Elasticache Subnet Group.
   returned: always
@@ -93,7 +93,7 @@ cache_subnet_group:
       sample:
         - subnet-aaaaaaaa
         - subnet-bbbbbbbb
-'''
+"""
 
 try:
     import botocore

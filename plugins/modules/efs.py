@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: efs
 version_added: 1.0.0
@@ -105,9 +105,9 @@ extends_documentation_fragment:
     - amazon.aws.tags
     - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: EFS provisioning
   community.aws.efs:
     state: present
@@ -151,9 +151,9 @@ EXAMPLES = r'''
   community.aws.efs:
     state: absent
     name: myTestEFS
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 creation_time:
     description: timestamp of creation date
     returned: always
@@ -243,7 +243,7 @@ tags:
             "key": "Value"
         }
 
-'''
+"""
 
 from time import sleep
 from time import time as timestamp

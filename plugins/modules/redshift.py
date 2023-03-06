@@ -4,7 +4,7 @@
 # Copyright 2014 Jens Carl, Hothead Games Inc.
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 author:
   - "Jens Carl (@j-carl), Hothead Games Inc."
@@ -170,9 +170,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Basic cluster provisioning example
   community.aws.redshift:
     command: create
@@ -187,9 +187,9 @@ EXAMPLES = r'''
     identifier: new_cluster
     skip_final_cluster_snapshot: true
     wait: true
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 cluster:
     description: dictionary containing all the cluster information
     returned: success
@@ -253,7 +253,7 @@ cluster:
             description: aws tags for cluster.
             returned: success
             type: dict
-'''
+"""
 
 try:
     import botocore

@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: lightsail
 version_added: 1.0.0
@@ -70,10 +70,10 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create a new Lightsail instance
   community.aws.lightsail:
     state: present
@@ -92,9 +92,9 @@ EXAMPLES = '''
     region: us-east-1
     name: my_instance
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 changed:
   description: if a snapshot has been modified/created
   returned: always
@@ -146,7 +146,7 @@ instance:
       name: running
     support_code: "123456789012/i-0997c97831ee21e33"
     username: "ubuntu"
-'''
+"""
 
 import time
 

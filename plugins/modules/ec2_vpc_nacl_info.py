@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_vpc_nacl_info
 version_added: 1.0.0
@@ -36,9 +36,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Gather information about all Network ACLs:
@@ -54,9 +54,9 @@ EXAMPLES = r'''
     filters:
       'default': 'true'
   register: default_nacls
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 nacls:
     description: Returns an array of complex objects as described below.
     returned: success
@@ -99,7 +99,7 @@ nacls:
             type: list
             elements: list
             sample: [[100, 'all', 'allow', '0.0.0.0/0', null, null, null, null]]
-'''
+"""
 
 try:
     import botocore

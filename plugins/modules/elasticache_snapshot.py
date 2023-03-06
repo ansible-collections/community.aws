@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: elasticache_snapshot
 version_added: 1.0.0
@@ -45,9 +45,9 @@ options:
     description:
       - The s3 bucket to which the snapshot is exported.
     type: str
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 
@@ -59,7 +59,7 @@ EXAMPLES = """
     replication_id: '{{ replication }}'
 """
 
-RETURN = """
+RETURN = r"""
 response_metadata:
   description: response metadata about the snapshot
   returned: always

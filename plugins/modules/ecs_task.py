@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ecs_task
 version_added: 1.0.0
@@ -101,9 +101,9 @@ extends_documentation_fragment:
     - amazon.aws.ec2
     - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Simple example of run task
 - name: Run task
   community.aws.ecs_task:
@@ -175,8 +175,8 @@ EXAMPLES = r'''
       cluster: console-sample-app-static-cluster
       task_definition: console-sample-app-static-taskdef
       task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 task:
     description: details about the task that was started
     returned: success
@@ -240,7 +240,7 @@ task:
             description: The launch type on which to run your task.
             returned: always
             type: str
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names, ansible_dict_to_boto3_tag_list

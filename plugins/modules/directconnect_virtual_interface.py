@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: directconnect_virtual_interface
 version_added: 1.0.0
@@ -87,9 +87,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 address_family:
   description: The address family for the BGP peer.
   returned: always
@@ -226,9 +226,9 @@ vlan:
   returned: always
   type: int
   sample: 100
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 ---
 - name: create an association between a LAG and connection
   community.aws.directconnect_virtual_interface:
@@ -243,7 +243,7 @@ EXAMPLES = r'''
     connection_id: dxcon-XXXXXXXX
     virtual_interface_id: dxv-XXXXXXXX
 
-'''
+"""
 
 import traceback
 

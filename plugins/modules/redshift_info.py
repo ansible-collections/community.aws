@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: redshift_info
 version_added: 1.0.0
@@ -31,9 +31,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do net set authentication details, see the AWS guide for details.
 
 - name: Find all clusters
@@ -62,9 +62,9 @@ EXAMPLES = '''
       stack: db
   register: redshift_user
   failed_when: "{{ redshift_user.results | length == 0 }}"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 # For more information see U(http://boto3.readthedocs.io/en/latest/reference/services/redshift.html#Redshift.Client.describe_clusters)
 ---
 cluster_identifier:
@@ -270,7 +270,7 @@ iam_roles:
     returned: success
     type: list
     sample: []
-'''
+"""
 
 import re
 

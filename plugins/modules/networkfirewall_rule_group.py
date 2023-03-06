@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: networkfirewall_rule_group
 short_description: create, delete and modify AWS Network Firewall rule groups
 version_added: 4.0.0
@@ -269,9 +269,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Create a rule group
 - name: Create a minimal AWS Network Firewall Rule Group
   community.aws.networkfirewall_rule_group:
@@ -395,9 +395,9 @@ EXAMPLES = '''
     type: 'stateful'
     state: absent
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 rule_group:
   description: Details of the rules in the rule group
   type: dict
@@ -706,7 +706,7 @@ rule_group:
           type: str
           returned: success
           example: 'STATEFUL'
-'''
+"""
 
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule

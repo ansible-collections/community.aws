@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ec2_win_password
 version_added: 1.0.0
@@ -53,9 +53,9 @@ extends_documentation_fragment:
 
 requirements:
 - cryptography
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Example of getting a password
 - name: get the Administrator password
   community.aws.ec2_win_password:
@@ -90,7 +90,7 @@ EXAMPLES = '''
     key_file: "~/aws-creds/my_test_key.pem"
     wait: true
     wait_timeout: 45
-'''
+"""
 
 import datetime
 import time
@@ -100,6 +100,7 @@ try:
     from cryptography.hazmat.backends import default_backend
     from cryptography.hazmat.primitives.asymmetric.padding import PKCS1v15
     from cryptography.hazmat.primitives.serialization import load_pem_private_key
+
     HAS_CRYPTOGRAPHY = True
 except ImportError:
     HAS_CRYPTOGRAPHY = False

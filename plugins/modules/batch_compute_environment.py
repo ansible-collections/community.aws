@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Jon Meran <jonathan.meran@sonos.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: batch_compute_environment
 version_added: 1.0.0
@@ -121,9 +121,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: My Batch Compute Environment
   community.aws.batch_compute_environment:
     compute_environment_name: computeEnvironmentName
@@ -153,9 +153,9 @@ EXAMPLES = r'''
 - name: show results
   ansible.builtin.debug:
     var: aws_batch_compute_environment_action
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 ---
 output:
   description: "returns what action was taken, whether something was changed, invocation and response"
@@ -220,7 +220,7 @@ output:
       statusReason: "ComputeEnvironment Healthy"
       type: MANAGED
   type: dict
-'''
+"""
 
 import re
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

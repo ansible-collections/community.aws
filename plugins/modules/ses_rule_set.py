@@ -4,7 +4,7 @@
 # Copyright (c) 2017, Ben Tomasik <ben@tomasik.io>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ses_rule_set
 version_added: 1.0.0
@@ -47,9 +47,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 ---
@@ -82,7 +82,7 @@ EXAMPLES = """
     force: true
 """
 
-RETURN = """
+RETURN = r"""
 active:
   description: if the SES rule set is active
   returned: success if I(state) is C(present)

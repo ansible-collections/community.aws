@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: autoscaling_instance_refresh_info
 version_added: 3.2.0
@@ -40,9 +40,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Find an refresh by ASG name
@@ -66,9 +66,9 @@ EXAMPLES = '''
     name: somename-asg
     next_token: 'some-token-123'
   register: asgs
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 ---
 instance_refresh_id:
     description: instance refresh id
@@ -116,7 +116,7 @@ instances_to_update:
     returned: success
     type: int
     sample: 5
-'''
+"""
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError

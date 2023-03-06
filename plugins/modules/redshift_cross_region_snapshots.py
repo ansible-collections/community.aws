@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, JR Kerkstra <jrkerkstra@example.org>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: redshift_cross_region_snapshots
 version_added: 1.0.0
@@ -55,9 +55,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: configure cross-region snapshot on cluster `johniscool`
   community.aws.redshift_cross_region_snapshots:
     cluster_name: johniscool
@@ -81,9 +81,9 @@ EXAMPLES = '''
     state: absent
     region: us-east-1
     destination_region: us-west-2
-'''
+"""
 
-RETURN = ''' # '''
+RETURN = r""" # """
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 

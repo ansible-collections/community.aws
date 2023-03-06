@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_vpc_vgw_info
 version_added: 1.0.0
@@ -29,9 +29,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all virtual gateways for an account or profile
@@ -54,9 +54,9 @@ EXAMPLES = r'''
     profile: production
     vpn_gateway_ids: vgw-c432f6a7
   register: vgw_info
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 virtual_gateways:
     description: The virtual gateways for the account.
     returned: always
@@ -119,7 +119,7 @@ virtual_gateways:
         type: dict
         returned: success
         example: {"MyKey": "MyValue"}
-'''
+"""
 
 try:
     import botocore

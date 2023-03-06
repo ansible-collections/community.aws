@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: directconnect_connection
 version_added: 1.0.0
@@ -66,9 +66,9 @@ options:
       - By default this will not happen.  This option must be explicitly set to C(true) to change I(bandwith) or I(location).
     type: bool
     default: false
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 
 # create a Direct Connect connection
 - community.aws.directconnect_connection:
@@ -100,7 +100,7 @@ EXAMPLES = """
     name: ansible-test-connection
 """
 
-RETURN = """
+RETURN = r"""
 connection:
   description: The attributes of the direct connect connection.
   type: complex

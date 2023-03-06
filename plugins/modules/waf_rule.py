@@ -5,7 +5,7 @@
 # Copyright (c) 2015 Mike Mochan
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: waf_rule
 short_description: Create and delete WAF Rules
 version_added: 1.0.0
@@ -69,9 +69,9 @@ options:
     default: false
     required: false
     type: bool
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
   - name: create WAF rule
     community.aws.waf_rule:
       name: my_waf_rule
@@ -90,9 +90,9 @@ EXAMPLES = r'''
     community.aws.waf_rule:
       name: "my_waf_rule"
       state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 rule:
   description: WAF rule contents
   returned: always
@@ -133,7 +133,7 @@ rule:
       returned: always
       type: str
       sample: 15de0cbc-9204-4e1f-90e6-69b2f415c261
-'''
+"""
 
 import re
 

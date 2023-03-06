@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: data_pipeline
 version_added: 1.0.0
@@ -123,9 +123,9 @@ options:
     type: dict
     default: {}
     aliases: ['resource_tags']
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create pipeline
@@ -175,9 +175,9 @@ EXAMPLES = r'''
     region: us-west-2
     state: absent
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 changed:
   description: whether the data pipeline has been modified
   type: bool
@@ -192,7 +192,7 @@ result:
       data_pipeline will be an empty dict. The msg describes the status of the operation.
   returned: always
   type: dict
-'''
+"""
 
 import hashlib
 import json

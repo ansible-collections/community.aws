@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: s3_metrics_configuration
 version_added: 1.3.0
@@ -50,9 +50,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create a metrics configuration that enables metrics for an entire bucket
@@ -92,7 +92,7 @@ EXAMPLES = r'''
     id: EntireBucket
     state: absent
 
-'''
+"""
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError

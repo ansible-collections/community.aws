@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: networkfirewall_info
 short_description: describe AWS Network Firewall firewalls
 version_added: 4.0.0
@@ -37,9 +37,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 
 # Describe all firewalls in an account
 - community.aws.networkfirewall_info: {}
@@ -51,9 +51,9 @@ EXAMPLES = '''
 # Describe a firewall by name
 - community.aws.networkfirewall_info:
     name: ExampleFirewall
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 firewall_list:
   description: A list of ARNs of the matching firewalls.
   type: list
@@ -182,7 +182,7 @@ firewalls:
                 }
               }
             }
-'''
+"""
 
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule

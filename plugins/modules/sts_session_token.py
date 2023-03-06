@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: sts_session_token
 version_added: 1.0.0
@@ -33,9 +33,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-RETURN = """
+RETURN = r"""
 sts_creds:
     description: The Credentials object returned by the AWS Security Token Service
     returned: always
@@ -52,7 +52,7 @@ changed:
 """
 
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # (more details: https://docs.aws.amazon.com/STS/latest/APIReference/API_GetSessionToken.html)
@@ -71,7 +71,7 @@ EXAMPLES = '''
     tags:
         MyNewTag: value
 
-'''
+"""
 
 try:
     import botocore

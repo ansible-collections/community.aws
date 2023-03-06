@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: s3_website
 version_added: 1.0.0
@@ -46,9 +46,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Configure an s3 bucket to redirect all requests to example.com
@@ -69,9 +69,9 @@ EXAMPLES = '''
     error_key: errors/404.htm
     state: present
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 index_document:
     description: index document
     type: complex
@@ -155,7 +155,7 @@ routing_rules:
                     returned: when routing rule present
                     type: str
                     sample: documents/
-'''
+"""
 
 import time
 

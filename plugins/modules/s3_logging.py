@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: s3_logging
 version_added: 1.0.0
@@ -38,9 +38,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Enable logging of s3 bucket mywebsite.com to s3 bucket mylogs
@@ -55,7 +55,7 @@ EXAMPLES = '''
     name: mywebsite.com
     state: absent
 
-'''
+"""
 
 try:
     import botocore

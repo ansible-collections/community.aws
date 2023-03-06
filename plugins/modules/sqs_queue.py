@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: sqs_queue
 version_added: 1.0.0
@@ -106,9 +106,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 content_based_deduplication:
     description: Enables content-based deduplication. Used for FIFOs only.
     type: bool
@@ -184,9 +184,9 @@ tags:
     type: dict
     returned: always
     sample: '{"Env": "prod"}'
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create SQS queue with redrive policy
   community.aws.sqs_queue:
     name: my-queue
@@ -256,7 +256,7 @@ EXAMPLES = r'''
     name: my-queue
     region: ap-southeast-2
     state: absent
-'''
+"""
 
 import json
 

@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: iam_server_certificate_info
 version_added: 1.0.0
@@ -22,9 +22,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Retrieve server certificate
   community.aws.iam_server_certificate_info:
     name: production-cert
@@ -35,9 +35,9 @@ EXAMPLES = '''
     name: production-cert
   register: server_cert
   failed_when: "{{ server_cert.results | length == 0 }}"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 server_certificate_id:
     description: The 21 character certificate id
     returned: success
@@ -73,7 +73,7 @@ upload_date:
     returned: success
     type: str
     sample: "2015-04-25T00:36:40+00:00"
-'''
+"""
 
 
 try:

@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Aaron Smith <ajsmith10381@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: config_aggregation_authorization
 version_added: 1.0.0
@@ -36,9 +36,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Get current account ID
   community.aws.aws_caller_info:
   register: whoami
@@ -46,9 +46,9 @@ EXAMPLES = '''
     state: present
     authorized_account_id: '{{ whoami.account }}'
     authorized_aws_region: us-east-1
-'''
+"""
 
-RETURN = '''#'''
+RETURN = r"""#"""
 
 
 try:

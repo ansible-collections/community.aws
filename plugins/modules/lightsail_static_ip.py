@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: lightsail_static_ip
 version_added: 4.1.0
@@ -28,10 +28,10 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Provision a Lightsail static IP
   community.aws.lightsail_static_ip:
     state: present
@@ -42,9 +42,9 @@ EXAMPLES = '''
   community.aws.lightsail_static_ip:
     state: absent
     name: my_static_ip
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 static_ip:
   description: static_ipinstance data
   returned: always
@@ -60,7 +60,7 @@ static_ip:
     name: "static_ip"
     resource_type: StaticIp
     support_code: "123456789012/192.0.2.5"
-'''
+"""
 
 try:
     import botocore

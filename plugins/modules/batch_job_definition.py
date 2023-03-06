@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Jon Meran <jonathan.meran@sonos.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: batch_job_definition
 version_added: 1.0.0
@@ -180,9 +180,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 ---
 - name: My Batch Job Definition
   community.aws.batch_job_definition:
@@ -205,9 +205,9 @@ EXAMPLES = r'''
 
 - name: show results
   ansible.builtin.debug: var=job_definition_create_result
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 ---
 output:
   description: "returns what action was taken, whether something was changed, invocation and response"
@@ -221,7 +221,7 @@ output:
       status: INACTIVE
       type: container
   type: dict
-'''
+"""
 
 from ansible_collections.amazon.aws.plugins.module_utils.batch import cc, set_api_params
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

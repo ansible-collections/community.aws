@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 version_added: 3.2.0
 module: cloudfront_response_headers_policy
@@ -55,9 +55,9 @@ options:
       default: {}
       type: dict
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Creationg a Cloudfront header policy using all predefined header features and a custom header for demonstration
   community.aws.cloudfront_response_headers_policy:
     name: my-header-policy
@@ -111,9 +111,9 @@ EXAMPLES = '''
   community.aws.cloudfront_response_headers_policy:
     name: my-header-policy
     state: absent
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 response_headers_policy:
     description: The policy's information
     returned: success
@@ -139,7 +139,7 @@ response_headers_policy:
             type: str
             returned: always
             sample: my-header-policy
-'''
+"""
 
 try:
     from botocore.exceptions import ClientError, ParamValidationError, BotoCoreError

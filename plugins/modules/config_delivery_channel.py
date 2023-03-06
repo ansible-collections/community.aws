@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Aaron Smith <ajsmith10381@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: config_delivery_channel
 version_added: 1.0.0
@@ -49,9 +49,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create Delivery Channel for AWS Config
   community.aws.config_delivery_channel:
     name: test_delivery_channel
@@ -59,9 +59,9 @@ EXAMPLES = '''
     s3_bucket: 'test_aws_config_bucket'
     sns_topic_arn: 'arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no'
     delivery_frequency: 'Twelve_Hours'
-'''
+"""
 
-RETURN = '''#'''
+RETURN = r"""#"""
 
 
 try:

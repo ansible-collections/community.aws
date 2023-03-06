@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: iam_saml_federation
 version_added: 1.0.0
@@ -35,9 +35,9 @@ extends_documentation_fragment:
 author:
     - Tony (@axc450)
     - Aidan Rowe (@aidan-)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # It is assumed that their matching environment variables are set.
 # Creates a new iam saml identity provider if not present
@@ -59,9 +59,9 @@ EXAMPLES = '''
   community.aws.iam_saml_federation:
       name: example3
       state: absent
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 saml_provider:
     description: Details of the SAML Identity Provider that was created/modified.
     type: complex
@@ -86,7 +86,7 @@ saml_provider:
             type: str
             returned: present
             sample: "2017-02-08T04:36:28+00:00"
-'''
+"""
 
 try:
     import botocore.exceptions

@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: networkfirewall_policy_info
 short_description: describe AWS Network Firewall policies
 version_added: 4.0.0
@@ -29,9 +29,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 
 # Describe all Firewall policies in an account
 - community.aws.networkfirewall_policy_info: {}
@@ -43,9 +43,9 @@ EXAMPLES = '''
 # Describe a Firewall policy by name
 - community.aws.networkfirewall_policy_info:
     name: ExamplePolicy
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 policy_list:
   description: A list of ARNs of the matching policies.
   type: list
@@ -210,7 +210,7 @@ policies:
           type: dict
           returned: success
           example: {'tagName': 'Some Value'}
-'''
+"""
 
 
 from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule

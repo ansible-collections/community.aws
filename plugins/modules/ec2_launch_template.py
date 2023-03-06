@@ -4,7 +4,7 @@
 # Copyright (c) 2018 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_launch_template
 version_added: 1.0.0
@@ -377,9 +377,9 @@ options:
           - Requires botocore >= 1.23.30
         choices: [enabled, disabled]
         default: 'disabled'
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create an ec2 launch template
   community.aws.ec2_launch_template:
     name: "my_template"
@@ -403,9 +403,9 @@ EXAMPLES = '''
     state: absent
 
 # This module does not yet allow deletion of specific versions of launch templates
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 latest_version:
   description: Latest available version of the launch template
   returned: when state=present
@@ -414,7 +414,8 @@ default_version:
   description: The version that will be used if only the template name is specified. Often this is the same as the latest version, but not always.
   returned: when state=present
   type: int
-'''
+"""
+
 import re
 from uuid import uuid4
 

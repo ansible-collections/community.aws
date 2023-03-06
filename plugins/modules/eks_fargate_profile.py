@@ -4,7 +4,7 @@
 # Copyright (c) 2022 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: eks_fargate_profile
 version_added: 4.0.0
@@ -71,9 +71,9 @@ extends_documentation_fragment:
   - amazon.aws.boto3
   - amazon.aws.tags
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create an EKS Fargate Profile
@@ -96,9 +96,9 @@ EXAMPLES = r'''
     cluster_name: test_cluster
     wait: true
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 fargate_profile_name:
   description: Name of Fargate Profile.
   returned: when state is present
@@ -162,7 +162,7 @@ status:
   sample:
   - CREATING
   - ACTIVE
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code

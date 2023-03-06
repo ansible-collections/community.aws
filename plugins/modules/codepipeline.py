@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: codepipeline
 version_added: 1.0.0
@@ -75,9 +75,9 @@ extends_documentation_fragment:
     - amazon.aws.aws
     - amazon.aws.ec2
     - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Example for creating a pipeline for continuous deploy of Github code to an ECS cluster (container)
@@ -144,9 +144,9 @@ EXAMPLES = r'''
               FileName: imagedefinitions.json
     region: us-east-1
     state: present
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 pipeline:
   description: Returns the dictionary describing the CodePipeline configuration.
   returned: success
@@ -191,7 +191,7 @@ pipeline:
         - This number is auto incremented when CodePipeline params are changed.
       returned: always
       type: int
-'''
+"""
 
 import copy
 

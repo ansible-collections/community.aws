@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: elb_classic_lb_info
 version_added: 1.0.0
@@ -25,9 +25,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # Output format tries to match amazon.aws.ec2_elb_lb module input parameters
 
@@ -58,9 +58,9 @@ EXAMPLES = r'''
     msg: "{{ item.dns_name }}"
   loop: "{{ elb_info.elbs }}"
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 elbs:
   description: a list of load balancers
   returned: always
@@ -124,7 +124,7 @@ elbs:
           - subnet-XXXXXXXX
         tags: {}
         vpc_id: vpc-c248fda4
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code

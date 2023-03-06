@@ -4,7 +4,7 @@
 # Copyright (c) 2018 Dennis Conrad for Sainsbury's
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: inspector_target
 version_added: 1.0.0
@@ -40,9 +40,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create my_target Assessment Target
   community.aws.inspector_target:
     name: my_target
@@ -60,9 +60,9 @@ EXAMPLES = '''
   community.aws.inspector_target:
     name: my_target
     state: absent
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 arn:
   description: The ARN that specifies the Amazon Inspector assessment target.
   returned: success
@@ -95,7 +95,7 @@ updated_at:
   returned: success
   type: str
   sample: "2018-01-29T13:48:51.958000+00:00"
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry

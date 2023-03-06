@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: ec2_transit_gateway_info
 short_description: Gather information about ec2 transit gateways in AWS
 version_added: 1.0.0
@@ -30,9 +30,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather info about all transit gateways
@@ -54,9 +54,9 @@ EXAMPLES = r'''
     transit_gateway_ids:
       - tgw-02c42332e6b7da829
       - tgw-03c53443d5a8cb716
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 transit_gateways:
     description: >
         Transit gateways that match the provided filters. Each element consists of a dict with all the information
@@ -159,7 +159,7 @@ transit_gateways:
             returned: always
             type: str
             sample: "tgw-02c42332e6b7da829"
-'''
+"""
 
 try:
     import botocore

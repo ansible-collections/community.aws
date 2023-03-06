@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: dynamodb_table
 version_added: 1.0.0
@@ -144,9 +144,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create dynamo table with hash and range primary key
   community.aws.dynamodb_table:
     name: my-table
@@ -195,9 +195,9 @@ EXAMPLES = r'''
     name: my-table
     region: us-east-1
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 table:
   description: The returned table params from the describe API call.
   returned: success
@@ -241,7 +241,7 @@ table_status:
   returned: success
   type: str
   sample: ACTIVE
-'''
+"""
 
 try:
     import botocore

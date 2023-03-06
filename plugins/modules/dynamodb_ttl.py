@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: dynamodb_ttl
 version_added: 1.0.0
@@ -35,9 +35,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: enable TTL on my cowfacts table
   community.aws.dynamodb_ttl:
     state: enable
@@ -49,9 +49,9 @@ EXAMPLES = '''
     state: disable
     table_name: cowfacts
     attribute_name: cow_deleted_date
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 current_status:
   description: current or new TTL specification.
   type: dict
@@ -59,7 +59,7 @@ current_status:
   sample:
   - { "AttributeName": "deploy_timestamp", "TimeToLiveStatus": "ENABLED" }
   - { "AttributeName": "deploy_timestamp", "Enabled": true }
-'''
+"""
 
 try:
     import botocore

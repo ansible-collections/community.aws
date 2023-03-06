@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: s3_lifecycle
 version_added: 1.0.0
@@ -151,9 +151,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Configure a lifecycle rule on a bucket to expire (delete) items with a prefix of /logs/ after 30 days
@@ -217,7 +217,7 @@ EXAMPLES = r'''
         storage_class: standard_ia
       - transition_days: 90
         storage_class: glacier
-'''
+"""
 
 from copy import deepcopy
 import datetime
@@ -225,6 +225,7 @@ import time
 
 try:
     from dateutil import parser as date_parser
+
     HAS_DATEUTIL = True
 except ImportError:
     HAS_DATEUTIL = False

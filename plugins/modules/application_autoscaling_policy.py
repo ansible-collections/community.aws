@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: application_autoscaling_policy
 version_added: 1.0.0
@@ -105,9 +105,9 @@ extends_documentation_fragment:
     - amazon.aws.aws
     - amazon.aws.ec2
     - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create step scaling policy for ECS Service
@@ -158,9 +158,9 @@ EXAMPLES = '''
     service_namespace: ecs
     resource_id: service/cluster-name/service-name
     scalable_dimension: ecs:service:DesiredCount
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 alarms:
     description: List of the CloudWatch alarms associated with the scaling policy
     returned: when state present
@@ -281,7 +281,7 @@ creation_time:
     returned: when state present
     type: str
     sample: '2017-09-28T08:22:51.881000-03:00'
-'''  # NOQA
+"""  # NOQA
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import _camel_to_snake, camel_dict_to_snake_dict

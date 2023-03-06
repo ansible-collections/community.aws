@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: elb_target_group
 version_added: 1.0.0
@@ -210,9 +210,9 @@ extends_documentation_fragment:
 
 notes:
   - Once a target group has been created, only its health check can then be modified using subsequent calls
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create a target group with a default health check
@@ -322,9 +322,9 @@ EXAMPLES = r'''
     targets:
         - Id: arn:aws:lambda:eu-central-1:123456789012:function:my-lambda-function
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 deregistration_delay_timeout_seconds:
     description: The amount time for Elastic Load Balancing to wait before changing the state of a deregistering target from draining to unused.
     returned: when state present
@@ -435,7 +435,7 @@ vpc_id:
     returned: when state present
     type: str
     sample: vpc-0123456
-'''
+"""
 
 import time
 

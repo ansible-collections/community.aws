@@ -4,7 +4,7 @@
 # Copyright 2014 Jens Carl, Hothead Games Inc.
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: redshift_subnet_group
 version_added: 1.0.0
@@ -42,9 +42,9 @@ extends_documentation_fragment:
 - amazon.aws.boto3
 author:
   - "Jens Carl (@j-carl), Hothead Games Inc."
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create a Redshift subnet group
   community.aws.redshift_subnet_group:
     state: present
@@ -58,9 +58,9 @@ EXAMPLES = r'''
   community.aws.redshift_subnet_group:
     state: absent
     group_name: redshift-subnet
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 cluster_subnet_group:
     description: A dictionary containing information about the Redshift subnet group.
     returned: success
@@ -89,7 +89,7 @@ cluster_subnet_group:
             sample:
               - subnet-aaaaaaaa
               - subnet-bbbbbbbb
-'''
+"""
 
 try:
     import botocore

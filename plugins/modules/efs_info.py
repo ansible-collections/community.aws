@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: efs_info
 version_added: 1.0.0
@@ -41,9 +41,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Find all existing efs
   community.aws.efs_info:
   register: result
@@ -64,9 +64,9 @@ EXAMPLES = r'''
 
 - ansible.builtin.debug:
     msg: "{{ result['efs'] }}"
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 creation_time:
     description: timestamp of creation date
     returned: always
@@ -166,7 +166,7 @@ tags:
             "key": "Value"
         }
 
-'''
+"""
 
 
 from collections import defaultdict

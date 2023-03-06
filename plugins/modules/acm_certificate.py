@@ -8,7 +8,7 @@
 #   - Matthew Davis <Matthew.Davis.2@team.telstra.com>
 #     on behalf of Telstra Corporation Limited
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: acm_certificate
 short_description: Upload and delete certificates in the AWS Certificate Manager service
@@ -162,9 +162,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 
 - name: upload a self-signed certificate
   community.aws.aws_acm:
@@ -213,9 +213,9 @@ EXAMPLES = '''
       Application: search
       Environment: development
     purge_tags: true
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 certificate:
   description: Information about the certificate which was uploaded
   type: complex
@@ -238,7 +238,7 @@ arns:
   returned: when I(state=absent)
   sample:
    - "arn:aws:acm:ap-southeast-2:123456789012:certificate/01234567-abcd-abcd-abcd-012345678901"
-'''
+"""
 
 
 import base64

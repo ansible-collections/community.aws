@@ -5,7 +5,7 @@
 
 # Based on the ssh connection plugin by Michael DeHaan
 
-DOCUMENTATION = '''
+DOCUMENTATION = """
 name: aws_ssm
 author:
   - Pat Sharkey (@psharkey) <psharkey@cleo.com>
@@ -127,9 +127,9 @@ options:
     version_added: 5.2.0
     vars:
     - name: ansible_aws_ssm_s3_addressing_style
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 
 # Wait for SSM Agent to be available on the Instance
 - name: Wait for connection to be available
@@ -260,7 +260,7 @@ EXAMPLES = r'''
       yum:
         name: nginx
         state: present
-'''
+"""
 
 import os
 import getpass

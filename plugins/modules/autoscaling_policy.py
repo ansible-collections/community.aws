@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: autoscaling_policy
 short_description: Create or delete AWS scaling policies for Autoscaling groups
 version_added: 1.0.0
@@ -190,8 +190,8 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
-EXAMPLES = '''
+"""
+EXAMPLES = r"""
 - name: Simple Scale Down policy
   community.aws.autoscaling_policy:
     state: present
@@ -259,9 +259,9 @@ EXAMPLES = '''
       target_value: 98.0
     asg_name: asg-test-1
   register: result
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 adjustment_type:
   description: Scaling policy adjustment type.
   returned: always
@@ -347,7 +347,7 @@ step_adjustments:
       returned: always
       type: int
       sample: 50
-'''
+"""
 
 try:
     import botocore

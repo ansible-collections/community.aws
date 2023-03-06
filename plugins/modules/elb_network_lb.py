@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Rob White (@wimnat)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: elb_network_lb
 version_added: 1.0.0
@@ -131,9 +131,9 @@ extends_documentation_fragment:
 notes:
   - Listeners are matched based on port. If a listener's port is changed then a new listener will be created.
   - Listener rules are matched based on priority. If a rule's priority is changed then a new rule will be created.
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create an ELB and attach a listener
@@ -184,9 +184,9 @@ EXAMPLES = r'''
     name: myelb
     state: absent
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 load_balancer:
     description: A representation of the Network Load Balancer
     returned: when state is present
@@ -325,7 +325,7 @@ load_balancer:
             returned: when state is present
             type: str
             sample: vpc-0011223344
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, boto3_tag_list_to_ansible_dict, compare_aws_tags

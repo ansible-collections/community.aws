@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_placement_group_info
 version_added: 1.0.0
@@ -26,9 +26,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details or the AWS region,
 # see the AWS Guide for details.
 
@@ -47,10 +47,10 @@ EXAMPLES = r'''
     msg: >
       {{ specific_ec2_placement_groups | json_query("[?name=='my-cluster']") }}
 
-'''
+"""
 
 
-RETURN = r'''
+RETURN = r"""
 placement_groups:
   description: Placement group attributes
   returned: always
@@ -69,7 +69,7 @@ placement_groups:
       type: str
       sample: "cluster"
 
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 try:

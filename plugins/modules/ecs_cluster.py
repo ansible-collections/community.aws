@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ecs_cluster
 version_added: 1.0.0
@@ -80,9 +80,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Cluster creation
@@ -118,8 +118,8 @@ EXAMPLES = '''
     repeat: 10
   register: task_output
 
-'''
-RETURN = '''
+"""
+RETURN = r"""
 activeServicesCount:
     description: how many services are active in this cluster
     returned: 0 if a new cluster
@@ -161,7 +161,7 @@ status:
     returned: always
     type: str
     sample: ACTIVE
-'''
+"""
 
 import time
 

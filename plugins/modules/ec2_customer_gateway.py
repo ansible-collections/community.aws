@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ec2_customer_gateway
 version_added: 1.0.0
@@ -51,9 +51,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create Customer Gateway
   community.aws.ec2_customer_gateway:
     bgp_asn: 12345
@@ -69,9 +69,9 @@ EXAMPLES = '''
     state: absent
     region: us-east-1
   register: cgw
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 gateway.customer_gateways:
     description: details about the gateway that was created.
     returned: success
@@ -106,7 +106,7 @@ gateway.customer_gateways:
             returned: when gateway exists and is available.
             sample: ipsec.1
             type: str
-'''
+"""
 
 try:
     import botocore

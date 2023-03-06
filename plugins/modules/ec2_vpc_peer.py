@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: ec2_vpc_peer
 short_description: create, delete, accept, and reject VPC peering connections between two VPCs.
 version_added: 1.0.0
@@ -59,9 +59,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Complete example to create and accept a local peering connection.
 - name: Create local account VPC peering Connection
   community.aws.ec2_vpc_peer:
@@ -210,8 +210,8 @@ EXAMPLES = '''
     profile: bot03_profile_for_cross_account
     state: reject
 
-'''
-RETURN = '''
+"""
+RETURN = r"""
 peering_id:
   description: The id of the VPC peering connection created/deleted.
   returned: always
@@ -350,7 +350,7 @@ vpc_peering_connection:
       returned: success
       type: str
       example: "pcx-0123456789abcdef0"
-'''
+"""
 
 try:
     import botocore

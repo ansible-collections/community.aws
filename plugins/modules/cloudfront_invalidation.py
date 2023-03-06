@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 
 version_added: 1.0.0
@@ -50,9 +50,9 @@ options:
 notes:
   - does not support check mode
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 
 - name: create a batch of invalidations using a distribution_id for a reference
   community.aws.cloudfront_invalidation:
@@ -72,9 +72,9 @@ EXAMPLES = r'''
       - /testpathtwo/test5.js
       - /testpaththree/*
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 invalidation:
   description: The invalidation's information.
   returned: always
@@ -128,7 +128,7 @@ location:
   returned: always
   type: str
   sample: https://cloudfront.amazonaws.com/2017-03-25/distribution/E1ZID6KZJECZY7/invalidation/I2G9MOWJZFV622
-'''
+"""
 
 import datetime
 

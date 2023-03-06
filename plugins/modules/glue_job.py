@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Rob White (@wimnat)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: glue_job
 version_added: 1.0.0
@@ -105,9 +105,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create an AWS Glue job
@@ -124,9 +124,9 @@ EXAMPLES = r'''
 - community.aws.glue_job:
     name: my-glue-job
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 allocated_capacity:
     description: The number of AWS Glue data processing units (DPUs) allocated to runs of this job. From 2 to
                  100 DPUs can be allocated; the default is 10. A DPU is a relative measure of processing power
@@ -221,10 +221,11 @@ timeout:
     returned: when state is present
     type: int
     sample: 300
-'''
+"""
 
 # Non-ansible imports
 import copy
+
 try:
     import botocore
 except ImportError:

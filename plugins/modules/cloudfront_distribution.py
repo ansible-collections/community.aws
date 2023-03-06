@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 
 version_added: 1.0.0
@@ -595,9 +595,9 @@ options:
       default: 1800
       type: int
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: create a basic distribution with defaults and tags
   community.aws.cloudfront_distribution:
     state: present
@@ -687,9 +687,9 @@ EXAMPLES = r'''
   community.aws.cloudfront_distribution:
     state: absent
     caller_reference: replaceable distribution
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 active_trusted_signers:
   description: Key pair IDs that CloudFront is aware of for each trusted signer.
   returned: always
@@ -1412,7 +1412,7 @@ web_acl_id:
   returned: always
   type: str
   sample: abcd1234-1234-abcd-abcd-abcd12345678
-'''
+"""
 
 from ansible.module_utils._text import to_text, to_native
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

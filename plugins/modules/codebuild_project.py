@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: codebuild_project
 version_added: 1.0.0
@@ -151,9 +151,9 @@ extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
     - amazon.aws.tags.modules
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - community.aws.codebuild_project:
@@ -179,9 +179,9 @@ EXAMPLES = r'''
     encryption_key: "arn:aws:kms:us-east-1:123123:alias/aws/s3"
     region: us-east-1
     state: present
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 project:
   description: Returns the dictionary describing the code project configuration.
   returned: success
@@ -285,7 +285,7 @@ project:
       returned: always
       type: str
       sample: "2018-04-17T16:56:03.245000+02:00"
-'''
+"""
 
 try:
     import botocore

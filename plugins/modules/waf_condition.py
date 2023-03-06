@@ -5,7 +5,7 @@
 # Copyright (c) 2015 Mike Mochan
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: waf_condition
 short_description: Create and delete WAF Conditions
 version_added: 1.0.0
@@ -135,9 +135,9 @@ options:
       - absent
     default: present
     type: str
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
   - name: create WAF byte condition
     community.aws.waf_condition:
       name: my_byte_condition
@@ -203,9 +203,9 @@ EXAMPLES = r'''
           transformation: url_decode
       type: xss
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 condition:
   description: Condition returned by operation.
   returned: always
@@ -395,7 +395,7 @@ condition:
           description: transformation applied to the text before matching.
           type: str
           sample: URL_DECODE
-'''
+"""
 
 try:
     import botocore

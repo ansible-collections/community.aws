@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: dms_replication_subnet_group
 version_added: 1.0.0
@@ -45,17 +45,17 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - community.aws.dms_replication_subnet_group:
     state: present
     identifier: "dev-sngroup"
     description: "Development Subnet Group asdasdas"
     subnet_ids: ['subnet-id1','subnet-id2']
-'''
+"""
 
-RETURN = ''' # '''
+RETURN = r""" # """
 
 try:
     import botocore

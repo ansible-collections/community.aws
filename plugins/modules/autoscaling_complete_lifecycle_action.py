@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: autoscaling_complete_lifecycle_action
 short_description: Completes the lifecycle action of an instance
@@ -39,9 +39,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # Complete the lifecycle action
 - aws_asg_complete_lifecycle_action:
@@ -49,16 +49,16 @@ EXAMPLES = '''
     lifecycle_hook_name: my-lifecycle-hook
     lifecycle_action_result: CONTINUE
     instance_id: i-123knm1l2312
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 ---
 status:
     description: How things went
     returned: success
     type: str
     sample: ["OK"]
-'''
+"""
 
 try:
     import botocore

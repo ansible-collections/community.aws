@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Aaron Smith <ajsmith10381@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: iam_password_policy
 version_added: 1.0.0
@@ -76,9 +76,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Password policy for AWS account
   community.aws.iam_password_policy:
     state: present
@@ -91,9 +91,9 @@ EXAMPLES = '''
     pw_max_age: 60
     pw_reuse_prevent: 5
     pw_expire: false
-'''
+"""
 
-RETURN = ''' # '''
+RETURN = r""" # """
 
 try:
     import botocore

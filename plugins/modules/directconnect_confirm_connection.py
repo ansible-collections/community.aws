@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: directconnect_confirm_connection
 short_description: Confirms the creation of a hosted DirectConnect connection
@@ -31,9 +31,9 @@ options:
       - The ID of the Direct Connect connection.
       - One of I(connection_id) or I(name) must be specified.
     type: str
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 
 # confirm a Direct Connect by name
 - name: confirm the connection id
@@ -44,16 +44,16 @@ EXAMPLES = '''
 - name: confirm the connection id
   community.aws.directconnect_confirm_connection:
     connection_id: dxcon-xxxxxxxx
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 
 connection_state:
   description: The state of the connection.
   returned: always
   type: str
   sample: pending
-'''
+"""
 
 import traceback
 

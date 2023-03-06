@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: wafv2_resources
 version_added: 1.5.0
@@ -40,18 +40,18 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: add test alb to waf string03
   community.aws.wafv2_resources:
     name: string03
     scope: REGIONAL
     state: present
     arn: "arn:aws:elasticloadbalancing:eu-central-1:111111111:loadbalancer/app/test03/dd83ea041ba6f933"
-'''
+"""
 
-RETURN = """
+RETURN = r"""
 resource_arns:
   description: Current resources where the wafv2 is applied on
   sample:

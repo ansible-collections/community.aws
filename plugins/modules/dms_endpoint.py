@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: dms_endpoint
 version_added: 1.0.0
@@ -145,9 +145,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details
 - name: Endpoint Creation
   community.aws.dms_endpoint:
@@ -162,9 +162,9 @@ EXAMPLES = '''
     databasename: 'testdb'
     sslmode: none
     wait: false
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 endpoint:
   description:
     - A description of the DMS endpoint.
@@ -323,7 +323,7 @@ endpoint:
         - Additional settings for Redis endpoints.
       type: dict
       returned: when the I(endpoint_type) is C(redshift)
-'''
+"""
 
 try:
     import botocore

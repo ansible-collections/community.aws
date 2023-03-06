@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: iam_managed_policy
 version_added: 1.0.0
@@ -48,9 +48,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Create a policy
 - name: Create IAM Managed Policy
   community.aws.iam_managed_policy:
@@ -100,9 +100,9 @@ EXAMPLES = r'''
   community.aws.iam_managed_policy:
     policy_name: "ManagedPolicy"
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 policy:
   description: Returns the policy json structure, when state == absent this will return the value of the removed policy.
   returned: success
@@ -119,7 +119,7 @@ policy:
         "policy_name": "AdministratorAccess",
         "update_date": "2017-03-01T15:42:55.981000+00:00"
   }'
-'''
+"""
 
 import json
 

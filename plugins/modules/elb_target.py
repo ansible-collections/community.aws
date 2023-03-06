@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: elb_target
 version_added: 1.0.0
@@ -73,9 +73,9 @@ extends_documentation_fragment:
 
 notes:
   - If you specified a port override when you registered a target, you must specify both the target ID and the port when you deregister it.
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Register an IP address target to a target group
@@ -104,11 +104,11 @@ EXAMPLES = '''
     target_port: 8080
     state: present
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 
-'''
+"""
 
 from time import time, sleep
 

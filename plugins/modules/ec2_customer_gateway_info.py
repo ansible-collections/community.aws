@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_customer_gateway_info
 version_added: 1.0.0
@@ -30,9 +30,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all customer gateways
@@ -53,9 +53,9 @@ EXAMPLES = r'''
       - 'cgw-48841a09'
       - 'cgw-fec021ce'
   register: cust_gw_info
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 customer_gateways:
     description: List of one or more customer gateways.
     returned: always
@@ -76,9 +76,10 @@ customer_gateways:
                 "type": "ipsec.1"
             }
         ]
-'''
+"""
 
 import json
+
 try:
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:

@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ses_identity_policy
 version_added: 1.0.0
@@ -42,9 +42,9 @@ extends_documentation_fragment:
     - amazon.aws.aws
     - amazon.aws.ec2
     - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: add sending authorization policy to domain identity
@@ -73,15 +73,15 @@ EXAMPLES = '''
     identity: example.com
     policy_name: ExamplePolicy
     state: absent
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 policies:
     description: A list of all policies present on the identity after the operation.
     returned: success
     type: list
     sample: [ExamplePolicy]
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies, AWSRetry

@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: elasticache_info
 short_description: Retrieve information for AWS ElastiCache clusters
 version_added: 1.0.0
@@ -21,18 +21,18 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: obtain all ElastiCache information
   community.aws.elasticache_info:
 
 - name: obtain all information for a single ElastiCache cluster
   community.aws.elasticache_info:
     name: test_elasticache
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 elasticache_clusters:
   description: List of ElastiCache clusters.
   returned: always
@@ -400,7 +400,7 @@ elasticache_clusters:
       sample:
         Application: web
         Environment: test
-'''
+"""
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: opensearch_info
 short_description: obtain information about one or more OpenSearch or ElasticSearch domain
@@ -33,7 +33,7 @@ extends_documentation_fragment:
   - amazon.aws.boto3
 """
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Get information about an OpenSearch domain instance
   community.aws.opensearch_info:
     domain-name: my-search-cluster
@@ -47,9 +47,9 @@ EXAMPLES = '''
     tags:
       Applications: search
       Environment: Development
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 instances:
   description: List of OpenSearch domain instances
   returned: always
@@ -438,7 +438,7 @@ instances:
           description: The name of the OpenSearch domain.
           returned: always
           type: str
-'''
+"""
 
 
 try:

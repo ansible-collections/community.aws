@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: iam_server_certificate
 version_added: 1.0.0
@@ -65,9 +65,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Basic server certificate upload from local file
   community.aws.iam_server_certificate:
     name: very_ssl
@@ -90,7 +90,7 @@ EXAMPLES = '''
     name: very_ssl
     new_name: new_very_ssl
     state: present
-'''
+"""
 
 try:
     import botocore

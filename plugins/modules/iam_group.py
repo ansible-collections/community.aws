@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: iam_group
 version_added: 1.0.0
@@ -59,9 +59,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create a group
@@ -105,8 +105,8 @@ EXAMPLES = r'''
     name: testgroup1
     state: absent
 
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 iam_group:
     description: dictionary containing all the group information including group membership
     returned: success
@@ -162,7 +162,7 @@ iam_group:
                     description: the path to the user
                     type: str
                     sample: /
-'''
+"""
 
 try:
     import botocore

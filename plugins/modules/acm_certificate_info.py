@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: acm_certificate_info
 short_description: Retrieve certificate information from AWS Certificate Manager service
 version_added: 1.0.0
@@ -44,9 +44,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: obtain all ACM certificates
   community.aws.aws_acm_info:
 
@@ -71,9 +71,9 @@ EXAMPLES = r'''
   community.aws.aws_acm_info:
     certificate_arn:  "arn:aws:acm:ap-southeast-2:123456789012:certificate/abcdeabc-abcd-1234-4321-abcdeabcde12"
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 certificates:
   description: A list of certificates
   returned: always
@@ -255,7 +255,7 @@ certificates:
       returned: always
       sample: AMAZON_ISSUED
       type: str
-'''
+"""
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.acm import ACMServiceManager

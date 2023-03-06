@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_vpc_vpn
 version_added: 1.0.0
@@ -133,7 +133,7 @@ options:
     required: false
     type: int
     default: 15
-'''
+"""
 
 EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.

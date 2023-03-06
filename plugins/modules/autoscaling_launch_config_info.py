@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: autoscaling_launch_config_info
 version_added: 1.0.0
@@ -48,9 +48,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all launch configurations
@@ -64,9 +64,9 @@ EXAMPLES = r'''
   community.aws.autoscaling_launch_config_info:
     sort: created_time
     sort_order: descending
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 block_device_mapping:
     description: Block device mapping for the instances of launch configuration.
     type: list
@@ -146,7 +146,7 @@ user_data:
     description: User data available.
     type: str
     returned: always
-'''
+"""
 
 try:
     import botocore

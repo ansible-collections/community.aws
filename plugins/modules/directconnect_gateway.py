@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: directconnect_gateway
 author:
   - Gobin Sougrakpam (@gobins)
@@ -52,9 +52,9 @@ options:
         - How long to wait for the association to be deleted.
     type: int
     default: 320
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create a new direct connect gateway attached to virtual private gateway
   community.aws.directconnect_gateway:
     state: present
@@ -69,9 +69,9 @@ EXAMPLES = '''
     name: my-dx-gateway
     amazon_asn: 7224
   register: created_dxgw
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 result:
   description:
     - The attributes of the Direct Connect Gateway
@@ -93,7 +93,7 @@ result:
     owner_account:
       description: The AWS account ID of the owner of the direct connect gateway.
       type: str
-'''
+"""
 
 import time
 

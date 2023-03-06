@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: s3_sync
 version_added: 1.0.0
@@ -119,9 +119,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: basic upload
   community.aws.s3_sync:
     bucket: tedder
@@ -152,9 +152,9 @@ EXAMPLES = '''
     storage_class: "GLACIER"
     include: "*"
     exclude: "*.txt,.*"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 filelist_initial:
   description: file listing (dicts) from initial globbing
   returned: always
@@ -227,7 +227,7 @@ uploads:
                 "whytime": "1477931637 / 1477931489"
            }]
 
-'''
+"""
 
 import datetime
 import fnmatch
@@ -237,6 +237,7 @@ import stat as osstat  # os.stat constants
 
 try:
     from dateutil import tz
+
     HAS_DATEUTIL = True
 except ImportError:
     HAS_DATEUTIL = False

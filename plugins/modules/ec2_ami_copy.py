@@ -4,7 +4,7 @@
 # This file is part of Ansible
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ec2_ami_copy
 version_added: 1.0.0
@@ -72,9 +72,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Basic AMI Copy
   community.aws.ec2_ami_copy:
     source_region: us-east-1
@@ -122,15 +122,15 @@ EXAMPLES = '''
     source_image_id: ami-xxxxxxx
     encrypted: true
     kms_key_id: arn:aws:kms:us-east-1:XXXXXXXXXXXX:key/746de6ea-50a4-4bcb-8fbc-e3b29f2d367b
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 image_id:
   description: AMI ID of the copied AMI
   returned: always
   type: str
   sample: ami-e689729e
-'''
+"""
 
 try:
     from botocore.exceptions import ClientError, WaiterError, BotoCoreError

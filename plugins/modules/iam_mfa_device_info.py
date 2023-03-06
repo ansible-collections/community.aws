@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: iam_mfa_device_info
 version_added: 1.0.0
@@ -21,9 +21,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-RETURN = """
+RETURN = r"""
 mfa_devices:
     description: The MFA devices registered for the given user
     returned: always
@@ -37,7 +37,7 @@ mfa_devices:
         user_name: example
 """
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # more details: https://docs.aws.amazon.com/IAM/latest/APIReference/API_ListMFADevices.html
@@ -52,7 +52,7 @@ EXAMPLES = r'''
     role_arn: "arn:aws:iam::123456789012:role/someRole"
     role_session_name: "someRoleSession"
   register: assumed_role
-'''
+"""
 
 try:
     import botocore

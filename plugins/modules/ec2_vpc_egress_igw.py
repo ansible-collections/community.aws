@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ec2_vpc_egress_igw
 version_added: 1.0.0
@@ -29,9 +29,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Ensure that the VPC has an Internet Gateway.
@@ -41,9 +41,9 @@ EXAMPLES = '''
     state: present
   register: eigw
 
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 gateway_id:
     description: The ID of the Egress Only Internet Gateway or Null.
     returned: always
@@ -54,7 +54,7 @@ vpc_id:
     returned: always
     type: str
     sample: vpc-012345678
-'''
+"""
 
 try:
     import botocore

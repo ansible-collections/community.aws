@@ -4,7 +4,7 @@
 # Copyright (c) 2019, Prasad Katti (@prasadkatti)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: stepfunctions_state_machine_execution
 version_added: 1.0.0
@@ -51,9 +51,9 @@ extends_documentation_fragment:
 
 author:
     - Prasad Katti (@prasadkatti)
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Start an execution of a state machine
   community.aws.stepfunctions_state_machine_execution:
     name: an_execution_name
@@ -66,9 +66,9 @@ EXAMPLES = '''
     execution_arn: "arn:aws:states:us-west-2:123456789012:execution:HelloWorldStateMachineCopy:a1e8e2b5-5dfe-d40e-d9e3-6201061047c8"
     cause: "cause of task failure"
     error: "error code of the failure"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 execution_arn:
     description: ARN of the AWS Step Functions state machine execution.
     type: str
@@ -84,7 +84,7 @@ stop_date:
     type: str
     returned: if action == stop
     sample: "2019-11-02T22:39:49.071000-07:00"
-'''
+"""
 
 
 try:

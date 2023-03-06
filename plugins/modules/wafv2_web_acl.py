@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: wafv2_web_acl
 version_added: 1.5.0
@@ -106,9 +106,9 @@ extends_documentation_fragment:
   - amazon.aws.tags
   - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create test web acl
   community.aws.wafv2_web_acl:
     name: test05
@@ -249,9 +249,9 @@ EXAMPLES = '''
     region: us-east-1
     state: present
 
-'''
+"""
 
-RETURN = """
+RETURN = r"""
 arn:
   description: web acl arn
   sample: arn:aws:wafv2:eu-central-1:123456789012:regional/webacl/test05/318c1ab9-fa74-4b3b-a974-f92e25106f61

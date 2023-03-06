@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: opensearch
 short_description: Creates OpenSearch or ElasticSearch domain
@@ -393,7 +393,7 @@ extends_documentation_fragment:
   - amazon.aws.tags
 """
 
-EXAMPLES = """
+EXAMPLES = r"""
 
 - name: Create OpenSearch domain for dev environment, no zone awareness, no dedicated masters
   community.aws.opensearch:

@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: api_gateway_domain
 short_description: Manage AWS API Gateway custom domains
@@ -63,9 +63,9 @@ notes:
   - Does not create a DNS entry on Route53, for that use the M(community.aws.route53) module.
   - Only supports TLS certificates from AWS ACM that can just be referenced by the ARN, while the AWS API still offers (deprecated)
     options to add own Certificates.
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Setup endpoint for a custom domain for your API Gateway HTTP API
   community.aws.api_gateway_domain:
     domain_name: myapi.foobar.com
@@ -86,9 +86,9 @@ EXAMPLES = '''
     zone: foobar.com
     alias_hosted_zone_id: "{{ api_gw_domain_result.response.domain.distribution_hosted_zone_id }}"
     command: create
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 response:
   description: The data returned by create_domain_name (or update and delete) and create_base_path_mapping methods by boto3.
   returned: success
@@ -108,7 +108,7 @@ response:
     path_mappings: [
         { base_path: '(empty)', rest_api_id: 'abcd123', stage: 'production' }
     ]
-'''
+"""
 
 try:
     from botocore.exceptions import ClientError, BotoCoreError, EndpointConnectionError

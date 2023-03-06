@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: directconnect_link_aggregation_group
 version_added: 1.0.0
@@ -79,9 +79,9 @@ options:
       - The duration in seconds to wait if I(wait=true).
     default: 120
     type: int
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 
 # create a Direct Connect connection
 - community.aws.directconnect_link_aggregation_group:
@@ -91,7 +91,7 @@ EXAMPLES = """
   bandwidth: 1Gbps
 """
 
-RETURN = """
+RETURN = r"""
 changed:
   type: str
   description: Whether or not the LAG has changed.

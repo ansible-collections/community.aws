@@ -4,7 +4,7 @@
 # Copyright: (c) 2021, Milan Zink <zeten30@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: efs_tag
 version_added: 2.0.0
@@ -44,9 +44,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Ensure tags are present on a resource
   community.aws.efs_tag:
     resource: fs-123456ab
@@ -76,9 +76,9 @@ EXAMPLES = r'''
     state: absent
     tags: {}
     purge_tags: true
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 tags:
   description: A dict containing the tags on the resource
   returned: always
@@ -91,7 +91,7 @@ removed_tags:
   description: A dict of tags that were removed from the resource
   returned: If tags were removed
   type: dict
-'''
+"""
 
 try:
     from botocore.exceptions import BotoCoreError, ClientError

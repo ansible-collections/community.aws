@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Rob White (@wimnat)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: glue_crawler
 version_added: 4.1.0
@@ -79,9 +79,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
   - amazon.aws.tags
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create an AWS Glue crawler
@@ -107,9 +107,9 @@ EXAMPLES = r'''
 - community.aws.glue_crawler:
     name: my-glue-crawler
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 creation_time:
     description: The time and date that this crawler definition was created.
     returned: when state is present
@@ -196,7 +196,7 @@ targets:
             description: List of catalog targets.
             returned: when state is present
             type: list
-'''
+"""
 
 try:
     import botocore

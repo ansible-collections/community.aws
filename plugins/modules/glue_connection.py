@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Rob White (@wimnat)
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: glue_connection
 version_added: 1.0.0
@@ -73,9 +73,9 @@ extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Create an AWS Glue connection
@@ -104,9 +104,9 @@ EXAMPLES = r'''
 - community.aws.glue_connection:
     name: my-glue-connection
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 connection_properties:
     description:
         - (deprecated) A dict of key-value pairs (converted to lowercase) used as parameters for this connection.
@@ -155,11 +155,12 @@ raw_connection_properties:
     returned: when state is present
     type: dict
     sample: {'JDBC_CONNECTION_URL':'jdbc:mysql://mydb:3306/databasename','USERNAME':'x','PASSWORD':'y'}
-'''
+"""
 
 # Non-ansible imports
 import copy
 import time
+
 try:
     import botocore
 except ImportError:

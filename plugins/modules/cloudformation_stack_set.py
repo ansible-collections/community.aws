@@ -4,7 +4,7 @@
 # Copyright: (c) 2018, Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: cloudformation_stack_set
 version_added: 1.0.0
@@ -172,9 +172,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create a stack set with instances in two accounts
   community.aws.cloudformation_stack_set:
     name: my-stack
@@ -211,9 +211,9 @@ EXAMPLES = r'''
     accounts: [1234567890, 2345678901]
     regions:
     - us-east-1
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 operations_log:
   type: list
   description: Most recent events in CloudFormation's event log. This may be from a previous run in some cases.
@@ -292,7 +292,7 @@ stack_set:
           Type: "AWS::SNS::Topic"
           Properties: {}
 
-'''  # NOQA
+"""  # NOQA
 
 import datetime
 import itertools

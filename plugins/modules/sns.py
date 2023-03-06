@@ -4,7 +4,7 @@
 # Copyright: (c) 2014, Michael J. Schultz <mjschultz@gmail.com>
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: sns
 short_description: Send Amazon Simple Notification Service messages
 version_added: 1.0.0
@@ -78,9 +78,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.aws
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 - name: Send default notification message via SNS
   community.aws.sns:
     msg: '{{ inventory_hostname }} has completed the play.'
@@ -110,7 +110,7 @@ EXAMPLES = """
   delegate_to: localhost
 """
 
-RETURN = """
+RETURN = r"""
 msg:
   description: Human-readable diagnostic information
   returned: always

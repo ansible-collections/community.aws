@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: eks_cluster
 version_added: 1.0.0
@@ -65,9 +65,9 @@ extends_documentation_fragment:
   - amazon.aws.ec2
   - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create an EKS cluster
@@ -87,9 +87,9 @@ EXAMPLES = r'''
     name: my_cluster
     wait: true
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 arn:
   description: ARN of the EKS cluster
   returned: when state is present
@@ -161,7 +161,7 @@ version:
   returned: when state is present
   type: str
   sample: '1.10'
-'''
+"""
 
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

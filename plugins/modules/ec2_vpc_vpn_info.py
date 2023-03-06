@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ec2_vpc_vpn_info
 version_added: 1.0.0
@@ -32,9 +32,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 - name: Gather information about all vpn connections
   community.aws.ec2_vpc_vpn_info:
@@ -50,9 +50,9 @@ EXAMPLES = r'''
     filters:
       vpn-gateway-id: vgw-cbe66beb
   register: vpn_conn_info
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 vpn_connections:
     description: List of one or more VPN Connections.
     returned: always
@@ -156,9 +156,10 @@ vpn_connections:
         returned: always
         type: str
         sample: vgw-cbe56bfb
-'''
+"""
 
 import json
+
 try:
     from botocore.exceptions import ClientError, BotoCoreError
 except ImportError:

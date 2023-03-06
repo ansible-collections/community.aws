@@ -4,7 +4,7 @@
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ses_identity
 version_added: 1.0.0
@@ -89,9 +89,9 @@ extends_documentation_fragment:
     - amazon.aws.aws
     - amazon.aws.ec2
     - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Ensure example@example.com email identity exists
@@ -145,9 +145,9 @@ EXAMPLES = '''
     state: present
     delivery_notifications:
       topic: "{{ topic_info.sns_arn }}"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 identity:
     description: The identity being modified.
     returned: success
@@ -215,7 +215,7 @@ notification_attributes:
         headers_in_delivery_notifications_enabled:
             description: Whether or not headers are included in messages delivered to the delivery topic.
             type: bool
-'''
+"""
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule

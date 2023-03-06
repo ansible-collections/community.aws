@@ -4,7 +4,7 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: elasticache_parameter_group
 version_added: 1.0.0
@@ -45,9 +45,9 @@ options:
     description:
       - A user-specified dictionary of parameters to reset or modify for the cache parameter group.
     type: dict
-'''
+"""
 
-EXAMPLES = """
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 ---
@@ -77,7 +77,7 @@ EXAMPLES = """
         state: 'absent'
 """
 
-RETURN = """
+RETURN = r"""
 elasticache:
   description: cache parameter group information and response metadata
   returned: always

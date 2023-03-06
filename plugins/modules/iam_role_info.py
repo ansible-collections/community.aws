@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: iam_role_info
 version_added: 1.0.0
@@ -31,9 +31,9 @@ extends_documentation_fragment:
 - amazon.aws.ec2
 - amazon.aws.boto3
 
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: find all existing IAM roles
   community.aws.iam_role_info:
   register: result
@@ -45,9 +45,9 @@ EXAMPLES = '''
 - name: describe all roles matching a path prefix
   community.aws.iam_role_info:
     path_prefix: /application/path
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 iam_roles:
   description: List of IAM roles
   returned: always
@@ -151,7 +151,7 @@ iam_roles:
       type: dict
       returned: always
       sample: '{"Env": "Prod"}'
-'''
+"""
 
 try:
     import botocore

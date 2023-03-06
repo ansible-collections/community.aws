@@ -4,7 +4,7 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 module: sns_topic_info
 short_description: sns_topic_info module
 version_added: 3.2.0
@@ -21,9 +21,9 @@ extends_documentation_fragment:
 - amazon.aws.aws
 - amazon.aws.ec2
 - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: list all the topics
   community.aws.sns_topic_info:
   register: sns_topic_list
@@ -32,9 +32,9 @@ EXAMPLES = r'''
   community.aws.sns_topic_info:
     topic_arn: "{{ sns_arn }}"
   register: sns_topic_info
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 result:
   description:
     - The result contaning the details of one or all AWS SNS topics.
@@ -129,7 +129,7 @@ result:
                 description: The type of topic.
                 type: str
                 sample: "standard"
-'''
+"""
 
 
 try:
