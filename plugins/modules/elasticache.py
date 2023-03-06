@@ -12,7 +12,8 @@ short_description: Manage cache clusters in Amazon ElastiCache
 description:
   - Manage cache clusters in Amazon ElastiCache.
   - Returns information about the specified cache cluster.
-author: "Jim Dalton (@jsdalton)"
+author:
+  - "Jim Dalton (@jsdalton)"
 options:
   state:
     description:

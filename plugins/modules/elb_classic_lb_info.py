@@ -10,7 +10,7 @@ module: elb_classic_lb_info
 version_added: 1.0.0
 short_description: Gather information about EC2 Elastic Load Balancers in AWS
 description:
-    - Gather information about EC2 Elastic Load Balancers in AWS
+  - Gather information about EC2 Elastic Load Balancers in AWS
 author:
   - "Michael Schultz (@mjschultz)"
   - "Fernando Jose Pando (@nand0p)"

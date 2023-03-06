@@ -11,7 +11,8 @@ short_description: Creates OpenSearch or ElasticSearch domain
 description:
   - Creates or modify a Amazon OpenSearch Service domain.
 version_added: 4.0.0
-author: "Sebastien Rosset (@sebastien-rosset)"
+author:
+  - "Sebastien Rosset (@sebastien-rosset)"
 options:
   state:
     description:

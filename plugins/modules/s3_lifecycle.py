@@ -10,8 +10,9 @@ module: s3_lifecycle
 version_added: 1.0.0
 short_description: Manage S3 bucket lifecycle rules in AWS
 description:
-    - Manage S3 bucket lifecycle rules in AWS.
-author: "Rob White (@wimnat)"
+  - Manage S3 bucket lifecycle rules in AWS.
+author:
+  - "Rob White (@wimnat)"
 notes:
   - If specifying expiration time as days then transition time must also be specified in days.
   - If specifying expiration time as a date then transition time must also be specified as a date.

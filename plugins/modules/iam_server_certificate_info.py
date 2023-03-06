@@ -11,7 +11,8 @@ version_added: 1.0.0
 short_description: Retrieve the information of a server certificate
 description:
   - Retrieve the attributes of a server certificate.
-author: "Allen Sanabria (@linuxdynasty)"
+author:
+  - "Allen Sanabria (@linuxdynasty)"
 options:
   name:
     description:

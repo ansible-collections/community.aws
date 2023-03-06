@@ -12,11 +12,10 @@ module: cloudfront_invalidation
 
 short_description: create invalidations for AWS CloudFront distributions
 description:
-    - Allows for invalidation of a batch of paths for a CloudFront distribution.
+  - Allows for invalidation of a batch of paths for a CloudFront distribution.
 
-author: Willem van Ketwich (@wilvk)
-
-
+author:
+  - Willem van Ketwich (@wilvk)
 
 options:
     distribution_id:

@@ -10,11 +10,12 @@ module: ecs_cluster
 version_added: 1.0.0
 short_description: Create or terminate ECS clusters.
 notes:
-    - When deleting a cluster, the information returned is the state of the cluster prior to deletion.
-    - It will also wait for a cluster to have instances registered to it.
+  - When deleting a cluster, the information returned is the state of the cluster prior to deletion.
+  - It will also wait for a cluster to have instances registered to it.
 description:
-    - Creates or terminates ecs clusters.
-author: Mark Chance (@Java1Guy)
+  - Creates or terminates ecs clusters.
+author:
+  - Mark Chance (@Java1Guy)
 options:
     state:
         description:

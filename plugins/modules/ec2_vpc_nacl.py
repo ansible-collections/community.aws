@@ -71,7 +71,8 @@ options:
     type: str
     choices: ['present', 'absent']
     default: present
-author: Mike Mochan (@mmochan)
+author:
+  - Mike Mochan (@mmochan)
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
 extends_documentation_fragment:

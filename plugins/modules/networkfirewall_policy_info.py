@@ -24,7 +24,8 @@ options:
     required: false
     type: str
 
-author: Mark Chappell (@tremble)
+author:
+  - Mark Chappell (@tremble)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

@@ -10,8 +10,9 @@ module: ec2_vpc_nacl_info
 version_added: 1.0.0
 short_description: Gather information about Network ACLs in an AWS VPC
 description:
-    - Gather information about Network ACLs in an AWS VPC
-author: "Brad Davidson (@brandond)"
+  - Gather information about Network ACLs in an AWS VPC
+author:
+  - "Brad Davidson (@brandond)"
 options:
   nacl_ids:
     description:

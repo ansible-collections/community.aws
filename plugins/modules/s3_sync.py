@@ -10,8 +10,8 @@ module: s3_sync
 version_added: 1.0.0
 short_description: Efficiently upload multiple files to S3
 description:
-     - The S3 module is great, but it is very slow for a large volume of files- even a dozen will be noticeable. In addition to speed, it handles globbing,
-       inclusions/exclusions, mime types, expiration mapping, recursion, cache control and smart directory mapping.
+- The S3 module is great, but it is very slow for a large volume of files- even a dozen will be noticeable. In addition to speed, it handles globbing,
+  inclusions/exclusions, mime types, expiration mapping, recursion, cache control and smart directory mapping.
 options:
   mode:
     description:
@@ -113,12 +113,12 @@ options:
     default: false
     type: bool
 
-author: Ted Timmons (@tedder)
+author:
+- Ted Timmons (@tedder)
 extends_documentation_fragment:
 - amazon.aws.common.modules
 - amazon.aws.region.modules
 - amazon.aws.boto3
-
 """
 
 EXAMPLES = r"""

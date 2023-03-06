@@ -12,8 +12,8 @@ short_description: Manage AWS IAM groups
 description:
   - Manage AWS IAM groups.
 author:
-- Nick Aslanidis (@naslanidis)
-- Maksym Postument (@infectsoldier)
+  - Nick Aslanidis (@naslanidis)
+  - Maksym Postument (@infectsoldier)
 options:
   name:
     description:

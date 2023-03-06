@@ -14,7 +14,8 @@ description:
   - You can determine the status of a request by looking at the I(status) parameter.
   - Prior to release 5.0.0 this module was called C(community.aws.ec2_asg_instance_refresh_info).
     The usage did not change.
-author: "Dan Khersonsky (@danquixote)"
+author:
+  - "Dan Khersonsky (@danquixote)"
 options:
   name:
     description:

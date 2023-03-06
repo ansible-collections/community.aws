@@ -11,7 +11,8 @@ short_description: obtain information about one or more OpenSearch or ElasticSea
 description:
   - Obtain information about one Amazon OpenSearch Service domain.
 version_added: 4.0.0
-author: "Sebastien Rosset (@sebastien-rosset)"
+author:
+  - "Sebastien Rosset (@sebastien-rosset)"
 options:
   domain_name:
     description:

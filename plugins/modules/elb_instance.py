@@ -13,7 +13,8 @@ description:
   - This module de-registers or registers an AWS EC2 instance from the ELBs
     that it belongs to.
   - Will be marked changed when called only if there are ELBs found to operate on.
-author: "John Jarvis (@jarv)"
+author:
+  - "John Jarvis (@jarv)"
 options:
   state:
     description:
@@ -53,8 +54,8 @@ options:
     default: 0
     type: int
 notes:
-- The ec2_elbs fact previously set by this module was deprecated in release 2.1.0 and since release
-  4.0.0 is no longer set.
+  - The ec2_elbs fact previously set by this module was deprecated in release 2.1.0 and since release
+    4.0.0 is no longer set.
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

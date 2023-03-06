@@ -65,7 +65,8 @@ options:
     required: false
     default: present
     choices: ['present', 'absent']
-author: Mark Woolley(@marknet15)
+author:
+  - Mark Woolley(@marknet15)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

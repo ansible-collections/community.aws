@@ -10,10 +10,10 @@ module: efs_info
 version_added: 1.0.0
 short_description: Get information about Amazon EFS file systems
 description:
-    - This module can be used to search Amazon EFS file systems.
-      Note that the M(community.aws.efs_info) module no longer returns C(ansible_facts)!
+- This module can be used to search Amazon EFS file systems.
+  Note that the M(community.aws.efs_info) module no longer returns C(ansible_facts)!
 author:
-    - "Ryan Sydnor (@ryansydnor)"
+- "Ryan Sydnor (@ryansydnor)"
 options:
     name:
       description:

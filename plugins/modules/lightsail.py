@@ -10,11 +10,11 @@ module: lightsail
 version_added: 1.0.0
 short_description: Manage instances in AWS Lightsail
 description:
-     - Manage instances in AWS Lightsail.
-     - Instance tagging is not yet supported in this module.
+  - Manage instances in AWS Lightsail.
+  - Instance tagging is not yet supported in this module.
 author:
-    - "Nick Ball (@nickball)"
-    - "Prasad Katti (@prasadkatti)"
+  - "Nick Ball (@nickball)"
+  - "Prasad Katti (@prasadkatti)"
 options:
   state:
     description:

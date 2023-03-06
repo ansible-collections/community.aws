@@ -12,7 +12,8 @@ short_description: fetch information about AWS IAM User access keys
 description:
   - 'Fetches information AWS IAM user access keys.'
   - 'Note: It is not possible to fetch the secret access key.'
-author: Mark Chappell (@tremble)
+author:
+  - Mark Chappell (@tremble)
 options:
   user_name:
     description:

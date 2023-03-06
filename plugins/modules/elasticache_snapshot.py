@@ -12,7 +12,8 @@ short_description: Manage cache snapshots in Amazon ElastiCache
 description:
   - Manage cache snapshots in Amazon ElastiCache.
   - Returns information about the specified snapshot.
-author: "Sloane Hertel (@s-hertel)"
+author:
+  - "Sloane Hertel (@s-hertel)"
 options:
   name:
     description:

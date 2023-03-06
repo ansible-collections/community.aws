@@ -12,8 +12,8 @@ short_description: Gathers which target groups a target is associated with.
 description:
   - This module will search through every target group in a region to find
     which ones have registered a given instance ID or IP.
-
-author: "Yaakov Kuperman (@yaakov-github)"
+author:
+  - "Yaakov Kuperman (@yaakov-github)"
 options:
   instance_id:
     description:

@@ -10,9 +10,9 @@ module: cloudformation_stack_set
 version_added: 1.0.0
 short_description: Manage groups of CloudFormation stacks
 description:
-     - Launches/updates/deletes AWS CloudFormation Stack Sets.
+  - Launches/updates/deletes AWS CloudFormation Stack Sets.
 notes:
-     - To make an individual stack, you want the M(amazon.aws.cloudformation) module.
+  - To make an individual stack, you want the M(amazon.aws.cloudformation) module.
 options:
   name:
     description:
@@ -167,7 +167,8 @@ options:
         - Note that this setting lets you specify the maximum for operations.
           For large deployments, under certain circumstances the actual count may be lower.
 
-author: "Ryan Scott Brown (@ryansb)"
+author:
+  - "Ryan Scott Brown (@ryansb)"
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

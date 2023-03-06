@@ -10,8 +10,9 @@ module: ec2_placement_group_info
 version_added: 1.0.0
 short_description: List EC2 Placement Group(s) details
 description:
-    - List details of EC2 Placement Group(s).
-author: "Brad Macpherson (@iiibrad)"
+  - List details of EC2 Placement Group(s).
+author:
+  - "Brad Macpherson (@iiibrad)"
 options:
   names:
     description:

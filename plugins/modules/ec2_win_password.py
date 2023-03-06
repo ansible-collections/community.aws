@@ -10,8 +10,9 @@ module: ec2_win_password
 version_added: 1.0.0
 short_description: Gets the default administrator password for EC2 Windows instances
 description:
-    - Gets the default administrator password from any EC2 Windows instance. The instance is referenced by its id (e.g. C(i-XXXXXXX)).
-author: "Rick Mendes (@rickmendes)"
+  - Gets the default administrator password from any EC2 Windows instance. The instance is referenced by its id (e.g. C(i-XXXXXXX)).
+author:
+  - "Rick Mendes (@rickmendes)"
 options:
   instance_id:
     description:
@@ -47,7 +48,7 @@ options:
     type: int
 
 requirements:
-- cryptography
+  - cryptography
 
 extends_documentation_fragment:
   - amazon.aws.common.modules

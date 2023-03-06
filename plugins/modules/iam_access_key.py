@@ -11,7 +11,8 @@ version_added: 2.1.0
 short_description: Manage AWS IAM User access keys
 description:
   - Manage AWS IAM user access keys.
-author: Mark Chappell (@tremble)
+author:
+  - Mark Chappell (@tremble)
 options:
   user_name:
     description:

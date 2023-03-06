@@ -10,12 +10,13 @@ module: s3_metrics_configuration
 version_added: 1.3.0
 short_description: Manage s3 bucket metrics configuration in AWS
 description:
-    - Manage s3 bucket metrics configuration in AWS which allows to get the CloudWatch request metrics for the objects in a bucket
-author: Dmytro Vorotyntsev (@vorotech)
+  - Manage s3 bucket metrics configuration in AWS which allows to get the CloudWatch request metrics for the objects in a bucket
+author:
+  - Dmytro Vorotyntsev (@vorotech)
 notes:
-    - This modules manages single metrics configuration, the s3 bucket might have up to 1,000 metrics configurations
-    - To request metrics for the entire bucket, create a metrics configuration without a filter
-    - Metrics configurations are necessary only to enable request metric, bucket-level daily storage metrics are always turned on
+  - This modules manages single metrics configuration, the s3 bucket might have up to 1,000 metrics configurations
+  - To request metrics for the entire bucket, create a metrics configuration without a filter
+  - Metrics configurations are necessary only to enable request metric, bucket-level daily storage metrics are always turned on
 options:
   bucket_name:
     description:

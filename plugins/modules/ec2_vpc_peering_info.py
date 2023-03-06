@@ -23,7 +23,8 @@ options:
         for possible filters.
     type: dict
     default: {}
-author: Karen Cheng (@Etherdaemon)
+author:
+  - Karen Cheng (@Etherdaemon)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

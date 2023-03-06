@@ -12,7 +12,8 @@ short_description: Manage Redshift Cross Region Snapshots
 description:
   - Manage Redshift Cross Region Snapshots. Supports KMS-Encrypted Snapshots.
   - For more information, see U(https://docs.aws.amazon.com/redshift/latest/mgmt/working-with-snapshots.html#cross-region-snapshot-copy)
-author: JR Kerkstra (@captainkerk)
+author:
+  - JR Kerkstra (@captainkerk)
 options:
   cluster_name:
     description:

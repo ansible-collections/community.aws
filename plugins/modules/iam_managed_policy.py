@@ -10,7 +10,7 @@ module: iam_managed_policy
 version_added: 1.0.0
 short_description: Manage User Managed IAM policies
 description:
-    - Allows creating and removing managed IAM policies
+  - Allows creating and removing managed IAM policies
 options:
   policy_name:
     description:
@@ -43,7 +43,8 @@ options:
     choices: [ "present", "absent" ]
     type: str
 
-author: "Dan Kozlowski (@dkhenry)"
+author:
+  - "Dan Kozlowski (@dkhenry)"
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

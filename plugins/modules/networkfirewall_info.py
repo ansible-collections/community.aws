@@ -32,7 +32,8 @@ options:
     elements: str
     aliases: ['vpcs', 'vpc_id']
 
-author: Mark Chappell (@tremble)
+author:
+  - Mark Chappell (@tremble)
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

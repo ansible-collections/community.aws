@@ -12,7 +12,8 @@ short_description: Manage cache parameter groups in Amazon ElastiCache.
 description:
   - Manage cache security groups in Amazon ElastiCache.
   - Returns information about the specified cache cluster.
-author: "Sloane Hertel (@s-hertel)"
+author:
+  - "Sloane Hertel (@s-hertel)"
 
 options:
   group_family:

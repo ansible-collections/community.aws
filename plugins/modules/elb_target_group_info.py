@@ -10,8 +10,9 @@ module: elb_target_group_info
 version_added: 1.0.0
 short_description: Gather information about ELB target groups in AWS
 description:
-    - Gather information about ELB target groups in AWS
-author: Rob White (@wimnat)
+  - Gather information about ELB target groups in AWS
+author:
+  - Rob White (@wimnat)
 options:
   load_balancer_arn:
     description:

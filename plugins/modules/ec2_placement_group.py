@@ -10,11 +10,12 @@ module: ec2_placement_group
 version_added: 1.0.0
 short_description: Create or delete an EC2 Placement Group
 description:
-    - Create an EC2 Placement Group; if the placement group already exists,
-      nothing is done. Or, delete an existing placement group. If the placement
-      group is absent, do nothing. See also
-      U(https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
-author: "Brad Macpherson (@iiibrad)"
+  - Create an EC2 Placement Group; if the placement group already exists,
+    nothing is done. Or, delete an existing placement group. If the placement
+    group is absent, do nothing. See also
+    U(https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/placement-groups.html)
+author:
+  - "Brad Macpherson (@iiibrad)"
 options:
   name:
     description:

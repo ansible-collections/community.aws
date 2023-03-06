@@ -10,8 +10,9 @@ module: ec2_vpc_egress_igw
 version_added: 1.0.0
 short_description: Manage an AWS VPC Egress Only Internet gateway
 description:
-    - Manage an AWS VPC Egress Only Internet gateway
-author: Daniel Shepherd (@shepdelacreme)
+  - Manage an AWS VPC Egress Only Internet gateway
+author:
+  - Daniel Shepherd (@shepdelacreme)
 options:
   vpc_id:
     description:

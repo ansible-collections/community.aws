@@ -14,12 +14,11 @@ short_description: Create, update and delete origin access identities for a
                    CloudFront distribution
 
 description:
-    - Allows for easy creation, updating and deletion of origin access
-      identities.
+  - Allows for easy creation, updating and deletion of origin access
+    identities.
 
-author: Willem van Ketwich (@wilvk)
-
-
+author:
+  - Willem van Ketwich (@wilvk)
 
 options:
     state:

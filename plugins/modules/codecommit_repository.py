@@ -14,7 +14,8 @@ description:
   - See U(https://aws.amazon.com/codecommit/) for more information about CodeCommit.
   - Prior to release 5.0.0 this module was called C(community.aws.aws_codecommit).
     The usage did not change.
-author: Shuang Wang (@ptux)
+author:
+  - Shuang Wang (@ptux)
 options:
   name:
     description:

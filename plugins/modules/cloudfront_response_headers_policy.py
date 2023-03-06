@@ -12,12 +12,11 @@ module: cloudfront_response_headers_policy
 short_description: Create, update and delete response headers policies to be used in a Cloudfront distribution
 
 description:
-    - Create, update and delete response headers policies to be used in a Cloudfront distribution for inserting custom headers
-    - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront.html#CloudFront.Client.create_response_headers_policy)
+  - Create, update and delete response headers policies to be used in a Cloudfront distribution for inserting custom headers
+  - See docs at U(https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/cloudfront.html#CloudFront.Client.create_response_headers_policy)
 
-author: Stefan Horning (@stefanhorning)
-
-
+author:
+  - Stefan Horning (@stefanhorning)
 
 options:
     state:

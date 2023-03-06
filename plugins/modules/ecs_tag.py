@@ -9,11 +9,9 @@ DOCUMENTATION = r"""
 module: ecs_tag
 version_added: 1.0.0
 short_description: create and remove tags on Amazon ECS resources
-notes:
-    - none
 description:
-    - Creates and removes tags for Amazon ECS resources.
-    - Resources are referenced by their cluster name.
+  - Creates and removes tags for Amazon ECS resources.
+  - Resources are referenced by their cluster name.
 author:
   - Michael Pechner (@mpechner)
 options:

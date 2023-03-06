@@ -10,11 +10,12 @@ module: kinesis_stream
 version_added: 1.0.0
 short_description: Manage a Kinesis Stream.
 description:
-    - Create or Delete a Kinesis Stream.
-    - Update the retention period of a Kinesis Stream.
-    - Update Tags on a Kinesis Stream.
-    - Enable/disable server side encryption on a Kinesis Stream.
-author: Allen Sanabria (@linuxdynasty)
+  - Create or Delete a Kinesis Stream.
+  - Update the retention period of a Kinesis Stream.
+  - Update Tags on a Kinesis Stream.
+  - Enable/disable server side encryption on a Kinesis Stream.
+author:
+  - Allen Sanabria (@linuxdynasty)
 options:
   name:
     description:

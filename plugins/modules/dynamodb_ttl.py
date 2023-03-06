@@ -30,7 +30,8 @@ options:
     required: true
     type: str
 
-author: Ted Timmons (@tedder)
+author:
+- Ted Timmons (@tedder)
 extends_documentation_fragment:
 - amazon.aws.common.modules
 - amazon.aws.region.modules

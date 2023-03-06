@@ -10,8 +10,9 @@ module: ec2_vpc_vpn_info
 version_added: 1.0.0
 short_description: Gather information about VPN Connections in AWS.
 description:
-    - Gather information about VPN Connections in AWS.
-author: Madhura Naniwadekar (@Madhura-CSI)
+  - Gather information about VPN Connections in AWS.
+author:
+  - Madhura Naniwadekar (@Madhura-CSI)
 options:
   filters:
     description:

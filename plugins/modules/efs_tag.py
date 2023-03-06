@@ -10,8 +10,8 @@ module: efs_tag
 version_added: 2.0.0
 short_description: create and remove tags on Amazon EFS resources
 description:
-    - Creates and removes tags for Amazon EFS resources.
-    - Resources are referenced by their ID (filesystem or filesystem access point).
+  - Creates and removes tags for Amazon EFS resources.
+  - Resources are referenced by their ID (filesystem or filesystem access point).
 author:
   - Milan Zink (@zeten30)
 options:
