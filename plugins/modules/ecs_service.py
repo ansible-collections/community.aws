@@ -674,6 +674,21 @@ ansible_facts:
 
 import time
 
+try:
+    import botocore
+except ImportError:
+    pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import map_complex_type
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+
+
 DEPLOYMENT_CONTROLLER_TYPE_MAP = {
     'type': 'str',
 }
@@ -683,19 +698,6 @@ DEPLOYMENT_CONFIGURATION_TYPE_MAP = {
     'minimum_healthy_percent': 'int',
     'deployment_circuit_breaker': 'dict',
 }
-
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
-
-from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import map_complex_type
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-
-try:
-    import botocore
-except ImportError:
-    pass  # caught by AnsibleAWSModule
 
 
 class EcsServiceManager:

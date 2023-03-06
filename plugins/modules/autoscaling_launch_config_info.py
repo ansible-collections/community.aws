@@ -150,7 +150,6 @@ user_data:
 
 try:
     import botocore
-    from botocore.exceptions import ClientError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
@@ -170,7 +169,7 @@ def list_launch_configs(connection, module):
     try:
         pg = connection.get_paginator('describe_launch_configurations')
         launch_configs = pg.paginate(LaunchConfigurationNames=launch_config_name).build_full_result()
-    except ClientError as e:
+    except botocore.exceptions.ClientError as e:
         module.fail_json_aws(e, msg="Failed to list launch configs")
 
     snaked_launch_configs = []

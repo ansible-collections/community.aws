@@ -281,15 +281,17 @@ creation_time:
     returned: when state present
     type: str
     sample: '2017-09-28T08:22:51.881000-03:00'
-"""  # NOQA
-
-from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import _camel_to_snake, camel_dict_to_snake_dict
+"""
 
 try:
     import botocore
 except ImportError:
     pass  # handled by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import _camel_to_snake
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 # Merge the results of the scalable target creation and policy deletion/creation

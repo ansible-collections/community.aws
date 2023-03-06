@@ -140,14 +140,18 @@ response_headers_policy:
             sample: my-header-policy
 """
 
+import datetime
+
 try:
-    from botocore.exceptions import ClientError, ParamValidationError, BotoCoreError
+    from botocore.exceptions import BotoCoreError
+    from botocore.exceptions import ClientError
 except ImportError:
     pass  # caught by imported AnsibleAWSModule
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-import datetime
 
 
 class CloudfrontResponseHeadersPolicyService(object):
@@ -171,7 +175,7 @@ class CloudfrontResponseHeadersPolicyService(object):
                     matching_policy = None
 
             return matching_policy
-        except (ParamValidationError, ClientError, BotoCoreError) as e:
+        except (ClientError, BotoCoreError) as e:
             self.module.fail_json_aws(e, msg="Error fetching policy information")
 
     def create_response_header_policy(self, name, comment, cors_config, security_headers_config, custom_headers_config):
@@ -205,7 +209,7 @@ class CloudfrontResponseHeadersPolicyService(object):
             try:
                 result = self.client.create_response_headers_policy(ResponseHeadersPolicyConfig=config)
                 changed = True
-            except (ParamValidationError, ClientError, BotoCoreError) as e:
+            except (ClientError, BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Error creating policy")
         else:
             policy_id = matching_policy['ResponseHeadersPolicy']['Id']
@@ -220,7 +224,7 @@ class CloudfrontResponseHeadersPolicyService(object):
                 # consider change made by this execution of the module if returned timestamp was very recent
                 if changed_time > seconds_ago:
                     changed = True
-            except (ParamValidationError, ClientError, BotoCoreError) as e:
+            except (ClientError, BotoCoreError) as e:
                 self.module.fail_json_aws(e, msg="Updating creating policy")
 
         self.module.exit_json(changed=changed, **camel_dict_to_snake_dict(result))
@@ -238,7 +242,7 @@ class CloudfrontResponseHeadersPolicyService(object):
             else:
                 try:
                     result = self.client.delete_response_headers_policy(Id=policy_id, IfMatch=etag)
-                except (ParamValidationError, ClientError, BotoCoreError) as e:
+                except (ClientError, BotoCoreError) as e:
                     self.module.fail_json_aws(e, msg="Error deleting policy")
 
             self.module.exit_json(changed=True, **camel_dict_to_snake_dict(result))

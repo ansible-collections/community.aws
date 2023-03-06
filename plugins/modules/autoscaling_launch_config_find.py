@@ -129,6 +129,7 @@ associate_public_address:
     sample: True
 ...
 """
+
 import re
 
 try:

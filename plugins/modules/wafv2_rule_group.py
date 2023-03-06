@@ -198,19 +198,22 @@ visibility_config:
 """
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    from botocore.exceptions import BotoCoreError
+    from botocore.exceptions import ClientError
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import snake_dict_to_camel_dict
 from ansible_collections.community.aws.plugins.module_utils.wafv2 import compare_priority_rules
-from ansible_collections.community.aws.plugins.module_utils.wafv2 import wafv2_list_rule_groups
-from ansible_collections.community.aws.plugins.module_utils.wafv2 import wafv2_snake_dict_to_camel_dict
 from ansible_collections.community.aws.plugins.module_utils.wafv2 import describe_wafv2_tags
 from ansible_collections.community.aws.plugins.module_utils.wafv2 import ensure_wafv2_tags
+from ansible_collections.community.aws.plugins.module_utils.wafv2 import wafv2_list_rule_groups
+from ansible_collections.community.aws.plugins.module_utils.wafv2 import wafv2_snake_dict_to_camel_dict
 
 
 class RuleGroup:

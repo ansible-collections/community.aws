@@ -35,14 +35,15 @@ export_items:
     type: dict
 """
 
-from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-
 try:
     from botocore.exceptions import ClientError
     from botocore.exceptions import BotoCoreError
 except ImportError:
     pass  # handled by AnsibleAWSModule
+
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 @AWSRetry.exponential_backoff()

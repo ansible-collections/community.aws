@@ -110,7 +110,8 @@ attributes:
 
 try:
     import botocore
-    from botocore.exceptions import ClientError, EndpointConnectionError
+    from botocore.exceptions import ClientError
+    from botocore.exceptions import EndpointConnectionError
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 

@@ -78,7 +78,6 @@ upload_date:
 
 try:
     import botocore
-    import botocore.exceptions
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 

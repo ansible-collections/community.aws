@@ -338,10 +338,11 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import scrub_none_parameters
+from ansible_collections.amazon.aws.plugins.module_utils.policy import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import scrub_none_parameters
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
 from ansible_collections.community.aws.plugins.module_utils.sns import list_topics
 from ansible_collections.community.aws.plugins.module_utils.sns import topic_arn_lookup
 from ansible_collections.community.aws.plugins.module_utils.sns import compare_delivery_policies

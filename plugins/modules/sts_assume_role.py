@@ -100,13 +100,15 @@ EXAMPLES = r"""
 
 """
 
-from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-
 try:
-    from botocore.exceptions import ClientError, ParamValidationError
+    from botocore.exceptions import ClientError
+    from botocore.exceptions import ParamValidationError
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def _parse_response(response):

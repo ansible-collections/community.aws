@@ -127,8 +127,8 @@ EXAMPLES = r"""
   community.aws.elasticache:
     name: "test-please-delete"
     state: rebooted
-
 """
+
 from time import sleep
 
 try:
@@ -136,12 +136,12 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
 
-class ElastiCacheManager(object):
+class ElastiCacheManager():
 
     """Handles elasticache creation and destruction"""
 
@@ -150,7 +150,7 @@ class ElastiCacheManager(object):
     def __init__(self, module, name, engine, cache_engine_version, node_type,
                  num_nodes, cache_port, cache_parameter_group, cache_subnet_group,
                  cache_security_groups, security_group_ids, zone, wait,
-                 hard_modify, region, **aws_connect_kwargs):
+                 hard_modify):
         self.module = module
         self.name = name
         self.engine = engine.lower()
@@ -165,9 +165,6 @@ class ElastiCacheManager(object):
         self.zone = zone
         self.wait = wait
         self.hard_modify = hard_modify
-
-        self.region = region
-        self.aws_connect_kwargs = aws_connect_kwargs
 
         self.changed = False
         self.data = None
@@ -497,8 +494,6 @@ def main():
         argument_spec=argument_spec,
     )
 
-    region, ec2_url, aws_connect_kwargs = get_aws_connection_info(module)
-
     name = module.params['name']
     state = module.params['state']
     engine = module.params['engine']
@@ -527,7 +522,7 @@ def main():
                                              cache_subnet_group,
                                              cache_security_groups,
                                              security_group_ids, zone, wait,
-                                             hard_modify, region, **aws_connect_kwargs)
+                                             hard_modify)
 
     if state == 'present':
         elasticache_manager.ensure_present()

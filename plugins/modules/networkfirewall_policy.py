@@ -335,8 +335,7 @@ policy:
           example: {'tagName': 'Some Value'}
 """
 
-
-from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.community.aws.plugins.module_utils.networkfirewall import NetworkFirewallPolicyManager
 
 

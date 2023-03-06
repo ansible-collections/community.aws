@@ -216,9 +216,7 @@ transit_gateway_attachments:
       example: '123456789012'
 """
 
-
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-
 from ansible_collections.community.aws.plugins.module_utils.transitgateway import TransitGatewayVpcAttachmentManager
 
 

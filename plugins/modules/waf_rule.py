@@ -143,17 +143,17 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.waf import MATCH_LOOKUP
+from ansible_collections.amazon.aws.plugins.module_utils.waf import list_regional_rules_with_backoff
+from ansible_collections.amazon.aws.plugins.module_utils.waf import list_rules_with_backoff
+from ansible_collections.amazon.aws.plugins.module_utils.waf import run_func_with_change_token_backoff
+from ansible_collections.amazon.aws.plugins.module_utils.waf import get_web_acl_with_backoff
+from ansible_collections.amazon.aws.plugins.module_utils.waf import list_web_acls_with_backoff
+from ansible_collections.amazon.aws.plugins.module_utils.waf import list_regional_web_acls_with_backoff
+
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.waf import (
-    MATCH_LOOKUP,
-    list_regional_rules_with_backoff,
-    list_rules_with_backoff,
-    run_func_with_change_token_backoff,
-    get_web_acl_with_backoff,
-    list_web_acls_with_backoff,
-    list_regional_web_acls_with_backoff,
-)
 
 
 def get_rule_by_name(client, module, name):
