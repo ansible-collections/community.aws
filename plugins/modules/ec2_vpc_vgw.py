@@ -53,10 +53,10 @@ notes:
 author:
   - Nick Aslanidis (@naslanidis)
 extends_documentation_fragment:
-  - amazon.aws.ec2
-  - amazon.aws.aws
-  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

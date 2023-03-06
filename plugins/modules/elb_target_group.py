@@ -202,14 +202,15 @@ options:
       - The time to wait for the target group.
     default: 200
     type: int
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
-  - amazon.aws.tags
 
 notes:
   - Once a target group has been created, only its health check can then be modified using subsequent calls
+
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

@@ -99,12 +99,11 @@ options:
         type: dict
         version_added: 5.2.0
 author:
- - David M. Lee (@leedm777)
+    - David M. Lee (@leedm777)
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
-
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
+    - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

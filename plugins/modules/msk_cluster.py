@@ -196,16 +196,16 @@ options:
         description: How many seconds to wait. Cluster creation can take up to 20-30 minutes.
         type: int
         default: 3600
-extends_documentation_fragment:
-    - amazon.aws.aws
-    - amazon.aws.ec2
-    - amazon.aws.boto3
-    - amazon.aws.tags
 notes:
     - All operations are time consuming, for example create takes 20-30 minutes,
       update kafka version -- more than one hour, update configuration -- 10-15 minutes;
     - Cluster's brokers get evenly distributed over a number of availability zones
       that's equal to the number of subnets.
+extends_documentation_fragment:
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
+    - amazon.aws.boto3
+    - amazon.aws.tags
 """
 
 EXAMPLES = r"""

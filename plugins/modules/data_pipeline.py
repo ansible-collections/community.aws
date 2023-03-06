@@ -12,10 +12,6 @@ author:
   - Raghu Udiyar (@raags) <raghusiddarth@gmail.com>
   - Sloane Hertel (@s-hertel) <shertel@redhat.com>
 short_description: Create and manage AWS Datapipelines
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 description:
   - Create and manage AWS Datapipelines. Creation is not idempotent in AWS, so the C(uniqueId) is created by hashing the options (minus objects)
     given to the datapipeline.
@@ -123,6 +119,10 @@ options:
     type: dict
     default: {}
     aliases: ['resource_tags']
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

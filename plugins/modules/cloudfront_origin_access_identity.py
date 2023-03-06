@@ -19,10 +19,6 @@ description:
 
 author: Willem van Ketwich (@wilvk)
 
-extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
 
 
 options:
@@ -52,6 +48,10 @@ options:
 notes:
   - Does not support check mode.
 
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

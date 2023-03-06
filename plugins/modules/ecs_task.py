@@ -97,10 +97,9 @@ options:
         default: false
         version_added: 4.1.0
 extends_documentation_fragment:
-    - amazon.aws.aws
-    - amazon.aws.ec2
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
     - amazon.aws.boto3
-
 """
 
 EXAMPLES = r"""
@@ -176,6 +175,7 @@ EXAMPLES = r"""
       task_definition: console-sample-app-static-taskdef
       task: "arn:aws:ecs:us-west-2:123456789012:task/3f8353d1-29a8-4689-bbf6-ad79937ffe8a"
 """
+
 RETURN = r"""
 task:
     description: details about the task that was started

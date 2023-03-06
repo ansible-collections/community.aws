@@ -59,8 +59,8 @@ options:
           - Before you can set this option, you must set I(all_supported=false).
     type: dict
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
 """
 

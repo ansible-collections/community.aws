@@ -36,8 +36,8 @@ options:
       - Corresponds to Python slice notation like list[:limit].
     type: int
 extends_documentation_fragment:
-  - amazon.aws.ec2
-  - amazon.aws.aws
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
 """
 

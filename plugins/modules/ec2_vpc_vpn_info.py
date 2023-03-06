@@ -28,10 +28,9 @@ options:
     elements: str
     default: []
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
-
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

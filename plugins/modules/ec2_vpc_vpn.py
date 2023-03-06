@@ -12,11 +12,6 @@ short_description: Create, modify, and delete EC2 VPN connections
 description:
   - This module creates, modifies, and deletes VPN connections. Idempotence is achieved by using the filters
     option or specifying the VPN connection identifier.
-extends_documentation_fragment:
-  - amazon.aws.ec2
-  - amazon.aws.aws
-  - amazon.aws.boto3
-  - amazon.aws.tags
 author:
   - "Sloane Hertel (@s-hertel)"
 options:
@@ -133,6 +128,11 @@ options:
     required: false
     type: int
     default: 15
+extends_documentation_fragment:
+  - amazon.aws.region.modules
+  - amazon.aws.common.modules
+  - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

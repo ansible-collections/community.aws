@@ -187,10 +187,11 @@ options:
     description:
       - The estimated time, in seconds, until a newly launched instance can contribute to the CloudWatch metrics.
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
 """
+
 EXAMPLES = r"""
 - name: Simple Scale Down policy
   community.aws.autoscaling_policy:

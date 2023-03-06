@@ -55,14 +55,14 @@ options:
     default: present
     choices: [ 'present', 'absent' ]
     type: str
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 notes:
   - Does not create a DNS entry on Route53, for that use the M(community.aws.route53) module.
   - Only supports TLS certificates from AWS ACM that can just be referenced by the ARN, while the AWS API still offers (deprecated)
     options to add own Certificates.
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

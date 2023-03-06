@@ -15,10 +15,6 @@ description:
 - The M(amazon.aws.ec2_instance) and M(community.aws.autoscaling_group) modules can, instead of specifying all
   parameters on those tasks, be passed a Launch Template which contains
   settings like instance size, disk type, subnet, and more.
-extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
 author:
 - Ryan Scott Brown (@ryansb)
 options:
@@ -377,6 +373,10 @@ options:
           - Requires botocore >= 1.23.30
         choices: [enabled, disabled]
         default: 'disabled'
+extends_documentation_fragment:
+- amazon.aws.common.modules
+- amazon.aws.region.modules
+- amazon.aws.boto3
 """
 
 EXAMPLES = r"""

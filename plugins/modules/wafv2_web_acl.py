@@ -101,11 +101,10 @@ notes:
   - Support for the I(purge_tags) parameter was added in release 4.0.0.
 
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.tags
   - amazon.aws.boto3
-
 """
 
 EXAMPLES = r"""

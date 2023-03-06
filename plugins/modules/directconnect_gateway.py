@@ -17,10 +17,6 @@ description:
   - Detaches Virtual Gateways to Direct Connect Gateway.
   - Prior to release 5.0.0 this module was called C(community.aws.aws_direct_connect_gateway).
     The usage did not change.
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 options:
   state:
     description:
@@ -52,6 +48,10 @@ options:
         - How long to wait for the association to be deleted.
     type: int
     default: 320
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

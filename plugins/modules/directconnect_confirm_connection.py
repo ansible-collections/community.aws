@@ -16,10 +16,6 @@ description:
     The usage did not change.
 author:
   - "Matt Traynham (@mtraynham)"
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 options:
   name:
     description:
@@ -31,6 +27,10 @@ options:
       - The ID of the Direct Connect connection.
       - One of I(connection_id) or I(name) must be specified.
     type: str
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

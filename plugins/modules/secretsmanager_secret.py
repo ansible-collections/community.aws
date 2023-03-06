@@ -105,13 +105,13 @@ options:
     - Specifies the number of days between automatic scheduled rotations of the secret.
     default: 30
     type: int
-extends_documentation_fragment:
-  - amazon.aws.ec2
-  - amazon.aws.aws
-  - amazon.aws.boto3
-  - amazon.aws.tags
 notes:
   - Support for I(purge_tags) was added in release 4.0.0.
+extends_documentation_fragment:
+  - amazon.aws.region.modules
+  - amazon.aws.common.modules
+  - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

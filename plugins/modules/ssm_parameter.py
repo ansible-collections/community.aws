@@ -84,15 +84,14 @@ author:
   - "Bill Wang (@ozbillwang) <ozbillwang@gmail.com>"
   - "Michael De La Rue (@mikedlr)"
 
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
-  - amazon.aws.tags
-
 notes:
   - Support for I(tags) and I(purge_tags) was added in release 5.3.0.
 
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

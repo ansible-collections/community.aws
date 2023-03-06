@@ -15,10 +15,6 @@ description:
     The usage did not change.
 author:
   - "Sloane Hertel (@s-hertel)"
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 options:
   state:
     description:
@@ -79,6 +75,10 @@ options:
       - The duration in seconds to wait if I(wait=true).
     default: 120
     type: int
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

@@ -13,10 +13,6 @@ description:
   - Manage cache snapshots in Amazon ElastiCache.
   - Returns information about the specified snapshot.
 author: "Sloane Hertel (@s-hertel)"
-extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
 options:
   name:
     description:
@@ -45,6 +41,10 @@ options:
     description:
       - The s3 bucket to which the snapshot is exported.
     type: str
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

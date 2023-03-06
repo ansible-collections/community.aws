@@ -100,11 +100,10 @@ options:
         version_added: 2.1.0
 
 extends_documentation_fragment:
-    - amazon.aws.aws
-    - amazon.aws.ec2
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
     - amazon.aws.tags
     - amazon.aws.boto3
-
 """
 
 EXAMPLES = r"""

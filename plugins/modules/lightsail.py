@@ -66,10 +66,9 @@ options:
     type: int
 
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
-
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 
@@ -91,7 +90,6 @@ EXAMPLES = r"""
     state: absent
     region: us-east-1
     name: my_instance
-
 """
 
 RETURN = r"""

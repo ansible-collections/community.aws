@@ -51,9 +51,9 @@ options:
 notes:
   - In order to use the assumed role in a following playbook task you must pass the access_key, access_secret and access_token.
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 RETURN = r"""

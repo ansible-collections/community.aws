@@ -100,16 +100,15 @@ options:
     default: EDGE
 author:
   - 'Michael De La Rue (@mikedlr)'
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
-
 notes:
   - A future version of this module will probably use tags or another
     ID so that an API can be created only once.
   - As an early work around an intermediate version will probably do
     the same using a tag embedded in the API name.
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

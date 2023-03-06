@@ -30,9 +30,9 @@ options:
 notes:
   - In order to use the session token in a following playbook task you must pass the I(access_key), I(access_secret) and I(access_token).
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 RETURN = r"""

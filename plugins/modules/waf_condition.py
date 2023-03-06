@@ -18,10 +18,6 @@ description:
 author:
   - Will Thames (@willthames)
   - Mike Mochan (@mmochan)
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 
 options:
   name:
@@ -135,6 +131,11 @@ options:
       - absent
     default: present
     type: str
+
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

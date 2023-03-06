@@ -628,9 +628,9 @@ options:
                 description: A cluster query language expression to apply to the constraint.
                 type: str
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
+    - amazon.aws.boto3
 """
 
 EXAMPLES = r"""
@@ -768,6 +768,7 @@ EXAMPLES = r"""
         timeout: 15
     state: present
 """
+
 RETURN = r"""
 taskdefinition:
     description: a reflection of the input parameters

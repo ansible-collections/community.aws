@@ -56,9 +56,9 @@ notes:
 - The ec2_elbs fact previously set by this module was deprecated in release 2.1.0 and since release
   4.0.0 is no longer set.
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

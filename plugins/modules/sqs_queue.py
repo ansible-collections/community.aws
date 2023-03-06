@@ -102,10 +102,10 @@ options:
       - Enables content-based deduplication. Used for FIFOs only.
       - Defaults to C(false).
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 RETURN = r"""

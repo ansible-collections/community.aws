@@ -123,14 +123,14 @@ options:
       - Sets the type of IP addresses used by the subnets of the specified Application Load Balancer.
     choices: [ 'ipv4', 'dualstack' ]
     type: str
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
-  - amazon.aws.tags
 notes:
   - Listeners are matched based on port. If a listener's port is changed then a new listener will be created.
   - Listener rules are matched based on priority. If a rule's priority is changed then a new rule will be created.
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.tags
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

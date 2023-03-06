@@ -13,10 +13,6 @@ description:
   - Manage cache security groups in Amazon ElastiCache.
   - Returns information about the specified cache cluster.
 author: "Sloane Hertel (@s-hertel)"
-extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
 
 options:
   group_family:
@@ -45,6 +41,11 @@ options:
     description:
       - A user-specified dictionary of parameters to reset or modify for the cache parameter group.
     type: dict
+
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

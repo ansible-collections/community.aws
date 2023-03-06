@@ -75,9 +75,9 @@ options:
     choices: ['json', 'string']
     type: str
 extends_documentation_fragment:
-- amazon.aws.ec2
-- amazon.aws.aws
-- amazon.aws.boto3
+  - amazon.aws.region.modules
+  - amazon.aws.common.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""

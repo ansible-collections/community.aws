@@ -17,10 +17,6 @@ description:
     The usage did not change.
 author:
   - "Sloane Hertel (@s-hertel)"
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
 options:
   state:
     description:
@@ -66,6 +62,10 @@ options:
       - By default this will not happen.  This option must be explicitly set to C(true) to change I(bandwith) or I(location).
     type: bool
     default: false
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
 """
 
 EXAMPLES = r"""
