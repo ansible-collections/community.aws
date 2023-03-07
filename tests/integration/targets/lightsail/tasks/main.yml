@@ -15,7 +15,7 @@
       lightsail:
         name: "{{ instance_name }}"
         zone: "{{ zone }}"
-        blueprint_id: amazon_linux
+        blueprint_id: amazon_linux_2
         bundle_id: nano_2_0
         wait: yes
       register: result
@@ -30,7 +30,7 @@
       lightsail:
         name: "{{ instance_name }}"
         zone: "{{ zone }}"
-        blueprint_id: amazon_linux
+        blueprint_id: amazon_linux_2
         bundle_id: nano_2_0
       register: result
 
