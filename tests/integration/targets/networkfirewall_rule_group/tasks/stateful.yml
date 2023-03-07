@@ -1078,8 +1078,6 @@
         rule_order: 'strict'
       register: stateful_group
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1092,8 +1090,6 @@
         rule_order: 'strict'
       register: stateful_group
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1142,8 +1138,6 @@
         rule_order: strict
       register: strict_group
       check_mode: true
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1170,8 +1164,6 @@
           - 'pass tcp any any -> any any (sid:1000001;)'
         rule_order: strict
       register: strict_group
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1208,8 +1200,6 @@
         rule_order: strict
       register: strict_group
       check_mode: true
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1238,8 +1228,6 @@
           - 'pass tcp any any -> any any (sid:1000001;)'
         rule_order: strict
       register: strict_group
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1269,8 +1257,6 @@
         rule_order: 'default'
       register: strict_group
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1283,8 +1269,6 @@
         rule_order: 'default'
       register: strict_group
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1299,8 +1283,6 @@
         rule_order: 'strict'
       register: strict_group
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1313,8 +1295,6 @@
         rule_order: 'strict'
       register: strict_group
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:

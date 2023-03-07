@@ -28,8 +28,6 @@ options:
         all tag key, value pairs.
     required: false
     type: dict
-requirements:
-  - botocore >= 1.21.38
 extends_documentation_fragment:
   - amazon.aws.aws
   - amazon.aws.ec2
