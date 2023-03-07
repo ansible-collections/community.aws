@@ -1,2 +1,0 @@
-minor_changes:
-- aws_ssm - rework environment variable handling to use built in Ansible plugin support (https://github.com/ansible-collections/community.aws/pull/514).

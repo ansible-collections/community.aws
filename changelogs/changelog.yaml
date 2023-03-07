@@ -3147,3 +3147,85 @@ releases:
     - iam_role_purge_policy.yml
     - release-5.2.0.yml
     release_date: '2023-01-24'
+  5.3.0:
+    changes:
+      bugfixes:
+      - aws_ssm - fix copying empty file with older curl versions (https://github.com/ansible-collections/community.aws/issues/1686).
+      - eks_cluster - adding tags to eks cluster creation (https://github.com/ansible-collections/community.aws/pull/1591).
+      - sns_topic - avoid fetching attributes from subscribers when not setting them,
+        this can cause permissions issues (https://github.com/ansible-collections/community.aws/pull/1418).
+      deprecated_features:
+      - ecs_service -  In a release after 2024-06-01, tha default value of ``purge_placement_constraints``
+        will be change from ``false`` to ``true`` (https://github.com/ansible-collections/community.aws/pull/1716).
+      - ecs_service -  In a release after 2024-06-01, tha default value of ``purge_placement_strategy``
+        will be change from ``false`` to ``true`` (https://github.com/ansible-collections/community.aws/pull/1716).
+      - iam_role - All top level return values other than ``iam_role`` and ``changed``
+        have been deprecated and will be removed in a release after 2023-12-01 (https://github.com/ansible-collections/community.aws/issues/551).
+      - iam_role - In a release after 2023-12-01 the contents of ``assume_role_policy_document``
+        will no longer be converted from CamelCase to snake_case.  The ``assume_role_policy_document_raw``
+        return value already returns the policy document in this future format (https://github.com/ansible-collections/community.aws/issues/551).
+      - iam_role_info - In a release after 2023-12-01 the contents of ``assume_role_policy_document``
+        will no longer be converted from CamelCase to snake_case.  The ``assume_role_policy_document_raw``
+        return value already returns the policy document in this future format (https://github.com/ansible-collections/community.aws/issues/551).
+      minor_changes:
+      - aws_ssm - added support for specifying the endpoint to use when connecting
+        to the S3 API (https://github.com/ansible-collections/community.aws/pull/1619).
+      - aws_ssm - remove unused imports (https://github.com/ansible-collections/community.aws/pull/1707).
+      - aws_ssm - rework environment variable handling to use built in Ansible plugin
+        support (https://github.com/ansible-collections/community.aws/pull/514).
+      - batch_job_definition - make trailing comma tuple explicitly a tuple (https://github.com/ansible-collections/community.aws/pull/1707).
+      - ecs_service - ``task_definition`` is now optional when ``force_new_deployment``
+        is ``True`` (https://github.com/ansible-collections/community.aws/pull/1680).
+      - ecs_service - new parameter ``purge_placement_constraints``  to have the ability
+        to remove the placement constraints of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
+      - ecs_service - new parameter ``purge_placement_strategy`` to have the ability
+        to remove the placement strategy of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
+      - iam_role - added ``assume_role_policy_document_raw`` to the role return values,
+        this doesn't convert policy document contents from CamelCase to snake_case
+        (https://github.com/ansible-collections/community.aws/issues/551).
+      - iam_role_info - added ``assume_role_policy_document_raw`` to the role return
+        values, this doesn't convert policy document contents from CamelCase to snake_case
+        (https://github.com/ansible-collections/community.aws/issues/551).
+      - inspector_target - minor linting fix (https://github.com/ansible-collections/community.aws/pull/1707).
+      - s3_lifecycle - add parameter ``noncurrent_version_keep_newer`` to set the
+        number of newest noncurrent versions to retain (https://github.com/ansible-collections/community.aws/pull/1606).
+      - secretsmanager_secret - added support for region replication using the ``replica``
+        parameter (https://github.com/ansible-collections/community.aws/pull/827).
+      - secretsmanager_secret - added the ``overwrite`` parameter to support only
+        setting the secret if it doesn't exist (https://github.com/ansible-collections/community.aws/pull/1628).
+      - sns_topic - add support for ``content_based_deduplication`` parameter (https://github.com/ansible-collections/community.aws/pull/1693).
+      - sns_topic - add support for ``tags`` and ``purge_tags`` (https://github.com/ansible-collections/community.aws/pull/972).
+      - sqs_queue - add support for ``deduplication_scope`` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
+      - sqs_queue - add support for ``fifo_throughput_limit`` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
+      - ssm_parameter - add support for tags in ssm parameters (https://github.com/ansible-collections/community.aws/issues/1573).
+      release_summary: This release brings some minor changes, bugfixes and deprecations.
+    fragments:
+    - 1426-docs_update_ecs_taskdefinition.yml
+    - 1574-ssm-parameter-support-for-tags.yml
+    - 1591-eks-add-tags-cluster.yml
+    - 1606-s3_lifecycle_add_number_of_versions_to_retain.yml
+    - 1619-add-s3-bucket-endpoint-url-var-for-private-network-vpc-interface-endpoints.yml
+    - 1628-secretsmanager_secret-overwrite.yml
+    - 1680-ecs_service-force_redeploy_taskdef_optional.yml
+    - 1690-fix-copying-empty-file.yml
+    - 1693-sns_topic.yml
+    - 1726-ssm_connection-vars_tests.yml
+    - 1728_remove_state.yml
+    - 1734-typo.yml
+    - 20221125-sqs-high-throughput.yml
+    - 20230204-sanity.yml
+    - 514-aws_ssm-env_vars.yml
+    - 551-iam_role-policy_documents.yml
+    - 827-secretsmanager_secret-replication.yml
+    - 972-sns_topic-add_tags.yaml
+    - ecs_service_and_ecs_integration_test.yml
+    - eks.yml
+    - eks_release.yml
+    - iam_access_key_docs_fix.yml
+    - release-summary.yml
+    - sns_topic-cross-account.yml
+    modules:
+    - description: Manage EKS Nodegroup module
+      name: eks_nodegroup
+      namespace: ''
+    release_date: '2023-03-07'

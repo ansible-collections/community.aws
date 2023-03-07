@@ -1,2 +1,0 @@
-minor_changes:
-- ecs_service - ``task_definition`` is now optional when ``force_new_deployment`` is ``True`` (https://github.com/ansible-collections/community.aws/pull/1680).
