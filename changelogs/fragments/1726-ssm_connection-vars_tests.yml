@@ -1,2 +1,0 @@
-trivial:
-- aws_ssm - additional integration tests when passing the connection parameters as variables (https://github.com/ansible-collections/community.aws/pull/1726).
