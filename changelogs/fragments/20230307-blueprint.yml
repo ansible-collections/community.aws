@@ -1,0 +1,2 @@
+trivial:
+- lightsail - update blueprint used by integration test to ``amazon_linux_2``
