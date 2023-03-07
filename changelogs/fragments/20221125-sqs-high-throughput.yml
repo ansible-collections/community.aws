@@ -1,3 +1,3 @@
 minor_changes:
- - sqs_queue - add support for `fifo_throughput_limit` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
- - sqs_queue - add support for `deduplication_scope` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
+ - sqs_queue - add support for ``fifo_throughput_limit`` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
+ - sqs_queue - add support for ``deduplication_scope`` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
