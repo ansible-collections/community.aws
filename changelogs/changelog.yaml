@@ -2590,6 +2590,59 @@ releases:
     fragments:
     - 1398-s3_lifecycle-no-prefix.yml
     release_date: '2022-09-14'
+  4.3.0:
+    changes:
+      bugfixes:
+      - ec2_placement_group - Handle a potential race creation during the creation
+        of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
+      - rds_cluster - fixes bug where specifiying an rds cluster parameter group raises
+        a `KeyError` (https://github.com/ansible-collections/community.aws/pull/1417).
+      minor_changes:
+      - autoscaling_group_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - cloudfront_distribution - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - cloudfront_origin_access_identity - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - cloudtrail - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - ec2_vpc_nacl - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - eks_fargate_profile - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - redshift - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      - s3_bucket_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+      release_summary: 'The community.aws 4.3.0 release includes a number of minor
+        bug fixes and improvements.
+
+        Following the release of amazon.aws 5.0.0, backports to the 4.x series will
+        be limited to security issues and bugfixes.'
+    fragments:
+    - 1410-linting.yml
+    - 1417-cluster-param-group-keyerror.yml
+    - RELEASE-4.3.0.yml
+    - ec2_placement_group_race_on_create.yaml
+    release_date: '2022-10-06'
+  4.4.0:
+    changes:
+      bugfixes:
+      - aws_ssm - fixes S3 bucket region detection by ensuring boto client has correct
+        credentials and exists in correct partition (https://github.com/ansible-collections/community.aws/pull/1428).
+      - ecs_ecr - fix a ``RepositoryNotFound`` exception when trying to create repositories
+        in check mode (https://github.com/ansible-collections/community.aws/pull/1550).
+      - opensearch - Fix cluster creation when using advanced security options (https://github.com/ansible-collections/community.aws/pull/1613).
+      minor_changes:
+      - elasticache_parameter_group - add ``redis6.x`` group family on the module
+        input choices (https://github.com/ansible-collections/community.aws/pull/1476).
+      release_summary: 'This is the minor release of the ``community.aws`` collection.
+
+        This changelog contains all changes to the modules and plugins in this collection
+
+        that have been made after the previous release.'
+    fragments:
+    - 1428-aws-ssm-missing-credentials.yml
+    - 1476-add-redis6x-cache-parameter-group-family.yml
+    - 1550-ecs_ecr-RepositoryNotFound.yml
+    - 1565-healthCheck-docs.yml
+    - 1579-ec2_vpc_vgw-deleted.yml
+    - 1613-opensearch.yml
+    - 20221026-pytest-forked.yml
+    - 4.4.0.yml
+    release_date: '2022-12-08'
   5.0.0:
     changes:
       breaking_changes:
@@ -3031,57 +3084,4 @@ releases:
     - 1613-opensearch.yml
     - 20221026-pytest-forked.yml
     - 5.1.0.yml
-    release_date: '2022-12-08'
-  4.3.0:
-    changes:
-      bugfixes:
-      - ec2_placement_group - Handle a potential race creation during the creation
-        of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
-      - rds_cluster - fixes bug where specifiying an rds cluster parameter group raises
-        a `KeyError` (https://github.com/ansible-collections/community.aws/pull/1417).
-      minor_changes:
-      - autoscaling_group_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - cloudfront_distribution - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - cloudfront_origin_access_identity - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - cloudtrail - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - ec2_vpc_nacl - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - eks_fargate_profile - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - redshift - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      - s3_bucket_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
-      release_summary: 'The community.aws 4.3.0 release includes a number of minor
-        bug fixes and improvements.
-
-        Following the release of amazon.aws 5.0.0, backports to the 4.x series will
-        be limited to security issues and bugfixes.'
-    fragments:
-    - 1410-linting.yml
-    - 1417-cluster-param-group-keyerror.yml
-    - RELEASE-4.3.0.yml
-    - ec2_placement_group_race_on_create.yaml
-    release_date: '2022-10-06'
-  4.4.0:
-    changes:
-      bugfixes:
-      - aws_ssm - fixes S3 bucket region detection by ensuring boto client has correct
-        credentials and exists in correct partition (https://github.com/ansible-collections/community.aws/pull/1428).
-      - ecs_ecr - fix a ``RepositoryNotFound`` exception when trying to create repositories
-        in check mode (https://github.com/ansible-collections/community.aws/pull/1550).
-      - opensearch - Fix cluster creation when using advanced security options (https://github.com/ansible-collections/community.aws/pull/1613).
-      minor_changes:
-      - elasticache_parameter_group - add ``redis6.x`` group family on the module
-        input choices (https://github.com/ansible-collections/community.aws/pull/1476).
-      release_summary: 'This is the minor release of the ``community.aws`` collection.
-
-        This changelog contains all changes to the modules and plugins in this collection
-
-        that have been made after the previous release.'
-    fragments:
-    - 1428-aws-ssm-missing-credentials.yml
-    - 1476-add-redis6x-cache-parameter-group-family.yml
-    - 1550-ecs_ecr-RepositoryNotFound.yml
-    - 1565-healthCheck-docs.yml
-    - 1579-ec2_vpc_vgw-deleted.yml
-    - 1613-opensearch.yml
-    - 20221026-pytest-forked.yml
-    - 4.4.0.yml
     release_date: '2022-12-08'
