@@ -56,6 +56,8 @@ extends_documentation_fragment:
   - amazon.aws.boto3
 """
 
+RETURN = r""" # """
+
 EXAMPLES = r"""
 # Example of getting a password
 - name: get the Administrator password

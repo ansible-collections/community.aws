@@ -5,7 +5,7 @@
 
 # Based on the ssh connection plugin by Michael DeHaan
 
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 name: aws_ssm
 author:
   - Pat Sharkey (@psharkey) <psharkey@cleo.com>

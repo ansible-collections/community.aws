@@ -394,6 +394,8 @@ extends_documentation_fragment:
   - amazon.aws.boto3
 """
 
+RETURN = r""" # """
+
 EXAMPLES = r"""
 
 - name: Create OpenSearch domain for dev environment, no zone awareness, no dedicated masters

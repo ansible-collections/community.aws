@@ -67,6 +67,8 @@ extends_documentation_fragment:
   - amazon.aws.boto3
 """
 
+RETURN = r""" # """
+
 EXAMPLES = r"""
 - name: Basic server certificate upload from local file
   community.aws.iam_server_certificate:
