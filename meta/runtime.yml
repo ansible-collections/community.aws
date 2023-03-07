@@ -200,6 +200,7 @@ action_groups:
   - sns_topic
   - sns_topic_info
   - sqs_queue
+  - ssm_inventory_info
   - ssm_parameter
   - stepfunctions_state_machine
   - stepfunctions_state_machine_execution
