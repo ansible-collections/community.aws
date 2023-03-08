@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # source: https://github.com/tlastowka/calculate_multipart_etag/blob/master/calculate_multipart_etag.py
 #
 # calculate_multipart_etag  Copyright (C) 2015
