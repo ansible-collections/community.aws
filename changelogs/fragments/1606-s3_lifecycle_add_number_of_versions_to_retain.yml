@@ -1,2 +1,0 @@
-minor_changes:
-- s3_lifecycle - add parameter `noncurrent_version_keep_newer` to set the number of newest noncurrent versions to retain

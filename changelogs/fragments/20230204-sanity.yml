@@ -1,4 +1,0 @@
-minor_changes:
-- aws_ssm - remove unused imports (https://github.com/ansible-collections/community.aws/pull/1707).
-- batch_job_definition - make trailing comma tuple explicitly a tuple (https://github.com/ansible-collections/community.aws/pull/1707).
-- inspector_target - minor linting fix (https://github.com/ansible-collections/community.aws/pull/1707).

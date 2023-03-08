@@ -1,4 +1,0 @@
-minor_changes:
-- aws_ssm - cleanup logging output (https://github.com/ansible-collections/community.aws/pull/1660).
-- aws_ssm - avoid overloading ``subprocess`` (https://github.com/ansible-collections/community.aws/pull/1660).
-- aws_ssm - minor refactoring (https://github.com/ansible-collections/community.aws/pull/1660).
