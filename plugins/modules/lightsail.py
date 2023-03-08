@@ -7,7 +7,7 @@
 DOCUMENTATION = r"""
 ---
 module: lightsail
-version_added: 1.1.0
+version_added: 1.0.0
 short_description: Manage instances in AWS Lightsail
 description:
   - Manage instances in AWS Lightsail.
@@ -47,22 +47,38 @@ options:
       - Launch script that can configure the instance with additional data.
     type: str
     default: ''
-  public_ports_info:
+  public_ports:
     description:
       - A list of dictionaries to describe the ports to open for the specified instance.
     type: list
     elements: dict
-    default:
-      - fromPort: 22
-        toPort: 22
-        protocol: 'tcp'
-        cidrs: ['0.0.0.0/0']
-        ipv6Cidrs: ['::/0']
-      - fromPort: 80
-        toPort: 80
-        protocol: 'tcp'
-        cidrs: ['0.0.0.0/0']
-        ipv6Cidrs: ['::/0']
+    suboptions:
+      from_port: 
+        description: The first port in a range of open ports on the instance.
+        type: int
+        required: true
+      to_port:
+        description: The last port in a range of open ports on the instance.
+        type: int
+        required: true
+      protocol:
+        description: The IP protocol name accepted for the defined range of open ports.
+        type: str
+        choices=['tcp', 'all', 'udp', 'icmp']
+        required: true
+      cidrs:
+        description:
+          - The IPv4 address, or range of IPv4 addresses (in CIDR notation) that are allowed to connect to the instance through the ports, and the protocol.
+          - One of I(cidrs) or I(ipv6_cidrs) must be specified.
+        type: list
+        elements: str
+      ipv6_cidrs:
+        description:
+          - The IPv6 address, or range of IPv6 addresses (in CIDR notation) that are allowed to connect to the instance through the ports, and the protocol.
+          - One of I(cidrs) or I(ipv6_cidrs) must be specified.
+        type: list
+        elements: str
+    version_added: 6.0.0
   key_pair_name:
     description:
       - Name of the key pair to use with the instance.
@@ -99,12 +115,12 @@ EXAMPLES = r"""
     bundle_id: nano_1_0
     key_pair_name: id_rsa
     user_data: " echo 'hello world' > /home/ubuntu/test.txt"
-    public_ports_info:
-      - fromPort: 22
-        toPort: 22
+    public_ports:
+      - from_port: 22
+        to_port: 22
         protocol: "tcp"
         cidrs: ["0.0.0.0/0"]
-        ipv6Cidrs: ["::/0"]
+        ipv6_cidrs: ["::/0"]
   register: my_instance
 
 - name: Delete an instance
@@ -176,7 +192,7 @@ except ImportError:
     # will be caught by AnsibleAWSModule
     pass
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 
@@ -219,7 +235,7 @@ def wait_for_instance_state(module, client, instance_name, states):
 def update_public_ports(module, client, instance_name):
     try:
         client.put_instance_public_ports(
-            portInfos=module.params.get('public_ports_info'),
+            portInfos=snake_dict_to_camel_dict(module.params.get('public_ports')),
             instanceName=instance_name
         )
     except botocore.exceptions.ClientError as e:
@@ -253,7 +269,8 @@ def create_or_update_instance(module, client, instance_name):
             desired_states = ['running']
             wait_for_instance_state(module, client, instance_name, desired_states)
 
-    update_public_ports(module, client, instance_name)
+    if module.params.get('public_ports') is not None:
+      update_public_ports(module, client, instance_name)
     after_update_inst = find_instance_info(module, client, instance_name, fail_if_not_found=True)
 
     module.exit_json(
@@ -350,22 +367,16 @@ def main():
         user_data=dict(type='str', default=''),
         wait=dict(type='bool', default=True),
         wait_timeout=dict(default=300, type='int'),
-        public_ports_info=dict(type='list', elements='dict', default=[
-            {
-                'fromPort': 22,
-                'toPort': 22,
-                'protocol': 'tcp',
-                'cidrs': ['0.0.0.0/0'],
-                'ipv6Cidrs': ['::/0'],
-            },
-            {
-                'fromPort': 80,
-                'toPort': 80,
-                'protocol': 'tcp',
-                'cidrs': ['0.0.0.0/0'],
-                'ipv6Cidrs': ['::/0'],
-            },
-        ])
+        public_ports=dict(type='list', elements='dict', 
+            options=dict(
+                from_port=dict(type='int', required=True),
+                to_port=dict(type='int', required=True),
+                protocol=dict(type='str', choices=['tcp', 'all', 'udp', 'icmp'], required=True),
+                cidrs=dict(type='list', elements='str'),
+                ipv6_cidrs=dict(type='list', elements='str')
+            ),
+            required_one_of=[('cidrs', 'ipv6_cidrs')]
+        )
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
