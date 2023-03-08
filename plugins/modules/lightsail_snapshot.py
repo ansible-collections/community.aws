@@ -1,18 +1,15 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright: Ansible Project
+# Copyright: Contributors to the Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
-
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
 
 DOCUMENTATION = '''
 ---
 module: lightsail_snapshot
-version_added: "1.0.0"
+version_added: "6.0.0"
 short_description: Creates snapshots of AWS Lightsail instances
 description:
-    - Creates snapshots of AWS Lightsail instances
+    - Creates snapshots of AWS Lightsail instances.
 author:
     - "Nuno Saavedra (@Nfsaavedra)"
 options:
@@ -22,18 +19,14 @@ options:
     default: present
     choices: ['present', 'absent']
     type: str
-  region:
-    description: AWS region in which to create the instance snapshot.
-    required: true
-    type: str
   snapshot_name:
-    description: Name of the new instance snapshot
+    description: Name of the new instance snapshot.
     required: true
     type: str
   instance_name:
     description:
-      - Name of the instance to create the snapshot
-      - Required when I(state=present)
+      - Name of the instance to create the snapshot.
+      - Required when I(state=present).
     type: str
   wait:
     description:
@@ -47,7 +40,8 @@ options:
     type: int
 
 extends_documentation_fragment:
-- amazon.aws.aws
+- amazon.aws.common.modules
+- amazon.aws.region.modules
 - amazon.aws.boto3
 
 '''
@@ -183,7 +177,6 @@ def delete_snapshot(module, client):
 def main():
     argument_spec = dict(
         state=dict(type='str', default='present', choices=['present', 'absent']),
-        region=dict(type='str', required=True),
         snapshot_name=dict(type='str', required=True),
         instance_name=dict(type='str'),
         wait=dict(type='bool', default=True),

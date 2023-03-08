@@ -53,7 +53,7 @@ options:
     type: list
     elements: dict
     suboptions:
-      from_port: 
+      from_port:
         description: The first port in a range of open ports on the instance.
         type: int
         required: true
@@ -64,7 +64,7 @@ options:
       protocol:
         description: The IP protocol name accepted for the defined range of open ports.
         type: str
-        choices=['tcp', 'all', 'udp', 'icmp']
+        choices: ['tcp', 'all', 'udp', 'icmp']
         required: true
       cidrs:
         description:
@@ -270,7 +270,7 @@ def create_or_update_instance(module, client, instance_name):
             wait_for_instance_state(module, client, instance_name, desired_states)
 
     if module.params.get('public_ports') is not None:
-      update_public_ports(module, client, instance_name)
+        update_public_ports(module, client, instance_name)
     after_update_inst = find_instance_info(module, client, instance_name, fail_if_not_found=True)
 
     module.exit_json(
@@ -367,16 +367,15 @@ def main():
         user_data=dict(type='str', default=''),
         wait=dict(type='bool', default=True),
         wait_timeout=dict(default=300, type='int'),
-        public_ports=dict(type='list', elements='dict', 
-            options=dict(
-                from_port=dict(type='int', required=True),
-                to_port=dict(type='int', required=True),
-                protocol=dict(type='str', choices=['tcp', 'all', 'udp', 'icmp'], required=True),
-                cidrs=dict(type='list', elements='str'),
-                ipv6_cidrs=dict(type='list', elements='str')
-            ),
-            required_one_of=[('cidrs', 'ipv6_cidrs')]
-        )
+        public_ports=dict(type='list', elements='dict',
+                          options=dict(
+                              from_port=dict(type='int', required=True),
+                              to_port=dict(type='int', required=True),
+                              protocol=dict(type='str', choices=['tcp', 'all', 'udp', 'icmp'], required=True),
+                              cidrs=dict(type='list', elements='str'),
+                              ipv6_cidrs=dict(type='list', elements='str')
+                          ),
+                          required_one_of=[('cidrs', 'ipv6_cidrs')])
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
