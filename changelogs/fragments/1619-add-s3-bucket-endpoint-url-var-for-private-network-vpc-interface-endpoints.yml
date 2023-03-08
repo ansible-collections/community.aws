@@ -1,2 +1,0 @@
-minor_changes:
-- aws_ssm - added support for specifying the endpoint to use when connecting to the S3 API (https://github.com/ansible-collections/community.aws/pull/1619).

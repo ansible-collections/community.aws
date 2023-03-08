@@ -5,6 +5,96 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v5.3.0
+======
+
+Release Summary
+---------------
+
+This release brings some minor changes, bugfixes and deprecations.
+
+Minor Changes
+-------------
+
+- aws_ssm - added support for specifying the endpoint to use when connecting to the S3 API (https://github.com/ansible-collections/community.aws/pull/1619).
+- aws_ssm - remove unused imports (https://github.com/ansible-collections/community.aws/pull/1707).
+- aws_ssm - rework environment variable handling to use built in Ansible plugin support (https://github.com/ansible-collections/community.aws/pull/514).
+- batch_job_definition - make trailing comma tuple explicitly a tuple (https://github.com/ansible-collections/community.aws/pull/1707).
+- ecs_service - ``task_definition`` is now optional when ``force_new_deployment`` is ``True`` (https://github.com/ansible-collections/community.aws/pull/1680).
+- ecs_service - new parameter ``purge_placement_constraints``  to have the ability to remove the placement constraints of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
+- ecs_service - new parameter ``purge_placement_strategy`` to have the ability to remove the placement strategy of an ECS Service (https://github.com/ansible-collections/community.aws/pull/1716).
+- iam_role - added ``assume_role_policy_document_raw`` to the role return values, this doesn't convert policy document contents from CamelCase to snake_case (https://github.com/ansible-collections/community.aws/issues/551).
+- iam_role_info - added ``assume_role_policy_document_raw`` to the role return values, this doesn't convert policy document contents from CamelCase to snake_case (https://github.com/ansible-collections/community.aws/issues/551).
+- inspector_target - minor linting fix (https://github.com/ansible-collections/community.aws/pull/1707).
+- s3_lifecycle - add parameter ``noncurrent_version_keep_newer`` to set the number of newest noncurrent versions to retain (https://github.com/ansible-collections/community.aws/pull/1606).
+- secretsmanager_secret - added support for region replication using the ``replica`` parameter (https://github.com/ansible-collections/community.aws/pull/827).
+- secretsmanager_secret - added the ``overwrite`` parameter to support only setting the secret if it doesn't exist (https://github.com/ansible-collections/community.aws/pull/1628).
+- sns_topic - add support for ``content_based_deduplication`` parameter (https://github.com/ansible-collections/community.aws/pull/1693).
+- sns_topic - add support for ``tags`` and ``purge_tags`` (https://github.com/ansible-collections/community.aws/pull/972).
+- sqs_queue - add support for ``deduplication_scope`` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
+- sqs_queue - add support for ``fifo_throughput_limit`` parameter (https://github.com/ansible-collections/community.aws/pull/1603).
+- ssm_parameter - add support for tags in ssm parameters (https://github.com/ansible-collections/community.aws/issues/1573).
+
+Deprecated Features
+-------------------
+
+- ecs_service -  In a release after 2024-06-01, tha default value of ``purge_placement_constraints`` will be change from ``false`` to ``true`` (https://github.com/ansible-collections/community.aws/pull/1716).
+- ecs_service -  In a release after 2024-06-01, tha default value of ``purge_placement_strategy`` will be change from ``false`` to ``true`` (https://github.com/ansible-collections/community.aws/pull/1716).
+- iam_role - All top level return values other than ``iam_role`` and ``changed`` have been deprecated and will be removed in a release after 2023-12-01 (https://github.com/ansible-collections/community.aws/issues/551).
+- iam_role - In a release after 2023-12-01 the contents of ``assume_role_policy_document`` will no longer be converted from CamelCase to snake_case.  The ``assume_role_policy_document_raw`` return value already returns the policy document in this future format (https://github.com/ansible-collections/community.aws/issues/551).
+- iam_role_info - In a release after 2023-12-01 the contents of ``assume_role_policy_document`` will no longer be converted from CamelCase to snake_case.  The ``assume_role_policy_document_raw`` return value already returns the policy document in this future format (https://github.com/ansible-collections/community.aws/issues/551).
+
+Bugfixes
+--------
+
+- aws_ssm - fix copying empty file with older curl versions (https://github.com/ansible-collections/community.aws/issues/1686).
+- eks_cluster - adding tags to eks cluster creation (https://github.com/ansible-collections/community.aws/pull/1591).
+- sns_topic - avoid fetching attributes from subscribers when not setting them, this can cause permissions issues (https://github.com/ansible-collections/community.aws/pull/1418).
+
+New Modules
+-----------
+
+- eks_nodegroup - Manage EKS Nodegroup module
+
+v5.2.0
+======
+
+Release Summary
+---------------
+
+A minor release containing bugfixes for the ``aws_ssm`` connection
+plugin and the ``ecs_service``, ``s3_lifecycle`` and  ``ssm_parameter``
+modules.
+As well as improvements to the ``ecs_cluster``, ``ec2_ecr``,
+``ecs_service``, ``iam_role`` and ``ssm_parameter`` plugins.
+
+
+Minor Changes
+-------------
+
+- aws_ssm - add ``ansible_aws_ssm_s3_addressing_style`` to allow setting the S3 addressing style (https://github.com/ansible-collections/community.aws/pull/1633).
+- aws_ssm - add support for custom SSM documents (https://github.com/ansible-collections/community.aws/pull/876).
+- aws_ssm - avoid overloading ``subprocess`` (https://github.com/ansible-collections/community.aws/pull/1660).
+- aws_ssm - cleanup logging output (https://github.com/ansible-collections/community.aws/pull/1660).
+- aws_ssm - minor refactoring (https://github.com/ansible-collections/community.aws/pull/1660).
+- aws_ssm - refactor boto3 client initialization (https://github.com/ansible-collections/community.aws/pull/1663).
+- aws_ssm - refactor remote command generation (https://github.com/ansible-collections/community.aws/pull/1664).
+- ecs_cluster - add support for ``capacity_providers`` and ``capacity_provider_strategy`` features (https://github.com/ansible-collections/community.aws/pull/1640).
+- ecs_cluster - append default value to documentation (https://github.com/ansible-collections/community.aws/pull/1636).
+- ecs_ecr - add ``encryption_configuration`` option (https://github.com/ansible-collections/community.aws/pull/1623).
+- ecs_service - support load balancer update for existing ECS services (https://github.com/ansible-collections/community.aws/pull/1625).
+- iam_role - Drop deprecation warning, because the standard value for purge parameters is ``true`` (https://github.com/ansible-collections/community.aws/pull/1636).
+- ssm_parameter - fix typo in examples ``paramater`` (https://github.com/ansible-collections/community.aws/issues/1642).
+
+Bugfixes
+--------
+
+- aws_ssm - fix ``invalid literal for int`` error on some operating systems (https://github.com/ansible-collections/community.aws/issues/113).
+- aws_ssm - fixes bug with presigned S3 URLs in post-2019 AWS regions (https://github.com/ansible-collections/community.aws/issues/1616).
+- ecs_service - respect ``placement_constraints`` for existing ECS services (https://github.com/ansible-collections/community.aws/pull/1601).
+- s3_lifecycle - module no longer calls ``put_lifecycle_configuration`` if there is no change (https://github.com/ansible-collections/community.aws/issues/1624).
+- ssm_parameter - fix a ``KeyError`` when adding a description to an existing parameter (https://github.com/ansible-collections/community.aws/issues/1471).
+
 v5.1.0
 ======
 
@@ -43,6 +133,7 @@ The community.aws collection has dropped support for ``botocore<1.21.0`` and ``b
 Support for ``ansible-core<2.11`` has also been dropped.
 
 This release also brings some new features, bugfixes, breaking changes and deprecated features.
+
 
 Minor Changes
 -------------
@@ -197,6 +288,28 @@ New Modules
 
 - accessanalyzer_validate_policy_info - Performs validation of IAM policies
 
+v4.5.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+
+Minor Changes
+-------------
+
+- ecs_service - support load balancer update for existing ecs services(https://github.com/ansible-collections/community.aws/pull/1625).
+- iam_role - Drop deprecation warning, because the standard value for purge parametes is ``true`` (https://github.com/ansible-collections/community.aws/pull/1636).
+
+Bugfixes
+--------
+
+- aws_ssm - fix ``invalid literal for int`` error on some operating systems (https://github.com/ansible-collections/community.aws/issues/113).
+- ecs_service - respect ``placement_constraints`` for existing ecs services (https://github.com/ansible-collections/community.aws/pull/1601).
+- s3_lifecycle - Module no longer calls ``put_lifecycle_configuration`` if there is no change. (https://github.com/ansible-collections/community.aws/issues/1624)
+- ssm_parameter - Fix a ``KeyError`` when adding a description to an existing parameter (https://github.com/ansible-collections/community.aws/issues/1471).
+
 v4.4.0
 ======
 
@@ -222,9 +335,11 @@ Bugfixes
 v4.3.0
 ======
 
+Release Summary
+---------------
+
 The community.aws 4.3.0 release includes a number of minor bug fixes and improvements.
-Following the release of amazon.aws 5.0.0, backports to the 4.x series will be limited to
-security issues and bugfixes.
+Following the release of amazon.aws 5.0.0, backports to the 4.x series will be limited to security issues and bugfixes.
 
 Minor Changes
 -------------

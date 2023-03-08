@@ -1,2 +1,0 @@
-bugfixes:
-  - eks_cluster - adding tags to eks cluster creation (https://github.com/ansible-collections/community.aws/pull/1591).
