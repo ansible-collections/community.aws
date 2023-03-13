@@ -22,8 +22,6 @@
 
     # List the Managed Rule Groups (there's no access to the rules themselves)
     - include_tasks: 'managed.yml'
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     # Minimal tests and manipulation of common metadata
     - include_tasks: 'minimal.yml'
