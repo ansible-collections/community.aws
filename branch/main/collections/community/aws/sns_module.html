@@ -286,12 +286,34 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-m
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-message_deduplication_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-module-parameter-message-deduplication-id"><strong>message_deduplication_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-message_deduplication_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.4.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Only in connection with the message_group_id.</p>
+<p>Overwrites the auto generated MessageDeduplicationId.</p>
+<p>Can contain up to 128 alphanumeric characters and punctuation.</p>
+<p>Messages with the same deduplication id getting recognized as the same message.</p>
+<p>Gets overwritten by an auto generated token, if the topic has ContentBasedDeduplication set.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-message_group_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-module-parameter-message-group-id"><strong>message_group_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-message_group_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 5.4.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A tag which is used to process messages that belong to the same group in a FIFO manner.</p>
+<p>Has to be included when publishing a message to a fifo topic.</p>
+<p>Can contain up to 128 alphanumeric characters and punctuation.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-message_structure"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-module-parameter-message-structure"><strong>message_structure</strong></p>
 <a class="ansibleOptionLink" href="#parameter-message_structure" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The payload format to use for the message.</p>
-<p>This must be ‘json’ to support protocol-specific messages (<code class="docutils literal notranslate"><span class="pre">http</span></code>, <code class="docutils literal notranslate"><span class="pre">https</span></code>, <code class="docutils literal notranslate"><span class="pre">email</span></code>, <code class="docutils literal notranslate"><span class="pre">sms</span></code>, <code class="docutils literal notranslate"><span class="pre">sqs</span></code>).</p>
-<p>It must be ‘string’ to support <em>message_attributes</em>.</p>
+<p>This must be <code class="docutils literal notranslate"><span class="pre">json</span></code> to support protocol-specific messages (<code class="docutils literal notranslate"><span class="pre">http</span></code>, <code class="docutils literal notranslate"><span class="pre">https</span></code>, <code class="docutils literal notranslate"><span class="pre">email</span></code>, <code class="docutils literal notranslate"><span class="pre">sms</span></code>, <code class="docutils literal notranslate"><span class="pre">sqs</span></code>).</p>
+<p>It must be <code class="docutils literal notranslate"><span class="pre">string</span></code> to support <em>message_attributes</em>.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;json&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -453,6 +475,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-m
 <span class="w">        </span><span class="nt">data_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">String</span>
 <span class="w">        </span><span class="nt">string_value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;green&quot;</span>
 <span class="w">  </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Send message to a fifo topic</span>
+<span class="w">  </span><span class="nt">community.aws.sns</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">topic</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deploy&quot;</span>
+<span class="w">    </span><span class="nt">msg</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;Message</span><span class="nv"> </span><span class="s">with</span><span class="nv"> </span><span class="s">message</span><span class="nv"> </span><span class="s">group</span><span class="nv"> </span><span class="s">id&quot;</span>
+<span class="w">    </span><span class="nt">subject</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy complete!</span>
+<span class="w">    </span><span class="nt">message_group_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;deploy-1&quot;</span>
+<span class="w">  </span><span class="nt">delegate_to</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">localhost</span>
 </pre></div>
 </div>
 </section>
@@ -482,6 +512,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-sns-m
 <td><div class="ansible-option-cell"><p>Human-readable diagnostic information</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;OK&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-sequence_number"></div><p class="ansible-option-title" id="ansible-collections-community-aws-sns-module-return-sequence-number"><strong>sequence_number</strong></p>
+<a class="ansibleOptionLink" href="#return-sequence_number" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A 128 bits long sequence number which gets assigned to the message in fifo topics</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when success</p>
 </div></td>
 </tr>
 </tbody>
