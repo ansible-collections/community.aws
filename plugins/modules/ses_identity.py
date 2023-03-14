@@ -292,7 +292,7 @@ def get_identity_notifications(connection, module, identity, retries=0, retryDel
 
 
 def has_notification_configuration(module, notification_type):
-    return f'{notification_type.lower()}_notifications' in module.params
+    return f"{notification_type.lower()}_notifications" in module.params
 
 
 def desired_topic(module, notification_type):
@@ -328,14 +328,14 @@ def update_notification_topic(connection, module, identity, identity_notificatio
         try:
             if not module.check_mode:
                 request_kwargs = {
-                    'Identity': identity,
-                    'NotificationType': notification_type,
-                    'aws_retry': True,
+                    "Identity": identity,
+                    "NotificationType": notification_type,
+                    "aws_retry": True,
                 }
 
                 # The topic has to be omitted from the request to disable the notification.
                 if required_topic is not None:
-                    request_kwargs['SnsTopic'] = required_topic
+                    request_kwargs["SnsTopic"] = required_topic
 
                 connection.set_identity_notification_topic(**request_kwargs)
         except (BotoCoreError, ClientError) as e:
