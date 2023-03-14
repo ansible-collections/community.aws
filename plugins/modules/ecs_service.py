@@ -927,6 +927,7 @@ class EcsServiceManager:
             params['loadBalancers'] = load_balancers
 
         response = self.ecs.update_service(**params)
+
         return self.jsonize(response['service'])
 
     def jsonize(self, service):
@@ -1129,24 +1130,27 @@ def main():
                     if task_definition is None and module.params['force_new_deployment']:
                         task_definition = existing['taskDefinition']
 
-                    # update required
-                    response = service_mgr.update_service(
-                        module.params["name"],
-                        module.params["cluster"],
-                        task_definition,
-                        module.params["desired_count"],
-                        deploymentConfiguration,
-                        module.params["placement_constraints"],
-                        module.params["placement_strategy"],
-                        network_configuration,
-                        module.params["health_check_grace_period_seconds"],
-                        module.params["force_new_deployment"],
-                        capacityProviders,
-                        updatedLoadBalancers,
-                        module.params["purge_placement_constraints"],
-                        module.params["purge_placement_strategy"],
-                        module.params["enable_execute_command"],
-                    )
+                    try:
+                        # update required
+                        response = service_mgr.update_service(
+                            module.params["name"],
+                            module.params["cluster"],
+                            task_definition,
+                            module.params["desired_count"],
+                            deploymentConfiguration,
+                            module.params["placement_constraints"],
+                            module.params["placement_strategy"],
+                            network_configuration,
+                            module.params["health_check_grace_period_seconds"],
+                            module.params["force_new_deployment"],
+                            capacityProviders,
+                            updatedLoadBalancers,
+                            module.params["purge_placement_constraints"],
+                            module.params["purge_placement_strategy"],
+                            module.params["enable_execute_command"],
+                        )
+                    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+                        module.fail_json_aws(e, msg="Couldn't create service")
 
                 else:
                     try:
@@ -1173,7 +1177,7 @@ def main():
                             module.params["propagate_tags"],
                             module.params["enable_execute_command"],
                         )
-                    except botocore.exceptions.ClientError as e:
+                    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
 
                 if response.get('tags', None):
