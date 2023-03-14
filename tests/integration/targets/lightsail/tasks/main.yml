@@ -17,6 +17,12 @@
         zone: "{{ zone }}"
         blueprint_id: amazon_linux_2
         bundle_id: nano_2_0
+        public_ports:
+          - from_port: 50
+            to_port: 50
+            protocol: "tcp"
+            cidrs: ["0.0.0.0/0"]
+            ipv6_cidrs: ["::/0"]
         wait: yes
       register: result
 
@@ -25,6 +31,20 @@
           - result.changed == True
           - "'instance' in result and result.instance.name == instance_name"
           - "result.instance.state.name == 'running'"
+          - "result.instance.networking.ports[0].from_port == 50"
+          - "{{ result.instance.networking.ports|length }} == 1"
+
+    - name: Check if it does not delete public ports config when no value is provided
+      lightsail:
+        name: "{{ instance_name }}"
+        zone: "{{ zone }}"
+        blueprint_id: amazon_linux
+        bundle_id: nano_2_0
+      register: result
+
+    - assert:
+        that:
+          - result.changed == False
 
     - name: Make sure create is idempotent
       lightsail:
@@ -32,6 +52,12 @@
         zone: "{{ zone }}"
         blueprint_id: amazon_linux_2
         bundle_id: nano_2_0
+        public_ports:
+          - from_port: 50
+            to_port: 50
+            protocol: "tcp"
+            cidrs: ["0.0.0.0/0"]
+            ipv6_cidrs: ["::/0"]
       register: result
 
     - assert:
