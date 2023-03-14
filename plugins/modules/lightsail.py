@@ -192,7 +192,8 @@ except ImportError:
     # will be caught by AnsibleAWSModule
     pass
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict, snake_dict_to_camel_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 
@@ -235,8 +236,8 @@ def wait_for_instance_state(module, client, instance_name, states):
 def update_public_ports(module, client, instance_name):
     try:
         client.put_instance_public_ports(
-            portInfos=snake_dict_to_camel_dict(module.params.get('public_ports')),
-            instanceName=instance_name
+            portInfos=snake_dict_to_camel_dict(module.params.get("public_ports")),
+            instanceName=instance_name,
         )
     except botocore.exceptions.ClientError as e:
         module.fail_json_aws(e)
@@ -248,11 +249,11 @@ def create_or_update_instance(module, client, instance_name):
 
     if not inst:
         create_params = {
-            'instanceNames': [instance_name],
-            'availabilityZone': module.params.get('zone'),
-            'blueprintId': module.params.get('blueprint_id'),
-            'bundleId': module.params.get('bundle_id'),
-            'userData': module.params.get('user_data')
+            "instanceNames": [instance_name],
+            "availabilityZone": module.params.get("zone"),
+            "blueprintId": module.params.get("blueprint_id"),
+            "bundleId": module.params.get("bundle_id"),
+            "userData": module.params.get("user_data"),
         }
 
         key_pair_name = module.params.get('key_pair_name')
@@ -269,13 +270,13 @@ def create_or_update_instance(module, client, instance_name):
             desired_states = ['running']
             wait_for_instance_state(module, client, instance_name, desired_states)
 
-    if module.params.get('public_ports') is not None:
+    if module.params.get("public_ports") is not None:
         update_public_ports(module, client, instance_name)
     after_update_inst = find_instance_info(module, client, instance_name, fail_if_not_found=True)
 
     module.exit_json(
         changed=after_update_inst != inst,
-        instance=camel_dict_to_snake_dict(after_update_inst)
+        instance=camel_dict_to_snake_dict(after_update_inst),
     )
 
 
@@ -357,25 +358,29 @@ def start_or_stop_instance(module, client, instance_name, state):
 def main():
 
     argument_spec = dict(
-        name=dict(type='str', required=True),
-        state=dict(type='str', default='present', choices=['present', 'absent', 'stopped', 'running', 'restarted',
-                                                           'rebooted']),
-        zone=dict(type='str'),
-        blueprint_id=dict(type='str'),
-        bundle_id=dict(type='str'),
-        key_pair_name=dict(type='str'),
-        user_data=dict(type='str', default=''),
-        wait=dict(type='bool', default=True),
-        wait_timeout=dict(default=300, type='int'),
-        public_ports=dict(type='list', elements='dict',
-                          options=dict(
-                              from_port=dict(type='int', required=True),
-                              to_port=dict(type='int', required=True),
-                              protocol=dict(type='str', choices=['tcp', 'all', 'udp', 'icmp'], required=True),
-                              cidrs=dict(type='list', elements='str'),
-                              ipv6_cidrs=dict(type='list', elements='str')
-                          ),
-                          required_one_of=[('cidrs', 'ipv6_cidrs')])
+        name=dict(type="str", required=True),
+        state=dict(
+            type="str", default="present", choices=["present", "absent", "stopped", "running", "restarted", "rebooted"]
+        ),
+        zone=dict(type="str"),
+        blueprint_id=dict(type="str"),
+        bundle_id=dict(type="str"),
+        key_pair_name=dict(type="str"),
+        user_data=dict(type="str", default=""),
+        wait=dict(type="bool", default=True),
+        wait_timeout=dict(default=300, type="int"),
+        public_ports=dict(
+            type="list",
+            elements="dict",
+            options=dict(
+                from_port=dict(type="int", required=True),
+                to_port=dict(type="int", required=True),
+                protocol=dict(type="str", choices=["tcp", "all", "udp", "icmp"], required=True),
+                cidrs=dict(type="list", elements="str"),
+                ipv6_cidrs=dict(type="list", elements="str"),
+            ),
+            required_one_of=[("cidrs", "ipv6_cidrs")],
+        ),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
