@@ -69,8 +69,8 @@ options:
   message_structure:
     description:
       - The payload format to use for the message.
-      - This must be 'json' to support protocol-specific messages (C(http), C(https), C(email), C(sms), C(sqs)).
-      - It must be 'string' to support I(message_attributes).
+      - This must be C(json) to support protocol-specific messages (C(http), C(https), C(email), C(sms), C(sqs)).
+      - It must be C(string) to support I(message_attributes).
     default: json
     choices: ['json', 'string']
     type: str
@@ -80,6 +80,7 @@ options:
       - Has to be included when publishing a message to a fifo topic.
       - Can contain up to 128 alphanumeric characters and punctuation.
     type: str
+    version_added: 5.4.0
   message_deduplication_id:
     description:
       - Only in connection with the message_group_id.
@@ -88,6 +89,7 @@ options:
       - Messages with the same deduplication id getting recognized as the same message.
       - Gets overwritten by an auto generated token, if the topic has ContentBasedDeduplication set.
     type: str
+    version_added: 5.4.0
 
 extends_documentation_fragment:
   - amazon.aws.region.modules
