@@ -201,10 +201,10 @@ def main():
             module.fail_json(msg='message_attributes is only supported when the message_structure is "string".')
         sns_kwargs['MessageAttributes'] = module.params['message_attributes']
 
-    if module.params['message_group_id']:
-        sns_kwargs['MessageGroupId'] = module.params['message_group_id']
-        if module.params['message_deduplication_id']:
-            sns_kwargs['MessageDeduplicationId'] = module.params['message_deduplication_id']
+    if module.params["message_group_id"]:
+        sns_kwargs["MessageGroupId"] = module.params["message_group_id"]
+        if module.params["message_deduplication_id"]:
+            sns_kwargs["MessageDeduplicationId"] = module.params["message_deduplication_id"]
 
     dict_msg = {
         'default': sns_kwargs['Message']
@@ -236,13 +236,10 @@ def main():
     except (BotoCoreError, ClientError) as e:
         module.fail_json_aws(e, msg='Failed to publish message')
 
-    sns_result = dict(
-        msg='OK',
-        message_id=result['MessageId']
-    )
+    sns_result = dict(msg="OK", message_id=result["MessageId"])
 
-    if module.params['message_group_id']:
-        sns_result['sequence_number'] = result['SequenceNumber']
+    if module.params["message_group_id"]:
+        sns_result["sequence_number"] = result["SequenceNumber"]
 
     module.exit_json(**sns_result)
 
