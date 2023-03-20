@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>community.aws.lightsail_static_ip module – Manage static IP addresses in AWS Lightsail &mdash; Ansible collections  documentation</title>
+  <title>community.aws.mq_broker_config module – Update Amazon MQ broker configuration &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
@@ -19,8 +19,8 @@
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="community.aws.mq_broker module – MQ broker management" href="mq_broker_module.html" />
-    <link rel="prev" title="community.aws.lightsail_snapshot module – Creates snapshots of AWS Lightsail instances" href="lightsail_snapshot_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+    <link rel="next" title="community.aws.mq_broker_info module – Retrieve MQ Broker details" href="mq_broker_info_module.html" />
+    <link rel="prev" title="community.aws.mq_broker module – MQ broker management" href="mq_broker_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
 
@@ -116,10 +116,10 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
-      <li class="breadcrumb-item active">community.aws.lightsail_static_ip module – Manage static IP addresses in AWS Lightsail</li>
+      <li class="breadcrumb-item active">community.aws.mq_broker_config module – Update Amazon MQ broker configuration</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/lightsail_static_ip.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/mq_broker_config.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -129,17 +129,17 @@
   
            <div itemprop="articleBody">
              
-  <span class="target" id="ansible-collections-community-aws-lightsail-static-ip-module"></span><section id="community-aws-lightsail-static-ip-module-manage-static-ip-addresses-in-aws-lightsail">
-<h1>community.aws.lightsail_static_ip module – Manage static IP addresses in AWS Lightsail<a class="headerlink" href="#community-aws-lightsail-static-ip-module-manage-static-ip-addresses-in-aws-lightsail" title="Permalink to this heading"></a></h1>
+  <span class="target" id="ansible-collections-community-aws-mq-broker-config-module"></span><section id="community-aws-mq-broker-config-module-update-amazon-mq-broker-configuration">
+<h1>community.aws.mq_broker_config module – Update Amazon MQ broker configuration<a class="headerlink" href="#community-aws-mq-broker-config-module-update-amazon-mq-broker-configuration" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 6.0.0-dev0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
-see <a class="reference internal" href="#ansible-collections-community-aws-lightsail-static-ip-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
-<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.lightsail_static_ip</span></code>.</p>
+see <a class="reference internal" href="#ansible-collections-community-aws-mq-broker-config-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.mq_broker_config</span></code>.</p>
 </div>
-<p class="ansible-version-added">New in community.aws 4.1.0</p>
+<p class="ansible-version-added">New in community.aws 6.0.0</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -153,11 +153,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Manage static IP addresses in AWS Lightsail.</p></li>
+<li><p>Update configuration for an MQ broker.</p></li>
+<li><p>If new configuration differs from the current one a new configuration is created and the new version is assigned to the broker.</p></li>
+<li><p>Optionally allows broker reboot to make changes effective immediately.</p></li>
 </ul>
 </section>
 <section id="requirements">
-<span id="ansible-collections-community-aws-lightsail-static-ip-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<span id="ansible-collections-community-aws-mq-broker-config-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
@@ -178,7 +180,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <div class="ansibleOptionAnchor" id="parameter-access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-access-key"></span><strong>access_key</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-access-key"></span><strong>access_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -192,7 +194,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
@@ -200,7 +202,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-config"><strong>aws_config</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-config"><strong>aws_config</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
@@ -208,7 +210,28 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-broker_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-broker-id"><strong>broker_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-broker_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The ID of the MQ broker to work on.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-config_description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-config-description"><strong>config_description</strong></p>
+<a class="ansibleOptionLink" href="#parameter-config_description" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Description to set on new configuration revision.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-config_xml"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-config-xml"><strong>config_xml</strong></p>
+<a class="ansibleOptionLink" href="#parameter-config_xml" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The maximum number of results to return.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
@@ -220,11 +243,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-s3-url"><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-s3-url"><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
 <a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -234,16 +257,9 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-name"><strong>name</strong></p>
-<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Name of the static IP.</p>
-</div></td>
-</tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-profile"><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-profile"></span><strong>profile</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-profile"><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -254,9 +270,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-reboot"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-reboot"><strong>reboot</strong></p>
+<a class="ansibleOptionLink" href="#parameter-reboot" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Reboot broker after new config has been applied.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-region"><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-region"></span><strong>region</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-region"><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-region"></span><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -268,11 +296,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-secret-key"><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-secret-key"><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -285,12 +313,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-session-token"><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-security-token"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-access-token"></span><strong>session_token</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-session-token"><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-security-token"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-mq-broker-config-module-parameter-access-token"></span><strong>session_token</strong></p>
 <a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -303,20 +331,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-state"><strong>state</strong></p>
-<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Describes the desired state.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
-<ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
-</ul>
-</div></td>
-</tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-parameter-validate-certs"><strong>validate_certs</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
@@ -343,16 +359,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Provision a Lightsail static IP</span>
-<span class="w">  </span><span class="nt">community.aws.lightsail_static_ip</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_static_ip</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_ip</span>
-
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Remove a static IP</span>
-<span class="w">  </span><span class="nt">community.aws.lightsail_static_ip</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_static_ip</span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">send new XML config to broker relying on credentials from environment</span>
+<span class="w">  </span><span class="nt">amazon.aws.mq_broker_config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-id&quot;</span>
+<span class="w">    </span><span class="nt">config_xml</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;activemq.xml&#39;</span> <span class="o">)</span><span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">aws_region</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">send new XML config to broker and reboot if necessary</span>
+<span class="w">  </span><span class="nt">amazon.aws.mq_broker_config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-id&quot;</span>
+<span class="w">    </span><span class="nt">config_xml</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;activemq2.xml&#39;</span> <span class="o">)</span><span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">reboot</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">send new broker config and set all credentials explicitly</span>
+<span class="w">  </span><span class="nt">amazon.aws.mq_broker_config</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">broker_id</span> <span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">config_xml</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">lookup</span><span class="o">(</span><span class="s1">&#39;file&#39;</span><span class="o">,</span> <span class="s1">&#39;activemq3.xml&#39;</span><span class="o">)</span><span class="cp">}}</span><span class="s">&quot;</span>
+<span class="w">    </span><span class="nt">config_description</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;custom</span><span class="nv"> </span><span class="s">description</span><span class="nv"> </span><span class="s">for</span><span class="nv"> </span><span class="s">configuration</span><span class="nv"> </span><span class="s">object&quot;</span>
+<span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 </pre></div>
 </div>
 </section>
@@ -367,12 +389,37 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-static_ip"></div><p class="ansible-option-title" id="ansible-collections-community-aws-lightsail-static-ip-module-return-static-ip"><strong>static_ip</strong></p>
-<a class="ansibleOptionLink" href="#return-static_ip" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<div class="ansibleOptionAnchor" id="return-broker"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-return-broker"><strong>broker</strong></p>
+<a class="ansibleOptionLink" href="#return-broker" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>static_ipinstance data</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;arn&quot;:</span> <span class="pre">&quot;arn:aws:lightsail:ap-southeast-2:123456789012:StaticIp/d8f47672-c261-4443-a484-4a2ec983db9a&quot;,</span> <span class="pre">&quot;created_at&quot;:</span> <span class="pre">&quot;2021-02-28T00:04:05.202000+10:30&quot;,</span> <span class="pre">&quot;ip_address&quot;:</span> <span class="pre">&quot;192.0.2.5&quot;,</span> <span class="pre">&quot;is_attached&quot;:</span> <span class="pre">false,</span> <span class="pre">&quot;location&quot;:</span> <span class="pre">{&quot;availability_zone&quot;:</span> <span class="pre">&quot;all&quot;,</span> <span class="pre">&quot;region_name&quot;:</span> <span class="pre">&quot;ap-southeast-2&quot;},</span> <span class="pre">&quot;name&quot;:</span> <span class="pre">&quot;static_ip&quot;,</span> <span class="pre">&quot;resource_type&quot;:</span> <span class="pre">&quot;StaticIp&quot;,</span> <span class="pre">&quot;support_code&quot;:</span> <span class="pre">&quot;123456789012/192.0.2.5&quot;}</span></code></p>
+<td><div class="ansible-option-cell"><p>API response of describe_broker() converted to snake yaml after changes have been applied.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-configuration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-return-configuration"><strong>configuration</strong></p>
+<a class="ansibleOptionLink" href="#return-configuration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Details about new configuration object.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>changed=true</em></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-configuration/id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-return-configuration-id"><strong>id</strong></p>
+<a class="ansibleOptionLink" href="#return-configuration/id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Configuration ID of broker configuration.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;c-386541b8-3139-42c2-9c2c-a4c267c1714f&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-configuration/revision"></div><p class="ansible-option-title" id="ansible-collections-community-aws-mq-broker-config-module-return-configuration-revision"><strong>revision</strong></p>
+<a class="ansibleOptionLink" href="#return-configuration/revision" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Revision of the configuration that will be active after next reboot.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">4</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -380,7 +427,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
 <section id="authors">
 <h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p>Daniel Cotton (&#64;danielcotton)</p></li>
+<li><p>FCO (&#64;fotto)</p></li>
 </ul>
 </section>
 <section id="collection-links">
@@ -399,8 +446,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-light
           
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="lightsail_snapshot_module.html" class="btn btn-neutral float-left" title="community.aws.lightsail_snapshot module – Creates snapshots of AWS Lightsail instances" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="mq_broker_module.html" class="btn btn-neutral float-right" title="community.aws.mq_broker module – MQ broker management" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="mq_broker_module.html" class="btn btn-neutral float-left" title="community.aws.mq_broker module – MQ broker management" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="mq_broker_info_module.html" class="btn btn-neutral float-right" title="community.aws.mq_broker_info module – Retrieve MQ Broker details" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
