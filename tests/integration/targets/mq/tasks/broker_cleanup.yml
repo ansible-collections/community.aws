@@ -1,0 +1,17 @@
+- name: cleanup broker
+  mq_broker:
+    broker_name: "{{ broker_name }}"
+    state: "absent"
+  ignore_errors: true
+  when: not ansible_check_mode
+# we need to wait - otherwise env_cleanup.yml will fail
+- name: wait until broker deletion is finished
+  mq_broker_info:
+    broker_id:      "{{ broker_id }}"
+  register: result
+  # the condition will never be met - instead it wail fail in the end
+  until: result.broker['broker_state'] != 'DELETION_IN_PROGRESS'
+  retries: 15
+  delay:   60
+  ignore_errors: true
+  when: not ansible_check_mode

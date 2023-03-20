@@ -1,0 +1,13 @@
+# reason: missing-policy
+# We don't have CI or 'unsupported' policy for Amazon MQ, yet
+# reason: slow
+# tests run about 30 minutes
+unsupported
+
+cloud/aws
+
+mq_broker_info
+mq_broker
+mq_broker_config
+mq_user_info
+mq_user

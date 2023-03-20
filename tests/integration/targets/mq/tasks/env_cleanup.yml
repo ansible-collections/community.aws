@@ -1,0 +1,33 @@
+- name: remove the security group
+  ec2_group:
+    name: "{{ sg_name }}"
+    description: a security group for ansible tests
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    state: absent
+  register: removed
+  until: removed is not failed
+  ignore_errors: yes
+  retries: 10
+
+- name: remove subnet A
+  ec2_vpc_subnet:
+    state: absent
+    vpc_id: "{{ testing_vpc.vpc.id }}"
+    cidr: "{{ subnet_cidr }}"
+  register: removed
+  until: removed is not failed
+  ignore_errors: yes
+  retries: 10
+
+- name: remove the VPC
+  ec2_vpc_net:
+    name: "{{ vpc_name }}"
+    cidr_block: "{{ vpc_cidr }}"
+    state: absent
+    tags:
+      Name: Ansible Testing VPC
+    tenancy: default
+  register: removed
+  until: removed is not failed
+  ignore_errors: yes
+  retries: 10
