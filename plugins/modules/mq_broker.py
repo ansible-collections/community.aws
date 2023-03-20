@@ -39,7 +39,7 @@ options:
     description:
       - Must be set to C(false) if I(kms_key_id) is provided as well.
       - Can be used only during creation.
-      - Defaults to C(true)
+      - Defaults to C(true).
     type: bool
   kms_key_id:
     description:
@@ -50,7 +50,7 @@ options:
     description:
       - Set broker engine type.
       - Can be used only during creation.
-      - Defaults to C(ACTIVEMQ)
+      - Defaults to C(ACTIVEMQ).
     choices: [ 'ACTIVEMQ', 'RABBITMQ' ]
     type: str
   maintenance_window_start_time:
