@@ -228,6 +228,8 @@
       - ecs_task_update.changed
 
 - name: Enable ExecuteCommand
+  vars:
+    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
   ecs_service:
     state: present
     name: "{{ ecs_service_name }}"
