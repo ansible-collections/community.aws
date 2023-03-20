@@ -1,0 +1,2 @@
+minor_changes:
+  - cloudfront_distribution - add http3 support (https://github.com/ansible-collections/community.aws/pull/1753).
