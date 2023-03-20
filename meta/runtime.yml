@@ -173,6 +173,11 @@ action_groups:
   - lightsail_static_ip
   - msk_cluster
   - msk_config
+  - mq_broker
+  - mq_broker_config
+  - mq_broker_info
+  - mq_user
+  - mq_user_info
   - networkfirewall
   - networkfirewall_info
   - networkfirewall_policy

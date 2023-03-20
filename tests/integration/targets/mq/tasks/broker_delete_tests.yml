@@ -1,0 +1,43 @@
+- name: delete broker
+  mq_broker:
+    broker_name: "{{ broker_name }}"
+    state: "absent"
+  register: result
+- name: verify broker delete
+  assert:
+    fail_msg: broker delete failed
+    that:
+    - ( result.changed | bool)
+  when: not ansible_check_mode
+- name: get details after delete
+  mq_broker_info:
+    broker_name: "{{ broker_name }}"
+  register: result_d1
+- name: verify broker deletion on progress
+  assert:
+    fail_msg: broker delete too fast?
+    that:
+    - result_d1.broker['broker_state'] == 'DELETION_IN_PROGRESS'
+  when: not ansible_check_mode
+- name: repeat broker deletion
+  mq_broker:
+    broker_name: "{{ broker_name }}"
+    state: "absent"
+  register: result
+- name: verify broker repeated delete
+  assert:
+    fail_msg: didn't detect DELETION_IN_PROGRESS in progress
+    that:
+    - not ( result.changed | bool)
+  when: not ansible_check_mode
+- name: deletion unknown broker - simulates re-deletion of completely deleted broker
+  mq_broker:
+    broker_name: "{{ broker_name }}__unknown_broker__"
+    state: "absent"
+  register: result
+- name: verify delete unknown broker
+  assert:
+    fail_msg: deletion of unknown broker return unexpected result
+    that:
+    - not ( result.changed | bool)
+  when: not ansible_check_mode

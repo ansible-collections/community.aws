@@ -1,0 +1,173 @@
+- name: set test data
+  set_fact:
+    usernames:
+      - "test_user1"
+      - "test_user2"
+      - "test_user3"
+
+- name: test1 - create user with default settings
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[0] }}"
+  register: result
+- name: test1 - verify
+  assert:
+    fail_msg: test1 failed
+    that:
+      - result.changed | bool
+      - result.user['username'] == usernames[0]
+      - not (result.user['pending']['console_access'] | bool)
+      - result.user['pending']['groups'] | length == 0
+  when: not ansible_check_mode
+- name: test2 - create user with console access and group list
+  mq_user:
+    state: present
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+    console_access: true
+    groups: [ "g1", "g2" ]
+  register: result
+- name: test2 - verify
+  assert:
+    fail_msg: test2 failed
+    that:
+      - result.changed | bool
+      - result.user['username'] == usernames[1]
+      - result.user['pending']['console_access'] | bool
+      - result.user['pending']['groups'] | length == 2
+  when: not ansible_check_mode
+- name: test3 - create user with defined password
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[2] }}"
+    password: "09234092jzxkjvjk23kn23qn5lk34"
+  register: result
+- name: test3 - verify
+  assert:
+    fail_msg: test3 failed
+    that:
+      - result.changed | bool
+      - result.user['username'] == usernames[2]
+      - not (result.user['pending']['console_access'] | bool)
+      - result.user['pending']['groups'] | length == 0
+  when: not ansible_check_mode
+- name: test4 - update user password - ignore mode
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[2] }}"
+    password: "new_password_ignored"
+  register: result
+- name: test4 - verify
+  assert:
+    fail_msg: test4 failed
+    that:
+      - not (result.changed | bool)
+  when: not ansible_check_mode
+- name: test5 - update user password - force mode
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[2] }}"
+    password: "new_Password_Accepted0815%"
+    allow_pw_update: true
+  register: result
+- name: test5 - verify
+  assert:
+    fail_msg: test5 failed
+    that:
+      - result.changed | bool
+  when: not ansible_check_mode
+- name: test6 - update console access - same value
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[2] }}"
+    console_access: false
+  register: result
+- name: test6 - verify
+  assert:
+    fail_msg: test6 failed
+    that:
+      - not (result.changed | bool)
+  when: not ansible_check_mode
+- name: test7 - update console access - new value
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+    console_access: false
+  register: result
+- name: test7 - verify
+  assert:
+    fail_msg: test7 failed
+    that:
+      - result.changed | bool
+      - not( result.user['pending']['console_access'] | bool )
+      - result.user['pending']['groups'] | length == 2
+  when: not ansible_check_mode
+- name: test8 - update group list - same list but different order
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+    groups: [ "g2", "g1" ]
+  register: result
+- name: test8 - verify
+  assert:
+    fail_msg: test8 failed
+    that:
+      - not (result.changed | bool)
+  when: not ansible_check_mode
+- name: test9 - update group list - add element
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+    groups: [ "g2", "g1", "g3" ]
+  register: result
+- name: test9 - verify
+  assert:
+    fail_msg: test9 failed
+    that:
+      - result.changed | bool
+      - result.user['pending']['groups'] | length == 3
+  when: not ansible_check_mode
+- name: test10 - update group list - remove element
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+    groups: [ "g2", "g3" ]
+  register: result
+- name: test10 - verify
+  assert:
+    fail_msg: test10 failed
+    that:
+      - result.changed | bool
+      - result.user['pending']['groups'] | length == 2
+  when: not ansible_check_mode
+- name: test11 - update group list - set to empty list
+  mq_user:
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+    groups: []
+  register: result
+- name: test11 - verify
+  assert:
+    fail_msg: test11 failed
+    that:
+      - result.changed | bool
+      - result.user['pending']['groups'] | length == 0
+  when: not ansible_check_mode
+- name: delete all users
+  mq_user:
+    state: absent
+    broker_id: "{{ broker_id }}"
+    username: "{{ item }}"
+  loop: "{{ usernames | flatten(levels=1) }}"
+- name: test13 - delete deleted user
+  mq_user:
+    state: absent
+    broker_id: "{{ broker_id }}"
+    username: "{{ usernames[1] }}"
+  register: result
+- name: test13 - verify
+  assert:
+    fail_msg: test13 failed
+    that:
+      - not(result.changed | bool)
+  when: not ansible_check_mode
