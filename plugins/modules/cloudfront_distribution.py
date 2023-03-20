@@ -568,7 +568,7 @@ options:
       description:
         - The version of the http protocol to use for the distribution.
         - AWS defaults this to C(http2).
-        - Valid values are C(http1.1) and C(http2).
+        - Valid values are C(http1.1), C(http2), C(http2) and C(http2and3).
       type: str
 
     ipv6_enabled:
@@ -1643,7 +1643,9 @@ class CloudFrontValidationManager(object):
         ])
         self.__valid_http_versions = set([
             'http1.1',
-            'http2'
+            'http2',
+            'http3',
+            'http2and3'
         ])
         self.__s3_bucket_domain_identifier = '.s3.amazonaws.com'
 
