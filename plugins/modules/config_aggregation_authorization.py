@@ -65,7 +65,7 @@ def resource_exists(client, module, params):
         current_authorizations = client.describe_aggregation_authorizations()['AggregationAuthorizations']
         authorization_exists = next(
             (item for item in current_authorizations if item["AuthorizedAccountId"] == params['AuthorizedAccountId']),
-            None
+            None,
         )
         if authorization_exists:
             return True
@@ -77,7 +77,7 @@ def create_resource(client, module, params, result):
     try:
         response = client.put_aggregation_authorization(
             AuthorizedAccountId=params['AuthorizedAccountId'],
-            AuthorizedAwsRegion=params['AuthorizedAwsRegion']
+            AuthorizedAwsRegion=params['AuthorizedAwsRegion'],
         )
         result['changed'] = True
         return result
@@ -89,7 +89,7 @@ def update_resource(client, module, params, result):
     current_authorizations = client.describe_aggregation_authorizations()['AggregationAuthorizations']
     current_params = next(
         (item for item in current_authorizations if item["AuthorizedAccountId"] == params['AuthorizedAccountId']),
-        None
+        None,
     )
 
     del current_params['AggregationAuthorizationArn']
@@ -99,7 +99,7 @@ def update_resource(client, module, params, result):
         try:
             response = client.put_aggregation_authorization(
                 AuthorizedAccountId=params['AuthorizedAccountId'],
-                AuthorizedAwsRegion=params['AuthorizedAwsRegion']
+                AuthorizedAwsRegion=params['AuthorizedAwsRegion'],
             )
             result['changed'] = True
             return result
@@ -111,7 +111,7 @@ def delete_resource(client, module, params, result):
     try:
         response = client.delete_aggregation_authorization(
             AuthorizedAccountId=params['AuthorizedAccountId'],
-            AuthorizedAwsRegion=params['AuthorizedAwsRegion']
+            AuthorizedAwsRegion=params['AuthorizedAwsRegion'],
         )
         result['changed'] = True
         return result

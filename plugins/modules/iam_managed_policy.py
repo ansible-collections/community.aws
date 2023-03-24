@@ -348,7 +348,7 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
         required_if=[['state', 'present', ['policy']]],
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     name = module.params.get('policy_name')

@@ -113,13 +113,13 @@ def get_rule_group(wafv2, name, scope, id, fail_json_aws):
 
 def main():
     arg_spec = dict(
-        name=dict(type='str', required=True),
-        scope=dict(type='str', required=True, choices=['CLOUDFRONT', 'REGIONAL'])
+        name=dict(type="str", required=True),
+        scope=dict(type="str", required=True, choices=["CLOUDFRONT", "REGIONAL"]),
     )
 
     module = AnsibleAWSModule(
         argument_spec=arg_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     name = module.params.get("name")

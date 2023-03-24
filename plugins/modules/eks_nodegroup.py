@@ -640,35 +640,66 @@ def main():
         name=dict(type='str', required=True),
         cluster_name=dict(type='str', required=True),
         node_role=dict(),
-        subnets=dict(type='list', elements='str'),
-        scaling_config=dict(type='dict', default={'min_size': 1, 'max_size': 2, 'desired_size': 1}, options=dict(
-            min_size=dict(type='int'),
-            max_size=dict(type='int'),
-            desired_size=dict(type='int')
-        )),
-        disk_size=dict(type='int'),
-        instance_types=dict(type='list', elements='str'),
-        ami_type=dict(choices=['AL2_x86_64', 'AL2_x86_64_GPU', 'AL2_ARM_64', 'CUSTOM', 'BOTTLEROCKET_ARM_64', 'BOTTLEROCKET_x86_64']),
-        remote_access=dict(type='dict', options=dict(
-            ec2_ssh_key=dict(no_log=True),
-            source_sg=dict(type='list', elements='str')
-        )),
-        update_config=dict(type='dict', default={'max_unavailable': 1}, options=dict(
-            max_unavailable=dict(type='int'),
-            max_unavailable_percentage=dict(type='int')
-        )),
-        labels=dict(type='dict', default={}),
-        taints=dict(type='list', elements='dict', default=[], options=dict(
-            key=dict(type='str', no_log=False,),
-            value=dict(type='str'),
-            effect=dict(type='str', choices=['NO_SCHEDULE', 'NO_EXECUTE', 'PREFER_NO_SCHEDULE'])
-        )),
-        launch_template=dict(type='dict', options=dict(
-            name=dict(type='str'),
-            version=dict(type='str'),
-            id=dict(type='str')
-        )),
-        capacity_type=dict(choices=['ON_DEMAND', 'SPOT'], default='ON_DEMAND'),
+        subnets=dict(type="list", elements="str"),
+        scaling_config=dict(
+            type="dict",
+            default={"min_size": 1, "max_size": 2, "desired_size": 1},
+            options=dict(
+                min_size=dict(type="int"),
+                max_size=dict(type="int"),
+                desired_size=dict(type="int"),
+            ),
+        ),
+        disk_size=dict(type="int"),
+        instance_types=dict(type="list", elements="str"),
+        ami_type=dict(
+            choices=[
+                "AL2_x86_64",
+                "AL2_x86_64_GPU",
+                "AL2_ARM_64",
+                "CUSTOM",
+                "BOTTLEROCKET_ARM_64",
+                "BOTTLEROCKET_x86_64",
+            ]
+        ),
+        remote_access=dict(
+            type="dict",
+            options=dict(
+                ec2_ssh_key=dict(no_log=True),
+                source_sg=dict(type="list", elements="str"),
+            ),
+        ),
+        update_config=dict(
+            type="dict",
+            default={"max_unavailable": 1},
+            options=dict(
+                max_unavailable=dict(type="int"),
+                max_unavailable_percentage=dict(type="int"),
+            ),
+        ),
+        labels=dict(type="dict", default={}),
+        taints=dict(
+            type="list",
+            elements="dict",
+            default=[],
+            options=dict(
+                key=dict(
+                    type="str",
+                    no_log=False,
+                ),
+                value=dict(type="str"),
+                effect=dict(type="str", choices=["NO_SCHEDULE", "NO_EXECUTE", "PREFER_NO_SCHEDULE"]),
+            ),
+        ),
+        launch_template=dict(
+            type="dict",
+            options=dict(
+                name=dict(type="str"),
+                version=dict(type="str"),
+                id=dict(type="str"),
+            ),
+        ),
+        capacity_type=dict(choices=["ON_DEMAND", "SPOT"], default="ON_DEMAND"),
         release_version=dict(),
         tags=dict(type='dict', aliases=['resource_tags']),
         purge_tags=dict(type='bool', default=True),
@@ -681,10 +712,10 @@ def main():
         argument_spec=argument_spec,
         required_if=[['state', 'present', ['node_role', 'subnets']]],
         mutually_exclusive=[
-            ('launch_template', 'instance_types'),
-            ('launch_template', 'disk_size'),
-            ('launch_template', 'remote_access'),
-            ('launch_template', 'ami_type')
+            ("launch_template", "instance_types"),
+            ("launch_template", "disk_size"),
+            ("launch_template", "remote_access"),
+            ("launch_template", "ami_type"),
         ],
         supports_check_mode=True,
     )

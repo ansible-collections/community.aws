@@ -572,13 +572,11 @@ def main():
     argument_spec = dict(
         name=dict(required=True),
         registry_id=dict(required=False),
-        state=dict(required=False, choices=['present', 'absent'],
-                   default='present'),
+        state=dict(required=False, choices=['present', 'absent'], default='present'),
         force_absent=dict(required=False, type='bool', default=False),
         force_set_policy=dict(required=False, type='bool', default=False),
         policy=dict(required=False, type='json'),
-        image_tag_mutability=dict(required=False, choices=['mutable', 'immutable'],
-                                  default='mutable'),
+        image_tag_mutability=dict(required=False, choices=['mutable', 'immutable'], default='mutable'),
         purge_policy=dict(required=False, type='bool'),
         lifecycle_policy=dict(required=False, type='json'),
         purge_lifecycle_policy=dict(required=False, type='bool'),
@@ -597,9 +595,10 @@ def main():
     )
     mutually_exclusive = [
         ['policy', 'purge_policy'],
-        ['lifecycle_policy', 'purge_lifecycle_policy']]
+        ['lifecycle_policy', 'purge_lifecycle_policy'],
+    ]
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True, mutually_exclusive=mutually_exclusive)
+    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True, mutually_exclusive=mutually_exclusive,)
 
     ecr = EcsEcr(module)
     passed, result = run(ecr, module.params)

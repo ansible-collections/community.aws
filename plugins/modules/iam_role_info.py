@@ -261,9 +261,11 @@ def main():
         path_prefix=dict(),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              supports_check_mode=True,
-                              mutually_exclusive=[['name', 'path_prefix']])
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        mutually_exclusive=[["name", "path_prefix"]],
+    )
 
     client = module.client('iam', retry_decorator=AWSRetry.jittered_backoff())
 

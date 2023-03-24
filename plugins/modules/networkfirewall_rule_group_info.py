@@ -405,11 +405,11 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
-            ('arn', 'name',),
-            ('arn', 'rule_type'),
+            ['arn', 'name'],
+            ['arn', 'rule_type'],
         ],
         required_together=[
-            ('name', 'rule_type'),
+            ['name', 'rule_type'],
         ]
     )
 

@@ -308,7 +308,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=False
+        supports_check_mode=False,
     )
 
     client = module.client('apigateway')

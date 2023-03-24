@@ -273,7 +273,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     client = module.client('iam', retry_decorator=AWSRetry.jittered_backoff())

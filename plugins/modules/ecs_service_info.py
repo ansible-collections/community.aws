@@ -208,7 +208,7 @@ def chunks(l, n):
     """Yield successive n-sized chunks from l."""
     """ https://stackoverflow.com/a/312464 """
     for i in range(0, len(l), n):
-        yield l[i:i + n]
+        yield l[i:i + n]  # fmt: skip
 
 
 def main():

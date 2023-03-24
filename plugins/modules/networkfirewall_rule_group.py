@@ -759,15 +759,15 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
-            ('name', 'arn'),
-            ('rule_strings', 'domain_list', 'rule_list'),
-            ('domain_list', 'ip_variables'),
+            ['name', 'arn'],
+            ['rule_strings', 'domain_list', 'rule_list'],
+            ['domain_list', 'ip_variables'],
         ],
         required_together=[
-            ('name', 'rule_type'),
+            ['name', 'rule_type'],
         ],
         required_one_of=[
-            ('name', 'arn'),
+            ['name', 'arn'],
         ],
     )
 

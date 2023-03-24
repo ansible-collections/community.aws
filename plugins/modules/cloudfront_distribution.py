@@ -1551,7 +1551,7 @@ class CloudFrontValidationManager(object):
         self.__default_origin_ssl_protocols = [
             'TLSv1',
             'TLSv1.1',
-            'TLSv1.2'
+            'TLSv1.2',
         ]
         self.__default_custom_origin_protocol_policy = 'match-viewer'
         self.__default_custom_origin_read_timeout = 30
@@ -1569,28 +1569,28 @@ class CloudFrontValidationManager(object):
         self.__valid_price_classes = set([
             'PriceClass_100',
             'PriceClass_200',
-            'PriceClass_All'
+            'PriceClass_All',
         ])
         self.__valid_origin_protocol_policies = set([
             'http-only',
             'match-viewer',
-            'https-only'
+            'https-only',
         ])
         self.__valid_origin_ssl_protocols = set([
             'SSLv3',
             'TLSv1',
             'TLSv1.1',
-            'TLSv1.2'
+            'TLSv1.2',
         ])
         self.__valid_cookie_forwarding = set([
             'none',
             'whitelist',
-            'all'
+            'all',
         ])
         self.__valid_viewer_protocol_policies = set([
             'allow-all',
             'https-only',
-            'redirect-to-https'
+            'redirect-to-https',
         ])
         self.__valid_methods = set([
             'GET',
@@ -1599,17 +1599,17 @@ class CloudFrontValidationManager(object):
             'PUT',
             'PATCH',
             'OPTIONS',
-            'DELETE'
+            'DELETE',
         ])
         self.__valid_methods_cached_methods = [
             set([
                 'GET',
-                'HEAD'
+                'HEAD',
             ]),
             set([
                 'GET',
                 'HEAD',
-                'OPTIONS'
+                'OPTIONS',
             ])
         ]
         self.__valid_methods_allowed_methods = [
@@ -1618,14 +1618,14 @@ class CloudFrontValidationManager(object):
             self.__valid_methods
         ]
         self.__valid_lambda_function_association_event_types = set(
-            ["viewer-request", "viewer-response", "origin-request", "origin-response"]
+            ["viewer-request", "viewer-response", "origin-request", "origin-response",]
         )
-        self.__valid_viewer_certificate_ssl_support_methods = set(["sni-only", "vip"])
+        self.__valid_viewer_certificate_ssl_support_methods = set(["sni-only", "vip",])
         self.__valid_viewer_certificate_minimum_protocol_versions = set(
-            ["SSLv3", "TLSv1", "TLSv1_2016", "TLSv1.1_2016", "TLSv1.2_2018", "TLSv1.2_2019", "TLSv1.2_2021"]
+            ["SSLv3", "TLSv1", "TLSv1_2016", "TLSv1.1_2016", "TLSv1.2_2018", "TLSv1.2_2019", "TLSv1.2_2021",]
         )
-        self.__valid_viewer_certificate_certificate_sources = set(["cloudfront", "iam", "acm"])
-        self.__valid_http_versions = set(["http1.1", "http2", "http3", "http2and3"])
+        self.__valid_viewer_certificate_certificate_sources = set(["cloudfront", "iam", "acm",])
+        self.__valid_http_versions = set(["http1.1", "http2", "http3", "http2and3",])
         self.__s3_bucket_domain_identifier = ".s3.amazonaws.com"
 
     def add_missing_key(self, dict_object, key_to_set, value_to_set):

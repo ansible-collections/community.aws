@@ -844,7 +844,7 @@ class EcsTaskManager:
             family=family,
             taskRoleArn=task_role_arn,
             containerDefinitions=container_definitions,
-            volumes=volumes
+            volumes=volumes,
         )
         if network_mode != 'default':
             params['networkMode'] = network_mode

@@ -465,12 +465,14 @@ def main():
     )
 
     required_if = [
-        ('state', 'present', ('subnets', 'subnet_mappings',), True)
+        ['state', 'present', ['subnets', 'subnet_mappings'], True],
     ]
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              required_if=required_if,
-                              mutually_exclusive=[['subnets', 'subnet_mappings']])
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=required_if,
+        mutually_exclusive=[["subnets", "subnet_mappings"]],
+    )
 
     # Check for subnets or subnet_mappings if state is present
     state = module.params.get("state")

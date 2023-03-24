@@ -980,7 +980,7 @@ def main():
             options=dict(
                 type=dict(type='str'),
                 expression=dict(required=False, type='str')
-            )
+            ),
         ),
         purge_placement_constraints=dict(required=False, default=False, type='bool'),
         placement_strategy=dict(
@@ -991,14 +991,14 @@ def main():
             options=dict(
                 type=dict(type='str'),
                 field=dict(type='str'),
-            )
+            ),
         ),
         purge_placement_strategy=dict(required=False, default=False, type='bool'),
         health_check_grace_period_seconds=dict(required=False, type='int'),
         network_configuration=dict(required=False, type='dict', options=dict(
             subnets=dict(type='list', elements='str'),
             security_groups=dict(type='list', elements='str'),
-            assign_public_ip=dict(type='bool')
+            assign_public_ip=dict(type='bool'),
         )),
         launch_type=dict(required=False, choices=['EC2', 'FARGATE']),
         platform_version=dict(required=False, type='str'),
@@ -1012,8 +1012,8 @@ def main():
             options=dict(
                 capacity_provider=dict(type='str'),
                 weight=dict(type='int'),
-                base=dict(type='int')
-            )
+                base=dict(type='int'),
+            ),
         ),
         propagate_tags=dict(required=False, choices=["TASK_DEFINITION", "SERVICE"]),
         tags=dict(required=False, type="dict"),
@@ -1024,7 +1024,7 @@ def main():
                               supports_check_mode=True,
                               required_if=[('launch_type', 'FARGATE', ['network_configuration'])],
                               required_together=[['load_balancers', 'role']],
-                              mutually_exclusive=[['launch_type', 'capacity_provider_strategy']])
+                              mutually_exclusive=[['launch_type', 'capacity_provider_strategy']],)
 
     if module.params['state'] == 'present':
         if module.params['scheduling_strategy'] == 'REPLICA' and module.params['desired_count'] is None:

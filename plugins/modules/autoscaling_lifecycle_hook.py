@@ -157,7 +157,7 @@ def create_lifecycle_hook(connection, module):
     lch_params = {
         'LifecycleHookName': lch_name,
         'AutoScalingGroupName': asg_name,
-        'LifecycleTransition': transition
+        'LifecycleTransition': transition,
     }
 
     if role_arn:
@@ -178,7 +178,7 @@ def create_lifecycle_hook(connection, module):
     try:
         existing_hook = connection.describe_lifecycle_hooks(
             AutoScalingGroupName=asg_name,
-            LifecycleHookNames=[lch_name]
+            LifecycleHookNames=[lch_name],
         )['LifecycleHooks']
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to get Lifecycle Hook")
@@ -236,7 +236,7 @@ def delete_lifecycle_hook(connection, module):
 
     try:
         all_hooks = connection.describe_lifecycle_hooks(
-            AutoScalingGroupName=asg_name
+            AutoScalingGroupName=asg_name,
         )
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
         module.fail_json_aws(e, msg="Failed to get Lifecycle Hooks")
@@ -245,7 +245,7 @@ def delete_lifecycle_hook(connection, module):
         if hook['LifecycleHookName'] == lch_name:
             lch_params = {
                 'LifecycleHookName': lch_name,
-                'AutoScalingGroupName': asg_name
+                'AutoScalingGroupName': asg_name,
             }
 
             try:

@@ -288,7 +288,7 @@ class EcsExecManager:
         response = self.ecs.list_tasks(
             cluster=cluster_name,
             family=service_name,
-            desiredStatus=status
+            desiredStatus=status,
         )
         if len(response['taskArns']) > 0:
             for c in response['taskArns']:

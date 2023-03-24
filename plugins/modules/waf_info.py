@@ -123,7 +123,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 def main():
     argument_spec = dict(
         name=dict(required=False),
-        waf_regional=dict(type='bool', default=False)
+        waf_regional=dict(type="bool", default=False),
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 

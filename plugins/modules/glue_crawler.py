@@ -406,7 +406,7 @@ def main():
                               required_if=[
                                   ('state', 'present', ['role', 'targets'])
                               ],
-                              supports_check_mode=True
+                              supports_check_mode=True,
                               )
 
     connection = module.client('glue', retry_decorator=AWSRetry.jittered_backoff(retries=10))

@@ -70,7 +70,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 def main():
     argument_spec = dict(
-        filters=dict(default={}, type='dict')
+        filters=dict(default={}, type="dict"),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)

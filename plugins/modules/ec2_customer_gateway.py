@@ -198,8 +198,8 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True,
         required_if=[
-            ('routing', 'dynamic', ['bgp_asn'])
-        ]
+            ('routing', 'dynamic', ['bgp_asn']),
+        ],
     )
 
     gw_mgr = Ec2CustomerGatewayManager(module)

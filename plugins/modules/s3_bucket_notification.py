@@ -353,7 +353,7 @@ def setup_module_object():
 
     mutually_exclusive = [
         ['queue_arn', 'topic_arn', 'lambda_function_arn'],
-        ['lambda_alias', 'lambda_version']
+        ['lambda_alias', 'lambda_version'],
     ]
 
     return AnsibleAWSModule(

@@ -201,7 +201,7 @@ def main():
         argument_spec=argument_spec,
         supports_check_mode=True,
         mutually_exclusive=[
-            ('arn', 'name', 'vpc_ids',),
+            ['arn', 'name', 'vpc_ids'],
         ],
     )
 

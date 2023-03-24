@@ -293,11 +293,10 @@ class TargetInfoGatherer(object):
             )["Reservations"]
         except (BotoCoreError, ClientError) as e:
             # typically this will happen if the instance doesn't exist
-            self.module.fail_json_aws(e,
-                                      msg="Could not get instance info" +
-                                          " for instance '%s'" %
-                                          (self.instance_id)
-                                      )
+            self.module.fail_json_aws(
+                e,
+                msg="Could not get instance info for instance '%s'" % (self.instance_id),
+            )
 
         if len(reservations) < 1:
             self.module.fail_json(
@@ -326,10 +325,10 @@ class TargetInfoGatherer(object):
             )
             tg_response = paginator.paginate().build_full_result()
         except (BotoCoreError, ClientError) as e:
-            self.module.fail_json_aws(e,
-                                      msg="Could not describe target" +
-                                          " groups"
-                                      )
+            self.module.fail_json_aws(
+                e,
+                msg="Could not describe target groups",
+            )
 
         # build list of TargetGroup objects representing every target group in
         # the system

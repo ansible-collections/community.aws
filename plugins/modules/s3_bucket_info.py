@@ -575,11 +575,15 @@ def main():
 
     # Define mutually exclusive options
     mutually_exclusive = [
-        ['name', 'name_filter']
+        ['name', 'name_filter'],
     ]
 
     # Including ec2 argument spec
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True, mutually_exclusive=mutually_exclusive)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+        mutually_exclusive=mutually_exclusive,
+    )
 
     # Get parameters
     name = module.params.get("name")

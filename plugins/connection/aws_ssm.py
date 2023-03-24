@@ -343,7 +343,7 @@ def _ssm_retry(func):
 def chunks(lst, n):
     """Yield successive n-sized chunks from lst."""
     for i in range(0, len(lst), n):
-        yield lst[i:i + n]
+        yield lst[i:i + n]  # fmt: skip
 
 
 class Connection(ConnectionBase):
@@ -670,7 +670,7 @@ class Connection(ConnectionBase):
             if disable_prompt_complete is False:
                 match = disable_prompt_reply.search(stdout)
                 if match:
-                    stdout = stdout[match.end():]
+                    stdout = stdout[match.end():]  # fmt: skip
                     disable_prompt_complete = True
 
         if not disable_prompt_complete:
@@ -691,7 +691,7 @@ class Connection(ConnectionBase):
                 f"printf '%s\\n' '{mark_start}';\n"
                 f"echo | {cmd};\n"
                 f"printf '\\n%s\\n%s\\n' \"$?\" '{mark_end}';\n"
-            )
+            )  # fmt: skip
 
         self._vvvv(f"_wrap_command: \n'{to_text(cmd)}'")
         return cmd
@@ -705,20 +705,20 @@ class Connection(ConnectionBase):
 
             # Throw away final lines
             for _x in range(0, 3):
-                stdout = stdout[:stdout.rfind('\n')]
+                stdout = stdout[:stdout.rfind('\n')]  # fmt: skip
 
             return (returncode, stdout)
 
         # Windows is a little more complex
         # Value of $LASTEXITCODE will be the line after the mark
-        trailer = stdout[stdout.rfind(mark_begin):]
+        trailer = stdout[stdout.rfind(mark_begin):]  # fmt: skip
         last_exit_code = trailer.splitlines()[1]
         if last_exit_code.isdigit:
             returncode = int(last_exit_code)
         else:
             returncode = -1
         # output to keep will be before the mark
-        stdout = stdout[:stdout.rfind(mark_begin)]
+        stdout = stdout[:stdout.rfind(mark_begin)]  # fmt: skip
 
         # If it looks like JSON remove any newlines
         if stdout.startswith('{'):
@@ -790,8 +790,8 @@ class Connection(ConnectionBase):
             endpoint_url=endpoint_url,
             config=Config(
                 signature_version="s3v4",
-                s3={'addressing_style': self.get_option('s3_addressing_style')}
-            )
+                s3={"addressing_style": self.get_option("s3_addressing_style")},
+            ),
         )
         return client
 
@@ -827,14 +827,14 @@ class Connection(ConnectionBase):
                     f"-Uri '{put_url}' "
                     f"-UseBasicParsing"
                 ),
-            ]
+            ]  # fmt: skip
             get_commands = [
                 (
                     "Invoke-WebRequest "
                     f"'{get_url}' "
                     f"-OutFile '{out_path}'"
                 ),
-            ]
+            ]  # fmt: skip
         else:
             put_command_headers = " ".join([f"-H '{h}: {v}'" for h, v in put_headers.items()])
             put_commands = [
@@ -844,7 +844,7 @@ class Connection(ConnectionBase):
                     f"--upload-file '{in_path}' "
                     f"'{put_url}'"
                 ),
-            ]
+            ]  # fmt: skip
             get_commands = [
                 (
                     "curl "
@@ -860,7 +860,7 @@ class Connection(ConnectionBase):
                     "touch "
                     f"'{out_path}'"
                 )
-            ]
+            ]  # fmt: skip
 
         return get_commands, put_commands, put_args
 
@@ -871,9 +871,7 @@ class Connection(ConnectionBase):
 
             # Check the return code
             if returncode != 0:
-                raise AnsibleError(
-                    f"failed to transfer file to {in_path} {out_path}:\n"
-                    f"{stdout}\n{stderr}")
+                raise AnsibleError(f"failed to transfer file to {in_path} {out_path}:\n{stdout}\n{stderr}")
 
             stdout_combined += stdout
             stderr_combined += stderr

@@ -291,7 +291,7 @@ class EFSConnection(object):
         items = iterate_all(
             'FileSystems',
             self.connection.describe_file_systems,
-            **kwargs
+            **kwargs,
         )
         for item in items:
             item['Name'] = item['CreationToken']
@@ -329,7 +329,7 @@ class EFSConnection(object):
         targets = iterate_all(
             'MountTargets',
             self.connection.describe_mount_targets,
-            **kwargs
+            **kwargs,
         )
         for target in targets:
             if target['LifeCycleState'] == self.STATE_AVAILABLE:
@@ -347,31 +347,35 @@ class EFSConnection(object):
         return iterate_all(
             'SecurityGroups',
             self.connection.describe_mount_target_security_groups,
-            **kwargs
+            **kwargs,
         )
 
     def get_file_system_id(self, name):
         """
          Returns ID of instance by instance name
         """
-        info = first_or_default(iterate_all(
-            'FileSystems',
-            self.connection.describe_file_systems,
-            CreationToken=name
-        ))
-        return info and info['FileSystemId'] or None
+        info = first_or_default(
+            iterate_all(
+                "FileSystems",
+                self.connection.describe_file_systems,
+                CreationToken=name,
+            )
+        )
+        return info and info["FileSystemId"] or None
 
     def get_file_system_state(self, name, file_system_id=None):
         """
          Returns state of filesystem by EFS id/name
         """
-        info = first_or_default(iterate_all(
-            'FileSystems',
-            self.connection.describe_file_systems,
-            CreationToken=name,
-            FileSystemId=file_system_id
-        ))
-        return info and info['LifeCycleState'] or self.STATE_DELETED
+        info = first_or_default(
+            iterate_all(
+                "FileSystems",
+                self.connection.describe_file_systems,
+                CreationToken=name,
+                FileSystemId=file_system_id,
+            )
+        )
+        return info and info["LifeCycleState"] or self.STATE_DELETED
 
     def get_mount_targets_in_state(self, file_system_id, states=None):
         """
@@ -380,7 +384,7 @@ class EFSConnection(object):
         targets = iterate_all(
             'MountTargets',
             self.connection.describe_mount_targets,
-            FileSystemId=file_system_id
+            FileSystemId=file_system_id,
         )
 
         if states:
@@ -394,11 +398,13 @@ class EFSConnection(object):
         """
         Returns throughput mode for selected EFS instance
         """
-        info = first_or_default(iterate_all(
-            'FileSystems',
-            self.connection.describe_file_systems,
-            **kwargs
-        ))
+        info = first_or_default(
+            iterate_all(
+                "FileSystems",
+                self.connection.describe_file_systems,
+                **kwargs,
+            )
+        )
 
         return info and info['ThroughputMode'] or None
 
@@ -406,12 +412,14 @@ class EFSConnection(object):
         """
         Returns throughput mode for selected EFS instance
         """
-        info = first_or_default(iterate_all(
-            'FileSystems',
-            self.connection.describe_file_systems,
-            **kwargs
-        ))
-        return info.get('ProvisionedThroughputInMibps', None)
+        info = first_or_default(
+            iterate_all(
+                "FileSystems",
+                self.connection.describe_file_systems,
+                **kwargs,
+            )
+        )
+        return info.get("ProvisionedThroughputInMibps", None)
 
     def create_file_system(self, name, performance_mode, encrypt, kms_key_id, throughput_mode, provisioned_throughput_in_mibps):
         """
@@ -434,7 +442,7 @@ class EFSConnection(object):
         if state in [self.STATE_DELETING, self.STATE_DELETED]:
             wait_for(
                 lambda: self.get_file_system_state(name),
-                self.STATE_DELETED
+                self.STATE_DELETED,
             )
             try:
                 self.connection.create_file_system(**params)
@@ -448,7 +456,7 @@ class EFSConnection(object):
         wait_for(
             lambda: self.get_file_system_state(name),
             self.STATE_AVAILABLE,
-            self.wait_timeout
+            self.wait_timeout,
         )
 
         return changed
@@ -472,7 +480,7 @@ class EFSConnection(object):
                 wait_for(
                     lambda: self.get_file_system_state(name),
                     self.STATE_AVAILABLE,
-                    self.wait_timeout
+                    self.wait_timeout,
                 )
                 try:
                     self.connection.update_file_system(FileSystemId=fs_id, **params)
@@ -538,7 +546,7 @@ class EFSConnection(object):
             incomplete_states = [self.STATE_CREATING, self.STATE_DELETING]
             wait_for(
                 lambda: len(self.get_mount_targets_in_state(fs_id, incomplete_states)),
-                0
+                0,
             )
             current_targets = _index_by_key('SubnetId', self.get_mount_targets(FileSystemId=fs_id))
             targets = _index_by_key('SubnetId', targets)
@@ -559,7 +567,7 @@ class EFSConnection(object):
                     )
                 wait_for(
                     lambda: len(self.get_mount_targets_in_state(fs_id, incomplete_states)),
-                    0
+                    0,
                 )
                 result = True
 
@@ -572,7 +580,7 @@ class EFSConnection(object):
                 wait_for(
                     lambda: len(self.get_mount_targets_in_state(fs_id, incomplete_states)),
                     0,
-                    self.wait_timeout
+                    self.wait_timeout,
                 )
                 result = True
 
@@ -600,7 +608,7 @@ class EFSConnection(object):
         if state in [self.STATE_CREATING, self.STATE_AVAILABLE]:
             wait_for(
                 lambda: self.get_file_system_state(name),
-                self.STATE_AVAILABLE
+                self.STATE_AVAILABLE,
             )
             if not file_system_id:
                 file_system_id = self.get_file_system_id(name)
@@ -612,7 +620,7 @@ class EFSConnection(object):
             wait_for(
                 lambda: self.get_file_system_state(name),
                 self.STATE_DELETED,
-                self.wait_timeout
+                self.wait_timeout,
             )
 
         return result
@@ -623,7 +631,7 @@ class EFSConnection(object):
         """
         wait_for(
             lambda: len(self.get_mount_targets_in_state(file_system_id, self.STATE_CREATING)),
-            0
+            0,
         )
 
         targets = self.get_mount_targets_in_state(file_system_id, self.STATE_AVAILABLE)
@@ -632,7 +640,7 @@ class EFSConnection(object):
 
         wait_for(
             lambda: len(self.get_mount_targets_in_state(file_system_id, self.STATE_DELETING)),
-            0
+            0,
         )
 
         return len(targets) > 0
@@ -740,12 +748,12 @@ def main():
     target_translations = {
         'ip_address': 'IpAddress',
         'security_groups': 'SecurityGroups',
-        'subnet_id': 'SubnetId'
+        'subnet_id': 'SubnetId',
     }
     targets = [dict((target_translations[key], value) for (key, value) in x.items()) for x in module.params.get('targets')]
     performance_mode_translations = {
         'general_purpose': 'generalPurpose',
-        'max_io': 'maxIO'
+        'max_io': 'maxIO',
     }
     encrypt = module.params.get('encrypt')
     kms_key_id = module.params.get('kms_key_id')

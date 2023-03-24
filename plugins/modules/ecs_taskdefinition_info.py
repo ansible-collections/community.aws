@@ -359,7 +359,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 
 def main():
     argument_spec = dict(
-        task_definition=dict(required=True, type='str')
+        task_definition=dict(required=True, type='str'),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)

@@ -719,9 +719,11 @@ def main():
         waf_regional=dict(type='bool', default=False),
         state=dict(default='present', choices=['present', 'absent']),
     )
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              required_if=[['state', 'present', ['filters']]])
-    state = module.params.get('state')
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=[["state", "present", ["filters"]]],
+    )
+    state = module.params.get("state")
 
     resource = 'waf' if not module.params['waf_regional'] else 'waf-regional'
     client = module.client(resource)

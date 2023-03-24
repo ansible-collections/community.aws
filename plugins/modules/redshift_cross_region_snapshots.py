@@ -152,12 +152,12 @@ def run_module():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     result = dict(
         changed=False,
-        message=''
+        message='',
     )
     connection = module.client('redshift')
 

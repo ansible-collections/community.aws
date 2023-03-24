@@ -298,7 +298,7 @@ def main():
         argument_spec=argument_spec,
         mutually_exclusive=[
             ['redirect_all_requests', 'suffix'],
-            ['redirect_all_requests', 'error_key']
+            ['redirect_all_requests', 'error_key'],
         ],
     )
 

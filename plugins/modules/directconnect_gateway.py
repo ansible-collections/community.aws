@@ -110,7 +110,8 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 def dx_gateway_info(client, gateway_id, module):
     try:
         resp = client.describe_direct_connect_gateways(
-            directConnectGatewayId=gateway_id)
+            directConnectGatewayId=gateway_id,
+        )
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to fetch gateway information.")
     if resp['directConnectGateways']:
@@ -128,7 +129,8 @@ def wait_for_status(client, module, gateway_id, virtual_gateway_id, status):
                 client,
                 module,
                 gateway_id=gateway_id,
-                virtual_gateway_id=virtual_gateway_id)
+                virtual_gateway_id=virtual_gateway_id,
+            )
             if response['directConnectGatewayAssociations']:
                 if response['directConnectGatewayAssociations'][0]['associationState'] == status:
                     status_achieved = True
@@ -151,7 +153,8 @@ def associate_direct_connect_gateway(client, module, gateway_id):
     try:
         response = client.create_direct_connect_gateway_association(
             directConnectGatewayId=gateway_id,
-            virtualGatewayId=params['virtual_gateway_id'])
+            virtualGatewayId=params['virtual_gateway_id'],
+        )
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, 'Failed to associate gateway')
 
@@ -167,7 +170,8 @@ def delete_association(client, module, gateway_id, virtual_gateway_id):
     try:
         response = client.delete_direct_connect_gateway_association(
             directConnectGatewayId=gateway_id,
-            virtualGatewayId=virtual_gateway_id)
+            virtualGatewayId=virtual_gateway_id,
+        )
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to delete gateway association.")
 
@@ -186,7 +190,8 @@ def create_dx_gateway(client, module):
     try:
         response = client.create_direct_connect_gateway(
             directConnectGatewayName=params['name'],
-            amazonSideAsn=int(params['amazon_asn']))
+            amazonSideAsn=int(params['amazon_asn']),
+        )
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(e, msg="Failed to create direct connect gateway.")
 
@@ -222,7 +227,7 @@ def check_dxgw_association(client, module, gateway_id, virtual_gateway_id=None):
     try:
         if virtual_gateway_id is None:
             resp = client.describe_direct_connect_gateway_associations(
-                directConnectGatewayId=gateway_id
+                directConnectGatewayId=gateway_id,
             )
         else:
             resp = client.describe_direct_connect_gateway_associations(
@@ -273,7 +278,8 @@ def ensure_present(client, module):
                             client,
                             module,
                             gateway_id=gateway_id,
-                            virtual_gateway_id=association['virtualGatewayId'])
+                            virtual_gateway_id=association['virtualGatewayId'],
+                        )
     else:
         # create a new dxgw
         new_dxgw = create_dx_gateway(client, module)
@@ -283,10 +289,11 @@ def ensure_present(client, module):
         # if a vpc-id was supplied, attempt to attach it to the dxgw
         if params['virtual_gateway_id']:
             associate_direct_connect_gateway(client, module, gateway_id)
-            resp = check_dxgw_association(client,
-                                          module,
-                                          gateway_id=gateway_id
-                                          )
+            resp = check_dxgw_association(
+                client,
+                module,
+                gateway_id=gateway_id,
+            )
             if resp["directConnectGatewayAssociations"]:
                 changed = True
 
@@ -308,9 +315,12 @@ def ensure_absent(client, module):
         if resp["directConnectGatewayAssociations"]:
             for association in resp['directConnectGatewayAssociations']:
                 if association['associationState'] not in ['disassociating', 'disassociated']:
-                    delete_association(client, module,
-                                       gateway_id=dx_gateway_id,
-                                       virtual_gateway_id=association['virtualGatewayId'])
+                    delete_association(
+                        client,
+                        module,
+                        gateway_id=dx_gateway_id,
+                        virtual_gateway_id=association['virtualGatewayId'],
+                    )
         # wait for deleting association
         timeout = time.time() + module.params.get('wait_timeout')
         while time.time() < timeout:
@@ -324,7 +334,7 @@ def ensure_absent(client, module):
 
         try:
             resp = client.delete_direct_connect_gateway(
-                directConnectGatewayId=dx_gateway_id
+                directConnectGatewayId=dx_gateway_id,
             )
         except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
             module.fail_json_aws(e, msg="Failed to delete gateway")
@@ -343,8 +353,10 @@ def main():
     )
     required_if = [('state', 'present', ['name', 'amazon_asn']),
                    ('state', 'absent', ['direct_connect_gateway_id'])]
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              required_if=required_if)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=required_if,
+    )
 
     state = module.params.get('state')
 

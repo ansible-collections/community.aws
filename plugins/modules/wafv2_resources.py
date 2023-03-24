@@ -117,16 +117,16 @@ def remove_resources(wafv2, arn, fail_json_aws):
 def main():
 
     arg_spec = dict(
-        state=dict(type='str', required=True, choices=['present', 'absent']),
-        name=dict(type='str'),
-        scope=dict(type='str', choices=['CLOUDFRONT', 'REGIONAL']),
-        arn=dict(type='str', required=True)
+        state=dict(type="str", required=True, choices=["present", "absent"]),
+        name=dict(type="str"),
+        scope=dict(type="str", choices=["CLOUDFRONT", "REGIONAL"]),
+        arn=dict(type="str", required=True),
     )
 
     module = AnsibleAWSModule(
         argument_spec=arg_spec,
         supports_check_mode=True,
-        required_if=[['state', 'present', ['name', 'scope']]]
+        required_if=[["state", "present", ["name", "scope"]]],
     )
 
     state = module.params.get("state")

@@ -281,12 +281,10 @@ def format_for_update(rule, action):
     return dict(
         Action=action,
         ActivatedRule=dict(
-            Priority=rule['Priority'],
-            RuleId=rule['RuleId'],
-            Action=dict(
-                Type=rule['Action']['Type']
-            )
-        )
+            Priority=rule["Priority"],
+            RuleId=rule["RuleId"],
+            Action=dict(Type=rule["Action"]["Type"]),
+        ),
     )
 
 
@@ -345,9 +343,11 @@ def main():
         purge_rules=dict(type='bool', default=False),
         waf_regional=dict(type='bool', default=False)
     )
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              required_if=[['state', 'present', ['default_action', 'rules']]])
-    state = module.params.get('state')
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        required_if=[["state", "present", ["default_action", "rules"]]],
+    )
+    state = module.params.get("state")
 
     resource = 'waf' if not module.params['waf_regional'] else 'waf-regional'
     client = module.client(resource)

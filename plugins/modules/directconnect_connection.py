@@ -234,9 +234,11 @@ def create_connection(client, location, bandwidth, name, lag_id):
     try:
         connection = AWSRetry.jittered_backoff(**retry_params)(client.create_connection)(**params)
     except (BotoCoreError, ClientError) as e:
-        raise DirectConnectError(msg="Failed to create DirectConnect connection {0}".format(name),
-                                 last_traceback=traceback.format_exc(),
-                                 exception=e)
+        raise DirectConnectError(
+            msg="Failed to create DirectConnect connection {0}".format(name),
+            last_traceback=traceback.format_exc(),
+            exception=e,
+        )
     return connection['connectionId']
 
 
@@ -319,7 +321,9 @@ def main():
             connection_name=module.params.get('name')
         )
         if not connection_id and module.params.get('connection_id'):
-            module.fail_json(msg="The Direct Connect connection {0} does not exist.".format(module.params.get('connection_id')))
+            module.fail_json(
+                msg=f"The Direct Connect connection {module.params['connection_id']} does not exist.",
+            )
 
         if state == 'present':
             changed, connection_id = ensure_present(connection,
@@ -335,7 +339,11 @@ def main():
             response = {}
     except DirectConnectError as e:
         if e.last_traceback:
-            module.fail_json(msg=e.msg, exception=e.last_traceback, **camel_dict_to_snake_dict(e.exception.response))
+            module.fail_json(
+                msg=e.msg,
+                exception=e.last_traceback,
+                **camel_dict_to_snake_dict(e.exception.response),
+            )
         else:
             module.fail_json(msg=e.msg)
 

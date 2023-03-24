@@ -247,7 +247,7 @@ def main():
                                         elements='dict',
                                         options=dict(capacity_provider=dict(type='str'),
                                                      weight=dict(type='int'),
-                                                     base=dict(type='int', default=0)
+                                                     base=dict(type='int', default=0),
                                                      )
                                         ),
     )

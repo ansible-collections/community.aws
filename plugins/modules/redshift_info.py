@@ -327,11 +327,11 @@ def main():
 
     argument_spec = dict(
         cluster_identifier=dict(type='str', aliases=['identifier', 'name']),
-        tags=dict(type='dict')
+        tags=dict(type='dict'),
     )
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     cluster_identifier = module.params.get('cluster_identifier')

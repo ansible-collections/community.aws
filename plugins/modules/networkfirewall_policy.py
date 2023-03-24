@@ -370,10 +370,10 @@ def main():
     )
 
     mutually_exclusive = [
-        ('arn', 'name',)
+        ['arn', 'name'],
     ]
     required_one_of = [
-        ('arn', 'name',)
+        ['arn', 'name'],
     ]
 
     module = AnsibleAWSModule(

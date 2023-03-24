@@ -270,12 +270,16 @@ def main():
     conti = Ec2EcsInstance(module, cluster, ec2_instance_id)
     attrs = EcsAttributes(module, attributes)
 
-    results = {'changed': False,
-               'attributes': [
-                   {'cluster': cluster,
-                    'ec2_instance_id': ec2_instance_id,
-                    'attributes': attributes}
-               ]}
+    results = {
+        "changed": False,
+        "attributes": [
+            {
+                "cluster": cluster,
+                "ec2_instance_id": ec2_instance_id,
+                "attributes": attributes,
+            }
+        ],
+    }
 
     attrs_present = conti.attrs_get_by_name(attrs)
 

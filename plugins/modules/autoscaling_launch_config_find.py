@@ -184,7 +184,7 @@ def find_launch_configs(client, module):
     results.sort(key=lambda e: e['name'], reverse=(sort_order == 'descending'))
 
     if limit:
-        results = results[:int(limit)]
+        results = results[:int(limit)]  # fmt: skip
 
     module.exit_json(changed=False, results=results)
 

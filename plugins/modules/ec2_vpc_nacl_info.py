@@ -203,10 +203,14 @@ def nacl_entry_to_list(entry):
 def main():
 
     argument_spec = dict(
-        nacl_ids=dict(default=[], type='list', aliases=['nacl_id'], elements='str'),
-        filters=dict(default={}, type='dict'))
+        nacl_ids=dict(default=[], type="list", aliases=["nacl_id"], elements="str"),
+        filters=dict(default={}, type="dict"),
+    )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
 
     connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
 

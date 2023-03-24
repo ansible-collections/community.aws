@@ -89,8 +89,8 @@ def list_wafv2_resources(wafv2, arn, fail_json_aws):
 def main():
 
     arg_spec = dict(
-        name=dict(type='str', required=True),
-        scope=dict(type='str', required=True, choices=['CLOUDFRONT', 'REGIONAL'])
+        name=dict(type="str", required=True),
+        scope=dict(type="str", required=True, choices=["CLOUDFRONT", "REGIONAL"]),
     )
 
     module = AnsibleAWSModule(

@@ -103,8 +103,8 @@ def set_ttl_state(c, table_name, state, attribute_name):
         TableName=table_name,
         TimeToLiveSpecification={
             'Enabled': is_enabled,
-            'AttributeName': attribute_name
-        }
+            'AttributeName': attribute_name,
+        },
     )
 
     return ret.get('TimeToLiveSpecification')

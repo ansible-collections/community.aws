@@ -599,7 +599,7 @@ def main():
 
     invocations = {
         "present": setup_network_acl,
-        "absent": remove_network_acl
+        "absent": remove_network_acl,
     }
     (changed, results) = invocations[state](client, module)
     module.exit_json(changed=changed, nacl_id=results)

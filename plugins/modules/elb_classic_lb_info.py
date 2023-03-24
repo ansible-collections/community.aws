@@ -204,10 +204,12 @@ def lb_instance_health(connection, load_balancer_name, instances, state):
 
 def main():
     argument_spec = dict(
-        names=dict(default=[], type='list', elements='str')
+        names=dict(default=[], type="list", elements="str"),
     )
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              supports_check_mode=True)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
 
     connection = module.client('elb', retry_decorator=AWSRetry.jittered_backoff(retries=MAX_AWS_RETRIES, delay=MAX_AWS_DELAY))
 

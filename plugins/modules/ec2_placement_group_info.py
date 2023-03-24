@@ -85,10 +85,13 @@ def get_placement_groups_details(connection, module):
     try:
         if len(names) > 0:
             response = connection.describe_placement_groups(
-                Filters=[{
-                    "Name": "group-name",
-                    "Values": names
-                }])
+                Filters=[
+                    {
+                        "Name": "group-name",
+                        "Values": names,
+                    }
+                ]
+            )
         else:
             response = connection.describe_placement_groups()
     except (BotoCoreError, ClientError) as e:
@@ -108,12 +111,12 @@ def get_placement_groups_details(connection, module):
 
 def main():
     argument_spec = dict(
-        names=dict(type='list', default=[], elements='str')
+        names=dict(type="list", default=[], elements="str"),
     )
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     connection = module.client('ec2')

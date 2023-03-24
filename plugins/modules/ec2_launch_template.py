@@ -806,9 +806,9 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=arg_spec,
         required_one_of=[
-            ('template_name', 'template_id')
+            ('template_name', 'template_id'),
         ],
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     for interface in (module.params.get('network_interfaces') or []):

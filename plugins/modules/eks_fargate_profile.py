@@ -320,16 +320,20 @@ def main():
         name=dict(required=True),
         cluster_name=dict(required=True),
         role_arn=dict(),
-        subnets=dict(type='list', elements='str'),
-        selectors=dict(type='list', elements='dict', options=dict(
-            namespace=dict(type='str'),
-            labels=dict(type='dict', default={})
-        )),
-        tags=dict(type='dict', aliases=['resource_tags']),
-        purge_tags=dict(type='bool', default=True),
-        state=dict(choices=['absent', 'present'], default='present'),
-        wait=dict(default=False, type='bool'),
-        wait_timeout=dict(default=1200, type='int')
+        subnets=dict(type="list", elements="str"),
+        selectors=dict(
+            type="list",
+            elements="dict",
+            options=dict(
+                namespace=dict(type="str"),
+                labels=dict(type="dict", default={}),
+            ),
+        ),
+        tags=dict(type="dict", aliases=["resource_tags"]),
+        purge_tags=dict(type="bool", default=True),
+        state=dict(choices=["absent", "present"], default="present"),
+        wait=dict(default=False, type="bool"),
+        wait_timeout=dict(default=1200, type="int"),
     )
 
     module = AnsibleAWSModule(

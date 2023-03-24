@@ -116,8 +116,8 @@ def get_web_acl(wafv2, name, scope, id, fail_json_aws):
 def main():
 
     arg_spec = dict(
-        name=dict(type='str', required=True),
-        scope=dict(type='str', required=True, choices=['CLOUDFRONT', 'REGIONAL'])
+        name=dict(type="str", required=True),
+        scope=dict(type="str", required=True, choices=["CLOUDFRONT", "REGIONAL"]),
     )
 
     module = AnsibleAWSModule(

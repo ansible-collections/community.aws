@@ -639,7 +639,7 @@ def main():
 
     module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        required_if=required_if
+        required_if=required_if,
     )
 
     command = module.params.get('command')

@@ -125,9 +125,13 @@ def main():
         filters=dict(default={}, type='dict')
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              mutually_exclusive=[['customer_gateway_ids', 'filters']],
-                              supports_check_mode=True)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[
+            ['customer_gateway_ids', 'filters'],
+        ],
+        supports_check_mode=True,
+    )
 
     connection = module.client('ec2')
 

@@ -194,7 +194,7 @@ def main():
                     'Three_Hours',
                     'Six_Hours',
                     'Twelve_Hours',
-                    'TwentyFour_Hours'
+                    'TwentyFour_Hours',
                 ]
             ),
         },
@@ -218,33 +218,33 @@ def main():
         params['Scope'] = {}
         if module.params.get('scope').get('compliance_types'):
             params['Scope'].update({
-                'ComplianceResourceTypes': module.params.get('scope').get('compliance_types')
+                'ComplianceResourceTypes': module.params.get('scope').get('compliance_types'),
             })
         if module.params.get('scope').get('tag_key'):
             params['Scope'].update({
-                'TagKey': module.params.get('scope').get('tag_key')
+                'TagKey': module.params.get('scope').get('tag_key'),
             })
         if module.params.get('scope').get('tag_value'):
             params['Scope'].update({
-                'TagValue': module.params.get('scope').get('tag_value')
+                'TagValue': module.params.get('scope').get('tag_value'),
             })
         if module.params.get('scope').get('compliance_id'):
             params['Scope'].update({
-                'ComplianceResourceId': module.params.get('scope').get('compliance_id')
+                'ComplianceResourceId': module.params.get('scope').get('compliance_id'),
             })
     if module.params.get('source'):
         params['Source'] = {}
         if module.params.get('source').get('owner'):
             params['Source'].update({
-                'Owner': module.params.get('source').get('owner')
+                'Owner': module.params.get('source').get('owner'),
             })
         if module.params.get('source').get('identifier'):
             params['Source'].update({
-                'SourceIdentifier': module.params.get('source').get('identifier')
+                'SourceIdentifier': module.params.get('source').get('identifier'),
             })
         if module.params.get('source').get('details'):
             params['Source'].update({
-                'SourceDetails': module.params.get('source').get('details')
+                'SourceDetails': module.params.get('source').get('details'),
             })
     if module.params.get('input_parameters'):
         params['InputParameters'] = module.params.get('input_parameters')

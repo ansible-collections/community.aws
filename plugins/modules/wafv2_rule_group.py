@@ -348,7 +348,7 @@ def main():
     module = AnsibleAWSModule(
         argument_spec=arg_spec,
         supports_check_mode=True,
-        required_if=[['state', 'present', ['capacity', 'rules']]]
+        required_if=[["state", "present", ["capacity", "rules"]]],
     )
 
     state = module.params.get("state")

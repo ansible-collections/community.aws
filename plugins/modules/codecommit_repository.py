@@ -186,7 +186,7 @@ class CodeCommit(object):
     def _get_repository(self):
         try:
             result = self._client.get_repository(
-                repositoryName=self._module.params['name']
+                repositoryName=self._module.params['name'],
             )
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self._module.fail_json_aws(e, msg="couldn't get repository")
@@ -196,7 +196,7 @@ class CodeCommit(object):
         try:
             result = self._client.update_repository_description(
                 repositoryName=self._module.params['name'],
-                repositoryDescription=self._module.params['description']
+                repositoryDescription=self._module.params['description'],
             )
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self._module.fail_json_aws(e, msg="couldn't create repository")
@@ -206,7 +206,7 @@ class CodeCommit(object):
         try:
             result = self._client.create_repository(
                 repositoryName=self._module.params['name'],
-                repositoryDescription=self._module.params['description']
+                repositoryDescription=self._module.params['description'],
             )
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self._module.fail_json_aws(e, msg="couldn't create repository")
@@ -215,7 +215,7 @@ class CodeCommit(object):
     def _delete_repository(self):
         try:
             result = self._client.delete_repository(
-                repositoryName=self._module.params['name']
+                repositoryName=self._module.params['name'],
             )
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             self._module.fail_json_aws(e, msg="couldn't delete repository")
@@ -226,12 +226,12 @@ def main():
     argument_spec = dict(
         name=dict(required=True),
         state=dict(choices=['present', 'absent'], required=True),
-        description=dict(default='', aliases=['comment'])
+        description=dict(default='', aliases=['comment']),
     )
 
     ansible_aws_module = AnsibleAWSModule(
         argument_spec=argument_spec,
-        supports_check_mode=True
+        supports_check_mode=True,
     )
 
     aws_codecommit = CodeCommit(module=ansible_aws_module)
