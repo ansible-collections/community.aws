@@ -3176,3 +3176,17 @@ releases:
       name: eks_nodegroup
       namespace: ''
     release_date: '2023-03-07'
+  5.4.0:
+    changes:
+      minor_changes:
+      - ecs_service - added new parameter ``enable_execute_command`` (https://github.com/ansible-collections/community.aws/pull/488).
+      - ecs_service - handle SDK errors more cleanly on update failures (https://github.com/ansible-collections/community.aws/pull/488).
+      - sns - Add support for ``message_group_id`` and ``message_deduplication_id``
+        (https://github.com/ansible-collections/community.aws/pull/1733).
+      release_summary: This minor release brings minor new features to the ``sns``
+        and ``ecs_service`` modules.
+    fragments:
+    - 1733-sns-publish-to-fifo-topics.yml
+    - 488-ecs_service-support_exec.yml
+    - release-5.4.0.yml
+    release_date: '2023-03-27'

@@ -5,6 +5,21 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v5.4.0
+======
+
+Release Summary
+---------------
+
+This minor release brings minor new features to the ``sns`` and ``ecs_service`` modules.
+
+Minor Changes
+-------------
+
+- ecs_service - added new parameter ``enable_execute_command`` (https://github.com/ansible-collections/community.aws/pull/488).
+- ecs_service - handle SDK errors more cleanly on update failures (https://github.com/ansible-collections/community.aws/pull/488).
+- sns - Add support for ``message_group_id`` and ``message_deduplication_id`` (https://github.com/ansible-collections/community.aws/pull/1733).
+
 v5.3.0
 ======
 
