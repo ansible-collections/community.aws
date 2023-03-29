@@ -38,6 +38,11 @@ options:
     - Which version should be the default when users spin up new instances based on this template? By default, the latest version will be made the default.
     type: str
     default: latest
+  version_description:
+    description:
+    - The description of a launch template version.
+    default: ""
+    type: str
   state:
     description:
     - Whether the launch template should exist or not.
@@ -586,6 +591,7 @@ def create_or_update(module, template_options):
                     LaunchTemplateId=template['LaunchTemplateId'],
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
+                    VersionDescription=str(module.params['version_description']),
                     aws_retry=True,
                 )
             elif module.params.get('source_version') == 'latest':
@@ -594,6 +600,7 @@ def create_or_update(module, template_options):
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
                     SourceVersion=str(most_recent['VersionNumber']),
+                    VersionDescription=str(module.params['version_description']),
                     aws_retry=True,
                 )
             else:
@@ -610,6 +617,7 @@ def create_or_update(module, template_options):
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
                     SourceVersion=str(source_version['VersionNumber']),
+                    VersionDescription=str(module.params['version_description']),
                     aws_retry=True,
                 )
 
@@ -786,7 +794,8 @@ def main():
         template_name=dict(aliases=['name']),
         template_id=dict(aliases=['id']),
         default_version=dict(default='latest'),
-        source_version=dict(default='latest')
+        source_version=dict(default='latest'),
+        version_description=dict(default=''),
     )
 
     arg_spec.update(template_options)
