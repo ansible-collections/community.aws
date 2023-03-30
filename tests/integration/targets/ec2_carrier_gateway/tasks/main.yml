@@ -150,7 +150,7 @@
     - name: delete carrier gateway
       ec2_carrier_gateway:
         state: absent
-        vpn_gateway_id: '{{ cagw.carrier_gateway_id }}'
+        carrier_gateway_id: '{{ cagw.carrier_gateway_id }}'
       ignore_errors: true
       check_mode: true
 
