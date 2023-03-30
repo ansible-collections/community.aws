@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>community.aws.ec2_customer_gateway module – Manage an AWS customer gateway &mdash; Ansible collections  documentation</title>
+  <title>community.aws.ec2_carrier_gateway module – Manage an AWS VPC Carrier gateway &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
@@ -19,8 +19,8 @@
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="community.aws.ec2_customer_gateway_info module – Gather information about customer gateways in AWS" href="ec2_customer_gateway_info_module.html" />
-    <link rel="prev" title="community.aws.ec2_carrier_gateway_info module – Gather information about carrier gateways in AWS" href="ec2_carrier_gateway_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+    <link rel="next" title="community.aws.ec2_carrier_gateway_info module – Gather information about carrier gateways in AWS" href="ec2_carrier_gateway_info_module.html" />
+    <link rel="prev" title="community.aws.ec2_ami_copy module – copies AMI between AWS regions, return new image id" href="ec2_ami_copy_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
 
@@ -116,10 +116,10 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
-      <li class="breadcrumb-item active">community.aws.ec2_customer_gateway module – Manage an AWS customer gateway</li>
+      <li class="breadcrumb-item active">community.aws.ec2_carrier_gateway module – Manage an AWS VPC Carrier gateway</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/ec2_customer_gateway.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/ec2_carrier_gateway.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -129,17 +129,17 @@
   
            <div itemprop="articleBody">
              
-  <span class="target" id="ansible-collections-community-aws-ec2-customer-gateway-module"></span><section id="community-aws-ec2-customer-gateway-module-manage-an-aws-customer-gateway">
-<h1>community.aws.ec2_customer_gateway module – Manage an AWS customer gateway<a class="headerlink" href="#community-aws-ec2-customer-gateway-module-manage-an-aws-customer-gateway" title="Permalink to this heading"></a></h1>
+  <span class="target" id="ansible-collections-community-aws-ec2-carrier-gateway-module"></span><section id="community-aws-ec2-carrier-gateway-module-manage-an-aws-vpc-carrier-gateway">
+<h1>community.aws.ec2_carrier_gateway module – Manage an AWS VPC Carrier gateway<a class="headerlink" href="#community-aws-ec2-carrier-gateway-module-manage-an-aws-vpc-carrier-gateway" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 6.0.0-dev0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
-see <a class="reference internal" href="#ansible-collections-community-aws-ec2-customer-gateway-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
-<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.ec2_customer_gateway</span></code>.</p>
+see <a class="reference internal" href="#ansible-collections-community-aws-ec2-carrier-gateway-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.ec2_carrier_gateway</span></code>.</p>
 </div>
-<p class="ansible-version-added">New in community.aws 1.0.0</p>
+<p class="ansible-version-added">New in community.aws 6.0.0</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -153,11 +153,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Manage an AWS customer gateway.</p></li>
+<li><p>Manage an AWS VPC Carrier gateway.</p></li>
 </ul>
 </section>
 <section id="requirements">
-<span id="ansible-collections-community-aws-ec2-customer-gateway-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<span id="ansible-collections-community-aws-ec2-carrier-gateway-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
@@ -178,7 +178,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <div class="ansibleOptionAnchor" id="parameter-access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-access-key"></span><strong>access_key</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-access-key"></span><strong>access_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -192,7 +192,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
@@ -200,7 +200,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-config"><strong>aws_config</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-config"><strong>aws_config</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
@@ -208,15 +208,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-bgp_asn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-bgp-asn"><strong>bgp_asn</strong></p>
-<a class="ansibleOptionLink" href="#parameter-bgp_asn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+<div class="ansibleOptionAnchor" id="parameter-carrier_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-carrier-gateway-id"><strong>carrier_gateway_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-carrier_gateway_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Border Gateway Protocol (BGP) Autonomous System Number (ASN).</p>
-<p>Defaults to <code class="docutils literal notranslate"><span class="pre">65000</span></code> if not specified when <em>state=present</em>.</p>
+<td><div class="ansible-option-cell"><p>The Carrier Gateway ID to manage the Carrier Gateway.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
@@ -232,7 +231,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-s3-url"><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-s3-url"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
 <a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -243,22 +242,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-ip_address"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-ip-address"><strong>ip_address</strong></p>
-<a class="ansibleOptionLink" href="#parameter-ip_address" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Internet-routable IP address for customers gateway, must be a static address.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-name"><strong>name</strong></p>
-<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Name of the customer gateway.</p>
-</div></td>
-</tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-profile"><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-profile"></span><strong>profile</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-profile"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -269,9 +254,23 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-purge-tags"><strong>purge_tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</p>
+<p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-region"><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-region"></span><strong>region</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-region"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-region"></span><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -283,23 +282,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-routing"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-routing"><strong>routing</strong></p>
-<a class="ansibleOptionLink" href="#parameter-routing" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>The type of routing.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
-<ul class="simple">
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;static&quot;</span></code></p></li>
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;dynamic&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
-</ul>
-</div></td>
-</tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-secret-key"><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-secret-key"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -317,7 +304,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-session-token"><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-security-token"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-access-token"></span><strong>session_token</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-session-token"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-security-token"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-access-token"></span><strong>session_token</strong></p>
 <a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -331,10 +318,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-state"><strong>state</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>Create or terminate the Customer Gateway.</p>
+<td><div class="ansible-option-cell"><p>Create or terminate the Carrier Gateway.</p>
 <p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
 <ul class="simple">
 <li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
@@ -343,7 +330,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-parameter-validate-certs"><strong>validate_certs</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-tags"></div>
+<div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-tags"><span id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-resource-tags"></span><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary representing the tags to be applied to the resource.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
@@ -355,6 +352,13 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </ul>
 </div></td>
 </tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-parameter-vpc-id"><strong>vpc_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-vpc_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The VPC ID for the VPC in which to manage the Carrier Gateway.</p>
+</div></td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -363,8 +367,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>You cannot create more than one customer gateway with the same IP address. If you run an identical request more than one time, the first request creates the customer gateway, and subsequent requests return information about the existing customer gateway. The subsequent requests do not create new customer gateway resources.</p></li>
-<li><p>Return values contain customer_gateway and customer_gateways keys which are identical dicts. You should use customer_gateway. See <a class="reference external" href="https://github.com/ansible/ansible-modules-extras/issues/2773">https://github.com/ansible/ansible-modules-extras/issues/2773</a> for details.</p></li>
 <li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
 <li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
@@ -372,21 +374,31 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Customer Gateway</span>
-<span class="w">  </span><span class="nt">community.aws.ec2_customer_gateway</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">bgp_asn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">12345</span>
-<span class="w">    </span><span class="nt">ip_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.3.4</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IndianapolisOffice</span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cgw</span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete Customer Gateway</span>
-<span class="w">  </span><span class="nt">community.aws.ec2_customer_gateway</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">ip_address</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1.2.3.4</span>
-<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">IndianapolisOffice</span>
+<span class="c1"># Ensure that the VPC has an Carrier Gateway.</span>
+<span class="c1"># The Carrier Gateway ID can be accessed via </span><span class="cp">{{</span><span class="nv">cagw.carrier_gateway_id</span><span class="cp">}}</span><span class="c1"> for use in setting up Route tables etc.</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Carrier gateway</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_carrier_gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-abcdefgh</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cagw</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Carrier gateway with tags</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_carrier_gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-abcdefgh</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">        </span><span class="nt">Tag1</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag1</span>
+<span class="w">        </span><span class="nt">Tag2</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tag2</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cagw</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete Carrier gateway</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_carrier_gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">vpc_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc-abcdefgh</span>
+<span class="w">    </span><span class="nt">carrier_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;cagw-123&quot;</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
-<span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cgw</span>
+<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vpc_cagw_delete</span>
 </pre></div>
 </div>
 </section>
@@ -401,64 +413,39 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways"><strong>gateway.customer_gateways</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
+<div class="ansibleOptionAnchor" id="return-carrier_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-return-carrier-gateway-id"><strong>carrier_gateway_id</strong></p>
+<a class="ansibleOptionLink" href="#return-carrier_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>details about the gateway that was created.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways/bgp_asn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways-bgp-asn"><strong>bgp_asn</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways/bgp_asn" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The Border Gateway Autonomous System Number.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when exists and gateway is available.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;65123&quot;</span></code></p>
+<td><div class="ansible-option-cell"><p>The unique identifier for the Carrier Gateway.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'carrier_gateway_id':</span> <span class="pre">'cagw-XXXXXXXX'}&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways/customer_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways-customer-gateway-id"><strong>customer_gateway_id</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways/customer_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-changed"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-return-changed"><strong>changed</strong></p>
+<a class="ansibleOptionLink" href="#return-changed" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>gateway id assigned by amazon.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when exists and gateway is available.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;cgw-cb6386a2&quot;</span></code></p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways/ip_address"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways-ip-address"><strong>ip_address</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways/ip_address" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>ip address of your gateway device.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when exists and gateway is available.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;1.2.3.4&quot;</span></code></p>
+<td><div class="ansible-option-cell"><p>If any changes have been made to the Carrier Gateway.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;changed&quot;:</span> <span class="pre">false}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways/state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways-state"><strong>state</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways/state" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-return-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#return-tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>state of gateway.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when gateway exists and is available.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;available&quot;</span></code></p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways-tags"><strong>tags</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
-</div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Any tags on the gateway.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when gateway exists and is available, and when tags exist.</p>
+<td><div class="ansible-option-cell"><p>The tags associated the Carrier Gateway.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;tags&quot;:</span> <span class="pre">{&quot;Ansible&quot;:</span> <span class="pre">&quot;Test&quot;}}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-gateway.customer_gateways/type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-customer-gateway-module-return-gateway-customer-gateways-type"><strong>type</strong></p>
-<a class="ansibleOptionLink" href="#return-gateway.customer_gateways/type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-vpc_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-carrier-gateway-module-return-vpc-id"><strong>vpc_id</strong></p>
+<a class="ansibleOptionLink" href="#return-vpc_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
-<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>encryption type.</p>
-<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> when gateway exists and is available.</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ipsec.1&quot;</span></code></p>
+<td><div class="ansible-option-cell"><p>The VPC ID associated with the Carrier Gateway.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'vpc_id':</span> <span class="pre">'vpc-XXXXXXXX'}&quot;</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -466,7 +453,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
 <section id="authors">
 <h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p>Michael Baydoun (&#64;MichaelBaydoun)</p></li>
+<li><p>Marco Braga (&#64;mtulio)</p></li>
 </ul>
 </section>
 <section id="collection-links">
@@ -485,8 +472,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-c
           
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="ec2_carrier_gateway_info_module.html" class="btn btn-neutral float-left" title="community.aws.ec2_carrier_gateway_info module – Gather information about carrier gateways in AWS" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="ec2_customer_gateway_info_module.html" class="btn btn-neutral float-right" title="community.aws.ec2_customer_gateway_info module – Gather information about customer gateways in AWS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="ec2_ami_copy_module.html" class="btn btn-neutral float-left" title="community.aws.ec2_ami_copy module – copies AMI between AWS regions, return new image id" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="ec2_carrier_gateway_info_module.html" class="btn btn-neutral float-right" title="community.aws.ec2_carrier_gateway_info module – Gather information about carrier gateways in AWS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
