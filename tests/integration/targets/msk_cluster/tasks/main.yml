@@ -58,10 +58,10 @@
     - name: delete tests
       include_tasks: test_delete.yml
 
-    - name: create test w/ sasl_scram
+    - name: create test with sasl_scram
       include_tasks: test_create_auth_sasl_scram.yml
 
-    - name: create test w/ sasl_iam
+    - name: create test with sasl_iam
       include_tasks: test_create_auth_sasl_iam.yml
 
     - name: create test disabling unauthenticated

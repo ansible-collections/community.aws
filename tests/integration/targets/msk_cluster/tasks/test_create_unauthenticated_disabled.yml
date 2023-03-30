@@ -1,5 +1,5 @@
 ---
-- name: create a msk cluster w/ sasl_scram and disable unauthenticated clients (check mode)
+- name: create a msk cluster with sasl_scram and disable unauthenticated clients (check mode)
   aws_msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
@@ -22,7 +22,7 @@
     that:
       - msk_cluster is changed
 
-- name: create a msk cluster w/ sasl_scram and disable unauthenticated clients
+- name: create a msk cluster with sasl_scram and disable unauthenticated clients
   aws_msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
@@ -60,7 +60,7 @@
       - "msk_cluster.cluster_info.open_monitoring.prometheus.jmx_exporter.enabled_in_broker == false"
       - "msk_cluster.cluster_info.cluster_arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
 
-- name: create a msk cluster w/ sasl_scram and disable unauthenticated clients (idempotency)
+- name: create a msk cluster with sasl_scram and disable unauthenticated clients (idempotency)
   aws_msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"

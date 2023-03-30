@@ -127,6 +127,7 @@ options:
                 description: IAM authentication is enabled or not.
                 type: bool
                 default: False
+                version_added: 5.5.0
             unauthenticated:
                 description: Option to explicitly turn on or off authentication 
                 type: bool
@@ -733,6 +734,8 @@ def main():
             options=dict(
                 tls_ca_arn=dict(type="list", elements="str", required=False),
                 sasl_scram=dict(type="bool", default=False),
+                sasl_iam=dict(type="bool", required=False),
+                unauthenticated=dict(type="bool", required=False),
             ),
         ),
         enhanced_monitoring=dict(
