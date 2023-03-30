@@ -1,0 +1,5 @@
+bugfixes:
+- msk_cluster - fix creating a cluster w/ sasl_scram authentication (https://github.com/ansible-collections/community.aws/issues/1761).
+- msk_cluster - add option for sasl_iam authentication and add support to disable "unauthenticated" clients
+trivial:
+- msk_cluster - changed test to 2.8.1 the recommended default version from MSK

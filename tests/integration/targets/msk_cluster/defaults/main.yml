@@ -8,7 +8,7 @@ vpc_subnet_name_prefix: "{{ resource_prefix }}"
 
 msk_config_name: "{{ resource_prefix }}-msk-cluster"
 msk_cluster_name: "{{ tiny_prefix }}-msk-cluster"
-msk_version: 2.6.0
+msk_version: 2.8.1
 msk_broker_nodes: 2
 
 tags_create:
