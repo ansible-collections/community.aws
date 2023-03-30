@@ -1,0 +1,167 @@
+---
+- name: 'ec2_carrier_gateway integration tests'
+  collections:
+    - community.aws
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+  block:
+
+    # ============================================================
+    - debug: msg="Setting up test dependencies"
+
+    - name: create a VPC
+      ec2_vpc_net:
+        name: "{{ vpc_name }}-{{ item }}"
+        state: present
+        cidr_block: "{{ vpc_cidr }}"
+        tags:
+          Description: "Created by ansible-test for CAGW tests"
+      register: vpc_result
+      loop: [1]
+
+    - name: use set fact for vpc ids
+      set_fact:
+        vpc_id_1: '{{ vpc_result.results.0.vpc.id }}'
+
+    # ============================================================
+    - debug: msg="Running tests"
+
+    - name: create carrier gateway and attach it to vpc
+      ec2_carrier_gateway:
+        state: present
+        vpc_id: '{{ vpc_id_1 }}'
+        name: "{{ cagw_name }}"
+      register: cagw
+      check_mode: true
+
+    - name: use set fact for cagw ids
+      set_fact:
+        cagw_id: '{{ cagw.carrier_gateway_id }}'
+
+    - assert:
+        that:
+          - cagw.changed
+          - cagw.vpc_id == vpc_id_1
+          - cagw.tags.Name == cagw_name
+
+    - name: test idempotence
+      ec2_carrier_gateway:
+        state: present
+        vpc_id: '{{ vpc_id_1 }}'
+        name: "{{ cagw_name }}"
+      register: cagw
+      check_mode: true
+
+    - assert:
+        that:
+          - not cagw.changed
+          - cagw.carrier_gateway_id == cagw_id
+
+    # ============================================================
+
+    - name: get VPC CAGW facts by ID (CHECK)
+      ec2_carrier_gateway_info:
+        carrier_gateway_id: ['{{ cagw_id }}']
+      register: cagw_info
+      check_mode: True
+
+    - name: verify expected facts
+      vars:
+        cagw_details: '{{ cagw_info.carrier_gateways[0] }}'
+      assert:
+        that:
+          - cagw_info.carrier_gateways | length == 1
+          - '"carrier_gateway_id" in cagw_details'
+          - '"tags" in cagw_details'
+          - '"vpc_id" in cagw_details'
+          - cagw_details.carrier_gateway_id == cagw_id
+          - '"Name" in cagw_details.tags'
+          - cagw_details.tags.Name == cagw_name
+
+    - name: get VPC CAGW facts by Tag
+      ec2_carrier_gateway_info:
+        filters:
+          "tag:Name": "{{ cagw_name }}"
+      register: cagw_info
+
+    - name: verify expected facts
+      vars:
+        cagw_details: '{{ cagw_info.virtual_gateways[0] }}'
+      assert:
+        that:
+          - cagw_info.virtual_gateways | length == 1
+          - '"carrier_gateway_id" in cagw_details'
+          - '"state" in cagw_details'
+          - '"tags" in cagw_details'
+          - cagw_details.carrier_gateway_id == cagw_id
+          - '"Name" in cagw_details.tags'
+          - cagw_details.tags.Name == cagw_name
+
+
+    # ============================================================
+
+    - name: get all CAGWs
+      ec2_carrier_gateway_info:
+      register: cagw_info
+
+    - name: verify test CAGW is in the results
+      vars:
+        cagw_id_list: '{{ cagw_info.carrier_gateways | map(attribute="carrier_gateway_id") | list }}'
+      assert:
+        that:
+          - cagw_id in cagw_id_list
+
+    # ============================================================
+
+    - include_tasks: 'tags.yml'
+
+    # ============================================================
+
+    - name: delete carrier gateway
+      ec2_carrier_gateway:
+        state: absent
+        name: "{{ cagw_name }}"
+      register: cagw
+      check_mode: true
+
+    - assert:
+        that:
+          - cagw.changed
+
+    - name: test idempotence
+      ec2_carrier_gateway:
+        state: absent
+        name: "{{ cagw_name }}"
+      register: cagw
+      check_mode: true
+
+    - assert:
+        that:
+          - not cagw.changed
+
+  always:
+
+    - debug: msg="Removing test dependencies"
+
+    - name: delete carrier gateway
+      ec2_carrier_gateway:
+        state: absent
+        carrier_gateway_id: '{{ cagw.carrier_gateway_id }}'
+      ignore_errors: true
+      check_mode: true
+
+    - name: delete vpc
+      ec2_vpc_net:
+        name: "{{ vpc_name }}-{{ item }}"
+        state: absent
+        cidr_block: "{{ vpc_cidr }}"
+      loop: [1, 2]
+      register: result
+      retries: 10
+      delay: 5
+      until: result is not failed
+      ignore_errors: true

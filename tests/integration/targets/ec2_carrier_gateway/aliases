@@ -1,0 +1,9 @@
+# reason: missing-policy
+# To test Carrier Gateway in the VPC, the Wavelength subnet
+# group should be enabled on the AWS Account.
+unsupported
+
+cloud/aws
+
+ec2_carrier_gateway
+ec2_carrier_gateway_info
