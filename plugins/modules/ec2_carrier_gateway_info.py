@@ -1,15 +1,13 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ec2_carrier_gateway_info
-version_added: 5.0.0
+version_added: 6.0.0
 short_description: Gather information about carrier gateways in AWS
 description:
   - Gather information about carrier gateways in AWS.
@@ -30,12 +28,12 @@ options:
     type: list
     elements: str
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
+"""
 
-'''
-
-EXAMPLES = '''
+EXAMPLES = r"""
 # # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Gather information about all Carrier Gateways for an account or profile
@@ -55,9 +53,9 @@ EXAMPLES = '''
     region: ap-southeast-2
     carrier_gateway_ids: cagw-c1231234
   register: cagw_info
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 changed:
     description: True if listing the carrier gateways succeeds.
     type: bool
@@ -85,7 +83,7 @@ carrier_gateways:
             sample:
                 tags:
                     "Ansible": "Test"
-'''
+"""
 
 try:
     import botocore

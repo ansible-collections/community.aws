@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ec2_carrier_gateway
 version_added: 6.0.0
@@ -33,12 +31,13 @@ options:
     choices: [ 'present', 'absent' ]
     type: str
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.tags
-'''
+  - amazon.aws.boto3
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 # Ensure that the VPC has an Carrier Gateway.
@@ -64,9 +63,9 @@ EXAMPLES = '''
     carrier_gateway_id: "cagw-123"
     state: absent
   register: vpc_cagw_delete
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 changed:
   description: If any changes have been made to the Carrier Gateway.
   type: bool
@@ -92,7 +91,7 @@ vpc_id:
   returned: I(state=present)
   sample:
     vpc_id: "vpc-XXXXXXXX"
-'''
+"""
 
 try:
     import botocore
