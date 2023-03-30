@@ -129,7 +129,7 @@ options:
                 default: False
                 version_added: 5.5.0
             unauthenticated:
-                description: Option to explicitly turn on or off authentication 
+                description: Option to explicitly turn on or off authentication
                 type: bool
                 default: True
     enhanced_monitoring:
