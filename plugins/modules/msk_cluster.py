@@ -403,7 +403,7 @@ def prepare_create_options(module):
         if module.params["authentication"].get("tls_ca_arn"):
             c_params["ClientAuthentication"]["Tls"] = {
                 "CertificateAuthorityArnList": module.params["authentication"]["tls_ca_arn"],
-                'Enabled': True,
+                "Enabled": True,
             }
         if module.params["authentication"].get("unauthenticated"):
             c_params["ClientAuthentication"] = {
