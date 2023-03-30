@@ -99,54 +99,59 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_t
 
 
 def get_carrier_gateway_info(carrier_gateway):
-    tags = carrier_gateway['Tags']
+    tags = carrier_gateway["Tags"]
     ignore_list = []
-    carrier_gateway_info = {'CarrierGatewayId': carrier_gateway['CarrierGatewayId'],
-                            'VpcId': carrier_gateway['VpcId'],
-                            'Tags': tags}
+    carrier_gateway_info = {
+        "CarrierGatewayId": carrier_gateway["CarrierGatewayId"],
+        "VpcId": carrier_gateway["VpcId"],
+        "Tags": tags,
+    }
 
-    carrier_gateway_info = camel_dict_to_snake_dict(carrier_gateway_info,
-                                                    ignore_list=ignore_list)
+    carrier_gateway_info = camel_dict_to_snake_dict(carrier_gateway_info, ignore_list=ignore_list)
     return carrier_gateway_info
 
 
 def list_carrier_gateways(connection, module):
-
     params = dict()
 
-    params['Filters'] = ansible_dict_to_boto3_filter_list(module.params.get('filters'))
+    params["Filters"] = ansible_dict_to_boto3_filter_list(module.params.get("filters"))
     if module.params.get("carrier_gateway_ids"):
-        params['CarrierGatewayIds'] = module.params.get("carrier_gateway_ids")
+        params["CarrierGatewayIds"] = module.params.get("carrier_gateway_ids")
 
     try:
         all_carrier_gateways = connection.describe_carrier_gateways(aws_retry=True, **params)
-    except is_boto3_error_code('InvalidCarrierGatewayID.NotFound'):
-        module.fail_json('CarrierGateway not found')
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, 'Unable to describe carrier gateways')
+    except is_boto3_error_code("InvalidCarrierGatewayID.NotFound"):
+        module.fail_json("CarrierGateway not found")
+    except (
+        botocore.exceptions.ClientError,
+        botocore.exceptions.BotoCoreError,
+    ) as e:  # pylint: disable=duplicate-except
+        module.fail_json_aws(e, "Unable to describe carrier gateways")
 
-    return [get_carrier_gateway_info(cagw)
-            for cagw in all_carrier_gateways['CarrierGateways']]
+    return [get_carrier_gateway_info(cagw) for cagw in all_carrier_gateways["CarrierGateways"]]
 
 
 def main():
     argument_spec = dict(
-        carrier_gateway_ids=dict(default=None, elements='str', type='list'),
-        filters=dict(default={}, type='dict')
+        carrier_gateway_ids=dict(default=None, elements="str", type="list"),
+        filters=dict(default={}, type="dict"),
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        supports_check_mode=True,
+    )
 
     # Validate Requirements
     try:
-        connection = module.client('ec2', retry_decorator=AWSRetry.jittered_backoff())
+        connection = module.client("ec2", retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg='Failed to connect to AWS')
+        module.fail_json_aws(e, msg="Failed to connect to AWS")
 
     results = list_carrier_gateways(connection, module)
 
     module.exit_json(carrier_gateways=results)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
