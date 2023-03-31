@@ -122,12 +122,10 @@ options:
             sasl_scram:
                 description: SASL/SCRAM authentication is enabled or not.
                 type: bool
-                default: False
             sasl_iam:
+                version_added: 5.5.0
                 description: IAM authentication is enabled or not.
                 type: bool
-                default: False
-                version_added: 5.5.0
             unauthenticated:
                 version_added: 5.5.0
                 description: Option to explicitly turn on or off authentication
@@ -734,9 +732,9 @@ def main():
             type="dict",
             options=dict(
                 tls_ca_arn=dict(type="list", elements="str", required=False),
-                sasl_scram=dict(type="bool", default=False),
+                sasl_scram=dict(type="bool", required=False),
                 sasl_iam=dict(type="bool", required=False),
-                unauthenticated=dict(type="bool", required=False),
+                unauthenticated=dict(type="bool", default=True, required=False),
             ),
         ),
         enhanced_monitoring=dict(
