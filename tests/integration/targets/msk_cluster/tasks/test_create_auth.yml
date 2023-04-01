@@ -1,5 +1,5 @@
 ---
-- name: create a msk cluster with sasl_scram and disable unauthenticated clients (check mode)
+- name: create a msk cluster with authentication flipped from default (check mode)
   aws_msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
@@ -7,6 +7,7 @@
     nodes: "{{ msk_broker_nodes }}"
     ebs_volume_size: 10
     authentication:
+      sasl_iam: true
       sasl_scram: true
       unauthenticated: false
     subnets: "{{ subnet_ids }}"
@@ -17,12 +18,12 @@
   check_mode: yes
   register: msk_cluster
 
-- name: assert that the sasl_scram msk cluster be created
+- name: assert that the msk cluster be created
   assert:
     that:
       - msk_cluster is changed
 
-- name: create a msk cluster with sasl_scram and disable unauthenticated clients
+- name: create a msk cluster with authentication flipped from default
   aws_msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
@@ -30,6 +31,7 @@
     nodes: "{{ msk_broker_nodes }}"
     ebs_volume_size: 10
     authentication:
+      sasl_iam: true
       sasl_scram: true
       unauthenticated: false
     subnets: "{{ subnet_ids }}"
@@ -39,7 +41,7 @@
     configuration_revision: "{{ msk_config.revision }}"
   register: msk_cluster
 
-- name: assert that the sasl_scram msk cluster is created
+- name: assert that the msk cluster is created
   assert:
     that:
       - msk_cluster is changed
@@ -55,12 +57,13 @@
       - "msk_cluster.cluster_info.number_of_broker_nodes == msk_broker_nodes"
       - "msk_cluster.cluster_info.broker_node_group_info.instance_type == 'kafka.t3.small'"
       - "msk_cluster.cluster_info.broker_node_group_info.storage_info.ebs_storage_info.volume_size == 10"
+      - "msk_cluster.cluster_info.client_authentication.sasl.iam.enabled == true"
       - "msk_cluster.cluster_info.client_authentication.sasl.scram.enabled == true"
       - "msk_cluster.cluster_info.client_authentication.unauthenticated.enabled == false"
       - "msk_cluster.cluster_info.open_monitoring.prometheus.jmx_exporter.enabled_in_broker == false"
       - "msk_cluster.cluster_info.cluster_arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
 
-- name: create a msk cluster with sasl_scram and disable unauthenticated clients (idempotency)
+- name: create a msk cluster with authentication flipped from default (idempotency)
   aws_msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
@@ -68,6 +71,7 @@
     nodes: "{{ msk_broker_nodes }}"
     ebs_volume_size: 10
     authentication:
+      sasl_iam: true
       sasl_scram: true
       unauthenticated: false
     subnets: "{{ subnet_ids }}"
