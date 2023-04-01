@@ -1,0 +1,2 @@
+minor_changes:
+  - ec2_launch_template - Add argument to config `VersionDescription` of a EC2 launch template.
