@@ -582,7 +582,10 @@ def create_or_update(module, template_options):
         out['changed'] = True
     elif template and template_versions:
         most_recent = sorted(template_versions, key=lambda x: x['VersionNumber'])[-1]
-        if lt_data == most_recent['LaunchTemplateData'] and module.params['version_description'] == most_recent['VersionDescription']:
+        if (
+            lt_data == most_recent['LaunchTemplateData']
+            and module.params['version_description'] == most_recent.get('VersionDescription', '')
+        ):
             out['changed'] = False
             return out
         try:
