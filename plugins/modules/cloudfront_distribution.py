@@ -568,7 +568,7 @@ options:
       description:
         - The version of the http protocol to use for the distribution.
         - AWS defaults this to C(http2).
-        - Valid values are C(http1.1), C(http2), C(http2) and C(http2and3).
+        - Valid values are C(http1.1), C(http2), C(http3) and C(http2and3).
       type: str
 
     ipv6_enabled:
