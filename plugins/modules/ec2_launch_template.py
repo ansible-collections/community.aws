@@ -39,6 +39,7 @@ options:
     type: str
     default: latest
   version_description:
+    version_added: 5.5.0
     description:
     - The description of a launch template version.
     default: ""
