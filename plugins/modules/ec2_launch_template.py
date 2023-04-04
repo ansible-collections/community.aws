@@ -582,10 +582,9 @@ def create_or_update(module, template_options):
         template, template_versions = existing_templates(module)
         out['changed'] = True
     elif template and template_versions:
-        most_recent = sorted(template_versions, key=lambda x: x['VersionNumber'])[-1]
-        if (
-            lt_data == most_recent['LaunchTemplateData']
-            and module.params['version_description'] == most_recent.get('VersionDescription', '')
+        most_recent = sorted(template_versions, key=lambda x: x["VersionNumber"])[-1]
+        if lt_data == most_recent["LaunchTemplateData"] and module.params["version_description"] == most_recent.get(
+            "VersionDescription", ""
         ):
             out['changed'] = False
             return out
@@ -595,7 +594,7 @@ def create_or_update(module, template_options):
                     LaunchTemplateId=template['LaunchTemplateId'],
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
-                    VersionDescription=str(module.params['version_description']),
+                    VersionDescription=str(module.params["version_description"]),
                     aws_retry=True,
                 )
             elif module.params.get('source_version') == 'latest':
@@ -603,8 +602,8 @@ def create_or_update(module, template_options):
                     LaunchTemplateId=template['LaunchTemplateId'],
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
-                    SourceVersion=str(most_recent['VersionNumber']),
-                    VersionDescription=str(module.params['version_description']),
+                    SourceVersion=str(most_recent["VersionNumber"]),
+                    VersionDescription=str(module.params["version_description"]),
                     aws_retry=True,
                 )
             else:
@@ -620,8 +619,8 @@ def create_or_update(module, template_options):
                     LaunchTemplateId=template['LaunchTemplateId'],
                     LaunchTemplateData=lt_data,
                     ClientToken=uuid4().hex,
-                    SourceVersion=str(source_version['VersionNumber']),
-                    VersionDescription=str(module.params['version_description']),
+                    SourceVersion=str(source_version["VersionNumber"]),
+                    VersionDescription=str(module.params["version_description"]),
                     aws_retry=True,
                 )
 
@@ -794,12 +793,12 @@ def main():
     )
 
     arg_spec = dict(
-        state=dict(choices=['present', 'absent'], default='present'),
-        template_name=dict(aliases=['name']),
-        template_id=dict(aliases=['id']),
-        default_version=dict(default='latest'),
-        source_version=dict(default='latest'),
-        version_description=dict(default=''),
+        state=dict(choices=["present", "absent"], default="present"),
+        template_name=dict(aliases=["name"]),
+        template_id=dict(aliases=["id"]),
+        default_version=dict(default="latest"),
+        source_version=dict(default="latest"),
+        version_description=dict(default=""),
     )
 
     arg_spec.update(template_options)
