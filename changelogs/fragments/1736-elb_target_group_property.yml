@@ -1,0 +1,2 @@
+bugfixes:
+  - elb_target_group - Property ``AvailabilityZone`` is kept when requested  (https://github.com/ansible-collections/community.aws/pull/1767).
