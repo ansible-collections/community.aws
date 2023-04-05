@@ -729,11 +729,11 @@ def create_or_update_target_group(connection, module):
 
                     if add_instances:
                         instances_to_add = []
-                        for target in params['Targets']:
-                            if target['Id'] in add_instances:
-                                tmp_item = {'Id': target['Id'], 'Port': target['Port']}
-                                if target.get('AvailabilityZone'):
-                                    tmp_item['AvailabilityZone'] = target['AvailabilityZone']
+                        for target in params["Targets"]:
+                            if target["Id"] in add_instances:
+                                tmp_item = {"Id": target["Id"], "Port": target["Port"]}
+                                if target.get("AvailabilityZone"):
+                                    tmp_item["AvailabilityZone"] = target["AvailabilityZone"]
                                 instances_to_add.append(tmp_item)
 
                         changed = True
