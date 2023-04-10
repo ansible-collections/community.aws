@@ -1,20 +1,18 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = """
+DOCUMENTATION = r"""
 ---
 module: opensearch_info
 short_description: obtain information about one or more OpenSearch or ElasticSearch domain
 description:
   - Obtain information about one Amazon OpenSearch Service domain.
 version_added: 4.0.0
-author: "Sebastien Rosset (@sebastien-rosset)"
+author:
+  - "Sebastien Rosset (@sebastien-rosset)"
 options:
   domain_name:
     description:
@@ -28,15 +26,13 @@ options:
         all tag key, value pairs.
     required: false
     type: dict
-requirements:
-  - botocore >= 1.21.38
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
 """
 
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Get information about an OpenSearch domain instance
   community.aws.opensearch_info:
     domain-name: my-search-cluster
@@ -50,9 +46,9 @@ EXAMPLES = '''
     tags:
       Applications: search
       Environment: Development
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 instances:
   description: List of OpenSearch domain instances
   returned: always
@@ -441,7 +437,7 @@ instances:
           description: The name of the OpenSearch domain.
           returned: always
           type: str
-'''
+"""
 
 
 try:
@@ -449,16 +445,14 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import (
-    AWSRetry,
-    boto3_tag_list_to_ansible_dict,
-    camel_dict_to_snake_dict,
-)
-from ansible_collections.community.aws.plugins.module_utils.opensearch import (
-    get_domain_config,
-    get_domain_status,
-)
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.opensearch import get_domain_config
+from ansible_collections.community.aws.plugins.module_utils.opensearch import get_domain_status
 
 
 def domain_info(client, module):

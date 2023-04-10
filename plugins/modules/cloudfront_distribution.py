@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 
 version_added: 1.0.0
@@ -20,12 +18,6 @@ description:
 author:
   - Willem van Ketwich (@wilvk)
   - Will Thames (@willthames)
-
-extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
-  - amazon.aws.tags
 
 options:
 
@@ -119,6 +111,17 @@ options:
         origin_path:
           description: Tells CloudFront to request your content from a directory in your Amazon S3 bucket or your custom origin.
           type: str
+        origin_shield:
+          description: Specify origin shield options for the origin.
+          type: dict
+          suboptions:
+            enabled:
+              description: Indicate whether you want the origin to have Origin Shield enabled or not.
+              type: bool
+            origin_shield_region:
+              description: Specify which AWS region will be used for Origin Shield. Required if Origin Shield is enabled.
+              type: str
+          version_added: 5.1.0
         custom_headers:
           description:
             - Custom headers you wish to add to the request before passing it to the origin.
@@ -614,9 +617,14 @@ options:
       default: 1800
       type: int
 
-'''
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.tags
+  - amazon.aws.boto3
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: create a basic distribution with defaults and tags
   community.aws.cloudfront_distribution:
     state: present
@@ -706,9 +714,9 @@ EXAMPLES = r'''
   community.aws.cloudfront_distribution:
     state: absent
     caller_reference: replaceable distribution
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 active_trusted_signers:
   description: Key pair IDs that CloudFront is aware of for each trusted signer.
   returned: always
@@ -1325,6 +1333,22 @@ origins:
           returned: always
           type: int
           sample: 10
+        origin_shield:
+          description: Configuration of the origin Origin Shield.
+          returned: always
+          type: complex
+          contains:
+            enabled:
+              description: Whether Origin Shield is enabled or not.
+              returned: always
+              type: bool
+              sample: false
+            origin_shield_region:
+              description: Which region is used by Origin Shield.
+              returned: when enabled is true
+              type: str
+              sample: us-east-1
+          version_added: 5.1.0
         s3_origin_config:
           description: Origin access identity configuration for S3 Origin.
           returned: when s3_origin_access_identity_enabled is true
@@ -1415,28 +1439,29 @@ web_acl_id:
   returned: always
   type: str
   sample: abcd1234-1234-abcd-abcd-abcd12345678
-'''
+"""
 
-from ansible.module_utils._text import to_text, to_native
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
-from ansible.module_utils.common.dict_transformations import recursive_diff
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry, compare_aws_tags, ansible_dict_to_boto3_tag_list, boto3_tag_list_to_ansible_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, snake_dict_to_camel_dict
+from collections import OrderedDict
 import datetime
-
-try:
-    from collections import OrderedDict
-except ImportError:
-    try:
-        from ordereddict import OrderedDict
-    except ImportError:
-        pass  # caught by AnsibleAWSModule (as python 2.6 + boto3 => ordereddict is installed)
 
 try:
     import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils._text import to_native
+from ansible.module_utils._text import to_text
+from ansible.module_utils.common.dict_transformations import recursive_diff
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def change_dict_key_name(dictionary, old_key, new_key):
@@ -1759,6 +1784,15 @@ class CloudFrontValidationManager(object):
                 origin['custom_headers'] = ansible_list_to_cloudfront_list(origin.get('custom_headers'))
             else:
                 origin['custom_headers'] = ansible_list_to_cloudfront_list()
+            if 'origin_shield' in origin:
+                origin_shield = origin.get('origin_shield')
+                if origin_shield.get('enabled'):
+                    origin_shield_region = origin_shield.get('origin_shield_region')
+                    if origin_shield_region is None:
+                        self.module.fail_json(msg="origins[].origin_shield.origin_shield_region must be specified"
+                                                  " when origins[].origin_shield.enabled is true.")
+                    else:
+                        origin_shield_region = origin_shield_region.lower()
             if self.__s3_bucket_domain_identifier in origin.get('domain_name').lower():
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     if origin['s3_origin_access_identity_enabled']:
@@ -2106,12 +2140,12 @@ class CloudFrontValidationManager(object):
 
     def validate_distribution_from_caller_reference(self, caller_reference):
         try:
-            distributions = self.__cloudfront_facts_mgr.list_distributions(False)
+            distributions = self.__cloudfront_facts_mgr.list_distributions(keyed=False)
             distribution_name = 'Distribution'
             distribution_config_name = 'DistributionConfig'
             distribution_ids = [dist.get('Id') for dist in distributions]
             for distribution_id in distribution_ids:
-                distribution = self.__cloudfront_facts_mgr.get_distribution(distribution_id)
+                distribution = self.__cloudfront_facts_mgr.get_distribution(id=distribution_id)
                 if distribution is not None:
                     distribution_config = distribution[distribution_name].get(distribution_config_name)
                     if distribution_config is not None and distribution_config.get('CallerReference') == caller_reference:
@@ -2129,13 +2163,13 @@ class CloudFrontValidationManager(object):
                 if aliases and distribution_id is None:
                     distribution_id = self.validate_distribution_id_from_alias(aliases)
                 if distribution_id:
-                    return self.__cloudfront_facts_mgr.get_distribution(distribution_id)
+                    return self.__cloudfront_facts_mgr.get_distribution(id=distribution_id)
             return None
         except Exception as e:
             self.module.fail_json_aws(e, msg="Error validating distribution_id from alias, aliases and caller reference")
 
     def validate_distribution_id_from_alias(self, aliases):
-        distributions = self.__cloudfront_facts_mgr.list_distributions(False)
+        distributions = self.__cloudfront_facts_mgr.list_distributions(keyed=False)
         if distributions:
             for distribution in distributions:
                 distribution_aliases = distribution.get('Aliases', {}).get('Items', [])
@@ -2254,12 +2288,12 @@ def main():
     if not (update or create or delete):
         module.exit_json(changed=False)
 
+    config = {}
     if update or delete:
         config = distribution['Distribution']['DistributionConfig']
         e_tag = distribution['ETag']
         distribution_id = distribution['Distribution']['Id']
-    else:
-        config = dict()
+
     if update:
         config = camel_dict_to_snake_dict(config, reversible=True)
 

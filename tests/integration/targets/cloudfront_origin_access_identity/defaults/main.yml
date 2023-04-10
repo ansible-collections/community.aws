@@ -1,0 +1,2 @@
+---
+cloudfront_hostname: "{{ resource_prefix }}01"

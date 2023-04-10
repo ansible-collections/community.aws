@@ -18,14 +18,15 @@ this collection requires Python 3.6 or greater.
 
 Amazon have also announced the end of support for
 [Python less than 3.7](https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/).
-As such support for Python less than 3.7 by this collection has been deprecated and will be removed in a release
-after 2023-05-31.
+As such support for Python less than 3.7 by this collection has been deprecated and will be removed in release 7.0.0.
+Additionally, support for Python less than 3.8 is expected to be removed in a release after 2024-12-01 based on currently
+available schedules.
 
 ## AWS SDK version compatibility
 
 Starting with the 2.0.0 releases of amazon.aws and community.aws, it is generally the collection's policy to support the versions of `botocore` and `boto3` that were released 12 months prior to the most recent major collection release, following semantic versioning (for example, 2.0.0, 3.0.0).
 
-Version 5.0.0 of this collection supports `boto3 >= 1.18.0` and `botocore >= 1.21.0`
+Version 6.0.0 of this collection supports `boto3 >= 1.22.0` and `botocore >= 1.25.0`
 
 All support for the original AWS SDK `boto` was removed in release 4.0.0.
 
@@ -90,7 +91,7 @@ You can either call modules by their Fully Qualified Collection Name (FQCN), suc
 
 ### See Also:
 
-* [Amazon Web Services Guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_aws.html)
+* [Amazon Web Services Guide](https://docs.ansible.com/ansible/latest/collections/amazon/aws/docsite/guide_aws.html)
 * [Ansible Using collections](https://docs.ansible.com/ansible/latest/user_guide/collections_using.html) for more details.
 
 ## Contributing to this collection
@@ -106,7 +107,7 @@ You can also join us on:
 
 - [Ansible Community Guide](https://docs.ansible.com/ansible/latest/community/index.html) - Details on contributing to Ansible
 - [Contributing to Collections](https://docs.ansible.com/ansible/devel/dev_guide/developing_collections.html#contributing-to-collections) - How to check out collection git repositories correctly
-- [Guidelines for Ansible Amazon AWS module development](https://docs.ansible.com/ansible/latest/dev_guide/platforms/aws_guidelines.html)
+- [Guidelines for Ansible Amazon AWS module development](https://docs.ansible.com/ansible/latest/collections/amazon/aws/docsite/dev_guidelines.html)
 - [Getting Started With AWS Ansible Module Development and Community Contribution](https://www.ansible.com/blog/getting-started-with-aws-ansible-module-development)
 
 ## Release notes

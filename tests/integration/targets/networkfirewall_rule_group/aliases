@@ -1,4 +1,6 @@
 time=18m
 cloud/aws
+# Idempotency issues - https://github.com/ansible-collections/community.aws/issues/1634
+disabled
 
 networkfirewall_rule_group_info

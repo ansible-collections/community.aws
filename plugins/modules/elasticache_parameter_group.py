@@ -1,12 +1,10 @@
 #!/usr/bin/python
-# This file is part of Ansible
+# -*- coding: utf-8 -*-
+
+# Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: elasticache_parameter_group
 version_added: 1.0.0
@@ -14,18 +12,15 @@ short_description: Manage cache parameter groups in Amazon ElastiCache.
 description:
   - Manage cache security groups in Amazon ElastiCache.
   - Returns information about the specified cache cluster.
-author: "Sloane Hertel (@s-hertel)"
-extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+author:
+  - "Sloane Hertel (@s-hertel)"
 
 options:
   group_family:
     description:
       - The name of the cache parameter group family that the cache parameter group can be used with.
         Required when creating a cache parameter group.
-    choices: ['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0']
+    choices: ['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0', 'redis6.x']
     type: str
   name:
     description:
@@ -47,9 +42,14 @@ options:
     description:
       - A user-specified dictionary of parameters to reset or modify for the cache parameter group.
     type: dict
-'''
 
-EXAMPLES = """
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
+"""
+
+EXAMPLES = r"""
 # Note: None of these examples set aws_access_key, aws_secret_key, or region.
 # It is assumed that their matching environment variables are set.
 ---
@@ -79,7 +79,7 @@ EXAMPLES = """
         state: 'absent'
 """
 
-RETURN = """
+RETURN = r"""
 elasticache:
   description: cache parameter group information and response metadata
   returned: always
@@ -115,7 +115,7 @@ from ansible.module_utils._text import to_text
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.six import string_types
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def create(module, conn, name, group_family, description):
@@ -274,7 +274,7 @@ def get_info(conn, name):
 
 def main():
     argument_spec = dict(
-        group_family=dict(type='str', choices=['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0']),
+        group_family=dict(type='str', choices=['memcached1.4', 'memcached1.5', 'redis2.6', 'redis2.8', 'redis3.2', 'redis4.0', 'redis5.0', 'redis6.x']),
         name=dict(required=True, type='str'),
         description=dict(default='', type='str'),
         state=dict(required=True, choices=['present', 'absent', 'reset']),

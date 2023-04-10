@@ -1,0 +1,7 @@
+- hosts: localhost
+  roles:
+    - role: ../setup_connection_aws_ssm
+      vars:
+        target_os: fedora
+        encrypted_bucket: True
+        test_suffix: encrypteds3

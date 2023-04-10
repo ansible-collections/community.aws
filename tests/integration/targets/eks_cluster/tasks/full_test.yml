@@ -80,6 +80,9 @@
         security_groups: "{{ eks_security_groups | map(attribute='name') }}"
         subnets: "{{ setup_subnets.results | map(attribute='subnet.id') }}"
         role_arn: "{{ iam_role.arn }}"
+        tags:
+          Name: "{{ resource_prefix }}"
+          another: foobar
       register: eks_create
 
     - name: check that EKS cluster was created
@@ -87,6 +90,7 @@
         that:
           - eks_create is changed
           - eks_create.name == eks_cluster_name
+          - eks_create.tags.another == "foobar"
 
     - name: create EKS cluster with same details but wait for it to become active
       aws_eks_cluster:

@@ -14,12 +14,8 @@
       create_instance_profile: false
       managed_policies:
       - 'arn:aws:iam::aws:policy/AWSXrayWriteOnlyAccess'
+      wait: True
     register: iam_role
-
-  - name: pause if role was created
-    pause:
-      seconds: 10
-    when: iam_role is changed
 
   - name: list all the topics (check_mode)
     sns_topic_info:
@@ -116,11 +112,49 @@
       - sns_fifo_topic.sns_topic.topic_type == 'fifo'
       - sns_fifo_topic.sns_topic.name == '{{ sns_topic_topic_name }}-fifo'
 
+  - name: Run create a FIFO topic again for idempotence test (with .fifo)
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}-fifo.fifo'
+      topic_type: fifo
+      display_name: My FIFO topic
+    register: sns_fifo_topic
+
+  - name: assert that FIFO SNS topic creation worked (without .fifo)
+    assert:
+      that:
+      - not sns_fifo_topic.changed
+
   - name: Run create a FIFO topic again for idempotence test
     sns_topic:
       name: '{{ sns_topic_topic_name }}-fifo.fifo'
       topic_type: fifo
       display_name: My FIFO topic
+    register: sns_fifo_topic
+
+  - name: assert that FIFO SNS topic creation worked
+    assert:
+      that:
+      - not sns_fifo_topic.changed
+
+  - name: set content_based_deduplication
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}-fifo'
+      topic_type: fifo
+      display_name: My FIFO topic
+      content_based_deduplication: "enabled"
+    register: sns_fifo_topic
+
+  - name: assert that FIFO SNS topic creation worked
+    assert:
+      that:
+      - sns_fifo_topic.changed
+
+  - name: set content_based_deduplication (idemopotence)
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}-fifo'
+      topic_type: fifo
+      display_name: My FIFO topic
+      content_based_deduplication: "enabled"
     register: sns_fifo_topic
 
   - name: assert that FIFO SNS topic creation worked
@@ -427,6 +461,170 @@
       that:
       - third_party_deletion is failed
       - third_party_topic.sns_topic.subscriptions|length == third_party_deletion_facts.sns_topic.subscriptions|length
+
+  # Test tags
+  - name: create standard SNS topic
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      display_name: My topic name
+    register: sns_topic_create
+
+  - name: assert that creation worked
+    assert:
+      that:
+      - sns_topic_create.changed
+
+  - name: set sns_arn fact
+    set_fact:
+      sns_arn: '{{ sns_topic_create.sns_arn }}'
+
+  - name: Add tags to topic - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    check_mode: true
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Add tags to topic
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Add tags to topic to verify idempotency - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    check_mode: true
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is not changed
+
+  - name: Add tags to topic to verify idempotency
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is not changed
+
+  - name: Update (add/remove) tags - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_three: '{{ tiny_prefix }} Three'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    check_mode: true
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Update tags to verify idempotency
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      tags:
+        tag_three: '{{ tiny_prefix }} Three'
+        "Tag Two": 'two {{ tiny_prefix }}'
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Update tags without purge - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+    check_mode: true
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Update tags without purge
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags:
+        tag_one: '{{ tiny_prefix }} One'
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Remove all the tags - CHECK_MODE
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: yes
+      tags: {}
+    check_mode: true
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Remove all the tags
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: yes
+      tags: {}
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Update with CamelCase tags
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+      tags:
+        "lowercase spaced": 'hello cruel world'
+        "Title Case": 'Hello Cruel World'
+        CamelCase: 'SimpleCamelCase'
+        snake_case: 'simple_snake_case'
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is changed
+
+  - name: Do not specify any tag to ensure previous tags are not removed
+    sns_topic:
+      name: '{{ sns_topic_topic_name }}'
+      purge_tags: no
+    register: sns_topic_tags
+
+  - assert:
+      that:
+      - sns_topic_tags is not changed
 
   always:
 

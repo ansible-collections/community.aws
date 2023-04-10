@@ -137,6 +137,7 @@ action_groups:
   - eks_cluster
   - efs_tag
   - eks_fargate_profile
+  - eks_nodegroup
   - elasticbeanstalk_app
   - elasticache
   - elasticache_info
@@ -168,9 +169,15 @@ action_groups:
   - inspector_target
   - kinesis_stream
   - lightsail
+  - lightsail_snapshot
   - lightsail_static_ip
   - msk_cluster
   - msk_config
+  - mq_broker
+  - mq_broker_config
+  - mq_broker_info
+  - mq_user
+  - mq_user_info
   - networkfirewall
   - networkfirewall_info
   - networkfirewall_policy
@@ -199,6 +206,7 @@ action_groups:
   - sns_topic
   - sns_topic_info
   - sqs_queue
+  - ssm_inventory_info
   - ssm_parameter
   - stepfunctions_state_machine
   - stepfunctions_state_machine_execution

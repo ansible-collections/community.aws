@@ -1,23 +1,20 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: lightsail
 version_added: 1.0.0
 short_description: Manage instances in AWS Lightsail
 description:
-     - Manage instances in AWS Lightsail.
-     - Instance tagging is not yet supported in this module.
+  - Manage instances in AWS Lightsail.
+  - Instance tagging is not yet supported in this module.
 author:
-    - "Nick Ball (@nickball)"
-    - "Prasad Katti (@prasadkatti)"
+  - "Nick Ball (@nickball)"
+  - "Prasad Katti (@prasadkatti)"
 options:
   state:
     description:
@@ -50,6 +47,38 @@ options:
       - Launch script that can configure the instance with additional data.
     type: str
     default: ''
+  public_ports:
+    description:
+      - A list of dictionaries to describe the ports to open for the specified instance.
+    type: list
+    elements: dict
+    suboptions:
+      from_port:
+        description: The first port in a range of open ports on the instance.
+        type: int
+        required: true
+      to_port:
+        description: The last port in a range of open ports on the instance.
+        type: int
+        required: true
+      protocol:
+        description: The IP protocol name accepted for the defined range of open ports.
+        type: str
+        choices: ['tcp', 'all', 'udp', 'icmp']
+        required: true
+      cidrs:
+        description:
+          - The IPv4 address, or range of IPv4 addresses (in CIDR notation) that are allowed to connect to the instance through the ports, and the protocol.
+          - One of I(cidrs) or I(ipv6_cidrs) must be specified.
+        type: list
+        elements: str
+      ipv6_cidrs:
+        description:
+          - The IPv6 address, or range of IPv6 addresses (in CIDR notation) that are allowed to connect to the instance through the ports, and the protocol.
+          - One of I(cidrs) or I(ipv6_cidrs) must be specified.
+        type: list
+        elements: str
+    version_added: 6.0.0
   key_pair_name:
     description:
       - Name of the key pair to use with the instance.
@@ -69,14 +98,13 @@ options:
     type: int
 
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
+"""
 
-'''
 
-
-EXAMPLES = '''
+EXAMPLES = r"""
 - name: Create a new Lightsail instance
   community.aws.lightsail:
     state: present
@@ -87,6 +115,12 @@ EXAMPLES = '''
     bundle_id: nano_1_0
     key_pair_name: id_rsa
     user_data: " echo 'hello world' > /home/ubuntu/test.txt"
+    public_ports:
+      - from_port: 22
+        to_port: 22
+        protocol: "tcp"
+        cidrs: ["0.0.0.0/0"]
+        ipv6_cidrs: ["::/0"]
   register: my_instance
 
 - name: Delete an instance
@@ -94,10 +128,9 @@ EXAMPLES = '''
     state: absent
     region: us-east-1
     name: my_instance
+"""
 
-'''
-
-RETURN = '''
+RETURN = r"""
 changed:
   description: if a snapshot has been modified/created
   returned: always
@@ -149,7 +182,7 @@ instance:
       name: running
     support_code: "123456789012/i-0997c97831ee21e33"
     username: "ubuntu"
-'''
+"""
 
 import time
 
@@ -160,9 +193,11 @@ except ImportError:
     pass
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def find_instance_info(module, client, instance_name, fail_if_not_found=False):
@@ -198,17 +233,28 @@ def wait_for_instance_state(module, client, instance_name, states):
                              ' {1}'.format(instance_name, states))
 
 
-def create_instance(module, client, instance_name):
+def update_public_ports(module, client, instance_name):
+    try:
+        client.put_instance_public_ports(
+            portInfos=snake_dict_to_camel_dict(module.params.get("public_ports")),
+            instanceName=instance_name,
+        )
+    except botocore.exceptions.ClientError as e:
+        module.fail_json_aws(e)
+
+
+def create_or_update_instance(module, client, instance_name):
 
     inst = find_instance_info(module, client, instance_name)
-    if inst:
-        module.exit_json(changed=False, instance=camel_dict_to_snake_dict(inst))
-    else:
-        create_params = {'instanceNames': [instance_name],
-                         'availabilityZone': module.params.get('zone'),
-                         'blueprintId': module.params.get('blueprint_id'),
-                         'bundleId': module.params.get('bundle_id'),
-                         'userData': module.params.get('user_data')}
+
+    if not inst:
+        create_params = {
+            "instanceNames": [instance_name],
+            "availabilityZone": module.params.get("zone"),
+            "blueprintId": module.params.get("blueprint_id"),
+            "bundleId": module.params.get("bundle_id"),
+            "userData": module.params.get("user_data"),
+        }
 
         key_pair_name = module.params.get('key_pair_name')
         if key_pair_name:
@@ -223,9 +269,15 @@ def create_instance(module, client, instance_name):
         if wait:
             desired_states = ['running']
             wait_for_instance_state(module, client, instance_name, desired_states)
-        inst = find_instance_info(module, client, instance_name, fail_if_not_found=True)
 
-        module.exit_json(changed=True, instance=camel_dict_to_snake_dict(inst))
+    if module.params.get("public_ports") is not None:
+        update_public_ports(module, client, instance_name)
+    after_update_inst = find_instance_info(module, client, instance_name, fail_if_not_found=True)
+
+    module.exit_json(
+        changed=after_update_inst != inst,
+        instance=camel_dict_to_snake_dict(after_update_inst),
+    )
 
 
 def delete_instance(module, client, instance_name):
@@ -306,16 +358,29 @@ def start_or_stop_instance(module, client, instance_name, state):
 def main():
 
     argument_spec = dict(
-        name=dict(type='str', required=True),
-        state=dict(type='str', default='present', choices=['present', 'absent', 'stopped', 'running', 'restarted',
-                                                           'rebooted']),
-        zone=dict(type='str'),
-        blueprint_id=dict(type='str'),
-        bundle_id=dict(type='str'),
-        key_pair_name=dict(type='str'),
-        user_data=dict(type='str', default=''),
-        wait=dict(type='bool', default=True),
-        wait_timeout=dict(default=300, type='int'),
+        name=dict(type="str", required=True),
+        state=dict(
+            type="str", default="present", choices=["present", "absent", "stopped", "running", "restarted", "rebooted"]
+        ),
+        zone=dict(type="str"),
+        blueprint_id=dict(type="str"),
+        bundle_id=dict(type="str"),
+        key_pair_name=dict(type="str"),
+        user_data=dict(type="str", default=""),
+        wait=dict(type="bool", default=True),
+        wait_timeout=dict(default=300, type="int"),
+        public_ports=dict(
+            type="list",
+            elements="dict",
+            options=dict(
+                from_port=dict(type="int", required=True),
+                to_port=dict(type="int", required=True),
+                protocol=dict(type="str", choices=["tcp", "all", "udp", "icmp"], required=True),
+                cidrs=dict(type="list", elements="str"),
+                ipv6_cidrs=dict(type="list", elements="str"),
+            ),
+            required_one_of=[("cidrs", "ipv6_cidrs")],
+        ),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
@@ -327,7 +392,7 @@ def main():
     state = module.params.get('state')
 
     if state == 'present':
-        create_instance(module, client, name)
+        create_or_update_instance(module, client, name)
     elif state == 'absent':
         delete_instance(module, client, name)
     elif state in ('running', 'stopped'):

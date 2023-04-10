@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ses_identity
 version_added: 1.0.0
@@ -88,12 +86,12 @@ options:
         type: 'bool'
         default: True
 extends_documentation_fragment:
-    - amazon.aws.aws
-    - amazon.aws.ec2
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
     - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Ensure example@example.com email identity exists
@@ -147,9 +145,9 @@ EXAMPLES = '''
     state: present
     delivery_notifications:
       topic: "{{ topic_info.sns_arn }}"
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 identity:
     description: The identity being modified.
     returned: success
@@ -217,18 +215,21 @@ notification_attributes:
         headers_in_delivery_notifications_enabled:
             description: Whether or not headers are included in messages delivered to the delivery topic.
             type: bool
-'''
-
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+"""
 
 import time
 
 try:
-    from botocore.exceptions import BotoCoreError, ClientError
+    from botocore.exceptions import BotoCoreError
+    from botocore.exceptions import ClientError
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def get_verification_attributes(connection, module, identity, retries=0, retryDelay=10):
@@ -299,26 +300,40 @@ def desired_topic(module, notification_type):
 
 
 def update_notification_topic(connection, module, identity, identity_notifications, notification_type):
+    # Not passing the parameter should not cause any changes.
+    if module.params.get(f"{notification_type.lower()}_notifications") is None:
+        return False
+
     topic_key = notification_type + 'Topic'
     if identity_notifications is None:
         # If there is no configuration for notifications cannot be being sent to topics
         # hence assume None as the current state.
-        current = None
+        current_topic = None
     elif topic_key in identity_notifications:
-        current = identity_notifications[topic_key]
+        current_topic = identity_notifications[topic_key]
     else:
         # If there is information on the notifications setup but no information on the
         # particular notification topic it's pretty safe to assume there's no topic for
         # this notification. AWS API docs suggest this information will always be
         # included but best to be defensive
-        current = None
+        current_topic = None
 
-    required = desired_topic(module, notification_type)
+    required_topic = desired_topic(module, notification_type)
 
-    if current != required:
+    if current_topic != required_topic:
         try:
             if not module.check_mode:
-                connection.set_identity_notification_topic(Identity=identity, NotificationType=notification_type, SnsTopic=required, aws_retry=True)
+                request_kwargs = {
+                    "Identity": identity,
+                    "NotificationType": notification_type,
+                    "aws_retry": True,
+                }
+
+                # The topic has to be omitted from the request to disable the notification.
+                if required_topic is not None:
+                    request_kwargs["SnsTopic"] = required_topic
+
+                connection.set_identity_notification_topic(**request_kwargs)
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(e, msg='Failed to set identity notification topic for {identity} {notification_type}'.format(
                 identity=identity,

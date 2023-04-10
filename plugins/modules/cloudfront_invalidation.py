@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 
 version_added: 1.0.0
@@ -14,15 +12,10 @@ module: cloudfront_invalidation
 
 short_description: create invalidations for AWS CloudFront distributions
 description:
-    - Allows for invalidation of a batch of paths for a CloudFront distribution.
+  - Allows for invalidation of a batch of paths for a CloudFront distribution.
 
-author: Willem van Ketwich (@wilvk)
-
-extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
-
+author:
+  - Willem van Ketwich (@wilvk)
 
 options:
     distribution_id:
@@ -52,9 +45,13 @@ options:
 notes:
   - does not support check mode
 
-'''
+extends_documentation_fragment:
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 
 - name: create a batch of invalidations using a distribution_id for a reference
   community.aws.cloudfront_invalidation:
@@ -74,9 +71,9 @@ EXAMPLES = r'''
       - /testpathtwo/test5.js
       - /testpaththree/*
 
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 invalidation:
   description: The invalidation's information.
   returned: always
@@ -130,7 +127,7 @@ location:
   returned: always
   type: str
   sample: https://cloudfront.amazonaws.com/2017-03-25/distribution/E1ZID6KZJECZY7/invalidation/I2G9MOWJZFV622
-'''
+"""
 
 import datetime
 
@@ -142,9 +139,10 @@ except ImportError:
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_message
 from ansible_collections.amazon.aws.plugins.module_utils.cloudfront_facts import CloudFrontFactsServiceManager
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 class CloudFrontInvalidationServiceManager(object):
@@ -152,9 +150,10 @@ class CloudFrontInvalidationServiceManager(object):
     Handles CloudFront service calls to AWS for invalidations
     """
 
-    def __init__(self, module):
+    def __init__(self, module, cloudfront_facts_mgr):
         self.module = module
         self.client = module.client('cloudfront')
+        self.__cloudfront_facts_mgr = cloudfront_facts_mgr
 
     def create_invalidation(self, distribution_id, invalidation_batch):
         current_invalidation_response = self.get_invalidation(distribution_id, invalidation_batch['CallerReference'])
@@ -174,28 +173,16 @@ class CloudFrontInvalidationServiceManager(object):
             self.module.fail_json_aws(e, msg="Error creating CloudFront invalidations.")
 
     def get_invalidation(self, distribution_id, caller_reference):
-        current_invalidation = {}
         # find all invalidations for the distribution
-        try:
-            paginator = self.client.get_paginator('list_invalidations')
-            invalidations = paginator.paginate(DistributionId=distribution_id).build_full_result().get('InvalidationList', {}).get('Items', [])
-            invalidation_ids = [inv['Id'] for inv in invalidations]
-        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            self.module.fail_json_aws(e, msg="Error listing CloudFront invalidations.")
+        invalidations = self.__cloudfront_facts_mgr.list_invalidations(distribution_id=distribution_id)
 
         # check if there is an invalidation with the same caller reference
-        for inv_id in invalidation_ids:
-            try:
-                invalidation = self.client.get_invalidation(DistributionId=distribution_id, Id=inv_id)['Invalidation']
-                caller_ref = invalidation.get('InvalidationBatch', {}).get('CallerReference')
-            except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                self.module.fail_json_aws(e, msg="Error getting CloudFront invalidation {0}".format(inv_id))
-            if caller_ref == caller_reference:
-                current_invalidation = invalidation
-                break
-
-        current_invalidation.pop('ResponseMetadata', None)
-        return current_invalidation
+        for invalidation in invalidations:
+            invalidation_info = self.__cloudfront_facts_mgr.get_invalidation(distribution_id=distribution_id, id=invalidation['Id'])
+            if invalidation_info.get('InvalidationBatch', {}).get('CallerReference') == caller_reference:
+                invalidation_info.pop('ResponseMetadata', None)
+                return invalidation_info
+        return {}
 
 
 class CloudFrontInvalidationValidationManager(object):
@@ -203,9 +190,9 @@ class CloudFrontInvalidationValidationManager(object):
     Manages CloudFront validations for invalidation batches
     """
 
-    def __init__(self, module):
+    def __init__(self, module, cloudfront_facts_mgr):
         self.module = module
-        self.__cloudfront_facts_mgr = CloudFrontFactsServiceManager(module)
+        self.__cloudfront_facts_mgr = cloudfront_facts_mgr
 
     def validate_distribution_id(self, distribution_id, alias):
         try:
@@ -248,8 +235,9 @@ def main():
 
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=False, mutually_exclusive=[['distribution_id', 'alias']])
 
-    validation_mgr = CloudFrontInvalidationValidationManager(module)
-    service_mgr = CloudFrontInvalidationServiceManager(module)
+    cloudfront_facts_mgr = CloudFrontFactsServiceManager(module)
+    validation_mgr = CloudFrontInvalidationValidationManager(module, cloudfront_facts_mgr)
+    service_mgr = CloudFrontInvalidationServiceManager(module, cloudfront_facts_mgr)
 
     caller_reference = module.params.get('caller_reference')
     distribution_id = module.params.get('distribution_id')

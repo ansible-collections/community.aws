@@ -1,19 +1,18 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: s3_lifecycle
 version_added: 1.0.0
 short_description: Manage S3 bucket lifecycle rules in AWS
 description:
-    - Manage S3 bucket lifecycle rules in AWS.
-author: "Rob White (@wimnat)"
+  - Manage S3 bucket lifecycle rules in AWS.
+author:
+  - "Rob White (@wimnat)"
 notes:
   - If specifying expiration time as days then transition time must also be specified in days.
   - If specifying expiration time as a date then transition time must also be specified as a date.
@@ -63,8 +62,17 @@ options:
   noncurrent_version_expiration_days:
     description:
       - The number of days after which non-current versions should be deleted.
+      - Must be set if I(noncurrent_version_keep_newer) is set.
     required: false
     type: int
+  noncurrent_version_keep_newer:
+    description:
+      - The minimum number of non-current versions to retain.
+      - Requires C(botocore >= 1.23.12)
+      - Requres I(noncurrent_version_expiration_days).
+    required: false
+    type: int
+    version_added: 5.3.0
   noncurrent_version_storage_class:
     description:
       - The storage class to which non-current versions are transitioned.
@@ -140,13 +148,14 @@ options:
     type: bool
     default: false
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
+  - amazon.aws.boto3
+"""
 
-'''
+RETURN = r""" # """
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Configure a lifecycle rule on a bucket to expire (delete) items with a prefix of /logs/ after 30 days
@@ -210,7 +219,7 @@ EXAMPLES = r'''
         storage_class: standard_ia
       - transition_days: 90
         storage_class: glacier
-'''
+"""
 
 from copy import deepcopy
 import datetime
@@ -218,6 +227,7 @@ import time
 
 try:
     from dateutil import parser as date_parser
+
     HAS_DATEUTIL = True
 except ImportError:
     HAS_DATEUTIL = False
@@ -227,11 +237,12 @@ try:
 except ImportError:
     pass  # handled by AnsibleAwsModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_message
-from ansible_collections.amazon.aws.plugins.module_utils.core import normalize_boto3_result
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_message
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import normalize_boto3_result
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def parse_date(date):
@@ -269,6 +280,7 @@ def build_rule(client, module):
     noncurrent_version_transition_days = module.params.get("noncurrent_version_transition_days")
     noncurrent_version_transitions = module.params.get("noncurrent_version_transitions")
     noncurrent_version_storage_class = module.params.get("noncurrent_version_storage_class")
+    noncurrent_version_keep_newer = module.params.get("noncurrent_version_keep_newer")
     prefix = module.params.get("prefix") or ""
     rule_id = module.params.get("rule_id")
     status = module.params.get("status")
@@ -294,10 +306,12 @@ def build_rule(client, module):
         rule['Expiration'] = dict(Date=expiration_date.isoformat())
     elif expire_object_delete_marker is not None:
         rule['Expiration'] = dict(ExpiredObjectDeleteMarker=expire_object_delete_marker)
-
+    if noncurrent_version_expiration_days or noncurrent_version_keep_newer:
+        rule['NoncurrentVersionExpiration'] = dict()
     if noncurrent_version_expiration_days is not None:
-        rule['NoncurrentVersionExpiration'] = dict(NoncurrentDays=noncurrent_version_expiration_days)
-
+        rule['NoncurrentVersionExpiration']['NoncurrentDays'] = noncurrent_version_expiration_days
+    if noncurrent_version_keep_newer is not None:
+        rule['NoncurrentVersionExpiration']['NewerNoncurrentVersions'] = noncurrent_version_keep_newer
     if transition_days is not None:
         rule['Transitions'] = [dict(Days=transition_days, StorageClass=storage_class.upper()), ]
 
@@ -467,38 +481,40 @@ def create_lifecycle_rule(client, module):
     (changed, lifecycle_configuration) = compare_and_update_configuration(client, module,
                                                                           old_lifecycle_rules,
                                                                           new_rule)
+    if changed:
+        # Write lifecycle to bucket
+        try:
+            client.put_bucket_lifecycle_configuration(
+                aws_retry=True,
+                Bucket=name,
+                LifecycleConfiguration=lifecycle_configuration)
+        except is_boto3_error_message('At least one action needs to be specified in a rule'):
+            # Amazon interpretted this as not changing anything
+            changed = False
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
+            module.fail_json_aws(e, lifecycle_configuration=lifecycle_configuration, name=name, old_lifecycle_rules=old_lifecycle_rules)
 
-    # Write lifecycle to bucket
-    try:
-        client.put_bucket_lifecycle_configuration(
-            aws_retry=True,
-            Bucket=name,
-            LifecycleConfiguration=lifecycle_configuration)
-    except is_boto3_error_message('At least one action needs to be specified in a rule'):
-        # Amazon interpretted this as not changing anything
-        changed = False
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, lifecycle_configuration=lifecycle_configuration, name=name, old_lifecycle_rules=old_lifecycle_rules)
-
-    _changed = changed
-    _retries = 10
-    _not_changed_cnt = 6
-    while wait and _changed and _retries and _not_changed_cnt:
-        # We've seen examples where get_bucket_lifecycle_configuration returns
-        # the updated rules, then the old rules, then the updated rules again and
-        # again couple of times.
-        # Thus try to read the rule few times in a row to check if it has changed.
-        time.sleep(5)
-        _retries -= 1
-        new_rules = fetch_rules(client, module, name)
-        (_changed, lifecycle_configuration) = compare_and_update_configuration(client, module,
-                                                                               new_rules,
-                                                                               new_rule)
-        if not _changed:
-            _not_changed_cnt -= 1
-            _changed = True
-        else:
-            _not_changed_cnt = 6
+        _changed = changed
+        _retries = 10
+        _not_changed_cnt = 6
+        while wait and _changed and _retries and _not_changed_cnt:
+            # We've seen examples where get_bucket_lifecycle_configuration returns
+            # the updated rules, then the old rules, then the updated rules again and
+            # again couple of times.
+            # Thus try to read the rule few times in a row to check if it has changed.
+            time.sleep(5)
+            _retries -= 1
+            new_rules = fetch_rules(client, module, name)
+            (_changed, lifecycle_configuration) = compare_and_update_configuration(client, module,
+                                                                                   new_rules,
+                                                                                   new_rule)
+            if not _changed:
+                _not_changed_cnt -= 1
+                _changed = True
+            else:
+                _not_changed_cnt = 6
+    else:
+        _retries = 0
 
     new_rules = fetch_rules(client, module, name)
 
@@ -521,36 +537,39 @@ def destroy_lifecycle_rule(client, module):
     current_lifecycle_rules = fetch_rules(client, module, name)
     changed, lifecycle_obj = compare_and_remove_rule(current_lifecycle_rules, rule_id, prefix)
 
-    # Write lifecycle to bucket or, if there no rules left, delete lifecycle configuration
-    try:
-        if lifecycle_obj['Rules']:
-            client.put_bucket_lifecycle_configuration(
-                aws_retry=True,
-                Bucket=name,
-                LifecycleConfiguration=lifecycle_obj)
-        elif current_lifecycle_rules:
-            changed = True
-            client.delete_bucket_lifecycle(aws_retry=True, Bucket=name)
-    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e)
+    if changed:
+        # Write lifecycle to bucket or, if there no rules left, delete lifecycle configuration
+        try:
+            if lifecycle_obj['Rules']:
+                client.put_bucket_lifecycle_configuration(
+                    aws_retry=True,
+                    Bucket=name,
+                    LifecycleConfiguration=lifecycle_obj)
+            elif current_lifecycle_rules:
+                changed = True
+                client.delete_bucket_lifecycle(aws_retry=True, Bucket=name)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e)
 
-    _changed = changed
-    _retries = 10
-    _not_changed_cnt = 6
-    while wait and _changed and _retries and _not_changed_cnt:
-        # We've seen examples where get_bucket_lifecycle_configuration returns
-        # the updated rules, then the old rules, then the updated rules again and
-        # again couple of times.
-        # Thus try to read the rule few times in a row to check if it has changed.
-        time.sleep(5)
-        _retries -= 1
-        new_rules = fetch_rules(client, module, name)
-        (_changed, lifecycle_configuration) = compare_and_remove_rule(new_rules, rule_id, prefix)
-        if not _changed:
-            _not_changed_cnt -= 1
-            _changed = True
-        else:
-            _not_changed_cnt = 6
+        _changed = changed
+        _retries = 10
+        _not_changed_cnt = 6
+        while wait and _changed and _retries and _not_changed_cnt:
+            # We've seen examples where get_bucket_lifecycle_configuration returns
+            # the updated rules, then the old rules, then the updated rules again and
+            # again couple of times.
+            # Thus try to read the rule few times in a row to check if it has changed.
+            time.sleep(5)
+            _retries -= 1
+            new_rules = fetch_rules(client, module, name)
+            (_changed, lifecycle_configuration) = compare_and_remove_rule(new_rules, rule_id, prefix)
+            if not _changed:
+                _not_changed_cnt -= 1
+                _changed = True
+            else:
+                _not_changed_cnt = 6
+    else:
+        _retries = 0
 
     new_rules = fetch_rules(client, module, name)
 
@@ -567,6 +586,7 @@ def main():
         expiration_date=dict(),
         expire_object_delete_marker=dict(type='bool'),
         noncurrent_version_expiration_days=dict(type='int'),
+        noncurrent_version_keep_newer=dict(type='int'),
         noncurrent_version_storage_class=dict(default='glacier', type='str', choices=s3_storage_class),
         noncurrent_version_transition_days=dict(type='int'),
         noncurrent_version_transitions=dict(type='list', elements='dict'),
@@ -582,16 +602,21 @@ def main():
         wait=dict(type='bool', default=False)
     )
 
-    module = AnsibleAWSModule(argument_spec=argument_spec,
-                              mutually_exclusive=[
-                                  ['expiration_days', 'expiration_date', 'expire_object_delete_marker'],
-                                  ['expiration_days', 'transition_date'],
-                                  ['transition_days', 'transition_date'],
-                                  ['transition_days', 'expiration_date'],
-                                  ['transition_days', 'transitions'],
-                                  ['transition_date', 'transitions'],
-                                  ['noncurrent_version_transition_days', 'noncurrent_version_transitions'],
-                              ],)
+    module = AnsibleAWSModule(
+        argument_spec=argument_spec,
+        mutually_exclusive=[
+            ["expiration_days", "expiration_date", "expire_object_delete_marker"],
+            ["expiration_days", "transition_date"],
+            ["transition_days", "transition_date"],
+            ["transition_days", "expiration_date"],
+            ["transition_days", "transitions"],
+            ["transition_date", "transitions"],
+            ["noncurrent_version_transition_days", "noncurrent_version_transitions"],
+        ],
+        required_by={
+            "noncurrent_version_keep_newer": ["noncurrent_version_expiration_days"],
+        },
+    )
 
     client = module.client('s3', retry_decorator=AWSRetry.jittered_backoff())
 
@@ -599,12 +624,19 @@ def main():
     transition_date = module.params.get("transition_date")
     state = module.params.get("state")
 
+    if module.params.get("noncurrent_version_keep_newer"):
+        module.require_botocore_at_least(
+            "1.23.12",
+            reason="to set number of versions to keep with noncurrent_version_keep_newer"
+        )
+
     if state == 'present' and module.params["status"] == "enabled":  # allow deleting/disabling a rule by id/prefix
 
         required_when_present = ('abort_incomplete_multipart_upload_days',
                                  'expiration_date', 'expiration_days', 'expire_object_delete_marker',
                                  'transition_date', 'transition_days', 'transitions',
                                  'noncurrent_version_expiration_days',
+                                 'noncurrent_version_keep_newer',
                                  'noncurrent_version_transition_days',
                                  'noncurrent_version_transitions')
         for param in required_when_present:

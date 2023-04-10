@@ -1,12 +1,10 @@
 #!/usr/bin/python
-# This file is part of Ansible
+# -*- coding: utf-8 -*-
+
+# Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ecs_taskdefinition
 version_added: 1.0.0
@@ -466,6 +464,49 @@ options:
                 description: The health check command and associated configuration parameters for the container.
                 required: False
                 type: dict
+                suboptions:
+                    command:
+                        description:
+                            - A string array representing the command that the container runs to determine if it is healthy.
+                            - >
+                              The string array must start with CMD to run the command arguments directly,
+                              or CMD-SHELL to run the command with the container's default shell.
+                            - An exit code of 0 indicates success, and non-zero exit code indicates failure.
+                        required: False
+                        type: list
+                        elements: str
+                    interval:
+                        description:
+                            - The time period in seconds between each health check execution.
+                            - You may specify between 5 and 300 seconds. The default value is 30 seconds.
+                        required: False
+                        type: int
+                        default: 30
+                    retries:
+                        description:
+                            - The number of times to retry a failed health check before the container is considered unhealthy.
+                            - You may specify between 1 and 10 retries. The default value is 3.
+                        required: False
+                        type: int
+                        default: 3
+                    startPeriod:
+                        description:
+                            - >
+                              The optional grace period to provide containers time to bootstrap
+                              before failed health checks count towards the maximum number of retries.
+                            - You can specify between 0 and 300 seconds. By default, the startPeriod is disabled.
+                            - >
+                              Note: If a health check succeeds within the startPeriod,
+                              then the container is considered healthy and any subsequent failures count toward the maximum number of retries.
+                        required: False
+                        type: int
+                    timeout:
+                        description:
+                            - The time period in seconds to wait for a health check to succeed before it is considered a failure.
+                            - You may specify between 2 and 60 seconds. The default value is 5.
+                        required: False
+                        type: int
+                        default: 5
             systemControls:
                 description: A list of namespaced kernel parameters to set in the container.
                 required: False
@@ -493,6 +534,32 @@ options:
                         description: The type of resource to assign to a container.
                         type: str
                         choices: ['GPU', 'InferenceAccelerator']
+            firelensConfiguration:
+                description:
+                    - The FireLens configuration for the container.
+                    - This is used to specify and configure a log router for container logs.
+                required: False
+                type: dict
+                suboptions:
+                    type:
+                        description:
+                            - The log router to use. The valid values are C(fluentd) or C(fluentbit).
+                        required: False
+                        type: str
+                        choices:
+                            - fluentd
+                            - fluentbit
+                    options:
+                        description:
+                            - The options to use when configuring the log router.
+                            - This field is optional and can be used to specify a custom configuration
+                              file or to add additional metadata, such as the task, task definition, cluster,
+                              and container instance details to the log event.
+                            - If specified, the syntax to use is
+                              C({"enable-ecs-log-metadata":"true|false","config-file-type:"s3|file","config-file-value":"arn:aws:s3:::mybucket/fluent.conf|filepath"}).
+                            - For more information, see U(https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_firelens.html#firelens-taskdef).
+                        required: False
+                        type: dict
     network_mode:
         description:
             - The Docker networking mode to use for the containers in the task.
@@ -561,12 +628,12 @@ options:
                 description: A cluster query language expression to apply to the constraint.
                 type: str
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
-'''
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
+    - amazon.aws.boto3
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 - name: Create task definition
   community.aws.ecs_taskdefinition:
     containers:
@@ -677,22 +744,46 @@ EXAMPLES = r'''
     memory: 1GB
     state: present
     network_mode: awsvpc
-'''
-RETURN = r'''
+
+# Create Task Definition with health check
+- name: Create task definition
+  community.aws.ecs_taskdefinition:
+    family: nginx
+    containers:
+    - name: nginx
+      essential: true
+      image: "nginx"
+      portMappings:
+      - containerPort: 8080
+        hostPort: 8080
+      cpu: 512
+      memory: 1024
+      healthCheck:
+        command:
+            - CMD-SHELL
+            - /app/healthcheck.py
+        interval: 60
+        retries: 3
+        startPeriod: 15
+        timeout: 15
+    state: present
+"""
+
+RETURN = r"""
 taskdefinition:
     description: a reflection of the input parameters
     type: dict
     returned: always
-'''
+"""
 
 try:
     import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
 
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 class EcsTaskManager:

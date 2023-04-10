@@ -1,0 +1,160 @@
+- name: ensure IAM service role exists
+  iam_role:
+    name: "{{ ecs_service_role_name }}"
+    assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
+    state: present
+    create_instance_profile: yes
+    managed_policy:
+    - AmazonEC2ContainerServiceRole
+    wait: True
+  register: iam_role_creation
+
+- name: ensure AmazonECSTaskExecutionRolePolicy exists
+  iam_role:
+    name: "{{ ecs_task_role_name }}"
+    assume_role_policy_document: "{{ lookup('file','ecs-trust-policy.json') }}"
+    description: "Allows ECS containers to make calls to ECR"
+    state: present
+    create_instance_profile: false
+    managed_policy:
+      - AmazonECSTaskExecutionRolePolicy
+    wait: True
+  register: iam_execution_role
+
+- name: ensure AWSServiceRoleForECS role exists
+  iam_role_info:
+    name: AWSServiceRoleForECS
+  register: iam_role_result
+
+#  # This should happen automatically with the right permissions...
+#- name: fail if AWSServiceRoleForECS role does not exist
+#  fail:
+#    msg: >
+#      Run `aws iam create-service-linked-role --aws-service-name=ecs.amazonaws.com ` to create
+#      a linked role for AWS VPC load balancer management
+#  when: not iam_role_result.iam_roles
+
+- name: create a VPC to work in
+  ec2_vpc_net:
+    cidr_block: 10.0.0.0/16
+    state: present
+    name: '{{ resource_prefix }}_ecs_cluster'
+    resource_tags:
+      Name: '{{ resource_prefix }}_ecs_cluster'
+  register: setup_vpc
+
+- name: create a key pair to use for creating an ec2 instance
+  ec2_key:
+    name: '{{ resource_prefix }}_ecs_cluster'
+    state: present
+  when: ec2_keypair is not defined  # allow override in cloud-config-aws.ini
+  register: setup_key
+
+- name: create subnets
+  ec2_vpc_subnet:
+    az: '{{ aws_region }}{{ item.zone }}'
+    tags:
+      Name: '{{ resource_prefix }}_ecs_cluster-subnet-{{ item.zone }}'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    cidr: "{{ item.cidr }}"
+    state: present
+  register: setup_subnet
+  with_items:
+    - zone: a
+      cidr: 10.0.1.0/24
+    - zone: b
+      cidr: 10.0.2.0/24
+
+- name: create an internet gateway so that ECS agents can talk to ECS
+  ec2_vpc_igw:
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    state: present
+  register: igw
+
+- name: create a security group to use for creating an ec2 instance
+  ec2_group:
+    name: '{{ resource_prefix }}_ecs_cluster-sg'
+    description: 'created by Ansible integration tests'
+    state: present
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    rules: # allow all ssh traffic but nothing else
+    - ports: 22
+      cidr_ip: 0.0.0.0/0
+  register: setup_sg
+
+- set_fact:
+    # As a lookup plugin we don't have access to module_defaults
+    connection_args:
+      region: "{{ aws_region }}"
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      aws_security_token: "{{ security_token | default(omit) }}"
+  no_log: True
+
+- name: set image id fact
+  set_fact:
+    ecs_image_id: "{{ lookup('aws_ssm', '/aws/service/ecs/optimized-ami/amazon-linux-2/recommended/image_id', **connection_args) }}"
+
+- name: provision ec2 instance to create an image
+  ec2_instance:
+    key_name: '{{ ec2_keypair|default(setup_key.key.name) }}'
+    instance_type: t3.micro
+    state: present
+    image_id: '{{ ecs_image_id }}'
+    wait: yes
+    user_data: "{{ user_data }}"
+    instance_role: "{{ ecs_service_role_name }}"
+    tags:
+      Name: '{{ resource_prefix }}_ecs_agent'
+    security_group: '{{ setup_sg.group_id }}'
+    vpc_subnet_id: '{{ setup_subnet.results[0].subnet.id }}'
+  register: setup_instance
+
+- name: create target group
+  elb_target_group:
+    name: "{{ ecs_target_group_name }}1"
+    state: present
+    protocol: HTTP
+    port: 8080
+    modify_targets: no
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    target_type: instance
+    health_check_interval: 5
+    health_check_timeout: 2
+    healthy_threshold_count: 2
+    unhealthy_threshold_count: 2
+  register: elb_target_group_instance
+
+- name: create second target group to use ip target_type
+  elb_target_group:
+    name: "{{ ecs_target_group_name }}2"
+    state: present
+    protocol: HTTP
+    port: 8080
+    modify_targets: no
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    target_type: ip
+    health_check_interval: 5
+    health_check_timeout: 2
+    healthy_threshold_count: 2
+    unhealthy_threshold_count: 2
+  register: elb_target_group_ip
+
+- name: create load balancer
+  elb_application_lb:
+    name: "{{ ecs_load_balancer_name }}"
+    state: present
+    scheme: internal
+    security_groups: '{{ setup_sg.group_id }}'
+    subnets: "{{ setup_subnet.results | map(attribute='subnet.id') | list }}"
+    listeners:
+      - Protocol: HTTP
+        Port: 80
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: "{{ ecs_target_group_name }}1"
+      - Protocol: HTTP
+        Port: 81
+        DefaultActions:
+          - Type: forward
+            TargetGroupName: "{{ ecs_target_group_name }}2"

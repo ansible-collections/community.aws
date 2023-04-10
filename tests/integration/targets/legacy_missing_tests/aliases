@@ -5,9 +5,6 @@ application_scaling_policy
 batch_compute_environment
 batch_job_definition
 batch_job_queue
-cloudfront_distribution_info
-cloudfront_invalidation
-cloudfront_origin_access_identity
 data_pipeline
 directconnect_confirm_connection
 directconnect_connection

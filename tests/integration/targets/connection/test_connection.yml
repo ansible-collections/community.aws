@@ -6,10 +6,18 @@
     local_file: '{{ local_dir }}/汉语.txt'
     remote_dir: '{{ remote_tmp }}-汉语'
     remote_file: '{{ remote_dir }}/汉语.txt'
+    remote_empty_file: '{{ remote_dir }}/empty.txt'
   tasks:
 
   ### test wait_for_connection plugin
+
   - wait_for_connection:
+      timeout: '{{ wait_for_timeout | default(100) }}'
+
+  ### Try to gather the default facts from the host
+
+  - name: Gather facts
+    ansible.builtin.setup:
 
   ### raw with unicode arg and output
 
@@ -46,3 +54,39 @@
     local_action: file path={{ local_file }} state=absent
   - name: remove remote temp file
     action: "{{ action_prefix }}file path={{ remote_file }} state=absent"
+
+  ### Test that we're the user we expect to be and can change where appropriate
+  # Regression - https://github.com/ansible-collections/community.aws/issues/853
+
+  - name: Test user manipulaton
+    when:
+      - '"aws_ssm_linux" in group_names'
+    block:
+      - name: 'Find ID when become=False'
+        become: False
+        command: 'id -u -n'
+        register: id_cmd
+
+      - assert:
+          that:
+            - id_cmd.stdout == 'ssm-user'
+
+      - include_tasks: 'test_assume.yml'
+        loop:
+          - ssm-agent
+          - zuul
+          - root
+        loop_control:
+          loop_var: user_name
+  
+  ### copy an empty file
+  - name: copy an empty file
+    action: "{{ action_prefix }}copy content= dest={{ remote_empty_file }}"
+  - name: stat empty file
+    action: "{{ action_prefix }}stat path={{ remote_empty_file }}"
+    register: stat_empty_file_cmd
+  - name: check that empty file exists
+    assert:
+      that:
+        - stat_empty_file_cmd.stat.isreg # it is a regular file
+        - stat_empty_file_cmd.stat.size == 0

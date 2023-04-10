@@ -13,8 +13,6 @@
       region: null
   collections:
     - amazon.aws
-  vars:
-    ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
   block:
     # Get some information about who we are before starting our tests

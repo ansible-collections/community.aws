@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ecs_taskdefinition_info
 version_added: 1.0.0
@@ -27,20 +25,19 @@ options:
         required: true
         type: str
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
+    - amazon.aws.boto3
+"""
 
-'''
-
-EXAMPLES = '''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - community.aws.ecs_taskdefinition_info:
     task_definition: test-td
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 container_definitions:
     description: Returns a list of complex objects representing the containers
     returned: success
@@ -219,7 +216,59 @@ container_definitions:
             description: The configuration options to send to the log driver.
             returned: when present
             type: str
-
+        healthCheck:
+            description: The container health check command and associated configuration parameters for the container.
+            returned: when present
+            type: dict
+            contains:
+                command:
+                    description: A string array representing the command that the container runs to determine if it is healthy.
+                    type: list
+                interval:
+                    description: The time period in seconds between each health check execution.
+                    type: int
+                timeout:
+                    description: The time period in seconds to wait for a health check to succeed before it is considered a failure.
+                    type: int
+                retries:
+                    description: The number of times to retry a failed health check before the container is considered unhealthy.
+                    type: int
+                startPeriod:
+                    description: The optional grace period to provide containers time to bootstrap before failed.
+                    type: int
+        resourceRequirements:
+            description: The type and amount of a resource to assign to a container.
+            returned: when present
+            type: dict
+            contains:
+                value:
+                    description: The value for the specified resource type.
+                    type: str
+                type:
+                    description: The type of resource to assign to a container.
+                    type: str
+        systemControls:
+            description: A list of namespaced kernel parameters to set in the container.
+            returned: when present
+            type: dict
+            contains:
+                namespace:
+                    description: TThe namespaced kernel.
+                    type: str
+                value:
+                    description: The value for the namespaced kernel.
+                    type: str
+        firelensConfiguration:
+            description: The FireLens configuration for the container.
+            returned: when present
+            type: dict
+            contains:
+                type:
+                    description: The log router.
+                    type: str
+                options:
+                    description: The options to use when configuring the log router.
+                    type: dict
 family:
     description: The family of your task definition, used as the definition name
     returned: always
@@ -296,15 +345,16 @@ placement_constraints:
             description: A cluster query language expression to apply to the constraint.
             returned: when present
             type: str
-'''
-
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+"""
 
 try:
     import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def main():

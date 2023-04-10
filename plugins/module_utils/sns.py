@@ -1,5 +1,7 @@
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
+# -*- coding: utf-8 -*-
+
+# Copyright: Contributors to the Ansible project
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 import re
 import copy
@@ -9,9 +11,13 @@ try:
 except ImportError:
     pass  # handled by AnsibleAWSModule
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
 
 @AWSRetry.jittered_backoff()
@@ -87,12 +93,23 @@ def canonicalize_endpoint(protocol, endpoint):
     return endpoint
 
 
+def get_tags(client, module, topic_arn):
+    try:
+        return boto3_tag_list_to_ansible_dict(client.list_tags_for_resource(ResourceArn=topic_arn)['Tags'])
+    except is_boto3_error_code('AuthorizationError'):
+        module.warn("Permission denied accessing tags")
+        return {}
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg="Couldn't obtain topic tags")
+
+
 def get_info(connection, module, topic_arn):
     name = module.params.get('name')
     topic_type = module.params.get('topic_type')
     state = module.params.get('state')
     subscriptions = module.params.get('subscriptions')
     purge_subscriptions = module.params.get('purge_subscriptions')
+    content_based_deduplication = module.params.get('content_based_deduplication')
     subscriptions_existing = module.params.get('subscriptions_existing', [])
     subscriptions_deleted = module.params.get('subscriptions_deleted', [])
     subscriptions_added = module.params.get('subscriptions_added', [])
@@ -111,6 +128,7 @@ def get_info(connection, module, topic_arn):
         'subscriptions_deleted': subscriptions_deleted,
         'subscriptions_added': subscriptions_added,
         'subscriptions_purge': purge_subscriptions,
+        'content_based_deduplication': content_based_deduplication,
         'check_mode': check_mode,
         'topic_created': topic_created,
         'topic_deleted': topic_deleted,
@@ -121,5 +139,34 @@ def get_info(connection, module, topic_arn):
             info.update(camel_dict_to_snake_dict(connection.get_topic_attributes(TopicArn=topic_arn)['Attributes']))
             info['delivery_policy'] = info.pop('effective_delivery_policy')
         info['subscriptions'] = [camel_dict_to_snake_dict(sub) for sub in list_topic_subscriptions(connection, module, topic_arn)]
-
+        info["tags"] = get_tags(connection, module, topic_arn)
     return info
+
+
+def update_tags(client, module, topic_arn):
+
+    if module.params.get('tags') is None:
+        return False
+
+    existing_tags = get_tags(client, module, topic_arn)
+    to_update, to_delete = compare_aws_tags(existing_tags, module.params['tags'], module.params['purge_tags'])
+
+    if not bool(to_delete or to_update):
+        return False
+
+    if module.check_mode:
+        return True
+
+    if to_update:
+        try:
+            client.tag_resource(ResourceArn=topic_arn,
+                                Tags=ansible_dict_to_boto3_tag_list(to_update))
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't add tags to topic")
+    if to_delete:
+        try:
+            client.untag_resource(ResourceArn=topic_arn, TagKeys=to_delete)
+        except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+            module.fail_json_aws(e, msg="Couldn't remove tags from topic")
+
+    return True

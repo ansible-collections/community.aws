@@ -1,0 +1,224 @@
+- vars:
+    first_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+    second_tags:
+      'New Key with Spaces': Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    third_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+    final_tags:
+      'Key with Spaces': Value with spaces
+      CamelCaseKey: CamelCaseValue
+      pascalCaseKey: pascalCaseValue
+      snake_case_key: snake_case_value
+      'New Key with Spaces': Updated Value with spaces
+      NewCamelCaseKey: CamelCaseValue
+      newPascalCaseKey: pascalCaseValue
+      new_snake_case_key: snake_case_value
+    name_tags:
+      Name: '{{ cagw_name }}'
+  module_defaults:
+    ec2_carrier_gateway:
+      name: '{{ cagw_name }}'
+    ec2_carrier_gateway_info:
+      vpn_gateway_ids: ['{{ cagw_id }}']
+  block:
+
+  # ============================================================
+
+  - name: add tags
+    ec2_carrier_gateway:
+      tags: '{{ first_tags }}'
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info: {}
+    register: tag_cagw_info
+
+  - name: verify the tags were added
+    assert:
+      that:
+        - tag_cagw is changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( first_tags | combine(name_tags) )
+
+  - name: add tags - IDEMPOTENCY
+    ec2_carrier_gateway:
+      tags: '{{ first_tags }}'
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info: {}
+    register: tag_carrier_gateway_info
+
+  - name: verify no change
+    assert:
+      that:
+        - tag_cagw is not changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( first_tags | combine(name_tags) )
+
+  # ============================================================
+
+  - name: get VPC CAGW facts by filter
+    ec2_carrier_gateway_info:
+      filters:
+        'tag:Name': '{{ cagw_name }}'
+      vpn_gateway_ids: '{{ omit }}'
+    register: tag_cagw_info
+
+  - name: assert the facts are the same as before
+    assert:
+      that:
+        - tag_cagw_info.carrier_gateways | length == 1
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+
+  # ============================================================
+
+  - name: modify tags with purge
+    ec2_carrier_gateway:
+      tags: '{{ second_tags }}'
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify the tags were added
+    assert:
+      that:
+        - tag_cagw is changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( second_tags | combine(name_tags) )
+
+  - name: modify tags with purge - IDEMPOTENCY
+    ec2_carrier_gateway:
+      tags: '{{ second_tags }}'
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify no change
+    assert:
+      that:
+        - tag_cagw is not changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( second_tags | combine(name_tags) )
+
+  # ============================================================
+
+  - name: modify tags without purge
+    ec2_carrier_gateway:
+      tags: '{{ third_tags }}'
+      state: 'present'
+      purge_tags: False
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify the tags were added
+    assert:
+      that:
+        - tag_cagw is changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( final_tags | combine(name_tags) )
+
+  - name: modify tags without purge - IDEMPOTENCY
+    ec2_carrier_gateway:
+      tags: '{{ third_tags }}'
+      state: 'present'
+      purge_tags: False
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify no change
+    assert:
+      that:
+        - tag_cagw is not changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( final_tags | combine(name_tags) )
+
+  # ============================================================
+
+  - name: No change to tags without setting tags
+    ec2_carrier_gateway:
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify the tags were added
+    assert:
+      that:
+        - tag_cagw is not changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == ( final_tags | combine(name_tags) )
+
+  # ============================================================
+
+  - name: remove non name tags
+    ec2_carrier_gateway:
+      tags: {}
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify the tags were added
+    assert:
+      that:
+        - tag_cagw is changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == name_tags
+
+  - name: remove non name tags - IDEMPOTENCY
+    ec2_carrier_gateway:
+      tags: {}
+      state: 'present'
+    register: tag_cagw
+    check_mode: true
+  - name: get VPC CAGW facts
+    ec2_carrier_gateway_info:
+    register: tag_cagw_info
+
+  - name: verify no change
+    assert:
+      that:
+        - tag_cagw is not changed
+        - tag_cagw.carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].carrier_gateway_id == cagw_id
+        - tag_cagw_info.carrier_gateways[0].tags == name_tags

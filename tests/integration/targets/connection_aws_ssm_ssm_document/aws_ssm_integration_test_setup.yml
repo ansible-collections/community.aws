@@ -1,0 +1,7 @@
+- hosts: localhost
+  roles:
+    - role: ../setup_connection_aws_ssm
+      vars:
+        target_os: fedora
+        use_ssm_document: True
+        test_suffix: document

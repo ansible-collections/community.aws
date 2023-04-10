@@ -1,0 +1,3 @@
+---
+minor_changes:
+- "elasticache - Use the ``cache.t3.small`` node type in the example. ``cache.m1.small`` is not deprecated."

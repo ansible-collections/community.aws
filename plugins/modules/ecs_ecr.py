@@ -1,15 +1,10 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*
+# -*- coding: utf-8 -*-
 
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 ---
 module: ecs_ecr
 version_added: 1.0.0
@@ -85,16 +80,33 @@ options:
         default: false
         type: bool
         version_added: 1.3.0
+    encryption_configuration:
+        description:
+            - The encryption configuration for the repository.
+        required: false
+        suboptions:
+            encryption_type:
+                description:
+                    - The encryption type to use.
+                choices: [AES256, KMS]
+                default: 'AES256'
+                type: str
+            kms_key:
+                description:
+                    - If I(encryption_type=KMS), specify the KMS key to use for encryption.
+                    - The alias, key ID, or full ARN of the KMS key can be specified.
+                type: str
+        type: dict
+        version_added: 5.2.0
 author:
- - David M. Lee (@leedm777)
+    - David M. Lee (@leedm777)
 extends_documentation_fragment:
-- amazon.aws.aws
-- amazon.aws.ec2
-- amazon.aws.boto3
+    - amazon.aws.common.modules
+    - amazon.aws.region.modules
+    - amazon.aws.boto3
+"""
 
-'''
-
-EXAMPLES = '''
+EXAMPLES = r"""
 # If the repository does not exist, it is created. If it does exist, would not
 # affect any policies already on it.
 - name: ecr-repo
@@ -161,9 +173,16 @@ EXAMPLES = '''
   community.aws.ecs_ecr:
     name: needs-no-lifecycle-policy
     purge_lifecycle_policy: true
-'''
 
-RETURN = '''
+- name: set-encryption-configuration
+  community.aws.ecs_ecr:
+    name: uses-custom-kms-key
+    encryption_configuration:
+      encryption_type: KMS
+      kms_key: custom-kms-key-alias
+"""
+
+RETURN = r"""
 state:
     type: str
     description: The asserted state of the repository (present, absent)
@@ -191,7 +210,7 @@ repository:
         repositoryArn: arn:aws:ecr:us-east-1:123456789012:repository/ecr-test-1484664090
         repositoryName: ecr-test-1484664090
         repositoryUri: 123456789012.dkr.ecr.us-east-1.amazonaws.com/ecr-test-1484664090
-'''
+"""
 
 import json
 import traceback
@@ -201,12 +220,14 @@ try:
 except ImportError:
     pass  # Handled by AnsibleAWSModule
 
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 from ansible.module_utils.six import string_types
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto_exception
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import boto_exception
+from ansible_collections.amazon.aws.plugins.module_utils.policy import compare_policies
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def build_kwargs(registry_id):
@@ -248,17 +269,21 @@ class EcsEcr:
         except is_boto3_error_code(['RepositoryNotFoundException', 'RepositoryPolicyNotFoundException']):
             return None
 
-    def create_repository(self, registry_id, name, image_tag_mutability):
+    def create_repository(self, registry_id, name, image_tag_mutability, encryption_configuration):
         if registry_id:
             default_registry_id = self.sts.get_caller_identity().get('Account')
             if registry_id != default_registry_id:
                 raise Exception('Cannot create repository in registry {0}.'
                                 'Would be created in {1} instead.'.format(registry_id, default_registry_id))
 
+        if encryption_configuration is None:
+            encryption_configuration = dict(encryptionType='AES256')
+
         if not self.check_mode:
             repo = self.ecr.create_repository(
                 repositoryName=name,
-                imageTagMutability=image_tag_mutability).get('repository')
+                imageTagMutability=image_tag_mutability,
+                encryptionConfiguration=encryption_configuration).get('repository')
             self.changed = True
             return repo
         else:
@@ -411,6 +436,7 @@ def run(ecr, params):
         lifecycle_policy_text = params['lifecycle_policy']
         purge_lifecycle_policy = params['purge_lifecycle_policy']
         scan_on_push = params['scan_on_push']
+        encryption_configuration = snake_dict_to_camel_dict(params['encryption_configuration'])
 
         # Parse policies, if they are given
         try:
@@ -437,10 +463,16 @@ def run(ecr, params):
             result['created'] = False
 
             if not repo:
-                repo = ecr.create_repository(registry_id, name, image_tag_mutability)
+                repo = ecr.create_repository(
+                    registry_id, name, image_tag_mutability, encryption_configuration)
                 result['changed'] = True
                 result['created'] = True
             else:
+                if encryption_configuration is not None:
+                    if repo.get('encryptionConfiguration') != encryption_configuration:
+                        result['msg'] = 'Cannot modify repository encryption type'
+                        return False, result
+
                 repo = ecr.put_image_tag_mutability(registry_id, name, image_tag_mutability)
             result['repository'] = repo
 
@@ -550,7 +582,18 @@ def main():
         purge_policy=dict(required=False, type='bool'),
         lifecycle_policy=dict(required=False, type='json'),
         purge_lifecycle_policy=dict(required=False, type='bool'),
-        scan_on_push=(dict(required=False, type='bool', default=False))
+        scan_on_push=(dict(required=False, type='bool', default=False)),
+        encryption_configuration=dict(
+            required=False,
+            type='dict',
+            options=dict(
+                encryption_type=dict(required=False, type='str', default='AES256', choices=['AES256', 'KMS']),
+                kms_key=dict(required=False, type='str', no_log=False),
+            ),
+            required_if=[
+                ['encryption_type', 'KMS', ['kms_key']],
+            ],
+        ),
     )
     mutually_exclusive = [
         ['policy', 'purge_policy'],

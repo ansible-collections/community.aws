@@ -1,11 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
+# Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: iam_role
 version_added: 1.0.0
@@ -58,9 +57,9 @@ options:
   purge_policies:
     description:
       - When I(purge_policies=true) any managed policies not listed in I(managed_policies) will be detatched.
-      - By default I(purge_policies=true).  In a release after 2022-06-01 this will be changed to I(purge_policies=false).
     type: bool
     aliases: ['purge_policy', 'purge_managed_policies']
+    default: true
   state:
     description:
       - Create or remove the IAM role.
@@ -91,13 +90,13 @@ options:
     default: True
     type: bool
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
-  - amazon.aws.boto3
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.tags
-'''
+  - amazon.aws.boto3
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create a role with description and tags
@@ -127,8 +126,8 @@ EXAMPLES = r'''
     assume_role_policy_document: "{{ lookup('file', 'policy.json') }}"
     state: absent
 
-'''
-RETURN = r'''
+"""
+RETURN = r"""
 iam_role:
     description: dictionary containing the IAM Role data
     returned: success
@@ -160,8 +159,12 @@ iam_role:
             returned: always
             sample: "2016-08-14T04:36:28+00:00"
         assume_role_policy_document:
-            description: the policy that grants an entity permission to assume the role
-            type: str
+            description:
+              - the policy that grants an entity permission to assume the role
+              - |
+                note: the case of keys in this dictionary are currently converted from CamelCase to
+                snake_case.  In a release after 2023-12-01 this behaviour will change
+            type: dict
             returned: always
             sample: {
                         'statement': [
@@ -176,6 +179,25 @@ iam_role:
                         ],
                         'version': '2012-10-17'
                     }
+        assume_role_policy_document_raw:
+            description: the policy that grants an entity permission to assume the role
+            type: dict
+            returned: always
+            version_added: 5.3.0
+            sample: {
+                        'Statement': [
+                            {
+                                'Action': 'sts:AssumeRole',
+                                'Effect': 'Allow',
+                                'Principal': {
+                                    'Service': 'ec2.amazonaws.com'
+                                },
+                                'Sid': ''
+                            }
+                        ],
+                        'Version': '2012-10-17'
+                    }
+
         attached_policies:
             description: a list of dicts containing the name and ARN of the managed IAM policies attached to the role
             type: list
@@ -191,7 +213,7 @@ iam_role:
             type: dict
             returned: always
             sample: '{"Env": "Prod"}'
-'''
+"""
 
 import json
 
@@ -202,13 +224,14 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.core import is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import AWSRetry
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_aws_tags
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.policy import compare_policies
+from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 @AWSRetry.jittered_backoff()
@@ -448,8 +471,6 @@ def create_or_update_role(module, client):
     purge_tags = module.params.get('purge_tags')
     tags = ansible_dict_to_boto3_tag_list(module.params.get('tags')) if module.params.get('tags') else None
     purge_policies = module.params.get('purge_policies')
-    if purge_policies is None:
-        purge_policies = True
     managed_policies = module.params.get('managed_policies')
     if managed_policies:
         # Attempt to list the policies early so we don't leave things behind if we can't find them.
@@ -500,6 +521,7 @@ def create_or_update_role(module, client):
     role['tags'] = get_role_tags(module, client)
 
     camel_role = camel_dict_to_snake_dict(role, ignore_list=['tags'])
+    camel_role["assume_role_policy_document_raw"] = role.get("AssumeRolePolicyDocument", {})
     module.exit_json(changed=changed, iam_role=camel_role, **camel_role)
 
 
@@ -665,7 +687,7 @@ def main():
         boundary=dict(type='str', aliases=['boundary_policy_arn']),
         create_instance_profile=dict(type='bool', default=True),
         delete_instance_profile=dict(type='bool', default=False),
-        purge_policies=dict(type='bool', aliases=['purge_policy', 'purge_managed_policies']),
+        purge_policies=dict(default=True, type='bool', aliases=['purge_policy', 'purge_managed_policies']),
         tags=dict(type='dict', aliases=['resource_tags']),
         purge_tags=dict(type='bool', default=True),
         wait=dict(type='bool', default=True),
@@ -676,9 +698,15 @@ def main():
                               required_if=[('state', 'present', ['assume_role_policy_document'])],
                               supports_check_mode=True)
 
-    if module.params.get('purge_policies') is None:
-        module.deprecate('After 2022-06-01 the default value of purge_policies will change from true to false.'
-                         '  To maintain the existing behaviour explicitly set purge_policies=true', date='2022-06-01', collection_name='community.aws')
+    module.deprecate("All return values other than iam_role and changed have been deprecated and "
+                     "will be removed in a release after 2023-12-01.",
+                     date="2023-12-01", collection_name="community.aws")
+
+    module.deprecate("In a release after 2023-12-01 the contents of iam_role.assume_role_policy_document "
+                     "will no longer be converted from CamelCase to snake_case.  The "
+                     "iam_role.assume_role_policy_document_raw return value already returns the "
+                     "policy document in this future format.",
+                     date="2023-12-01", collection_name="community.aws")
 
     if module.params.get('boundary'):
         if module.params.get('create_instance_profile'):

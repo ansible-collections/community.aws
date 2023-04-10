@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright (c) 2017 Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: eks_cluster
 version_added: 1.0.0
@@ -45,6 +43,11 @@ options:
       - present
     default: present
     type: str
+  tags:
+    description:
+      - A dictionary of tags to add the EKS cluster.
+    type: dict
+    version_added: 5.3.0
   wait:
     description: >-
       Specifies whether the module waits until the cluster is active or deleted
@@ -58,13 +61,12 @@ options:
     default: 1200
     type: int
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
+"""
 
-'''
-
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 
 - name: Create an EKS cluster
@@ -84,9 +86,9 @@ EXAMPLES = r'''
     name: my_cluster
     wait: true
     state: absent
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 arn:
   description: ARN of the EKS cluster
   returned: when state is present
@@ -158,17 +160,20 @@ version:
   returned: when state is present
   type: str
   sample: '1.10'
-'''
-
-
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule, is_boto3_error_code
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import camel_dict_to_snake_dict, get_ec2_security_group_ids_from_names
-from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
+"""
 
 try:
-    import botocore.exceptions
+    import botocore
 except ImportError:
     pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
+from ansible_collections.amazon.aws.plugins.module_utils.waiters import get_waiter
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
 def ensure_present(client, module):
@@ -211,6 +216,8 @@ def ensure_present(client, module):
                       )
         if module.params['version']:
             params['version'] = module.params['version']
+        if module.params['tags']:
+            params['tags'] = module.params['tags']
         cluster = client.create_cluster(**params)['cluster']
     except botocore.exceptions.EndpointConnectionError as e:
         module.fail_json(msg="Region %s is not supported by EKS" % client.meta.region_name)
@@ -275,6 +282,7 @@ def main():
         subnets=dict(type='list', elements='str'),
         security_groups=dict(type='list', elements='str'),
         state=dict(choices=['absent', 'present'], default='present'),
+        tags=dict(type='dict', required=False),
         wait=dict(default=False, type='bool'),
         wait_timeout=dict(default=1200, type='int')
     )

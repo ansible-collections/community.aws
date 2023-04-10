@@ -1,11 +1,10 @@
 #!/usr/bin/python
-# This file is part of Ansible
+# -*- coding: utf-8 -*-
+
+# Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
-
-DOCUMENTATION = r'''
+DOCUMENTATION = r"""
 ---
 module: ecs_service
 version_added: 1.0.0
@@ -44,7 +43,7 @@ options:
     task_definition:
         description:
           - The task definition the service will run.
-          - This parameter is required when I(state=present).
+          - This parameter is required when I(state=present) unless I(force_new_deployment=True).
           - This parameter is ignored when updating a service with a C(CODE_DEPLOY) deployment controller in which case
             the task definition is managed by Code Pipeline and cannot be updated.
         required: false
@@ -132,6 +131,13 @@ options:
               rollback:
                 type: bool
                 description: If enabled, ECS will roll back your service to the last completed deployment after a failure.
+    enable_execute_command:
+        description:
+          - Whether or not to enable the execute command functionality for the containers in the ECS task.
+          - If I(enable_execute_command=true) execute command functionality is enabled on all containers in the ECS task.
+        required: false
+        type: bool
+        version_added: 5.4.0
     placement_constraints:
         description:
           - The placement constraints for the tasks in the service.
@@ -148,6 +154,14 @@ options:
             description: A cluster query language expression to apply to the constraint.
             required: false
             type: str
+    purge_placement_constraints:
+        version_added: 5.3.0
+        description:
+            - Toggle overwriting of existing placement constraints. This is needed for backwards compatibility.
+            - By default I(purge_placement_constraints=false). In a release after 2024-06-01 this will be changed to I(purge_placement_constraints=true).
+        required: false
+        type: bool
+        default: false
     placement_strategy:
         description:
           - The placement strategy objects to use for tasks in your service. You can specify a maximum of 5 strategy rules per service.
@@ -162,6 +176,14 @@ options:
           field:
             description: The field to apply the placement strategy against.
             type: str
+    purge_placement_strategy:
+        version_added: 5.3.0
+        description:
+            - Toggle overwriting of existing placement strategy. This is needed for backwards compatibility.
+            - By default I(purge_placement_strategy=false). In a release after 2024-06-01 this will be changed to I(purge_placement_strategy=true).
+        required: false
+        type: bool
+        default: false
     force_deletion:
         description:
           - Forcibly delete the service. Required when deleting a service with >0 scale, or no target group.
@@ -274,12 +296,12 @@ options:
         required: false
         version_added: 4.1.0
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = r'''
+EXAMPLES = r"""
 # Note: These examples do not set authentication details, see the AWS Guide for details.
 # Basic provisioning example
 - community.aws.ecs_service:
@@ -361,9 +383,9 @@ EXAMPLES = r'''
       Firstname: jane
       lastName: doe
     propagate_tags: SERVICE
-'''
+"""
 
-RETURN = r'''
+RETURN = r"""
 service:
     description: Details of created service.
     returned: when creating a service
@@ -396,7 +418,9 @@ service:
             returned: always
             type: int
         loadBalancers:
-            description: A list of load balancer objects
+            description:
+                - A list of load balancer objects
+                - Updating the loadbalancer configuration of an existing service requires botocore>=1.24.14.
             returned: always
             type: complex
             contains:
@@ -653,8 +677,24 @@ ansible_facts:
                     returned: always
                     type: str
 
-'''
+"""
+
 import time
+
+try:
+    import botocore
+except ImportError:
+    pass  # caught by AnsibleAWSModule
+
+from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
+from ansible_collections.amazon.aws.plugins.module_utils.transformation import map_complex_type
+
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+
 
 DEPLOYMENT_CONTROLLER_TYPE_MAP = {
     'type': 'str',
@@ -665,19 +705,6 @@ DEPLOYMENT_CONFIGURATION_TYPE_MAP = {
     'minimum_healthy_percent': 'int',
     'deployment_circuit_breaker': 'dict',
 }
-
-from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
-
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import map_complex_type
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_ec2_security_group_ids_from_names
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import ansible_dict_to_boto3_tag_list
-from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
-
-try:
-    import botocore
-except ImportError:
-    pass  # caught by AnsibleAWSModule
 
 
 class EcsServiceManager:
@@ -758,6 +785,9 @@ class EcsServiceManager:
         if boto3_tag_list_to_ansible_dict(existing.get('tags', [])) != (expected['tags'] or {}):
             return False
 
+        if (expected["enable_execute_command"] or False) != existing.get("enableExecuteCommand", False):
+            return False
+
         # expected is params. DAEMON scheduling strategy returns desired count equal to
         # number of instances running; don't check desired count if scheduling strat is daemon
         if (expected['scheduling_strategy'] != 'DAEMON'):
@@ -766,11 +796,30 @@ class EcsServiceManager:
 
         return True
 
-    def create_service(self, service_name, cluster_name, task_definition, load_balancers,
-                       desired_count, client_token, role, deployment_controller, deployment_configuration,
-                       placement_constraints, placement_strategy, health_check_grace_period_seconds,
-                       network_configuration, service_registries, launch_type, platform_version,
-                       scheduling_strategy, capacity_provider_strategy, tags, propagate_tags):
+    def create_service(
+        self,
+        service_name,
+        cluster_name,
+        task_definition,
+        load_balancers,
+        desired_count,
+        client_token,
+        role,
+        deployment_controller,
+        deployment_configuration,
+        placement_constraints,
+        placement_strategy,
+        health_check_grace_period_seconds,
+        network_configuration,
+        service_registries,
+        launch_type,
+        platform_version,
+        scheduling_strategy,
+        capacity_provider_strategy,
+        tags,
+        propagate_tags,
+        enable_execute_command,
+    ):
 
         params = dict(
             cluster=cluster_name,
@@ -816,17 +865,50 @@ class EcsServiceManager:
 
         if scheduling_strategy:
             params['schedulingStrategy'] = scheduling_strategy
+        if enable_execute_command:
+            params["enableExecuteCommand"] = enable_execute_command
+
         response = self.ecs.create_service(**params)
         return self.jsonize(response['service'])
 
-    def update_service(self, service_name, cluster_name, task_definition,
-                       desired_count, deployment_configuration, network_configuration,
-                       health_check_grace_period_seconds, force_new_deployment, capacity_provider_strategy):
+    def update_service(
+        self,
+        service_name,
+        cluster_name,
+        task_definition,
+        desired_count,
+        deployment_configuration,
+        placement_constraints,
+        placement_strategy,
+        network_configuration,
+        health_check_grace_period_seconds,
+        force_new_deployment,
+        capacity_provider_strategy,
+        load_balancers,
+        purge_placement_constraints,
+        purge_placement_strategy,
+        enable_execute_command,
+    ):
         params = dict(
             cluster=cluster_name,
             service=service_name,
             taskDefinition=task_definition,
             deploymentConfiguration=deployment_configuration)
+        # filter placement_constraint and left only those where value is not None
+        # use-case: `distinctInstance` type should never contain `expression`, but None will fail `str` type validation
+        if placement_constraints:
+            params['placementConstraints'] = [{key: value for key, value in constraint.items() if value is not None}
+                                              for constraint in placement_constraints]
+
+        if purge_placement_constraints and not placement_constraints:
+            params['placementConstraints'] = []
+
+        if placement_strategy:
+            params['placementStrategy'] = placement_strategy
+
+        if purge_placement_strategy and not placement_strategy:
+            params['placementStrategy'] = []
+
         if network_configuration:
             params['networkConfiguration'] = network_configuration
         if force_new_deployment:
@@ -838,8 +920,14 @@ class EcsServiceManager:
         # desired count is not required if scheduling strategy is daemon
         if desired_count is not None:
             params['desiredCount'] = desired_count
+        if enable_execute_command is not None:
+            params["enableExecuteCommand"] = enable_execute_command
+
+        if load_balancers:
+            params['loadBalancers'] = load_balancers
 
         response = self.ecs.update_service(**params)
+
         return self.jsonize(response['service'])
 
     def jsonize(self, service):
@@ -894,6 +982,7 @@ def main():
                 expression=dict(required=False, type='str')
             )
         ),
+        purge_placement_constraints=dict(required=False, default=False, type='bool'),
         placement_strategy=dict(
             required=False,
             default=[],
@@ -904,6 +993,7 @@ def main():
                 field=dict(type='str'),
             )
         ),
+        purge_placement_strategy=dict(required=False, default=False, type='bool'),
         health_check_grace_period_seconds=dict(required=False, type='int'),
         network_configuration=dict(required=False, type='dict', options=dict(
             subnets=dict(type='list', elements='str'),
@@ -925,20 +1015,22 @@ def main():
                 base=dict(type='int')
             )
         ),
-        propagate_tags=dict(required=False, choices=['TASK_DEFINITION', 'SERVICE']),
-        tags=dict(required=False, type='dict'),
+        propagate_tags=dict(required=False, choices=["TASK_DEFINITION", "SERVICE"]),
+        tags=dict(required=False, type="dict"),
+        enable_execute_command=dict(required=False, type="bool"),
     )
 
     module = AnsibleAWSModule(argument_spec=argument_spec,
                               supports_check_mode=True,
-                              required_if=[('state', 'present', ['task_definition']),
-                                           ('launch_type', 'FARGATE', ['network_configuration'])],
+                              required_if=[('launch_type', 'FARGATE', ['network_configuration'])],
                               required_together=[['load_balancers', 'role']],
                               mutually_exclusive=[['launch_type', 'capacity_provider_strategy']])
 
-    if module.params['state'] == 'present' and module.params['scheduling_strategy'] == 'REPLICA':
-        if module.params['desired_count'] is None:
+    if module.params['state'] == 'present':
+        if module.params['scheduling_strategy'] == 'REPLICA' and module.params['desired_count'] is None:
             module.fail_json(msg='state is present, scheduling_strategy is REPLICA; missing desired_count')
+        if module.params['task_definition'] is None and not module.params['force_new_deployment']:
+            module.fail_json(msg='Either task_definition or force_new_deployment is required when status is present.')
 
     if len(module.params['capacity_provider_strategy']) > 6:
         module.fail_json(msg='AWS allows a maximum of six capacity providers in the strategy.')
@@ -1017,7 +1109,8 @@ def main():
                         if 'capacityProviderStrategy' in existing.keys():
                             module.fail_json(msg="It is not possible to change an existing service from capacity_provider_strategy to launch_type.")
                     if (existing['loadBalancers'] or []) != loadBalancers:
-                        if existing['deploymentController']['type'] != 'CODE_DEPLOY':
+                        # fails if deployment type is not CODE_DEPLOY or ECS
+                        if existing['deploymentController']['type'] not in ['CODE_DEPLOY', 'ECS']:
                             module.fail_json(msg="It is not possible to update the load balancers of an existing service")
 
                     if existing.get('deploymentController', {}).get('type', None) == 'CODE_DEPLOY':
@@ -1032,42 +1125,59 @@ def main():
                     if module.params['tags'] and boto3_tag_list_to_ansible_dict(existing['tags']) != module.params['tags']:
                         module.fail_json(msg="It is not currently supported to change tags of an existing service")
 
-                    # update required
-                    response = service_mgr.update_service(module.params['name'],
-                                                          module.params['cluster'],
-                                                          task_definition,
-                                                          module.params['desired_count'],
-                                                          deploymentConfiguration,
-                                                          network_configuration,
-                                                          module.params['health_check_grace_period_seconds'],
-                                                          module.params['force_new_deployment'],
-                                                          capacityProviders,
-                                                          )
+                    updatedLoadBalancers = loadBalancers if existing['deploymentController']['type'] == 'ECS' else []
+
+                    if task_definition is None and module.params['force_new_deployment']:
+                        task_definition = existing['taskDefinition']
+
+                    try:
+                        # update required
+                        response = service_mgr.update_service(
+                            module.params["name"],
+                            module.params["cluster"],
+                            task_definition,
+                            module.params["desired_count"],
+                            deploymentConfiguration,
+                            module.params["placement_constraints"],
+                            module.params["placement_strategy"],
+                            network_configuration,
+                            module.params["health_check_grace_period_seconds"],
+                            module.params["force_new_deployment"],
+                            capacityProviders,
+                            updatedLoadBalancers,
+                            module.params["purge_placement_constraints"],
+                            module.params["purge_placement_strategy"],
+                            module.params["enable_execute_command"],
+                        )
+                    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
+                        module.fail_json_aws(e, msg="Couldn't create service")
 
                 else:
                     try:
-                        response = service_mgr.create_service(module.params['name'],
-                                                              module.params['cluster'],
-                                                              module.params['task_definition'],
-                                                              loadBalancers,
-                                                              module.params['desired_count'],
-                                                              clientToken,
-                                                              role,
-                                                              deploymentController,
-                                                              deploymentConfiguration,
-                                                              module.params['placement_constraints'],
-                                                              module.params['placement_strategy'],
-                                                              module.params['health_check_grace_period_seconds'],
-                                                              network_configuration,
-                                                              serviceRegistries,
-                                                              module.params['launch_type'],
-                                                              module.params['platform_version'],
-                                                              module.params['scheduling_strategy'],
-                                                              capacityProviders,
-                                                              module.params['tags'],
-                                                              module.params['propagate_tags'],
-                                                              )
-                    except botocore.exceptions.ClientError as e:
+                        response = service_mgr.create_service(
+                            module.params["name"],
+                            module.params["cluster"],
+                            module.params["task_definition"],
+                            loadBalancers,
+                            module.params["desired_count"],
+                            clientToken,
+                            role,
+                            deploymentController,
+                            deploymentConfiguration,
+                            module.params["placement_constraints"],
+                            module.params["placement_strategy"],
+                            module.params["health_check_grace_period_seconds"],
+                            network_configuration,
+                            serviceRegistries,
+                            module.params["launch_type"],
+                            module.params["platform_version"],
+                            module.params["scheduling_strategy"],
+                            capacityProviders,
+                            module.params["tags"],
+                            module.params["propagate_tags"],
+                            module.params["enable_execute_command"],
+                        )
+                    except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
                         module.fail_json_aws(e, msg="Couldn't create service")
 
                 if response.get('tags', None):

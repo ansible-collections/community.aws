@@ -1,0 +1,324 @@
+- name: Announce teardown start
+  debug:
+    msg: "***** TESTING COMPLETE. COMMENCE TEARDOWN *****"
+
+- name: remove setup ec2 instance
+  ec2_instance:
+    instance_ids: '{{ setup_instance.instance_ids }}'
+    state: absent
+    wait: true
+  ignore_errors: true
+
+- name: obtain ECS service facts
+  ecs_service_info:
+    service: "{{ ecs_service_name }}"
+    cluster: "{{ ecs_cluster_name }}"
+    details: true
+  register: ecs_service_info
+  ignore_errors: true
+
+- name: scale down ECS service
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_service_info.services[0].taskDefinition }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    placement_strategy: "{{ ecs_service_placement_strategy }}"
+    load_balancers:
+      - targetGroupArn: "{{ ecs_service_info.services[0].loadBalancers[0].targetGroupArn }}"
+        containerName: "{{ ecs_task_name }}"
+        containerPort: "{{ ecs_task_container_port }}"
+  ignore_errors: true
+  register: ecs_service_scale_down
+
+- name: obtain second ECS service facts
+  ecs_service_info:
+    service: "{{ ecs_service_name }}2"
+    cluster: "{{ ecs_cluster_name }}"
+    details: true
+  ignore_errors: true
+  register: ecs_service_info
+
+- name: scale down second ECS service
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}2"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_service_info.services[0].taskDefinition }}"
+    desired_count: 0
+    deployment_configuration: "{{ ecs_service_deployment_configuration }}"
+    placement_strategy: "{{ ecs_service_placement_strategy }}"
+    load_balancers:
+      - targetGroupArn: "{{ ecs_service_info.services[0].loadBalancers[0].targetGroupArn }}"
+        containerName: "{{ ecs_task_name }}"
+        containerPort: "{{ ecs_task_container_port }}"
+  ignore_errors: true
+  register: ecs_service_scale_down
+
+- name: scale down multifunction-test service
+  ecs_service:
+    name: "{{ ecs_service_name }}-mft"
+    cluster: "{{ ecs_cluster_name }}"
+    state: present
+    load_balancers:
+      - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+        containerName: "{{ ecs_task_name }}"
+        containerPort: "{{ ecs_task_container_port }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+  ignore_errors: true
+  register: ecs_service_scale_down
+
+- name: scale down scheduling_strategy service
+  ecs_service:
+    name: "{{ ecs_service_name }}-replica"
+    cluster: "{{ ecs_cluster_name }}"
+    state: present
+    load_balancers:
+      - targetGroupArn: "{{ elb_target_group_instance.target_group_arn }}"
+        containerName: "{{ ecs_task_name }}"
+        containerPort: "{{ ecs_task_container_port }}"
+    task_definition: "{{ ecs_task_name }}:{{ ecs_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+  ignore_errors: true
+  register: ecs_service_scale_down
+
+- name: scale down Fargate ECS service
+  ecs_service:
+    state: present
+    name: "{{ ecs_service_name }}4"
+    cluster: "{{ ecs_cluster_name }}"
+    task_definition: "{{ ecs_task_name }}-vpc:{{ ecs_fargate_task_definition.taskdefinition.revision }}"
+    desired_count: 0
+  ignore_errors: true
+  register: ecs_service_scale_down
+
+- name: stop Fargate ECS tasks
+  ecs_task:
+    task: "{{ item.task[0].taskArn }}"
+    task_definition: "{{ ecs_task_name }}-vpc"
+    operation: stop
+    cluster: "{{ ecs_cluster_name }}"
+    wait: true
+  ignore_errors: true
+  with_items:
+    - "{{ fargate_run_task_output }}"
+    - "{{ fargate_run_task_output_with_tags }}"
+    - "{{ fargate_run_task_output_with_assign_ip }}"
+    - "{{ fargate_run_task_output_with_tags_fail }}"
+
+- name: remove ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove second ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}2"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove mft ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}-mft"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove constraints ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}-constraint"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove strategy ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}-strategy"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove scheduling_strategy ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}-replica"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove load balancer ecs service
+  ecs_service:
+    state: absent
+    cluster: "{{ ecs_cluster_name }}"
+    name: "{{ ecs_service_name }}-lb"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+
+- name: remove fargate ECS service
+  ecs_service:
+    state: absent
+    name: "{{ ecs_service_name }}4"
+    cluster: "{{ ecs_cluster_name }}"
+    force_deletion: true
+    wait: true
+  ignore_errors: true
+  register: ecs_fargate_service_network_with_awsvpc
+
+- name: remove ecs task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}"
+    revision: "{{ ecs_task_definition.taskdefinition.revision }}"
+    state: absent
+  vars:
+    ecs_task_host_port: 8080
+  ignore_errors: true
+
+- name: remove ecs task definition again
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}"
+    revision: "{{ ecs_task_definition_again.taskdefinition.revision }}"
+    state: absent
+  vars:
+    ecs_task_host_port: 8080
+  ignore_errors: true
+
+- name: remove second ecs task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-vpc"
+    revision: "{{ ecs_task_definition_vpc_with_host_port.taskdefinition.revision }}"
+    state: absent
+  vars:
+    ecs_task_host_port: 8080
+  ignore_errors: true
+
+- name: remove fargate ecs task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_fargate_task_containers }}"
+    family: "{{ ecs_task_name }}-vpc"
+    revision: "{{ ecs_fargate_task_definition.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+
+- name: remove ec2 ecs task definition
+  ecs_taskdefinition:
+    containers: "{{ ecs_fargate_task_containers }}"
+    family: "{{ ecs_task_name }}-vpc"
+    revision: "{{ ecs_ec2_task_definition.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+
+- name: remove ecs task definition for absent with arn
+  ecs_taskdefinition:
+    containers: "{{ ecs_task_containers }}"
+    family: "{{ ecs_task_name }}-absent"
+    revision: "{{ ecs_task_definition_absent_with_arn.taskdefinition.revision }}"
+    state: absent
+  ignore_errors: true
+
+- name: remove load balancer
+  elb_application_lb:
+    name: "{{ ecs_load_balancer_name }}"
+    state: absent
+    wait: true
+  ignore_errors: true
+  register: elb_application_lb_remove
+
+- name: remove setup keypair
+  ec2_key:
+    name: '{{ resource_prefix }}_ecs_cluster'
+    state: absent
+  ignore_errors: true
+
+- name: remove ECS cluster
+  with_items:
+    - "{{ ecs_cluster_name }}"
+    - "{{ ecs_cluster_name }}-cps"
+  ecs_cluster:
+    name: "{{ item }}"
+    state: absent
+  ignore_errors: true
+  register: this_deletion
+
+- name: remove security groups
+  ec2_group:
+    name: '{{ item }}'
+    description: 'created by Ansible integration tests'
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  with_items:
+    - '{{ resource_prefix }}_ecs_cluster-sg'
+  ignore_errors: true
+  register: this_deletion
+  retries: 10
+  delay: 10
+  until: this_deletion is not failed
+
+- name: remove target groups
+  elb_target_group:
+    name: "{{ item }}"
+    state: absent
+  with_items:
+    - "{{ ecs_target_group_name }}1"
+    - "{{ ecs_target_group_name }}2"
+  ignore_errors: true
+
+- name: remove IGW
+  ec2_vpc_igw:
+    state: absent
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+  ignore_errors: true
+
+- name: remove setup subnet
+  ec2_vpc_subnet:
+    az: '{{ aws_region }}{{ item.zone }}'
+    vpc_id: '{{ setup_vpc.vpc.id }}'
+    cidr: "{{ item.cidr}}"
+    state: absent
+  with_items:
+    - zone: a
+      cidr: 10.0.1.0/24
+    - zone: b
+      cidr: 10.0.2.0/24
+  ignore_errors: true
+
+- name: remove setup VPC
+  ec2_vpc_net:
+    cidr_block: 10.0.0.0/16
+    state: absent
+    name: '{{ resource_prefix }}_ecs_cluster'
+  ignore_errors: true
+
+- name: Delete IAM service role
+  iam_role:
+    name: '{{ ecs_service_role_name }}'
+    state: absent
+    delete_instance_profile: True
+  ignore_errors: true
+
+- name: Delete IAM task execution role
+  iam_role:
+    name: '{{ ecs_task_role_name }}'
+    state: absent
+    delete_instance_profile: True
+  ignore_errors: true

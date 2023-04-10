@@ -1,12 +1,10 @@
 #!/usr/bin/python
+# -*- coding: utf-8 -*-
+
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
-__metaclass__ = type
-
-
-DOCUMENTATION = '''
+DOCUMENTATION = r"""
 module: ec2_transit_gateway_vpc_attachment_info
 short_description: describes AWS Transit Gateway VPC attachments
 version_added: 4.0.0
@@ -39,33 +37,31 @@ options:
     type: bool
     required: false
     default: false
-author: "Mark Chappell (@tremble)"
+author:
+  - "Mark Chappell (@tremble)"
 extends_documentation_fragment:
-  - amazon.aws.aws
-  - amazon.aws.ec2
+  - amazon.aws.common.modules
+  - amazon.aws.region.modules
   - amazon.aws.boto3
-'''
+"""
 
-EXAMPLES = '''
+EXAMPLES = r"""
 # Describe a specific Transit Gateway attachment.
 - community.aws.ec2_transit_gateway_vpc_attachment_info:
-    state: present
     id: 'tgw-attach-0123456789abcdef0'
 
 # Describe all attachments attached to a transit gateway.
 - community.aws.ec2_transit_gateway_vpc_attachment_info:
-    state: present
     filters:
       transit-gateway-id: tgw-0fedcba9876543210'
 
 # Describe all attachments in an account.
 - community.aws.ec2_transit_gateway_vpc_attachment_info:
-    state: present
     filters:
       transit-gateway-id: tgw-0fedcba9876543210'
-'''
+"""
 
-RETURN = '''
+RETURN = r"""
 transit_gateway_attachments:
   description: The attributes of the Transit Gateway attachments.
   type: list
@@ -144,11 +140,9 @@ transit_gateway_attachments:
       type: str
       returned: success
       example: '123456789012'
-'''
+"""
 
-
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
-
+from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.community.aws.plugins.module_utils.transitgateway import TransitGatewayVpcAttachmentManager
 
 
