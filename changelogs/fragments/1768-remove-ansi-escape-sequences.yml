@@ -1,0 +1,2 @@
+bugfixes:
+  - aws_ssm - remove ansi escape sequences to fix issue with amazone linux 2003 and others (https://github.com/ansible-collections/community.aws/issues/1756)
