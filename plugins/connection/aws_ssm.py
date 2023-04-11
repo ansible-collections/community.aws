@@ -742,7 +742,11 @@ class Connection(ConnectionBase):
             line = line.replace("\r\r\n", "\n")
             if len(line) == 201:
                 line = line[:-1]
-
+                
+        # Remove ansi escape sequences:
+        ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+        line = ansi_escape.sub('', line)
+        
         return line
 
     def _flush_stderr(self, session_process):
