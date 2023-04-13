@@ -168,14 +168,8 @@
         tags:
           Name: "{{ resource_prefix }}-inst"
         user_data: |
-          #cloud-config
-          package_upgrade: true
-          package_update: true
-          packages:
-            - httpd
-          runcmd:
-            - "service httpd start"
-            - echo "HELLO ANSIBLE" > /var/www/html/index.html
+          #!/bin/bash
+          sudo nohup python3 -m http.server 80 &
       register: ec2
 
     - set_fact:
