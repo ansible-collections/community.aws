@@ -86,6 +86,24 @@
         # - not cf_update_ipv6.changed
         - cf_update_ipv6.is_ipv6_enabled
   
+  - name: Ensure that default value of 'http_version' is 'http2'
+    assert:
+      that:
+        - cf_update_ipv6.http_version == 'http2'
+
+  - name: Update the distribution http_version to http2and3
+    cloudfront_distribution:
+      state: present
+      distribution_id: "{{ distribution_id }}"
+      http_version: http2and3
+    register: cf_update_http_version
+
+  - name: Ensure that default value of 'http_version' is 'http2and3'
+    assert:
+      that:
+        - cf_update_http_version.changed
+        - cf_update_http_version.http_version == 'http2and3'
+
   # - name: re-run cloudfront distribution with same defaults
   #   cloudfront_distribution:
   #     distribution_id: "{{ distribution_id }}"
