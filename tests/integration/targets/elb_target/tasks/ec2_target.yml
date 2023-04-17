@@ -503,7 +503,7 @@
         wait: false
         modify_targets: true
         targets:
-          - Id: 192.168.178.32 # must be a member of test vpc subnet 20.0.0.0/18
+          - Id: 192.168.178.32
             Port: 443
             AvailabilityZone: all
       register: result
