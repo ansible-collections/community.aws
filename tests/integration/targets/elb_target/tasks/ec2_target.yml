@@ -168,14 +168,8 @@
         tags:
           Name: "{{ resource_prefix }}-inst"
         user_data: |
-          #cloud-config
-          package_upgrade: true
-          package_update: true
-          packages:
-            - httpd
-          runcmd:
-            - "service httpd start"
-            - echo "HELLO ANSIBLE" > /var/www/html/index.html
+          #!/bin/bash
+          sudo nohup python3 -m http.server 80 &
       register: ec2
 
     - set_fact:
@@ -480,6 +474,46 @@
           - not result.changed
           - not result.target_health_descriptions
 
+    - name: create ip target group
+      elb_target_group:
+        name: "{{ tg_name }}-ip"
+        health_check_port: 443
+        protocol: tcp
+        port: 443
+        vpc_id: "{{ vpc.vpc.id }}"
+        state: present
+        target_type: ip
+      register: result
+
+    - name: ip target group must be created
+      assert:
+        that:
+          - result.changed
+          - result.target_type == 'ip'
+
+    - name: "mobify ip target group with AvailabilityZone: all"
+      elb_target_group:
+        name: "{{ tg_name }}-ip"
+        health_check_port: 443
+        protocol: tcp
+        port: 443
+        vpc_id: "{{ vpc.vpc.id }}"
+        state: present
+        target_type: ip
+        wait: false
+        modify_targets: true
+        targets:
+          - Id: 192.168.178.32
+            Port: 443
+            AvailabilityZone: all
+      register: result
+
+    - name: ip target group must be modified
+      assert:
+        that:
+          - result.changed
+          - result.load_balancing_cross_zone_enabled == 'use_load_balancer_configuration'
+
   # ============================================================
 
   always:
@@ -533,6 +567,7 @@
         - "{{ tg_used_name }}"
         - "{{ tg_tcpudp_name }}"
         - "{{ tg_name }}-nlb"
+        - "{{ tg_name }}-ip"
       ignore_errors: true
 
     - name: remove routing rules
