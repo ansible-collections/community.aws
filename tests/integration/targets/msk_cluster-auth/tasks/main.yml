@@ -49,14 +49,8 @@
           - "{{ msk_version }}"
       register: msk_config
 
-    - name: create tests
-      include_tasks: test_create.yml
-
-    - name: update tests
-      include_tasks: test_update.yml
-
-    - name: delete tests
-      include_tasks: test_delete.yml
+    - name: create test with sasl_iam
+      include_tasks: test_create_auth.yml
 
   always:
 
