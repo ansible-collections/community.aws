@@ -471,7 +471,7 @@ def get_elasticache_clusters(client, module):
         arn = "arn:aws:elasticache:%s:%s:cluster:%s" % (region, account_id, cluster['cache_cluster_id'])
         try:
             tags = get_elasticache_tags_with_backoff(client, arn)
-        except is_boto3_error_code('CacheClusterNotFound'):
+        except is_boto3_error_code("CacheClusterNotFound"):
             # e.g: Cluster was listed but is in deleting state
             continue
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
