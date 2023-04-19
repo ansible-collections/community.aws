@@ -280,6 +280,23 @@
         that:
           - output.changed
 
+    - name: Update Config Rule - idempotency
+      aws_config_rule:
+        name: '{{ resource_prefix }}-rule'
+        state: present
+        description: 'This AWS Config rule checks for public write access on S3 buckets'
+        scope:
+            compliance_types:
+                - 'AWS::S3::Bucket'
+        source:
+            owner: AWS
+            identifier: 'S3_BUCKET_PUBLIC_READ_PROHIBITED'
+      register: output
+
+    - assert:
+        that:
+          - output is not changed
+
     - name: Update aws_config_aggregator
       aws_config_aggregator:
         name: random_name
