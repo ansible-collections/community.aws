@@ -391,15 +391,12 @@ def prepare_create_options(module):
     if module.params["authentication"]:
         c_params["ClientAuthentication"] = {}
         if module.params["authentication"].get("sasl_scram") or module.params["authentication"].get("sasl_iam"):
-            c_params["ClientAuthentication"]["Sasl"] = {}
+            sasl = {}
             if module.params["authentication"].get("sasl_scram"):
-                c_params["ClientAuthentication"]["Sasl"] = {
-                    "Scram": {"Enabled": module.params["authentication"]["sasl_scram"]}
-                }
+                sasl["Scram"] = {"Enabled": True}
             if module.params["authentication"].get("sasl_iam"):
-                c_params["ClientAuthentication"]["Sasl"] = {
-                    "Iam": {"Enabled": module.params["authentication"]["sasl_iam"]}
-                }
+                sasl["Iam"] = {"Enabled": True}
+            c_params["ClientAuthentication"]["Sasl"] = sasl
         if module.params["authentication"].get("tls_ca_arn"):
             c_params["ClientAuthentication"]["Tls"] = {
                 "CertificateAuthorityArnList": module.params["authentication"]["tls_ca_arn"],
@@ -407,7 +404,7 @@ def prepare_create_options(module):
             }
         if module.params["authentication"].get("unauthenticated"):
             c_params["ClientAuthentication"] = {
-                "Unauthenticated": {"Enabled": module.params["authentication"]["unauthenticated"]}
+                "Unauthenticated": {"Enabled": True},
             }
 
     c_params.update(prepare_enhanced_monitoring_options(module))

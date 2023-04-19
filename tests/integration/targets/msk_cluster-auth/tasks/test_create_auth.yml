@@ -59,7 +59,8 @@
       - "msk_cluster.cluster_info.broker_node_group_info.storage_info.ebs_storage_info.volume_size == 10"
       - "msk_cluster.cluster_info.client_authentication.sasl.iam.enabled == true"
       - "msk_cluster.cluster_info.client_authentication.sasl.scram.enabled == true"
-      - "msk_cluster.cluster_info.client_authentication.unauthenticated.enabled == false"
+      # Not always returned by API
+      # - "msk_cluster.cluster_info.client_authentication.unauthenticated.enabled == false"
       - "msk_cluster.cluster_info.open_monitoring.prometheus.jmx_exporter.enabled_in_broker == false"
       - "msk_cluster.cluster_info.cluster_arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
 
