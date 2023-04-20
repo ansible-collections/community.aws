@@ -80,6 +80,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
   check_mode: True
@@ -114,6 +118,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
 
@@ -147,6 +155,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
   check_mode: True
@@ -181,6 +193,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
   check_mode: True
@@ -255,6 +271,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
   check_mode: True
@@ -289,6 +309,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
 
@@ -322,6 +346,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
   check_mode: True
@@ -356,6 +384,10 @@
     capacity_type: 'SPOT'
     tags:
       'foo': 'bar'
+    remote_access:
+      ec2_ssh_key: "{{ ec2_key_eks_nodegroup.key.name }}"
+      source_sg:
+        - "{{ securitygroup_eks_nodegroup.group_id }}"
     wait: True
   register: eks_nodegroup_result
 
