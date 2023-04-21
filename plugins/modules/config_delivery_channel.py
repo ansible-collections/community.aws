@@ -36,6 +36,10 @@ options:
     description:
       - The prefix for the specified Amazon S3 bucket.
     type: str
+  s3_kms_key_arn:
+    description:
+      - The ARN of a KMS key to encrypt objects delivered by Config. The key must belong to the same region as the destination S3 bucket.
+    type: str
   sns_topic_arn:
     description:
       - The Amazon Resource Name (ARN) of the Amazon SNS topic to which AWS Config sends notifications about configuration changes.
@@ -45,6 +49,7 @@ options:
       - The frequency with which AWS Config delivers configuration snapshots.
     choices: ['One_Hour', 'Three_Hours', 'Six_Hours', 'Twelve_Hours', 'TwentyFour_Hours']
     type: str
+
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -57,6 +62,15 @@ EXAMPLES = r"""
     name: test_delivery_channel
     state: present
     s3_bucket: 'test_aws_config_bucket'
+    sns_topic_arn: 'arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no'
+    delivery_frequency: 'Twelve_Hours'
+
+- name: Create Delivery Channel for AWS Config with encryption
+  community.aws.config_delivery_channel:
+    name: test_delivery_channel
+    state: present
+    s3_bucket: 'test_aws_config_bucket'
+    s3_kms_key_arn: 'arn:aws:kms:us-east-1:123456789012/config_kms_key
     sns_topic_arn: 'arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no'
     delivery_frequency: 'Twelve_Hours'
 """
@@ -88,8 +102,7 @@ def resource_exists(client, module, params):
     try:
         channel = client.describe_delivery_channels(
             DeliveryChannelNames=[params['name']],
-            aws_retry=True,
-        )
+            aws_retry=True,)
         return channel['DeliveryChannels'][0]
     except is_boto3_error_code('NoSuchDeliveryChannelException'):
         return
@@ -159,6 +172,7 @@ def main():
             'state': dict(type='str', choices=['present', 'absent'], default='present'),
             's3_bucket': dict(type='str', required=True),
             's3_prefix': dict(type='str'),
+            's3_kms_key_arn': dict(tye='str'),
             'sns_topic_arn': dict(type='str'),
             'delivery_frequency': dict(
                 type='str',
@@ -188,6 +202,8 @@ def main():
         params['s3BucketName'] = module.params.get('s3_bucket')
     if module.params.get('s3_prefix'):
         params['s3KeyPrefix'] = module.params.get('s3_prefix')
+    if module.params.get('s3_kms_key_arn'):
+        params['s3_kms_key_arn'] = module.params.get('s3_kms_key_arn')
     if module.params.get('sns_topic_arn'):
         params['snsTopicARN'] = module.params.get('sns_topic_arn')
     if module.params.get('delivery_frequency'):
@@ -196,7 +212,6 @@ def main():
         }
 
     client = module.client('config', retry_decorator=AWSRetry.jittered_backoff())
-
     resource_status = resource_exists(client, module, params)
 
     if state == 'present':

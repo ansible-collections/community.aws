@@ -45,6 +45,10 @@
         state: present
         policy_json: "{{ lookup( 'template', 'config-s3-policy.json.j2') }}"
 
+    - name: ensure KMS key exists
+      amazon.aws.kms_key:
+        alias: "{{ config_kms_key }}"
+
     # ============================================================
     # Module requirement testing
     # ============================================================
