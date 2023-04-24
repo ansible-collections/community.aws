@@ -74,6 +74,7 @@ EXAMPLES = '''
     kms_key_arn: 'arn:aws:kms:us-east-1:123456789012:key/160f41cb-e660-4fa0-8bf6-976f53bf7851
     sns_topic_arn: 'arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no'
     delivery_frequency: 'Twelve_Hours'
+"""
 
 RETURN = r"""#"""
 
