@@ -57,8 +57,6 @@ extends_documentation_fragment:
 
 EXAMPLES = r"""
 - name: Create a delivery channel for AWS Config
-EXAMPLES = '''
-- name: Create a delivery channel for AWS Config
   community.aws.config_delivery_channel:
     name: test_delivery_channel
     state: present
