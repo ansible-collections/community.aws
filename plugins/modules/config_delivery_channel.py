@@ -170,7 +170,7 @@ def main():
             'state': dict(type='str', choices=['present', 'absent'], default='present'),
             's3_bucket': dict(type='str', required=True),
             's3_prefix': dict(type='str'),
-            'kms_key_arn': dict(type='str'),
+            'kms_key_arn': dict(type='str', no_log=True),
             'sns_topic_arn': dict(type='str'),
             'delivery_frequency': dict(
                 type='str',
