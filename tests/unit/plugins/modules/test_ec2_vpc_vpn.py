@@ -9,12 +9,11 @@ import os
 import pytest
 
 # Magic...  Incorrectly identified by pylint as unused
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import (
-    placeboify,
-)  # pylint: disable=unused-import
-from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import (
-    maybe_sleep,
-)  # pylint: disable=unused-import
+# pylint: disable-next=unused-import
+from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify
+
+# pylint: disable-next=unused-import
+from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep
 
 import ansible_collections.amazon.aws.plugins.module_utils.retries as aws_retries
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
