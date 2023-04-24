@@ -9,7 +9,7 @@
       security_token: '{{ security_token | default(omit) }}'
       region: '{{ aws_region }}'
     s3_lifecycle:
-      wait: yes
+      wait: true
   block:
 
     # ============================================================
@@ -33,7 +33,7 @@
         prefix: "{{ item }}"
         status: enabled
         state: present
-        wait: yes
+        wait: true
       register: output
       loop:
         - rule_1
@@ -51,7 +51,7 @@
         prefix: "{{ item }}"
         status: enabled
         state: absent
-        wait: yes
+        wait: true
       register: output
       loop:
         - rule_1
@@ -704,6 +704,6 @@
       s3_bucket:
         name: "{{item}}"
         state: absent
-      ignore_errors: yes
+      ignore_errors: true
       with_items:
         - '{{ bucket_name }}'
