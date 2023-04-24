@@ -10,9 +10,7 @@ from ansible_collections.community.aws.plugins.module_utils.common import COMMUN
 
 
 class AnsibleCommunityAWSModule(AnsibleAWSModule):
-
     def __init__(self, **kwargs):
-
         super(AnsibleCommunityAWSModule, self).__init__(**kwargs)
         set_collection_info(
             collection_name=COMMUNITY_AWS_COLLECTION_NAME,

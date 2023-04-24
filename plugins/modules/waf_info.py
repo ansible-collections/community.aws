@@ -127,18 +127,16 @@ def main():
     )
     module = AnsibleAWSModule(argument_spec=argument_spec, supports_check_mode=True)
 
-    resource = 'waf' if not module.params['waf_regional'] else 'waf-regional'
+    resource = "waf" if not module.params["waf_regional"] else "waf-regional"
     client = module.client(resource)
     web_acls = list_web_acls(client, module)
-    name = module.params['name']
+    name = module.params["name"]
     if name:
-        web_acls = [web_acl for web_acl in web_acls if
-                    web_acl['Name'] == name]
+        web_acls = [web_acl for web_acl in web_acls if web_acl["Name"] == name]
         if not web_acls:
             module.fail_json(msg="WAF named %s not found" % name)
-    module.exit_json(wafs=[get_web_acl(client, module, web_acl['WebACLId'])
-                           for web_acl in web_acls])
+    module.exit_json(wafs=[get_web_acl(client, module, web_acl["WebACLId"]) for web_acl in web_acls])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
