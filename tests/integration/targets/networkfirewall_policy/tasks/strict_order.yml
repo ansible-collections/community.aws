@@ -260,8 +260,6 @@
         stateful_rule_order: default
       register: strict_policy
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -274,8 +272,6 @@
         stateful_rule_order: default
       register: strict_policy
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:

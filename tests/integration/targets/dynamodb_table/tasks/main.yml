@@ -588,8 +588,6 @@
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
-    vars:
-      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
     check_mode: True
 
   - name: Check results - Create complex table - check_mode
@@ -612,8 +610,6 @@
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
-    vars:
-      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
   - name: Check results - Create complex table
     assert:
@@ -656,8 +652,6 @@
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
-    vars:
-      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
     check_mode: True
 
   - name: Check results - Create complex table - idempotent - check_mode
@@ -680,8 +674,6 @@
       tags: "{{ tags_default }}"
       indexes: "{{ indexes }}"
     register: create_complex_table
-    vars:
-      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
   - name: Check results - Create complex table - idempotent
     assert:
@@ -719,8 +711,6 @@
       name: "{{ table_name }}"
       table_class: "STANDARD"
     register: update_class
-    vars:
-      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
     check_mode: True
 
   - name: Check results - Update table class - check_mode
@@ -734,8 +724,6 @@
       state: present
       name: "{{ table_name }}"
       table_class: "STANDARD"
-    vars:
-      ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
     register: update_class
 
   - name: Check results - Update table class

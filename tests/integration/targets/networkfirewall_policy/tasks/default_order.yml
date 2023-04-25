@@ -223,8 +223,6 @@
         stateful_rule_order: strict
       register: default_policy
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -237,8 +235,6 @@
         stateful_rule_order: strict
       register: default_policy
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1143,8 +1139,6 @@
           - 'aws:drop_strict'
       register: default_policy
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -1158,8 +1152,6 @@
           - 'aws:drop_strict'
       register: default_policy
       ignore_errors: True
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:

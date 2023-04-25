@@ -465,8 +465,6 @@
         noncurrent_version_keep_newer: 6
         prefix: /something
       register: output
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
@@ -479,8 +477,6 @@
         noncurrent_version_keep_newer: 6
         prefix: /something
       register: output
-      vars:
-        ansible_python_interpreter: "{{ botocore_virtualenv_interpreter }}"
 
     - assert:
         that:
