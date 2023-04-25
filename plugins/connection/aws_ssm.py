@@ -144,7 +144,6 @@ options:
 """
 
 EXAMPLES = r"""
-
 # Wait for SSM Agent to be available on the Instance
 - name: Wait for connection to be available
   vars:
