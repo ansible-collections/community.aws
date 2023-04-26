@@ -5,7 +5,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # Make coding more python3-ish
-from __future__ import (absolute_import, division, print_function)
+from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import sys
@@ -25,7 +26,7 @@ exit_return_dict = {}
 
 
 def fake_exit_json(self, **kwargs):
-    """ store the kwargs given to exit_json rather than putting them out to stdout"""
+    """store the kwargs given to exit_json rather than putting them out to stdout"""
     global exit_return_dict
     exit_return_dict = kwargs
     sys.exit(0)
@@ -33,7 +34,6 @@ def fake_exit_json(self, **kwargs):
 
 def test_upload_api(monkeypatch):
     class FakeConnection:
-
         def put_rest_api(self, *args, **kwargs):
             assert kwargs["body"] == "the-swagger-text-is-fake"
             return {"msg": "success!"}
@@ -46,25 +46,29 @@ def test_upload_api(monkeypatch):
     monkeypatch.setattr(aws_modules, "boto3_conn", return_fake_connection)
     monkeypatch.setattr(aws_modules.AnsibleAWSModule, "exit_json", fake_exit_json)
 
-    set_module_args({
-        "api_id": "fred",
-        "state": "present",
-        "swagger_text": "the-swagger-text-is-fake",
-        "region": 'mars-north-1',
-        "_ansible_tmpdir": "/tmp/ansibl-abcdef",
-    })
+    set_module_args(
+        {
+            "api_id": "fred",
+            "state": "present",
+            "swagger_text": "the-swagger-text-is-fake",
+            "region": "mars-north-1",
+            "_ansible_tmpdir": "/tmp/ansibl-abcdef",
+        }
+    )
     with pytest.raises(SystemExit):
         agw.main()
     assert exit_return_dict["changed"]
 
 
 def test_warn_if_region_not_specified():
-
-    set_module_args({
-        "name": "api_gateway",
-        "state": "present",
-        "runtime": 'python2.7',
-        "role": 'arn:aws:iam::123456789012:role/lambda_basic_execution',
-        "handler": 'lambda_python.my_handler'})
+    set_module_args(
+        {
+            "name": "api_gateway",
+            "state": "present",
+            "runtime": "python2.7",
+            "role": "arn:aws:iam::123456789012:role/lambda_basic_execution",
+            "handler": "lambda_python.my_handler",
+        }
+    )
     with pytest.raises(SystemExit):
         print(agw.main())

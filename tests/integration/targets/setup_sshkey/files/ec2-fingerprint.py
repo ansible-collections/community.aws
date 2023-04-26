@@ -9,6 +9,7 @@ ssh-keygen -f id_rsa.pub -e -m PKCS8 | openssl pkey -pubin -outform DER | openss
 """
 
 from __future__ import absolute_import, division, print_function
+
 __metaclass__ = type
 
 import hashlib
@@ -20,11 +21,11 @@ if len(sys.argv) == 0:
 else:
     ssh_public_key = sys.argv[1]
 
-with open(ssh_public_key, 'r') as key_fh:
+with open(ssh_public_key, "r") as key_fh:
     data = key_fh.read()
 
 # Convert from SSH format to DER format
-public_key = RSA.importKey(data).exportKey('DER')
+public_key = RSA.importKey(data).exportKey("DER")
 md5digest = hashlib.md5(public_key).hexdigest()
 # Format the md5sum into the normal format
 pairs = zip(md5digest[::2], md5digest[1::2])

@@ -24,6 +24,7 @@ import hashlib
 
 try:
     from boto3.s3.transfer import TransferConfig
+
     DEFAULT_CHUNK_SIZE = TransferConfig().multipart_chunksize
 except ImportError:
     DEFAULT_CHUNK_SIZE = 5 * 1024 * 1024
@@ -42,14 +43,13 @@ def calculate_multipart_etag(source_path, chunk_size=DEFAULT_CHUNK_SIZE):
 
     md5s = []
 
-    with open(source_path, 'rb') as fp:
+    with open(source_path, "rb") as fp:
         while True:
-
             data = fp.read(chunk_size)
 
             if not data:
                 break
-            md5 = hashlib.new('md5', usedforsecurity=False)
+            md5 = hashlib.new("md5", usedforsecurity=False)
             md5.update(data)
             md5s.append(md5)
 
