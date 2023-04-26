@@ -1,1 +1,4 @@
 cloud/aws
+
+disabled
+# https://github.com/ansible-collections/community.aws/issues/1796

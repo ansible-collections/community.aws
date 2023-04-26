@@ -22,7 +22,7 @@ class Ec2WaiterFactory(BaseWaiterFactory):
     def __init__(self, module):
         # the AWSRetry wrapper doesn't support the wait functions (there's no
         # public call we can cleanly wrap)
-        client = module.client('ec2')
+        client = module.client("ec2")
         super(Ec2WaiterFactory, self).__init__(module, client)
 
     @property
@@ -32,30 +32,28 @@ class Ec2WaiterFactory(BaseWaiterFactory):
 
 
 class Ec2Boto3Mixin(Boto3Mixin):
-
     @AWSRetry.jittered_backoff()
     def _paginated_describe_subnets(self, **params):
-        paginator = self.client.get_paginator('describe_subnets')
+        paginator = self.client.get_paginator("describe_subnets")
         return paginator.paginate(**params).build_full_result()
 
-    @Boto3Mixin.aws_error_handler('describe subnets')
+    @Boto3Mixin.aws_error_handler("describe subnets")
     def _describe_subnets(self, **params):
         try:
             result = self._paginated_describe_subnets(**params)
-        except is_boto3_error_code('SubnetID.NotFound'):
+        except is_boto3_error_code("SubnetID.NotFound"):
             return None
-        return result.get('Subnets', None)
+        return result.get("Subnets", None)
 
 
 class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
-
     resource_id = None
     TAG_RESOURCE_TYPE = None
     # This can be overridden by a subclass *if* 'Tags' isn't returned as a part of
     # the standard Resource description
     TAGS_ON_RESOURCE = True
     # If the resource supports using "TagSpecifications" on creation we can
-    TAGS_ON_CREATE = 'TagSpecifications'
+    TAGS_ON_CREATE = "TagSpecifications"
 
     def __init__(self, module, id=None):
         r"""
@@ -78,27 +76,27 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
         changed |= super(BaseEc2Manager, self)._flush_update()
         return changed
 
-    @Boto3Mixin.aws_error_handler('connect to AWS')
-    def _create_client(self, client_name='ec2'):
+    @Boto3Mixin.aws_error_handler("connect to AWS")
+    def _create_client(self, client_name="ec2"):
         client = self.module.client(client_name, retry_decorator=AWSRetry.jittered_backoff())
         return client
 
-    @Boto3Mixin.aws_error_handler('set tags on resource')
+    @Boto3Mixin.aws_error_handler("set tags on resource")
     def _add_tags(self, **params):
         self.client.create_tags(aws_retry=True, **params)
         return True
 
-    @Boto3Mixin.aws_error_handler('unset tags on resource')
+    @Boto3Mixin.aws_error_handler("unset tags on resource")
     def _remove_tags(self, **params):
         self.client.delete_tags(aws_retry=True, **params)
         return True
 
     @AWSRetry.jittered_backoff()
     def _paginated_describe_tags(self, **params):
-        paginator = self.client.get_paginator('describe_tags')
+        paginator = self.client.get_paginator("describe_tags")
         return paginator.paginate(**params).build_full_result()
 
-    @Boto3Mixin.aws_error_handler('list tags on resource')
+    @Boto3Mixin.aws_error_handler("list tags on resource")
     def _describe_tags(self, id=None):
         if not id:
             id = self.resource_id
@@ -111,7 +109,7 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
             id = self.resource_id
         # If the Tags are available from the resource, then use them
         if self.TAGS_ON_RESOURCE:
-            tags = self._preupdate_resource.get('Tags', [])
+            tags = self._preupdate_resource.get("Tags", [])
         # Otherwise we'll have to look them up
         else:
             tags = self._describe_tags(id=id)
@@ -119,8 +117,8 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
 
     def _do_tagging(self):
         changed = False
-        tags_to_add = self._tagging_updates.get('add')
-        tags_to_remove = self._tagging_updates.get('remove')
+        tags_to_add = self._tagging_updates.get("add")
+        tags_to_remove = self._tagging_updates.get("remove")
 
         if tags_to_add:
             changed = True
@@ -136,25 +134,22 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
         return changed
 
     def _merge_resource_changes(self, filter_immutable=True, creation=False):
-
         resource = super(BaseEc2Manager, self)._merge_resource_changes(
-            filter_immutable=filter_immutable,
-            creation=creation
+            filter_immutable=filter_immutable, creation=creation
         )
 
         if creation:
             if not self.TAGS_ON_CREATE:
-                resource.pop('Tags', None)
-            elif self.TAGS_ON_CREATE == 'TagSpecifications':
-                tags = boto3_tag_list_to_ansible_dict(resource.pop('Tags', []))
+                resource.pop("Tags", None)
+            elif self.TAGS_ON_CREATE == "TagSpecifications":
+                tags = boto3_tag_list_to_ansible_dict(resource.pop("Tags", []))
                 tag_specs = boto3_tag_specifications(tags, types=[self.TAG_RESOURCE_TYPE])
                 if tag_specs:
-                    resource['TagSpecifications'] = tag_specs
+                    resource["TagSpecifications"] = tag_specs
 
         return resource
 
     def set_tags(self, tags, purge_tags):
-
         if tags is None:
             return False
         changed = False
@@ -173,16 +168,16 @@ class BaseEc2Manager(Ec2Boto3Mixin, BaseResourceManager):
         tags_to_add, tags_to_remove = compare_aws_tags(current_tags, tags, purge_tags)
 
         if tags_to_add:
-            self._tagging_updates['add'] = tags_to_add
+            self._tagging_updates["add"] = tags_to_add
             changed = True
         if tags_to_remove:
-            self._tagging_updates['remove'] = tags_to_remove
+            self._tagging_updates["remove"] = tags_to_remove
             changed = True
 
         if changed:
             # Tags are a stored as a list, but treated like a list, the
             # simplisic '==' in _set_resource_value doesn't do the comparison
             # properly
-            return self._set_resource_value('Tags', ansible_dict_to_boto3_tag_list(desired_tags))
+            return self._set_resource_value("Tags", ansible_dict_to_boto3_tag_list(desired_tags))
 
         return False
