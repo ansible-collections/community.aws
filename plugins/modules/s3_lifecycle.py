@@ -328,13 +328,13 @@ def build_rule(client, module):
             rule["Transitions"] = []
         for transition in transitions:
             t_out = dict()
-            if transition.get('transition_date'):
-                t_out['Date'] = transition['transition_date']
-            elif transition.get('transition_days') is not None:
-                t_out['Days'] = int(transition['transition_days'])
-            if transition.get('storage_class'):
-                t_out['StorageClass'] = transition['storage_class'].upper()
-                rule['Transitions'].append(t_out)
+            if transition.get("transition_date"):
+                t_out["Date"] = transition["transition_date"]
+            elif transition.get("transition_days") is not None:
+                t_out["Days"] = transition["transition_days"]
+            if transition.get("storage_class"):
+                t_out["StorageClass"] = transition["storage_class"].upper()
+                rule["Transitions"].append(t_out)
 
     if noncurrent_version_transition_days is not None:
         rule["NoncurrentVersionTransitions"] = [
@@ -495,11 +495,10 @@ def create_lifecycle_rule(client, module):
         # Write lifecycle to bucket
         try:
             client.put_bucket_lifecycle_configuration(
-                aws_retry=True,
-                Bucket=name,
-                LifecycleConfiguration=lifecycle_configuration)
-        except is_boto3_error_message('At least one action needs to be specified in a rule'):
-            # Amazon interpreted this as not changing anything
+                aws_retry=True, Bucket=name, LifecycleConfiguration=lifecycle_configuration
+            )
+        except is_boto3_error_message("At least one action needs to be specified in a rule"):
+            # Amazon interpretted this as not changing anything
             changed = False
         except (
             botocore.exceptions.ClientError,
