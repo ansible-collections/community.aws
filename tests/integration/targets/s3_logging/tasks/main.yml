@@ -46,6 +46,7 @@
     s3_bucket:
       state: present
       name: '{{ log_bucket_1 }}'
+      object_ownership: BucketOwnerPreferred
     register: output
   - assert:
       that:
@@ -56,6 +57,7 @@
     s3_bucket:
       state: present
       name: '{{ log_bucket_2 }}'
+      object_ownership: BucketOwnerPreferred
     register: output
   - assert:
       that:
