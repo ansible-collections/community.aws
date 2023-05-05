@@ -679,9 +679,12 @@ def main():
             changed |= update_stack_set(module, stack_params, cfn)
 
             await_stack_set_operation(
-                module, cfn, operation_id=stack_params['OperationId'],
-                stack_set_name=stack_params['StackSetName'],
-                max_wait=module.params.get('wait_timeout'),)
+                module,
+                cfn,
+                operation_id=stack_params["OperationId"],
+                stack_set_name=stack_params["StackSetName"],
+                max_wait=module.params.get("wait_timeout"),
+            )
 
         # now create/update any appropriate stack instances
         new_stack_instances, existing_stack_instances, unspecified_stack_instances = compare_stack_instances(
