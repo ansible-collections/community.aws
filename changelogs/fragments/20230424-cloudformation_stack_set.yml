@@ -1,3 +1,0 @@
----
-bugfixes:
-  - cloudformation_stack_set - add a waiter to ensure that update operation complete before adding stack instances (https://github.com/ansible-collections/community.aws/issues/1608).

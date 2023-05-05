@@ -1,3 +1,0 @@
----
-bugfixes:
-- elasticache_info - ignore the ``CacheClusterNotFound`` exception when collecting tags (https://github.com/ansible-collections/community.aws/pull/1777).
