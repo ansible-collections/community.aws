@@ -1,2 +1,2 @@
 bugfixes:
-  - eks_nodegroup - fix parameter options of ``remote_access`` (https://github.com/ansible-collections/community.aws/issues/1771).
+  - eks_nodegroup - fix handling of ``remote_access`` option (https://github.com/ansible-collections/community.aws/issues/1771).
