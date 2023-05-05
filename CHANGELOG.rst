@@ -5,6 +5,20 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v4.5.1
+======
+
+Release Summary
+---------------
+
+This release contains a minor bugfix for the ``sns_topic`` module as well as corrections to the documentation for various modules.  This is the last planned release of the 4.x series.
+
+
+Bugfixes
+--------
+
+- sns_topic - avoid fetching attributes from subscribers when not setting them, this can cause permissions issues (https://github.com/ansible-collections/community.aws/pull/1418).
+
 v4.5.0
 ======
 

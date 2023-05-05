@@ -1,2 +1,0 @@
-release_summary: |
-  This release contains a minor bugfix for the ``sns_topic`` module as well as corrections to the documentation for various modules.  This is the last planned release of the 4.x series.
