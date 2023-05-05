@@ -5,6 +5,32 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v5.5.0
+======
+
+Release Summary
+---------------
+
+This release contains a number of bugfixes for various modules, as well as new features for the ``ec2_launch_template`` and ``msk_cluster`` modules.  This is the last planned minor release prior to the release of version 6.0.0.
+
+
+Minor Changes
+-------------
+
+- ec2_launch_template - Add parameter ``version_description`` (https://github.com/ansible-collections/community.aws/pull/1763).
+- msk_cluster - add option for SASL/IAM authentication and add support to disable unauthenticated clients (https://github.com/ansible-collections/community.aws/issues/1761).
+
+Bugfixes
+--------
+
+- cloudformation_stack_set - add a waiter to ensure that update operation complete before adding stack instances (https://github.com/ansible-collections/community.aws/issues/1608).
+- eks_nodegroup - fix handling of ``remote_access`` option (https://github.com/ansible-collections/community.aws/issues/1771).
+- elasticache_info - ignore the ``CacheClusterNotFound`` exception when collecting tags (https://github.com/ansible-collections/community.aws/pull/1777).
+- elb_target_group - ensure ``AvailabilityZone`` is kept in target definitions when ``Id`` and ``Port`` are passed (https://github.com/ansible-collections/community.aws/issues/1736).
+- elb_target_group - get ``ProtocolVersion`` key from ``target_group`` attributes only when exists (https://github.com/ansible-collections/community.aws/pull/1800).
+- msk_cluster - fix creating a cluster with SASL/SCRAM authentication (https://github.com/ansible-collections/community.aws/issues/1761).
+- s3_lifecycle - fix invalid value type for transitions list (https://github.com/ansible-collections/community.aws/issues/1774)
+
 v5.4.0
 ======
 

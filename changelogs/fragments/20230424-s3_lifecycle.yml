@@ -1,3 +1,0 @@
----
-bugfixes:
-  - s3_lifecycle - fix invalid value type for transitions list (https://github.com/ansible-collections/community.aws/issues/1774)
