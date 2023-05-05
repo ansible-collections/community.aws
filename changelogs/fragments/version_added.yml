@@ -1,0 +1,2 @@
+trivial:
+- cloudfront_distribution - fix version_added information
