@@ -14,9 +14,9 @@
       aws_secret_key: "{{ secondary_aws_secret_key }}"
       security_token: "{{ secondary_security_token }}"
       region: "{{ aws_region }}"
-  no_log: yes
+  no_log: true
 
-- name: cloudformation_stack_set tests 
+- name: cloudformation_stack_set tests
   collections:
     - amazon.aws
 
