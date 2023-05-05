@@ -1,2 +1,0 @@
-trivial:
-- config_rule - Fix idempotency issues by ignoring `EvaluationModes` attribute

@@ -2633,3 +2633,20 @@ releases:
     - 558-ssm_connection-invalid-literal.yml
     - iam_role_purge_policy.yml
     release_date: '2023-01-25'
+  4.5.1:
+    changes:
+      bugfixes:
+      - sns_topic - avoid fetching attributes from subscribers when not setting them,
+        this can cause permissions issues (https://github.com/ansible-collections/community.aws/pull/1418).
+      release_summary: 'This release contains a minor bugfix for the ``sns_topic``
+        module as well as corrections to the documentation for various modules.  This
+        is the last planned release of the 4.x series.
+
+        '
+    fragments:
+    - 1576-defaults.yml
+    - 1757-config_rule-evaluation-mode.yml
+    - iam_access_key_docs_fix.yml
+    - release-notes.yml
+    - sns_topic-cross-account.yml
+    release_date: '2023-05-05'
