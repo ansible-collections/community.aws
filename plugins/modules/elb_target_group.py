@@ -680,12 +680,12 @@ def create_or_update_target_group(connection, module):
 
                 # Matcher (successful response codes)
                 # TODO: required and here?
-                if 'Matcher' in params:
-                    code_key = 'HttpCode'
-                    if target_group['ProtocolVersion'] == 'GRPC':
-                        code_key = 'GrpcCode'
-                    current_matcher_list = target_group['Matcher'][code_key].split(',')
-                    requested_matcher_list = params['Matcher'][code_key].split(',')
+                if "Matcher" in params:
+                    code_key = "HttpCode"
+                    if target_group.get("ProtocolVersion") == "GRPC":
+                        code_key = "GrpcCode"
+                    current_matcher_list = target_group["Matcher"][code_key].split(",")
+                    requested_matcher_list = params["Matcher"][code_key].split(",")
                     if set(current_matcher_list) != set(requested_matcher_list):
                         health_check_params['Matcher'] = {}
                         health_check_params['Matcher'][code_key] = ','.join(requested_matcher_list)
