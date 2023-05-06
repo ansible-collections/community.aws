@@ -250,13 +250,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-kms_key_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-kms-key-arn"><strong>kms_key_arn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-kms_key_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The ARN of a KMS key used to encrypt objects delivered by Config. The key must belong to the same region as the destination S3 bucket.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-name"><strong>name</strong></p>
 <a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the AWS Config resource.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-profile"><span id="ansible-collections-community-aws-config-delivery-channel-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -268,7 +275,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-region"><span id="ansible-collections-community-aws-config-delivery-channel-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-config-delivery-channel-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -283,21 +290,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-s3_bucket"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-s3-bucket"><strong>s3_bucket</strong></p>
 <a class="ansibleOptionLink" href="#parameter-s3_bucket" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the Amazon S3 bucket to which AWS Config delivers configuration snapshots and configuration history files.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-s3_prefix"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-s3-prefix"><strong>s3_prefix</strong></p>
 <a class="ansibleOptionLink" href="#parameter-s3_prefix" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The prefix for the specified Amazon S3 bucket.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -314,7 +321,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -332,14 +339,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-sns_topic_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-sns-topic-arn"><strong>sns_topic_arn</strong></p>
 <a class="ansibleOptionLink" href="#parameter-sns_topic_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The Amazon Resource Name (ARN) of the Amazon SNS topic to which AWS Config sends notifications about configuration changes.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -351,7 +358,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-config-delivery-channel-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -379,11 +386,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-confi
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create Delivery Channel for AWS Config</span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a delivery channel for AWS Config</span>
 <span class="w">  </span><span class="nt">community.aws.config_delivery_channel</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_delivery_channel</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">s3_bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;test_aws_config_bucket&#39;</span>
+<span class="w">    </span><span class="nt">sns_topic_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no&#39;</span>
+<span class="w">    </span><span class="nt">delivery_frequency</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Twelve_Hours&#39;</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a delivery channel with encrypted objects</span>
+<span class="w">  </span><span class="nt">community.aws.config_delivery_channel</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">test_delivery_channel</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">s3_bucket</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;test_aws_config_bucket&#39;</span>
+<span class="w">    </span><span class="nt">kms_key_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:kms:us-east-1:123456789012:key/160f41cb-e660-4fa0-8bf6-976f53bf7851&#39;</span>
 <span class="w">    </span><span class="nt">sns_topic_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:sns:us-east-1:123456789012:aws_config_topic:1234ab56-cdef-7g89-01hi-2jk34l5m67no&#39;</span>
 <span class="w">    </span><span class="nt">delivery_frequency</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;Twelve_Hours&#39;</span>
 </pre></div>
