@@ -1,0 +1,3 @@
+trivial:
+- s3_sync - fix tests broken by AWS changing default permissions
+- s3_logging - fix tests broken by AWS changing default permissions

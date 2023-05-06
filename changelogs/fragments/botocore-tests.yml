@@ -1,0 +1,4 @@
+trivial:
+- s3_lifecycle - drop custom botocore installation for tests
+- dynamodb_table - drop custom botocore installation for tests
+- networkfirewall_policy - drop custom botocore installation for tests

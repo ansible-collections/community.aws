@@ -124,17 +124,23 @@ def create_resource(client, module, params, result):
         result["channel"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
         return result
     except is_boto3_error_code("InvalidS3KeyPrefixException") as e:
-        module.fail_json_aws(e, msg="The `s3_prefix` parameter was invalid. Try '/' for no prefix")
+        module.fail_json_aws(
+            e,
+            msg="The `s3_prefix` parameter was invalid. Try '/' for no prefix",
+        )
     except is_boto3_error_code("InsufficientDeliveryPolicyException") as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
-            msg="The `s3_prefix` or `s3_bucket` parameter is invalid. " "Make sure the bucket exists and is available",
+            msg="The `s3_prefix` or `s3_bucket` parameter is invalid.  Make sure the bucket exists and is available",
         )
     except (
         botocore.exceptions.ClientError,
         botocore.exceptions.BotoCoreError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't create AWS Config delivery channel")
+        module.fail_json_aws(
+            e,
+            msg="Couldn't create AWS Config delivery channel",
+        )
 
 
 def update_resource(client, module, params, result):
@@ -187,7 +193,14 @@ def main():
             "kms_key_arn": dict(type="str", no_log=True),
             "sns_topic_arn": dict(type="str"),
             "delivery_frequency": dict(
-                type="str", choices=["One_Hour", "Three_Hours", "Six_Hours", "Twelve_Hours", "TwentyFour_Hours"]
+                type="str",
+                choices=[
+                    "One_Hour",
+                    "Three_Hours",
+                    "Six_Hours",
+                    "Twelve_Hours",
+                    "TwentyFour_Hours",
+                ],
             ),
         },
         supports_check_mode=False,
@@ -213,6 +226,7 @@ def main():
         params["configSnapshotDeliveryProperties"] = {"deliveryFrequency": module.params.get("delivery_frequency")}
 
     client = module.client("config", retry_decorator=AWSRetry.jittered_backoff())
+
     resource_status = resource_exists(client, module, params)
 
     if state == "present":

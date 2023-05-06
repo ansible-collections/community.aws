@@ -15,6 +15,9 @@
       s3_bucket:
         name: "{{ test_bucket }}"
         state: present
+        public_access:
+          block_public_acls: false
+        object_ownership: BucketOwnerPreferred
       register: output
 
     - assert:
