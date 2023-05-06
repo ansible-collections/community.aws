@@ -13,6 +13,13 @@
     # ============================================================
     # Prerequisites
     # ============================================================
+    - name: get ARN of calling user
+      aws_caller_info:
+      register: aws_caller_info
+
+    - name: Store Account ID for later use
+      set_fact:
+        aws_account_id: "{{ aws_caller_info.account }}"
 
     - name: ensure IAM role exists
       iam_role:
@@ -21,7 +28,7 @@
         state: present
         create_instance_profile: no
         managed_policy:
-        - 'arn:aws:iam::aws:policy/service-role/AWSConfigRole'
+        - arn:aws:iam::aws:policy/service-role/AWS_ConfigRole
       register: config_iam_role
 
     - name: ensure SNS topic exists
@@ -36,6 +43,12 @@
     - name: ensure S3 bucket exists
       s3_bucket:
         name: "{{ config_s3_bucket }}"
+
+    - name: ensure KMS key exists
+      kms_key:
+        alias: "{{ config_kms_key }}"
+        policy: "{{ lookup('template', 'config-kms-policy.json.j2') }}"
+      register: kms_key
 
     - name: ensure S3 access for IAM role
       iam_policy:
@@ -184,6 +197,21 @@
         that:
           - output.changed
 
+    - name: Create Delivery Channel for AWS Config with a KMS key
+      aws_config_delivery_channel:
+        name: '{{ resource_prefix }}-channel'
+        state: present
+        s3_bucket: "{{ config_s3_bucket }}"
+        s3_prefix: "foo/bar"
+        kms_key_arn: "{{ kms_key.key_arn }}"
+        sns_topic_arn: "{{ config_sns_topic.sns_arn }}"
+        delivery_frequency: 'Twelve_Hours'
+      register: output
+
+    - assert:
+        that:
+          - output.changed
+
     - name: Create Config Rule for AWS Config
       aws_config_rule:
         name: '{{ resource_prefix }}-rule'
@@ -256,6 +284,20 @@
         state: present
         s3_bucket: "{{ config_s3_bucket }}"
         sns_topic_arn: "{{ config_sns_topic.sns_arn }}"
+        delivery_frequency: 'TwentyFour_Hours'
+      register: output
+
+    - assert:
+        that:
+          - output.changed
+
+    - name: Update Delivery Channel with KMS key
+      aws_config_delivery_channel:
+        name: '{{ resource_prefix }}-channel'
+        state: present
+        s3_bucket: "{{ config_s3_bucket }}"
+        sns_topic_arn: "{{ config_sns_topic.sns_arn }}"
+        kms_key_arn: "{{ kms_key.key_arn }}"
         delivery_frequency: 'TwentyFour_Hours'
       register: output
 
@@ -397,7 +439,7 @@
         name: '{{ resource_prefix }}-recorder'
         state: absent
       register: output
-      ignore_errors: yes
+      ignore_errors: true
 
 #    - assert:
 #        that:
@@ -411,7 +453,7 @@
         sns_topic_arn: "{{ config_sns_topic.sns_arn }}"
         delivery_frequency: 'TwentyFour_Hours'
       register: output
-      ignore_errors: yes
+      ignore_errors: true
 
 #    - assert:
 #        that:
@@ -429,7 +471,7 @@
             owner: AWS
             identifier: 'S3_BUCKET_PUBLIC_READ_PROHIBITED'
       register: output
-      ignore_errors: yes
+      ignore_errors: true
 
 #    - assert:
 #        that:
@@ -445,23 +487,29 @@
         policy_name: AwsConfigRecorderTestRoleS3Policy
         state: absent
         policy_json: "{{ lookup( 'template', 'config-s3-policy.json.j2') }}"
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: remove IAM role
       iam_role:
         name: '{{ config_role_name }}'
         state: absent
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: remove SNS topic
       sns_topic:
         name: '{{ config_sns_name }}'
         state: absent
-      ignore_errors: yes
+      ignore_errors: true
 
     - name: remove S3 bucket
       s3_bucket:
         name: "{{ config_s3_bucket }}"
         state: absent
-        force: yes
-      ignore_errors: yes
+        force: true
+      ignore_errors: true
+
+    - name: remove KMS key
+      kms_key:
+        alias: "{{ config_kms_key }}"
+        state: absent
+      ignore_errors: true
