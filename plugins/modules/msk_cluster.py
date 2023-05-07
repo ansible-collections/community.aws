@@ -573,9 +573,7 @@ def create_or_update_cluster(client, module):
                         wait_for_cluster_state(client, module, arn=cluster["ClusterArn"], state="ACTIVE")
                     else:
                         module.fail_json(
-                            msg="Cluster can be updated only in active state, current state is '{0}'. check cluster state or use wait option".format(
-                                state
-                            )
+                            msg=f"Cluster can be updated only in active state, current state is '{state}'. check cluster state or use wait option"
                         )
                 try:
                     response["changes"][method] = update_method(

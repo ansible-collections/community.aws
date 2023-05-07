@@ -306,9 +306,7 @@ def target_status_check(connection, module, target_group_arn, target, target_sta
         sleep(1)
     if not reached_state:
         module.fail_json(
-            msg="Status check timeout of {0} exceeded, last status was {1}: ".format(
-                target_status_timeout, health_state
-            )
+            msg=f"Status check timeout of {target_status_timeout} exceeded, last status was {health_state}: "
         )
 
 

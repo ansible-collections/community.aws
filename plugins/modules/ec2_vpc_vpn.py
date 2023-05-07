@@ -622,9 +622,7 @@ def check_for_update(connection, module_params, vpn_connection_id):
 
         if will_be is not None and to_text(will_be) != to_text(is_now):
             raise VPNConnectionException(
-                msg="You cannot modify {0}, the current value of which is {1}. Modifiable VPN "
-                "connection attributes are tags and routes. The value you tried to change it to "
-                "is {2}.".format(attribute, is_now, will_be)
+                msg=f"You cannot modify {attribute}, the current value of which is {is_now}. Modifiable VPN connection attributes are tags and routes. The value you tried to change it to is {will_be}."
             )
 
     return changes

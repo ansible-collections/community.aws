@@ -2260,21 +2260,15 @@ class CloudFrontValidationManager(object):
                 or isinstance(allowed_list, set)
                 and not set(allowed_list).issuperset(attribute_list)
             ):
-                self.module.fail_json(
-                    msg="The attribute list {0} must be one of [{1}]".format(
-                        attribute_list_name, " ".join(str(a) for a in allowed_list)
-                    )
-                )
+                attribute_list = " ".join(str(a) for a in allowed_list)
+                self.module.fail_json(msg=f"The attribute list {attribute_list_name} must be one of [{attribute_list}]")
         except Exception as e:
             self.module.fail_json_aws(e, msg="Error validating attribute list with allowed value list")
 
     def validate_attribute_with_allowed_values(self, attribute, attribute_name, allowed_list):
         if attribute is not None and attribute not in allowed_list:
-            self.module.fail_json(
-                msg="The attribute {0} must be one of [{1}]".format(
-                    attribute_name, " ".join(str(a) for a in allowed_list)
-                )
-            )
+            attribute_list = " ".join(str(a) for a in allowed_list)
+            self.module.fail_json(msg=f"The attribute {attribute_name} must be one of [{attribute_list}]")
 
     def validate_distribution_from_caller_reference(self, caller_reference):
         try:
@@ -2331,8 +2325,7 @@ class CloudFrontValidationManager(object):
         except botocore.exceptions.WaiterError as e:
             self.module.fail_json_aws(
                 e,
-                msg="Timeout waiting for CloudFront action."
-                " Waited for {0} seconds before timeout.".format(to_text(wait_timeout)),
+                msg=f"Timeout waiting for CloudFront action. Waited for {to_text(wait_timeout)} seconds before timeout.",
             )
 
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

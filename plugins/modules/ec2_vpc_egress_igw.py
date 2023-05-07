@@ -134,9 +134,7 @@ def create_eigw(module, connection, vpc_id):
         else:
             # EIGW gave back a bad attachment state or an invalid response so we error out
             module.fail_json(
-                msg="Unable to create and attach Egress Only Internet Gateway to VPCId: {0}. Bad or no state in response".format(
-                    vpc_id
-                ),
+                msg=f"Unable to create and attach Egress Only Internet Gateway to VPCId: {vpc_id}. Bad or no state in response",
                 **camel_dict_to_snake_dict(response),
             )
 

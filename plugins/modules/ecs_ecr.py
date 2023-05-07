@@ -272,8 +272,7 @@ class EcsEcr:
             default_registry_id = self.sts.get_caller_identity().get("Account")
             if registry_id != default_registry_id:
                 raise Exception(
-                    "Cannot create repository in registry {0}."
-                    "Would be created in {1} instead.".format(registry_id, default_registry_id)
+                    f"Cannot create repository in registry {registry_id}.  Would be created in {default_registry_id} instead."
                 )
 
         if encryption_configuration is None:

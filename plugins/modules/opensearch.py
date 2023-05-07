@@ -565,9 +565,7 @@ def upgrade_domain(client, module, source_version, target_engine_version):
             # Check the module parameters to determine if this is allowed or not.
             if not module.params.get("allow_intermediate_upgrades"):
                 module.fail_json(
-                    msg="Cannot upgrade from {0} to version {1}. The highest compatible version is {2}".format(
-                        source_version, target_engine_version, next_version
-                    )
+                    msg=f"Cannot upgrade from {source_version} to version {target_engine_version}. The highest compatible version is {next_version}"
                 )
 
         parameters = {
@@ -597,9 +595,7 @@ def upgrade_domain(client, module, source_version, target_engine_version):
         if module.check_mode:
             module.exit_json(
                 changed=True,
-                msg="Would have upgraded domain from {0} to {1} if not in check mode".format(
-                    current_version, next_version
-                ),
+                msg=f"Would have upgraded domain from {current_version} to {next_version} if not in check mode",
             )
         current_version = next_version
 
@@ -717,10 +713,7 @@ def set_encryption_at_rest_options(module, current_domain_config, desired_domain
         and current_domain_config["EncryptionAtRestOptions"] != encryption_at_rest_config
     ):
         change_set.append(
-            "EncryptionAtRestOptions changed from {0} to {1}".format(
-                current_domain_config["EncryptionAtRestOptions"],
-                encryption_at_rest_config,
-            )
+            f"EncryptionAtRestOptions changed from {current_domain_config['EncryptionAtRestOptions']} to {encryption_at_rest_config}"
         )
         changed = True
     return changed
@@ -740,10 +733,7 @@ def set_node_to_node_encryption_options(module, current_domain_config, desired_d
         and current_domain_config["NodeToNodeEncryptionOptions"] != node_to_node_encryption_config
     ):
         change_set.append(
-            "NodeToNodeEncryptionOptions changed from {0} to {1}".format(
-                current_domain_config["NodeToNodeEncryptionOptions"],
-                node_to_node_encryption_config,
-            )
+            f"NodeToNodeEncryptionOptions changed from {current_domain_config['NodeToNodeEncryptionOptions']} to {node_to_node_encryption_config}"
         )
         changed = True
     return changed
@@ -803,18 +793,12 @@ def set_vpc_options(module, current_domain_config, desired_domain_config, change
             # Note the subnets may be the same but be listed in a different order.
             if set(current_domain_config["VPCOptions"]["SubnetIds"]) != set(vpc_config["SubnetIds"]):
                 change_set.append(
-                    "SubnetIds changed from {0} to {1}".format(
-                        current_domain_config["VPCOptions"]["SubnetIds"],
-                        vpc_config["SubnetIds"],
-                    )
+                    f"SubnetIds changed from {current_domain_config['VPCOptions']['SubnetIds']} to {vpc_config['SubnetIds']}"
                 )
                 changed = True
             if set(current_domain_config["VPCOptions"]["SecurityGroupIds"]) != set(vpc_config["SecurityGroupIds"]):
                 change_set.append(
-                    "SecurityGroup changed from {0} to {1}".format(
-                        current_domain_config["VPCOptions"]["SecurityGroupIds"],
-                        vpc_config["SecurityGroupIds"],
-                    )
+                    f"SecurityGroup changed from {current_domain_config['VPCOptions']['SecurityGroupIds']} to {vpc_config['SecurityGroupIds']}"
                 )
                 changed = True
     return changed
@@ -918,10 +902,7 @@ def set_advanced_security_options(module, current_domain_config, desired_domain_
         and current_domain_config["AdvancedSecurityOptions"] != advanced_security_config
     ):
         change_set.append(
-            "AdvancedSecurityOptions changed from {0} to {1}".format(
-                current_domain_config["AdvancedSecurityOptions"],
-                advanced_security_config,
-            )
+            f"AdvancedSecurityOptions changed from {current_domain_config['AdvancedSecurityOptions']} to {advanced_security_config}"
         )
         changed = True
     return changed
@@ -949,9 +930,7 @@ def set_domain_endpoint_options(module, current_domain_config, desired_domain_co
 
     if current_domain_config is not None and current_domain_config["DomainEndpointOptions"] != domain_endpoint_config:
         change_set.append(
-            "DomainEndpointOptions changed from {0} to {1}".format(
-                current_domain_config["DomainEndpointOptions"], domain_endpoint_config
-            )
+            f"DomainEndpointOptions changed from {current_domain_config['DomainEndpointOptions']} to {domain_endpoint_config}"
         )
         changed = True
     return changed
@@ -993,18 +972,12 @@ def set_auto_tune_options(module, current_domain_config, desired_domain_config, 
     if current_domain_config is not None:
         if current_domain_config["AutoTuneOptions"]["DesiredState"] != auto_tune_config["DesiredState"]:
             change_set.append(
-                "AutoTuneOptions.DesiredState changed from {0} to {1}".format(
-                    current_domain_config["AutoTuneOptions"]["DesiredState"],
-                    auto_tune_config["DesiredState"],
-                )
+                f"AutoTuneOptions.DesiredState changed from {current_domain_config['AutoTuneOptions']['DesiredState']} to {auto_tune_config['DesiredState']}"
             )
             changed = True
         if auto_tune_config["MaintenanceSchedules"] != current_domain_config["AutoTuneOptions"]["MaintenanceSchedules"]:
             change_set.append(
-                "AutoTuneOptions.MaintenanceSchedules changed from {0} to {1}".format(
-                    current_domain_config["AutoTuneOptions"]["MaintenanceSchedules"],
-                    auto_tune_config["MaintenanceSchedules"],
-                )
+                f"AutoTuneOptions.MaintenanceSchedules changed from {current_domain_config['AutoTuneOptions']['MaintenanceSchedules']} to {auto_tune_config['MaintenanceSchedules']}"
             )
             changed = True
     return changed

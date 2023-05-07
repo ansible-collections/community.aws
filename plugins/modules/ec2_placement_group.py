@@ -220,9 +220,7 @@ def main():
             else:
                 name = module.params.get("name")
                 module.fail_json(
-                    msg=("Placement group '{}' exists, can't change strategy" + " from '{}' to '{}'").format(
-                        name, placement_group["strategy"], strategy
-                    )
+                    msg=f"Placement group '{name}' exists, can't change strategy from '{placement_group['strategy']}' to '{strategy}'"
                 )
 
     elif state == "absent":

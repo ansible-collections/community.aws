@@ -285,8 +285,7 @@ def update_lag(client, lag_id, lag_name, min_links, num_connections, wait, wait_
 
     if min_links and min_links > num_connections:
         raise DirectConnectError(
-            msg="The number of connections {0} must be greater than the minimum number of links "
-            "{1} to update the LAG {2}".format(num_connections, min_links, lag_id),
+            msg=f"The number of connections {num_connections} must be greater than the minimum number of links {min_links} to update the LAG {lag_id}",
             last_traceback=None,
             exception=None,
         )
@@ -299,11 +298,7 @@ def update_lag(client, lag_id, lag_name, min_links, num_connections, wait, wait_
                 continue
             msg = f"Failed to update Direct Connect link aggregation group {lag_id}."
             if "MinimumLinks cannot be set higher than the number of connections" in e.response["Error"]["Message"]:
-                msg += (
-                    "Unable to set the min number of links to {0} while the LAG connections are being requested".format(
-                        min_links
-                    )
-                )
+                msg += f"Unable to set the min number of links to {min_links} while the LAG connections are being requested"
             raise DirectConnectError(msg=msg, last_traceback=traceback.format_exc(), exception=e)
         else:
             break
@@ -385,10 +380,7 @@ def ensure_absent(client, lag_id, lag_name, force_delete, delete_with_disassocia
     # If min_links is not 0, there are associated connections, or if there are virtual interfaces, ask for force_delete
     if any((latest_status["minimumLinks"], virtual_interfaces, connections)) and not force_delete:
         raise DirectConnectError(
-            msg="There are a minimum number of links, hosted connections, or associated virtual interfaces for LAG {0}. "
-            "To force deletion of the LAG use delete_force: True (if the LAG has virtual interfaces they will be deleted). "
-            "Optionally, to ensure hosted connections are deleted after disassociation use delete_with_disassociation: True "
-            "and wait: True (as Virtual Interfaces may take a few moments to delete)".format(lag_id),
+            msg=f"There are a minimum number of links, hosted connections, or associated virtual interfaces for LAG {lag_id}. To force deletion of the LAG use delete_force: True (if the LAG has virtual interfaces they will be deleted). Optionally, to ensure hosted connections are deleted after disassociation use delete_with_disassociation: True and wait: True (as Virtual Interfaces may take a few moments to delete)",
             last_traceback=None,
             exception=None,
         )

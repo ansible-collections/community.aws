@@ -337,10 +337,7 @@ def update_notification_topic(connection, module, identity, identity_notificatio
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(
                 e,
-                msg="Failed to set identity notification topic for {identity} {notification_type}".format(
-                    identity=identity,
-                    notification_type=notification_type,
-                ),
+                msg=f"Failed to set identity notification topic for {identity} {notification_type}",
             )
         return True
     return False
@@ -374,11 +371,7 @@ def update_notification_topic_headers(connection, module, identity, identity_not
                 )
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(
-                e,
-                msg="Failed to set identity headers in notification for {identity} {notification_type}".format(
-                    identity=identity,
-                    notification_type=notification_type,
-                ),
+                e, msg=f"Failed to set identity headers in notification for {identity} {notification_type}"
             )
         return True
     return False

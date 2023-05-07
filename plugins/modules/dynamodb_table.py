@@ -734,8 +734,7 @@ def _generate_index(index, include_throughput=True):
     else:
         if non_key_attributes:
             module.fail_json(
-                "DynamoDB does not support specifying non-key-attributes ('includes') for "
-                "indexes of type 'all'. Index name: {0}".format(index["name"])
+                f"DynamoDB does not support specifying non-key-attributes ('includes') for indexes of type 'all'. Index name: {index['name']}"
             )
 
     idx = dict(
@@ -919,9 +918,7 @@ def update_table(current_table):
     primary_index_changes = _primary_index_changes(current_table)
     if primary_index_changes:
         module.fail_json(
-            "DynamoDB does not support updating the Primary keys on a table. Changed paramters are: {0}".format(
-                primary_index_changes
-            )
+            f"DynamoDB does not support updating the Primary keys on a table. Changed paramters are: {primary_index_changes}"
         )
 
     changed = False

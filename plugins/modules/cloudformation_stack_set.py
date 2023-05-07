@@ -436,9 +436,7 @@ def await_stack_set_operation(module, cfn, stack_set_name, operation_id, max_wai
         pass
     else:
         module.warn(
-            "Timed out waiting for operation {0} on stack set {1} after {2} seconds. Returning unfinished operation".format(
-                operation_id, stack_set_name, max_wait
-            )
+            f"Timed out waiting for operation {operation_id} on stack set {stack_set_name} after {max_wait} seconds. Returning unfinished operation"
         )
 
 
@@ -456,9 +454,7 @@ def await_stack_instance_completion(module, cfn, stack_set_name, max_wait):
         time.sleep(15)
 
     module.warn(
-        "Timed out waiting for stack set {0} instances {1} to complete after {2} seconds. Returning unfinished operation".format(
-            stack_set_name, ", ".join(s["StackId"] for s in to_await), max_wait
-        )
+        f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s['StackId'] for s in to_await)} to complete after {max_wait} seconds. Returning unfinished operation"
     )
 
 
@@ -609,8 +605,7 @@ def main():
             stack_params["UsePreviousTemplate"] = True
         else:
             module.fail_json(
-                msg="The Stack Set {0} does not exist, and no template was provided. Provide one of `template`, "
-                "`template_body`, or `template_url`".format(module.params["name"])
+                msg=f"The Stack Set {module.params['name']} does not exist, and no template was provided. Provide one of `template`, `template_body`, or `template_url`"
             )
 
     stack_params["Parameters"] = []

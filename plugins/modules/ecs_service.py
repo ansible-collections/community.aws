@@ -1065,9 +1065,7 @@ def main():
     except Exception as e:
         module.fail_json_aws(
             e,
-            msg="Exception describing service '{0}' in cluster '{1}'".format(
-                module.params["name"], module.params["cluster"]
-            ),
+            msg=f"Exception describing service '{module.params['name']}' in cluster '{module.params['cluster']}'",
         )
 
     results = dict(changed=False)

@@ -695,9 +695,7 @@ def update(
                 )
 
             elif retention_period == current_stream["RetentionPeriodHours"]:
-                retention_msg = "Retention {0} is the same as {1}".format(
-                    retention_period, current_stream["RetentionPeriodHours"]
-                )
+                retention_msg = f"Retention {retention_period} is the same as {current_stream['RetentionPeriodHours']}"
                 success = True
 
             if retention_changed:
@@ -719,9 +717,8 @@ def update(
                         return success, changed, err_msg
         else:
             err_msg = (
-                "StreamStatus has to be ACTIVE in order to modify the retention period. Current status is {0}".format(
-                    current_stream.get("StreamStatus", "UNKNOWN")
-                )
+                "StreamStatus has to be ACTIVE in order to modify the retention period."
+                f" Current status is {current_stream.get('StreamStatus', 'UNKNOWN')}"
             )
             return success, changed, err_msg
 
@@ -860,8 +857,9 @@ def create_stream(
                 if not success:
                     return success, changed, err_msg, results
             else:
-                err_msg = "StreamStatus has to be ACTIVE in order to modify the retention period. Current status is {0}".format(
-                    current_stream.get("StreamStatus", "UNKNOWN")
+                err_msg = (
+                    "StreamStatus has to be ACTIVE in order to modify the retention period."
+                    f" Current status is {current_stream.get('StreamStatus', 'UNKNOWN')}"
                 )
                 success = create_success
                 changed = True
