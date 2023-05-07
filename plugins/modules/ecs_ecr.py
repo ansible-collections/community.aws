@@ -303,8 +303,8 @@ class EcsEcr:
             if self.get_repository(registry_id, name) is None:
                 printable = name
                 if registry_id:
-                    printable = "{0}:{1}".format(registry_id, name)
-                raise Exception("could not find repository {0}".format(printable))
+                    printable = f"{registry_id}:{name}"
+                raise Exception(f"could not find repository {printable}")
             return
 
     def delete_repository(self, registry_id, name, force):
@@ -367,8 +367,8 @@ class EcsEcr:
             if self.get_repository(registry_id, name) is None:
                 printable = name
                 if registry_id:
-                    printable = "{0}:{1}".format(registry_id, name)
-                raise Exception("could not find repository {0}".format(printable))
+                    printable = f"{registry_id}:{name}"
+                raise Exception(f"could not find repository {printable}")
             return
 
     def purge_lifecycle_policy(self, registry_id, name):

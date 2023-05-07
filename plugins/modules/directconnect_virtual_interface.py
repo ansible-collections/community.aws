@@ -361,7 +361,7 @@ def vi_state(client, virtual_interface_id):
     """
     Returns the state of the virtual interface.
     """
-    err_msg = "Failed to describe virtual interface: {0}".format(virtual_interface_id)
+    err_msg = f"Failed to describe virtual interface: {virtual_interface_id}"
     vi = try_except_ClientError(failure_msg=err_msg)(client.describe_virtual_interfaces)(
         virtualInterfaceId=virtual_interface_id
     )
@@ -435,7 +435,7 @@ def modify_vi(client, virtual_interface_id, connection_id):
     """
     Associate a new connection ID
     """
-    err_msg = "Unable to associate {0} with virtual interface {1}".format(connection_id, virtual_interface_id)
+    err_msg = f"Unable to associate {connection_id} with virtual interface {virtual_interface_id}"
     try_except_ClientError(failure_msg=err_msg)(client.associate_virtual_interface)(
         virtualInterfaceId=virtual_interface_id, connectionId=connection_id
     )
@@ -467,7 +467,7 @@ def ensure_state(connection, module):
     if state == "present":
         if not virtual_interface_id and module.params["virtual_interface_id"]:
             module.fail_json(
-                msg="The virtual interface {0} does not exist.".format(module.params["virtual_interface_id"])
+                msg=f"The virtual interface {module.params['virtual_interface_id']} does not exist."
             )
 
         elif not virtual_interface_id:

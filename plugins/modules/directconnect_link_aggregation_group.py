@@ -250,7 +250,7 @@ def create_lag(client, num_connections, location, bandwidth, name, connection_id
         lag = client.create_lag(**parameters)
     except botocore.exceptions.ClientError as e:
         raise DirectConnectError(
-            msg="Failed to create DirectConnect link aggregation group {0}".format(name),
+            msg=f"Failed to create DirectConnect link aggregation group {name}",
             last_traceback=traceback.format_exc(),
             exception=e,
         )
@@ -263,7 +263,7 @@ def delete_lag(client, lag_id):
         client.delete_lag(lagId=lag_id)
     except botocore.exceptions.ClientError as e:
         raise DirectConnectError(
-            msg="Failed to delete Direct Connect link aggregation group {0}.".format(lag_id),
+            msg=f"Failed to delete Direct Connect link aggregation group {lag_id}.",
             last_traceback=traceback.format_exc(),
             exception=e,
         )
@@ -297,7 +297,7 @@ def update_lag(client, lag_id, lag_name, min_links, num_connections, wait, wait_
         except botocore.exceptions.ClientError as e:
             if wait and time.time() - start <= wait_timeout:
                 continue
-            msg = "Failed to update Direct Connect link aggregation group {0}.".format(lag_id)
+            msg = f"Failed to update Direct Connect link aggregation group {lag_id}."
             if "MinimumLinks cannot be set higher than the number of connections" in e.response["Error"]["Message"]:
                 msg += (
                     "Unable to set the min number of links to {0} while the LAG connections are being requested".format(
@@ -320,7 +320,7 @@ def ensure_present(
     exists = lag_exists(client, lag_id, lag_name)
     if not exists and lag_id:
         raise DirectConnectError(
-            msg="The Direct Connect link aggregation group {0} does not exist.".format(lag_id),
+            msg=f"The Direct Connect link aggregation group {lag_id} does not exist.",
             last_traceback=None,
             exception="",
         )
@@ -346,7 +346,7 @@ def describe_virtual_interfaces(client, lag_id):
         response = client.describe_virtual_interfaces(connectionId=lag_id)
     except botocore.exceptions.ClientError as e:
         raise DirectConnectError(
-            msg="Failed to describe any virtual interfaces associated with LAG: {0}".format(lag_id),
+            msg=f"Failed to describe any virtual interfaces associated with LAG: {lag_id}",
             last_traceback=traceback.format_exc(),
             exception=e,
         )
@@ -366,7 +366,7 @@ def disassociate_vis(client, lag_id, virtual_interfaces):
             response = client.delete_virtual_interface(virtualInterfaceId=vi["virtualInterfaceId"])
         except botocore.exceptions.ClientError as e:
             raise DirectConnectError(
-                msg="Could not delete virtual interface {0} to delete link aggregation group {1}.".format(vi, lag_id),
+                msg=f"Could not delete virtual interface {vi} to delete link aggregation group {lag_id}.",
                 last_traceback=traceback.format_exc(),
                 exception=e,
             )

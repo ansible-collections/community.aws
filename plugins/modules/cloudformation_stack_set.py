@@ -346,7 +346,7 @@ def create_stack_set(module, stack_params, cfn):
         cfn.create_stack_set(aws_retry=True, **stack_params)
         return await_stack_set_exists(cfn, stack_params["StackSetName"])
     except (ClientError, BotoCoreError) as err:
-        module.fail_json_aws(err, msg="Failed to create stack set {0}.".format(stack_params.get("StackSetName")))
+        module.fail_json_aws(err, msg=f"Failed to create stack set {stack_params.get('StackSetName')}.")
 
 
 def update_stack_set(module, stack_params, cfn):
@@ -668,11 +668,11 @@ def main():
     if state == "present":
         if not existing_stack_set:
             # on create this parameter has a different name, and cannot be referenced later in the job log
-            stack_params["ClientRequestToken"] = "Ansible-StackSet-Create-{0}".format(operation_uuid)
+            stack_params["ClientRequestToken"] = f"Ansible-StackSet-Create-{operation_uuid}"
             changed = True
             create_stack_set(module, stack_params, cfn)
         else:
-            stack_params["OperationId"] = "Ansible-StackSet-Update-{0}".format(operation_uuid)
+            stack_params["OperationId"] = f"Ansible-StackSet-Update-{operation_uuid}"
             operation_ids.append(stack_params["OperationId"])
             if module.params.get("regions"):
                 stack_params["OperationPreferences"] = get_operation_preferences(module)
@@ -694,7 +694,7 @@ def main():
             module.params["regions"],
         )
         if new_stack_instances:
-            operation_ids.append("Ansible-StackInstance-Create-{0}".format(operation_uuid))
+            operation_ids.append(f"Ansible-StackInstance-Create-{operation_uuid}")
             changed = True
             cfn.create_stack_instances(
                 StackSetName=module.params["name"],
@@ -704,7 +704,7 @@ def main():
                 OperationId=operation_ids[-1],
             )
         else:
-            operation_ids.append("Ansible-StackInstance-Update-{0}".format(operation_uuid))
+            operation_ids.append(f"Ansible-StackInstance-Update-{operation_uuid}")
             cfn.update_stack_instances(
                 StackSetName=module.params["name"],
                 Accounts=list(set(acct for acct, region in existing_stack_instances)),
@@ -723,20 +723,20 @@ def main():
 
     elif state == "absent":
         if not existing_stack_set:
-            module.exit_json(msg="Stack set {0} does not exist".format(module.params["name"]))
+            module.exit_json(msg=f"Stack set {module.params['name']} does not exist")
         if module.params.get("purge_stack_instances") is False:
             pass
         try:
             cfn.delete_stack_set(
                 StackSetName=module.params["name"],
             )
-            module.exit_json(msg="Stack set {0} deleted".format(module.params["name"]))
+            module.exit_json(msg=f"Stack set {module.params['name']} deleted")
         except is_boto3_error_code("OperationInProgressException") as e:  # pylint: disable=duplicate-except
             module.fail_json_aws(
-                e, msg="Cannot delete stack {0} while there is an operation in progress".format(module.params["name"])
+                e, msg=f"Cannot delete stack {module.params['name']} while there is an operation in progress"
             )
         except is_boto3_error_code("StackSetNotEmptyException"):  # pylint: disable=duplicate-except
-            delete_instances_op = "Ansible-StackInstance-Delete-{0}".format(operation_uuid)
+            delete_instances_op = f"Ansible-StackInstance-Delete-{operation_uuid}"
             cfn.delete_stack_instances(
                 StackSetName=module.params["name"],
                 Accounts=module.params["accounts"],
@@ -768,7 +768,7 @@ def main():
                     msg="Could not purge all stacks, or not all accounts/regions were chosen for deletion: "
                     + stack_states,
                 )
-            module.exit_json(changed=True, msg="Stack set {0} deleted".format(module.params["name"]))
+            module.exit_json(changed=True, msg=f"Stack set {module.params['name']} deleted")
 
     result.update(**describe_stack_tree(module, stack_params["StackSetName"], operation_ids=operation_ids))
     if any(o["status"] == "FAILED" for o in result["operations"]):

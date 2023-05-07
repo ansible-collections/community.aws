@@ -136,7 +136,7 @@ class BaseWaiterFactory:
     def get_waiter(self, waiter_name):
         waiters = self._model.waiter_names
         if waiter_name not in waiters:
-            self.module.fail_json("Unable to find waiter {0}.  Available_waiters: {1}".format(waiter_name, waiters))
+            self.module.fail_json(f"Unable to find waiter {waiter_name}.  Available_waiters: {waiters}")
         return botocore.waiter.create_waiter_with_client(
             waiter_name,
             self._model,
@@ -184,10 +184,10 @@ class Boto3Mixin:
                     return func(_self, *args, **kwargs)
                 except botocore.exceptions.WaiterError as e:
                     _self.module.fail_json_aws(
-                        e, msg="Failed waiting for {DESC}".format(DESC=description), **extra_ouput
+                        e, msg=f"Failed waiting for {description}", **extra_ouput
                     )
                 except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                    _self.module.fail_json_aws(e, msg="Failed to {DESC}".format(DESC=description), **extra_ouput)
+                    _self.module.fail_json_aws(e, msg=f"Failed to {description}", **extra_ouput)
 
             return handler
 
@@ -356,7 +356,7 @@ class BaseResourceManager(Boto3Mixin):
         if immutable and self.original_resource:
             if description is None:
                 description = key
-            self.module.fail_json(msg="{0} can not be updated after creation".format(description))
+            self.module.fail_json(msg=f"{description} can not be updated after creation")
         self._resource_updates[key] = value
         self.changed = True
         return True

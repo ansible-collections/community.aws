@@ -243,7 +243,7 @@ def get_verification_attributes(connection, module, identity, retries=0, retryDe
             response = connection.get_identity_verification_attributes(Identities=[identity], aws_retry=True)
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(
-                e, msg="Failed to retrieve identity verification attributes for {identity}".format(identity=identity)
+                e, msg=f"Failed to retrieve identity verification attributes for {identity}"
             )
         identity_verification = response["VerificationAttributes"]
         if identity in identity_verification:
@@ -266,7 +266,7 @@ def get_identity_notifications(connection, module, identity, retries=0, retryDel
             response = connection.get_identity_notification_attributes(Identities=[identity], aws_retry=True)
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(
-                e, msg="Failed to retrieve identity notification attributes for {identity}".format(identity=identity)
+                e, msg=f"Failed to retrieve identity notification attributes for {identity}"
             )
         notification_attributes = response["NotificationAttributes"]
 
@@ -412,7 +412,7 @@ def update_feedback_forwarding(connection, module, identity, identity_notificati
                 )
         except (BotoCoreError, ClientError) as e:
             module.fail_json_aws(
-                e, msg="Failed to set identity feedback forwarding for {identity}".format(identity=identity)
+                e, msg=f"Failed to set identity feedback forwarding for {identity}"
             )
         return True
     return False
@@ -477,7 +477,7 @@ def create_or_update_identity(connection, module, region, account_id):
                 else:
                     connection.verify_domain_identity(Domain=identity, aws_retry=True)
         except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Failed to verify identity {identity}".format(identity=identity))
+            module.fail_json_aws(e, msg=f"Failed to verify identity {identity}")
         if module.check_mode:
             verification_attributes = {
                 "VerificationStatus": "Pending",
@@ -520,7 +520,7 @@ def destroy_identity(connection, module):
             if not module.check_mode:
                 connection.delete_identity(Identity=identity, aws_retry=True)
         except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(e, msg="Failed to delete identity {identity}".format(identity=identity))
+            module.fail_json_aws(e, msg=f"Failed to delete identity {identity}")
         changed = True
 
     module.exit_json(

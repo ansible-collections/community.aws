@@ -1017,17 +1017,16 @@ def main():
             if existing and existing["status"] != "ACTIVE":
                 # We cannot reactivate an inactive revision
                 module.fail_json(
-                    msg="A task in family '%s' already exists for revision %d, but it is inactive" % (family, revision)
+                    msg=f"A task in family '{family}' already exists for revision {int(revision)}, but it is inactive"
                 )
             elif not existing:
                 if not existing_definitions_in_family and revision != 1:
                     module.fail_json(
-                        msg="You have specified a revision of %d but a created revision would be 1" % revision
+                        msg=f"You have specified a revision of {int(revision)} but a created revision would be 1"
                     )
                 elif existing_definitions_in_family and existing_definitions_in_family[-1]["revision"] + 1 != revision:
                     module.fail_json(
-                        msg="You have specified a revision of %d but a created revision would be %d"
-                        % (revision, existing_definitions_in_family[-1]["revision"] + 1)
+                        msg=f"You have specified a revision of {int(revision)} but a created revision would be {int(existing_definitions_in_family[-1]['revision'] + 1)}"
                     )
         else:
             existing = None

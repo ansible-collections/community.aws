@@ -488,7 +488,7 @@ def create_scaling_policy(connection, module):
             aws_retry=True, AutoScalingGroupName=asg_name, PolicyNames=[policy_name]
         )["ScalingPolicies"]
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to obtain autoscaling policy %s" % policy_name)
+        module.fail_json_aws(e, msg=f"Failed to obtain autoscaling policy {policy_name}")
 
     before = after = {}
     if not policies:
@@ -512,7 +512,7 @@ def create_scaling_policy(connection, module):
                 aws_retry=True, AutoScalingGroupName=asg_name, PolicyNames=[policy_name]
             )["ScalingPolicies"]
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Failed to obtain autoscaling policy %s" % policy_name)
+            module.fail_json_aws(e, msg=f"Failed to obtain autoscaling policy {policy_name}")
 
     policy = camel_dict_to_snake_dict(policies[0])
     # Backward compatible return values
@@ -532,7 +532,7 @@ def delete_scaling_policy(connection, module):
     try:
         policy = connection.describe_policies(aws_retry=True, PolicyNames=[policy_name])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, msg="Failed to obtain autoscaling policy %s" % policy_name)
+        module.fail_json_aws(e, msg=f"Failed to obtain autoscaling policy {policy_name}")
 
     if policy["ScalingPolicies"]:
         try:

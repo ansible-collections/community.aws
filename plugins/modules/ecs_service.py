@@ -761,7 +761,7 @@ class EcsServiceManager:
             c = self.find_in_array(response["services"], service_name)
             if c:
                 return c
-        raise Exception("Unknown problem describing service %s." % service_name)
+        raise Exception(f"Unknown problem describing service {service_name}.")
 
     def is_matching_service(self, expected, existing):
         # aws returns the arn of the task definition
@@ -1265,7 +1265,7 @@ def main():
                 break
             time.sleep(delay)
         if i is repeat - 1:
-            module.fail_json(msg="Service still not deleted after {0} tries of {1} seconds each.".format(repeat, delay))
+            module.fail_json(msg=f"Service still not deleted after {repeat} tries of {delay} seconds each.")
             return
 
     module.exit_json(**results)

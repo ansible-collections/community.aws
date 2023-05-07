@@ -46,12 +46,12 @@ def list_topic_subscriptions(client, module, topic_arn):
             # potentially AuthorizationError when listing subscriptions for third party topic
             return [sub for sub in _list_subscriptions_with_backoff(client) if sub["TopicArn"] == topic_arn]
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
+            module.fail_json_aws(e, msg=f"Couldn't get subscriptions list for topic {topic_arn}")
     except (
         botocore.exceptions.ClientError,
         botocore.exceptions.BotoCoreError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get subscriptions list for topic %s" % topic_arn)
+        module.fail_json_aws(e, msg=f"Couldn't get subscriptions list for topic {topic_arn}")
 
 
 def list_topics(client, module):
@@ -65,7 +65,7 @@ def list_topics(client, module):
 def topic_arn_lookup(client, module, name):
     # topic names cannot have colons, so this captures the full topic name
     all_topics = list_topics(client, module)
-    lookup_topic = ":%s" % name
+    lookup_topic = f":{name}"
     for topic in all_topics:
         if topic.endswith(lookup_topic):
             return topic

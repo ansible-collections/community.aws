@@ -591,7 +591,7 @@ def upgrade_domain(client, module, source_version, target_engine_version):
             # raised if it's not possible to upgrade to the target version.
             module.fail_json_aws(
                 e,
-                msg="Couldn't upgrade domain {0} from {1} to {2}".format(domain_name, current_version, next_version),
+                msg=f"Couldn't upgrade domain {domain_name} from {current_version} to {next_version}",
             )
 
         if module.check_mode:
@@ -665,7 +665,7 @@ def set_cluster_config(module, current_domain_config, desired_domain_config, cha
 
     if current_domain_config is not None and current_domain_config["ClusterConfig"] != cluster_config:
         change_set.append(
-            "ClusterConfig changed from {0} to {1}".format(current_domain_config["ClusterConfig"], cluster_config)
+            f"ClusterConfig changed from {current_domain_config['ClusterConfig']} to {cluster_config}"
         )
         changed = True
     return changed
@@ -693,7 +693,7 @@ def set_ebs_options(module, current_domain_config, desired_domain_config, change
             ebs_config["Iops"] = ebs_opts.get("iops")
 
     if current_domain_config is not None and current_domain_config["EBSOptions"] != ebs_config:
-        change_set.append("EBSOptions changed from {0} to {1}".format(current_domain_config["EBSOptions"], ebs_config))
+        change_set.append(f"EBSOptions changed from {current_domain_config['EBSOptions']} to {ebs_config}")
         changed = True
     return changed
 
@@ -858,7 +858,7 @@ def set_cognito_options(module, current_domain_config, desired_domain_config, ch
 
     if current_domain_config is not None and current_domain_config["CognitoOptions"] != cognito_config:
         change_set.append(
-            "CognitoOptions changed from {0} to {1}".format(current_domain_config["CognitoOptions"], cognito_config)
+            f"CognitoOptions changed from {current_domain_config['CognitoOptions']} to {cognito_config}"
         )
         changed = True
     return changed
@@ -1023,12 +1023,12 @@ def set_access_policy(module, current_domain_config, desired_domain_config, chan
     try:
         access_policy_config = json.dumps(access_policy_opt)
     except Exception as e:
-        module.fail_json(msg="Failed to convert the policy into valid JSON: %s" % str(e))
+        module.fail_json(msg=f"Failed to convert the policy into valid JSON: {str(e)}")
     if current_domain_config is not None:
         # Updating existing domain
         current_access_policy = json.loads(current_domain_config["AccessPolicies"])
         if not compare_policies(current_access_policy, access_policy_opt):
-            change_set.append("AccessPolicy changed from {0} to {1}".format(current_access_policy, access_policy_opt))
+            change_set.append(f"AccessPolicy changed from {current_access_policy} to {access_policy_opt}")
             changed = True
             desired_domain_config["AccessPolicies"] = access_policy_config
     else:
@@ -1134,7 +1134,7 @@ def ensure_domain_present(client, module):
                 botocore.exceptions.BotoCoreError,
                 botocore.exceptions.ClientError,
             ) as e:
-                module.fail_json_aws(e, msg="Couldn't update domain {0}".format(domain_name))
+                module.fail_json_aws(e, msg=f"Couldn't update domain {domain_name}")
 
     else:
         # Create new OpenSearch cluster
@@ -1152,12 +1152,12 @@ def ensure_domain_present(client, module):
             botocore.exceptions.BotoCoreError,
             botocore.exceptions.ClientError,
         ) as e:
-            module.fail_json_aws(e, msg="Couldn't update domain {0}".format(domain_name))
+            module.fail_json_aws(e, msg=f"Couldn't update domain {domain_name}")
 
     try:
         existing_tags = boto3_tag_list_to_ansible_dict(client.list_tags(ARN=domain_arn, aws_retry=True)["TagList"])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, "Couldn't get tags for domain %s" % domain_name)
+        module.fail_json_aws(e, f"Couldn't get tags for domain {domain_name}")
 
     desired_tags = module.params["tags"]
     purge_tags = module.params["purge_tags"]

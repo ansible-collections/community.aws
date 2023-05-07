@@ -90,7 +90,7 @@ def delete_eigw(module, connection, eigw_id):
         botocore.exceptions.BotoCoreError,
     ) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
-            e, msg="Could not delete Egress-Only Internet Gateway {0} from VPC {1}".format(eigw_id, module.vpc_id)
+            e, msg=f"Could not delete Egress-Only Internet Gateway {eigw_id} from VPC {module.vpc_id}"
         )
 
     if not module.check_mode:
@@ -119,12 +119,12 @@ def create_eigw(module, connection, vpc_id):
         # We need to catch the error and return something valid
         changed = True
     except is_boto3_error_code("InvalidVpcID.NotFound") as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="invalid vpc ID '{0}' provided".format(vpc_id))
+        module.fail_json_aws(e, msg=f"invalid vpc ID '{vpc_id}' provided")
     except (
         botocore.exceptions.ClientError,
         botocore.exceptions.BotoCoreError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Could not create Egress-Only Internet Gateway for vpc ID {0}".format(vpc_id))
+        module.fail_json_aws(e, msg=f"Could not create Egress-Only Internet Gateway for vpc ID {vpc_id}")
 
     if not module.check_mode:
         gateway = response.get("EgressOnlyInternetGateway", {})

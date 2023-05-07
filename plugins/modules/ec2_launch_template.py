@@ -453,7 +453,7 @@ def determine_iam_role(module, name_or_arn):
         role = iam.get_instance_profile(InstanceProfileName=name_or_arn, aws_retry=True)
         return {"arn": role["InstanceProfile"]["Arn"]}
     except is_boto3_error_code("NoSuchEntity") as e:
-        module.fail_json_aws(e, msg="Could not find instance_role {0}".format(name_or_arn))
+        module.fail_json_aws(e, msg=f"Could not find instance_role {name_or_arn}")
     except (BotoCoreError, ClientError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
@@ -568,7 +568,7 @@ def delete_template(module):
                 aws_retry=True,
             )
         except (ClientError, BotoCoreError) as e:
-            module.fail_json_aws(e, msg="Could not delete launch template {0}".format(template["LaunchTemplateId"]))
+            module.fail_json_aws(e, msg=f"Could not delete launch template {template['LaunchTemplateId']}")
         return {
             "deleted_versions": deleted_versions,
             "deleted_template": camel_dict_to_snake_dict(resp["LaunchTemplate"]),
@@ -658,7 +658,7 @@ def create_or_update(module, template_options):
                 )
                 if source_version is None:
                     module.fail_json(
-                        msg='source_version does not exist, got "{0}"'.format(module.params.get("source_version"))
+                        msg=f"source_version does not exist, got \"{module.params.get('source_version')}\""
                     )
                 resp = ec2.create_launch_template_version(
                     LaunchTemplateId=template["LaunchTemplateId"],
@@ -863,7 +863,7 @@ def main():
     elif module.params.get("state") == "absent":
         out = delete_template(module)
     else:
-        module.fail_json(msg='Unsupported value "{0}" for `state` parameter'.format(module.params.get("state")))
+        module.fail_json(msg=f"Unsupported value \"{module.params.get('state')}\" for `state` parameter")
 
     module.exit_json(**out)
 

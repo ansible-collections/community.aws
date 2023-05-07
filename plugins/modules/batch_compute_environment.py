@@ -274,7 +274,7 @@ def validate_params(module):
     if not compute_environment_name.startswith("arn:aws:batch:"):
         if len(compute_environment_name) > 128:
             module.fail_json(
-                msg='compute_environment_name "{0}" exceeds 128 character limit'.format(compute_environment_name)
+                msg=f'compute_environment_name "{compute_environment_name}" exceeds 128 character limit'
             )
 
     return
