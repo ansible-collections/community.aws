@@ -1721,9 +1721,7 @@ class CloudFrontValidationManager(object):
 
     def validate_is_list(self, list_to_validate, list_name):
         if not isinstance(list_to_validate, list):
-            self.module.fail_json(
-                msg=f"{list_name} is of type {type(list_to_validate).__name__}. Must be a list."
-            )
+            self.module.fail_json(msg=f"{list_name} is of type {type(list_to_validate).__name__}. Must be a list.")
 
     def validate_required_key(self, key_name, full_key_name, dict_object):
         if key_name not in dict_object:

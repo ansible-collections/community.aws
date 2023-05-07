@@ -558,9 +558,7 @@ def delete_connection(connection, vpn_connection_id, delay, max_attempts):
             msg=f"Failed to wait for VPN connection {vpn_connection_id} to be removed", exception=e
         )
     except (BotoCoreError, ClientError) as e:
-        raise VPNConnectionException(
-            msg=f"Failed to delete the VPN connection: {vpn_connection_id}", exception=e
-        )
+        raise VPNConnectionException(msg=f"Failed to delete the VPN connection: {vpn_connection_id}", exception=e)
 
 
 def add_tags(connection, vpn_connection_id, add):

@@ -242,9 +242,7 @@ def get_verification_attributes(connection, module, identity, retries=0, retryDe
         try:
             response = connection.get_identity_verification_attributes(Identities=[identity], aws_retry=True)
         except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(
-                e, msg=f"Failed to retrieve identity verification attributes for {identity}"
-            )
+            module.fail_json_aws(e, msg=f"Failed to retrieve identity verification attributes for {identity}")
         identity_verification = response["VerificationAttributes"]
         if identity in identity_verification:
             break
@@ -265,9 +263,7 @@ def get_identity_notifications(connection, module, identity, retries=0, retryDel
         try:
             response = connection.get_identity_notification_attributes(Identities=[identity], aws_retry=True)
         except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(
-                e, msg=f"Failed to retrieve identity notification attributes for {identity}"
-            )
+            module.fail_json_aws(e, msg=f"Failed to retrieve identity notification attributes for {identity}")
         notification_attributes = response["NotificationAttributes"]
 
         # No clear AWS docs on when this happens, but it appears sometimes identities are not included in
@@ -411,9 +407,7 @@ def update_feedback_forwarding(connection, module, identity, identity_notificati
                     Identity=identity, ForwardingEnabled=required, aws_retry=True
                 )
         except (BotoCoreError, ClientError) as e:
-            module.fail_json_aws(
-                e, msg=f"Failed to set identity feedback forwarding for {identity}"
-            )
+            module.fail_json_aws(e, msg=f"Failed to set identity feedback forwarding for {identity}")
         return True
     return False
 

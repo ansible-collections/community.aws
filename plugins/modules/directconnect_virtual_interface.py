@@ -466,9 +466,7 @@ def ensure_state(connection, module):
 
     if state == "present":
         if not virtual_interface_id and module.params["virtual_interface_id"]:
-            module.fail_json(
-                msg=f"The virtual interface {module.params['virtual_interface_id']} does not exist."
-            )
+            module.fail_json(msg=f"The virtual interface {module.params['virtual_interface_id']} does not exist.")
 
         elif not virtual_interface_id:
             assembled_params = assemble_params_for_creating_vi(module.params)

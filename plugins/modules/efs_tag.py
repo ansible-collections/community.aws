@@ -176,9 +176,7 @@ def main():
                 tags = ansible_dict_to_boto3_tag_list(add_tags)
                 efs.tag_resource(aws_retry=True, ResourceId=resource, Tags=tags)
             except (BotoCoreError, ClientError) as set_tag_error:
-                module.fail_json_aws(
-                    set_tag_error, msg=f"Failed to set tags {add_tags} on resource {resource}"
-                )
+                module.fail_json_aws(set_tag_error, msg=f"Failed to set tags {add_tags} on resource {resource}")
 
     result["tags"] = get_tags(efs, module, resource)
     module.exit_json(**result)

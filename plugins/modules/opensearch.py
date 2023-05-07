@@ -664,9 +664,7 @@ def set_cluster_config(module, current_domain_config, desired_domain_config, cha
             }
 
     if current_domain_config is not None and current_domain_config["ClusterConfig"] != cluster_config:
-        change_set.append(
-            f"ClusterConfig changed from {current_domain_config['ClusterConfig']} to {cluster_config}"
-        )
+        change_set.append(f"ClusterConfig changed from {current_domain_config['ClusterConfig']} to {cluster_config}")
         changed = True
     return changed
 
@@ -857,9 +855,7 @@ def set_cognito_options(module, current_domain_config, desired_domain_config, ch
             cognito_config["RoleArn"] = cognito_opts.get("cognito_role_arn")
 
     if current_domain_config is not None and current_domain_config["CognitoOptions"] != cognito_config:
-        change_set.append(
-            f"CognitoOptions changed from {current_domain_config['CognitoOptions']} to {cognito_config}"
-        )
+        change_set.append(f"CognitoOptions changed from {current_domain_config['CognitoOptions']} to {cognito_config}")
         changed = True
     return changed
 

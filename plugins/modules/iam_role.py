@@ -601,9 +601,7 @@ def remove_instance_profiles(module, client, role_name):
                         ) as e:  # pylint: disable=duplicate-except
                             module.fail_json_aws(e, msg=f"Unable to remove instance profile {profile_name}")
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-            module.fail_json_aws(
-                e, msg=f"Unable to remove role {role_name} from instance profile {profile_name}"
-            )
+            module.fail_json_aws(e, msg=f"Unable to remove role {role_name} from instance profile {profile_name}")
 
 
 def destroy_role(module, client):

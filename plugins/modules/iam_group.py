@@ -296,9 +296,7 @@ def create_or_update_group(connection, module):
                     try:
                         connection.remove_user_from_group(GroupName=params["GroupName"], UserName=user)
                     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-                        module.fail_json_aws(
-                            e, msg=f"Couldn't remove user {user} from group {params['GroupName']}"
-                        )
+                        module.fail_json_aws(e, msg=f"Couldn't remove user {user} from group {params['GroupName']}")
         # If there are users to adjust that aren't in the current list, then things have changed
         # Otherwise the only changes were in purging above
         if set(users) - set(current_group_members_list):

@@ -89,9 +89,7 @@ def delete_eigw(module, connection, eigw_id):
         botocore.exceptions.ClientError,
         botocore.exceptions.BotoCoreError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(
-            e, msg=f"Could not delete Egress-Only Internet Gateway {eigw_id} from VPC {module.vpc_id}"
-        )
+        module.fail_json_aws(e, msg=f"Could not delete Egress-Only Internet Gateway {eigw_id} from VPC {module.vpc_id}")
 
     if not module.check_mode:
         changed = response.get("ReturnCode", False)

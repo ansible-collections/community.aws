@@ -340,9 +340,7 @@ def wait_for_cluster_state(client, module, arn, state="ACTIVE"):
         if current_state == state:
             return
         if time.time() - start > timeout:
-            module.fail_json(
-                msg=f"Timeout waiting for cluster {current_state} (desired state is '{state}')"
-            )
+            module.fail_json(msg=f"Timeout waiting for cluster {current_state} (desired state is '{state}')")
         time.sleep(check_interval)
 
 

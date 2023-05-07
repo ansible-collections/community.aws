@@ -183,9 +183,7 @@ class Boto3Mixin:
                 try:
                     return func(_self, *args, **kwargs)
                 except botocore.exceptions.WaiterError as e:
-                    _self.module.fail_json_aws(
-                        e, msg=f"Failed waiting for {description}", **extra_ouput
-                    )
+                    _self.module.fail_json_aws(e, msg=f"Failed waiting for {description}", **extra_ouput)
                 except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
                     _self.module.fail_json_aws(e, msg=f"Failed to {description}", **extra_ouput)
 
