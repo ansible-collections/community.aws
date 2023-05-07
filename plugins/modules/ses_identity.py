@@ -447,8 +447,10 @@ def validate_params_for_identity_present(module):
     if module.params.get("feedback_forwarding") is False:
         if not (desired_topic(module, "Bounce") and desired_topic(module, "Complaint")):
             module.fail_json(
-                msg="Invalid Parameter Value 'False' for 'feedback_forwarding'. AWS requires "
-                "feedback forwarding to be enabled unless bounces and complaints are handled by SNS topics"
+                msg=(
+                    "Invalid Parameter Value 'False' for 'feedback_forwarding'. AWS requires "
+                    "feedback forwarding to be enabled unless bounces and complaints are handled by SNS topics"
+                )
             )
 
 

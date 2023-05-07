@@ -487,8 +487,10 @@ def find_connection_response(connections=None):
             return None
         else:
             raise VPNConnectionException(
-                msg="More than one matching VPN connection was found. "
-                "To modify or delete a VPN please specify vpn_connection_id or add filters."
+                msg=(
+                    "More than one matching VPN connection was found. "
+                    "To modify or delete a VPN please specify vpn_connection_id or add filters."
+                )
             )
 
     # Found unique match
@@ -524,8 +526,10 @@ def create_connection(
 
     if not (customer_gateway_id and vpn_gateway_id):
         raise VPNConnectionException(
-            msg="No matching connection was found. To create a new connection you must provide "
-            "both vpn_gateway_id and customer_gateway_id."
+            msg=(
+                "No matching connection was found. To create a new connection you must provide "
+                "both vpn_gateway_id and customer_gateway_id."
+            )
         )
     try:
         vpn = connection.create_vpn_connection(
@@ -622,7 +626,10 @@ def check_for_update(connection, module_params, vpn_connection_id):
 
         if will_be is not None and to_text(will_be) != to_text(is_now):
             raise VPNConnectionException(
-                msg=f"You cannot modify {attribute}, the current value of which is {is_now}. Modifiable VPN connection attributes are tags and routes. The value you tried to change it to is {will_be}."
+                msg=(
+                    f"You cannot modify {attribute}, the current value of which is {is_now}. Modifiable VPN connection"
+                    f" attributes are tags and routes. The value you tried to change it to is {will_be}."
+                )
             )
 
     return changes

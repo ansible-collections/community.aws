@@ -206,7 +206,10 @@ def remove_rule_set(client, module):
         active = ruleset_active(client, module, name)
         if active and not module.params.get("force"):
             module.fail_json(
-                msg=f"Couldn't delete rule set {name} because it is currently active. Set force=true to delete an active ruleset.",
+                msg=(
+                    f"Couldn't delete rule set {name} because it is currently active. Set force=true to delete an"
+                    " active ruleset."
+                ),
                 error={
                     "code": "CannotDelete",
                     "message": f"Cannot delete active rule set: {name}",

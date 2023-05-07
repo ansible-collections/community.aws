@@ -259,7 +259,7 @@ def main():
     )
 
     required_if = [
-        ["state", "absent", ("id")],
+        ["state", "absent", ("id",)],
     ]
     mutually_exclusive = [
         ["rotate_keys", "id"],

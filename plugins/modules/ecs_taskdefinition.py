@@ -830,8 +830,10 @@ class EcsTaskManager:
                     if network_mode == "awsvpc" and "hostPort" in port_mapping:
                         if port_mapping["hostPort"] != port_mapping.get("containerPort"):
                             self.module.fail_json(
-                                msg="In awsvpc network mode, host port must be set to the same as "
-                                "container port or not be set"
+                                msg=(
+                                    "In awsvpc network mode, host port must be set to the same as "
+                                    "container port or not be set"
+                                )
                             )
 
             if "linuxParameters" in container:
@@ -1026,7 +1028,10 @@ def main():
                     )
                 elif existing_definitions_in_family and existing_definitions_in_family[-1]["revision"] + 1 != revision:
                     module.fail_json(
-                        msg=f"You have specified a revision of {int(revision)} but a created revision would be {int(existing_definitions_in_family[-1]['revision'] + 1)}"
+                        msg=(
+                            f"You have specified a revision of {int(revision)} but a created revision would be"
+                            f" {int(existing_definitions_in_family[-1]['revision'] + 1)}"
+                        )
                     )
         else:
             existing = None

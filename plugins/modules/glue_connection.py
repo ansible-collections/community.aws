@@ -335,8 +335,10 @@ def create_or_update_glue_connection(connection, connection_ec2, module, glue_co
 
     if glue_connection:
         module.deprecate(
-            "The 'connection_properties' return key is deprecated and will be replaced"
-            " by 'raw_connection_properties'. Both values are returned for now.",
+            (
+                "The 'connection_properties' return key is deprecated and will be replaced"
+                " by 'raw_connection_properties'. Both values are returned for now."
+            ),
             date="2024-06-01",
             collection_name="community.aws",
         )

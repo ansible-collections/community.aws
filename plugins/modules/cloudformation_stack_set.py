@@ -360,14 +360,19 @@ def update_stack_set(module, stack_params, cfn):
     except is_boto3_error_code("StackInstanceNotFound") as err:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             err,
-            msg="One or more stack instances were not found for this stack set. Double check "
-            "the `accounts` and `regions` parameters.",
+            msg=(
+                "One or more stack instances were not found for this stack set. Double check "
+                "the `accounts` and `regions` parameters."
+            ),
         )
     except is_boto3_error_code("OperationInProgressException") as err:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             err,
-            msg="Another operation is already in progress on this stack set - please try again later. When making "
-            "multiple cloudformation_stack_set calls, it's best to enable `wait: true` to avoid unfinished op errors.",
+            msg=(
+                "Another operation is already in progress on this stack set - please try again later. When making"
+                " multiple cloudformation_stack_set calls, it's best to enable `wait: true` to avoid unfinished op"
+                " errors."
+            ),
         )
     except (ClientError, BotoCoreError) as err:  # pylint: disable=duplicate-except
         module.fail_json_aws(err, msg="Could not update stack set.")
@@ -436,7 +441,8 @@ def await_stack_set_operation(module, cfn, stack_set_name, operation_id, max_wai
         pass
     else:
         module.warn(
-            f"Timed out waiting for operation {operation_id} on stack set {stack_set_name} after {max_wait} seconds. Returning unfinished operation"
+            f"Timed out waiting for operation {operation_id} on stack set {stack_set_name} after {max_wait} seconds."
+            " Returning unfinished operation"
         )
 
 
@@ -454,7 +460,8 @@ def await_stack_instance_completion(module, cfn, stack_set_name, max_wait):
         time.sleep(15)
 
     module.warn(
-        f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s['StackId'] for s in to_await)} to complete after {max_wait} seconds. Returning unfinished operation"
+        f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s['StackId'] for s in to_await)} to"
+        f" complete after {max_wait} seconds. Returning unfinished operation"
     )
 
 
@@ -579,8 +586,10 @@ def main():
     state = module.params["state"]
     if state == "present" and not module.params["accounts"]:
         module.fail_json(
-            msg="Can't create a stack set without choosing at least one account. "
-            "To get the ID of the current account, use the aws_caller_info module."
+            msg=(
+                "Can't create a stack set without choosing at least one account. "
+                "To get the ID of the current account, use the aws_caller_info module."
+            )
         )
 
     module.params["accounts"] = [to_native(a) for a in module.params["accounts"]]
@@ -605,7 +614,10 @@ def main():
             stack_params["UsePreviousTemplate"] = True
         else:
             module.fail_json(
-                msg=f"The Stack Set {module.params['name']} does not exist, and no template was provided. Provide one of `template`, `template_body`, or `template_url`"
+                msg=(
+                    f"The Stack Set {module.params['name']} does not exist, and no template was provided. Provide one"
+                    " of `template`, `template_body`, or `template_url`"
+                )
             )
 
     stack_params["Parameters"] = []

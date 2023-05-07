@@ -380,7 +380,13 @@ def ensure_absent(client, lag_id, lag_name, force_delete, delete_with_disassocia
     # If min_links is not 0, there are associated connections, or if there are virtual interfaces, ask for force_delete
     if any((latest_status["minimumLinks"], virtual_interfaces, connections)) and not force_delete:
         raise DirectConnectError(
-            msg=f"There are a minimum number of links, hosted connections, or associated virtual interfaces for LAG {lag_id}. To force deletion of the LAG use delete_force: True (if the LAG has virtual interfaces they will be deleted). Optionally, to ensure hosted connections are deleted after disassociation use delete_with_disassociation: True and wait: True (as Virtual Interfaces may take a few moments to delete)",
+            msg=(
+                "There are a minimum number of links, hosted connections, or associated virtual interfaces for LAG"
+                f" {lag_id}. To force deletion of the LAG use delete_force: True (if the LAG has virtual interfaces"
+                " they will be deleted). Optionally, to ensure hosted connections are deleted after disassociation use"
+                " delete_with_disassociation: True and wait: True (as Virtual Interfaces may take a few moments to"
+                " delete)"
+            ),
             last_traceback=None,
             exception=None,
         )

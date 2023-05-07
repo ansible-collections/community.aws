@@ -734,7 +734,8 @@ def _generate_index(index, include_throughput=True):
     else:
         if non_key_attributes:
             module.fail_json(
-                f"DynamoDB does not support specifying non-key-attributes ('includes') for indexes of type 'all'. Index name: {index['name']}"
+                "DynamoDB does not support specifying non-key-attributes ('includes') for indexes of type 'all'. Index"
+                f" name: {index['name']}"
             )
 
     idx = dict(

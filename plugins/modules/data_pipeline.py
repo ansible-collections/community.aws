@@ -543,9 +543,11 @@ def define_pipeline(client, module, objects, dp_id):
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(
                 e,
-                msg=f"Failed to put the definition for pipeline {dp_name}. Check that string/reference fields"
-                "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
-                "objects",
+                msg=(
+                    f"Failed to put the definition for pipeline {dp_name}. Check that string/reference fields"
+                    "are not empty and that the number of objects in the pipeline does not exceed maximum allowed"
+                    "objects"
+                ),
             )
     else:
         changed = False

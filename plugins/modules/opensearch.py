@@ -713,7 +713,8 @@ def set_encryption_at_rest_options(module, current_domain_config, desired_domain
         and current_domain_config["EncryptionAtRestOptions"] != encryption_at_rest_config
     ):
         change_set.append(
-            f"EncryptionAtRestOptions changed from {current_domain_config['EncryptionAtRestOptions']} to {encryption_at_rest_config}"
+            f"EncryptionAtRestOptions changed from {current_domain_config['EncryptionAtRestOptions']} to"
+            f" {encryption_at_rest_config}"
         )
         changed = True
     return changed
@@ -733,7 +734,8 @@ def set_node_to_node_encryption_options(module, current_domain_config, desired_d
         and current_domain_config["NodeToNodeEncryptionOptions"] != node_to_node_encryption_config
     ):
         change_set.append(
-            f"NodeToNodeEncryptionOptions changed from {current_domain_config['NodeToNodeEncryptionOptions']} to {node_to_node_encryption_config}"
+            f"NodeToNodeEncryptionOptions changed from {current_domain_config['NodeToNodeEncryptionOptions']} to"
+            f" {node_to_node_encryption_config}"
         )
         changed = True
     return changed
@@ -793,12 +795,14 @@ def set_vpc_options(module, current_domain_config, desired_domain_config, change
             # Note the subnets may be the same but be listed in a different order.
             if set(current_domain_config["VPCOptions"]["SubnetIds"]) != set(vpc_config["SubnetIds"]):
                 change_set.append(
-                    f"SubnetIds changed from {current_domain_config['VPCOptions']['SubnetIds']} to {vpc_config['SubnetIds']}"
+                    f"SubnetIds changed from {current_domain_config['VPCOptions']['SubnetIds']} to"
+                    f" {vpc_config['SubnetIds']}"
                 )
                 changed = True
             if set(current_domain_config["VPCOptions"]["SecurityGroupIds"]) != set(vpc_config["SecurityGroupIds"]):
                 change_set.append(
-                    f"SecurityGroup changed from {current_domain_config['VPCOptions']['SecurityGroupIds']} to {vpc_config['SecurityGroupIds']}"
+                    f"SecurityGroup changed from {current_domain_config['VPCOptions']['SecurityGroupIds']} to"
+                    f" {vpc_config['SecurityGroupIds']}"
                 )
                 changed = True
     return changed
@@ -902,7 +906,8 @@ def set_advanced_security_options(module, current_domain_config, desired_domain_
         and current_domain_config["AdvancedSecurityOptions"] != advanced_security_config
     ):
         change_set.append(
-            f"AdvancedSecurityOptions changed from {current_domain_config['AdvancedSecurityOptions']} to {advanced_security_config}"
+            f"AdvancedSecurityOptions changed from {current_domain_config['AdvancedSecurityOptions']} to"
+            f" {advanced_security_config}"
         )
         changed = True
     return changed
@@ -930,7 +935,8 @@ def set_domain_endpoint_options(module, current_domain_config, desired_domain_co
 
     if current_domain_config is not None and current_domain_config["DomainEndpointOptions"] != domain_endpoint_config:
         change_set.append(
-            f"DomainEndpointOptions changed from {current_domain_config['DomainEndpointOptions']} to {domain_endpoint_config}"
+            f"DomainEndpointOptions changed from {current_domain_config['DomainEndpointOptions']} to"
+            f" {domain_endpoint_config}"
         )
         changed = True
     return changed
@@ -972,12 +978,15 @@ def set_auto_tune_options(module, current_domain_config, desired_domain_config, 
     if current_domain_config is not None:
         if current_domain_config["AutoTuneOptions"]["DesiredState"] != auto_tune_config["DesiredState"]:
             change_set.append(
-                f"AutoTuneOptions.DesiredState changed from {current_domain_config['AutoTuneOptions']['DesiredState']} to {auto_tune_config['DesiredState']}"
+                "AutoTuneOptions.DesiredState changed from"
+                f" {current_domain_config['AutoTuneOptions']['DesiredState']} to {auto_tune_config['DesiredState']}"
             )
             changed = True
         if auto_tune_config["MaintenanceSchedules"] != current_domain_config["AutoTuneOptions"]["MaintenanceSchedules"]:
             change_set.append(
-                f"AutoTuneOptions.MaintenanceSchedules changed from {current_domain_config['AutoTuneOptions']['MaintenanceSchedules']} to {auto_tune_config['MaintenanceSchedules']}"
+                "AutoTuneOptions.MaintenanceSchedules changed from"
+                f" {current_domain_config['AutoTuneOptions']['MaintenanceSchedules']} to"
+                f" {auto_tune_config['MaintenanceSchedules']}"
             )
             changed = True
     return changed

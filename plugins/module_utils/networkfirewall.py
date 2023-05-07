@@ -954,8 +954,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         rule_type = self.RULE_TYPES.intersection(set(rules_source.keys()))
         if len(rule_type) != 1:
             self.module.fail_json(
-                "Exactly one of rule strings, domain list or rule list"
-                " must be provided when creating a new rule group",
+                "Exactly one of rule strings, domain list or rule list must be provided when creating a new rule group",
                 rule_type=rule_type,
                 keys=self._resource_updates.keys(),
                 types=self.RULE_TYPES,

@@ -479,12 +479,18 @@ def existing_templates(module):
     except is_boto3_error_code("InvalidLaunchTemplateId.Malformed") as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
-            msg=f"Launch template with ID {module.params.get('launch_template_id')} is not a valid ID. It should start with `lt-....`",
+            msg=(
+                f"Launch template with ID {module.params.get('launch_template_id')} is not a valid ID. It should start"
+                " with `lt-....`"
+            ),
         )
     except is_boto3_error_code("InvalidLaunchTemplateId.NotFoundException") as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(
             e,
-            msg=f"Launch template with ID {module.params.get('launch_template_id')} could not be found, please supply a name instead so that a new template can be created",
+            msg=(
+                f"Launch template with ID {module.params.get('launch_template_id')} could not be found, please supply a"
+                " name instead so that a new template can be created"
+            ),
         )
     except (ClientError, BotoCoreError, WaiterError) as e:  # pylint: disable=duplicate-except
         module.fail_json_aws(e, msg="Could not check existing launch templates. This may be an IAM permission problem.")
@@ -540,7 +546,8 @@ def delete_template(module):
                 )
                 if v_resp["UnsuccessfullyDeletedLaunchTemplateVersions"]:
                     module.warn(
-                        f"Failed to delete template versions {v_resp['UnsuccessfullyDeletedLaunchTemplateVersions']} on launch template {template['LaunchTemplateId']}"
+                        f"Failed to delete template versions {v_resp['UnsuccessfullyDeletedLaunchTemplateVersions']} on"
+                        f" launch template {template['LaunchTemplateId']}"
                     )
                 deleted_versions = [
                     camel_dict_to_snake_dict(v) for v in v_resp["SuccessfullyDeletedLaunchTemplateVersions"]

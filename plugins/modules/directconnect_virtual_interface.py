@@ -460,8 +460,10 @@ def ensure_state(connection, module):
 
     if virtual_interface_id is False:
         module.fail_json(
-            msg="Multiple virtual interfaces were found. Use the virtual_interface_id, name, "
-            "and connection_id options if applicable to find a unique match."
+            msg=(
+                "Multiple virtual interfaces were found. Use the virtual_interface_id, name, "
+                "and connection_id options if applicable to find a unique match."
+            )
         )
 
     if state == "present":

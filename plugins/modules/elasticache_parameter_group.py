@@ -185,11 +185,17 @@ def check_valid_modification(module, values, modifiable_params):
                     values[parameter] = 1 if new_value else 0
                 else:
                     module.fail_json(
-                        msg=f"{new_value} (type {type(new_value)}) is not an allowed value for the parameter {parameter}. Expected a type {modifiable_params[parameter][1]}."
+                        msg=(
+                            f"{new_value} (type {type(new_value)}) is not an allowed value for the parameter"
+                            f" {parameter}. Expected a type {modifiable_params[parameter][1]}."
+                        )
                     )
             else:
                 module.fail_json(
-                    msg=f"{new_value} (type {type(new_value)}) is not an allowed value for the parameter {parameter}. Expected a type {modifiable_params[parameter][1]}."
+                    msg=(
+                        f"{new_value} (type {type(new_value)}) is not an allowed value for the parameter {parameter}."
+                        f" Expected a type {modifiable_params[parameter][1]}."
+                    )
                 )
 
         # check allowed values for modifiable parameters
