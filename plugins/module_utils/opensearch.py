@@ -34,7 +34,7 @@ def get_domain_status(client, module, domain_name):
         botocore.exceptions.BotoCoreError,
         botocore.exceptions.ClientError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get domain {0}".format(domain_name))
+        module.fail_json_aws(e, msg=f"Couldn't get domain {domain_name}")
     return response["DomainStatus"]
 
 
@@ -56,7 +56,7 @@ def get_domain_config(client, module, domain_name):
         botocore.exceptions.BotoCoreError,
         botocore.exceptions.ClientError,
     ) as e:  # pylint: disable=duplicate-except
-        module.fail_json_aws(e, msg="Couldn't get domain {0}".format(domain_name))
+        module.fail_json_aws(e, msg=f"Couldn't get domain {domain_name}")
     domain_config = {}
     arn = None
     if response is not None:
@@ -96,7 +96,7 @@ def normalize_opensearch(client, module, domain):
     try:
         domain["Tags"] = boto3_tag_list_to_ansible_dict(client.list_tags(ARN=domain["ARN"], aws_retry=True)["TagList"])
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
-        module.fail_json_aws(e, "Couldn't get tags for domain %s" % domain["domain_name"])
+        module.fail_json_aws(e, f"Couldn't get tags for domain {domain['domain_name']}")
     except KeyError:
         module.fail_json(msg=str(domain))
 
@@ -203,7 +203,7 @@ def get_target_increment_version(client, module, domain_name, target_version):
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         module.fail_json_aws(
             e,
-            msg="Couldn't get compatible versions for domain {0}".format(domain_name),
+            msg=f"Couldn't get compatible versions for domain {domain_name}",
         )
     compat = api_compatible_versions.get("CompatibleVersions")
     if compat is None:
@@ -246,7 +246,7 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
         ) as e:
-            module.fail_json_aws(e, "Couldn't add tags to domain {0}".format(resource_arn))
+            module.fail_json_aws(e, f"Couldn't add tags to domain {resource_arn}")
     if tags_to_remove:
         if module.check_mode:
             module.exit_json(changed=True, msg="Would have removed tags if not in check mode")
@@ -256,5 +256,5 @@ def ensure_tags(client, module, resource_arn, existing_tags, tags, purge_tags):
             botocore.exceptions.ClientError,
             botocore.exceptions.BotoCoreError,
         ) as e:
-            module.fail_json_aws(e, "Couldn't remove tags from domain {0}".format(resource_arn))
+            module.fail_json_aws(e, f"Couldn't remove tags from domain {resource_arn}")
     return changed
