@@ -546,7 +546,7 @@ class BaseNetworkFirewallManager(BaseResourceManager):
         if immutable and self.original_resource:
             if description is None:
                 description = key
-            self.module.fail_json(msg="{0} can not be updated after creation".format(description))
+            self.module.fail_json(msg=f"{description} can not be updated after creation")
         self._metadata_updates[key] = value
         self.changed = True
         return True
@@ -785,7 +785,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         if value == rule_options.get(option_name, default_value):
             return False
         if immutable and self.original_resource:
-            self.module.fail_json(msg="{0} can not be updated after creation".format(description))
+            self.module.fail_json(msg=f"{description} can not be updated after creation")
 
         rule_options[option_name] = value
 
@@ -834,7 +834,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         conflicting_rule_type = conflicting_types.intersection(current_keys)
         if conflicting_rule_type:
             self.module.fail_json(
-                "Unable to add {0} rules, {1} rules already set".format(rule_type, " and ".join(conflicting_rule_type))
+                f"Unable to add {rule_type} rules, {' and '.join(conflicting_rule_type)} rules already set"
             )
 
         original_rules = rules_source.get(rule_type, None)
@@ -892,7 +892,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
 
     def _format_rule_options(self, options, sid):
         formatted_options = []
-        opt = dict(Keyword="sid:{0}".format(sid))
+        opt = dict(Keyword=f"sid:{sid}")
         formatted_options.append(opt)
         if options:
             for option in sorted(options.keys()):
@@ -954,8 +954,7 @@ class NetworkFirewallRuleManager(NFRuleGroupBoto3Mixin, BaseNetworkFirewallManag
         rule_type = self.RULE_TYPES.intersection(set(rules_source.keys()))
         if len(rule_type) != 1:
             self.module.fail_json(
-                "Exactly one of rule strings, domain list or rule list"
-                " must be provided when creating a new rule group",
+                "Exactly one of rule strings, domain list or rule list must be provided when creating a new rule group",
                 rule_type=rule_type,
                 keys=self._resource_updates.keys(),
                 types=self.RULE_TYPES,
@@ -1168,7 +1167,7 @@ class NetworkFirewallPolicyManager(NFPolicyBoto3Mixin, NFRuleGroupBoto3Mixin, Ba
         if value == engine_options.get(option_name, default_value):
             return False
         if immutable and self.original_resource:
-            self.module.fail_json(msg="{0} can not be updated after creation".format(description))
+            self.module.fail_json(msg=f"{description} can not be updated after creation")
 
         engine_options[option_name] = value
         return self._set_resource_value("StatefulEngineOptions", engine_options)
@@ -1207,7 +1206,7 @@ class NetworkFirewallPolicyManager(NFPolicyBoto3Mixin, NFRuleGroupBoto3Mixin, Ba
         invalid_actions = list(set(actions) - set(valid_actions or []))
         if valid_actions and invalid_actions:
             self.module.fail_json(
-                msg="{0} contains invalid actions".format(key),
+                msg=f"{key} contains invalid actions",
                 valid_actions=valid_actions,
                 invalid_actions=invalid_actions,
                 actions=actions,

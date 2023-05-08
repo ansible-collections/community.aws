@@ -50,7 +50,7 @@ def test_chain_compare():
             pprint(expected)
             print("Actual:")
             pprint(actual)
-            raise AssertionError("Failed to properly split %s" % fname)
+            raise AssertionError(f"Failed to properly split {fname}")
 
     # Now test real chains
     # chains with same same_as should be considered equal
@@ -92,10 +92,10 @@ def test_chain_compare():
             print(chain["pem_text"])
             print("Cert after split")
             pprint(chain["split"])
-            print("path: %s" % chain["path"])
-            print("Expected chain length: %d" % chain["length"])
-            print("Actual chain length: %d" % len(chain["split"]))
-            raise AssertionError("Chain %s was not split properly" % chain["path"])
+            print(f"path: {chain['path']}")
+            print(f"Expected chain length: {int(chain['length'])}")
+            print(f"Actual chain length: {len(chain['split'])}")
+            raise AssertionError(f"Chain {chain['path']} was not split properly")
 
     for chain_a in test_chains:
         for chain_b in test_chains:
@@ -104,6 +104,6 @@ def test_chain_compare():
             # Now test the comparison function
             actual = chain_compare(module, chain_a["pem_text"], chain_b["pem_text"])
             if expected != actual:
-                print("Error, unexpected comparison result between \n%s\nand\n%s" % (chain_a["path"], chain_b["path"]))
-                print("Expected %s got %s" % (str(expected), str(actual)))
+                print(f"Error, unexpected comparison result between \n{chain_a['path']}\nand\n{chain_b['path']}")
+                print(f"Expected {str(expected)} got {str(actual)}")
             assert expected == actual

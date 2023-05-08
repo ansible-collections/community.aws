@@ -51,7 +51,7 @@ class DictDataLoader(DataLoader):
         if file_name in self._file_mapping:
             return (to_bytes(self._file_mapping[file_name]), False)
         else:
-            raise AnsibleParserError("file not found: %s" % file_name)
+            raise AnsibleParserError(f"file not found: {file_name}")
 
     def path_exists(self, path):
         path = to_text(path)
