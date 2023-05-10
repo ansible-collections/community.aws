@@ -10,7 +10,7 @@ tags: [community, aws, cloud, amazon]
 dependencies:
   amazon.aws: '>=6.0.0-dev0'
 repository: https://github.com/ansible-collections/community.aws
-documentation: https://ansible-collections.github.io/community.aws/branch/main/collections/community/aws/index.html
+documentation: https://ansible-collections.github.io/community.aws/branch/stable-6/collections/community/aws/index.html
 homepage: https://github.com/ansible-collections/community.aws
 issues: https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc
 build_ignore:
