@@ -1,3 +1,0 @@
----
-minor_changes:
-- minor code fixes and enable integration tests for modules cloudfront_distribution, cloudfront_invalidation and cloudfront_origin_access_identity (https://github.com/ansible-collections/community.aws/pull/1596).

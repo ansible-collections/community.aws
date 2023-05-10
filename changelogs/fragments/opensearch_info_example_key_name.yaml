@@ -1,3 +1,0 @@
----
-bugfixes:
-- "opensearch_info - Fix the name of the domain_name key in the example (https://github.com/ansible-collections/community.aws/pull/1811)."

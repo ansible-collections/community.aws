@@ -1,6 +1,6 @@
 namespace: community
 name: aws
-version: 6.0.0-dev0
+version: 6.0.0
 readme: README.md
 authors:
   - Ansible (https://github.com/ansible)
@@ -8,7 +8,7 @@ description: null
 license_file: COPYING
 tags: [community, aws, cloud, amazon]
 dependencies:
-  amazon.aws: '>=6.0.0-dev0'
+  amazon.aws: '>=6.0.0'
 repository: https://github.com/ansible-collections/community.aws
 documentation: https://ansible-collections.github.io/community.aws/branch/stable-6/collections/community/aws/index.html
 homepage: https://github.com/ansible-collections/community.aws

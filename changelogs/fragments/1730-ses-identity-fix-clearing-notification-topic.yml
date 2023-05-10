@@ -1,2 +1,0 @@
-bugfixes:
-  - ses_identity - fix clearing notification topic (https://github.com/ansible-collections/community.aws/issues/150).

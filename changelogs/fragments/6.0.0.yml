@@ -1,0 +1,2 @@
+trivial:
+- Add a fragment to work around ansible-test-changelog, updating the version triggers an update to common.py which ``needs`` a changelog fragment.

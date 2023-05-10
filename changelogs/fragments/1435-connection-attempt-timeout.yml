@@ -1,2 +1,0 @@
-minor_changes:
-- cloudfront_distribution - documented `connection_attempts` and `connection_timeout` - the module was already capable of using them

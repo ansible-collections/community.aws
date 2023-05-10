@@ -1,4 +1,0 @@
----
-trivial:
-- "s2_lifecycle - Increase the max duration of the integration tests (https://github.com/ansible-collections/community.aws/pull/1578)." 
-- "secretsmanager_secret - Increase the max duration of the integration tests (https://github.com/ansible-collections/community.aws/pull/1578)." 
