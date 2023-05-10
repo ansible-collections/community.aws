@@ -1,2 +1,0 @@
-minor_changes:
-- wafv2_rule_group_info - remove unused and deprecated ``state`` parameter (https://github.com/ansible-collections/community.aws/pull/1555).
