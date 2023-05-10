@@ -1,4 +1,0 @@
-release_summary: |
-  This release brings some new plugins and features. Several bugfixes, breaking changes and deprecated features are also included.
-  The community.aws collection has dropped support for ``botocore<1.25.0`` and ``boto3<1.22.0``.
-  Support for Python 3.6 has also been dropped.

@@ -5,6 +5,67 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v6.0.0
+======
+
+Release Summary
+---------------
+
+This release brings some new plugins and features. Several bugfixes, breaking changes and deprecated features are also included.
+The community.aws collection has dropped support for ``botocore<1.25.0`` and ``boto3<1.22.0``.
+Support for Python 3.6 has also been dropped.
+
+
+Minor Changes
+-------------
+
+- The ``black`` code formatter has been run across the collection to improve code consistency (https://github.com/ansible-collections/community.aws/pull/1784).
+- aws_config_delivery_channel - add support for encrypted objects in S3 via KMS key (https://github.com/ansible-collections/community.aws/pull/1786).
+- aws_ssm - Updated the documentation to explicitly mention that the ``ansible_user`` and ``remote_user`` variables are not supported by the plugin (https://github.com/ansible-collections/community.aws/pull/1682).
+- bulk migration of ``%`` and ``.format()`` to fstrings (https://github.com/ansible-collections/community.aws/pull/1810).
+- cloudfront_distribution - add ``http3`` support via parameter value ``http2and3`` for parameter ``http_version`` (https://github.com/ansible-collections/community.aws/pull/1753).
+- cloudfront_distribution - add `origin_shield` options (https://github.com/ansible-collections/community.aws/pull/1557).
+- cloudfront_distribution - documented `connection_attempts` and `connection_timeout` - the module was already capable of using them
+- community.aws - updated document fragments based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
+- community.aws - updated imports based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
+- ecs_ecr - use ``compare_policies`` when comparing lifecycle policies instead of naive ``sort_json_policy_dict`` comparisons (https://github.com/ansible-collections/community.aws/pull/1551).
+- elasticache - Use the ``cache.t3.small`` node type in the example. ``cache.m1.small`` is not deprecated.
+- minor code fixes and enable integration tests for modules cloudfront_distribution, cloudfront_invalidation and cloudfront_origin_access_identity (https://github.com/ansible-collections/community.aws/pull/1596).
+- module_utils.botocore - Add Ansible AWS User-Agent identification (https://github.com/ansible-collections/community.aws/pull/1632).
+- wafv2_rule_group_info - remove unused and deprecated ``state`` parameter (https://github.com/ansible-collections/community.aws/pull/1555).
+
+Breaking Changes / Porting Guide
+--------------------------------
+
+- The community.aws collection has dropped support for ``botocore<1.25.0`` and ``boto3<1.22.0``. Most modules will continue to work with older versions of the AWS SDK, however compatability with older versions of the SDK is not guaranteed and will not be tested. When using older versions of the SDK a warning will be emitted by Ansible (https://github.com/ansible-collections/community.aws/pull/1743).
+- aws_ssm - the AWS SSM plugin was incorrectly prepending ``sudo`` to most commands.  This behaviour was incorrect and has been removed. To execute commands as a specific user, including the ``root`` user, the ``become`` and ``become_user`` directives should be used.  See the `Ansible documentation for more information <https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html>`_ (https://github.com/ansible-collections/community.aws/issues/853).
+- codebuild_project - ``tags`` parameter now accepts a dict representing the tags, rather than the boto3 format (https://github.com/ansible-collections/community.aws/pull/1643).
+
+Deprecated Features
+-------------------
+
+- community.aws collection - due to the AWS SDKs Python support policies (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.8 by this collection is expected to be removed in a release after 2024-12-01 (https://github.com/ansible-collections/community.aws/pull/1743).
+- community.aws collection - due to the AWS SDKs announcing the end of support for Python less than 3.7 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.7 by this collection has been deprecated and will be removed in release 7.0.0. (https://github.com/ansible-collections/community.aws/pull/1743).
+
+Bugfixes
+--------
+
+- opensearch_info - Fix the name of the domain_name key in the example (https://github.com/ansible-collections/community.aws/pull/1811).
+- ses_identity - fix clearing notification topic (https://github.com/ansible-collections/community.aws/issues/150).
+
+New Modules
+-----------
+
+- ec2_carrier_gateway - Manage an AWS VPC Carrier gateway
+- ec2_carrier_gateway_info - Gather information about carrier gateways in AWS
+- lightsail_snapshot - Creates snapshots of AWS Lightsail instances
+- mq_broker - MQ broker management
+- mq_broker_config - Update Amazon MQ broker configuration
+- mq_broker_info - Retrieve MQ Broker details
+- mq_user - Manage users in existing Amazon MQ broker
+- mq_user_info - List users of an Amazon MQ broker
+- ssm_inventory_info - Get SSM inventory information for EC2 instance
+
 v5.5.0
 ======
 

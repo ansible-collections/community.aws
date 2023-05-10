@@ -1,3 +1,0 @@
----
-minor_changes:
-  - aws_config_delivery_channel - add support for encrypted objects in S3 via KMS key (https://github.com/ansible-collections/community.aws/pull/1786).

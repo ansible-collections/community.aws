@@ -1,7 +1,0 @@
-minor_changes:
-- community.aws - updated imports based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
-- community.aws - updated document fragments based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
-trivial:
-- Add file encoding comment to all plugins
-- Replace full GPL prefix entries with one line version
-- Add missing copyright notices

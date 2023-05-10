@@ -1,2 +1,0 @@
-trivial:
-- Include aws_ssm black changes (https://github.com/ansible-collections/community.aws/pull/1798)
