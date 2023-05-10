@@ -24,8 +24,8 @@ Minor Changes
 - aws_ssm - Updated the documentation to explicitly mention that the ``ansible_user`` and ``remote_user`` variables are not supported by the plugin (https://github.com/ansible-collections/community.aws/pull/1682).
 - bulk migration of ``%`` and ``.format()`` to fstrings (https://github.com/ansible-collections/community.aws/pull/1810).
 - cloudfront_distribution - add ``http3`` support via parameter value ``http2and3`` for parameter ``http_version`` (https://github.com/ansible-collections/community.aws/pull/1753).
-- cloudfront_distribution - add `origin_shield` options (https://github.com/ansible-collections/community.aws/pull/1557).
-- cloudfront_distribution - documented `connection_attempts` and `connection_timeout` - the module was already capable of using them
+- cloudfront_distribution - add ``origin_shield`` options (https://github.com/ansible-collections/community.aws/pull/1557).
+- cloudfront_distribution - documented ``connection_attempts`` and ``connection_timeout`` the module was already capable of using them
 - community.aws - updated document fragments based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
 - community.aws - updated imports based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
 - ecs_ecr - use ``compare_policies`` when comparing lifecycle policies instead of naive ``sort_json_policy_dict`` comparisons (https://github.com/ansible-collections/community.aws/pull/1551).
@@ -217,7 +217,7 @@ Bugfixes
 --------
 
 - aws_ssm - fixes S3 bucket region detection by ensuring boto client has correct credentials and exists in correct partition (https://github.com/ansible-collections/community.aws/pull/1428).
-- ec2_snapshot_copy - including tags caused the erorr "Tag specification resource type must have a value". Fix sets the ResourceType to snapshot to resolve this issue (https://github.com/ansible-collections/community.aws/pull/1419).
+- ec2_snapshot_copy - including tags caused the erorr ``Tag specification resource type must have a value``. Fix sets the ResourceType to snapshot to resolve this issue (https://github.com/ansible-collections/community.aws/pull/1419).
 - ecs_ecr - fix a ``RepositoryNotFound`` exception when trying to create repositories in check mode (https://github.com/ansible-collections/community.aws/pull/1550).
 - opensearch - Fix cluster creation when using advanced security options (https://github.com/ansible-collections/community.aws/pull/1613).
 
@@ -382,7 +382,7 @@ Bugfixes
 
 - ec2_placement_group - Handle a potential race creation during the creation of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
 - elb_network_lb - fixes bug where ``ip_address_type`` in return value was not updated (https://github.com/ansible-collections/community.aws/pull/1365).
-- rds_cluster - fixes bug where specifiying an rds cluster parameter group raises a `KeyError` (https://github.com/ansible-collections/community.aws/pull/1417).
+- rds_cluster - fixes bug where specifiying an rds cluster parameter group raises a ``KeyError`` (https://github.com/ansible-collections/community.aws/pull/1417).
 - s3_sync - fix etag generation when running in FIPS mode (https://github.com/ansible-collections/community.aws/issues/757).
 
 New Modules
@@ -473,7 +473,7 @@ Bugfixes
 --------
 
 - ec2_placement_group - Handle a potential race creation during the creation of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
-- rds_cluster - fixes bug where specifiying an rds cluster parameter group raises a `KeyError` (https://github.com/ansible-collections/community.aws/pull/1417).
+- rds_cluster - fixes bug where specifiying an rds cluster parameter group raises a ``KeyError`` (https://github.com/ansible-collections/community.aws/pull/1417).
 
 v4.2.0
 ======
@@ -531,7 +531,7 @@ Deprecated Features
 - community.aws collection - due to the AWS SDKs announcing the end of support for Python less than 3.7 (https://aws.amazon.com/blogs/developer/python-support-policy-updates-for-aws-sdks-and-tools/) support for Python less than 3.7 by this collection has been deprecated and will be removed in a release after 2023-05-31 (https://github.com/ansible-collections/community.aws/pull/1361).
 - iam_policy - the ``policies`` return value has been renamed ``policy_names`` and will be removed in a release after 2024-08-01, both values are currently returned (https://github.com/ansible-collections/community.aws/pull/1375).
 - lambda_info - The ``function`` return key returns a dictionary of dictionaries and has been deprecated. In a release after 2025-01-01, this key will be removed in favor of ``functions``, which returns a list of dictionaries (https://github.com/ansible-collections/community.aws/pull/1239).
-- route53_info - The CamelCase return values for ``DelegationSets``, ``CheckerIpRanges``, and ``HealthCheck`` have been deprecated, in the future release you must use snake_case return values ``delegation_sets``, ``checker_ip_ranges``, and ``health_check`` instead respectively" (https://github.com/ansible-collections/community.aws/pull/1322).
+- route53_info - The CamelCase return values for ``DelegationSets``, ``CheckerIpRanges``, and ``HealthCheck`` have been deprecated, in the future release you must use snake_case return values ``delegation_sets``, ``checker_ip_ranges``, and ``health_check`` instead respectively (https://github.com/ansible-collections/community.aws/pull/1322).
 
 Bugfixes
 --------
@@ -694,7 +694,7 @@ Removed Features (previously deprecated)
 ----------------------------------------
 
 - aws_kms_info - the unused and deprecated ``keys_attr`` parameter has been removed (https://github.com/ansible-collections/amazon.aws/pull/1172).
-- data_pipeline - the ``version`` option has always been ignored and has been removed (https://github.com/ansible-collections/community.aws/pull/1160"
+- data_pipeline - the ``version`` option has always been ignored and has been removed (https://github.com/ansible-collections/community.aws/pull/1160
 - ec2_eip - The ``wait_timeout`` option has been removed. It has always been ignored by the module (https://github.com/ansible-collections/community.aws/pull/1159).
 - ec2_lc - the ``associate_public_ip_address`` option has been removed. It has always been ignored by the module (https://github.com/ansible-collections/community.aws/pull/1158).
 - ec2_metric_alarm - support for using the ``<=``, ``<``, ``>`` and ``>=`` operators for comparison has been dropped. Please use ``LessThanOrEqualToThreshold``, ``LessThanThreshold``, ``GreaterThanThreshold`` or ``GreaterThanOrEqualToThreshold`` instead (https://github.com/ansible-collections/amazon.aws/pull/1164).
@@ -795,7 +795,7 @@ Deprecated Features
 -------------------
 
 - aws_codebuild - The ``tags`` parameter currently uses a non-standard format and has been deprecated.  In release 6.0.0 this parameter will accept a simple key/value pair dictionary instead of the current list of dictionaries.  It is recommended to migrate to using the resource_tags parameter which already accepts the simple dictionary format (https://github.com/ansible-collections/community.aws/pull/1221).
-- route53_info - The CamelCase return values for ``HostedZones``, ``ResourceRecordSets``, and ``HealthChecks`` have been deprecated, in the future release you must use snake_case return values ``hosted_zones``, ``resource_record_sets``, and ``health_checks`` instead respectively".
+- route53_info - The CamelCase return values for ``HostedZones``, ``ResourceRecordSets``, and ``HealthChecks`` have been deprecated, in the future release you must use snake_case return values ``hosted_zones``, ``resource_record_sets``, and ``health_checks`` instead respectively.
 
 Bugfixes
 --------
@@ -1680,7 +1680,7 @@ Bugfixes
 - cloudfront_distribution - Always add field_level_encryption_id to cache behaviour to match AWS requirements
 - cloudwatchlogs_log_group - Fix a KeyError when updating a log group that does not have a retention period (https://github.com/ansible/ansible/issues/47945)
 - cloudwatchlogs_log_group_info - remove limitation of max 50 results
-- ec2_asg - Ensure "wait" is honored during replace operations
+- ec2_asg - Ensure ``wait`` is honored during replace operations
 - ec2_launch_template - Update output to include latest_version and default_version, matching the documentation
 - ec2_transit_gateway - Use AWSRetry before ClientError is handled when describing transit gateways
 - ec2_transit_gateway - fixed issue where auto_attach set to yes was not being honored (https://github.com/ansible/ansible/issues/61907)
