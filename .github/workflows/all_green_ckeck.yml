@@ -22,8 +22,6 @@ on:  # yamllint disable-line rule:truthy
 jobs:
   changelog-and-linters:
     uses: ./.github/workflows/changelog_and_linters.yml  # use the callable changelog_and_linters job to run tests
-  linters:
-    uses: ./.github/workflows/linters.yml  # use the callable linters job to run tests
   sanity:
     uses: ./.github/workflows/sanity.yml  # use the callable sanity job to run tests
   units:
