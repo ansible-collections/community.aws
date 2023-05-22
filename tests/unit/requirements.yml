@@ -1,0 +1,3 @@
+---
+collections:
+- amazon.aws >= 5.0.0
