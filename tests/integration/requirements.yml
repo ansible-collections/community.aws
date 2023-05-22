@@ -1,6 +1,6 @@
 ---
 collections:
-- amazon.aws >= 3.0.0
+- amazon.aws >= 6.0.0
 - ansible.windows
 - community.crypto
 - community.general
