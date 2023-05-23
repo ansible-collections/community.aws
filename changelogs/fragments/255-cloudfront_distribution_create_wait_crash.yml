@@ -1,0 +1,2 @@
+bugfixes:
+  - cloudfront_distribution - no longer crashes when waiting for completion of creation
