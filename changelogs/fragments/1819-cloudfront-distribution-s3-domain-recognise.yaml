@@ -1,2 +1,2 @@
-bugfix:
+bugfixes:
 - The origins of cloudfront_distribution now recognise s3 domains with region part
