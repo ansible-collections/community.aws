@@ -1677,7 +1677,7 @@ class CloudFrontValidationManager(object):
                 "http2and3",
             ]
         )
-        self.__s3_bucket_domain_regex = re.compile("\.s3(?:\.[^.]+)?\.amazonaws\.com$")
+        self.__s3_bucket_domain_regex = re.compile(r"\.s3(?:\.[^.]+)?\.amazonaws\.com$")
 
     def add_missing_key(self, dict_object, key_to_set, value_to_set):
         if key_to_set not in dict_object and value_to_set is not None:
