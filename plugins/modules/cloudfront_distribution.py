@@ -1417,6 +1417,7 @@ web_acl_id:
 
 from collections import OrderedDict
 import datetime
+import re
 
 try:
     import botocore
@@ -1676,7 +1677,7 @@ class CloudFrontValidationManager(object):
                 "http2and3",
             ]
         )
-        self.__s3_bucket_domain_identifier = ".s3.amazonaws.com"
+        self.__s3_bucket_domain_regex = re.compile("\.s3(?:\.[^.]+)?\.amazonaws\.com$")
 
     def add_missing_key(self, dict_object, key_to_set, value_to_set):
         if key_to_set not in dict_object and value_to_set is not None:
@@ -1818,7 +1819,7 @@ class CloudFrontValidationManager(object):
                         )
                     else:
                         origin_shield_region = origin_shield_region.lower()
-            if self.__s3_bucket_domain_identifier in origin.get("domain_name").lower():
+            if self.__s3_bucket_domain_regex.search(origin.get("domain_name").lower()):
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     if origin["s3_origin_access_identity_enabled"]:
                         s3_origin_config = self.validate_s3_origin_configuration(client, existing_config, origin)
