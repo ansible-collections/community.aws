@@ -1,0 +1,2 @@
+bugfixes:
+  - dynamodb_table - secondary indexes are now created
