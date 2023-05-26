@@ -36,6 +36,8 @@ indexes:
 local_indexes:
   - name: NamedIndex
     type: include
+    hash_key_name: "id"  ## == table_index
+    hash_key_type: "NUMBER"  ## == table_index_type
     range_key_name: create_time
     includes:
       - other_field
@@ -44,11 +46,15 @@ local_indexes:
     write_capacity: 10
   - name: AnotherIndex
     type: all
+    hash_key_name: id  ## == table_index
+    hash_key_type: "NUMBER"  ## == table_index_type
     range_key_name: bar
     read_capacity: 5
     write_capacity: 5
   - name: KeysOnlyIndex
     type: keys_only
+    hash_key_name: id  ## == table_index
+    hash_key_type: "NUMBER"  ## == table_index_type
     range_key_name: baz
     read_capacity: 2
     write_capacity: 2
