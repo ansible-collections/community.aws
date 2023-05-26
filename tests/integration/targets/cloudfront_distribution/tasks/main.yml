@@ -25,6 +25,12 @@
   - set_fact:
       distribution_id: '{{ cf_distribution.id }}'
 
+  - name: ensure that default value of 'enabled' is 'true'
+    assert:
+      that:
+        - cf_distribution.changed
+        - cf_distribution.enabled
+
   - name: ensure that default value of 'ipv6_enabled' is 'false'
     assert:
       that:
@@ -359,8 +365,9 @@
       wait: true
       state: absent
 
-  - name: create cloudfront distribution with tags
+  - name: create cloudfront distribution with tags and as disabled
     cloudfront_distribution:
+      enabled: false
       origins:
       - domain_name: "{{ resource_prefix }}2.example.com"
         id: "{{ resource_prefix }}2.example.com"
@@ -372,6 +379,12 @@
 
   - set_fact:
       distribution_id: '{{ cf_second_distribution.id }}'
+
+  - name: ensure that the value of 'enabled' is 'false'
+    assert:
+      that:
+        - cf_second_distribution.changed
+        - not cf_second_distribution.enabled
 
   - name: ensure tags were set on creation
     assert:
