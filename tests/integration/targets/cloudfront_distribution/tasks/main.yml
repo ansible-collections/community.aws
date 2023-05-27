@@ -555,6 +555,43 @@
     ignore_errors: true
 
   - name: check that custom origin with origin access identity fails
+    # "s3 origin domains and custom_origin_config are mutually exclusive"
+    assert:
+      that:
+        - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed
+
+  - name: check that custom_origin_config can't be used with an region-agnostic S3 domain
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ resource_prefix }}-bucket.s3.{{ aws_region }}.amazonaws.com"
+        id: "{{ resource_prefix }}3.example.com"
+        custom_origin_config:
+          http_port: 8080
+      state: present
+    register: update_origin_to_s3_with_origin_access_and_with_custom_origin_config
+    ignore_errors: true
+
+  - name: check that custom origin with region-agnostic S3 domain fails
+    # "s3 origin domains and custom_origin_config are mutually exclusive"
+    assert:
+      that:
+        - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed
+
+  - name: check that custom_origin_config can't be used with an region-aware S3 domain
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ resource_prefix }}-bucket.s3.amazonaws.com"
+        id: "{{ resource_prefix }}3.example.com"
+        custom_origin_config:
+          http_port: 8080
+      state: present
+    register: update_origin_to_s3_with_origin_access_and_with_custom_origin_config
+    ignore_errors: true
+
+  - name: check that custom origin with region-aware S3 domain fails
+    # "s3 origin domains and custom_origin_config are mutually exclusive"
     assert:
       that:
         - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed

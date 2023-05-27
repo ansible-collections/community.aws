@@ -1835,10 +1835,10 @@ class CloudFrontValidationManager(object):
 
                     origin["s3_origin_config"] = dict(origin_access_identity=oai)
 
-                    if "custom_origin_config" in origin:
-                        self.module.fail_json(
-                            msg="s3_origin_access_identity_enabled and custom_origin_config are mutually exclusive"
-                        )
+                if "custom_origin_config" in origin:
+                    self.module.fail_json(
+                        msg="s3 origin domains and custom_origin_config are mutually exclusive"
+                    )
             else:
                 origin = self.add_missing_key(
                     origin, "custom_origin_config", existing_config.get("custom_origin_config", {})
