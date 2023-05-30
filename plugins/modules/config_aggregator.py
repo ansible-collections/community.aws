@@ -47,7 +47,7 @@ options:
         type: bool
     type: list
     elements: dict
-    required: true
+    required: false
   organization_source:
     description:
       - The region authorized to collect aggregated data.
@@ -66,7 +66,7 @@ options:
           - If true, aggregate existing AWS Config regions and future regions.
         type: bool
     type: dict
-    required: true
+    required: false
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -76,13 +76,21 @@ extends_documentation_fragment:
 EXAMPLES = r"""
 - name: Create cross-account aggregator
   community.aws.config_aggregator:
-    name: test_config_rule
+    name: config_aggregator
     state: present
     account_sources:
-      account_ids:
-      - 1234567890
-      - 0123456789
-      - 9012345678
+      - all_aws_regions: true
+        account_ids:
+          - 1234567890
+          - 0123456789
+          - 9012345678
+
+- name: Create organization aggregator
+  community.aws.config_aggregator:
+    name: organization_aggregator
+    state: present
+    organization_source:
+      role_arn: "arn:aws:iam::012345678910:role/AWSConfigRole"
       all_aws_regions: true
 """
 
