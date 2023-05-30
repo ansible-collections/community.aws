@@ -105,8 +105,7 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 def resource_exists(client, module, params):
     try:
         aggregator = client.describe_configuration_aggregators(
-            ConfigurationAggregatorNames=[params['ConfigurationAggregatorName']]
-        )
+            ConfigurationAggregatorNames=[params['ConfigurationAggregatorName']])
         return aggregator['ConfigurationAggregators'][0]
     except is_boto3_error_code('NoSuchConfigurationAggregatorException'):
         return
@@ -114,13 +113,9 @@ def resource_exists(client, module, params):
         module.fail_json_aws(e)
 
 
-def create_resource(client, module, params, result):
+def create_resource(client, module, result, **params):
     try:
-        client.put_configuration_aggregator(
-            ConfigurationAggregatorName=params['ConfigurationAggregatorName'],
-            AccountAggregationSources=params['AccountAggregationSources'],
-            OrganizationAggregationSource=params['OrganizationAggregationSource']
-        )
+        client.put_configuration_aggregator(**params)
         result['changed'] = True
         result['aggregator'] = camel_dict_to_snake_dict(resource_exists(client, module, params))
         return result
@@ -128,7 +123,7 @@ def create_resource(client, module, params, result):
         module.fail_json_aws(e, msg="Couldn't create AWS Config configuration aggregator")
 
 
-def update_resource(client, module, params, result):
+def update_resource(client, module, result, **params):
     result['changed'] = False
 
     current_params = client.describe_configuration_aggregators(
@@ -143,18 +138,14 @@ def update_resource(client, module, params, result):
 
     if result['changed']:
         try:
-            client.put_configuration_aggregator(
-                ConfigurationAggregatorName=params['ConfigurationAggregatorName'],
-                AccountAggregationSources=params['AccountAggregationSources'],
-                OrganizationAggregationSource=params['OrganizationAggregationSource']
-            )
+            client.put_configuration_aggregator(**params)
             result['aggregator'] = camel_dict_to_snake_dict(resource_exists(client, module, params))
             return result
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't create AWS Config configuration aggregator")
 
 
-def delete_resource(client, module, params, result):
+def delete_resource(client, module, result, params):
     try:
         client.delete_configuration_aggregator(
             ConfigurationAggregatorName=params['ConfigurationAggregatorName']
@@ -170,8 +161,8 @@ def main():
         argument_spec={
             'name': dict(type='str', required=True),
             'state': dict(type='str', choices=['present', 'absent'], default='present'),
-            'account_sources': dict(type='list', required=True, elements='dict'),
-            'organization_source': dict(type='dict', required=True)
+            'account_sources': dict(type='list', required=False, elements='dict'),
+            'organization_source': dict(type='dict', required=False)
         },
         supports_check_mode=False,
     )
@@ -182,11 +173,14 @@ def main():
 
     name = module.params.get('name')
     state = module.params.get('state')
-
     params = {}
+
     if name:
         params['ConfigurationAggregatorName'] = name
     params['AccountAggregationSources'] = []
+    if not any([module.params.get('account_sources', False), module.params.get('organization_source', False)]):
+        module.fail_json(msg="missing 'account_sources' or 'organization_source' parameter")
+
     if module.params.get('account_sources'):
         for i in module.params.get('account_sources'):
             tmp_dict = {}
@@ -197,6 +191,7 @@ def main():
             if i.get('all_aws_regions') is not None:
                 tmp_dict['AllAwsRegions'] = i.get('all_aws_regions')
             params['AccountAggregationSources'].append(tmp_dict)
+
     if module.params.get('organization_source'):
         params['OrganizationAggregationSource'] = {}
         if module.params.get('organization_source').get('role_arn'):
@@ -213,18 +208,17 @@ def main():
             })
 
     client = module.client('config', retry_decorator=AWSRetry.jittered_backoff())
-
     resource_status = resource_exists(client, module, params)
 
     if state == 'present':
         if not resource_status:
-            create_resource(client, module, params, result)
+            create_resource(client, module, result, **params)
         else:
-            update_resource(client, module, params, result)
+            update_resource(client, module, result, **params)
 
     if state == 'absent':
         if resource_status:
-            delete_resource(client, module, params, result)
+            delete_resource(client, module, result, params)
 
     module.exit_json(changed=result['changed'])
 
