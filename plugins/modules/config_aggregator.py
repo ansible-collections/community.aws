@@ -47,7 +47,7 @@ options:
         type: bool
     type: list
     elements: dict
-    required: true
+    required: false
   organization_source:
     description:
       - The region authorized to collect aggregated data.
@@ -66,7 +66,7 @@ options:
           - If true, aggregate existing AWS Config regions and future regions.
         type: bool
     type: dict
-    required: true
+    required: false
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -79,11 +79,18 @@ EXAMPLES = r"""
     name: test_config_rule
     state: present
     account_sources:
-      account_ids:
-      - 1234567890
-      - 0123456789
-      - 9012345678
-      all_aws_regions: true
+      - all_aws_regions: true
+        account_ids:
+          - 1234567890
+          - 0123456789
+          - 9012345678
+
+- name: Create organization aggregator
+  community.aws.config_aggregator:
+    name: organization_aggregator
+    state: present
+    organization_source:
+      role_arn: "arn:aws:iam::012345678910:role/AWSConfigRole"
 """
 
 RETURN = r"""#"""
@@ -117,13 +124,9 @@ def resource_exists(client, module, params):
         module.fail_json_aws(e)
 
 
-def create_resource(client, module, params, result):
+def create_resource(client, module, result, **params):
     try:
-        client.put_configuration_aggregator(
-            ConfigurationAggregatorName=params["ConfigurationAggregatorName"],
-            AccountAggregationSources=params["AccountAggregationSources"],
-            OrganizationAggregationSource=params["OrganizationAggregationSource"],
-        )
+        client.put_configuration_aggregator(**params)
         result["changed"] = True
         result["aggregator"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
         return result
@@ -131,7 +134,7 @@ def create_resource(client, module, params, result):
         module.fail_json_aws(e, msg="Couldn't create AWS Config configuration aggregator")
 
 
-def update_resource(client, module, params, result):
+def update_resource(client, module, result, **params):
     result["changed"] = False
 
     current_params = client.describe_configuration_aggregators(
@@ -146,20 +149,18 @@ def update_resource(client, module, params, result):
 
     if result["changed"]:
         try:
-            client.put_configuration_aggregator(
-                ConfigurationAggregatorName=params["ConfigurationAggregatorName"],
-                AccountAggregationSources=params["AccountAggregationSources"],
-                OrganizationAggregationSource=params["OrganizationAggregationSource"],
-            )
+            client.put_configuration_aggregator(**params)
             result["aggregator"] = camel_dict_to_snake_dict(resource_exists(client, module, params))
             return result
         except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
             module.fail_json_aws(e, msg="Couldn't create AWS Config configuration aggregator")
 
 
-def delete_resource(client, module, params, result):
+def delete_resource(client, module, result, params):
     try:
-        client.delete_configuration_aggregator(ConfigurationAggregatorName=params["ConfigurationAggregatorName"])
+        client.delete_configuration_aggregator(
+            ConfigurationAggregatorName=params["ConfigurationAggregatorName"]
+        )
         result["changed"] = True
         return result
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
@@ -171,21 +172,23 @@ def main():
         argument_spec={
             "name": dict(type="str", required=True),
             "state": dict(type="str", choices=["present", "absent"], default="present"),
-            "account_sources": dict(type="list", required=True, elements="dict"),
-            "organization_source": dict(type="dict", required=True),
+            "account_sources": dict(type="list", required=False, elements="dict"),
+            "organization_source": dict(type="dict", required=False)
         },
         supports_check_mode=False,
     )
 
     result = {"changed": False}
-
     name = module.params.get("name")
     state = module.params.get("state")
-
     params = {}
+
     if name:
         params["ConfigurationAggregatorName"] = name
     params["AccountAggregationSources"] = []
+    if not any([module.params.get('account_sources', False), module.params.get("organization_source", False)]):
+      module.fail_json(msg="missing 'account_sources' or 'organization_source' parameter")
+
     if module.params.get("account_sources"):
         for i in module.params.get("account_sources"):
             tmp_dict = {}
@@ -196,34 +199,34 @@ def main():
             if i.get("all_aws_regions") is not None:
                 tmp_dict["AllAwsRegions"] = i.get("all_aws_regions")
             params["AccountAggregationSources"].append(tmp_dict)
+
     if module.params.get("organization_source"):
         params["OrganizationAggregationSource"] = {}
         if module.params.get("organization_source").get("role_arn"):
             params["OrganizationAggregationSource"].update(
-                {"RoleArn": module.params.get("organization_source").get("role_arn")}
-            )
+            {"RoleArn": module.params.get("organization_source").get("role_arn")}
+          )
         if module.params.get("organization_source").get("aws_regions"):
             params["OrganizationAggregationSource"].update(
                 {"AwsRegions": module.params.get("organization_source").get("aws_regions")}
-            )
+          )
         if module.params.get("organization_source").get("all_aws_regions") is not None:
             params["OrganizationAggregationSource"].update(
                 {"AllAwsRegions": module.params.get("organization_source").get("all_aws_regions")}
             )
 
     client = module.client("config", retry_decorator=AWSRetry.jittered_backoff())
-
     resource_status = resource_exists(client, module, params)
 
     if state == "present":
         if not resource_status:
-            create_resource(client, module, params, result)
+            create_resource(client, module, result, **params)
         else:
-            update_resource(client, module, params, result)
+            update_resource(client, module, result, **params)
 
     if state == "absent":
         if resource_status:
-            delete_resource(client, module, params, result)
+            delete_resource(client, module, result, params)
 
     module.exit_json(changed=result["changed"])
 
