@@ -204,12 +204,12 @@ def main():
         params["OrganizationAggregationSource"] = {}
         if module.params.get("organization_source").get("role_arn"):
             params["OrganizationAggregationSource"].update(
-            {"RoleArn": module.params.get("organization_source").get("role_arn")}
-          )
+                {"RoleArn": module.params.get("organization_source").get("role_arn")}
+            )
         if module.params.get("organization_source").get("aws_regions"):
             params["OrganizationAggregationSource"].update(
                 {"AwsRegions": module.params.get("organization_source").get("aws_regions")}
-          )
+            )
         if module.params.get("organization_source").get("all_aws_regions") is not None:
             params["OrganizationAggregationSource"].update(
                 {"AllAwsRegions": module.params.get("organization_source").get("all_aws_regions")}
