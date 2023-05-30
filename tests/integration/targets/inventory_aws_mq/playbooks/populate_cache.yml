@@ -1,0 +1,34 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+
+  vars:
+    env_vars:
+      AWS_ACCESS_KEY_ID: '{{ aws_access_key }}'
+      AWS_SECRET_ACCESS_KEY: '{{ aws_secret_key }}'
+      AWS_DEFAULT_REGION: '{{ aws_region }}'
+#     AWS_SECURITY_TOKEN: '{{ security_token }}'
+
+  environment: "{{ ansible_test.environment | combine(env_vars) }}"
+
+  collections:
+    - amazon.aws
+    - community.aws
+
+  vars_files:
+    - vars/main.yml
+
+  tasks:
+    - name: refresh inventory to populate cache
+      meta: refresh_inventory
+
+    - name: assert group was populated with inventory but is empty
+      assert:
+        that:
+          - "'aws_mq' in groups"
+          - "groups.aws_mq | length == 1"
+
+    - name: Delete MQ instance
+      include_tasks: tasks/mq_instance_delete_cmd.yml
+      # include_tasks: tasks/mq_instance_delete.yml
