@@ -178,7 +178,7 @@ class InventoryModule(AWSInventoryBase):
             except (
                 botocore.exceptions.ClientError,
                 botocore.exceptions.BotoCoreError,
-                   ) as e:  # pylint: disable=duplicate-except
+            ) as e:  # pylint: disable=duplicate-except
                 raise AnsibleError(f"Failed to query MQ: {to_native(e)}")
             return results
         return _boto3_paginate_wrapper
