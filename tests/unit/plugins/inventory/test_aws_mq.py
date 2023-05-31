@@ -33,7 +33,7 @@ except ImportError:
 
 from ansible.errors import AnsibleError
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from ansible_collections.amazon.aws.plugins.inventory.aws_mq import (
+from ansible_collections.community.aws.plugins.inventory.aws_mq import (
     InventoryModule,
     _find_hosts_matching_statuses,
     _get_broker_host_tags,
@@ -169,7 +169,7 @@ def test_find_hosts_matching_statuses(hosts, statuses, expected):
 
 
 @pytest.mark.parametrize("hosts", ["", "host1", "host2,host3", "host2,host3,host1"])
-@patch("ansible_collections.amazon.aws.plugins.inventory.aws_mq._get_mq_hostname")
+@patch("ansible_collections.community.aws.plugins.inventory.aws_mq._get_mq_hostname")
 def test_inventory_format_inventory(m_get_mq_hostname, inventory, hosts):
     hosts_vars = {
         "host1": {"var10": "value10"},
@@ -331,7 +331,7 @@ def test_add_details_to_hosts_with_hosts(connection):
     ]
 
 
-ADD_DETAILS_TO_HOSTS = "ansible_collections.amazon.aws.plugins.inventory.aws_mq._add_details_to_hosts"
+ADD_DETAILS_TO_HOSTS = "ansible_collections.community.aws.plugins.inventory.aws_mq._add_details_to_hosts"
 
 
 @patch(ADD_DETAILS_TO_HOSTS)
@@ -402,7 +402,7 @@ def test_get_broker_hosts_with_client_error(m_add_details_to_hosts, inventory, c
 
 
 FIND_HOSTS_MATCHING_STATUSES = (
-    "ansible_collections.amazon.aws.plugins.inventory.aws_mq._find_hosts_matching_statuses"
+    "ansible_collections.community.aws.plugins.inventory.aws_mq._find_hosts_matching_statuses"
 )
 
 
@@ -450,7 +450,7 @@ def test_inventory_get_all_hosts(m_find_hosts, inventory, regions):
 
 @pytest.mark.parametrize("hostvars_prefix", [True])
 @pytest.mark.parametrize("hostvars_suffix", [True])
-@patch("ansible_collections.amazon.aws.plugins.inventory.aws_mq._get_mq_hostname")
+@patch("ansible_collections.community.aws.plugins.inventory.aws_mq._get_mq_hostname")
 def test_inventory_add_hosts(m_get_mq_hostname, inventory, hostvars_prefix, hostvars_suffix):
     _options = {
         "strict": random.choice((False, True)),
@@ -564,7 +564,7 @@ def test_inventory_add_hosts(m_get_mq_hostname, inventory, hostvars_prefix, host
     )
 
 
-BASE_INVENTORY_PARSE = "ansible_collections.amazon.aws.plugins.inventory.aws_mq.AWSInventoryBase.parse"
+BASE_INVENTORY_PARSE = "ansible_collections.community.aws.plugins.inventory.aws_mq.AWSInventoryBase.parse"
 
 
 @pytest.mark.parametrize("user_cache_directive", [True, False])
