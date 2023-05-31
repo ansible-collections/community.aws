@@ -1,0 +1,2 @@
+trivial:
+  - "Fix FQDN in EXAMPLES block for mq_* modules."
