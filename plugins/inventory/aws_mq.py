@@ -53,7 +53,7 @@ author:
 """
 
 EXAMPLES = r"""
-plugin: aws_mq
+plugin: community.aws.aws_mq
 regions:
   - ca-central-1
 keyed_groups:
