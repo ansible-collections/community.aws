@@ -13,7 +13,6 @@
   environment: "{{ ansible_test.environment | combine(env_vars) }}"
 
   collections:
-    - community.general
     - community.aws
 
   vars_files:

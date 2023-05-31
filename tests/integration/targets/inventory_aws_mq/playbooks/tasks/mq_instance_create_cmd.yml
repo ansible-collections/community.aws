@@ -1,4 +1,5 @@
 ---
+# using command module until #1832 is resolved
 - include_tasks: find_broker.yml
 - block:
   - name: Get engine versions
@@ -8,7 +9,7 @@
 
   - name: Select latest engine version
     set_fact:
-      engine_version: "{{ describe_engine_result.stdout | from_json | json_query('BrokerEngineTypes[0].EngineVersions') | map(attribute='Name') | sort | max }}"
+      engine_version: "{{ ( describe_engine_result.stdout | from_json ).BrokerEngineTypes[0].EngineVersions | map(attribute='Name') | sort | max }}"
 
   - name: Create minimal MQ instance in default VPC and default subnet group
     command: >

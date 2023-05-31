@@ -1,4 +1,5 @@
 ---
+# using command module until #1832 is resolved
 - include_tasks: find_broker.yml
 - name: remove broker instance
   command: >

@@ -9,12 +9,10 @@ function cleanup() {
 
 trap 'cleanup "${@}"'  ERR
 
-pip install jmespath
-ansible-galaxy collection install community.general
 # ensure test config is empty
 ansible-playbook playbooks/empty_inventory_config.yml "$@"
 
-export ANSIBLE_INVENTORY_ENABLED="amazon.aws.aws_mq"
+export ANSIBLE_INVENTORY_ENABLED="community.aws.aws_mq"
 
 # test with default inventory file
 ansible-playbook playbooks/test_invalid_aws_mq_inventory_config.yml "$@"

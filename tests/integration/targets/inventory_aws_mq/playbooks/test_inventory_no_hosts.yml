@@ -12,7 +12,6 @@
   environment: "{{ ansible_test.environment | combine(env_vars) }}"
 
   collections:
-    - community.general
     - community.aws
   tasks:
     - name: assert group was populated with inventory but is empty
