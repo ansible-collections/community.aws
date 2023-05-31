@@ -216,6 +216,7 @@ def test_inventory_populate(inventory, length):
         inventory._add_hosts.assert_called_with(hosts=hosts, group=group)
         inventory.inventory.add_child.assert_called_with("all", group)
 
+
 def test_inventory_populate_from_cache(inventory):
     cache_data = {
         "_meta": {
@@ -453,10 +454,10 @@ def test_inventory_get_all_hosts(m_find_hosts, inventory, regions):
 @patch("ansible_collections.amazon.aws.plugins.inventory.aws_mq._get_mq_hostname")
 def test_inventory_add_hosts(m_get_mq_hostname, inventory, hostvars_prefix, hostvars_suffix):
     _options = {
-      "strict": random.choice((False, True)),
-      "compose": random.choice((False, True)),
-      "keyed_groups": "keyed_group_test_inventory_add_hosts",
-      "groups": ["all", "test_inventory_add_hosts"],
+        "strict": random.choice((False, True)),
+        "compose": random.choice((False, True)),
+        "keyed_groups": "keyed_group_test_inventory_add_hosts",
+        "groups": ["all", "test_inventory_add_hosts"],
     }
 
     if hostvars_prefix:
