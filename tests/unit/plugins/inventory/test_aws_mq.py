@@ -36,7 +36,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOT
 from ansible_collections.amazon.aws.plugins.inventory.aws_mq import (
     InventoryModule,
     _find_hosts_matching_statuses,
-    _get_mq_hostname,
     _get_broker_host_tags,
     _add_details_to_hosts
 )

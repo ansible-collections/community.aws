@@ -104,7 +104,7 @@ inventory_group = "aws_mq"
 
 def _find_hosts_matching_statuses(hosts, statuses):
     if not statuses:
-      statuses = ["RUNNING", "CREATION_IN_PROGRESS"]
+        statuses = ["RUNNING", "CREATION_IN_PROGRESS"]
     if "all" in statuses:
         return hosts
     valid_hosts = []
@@ -113,9 +113,11 @@ def _find_hosts_matching_statuses(hosts, statuses):
             valid_hosts.append(host)
     return valid_hosts
 
+
 def _get_mq_hostname(host):
     if host.get("BrokerName"):
         return host["BrokerName"]
+
 
 def _get_broker_host_tags(detail):
     tags = []
@@ -124,9 +126,10 @@ def _get_broker_host_tags(detail):
             tags.append({"Key": key, "Value": value})
     return tags
 
+
 def _add_details_to_hosts(connection, hosts, strict):
     for host in hosts:
-        detail=None
+        detail = None
         resource_id = host["BrokerId"]
         try:
             detail = connection.describe_broker(BrokerId=resource_id)
@@ -149,6 +152,7 @@ def _add_details_to_hosts(connection, hosts, strict):
             for attr in broker_attr:
                 if attr in detail:
                     host[attr] = detail[attr]
+
 
 class InventoryModule(AWSInventoryBase):
 
@@ -174,7 +178,7 @@ class InventoryModule(AWSInventoryBase):
             except (
                 botocore.exceptions.ClientError,
                 botocore.exceptions.BotoCoreError,
-             ) as e:  # pylint: disable=duplicate-except
+               ) as e:  # pylint: disable=duplicate-except
                 raise AnsibleError(f"Failed to query MQ: {to_native(e)}")
             return results
         return _boto3_paginate_wrapper
@@ -241,8 +245,8 @@ class InventoryModule(AWSInventoryBase):
             host = camel_dict_to_snake_dict(host, ignore_list=["Tags", "EngineType"])
             host["tags"] = boto3_tag_list_to_ansible_dict(host.get("tags", []))
             if host.get("engine_type"):
-              # align value with API spec of all upper
-              host["engine_type"] = host.get("engine_type", "").upper()
+                # align value with API spec of all upper
+                host["engine_type"] = host.get("engine_type", "").upper()
 
             self.inventory.add_host(hostname, group=group)
             new_vars = dict()
@@ -272,8 +276,8 @@ class InventoryModule(AWSInventoryBase):
 
         result_was_cached, results = self.get_cached_result(path, cache)
         if result_was_cached:
-          self._populate_from_cache(results)
-          return
+            self._populate_from_cache(results)
+            return
 
         results = self._get_all_hosts(regions, strict_permissions, statuses)
         self._populate(results)
