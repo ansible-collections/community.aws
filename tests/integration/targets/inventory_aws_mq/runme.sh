@@ -9,9 +9,6 @@ function cleanup() {
 
 trap 'cleanup "${@}"'  ERR
 
-# Uncomment for testing with community.aws >= 6.0.0
-# ansible-galaxy collection install -n -r requirements.yml
-
 pip install jmespath
 ansible-galaxy collection install community.general
 # ensure test config is empty

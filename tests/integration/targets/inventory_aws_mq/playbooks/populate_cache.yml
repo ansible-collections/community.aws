@@ -8,12 +8,12 @@
       AWS_ACCESS_KEY_ID: '{{ aws_access_key }}'
       AWS_SECRET_ACCESS_KEY: '{{ aws_secret_key }}'
       AWS_DEFAULT_REGION: '{{ aws_region }}'
-#     AWS_SECURITY_TOKEN: '{{ security_token }}'
+      AWS_SECURITY_TOKEN: '{{ security_token }}'
 
   environment: "{{ ansible_test.environment | combine(env_vars) }}"
 
   collections:
-    - amazon.aws
+    - community.general
     - community.aws
 
   vars_files:
@@ -31,4 +31,3 @@
 
     - name: Delete MQ instance
       include_tasks: tasks/mq_instance_delete_cmd.yml
-      # include_tasks: tasks/mq_instance_delete.yml

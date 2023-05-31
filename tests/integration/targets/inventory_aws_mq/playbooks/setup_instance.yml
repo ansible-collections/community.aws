@@ -8,20 +8,16 @@
       AWS_ACCESS_KEY_ID: '{{ aws_access_key }}'
       AWS_SECRET_ACCESS_KEY: '{{ aws_secret_key }}'
       AWS_DEFAULT_REGION: '{{ aws_region }}'
-#      AWS_SECURITY_TOKEN: '{{ security_token }}'
+      AWS_SECURITY_TOKEN: '{{ security_token }}'
 
   environment: "{{ ansible_test.environment | combine(env_vars) }}"
 
   collections:
-    - amazon.aws
+    - community.general
     - community.aws
 
   vars_files:
     - vars/main.yml
 
   tasks:
-    # Toggle between the following blocks, to run the tests with mq modules
-    # from community.aws >= 6.0.0 or command module
-    # - include_tasks: 'tasks/get_aws_defaults.yml'
-    # - include_tasks: 'tasks/mq_instance_{{ operation }}.yml'
     - include_tasks: 'tasks/mq_instance_{{ operation }}_cmd.yml'
