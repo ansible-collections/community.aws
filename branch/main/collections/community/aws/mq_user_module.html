@@ -396,22 +396,24 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-us
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create/update user - set provided password if user doesn&#39;t exist, yet</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_user</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_user</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-id&quot;</span>
 <span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sample_user1&quot;</span>
 <span class="w">    </span><span class="nt">console_access</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span>
 <span class="w">    </span><span class="nt">groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&quot;g1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;g2&quot;</span><span class="w"> </span><span class="p p-Indicator">]</span>
 <span class="w">    </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;plain-text-password&quot;</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">allow console access and update group list - relying on default state</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_user</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_user</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-id&quot;</span>
 <span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;sample_user1&quot;</span>
 <span class="w">    </span><span class="nt">region</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">aws_region</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">console_access</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">groups</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">[</span><span class="w"> </span><span class="s">&quot;g1&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;g2&quot;</span><span class="p p-Indicator">,</span><span class="w"> </span><span class="s">&quot;g3&quot;</span><span class="w"> </span><span class="p p-Indicator">]</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">remove user - setting all credentials explicitly</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_user</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_user</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 <span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-id&quot;</span>
 <span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;other_user&quot;</span>

@@ -537,7 +537,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create broker (if missing) with minimal required parameters</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">broker_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">    </span><span class="nt">security_groups</span><span class="p">:</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">sg_xxxxxxx</span>
@@ -545,17 +545,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet_xxx</span>
 <span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">subnet_yyy</span>
 <span class="w">    </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">set_fact</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">result.broker</span><span class="o">[</span><span class="s1">&#39;BrokerId&#39;</span><span class="o">]</span> <span class="cp">}}</span><span class="s">&quot;</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">use mq_broker_info to wait until broker is ready</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">broker_id</span> <span class="cp">}}</span><span class="s">&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 <span class="w">  </span><span class="nt">until</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;result.broker[&#39;BrokerState&#39;]</span><span class="nv"> </span><span class="s">==</span><span class="nv"> </span><span class="s">&#39;RUNNING&#39;&quot;</span>
 <span class="w">  </span><span class="nt">retries</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">15</span>
 <span class="w">  </span><span class="nt">delay</span><span class="p">:</span><span class="w">   </span><span class="l l-Scalar l-Scalar-Plain">60</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create or update broker with almost all parameter set including credentials</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_broker_2&quot;</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">deployment_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;ACTIVE_STANDBY_MULTI_AZ&#39;</span>
@@ -586,12 +589,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 <span class="w">    </span><span class="nt">host_instance_type</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;mq.t3.micro&#39;</span>
 <span class="w">    </span><span class="nt">enable_audit_log</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
 <span class="w">    </span><span class="nt">enable_general_log</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">reboot a broker</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_broker_2&quot;</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">restarted</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">delete a broker</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;my_broker_2&quot;</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
