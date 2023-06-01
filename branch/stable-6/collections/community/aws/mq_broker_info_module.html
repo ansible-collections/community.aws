@@ -14,6 +14,8 @@
     <script src="../../../_static/js/html5shiv.min.js"></script>
   <![endif]-->
   
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
         <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
         <script src="../../../_static/doctools.js"></script>
         <script src="../../../_static/sphinx_highlight.js"></script>
@@ -340,11 +342,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-mq-br
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get current broker settings by id</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-id&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">broker_info</span>
+
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">get current broker settings by name setting all credential parameters explicitly</span>
-<span class="w">  </span><span class="nt">amazon.aws.mq_broker_info</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.mq_broker_info</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">broker_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;aws-mq-broker-name&quot;</span>
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">broker_info</span>
 </pre></div>
