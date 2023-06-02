@@ -39,8 +39,6 @@ options:
     description:
       - The suffix for host variables names coming from AWS.
     type: str
-notes:
-  - Ansible versions prior to 2.10 should use the fully qualified plugin name 'amazon.aws.aws_mq'.
 extends_documentation_fragment:
   - inventory_cache
   - constructed
@@ -156,7 +154,7 @@ def _add_details_to_hosts(connection, hosts, strict):
 
 class InventoryModule(AWSInventoryBase):
 
-    NAME = "amazon.aws.aws_mq"
+    NAME = "community.aws.aws_mq"
     INVENTORY_FILE_SUFFIXES = ("aws_mq.yml", "aws_mq.yaml")
 
     def __init__(self):
