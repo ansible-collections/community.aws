@@ -12,6 +12,13 @@
 
   environment: "{{ ansible_test.environment | combine(env_vars) }}"
 
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+
   collections:
     - community.aws
 
@@ -19,4 +26,4 @@
     - vars/main.yml
 
   tasks:
-    - include_tasks: 'tasks/mq_instance_{{ operation }}_cmd.yml'
+    - include_tasks: 'tasks/mq_instance_{{ operation }}.yml'
