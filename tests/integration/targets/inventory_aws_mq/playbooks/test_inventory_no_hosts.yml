@@ -8,8 +8,9 @@
   collections:
     - community.aws
   tasks:
+    - debug: var=groups
     - name: assert group was populated with inventory but is empty
       assert:
         that:
           - "'aws_mq' in groups"
-          - "not groups.aws_mq"
+          - groups.aws_mq | length == 0
