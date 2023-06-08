@@ -115,6 +115,262 @@
         - create_table.write_capacity == 1
 
   # ==============================================
+  # Attempting to create a table without PK range key but with local indexes will result in an expected failure.
+  # "One or more parameter values were invalid: Table KeySchema does not have a range key, which is required when specifying a LocalSecondaryIndex"
+
+  - name: Create table with simple PK with local indexes - test failure
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      indexes: "{{ local_indexes }}"
+    ignore_errors: yes
+    register: create_table
+
+  - name: Check results - Create table with simple PK with local indexes
+    assert:
+      that:
+        - create_table is failed
+
+  # ==============================================
+  # Attempting to create a table with composite PK but with local indexes using different hash key will result in an expected failure.
+  # "One or more parameter values were invalid: Index KeySchema does not have the same leading hash key as table KeySchema for index: NamedIndex. index hash key: id, table hash key: NOT_id"
+
+  - name: Create table with composite PK with mismatching local indexes - test failure
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk }}"
+      hash_key_name: "NOT_{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+      indexes: "{{ local_indexes }}"
+    ignore_errors: yes
+    register: create_table
+
+  - name: Check results - Create table with composite PK with mismatching local indexes
+    assert:
+      that:
+        - create_table is failed
+
+  # ==============================================
+
+  - name: Create table with composite PK - check_mode
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+    register: create_table
+    check_mode: True
+
+  - name: Check results - Create table with composite PK - check_mode
+    assert:
+      that:
+        - create_table is successful
+        - create_table is changed
+
+  - name: Create table with composite PK
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+    register: create_table
+
+  - name: Check results - Create table with composite PK
+    assert:
+      that:
+        - create_table is successful
+        - create_table is changed
+        - '"hash_key_name" in create_table'
+        - '"hash_key_type" in create_table'
+        - '"indexes" in create_table'
+        - '"range_key_name" in create_table'
+        - '"range_key_type" in create_table'
+        - '"read_capacity" in create_table'
+        - '"region" in create_table'
+        - '"table_name" in create_table'
+        - '"table_status" in create_table'
+        - '"tags" in create_table'
+        - '"write_capacity" in create_table'
+        - create_table.hash_key_name == table_index
+        - create_table.hash_key_type == table_index_type
+        - create_table.range_key_name == range_index
+        - create_table.range_key_type == range_index_type
+        - create_table.indexes | length == 0
+        - create_table.read_capacity == 1
+        - create_table.table_name == table_name_composite_pk
+        - create_table.write_capacity == 1
+
+  - name: Create table with composite PK - idempotent - check_mode
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+    register: create_table
+    check_mode: True
+
+  - name: Check results - Create table with composite PK - idempotent - check_mode
+    assert:
+      that:
+        - create_table is successful
+        - create_table is not changed
+
+  - name: Create table with composite PK - idempotent
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+    register: create_table
+
+  - name: Check results - Create table with composite PK - idempotent
+    assert:
+      that:
+        - create_table is successful
+        - create_table is not changed
+        - '"hash_key_name" in create_table'
+        - '"hash_key_type" in create_table'
+        - '"indexes" in create_table'
+        - '"range_key_name" in create_table'
+        - '"range_key_type" in create_table'
+        - '"read_capacity" in create_table'
+        - '"region" in create_table'
+        - '"table_name" in create_table'
+        - '"table_status" in create_table'
+        - '"tags" in create_table'
+        - '"write_capacity" in create_table'
+        - create_table.hash_key_name == table_index
+        - create_table.hash_key_type == table_index_type
+        - create_table.range_key_name == range_index
+        - create_table.range_key_type == range_index_type
+        - create_table.indexes | length == 0
+        - create_table.read_capacity == 1
+        - create_table.table_name == table_name_composite_pk
+        - create_table.write_capacity == 1
+
+  # ==============================================
+
+  - name: Create table with composite PK and local indexes - check_mode
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk_local_indexes }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+      indexes: "{{ local_indexes }}"
+    register: create_table
+    check_mode: True
+
+  - name: Check results - Create table with composite PK and local indexes - check_mode
+    assert:
+      that:
+        - create_table is successful
+        - create_table is changed
+
+  - name: Create table with composite PK and local indexes
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk_local_indexes  }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+      indexes: "{{ local_indexes }}"
+    register: create_table
+
+  - name: Check results - Create table with composite PK and local indexes
+    assert:
+      that:
+        - create_table is successful
+        - create_table is changed
+        - '"hash_key_name" in create_table'
+        - '"hash_key_type" in create_table'
+        - '"indexes" in create_table'
+        - '"range_key_name" in create_table'
+        - '"range_key_type" in create_table'
+        - '"read_capacity" in create_table'
+        - '"region" in create_table'
+        - '"table_name" in create_table'
+        - '"table_status" in create_table'
+        - '"tags" in create_table'
+        - '"write_capacity" in create_table'
+        - create_table.hash_key_name == table_index
+        - create_table.hash_key_type == table_index_type
+        - create_table.range_key_name == range_index
+        - create_table.range_key_type == range_index_type
+        - create_table.indexes | length == 3
+        - create_table.read_capacity == 1
+        - create_table.table_name == table_name_composite_pk_local_indexes
+        - create_table.write_capacity == 1
+
+  - name: Create table with composite PK and local indexes - idempotent - check_mode
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk_local_indexes }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+      indexes: "{{ local_indexes }}"
+    register: create_table
+    check_mode: True
+
+  - name: Check results - Create table with composite PK and local indexes - idempotent - check_mode
+    assert:
+      that:
+        - create_table is successful
+        - create_table is not changed
+
+  - name: Create table with composite PK and local indexes - idempotent
+    dynamodb_table:
+      state: present
+      name: "{{ table_name_composite_pk_local_indexes }}"
+      hash_key_name: "{{ table_index }}"
+      hash_key_type: "{{ table_index_type }}"
+      range_key_name: "{{ range_index }}"
+      range_key_type: "{{ range_index_type }}"
+      indexes: "{{ local_indexes }}"
+    register: create_table
+
+  - name: Check results - Create table with composite PK and local indexes - idempotent
+    assert:
+      that:
+        - create_table is successful
+        - create_table is not changed
+        - '"hash_key_name" in create_table'
+        - '"hash_key_type" in create_table'
+        - '"indexes" in create_table'
+        - '"range_key_name" in create_table'
+        - '"range_key_type" in create_table'
+        - '"read_capacity" in create_table'
+        - '"region" in create_table'
+        - '"table_name" in create_table'
+        - '"table_status" in create_table'
+        - '"tags" in create_table'
+        - '"write_capacity" in create_table'
+        - create_table.hash_key_name == table_index
+        - create_table.hash_key_type == table_index_type
+        - create_table.range_key_name == range_index
+        - create_table.range_key_type == range_index_type
+        - create_table.indexes | length == 3
+        - create_table.read_capacity == 1
+        - create_table.table_name == table_name_composite_pk_local_indexes
+        - create_table.write_capacity == 1
+
+  # ==============================================
 
   - name: Tag table - check_mode
     dynamodb_table:
@@ -488,14 +744,14 @@
         - update_indexes is successful
         - update_indexes is not changed
 
-  - name: Update table add indexes - idempotent
+  - name: Update table add global indexes - idempotent
     dynamodb_table:
       state: present
       name: "{{ table_name }}"
       indexes: "{{ indexes }}"
     register: update_indexes
 
-  - name: Check results - Update table add indexes - idempotent
+  - name: Check results - Update table add global indexes - idempotent
     assert:
       that:
         - update_indexes is successful
@@ -858,6 +1114,20 @@
       dynamodb_table:
         state: absent
         name: "{{ table_name }}"
+        wait: false
+      register: delete_table
+
+    - name: Delete provisoned table with composite key
+      dynamodb_table:
+        state: absent
+        name: "{{ table_name_composite_pk }}"
+        wait: false
+      register: delete_table
+
+    - name: Delete provisoned table with composite key and local indexes
+      dynamodb_table:
+        state: absent
+        name: "{{ table_name_composite_pk_local_indexes }}"
         wait: false
       register: delete_table
 
