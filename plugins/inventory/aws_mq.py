@@ -18,13 +18,13 @@ options:
     elements: str
     default: []
   strict_permissions:
-    description: By default if an AccessDenied exception is encountered this plugin will fail. You can set strict_permissions to
-      False in the inventory config file which will allow the restrictions to be gracefully skipped.
+    description: By default if an AccessDenied exception is encountered this plugin will fail. You can set I(strict_permissions) to
+      C(False) in the inventory config file which will allow the restrictions to be gracefully skipped.
     type: bool
     default: True
   statuses:
     description:
-      - A list of desired states for brokers to be added to inventory. Set to ['all'] as a shorthand to find everything.
+      - A list of desired states for brokers to be added to inventory. Set to C(['all']) as a shorthand to find everything.
         Possible value are listed here U(https://docs.aws.amazon.com/amazon-mq/latest/developer-guide/broker-statuses.html)
     type: list
     elements: str
@@ -51,6 +51,22 @@ author:
 """
 
 EXAMPLES = r"""
+# Minimal example using AWS credentials from environment vars or instance role credentials
+# Get all brokers in us-east-1 region
+plugin: community.aws.aws_mq
+regions:
+  - ca-central-1
+
+# Example multiple regions, ignoring permission errors, and only brokers with state RUNNING
+plugin: community.aws.aws_mq
+regions:
+  - us-east-1
+  - us-east-2
+strict_permissions: False
+statuses:
+  - RUNNING
+
+# Example group by engine, hostvars custom prefix-suffix, and compose variable from tags
 plugin: community.aws.aws_mq
 regions:
   - ca-central-1
