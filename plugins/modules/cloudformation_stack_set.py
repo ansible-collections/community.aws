@@ -544,7 +544,7 @@ def main():
         template=dict(type="path"),
         template_url=dict(),
         template_body=dict(),
-        capabilities=dict(type="list", elements="str", choices=["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM",'CAPABILITY_AUTO_EXPAND']),
+        capabilities=dict(type="list", elements="str", choices=["CAPABILITY_IAM", "CAPABILITY_NAMED_IAM", "CAPABILITY_AUTO_EXPAND"]),
         regions=dict(type="list", elements="str"),
         accounts=dict(type="list", elements="str"),
         failure_tolerance=dict(
