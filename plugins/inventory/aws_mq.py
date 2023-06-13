@@ -4,8 +4,8 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 DOCUMENTATION = r"""
-version_added: 6.1.0
 name: aws_mq
+version_added: 6.1.0
 short_description: MQ broker inventory source
 description:
   - Get brokers from Amazon Web Services MQ.
