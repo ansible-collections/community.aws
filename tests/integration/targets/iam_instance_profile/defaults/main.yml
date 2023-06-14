@@ -1,0 +1,5 @@
+---
+test_profile: '{{ resource_prefix }}-iam-ip'
+test_role: '{{ resource_prefix }}-iam-ip'
+test_path: '/{{ resource_prefix }}-ip/'
+safe_managed_policy: 'AWSDenyAll'

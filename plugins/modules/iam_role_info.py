@@ -26,6 +26,7 @@ options:
             - Prefix of role to restrict IAM role search for.
             - Mutually exclusive with I(name).
         type: str
+        aliases: ["path", "prefix"]
 extends_documentation_fragment:
     - amazon.aws.common.modules
     - amazon.aws.region.modules
@@ -164,6 +165,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.iam import normalize_role
 
 
 @AWSRetry.jittered_backoff()
@@ -240,28 +242,13 @@ def describe_iam_roles(module, client):
     return [normalize_role(describe_iam_role(module, client, role)) for role in roles]
 
 
-def normalize_profile(profile):
-    new_profile = camel_dict_to_snake_dict(profile)
-    if profile.get("Roles"):
-        profile["roles"] = [normalize_role(role) for role in profile.get("Roles")]
-    return new_profile
-
-
-def normalize_role(role):
-    new_role = camel_dict_to_snake_dict(role, ignore_list=["tags"])
-    new_role["assume_role_policy_document_raw"] = role.get("AssumeRolePolicyDocument")
-    if role.get("InstanceProfiles"):
-        role["instance_profiles"] = [normalize_profile(profile) for profile in role.get("InstanceProfiles")]
-    return new_role
-
-
 def main():
     """
     Module action handler
     """
     argument_spec = dict(
         name=dict(aliases=["role_name"]),
-        path_prefix=dict(),
+        path_prefix=dict(aliases=["path", "prefix"]),
     )
 
     module = AnsibleAWSModule(

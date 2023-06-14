@@ -1,0 +1,67 @@
+---
+# Tests for iam_instance_profile and iam_instance_profile_info
+#
+
+- name: "Setup AWS connection info"
+  module_defaults:
+    group/aws:
+      aws_access_key: "{{ aws_access_key }}"
+      aws_secret_key: "{{ aws_secret_key }}"
+      security_token: "{{ security_token | default(omit) }}"
+      region: "{{ aws_region }}"
+  collections:
+    - amazon.aws
+    - community.general
+  block:
+
+    - name: "Prepare IAM Roles"
+      iam_role:
+        state: present
+        name: "{{ item }}"
+        path: "{{ test_path }}"
+        create_instance_profile: True
+        assume_role_policy_document: '{{ lookup("file", "deny-assume.json") }}'
+        managed_policies:
+          - "{{ safe_managed_policy }}"
+        wait: True
+      loop:
+        - "{{ test_role }}"
+        - "{{ test_role }}-2"
+
+    - name: "Delete Instance Profiles"
+      iam_instance_profile:
+        state: absent
+        name: "{{ item }}"
+      loop:
+        - "{{ test_role }}"
+        - "{{ test_role }}-2"
+
+  always:
+    # ===================================================================
+    # Cleanup
+
+    - name: "iam_instance_profile_info after Role deletion"
+      iam_instance_profile_info:
+        path: "{{ test_path }}"
+      ignore_errors: true
+
+    - name: "iam_role_info after Role deletion"
+      iam_role_info:
+        path: "{{ test_path }}"
+      ignore_errors: true
+
+    - name: "Remove IAM Roles"
+      iam_role:
+        state: absent
+        name: "{{ item }}"
+        path: "{{ test_path }}"
+        delete_instance_profile: yes
+      ignore_errors: true
+      loop:
+        - "{{ test_role }}"
+        - "{{ test_role }}-2"
+
+    - name: "iam_role_info after Role deletion"
+      iam_role_info:
+        path: "{{ test_path }}"
+      ignore_errors: true

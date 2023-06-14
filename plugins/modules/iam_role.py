@@ -231,6 +231,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
+from ansible_collections.community.aws.plugins.module_utils.iam import normalize_role
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
 
@@ -528,8 +529,7 @@ def create_or_update_role(module, client):
     role["AttachedPolicies"] = get_attached_policy_list(module, client, role_name)
     role["tags"] = get_role_tags(module, client)
 
-    camel_role = camel_dict_to_snake_dict(role, ignore_list=["tags"])
-    camel_role["assume_role_policy_document_raw"] = role.get("AssumeRolePolicyDocument", {})
+    camel_role = normalize_role(role)
     module.exit_json(changed=changed, iam_role=camel_role, **camel_role)
 
 
