@@ -98,6 +98,12 @@ options:
     choices: ['EDGE', 'REGIONAL', 'PRIVATE']
     type: str
     default: EDGE
+  name:
+    description:
+      - The name of the RestApi.
+    type: str
+    default: ansible-temp-api
+    version_added: 6.1.0
 author:
   - 'Michael De La Rue (@mikedlr)'
 notes:
@@ -195,6 +201,7 @@ def main():
         stage_canary_settings=dict(type="dict", default={}),
         tracing_enabled=dict(type="bool", default=False),
         endpoint_type=dict(type="str", default="EDGE", choices=["EDGE", "REGIONAL", "PRIVATE"]),
+        name=dict(type="str", default="ansible-temp-api"),
     )
 
     mutually_exclusive = [["swagger_file", "swagger_dict", "swagger_text"]]  # noqa: F841
@@ -211,6 +218,7 @@ def main():
     swagger_dict = module.params.get("swagger_dict")
     swagger_text = module.params.get("swagger_text")
     endpoint_type = module.params.get("endpoint_type")
+    restapi_name = module.params.get("name")
 
     client = module.client("apigateway")
 
@@ -221,7 +229,7 @@ def main():
 
     if state == "present":
         if api_id is None:
-            api_id = create_empty_api(module, client, endpoint_type)
+            api_id = create_empty_api(module, client, restapi_name, endpoint_type)
         api_data = get_api_definitions(
             module, swagger_file=swagger_file, swagger_dict=swagger_dict, swagger_text=swagger_text
         )
@@ -260,7 +268,7 @@ def get_api_definitions(module, swagger_file=None, swagger_dict=None, swagger_te
     return apidata
 
 
-def create_empty_api(module, client, endpoint_type):
+def create_empty_api(module, client, name, endpoint_type):
     """
     creates a new empty API ready to be configured. The description is
     temporarily set to show the API as incomplete but should be
@@ -268,7 +276,7 @@ def create_empty_api(module, client, endpoint_type):
     """
     desc = "Incomplete API creation by ansible api_gateway module"
     try:
-        awsret = create_api(client, name="ansible-temp-api", description=desc, endpoint_type=endpoint_type)
+        awsret = create_api(client, name=name, description=desc, endpoint_type=endpoint_type)
     except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
         module.fail_json_aws(e, msg="creating API")
     return awsret["id"]
@@ -318,9 +326,9 @@ retry_params = {"retries": 10, "delay": 10, "catch_extra_error_codes": ["TooMany
 
 
 @AWSRetry.jittered_backoff(**retry_params)
-def create_api(client, name=None, description=None, endpoint_type=None):
+def create_api(client, name, description=None, endpoint_type=None):
     return client.create_rest_api(
-        name="ansible-temp-api", description=description, endpointConfiguration={"types": [endpoint_type]}
+        name=name, description=description, endpointConfiguration={"types": [endpoint_type]}
     )
 
 

@@ -1,0 +1,4 @@
+---
+minor_changes:
+  - api_gateway - add parameter `name` allowing user to choose the name of the API gateway to create, default to `ansible-temp-api` for backward compatibility.
+
