@@ -175,7 +175,7 @@ EXAMPLES = r"""
       - subnet_yyy
     users:
     - Username: 'initial-user'
-      Password': 'plain-text-password'
+      Password: 'plain-text-password'
       ConsoleAccess: true
     tags:
     - env: Test
