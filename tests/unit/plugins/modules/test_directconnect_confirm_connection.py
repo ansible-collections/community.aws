@@ -1,16 +1,15 @@
-# Make coding more python3-ish
-from __future__ import (absolute_import, division, print_function)
-__metaclass__ = type
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 import pytest
+from unittest.mock import call
+from unittest.mock import patch
+
 try:
     from botocore.exceptions import ClientError
 except ImportError:
     pass
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from ansible_collections.community.aws.tests.unit.compat.mock import call
-from ansible_collections.community.aws.tests.unit.compat.mock import patch
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import AnsibleExitJson
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import AnsibleFailJson
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import ModuleTestCase
