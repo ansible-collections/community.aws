@@ -1,7 +1,3 @@
-from __future__ import absolute_import, division, print_function
-
-__metaclass__ = type
-
 """
 Commands to encrypt a message that can be decrypted:
 from cryptography.hazmat.backends import default_backend
@@ -19,17 +15,15 @@ string_cipher = base64.b64encode(base64_cipher)
 
 import datetime
 import pytest
+from unittest.mock import patch
 
 from ansible.module_utils._text import to_bytes
 from ansible.module_utils._text import to_text
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-
-from ansible_collections.community.aws.tests.unit.compat.mock import patch
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import AnsibleExitJson
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import ModuleTestCase
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import set_module_args
-
 from ansible_collections.community.aws.plugins.modules.ec2_win_password import setup_module_object
 from ansible_collections.community.aws.plugins.modules.ec2_win_password import ec2_win_password
 

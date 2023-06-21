@@ -1,12 +1,8 @@
-# Make coding more python3-ish
-from __future__ import absolute_import, division, print_function
-
-__metaclass__ = type
+# GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 from io import StringIO
 import pytest
-
-from ansible_collections.community.aws.tests.unit.compat.mock import patch, MagicMock
+from unittest.mock import patch, MagicMock
 from ansible.playbook.play_context import PlayContext
 from ansible.plugins.loader import connection_loader
 
