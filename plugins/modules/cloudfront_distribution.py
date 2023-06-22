@@ -2219,7 +2219,9 @@ class CloudFrontValidationManager(object):
                 config["aliases"] = ansible_list_to_cloudfront_list(aliases)
             if logging is not None:
                 config["logging"] = self.validate_logging(logging)
-            config["enabled"] = enabled or config.get("enabled", self.__default_distribution_enabled)
+            config["enabled"] = (
+                enabled if enabled is not None else config.get("enabled", self.__default_distribution_enabled)
+            )
             if price_class is not None:
                 self.validate_attribute_with_allowed_values(price_class, "price_class", self.__valid_price_classes)
                 config["price_class"] = price_class
@@ -2317,7 +2319,8 @@ class CloudFrontValidationManager(object):
 
     def wait_until_processed(self, client, wait_timeout, distribution_id, caller_reference):
         if distribution_id is None:
-            distribution_id = self.validate_distribution_from_caller_reference(caller_reference=caller_reference)["Id"]
+            distribution = self.validate_distribution_from_caller_reference(caller_reference=caller_reference)
+            distribution_id = distribution["Distribution"]["Id"]
 
         try:
             waiter = client.get_waiter("distribution_deployed")
