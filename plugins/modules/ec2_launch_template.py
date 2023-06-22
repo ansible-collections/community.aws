@@ -422,7 +422,6 @@ default_version:
   type: int
 """
 
-import re
 from uuid import uuid4
 
 try:
