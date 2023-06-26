@@ -2,4 +2,4 @@
 collections:
   - name: https://github.com/ansible-collections/amazon.aws.git
     type: git
-    version: main
+    version: stable-6
