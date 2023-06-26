@@ -11,7 +11,7 @@
     # ====================== testing failure cases: ==================================
 
     - name: test with no parameters
-      aws_api_gateway:
+      api_gateway:
       register: result
       ignore_errors: true
 
@@ -22,7 +22,7 @@
            - '"no swagger info provided" in result.msg'
 
     - name: test for disallowing multiple swagger sources
-      aws_api_gateway:
+      api_gateway:
         api_id: 'fake-api-doesnt-exist'
         swagger_file: foo.yml
         swagger_text: "this is not really an API"
@@ -42,9 +42,11 @@
       template:
         src: minimal-swagger-api.yml.j2
         dest: "{{output_dir}}/minimal-swagger-api.yml"
+      vars:
+        api_name: "{{ resource_prefix }}-minimal"
 
     - name: deploy new API
-      aws_api_gateway:
+      api_gateway:
         api_file: "{{output_dir}}/minimal-swagger-api.yml"
         stage: "minimal"
         endpoint_type: 'REGIONAL'
@@ -81,7 +83,7 @@
           - bad_uri_result is failed
 
     - name: Update API to test params effect
-      aws_api_gateway:
+      api_gateway:
         api_id: '{{create_result.api_id}}'
         api_file: "{{output_dir}}/minimal-swagger-api.yml"
         cache_enabled: true
@@ -100,7 +102,7 @@
     # ==== additional create/delete tests ====
 
     - name: deploy first API
-      aws_api_gateway:
+      api_gateway:
         api_file: "{{output_dir}}/minimal-swagger-api.yml"
         stage: "minimal"
         cache_enabled: false
@@ -108,7 +110,7 @@
       register: create_result_1
 
     - name: deploy second API rapidly after first
-      aws_api_gateway:
+      api_gateway:
         api_file: "{{output_dir}}/minimal-swagger-api.yml"
         stage: "minimal"
         state: present
@@ -124,13 +126,13 @@
           - 'create_result_1.configure_response.endpoint_configuration.types.0 == "EDGE"'
 
     - name: destroy first API
-      aws_api_gateway:
+      api_gateway:
         state: absent
         api_id: '{{create_result_1.api_id}}'
       register: destroy_result_1
 
     - name: destroy second API rapidly after first
-      aws_api_gateway:
+      api_gateway:
         state: absent
         api_id: '{{create_result_2.api_id}}'
       register: destroy_result_2
@@ -143,24 +145,27 @@
            - '"apigateway:DeleteRestApi" in destroy_result_1.resource_actions'
            - '"apigateway:DeleteRestApi" in destroy_result_2.resource_actions'
 
+    # ==== test create/delete using lookup=tag ====
+    - include_tasks: lookup.yml
+
     # ================= end testing ====================================
 
   always:
 
     - name: Ensure cleanup of API deploy
-      aws_api_gateway:
+      api_gateway:
         state: absent
         api_id: '{{create_result.api_id}}'
       ignore_errors: true
 
     - name: Ensure cleanup of API deploy 1
-      aws_api_gateway:
+      api_gateway:
         state: absent
         api_id: '{{create_result_1.api_id}}'
       ignore_errors: true
 
     - name: Ensure cleanup of API deploy 2
-      aws_api_gateway:
+      api_gateway:
         state: absent
         api_id: '{{create_result_2.api_id}}'
       ignore_errors: true
