@@ -61,4 +61,4 @@ jobs:
               "python-version": "3.8"
             }
           ]
-      collection_pre_install: ''
+      collection_pre_install: '-r source/tests/unit/requirements.yml'
