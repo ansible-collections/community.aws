@@ -15,6 +15,7 @@ description:
     The usage did not change.
 author:
   - "Aaron Smith (@slapula)"
+  - "Razique Mahroua (@razique)"
 options:
   name:
     description:
@@ -57,6 +58,18 @@ options:
           - A list that specifies the types of AWS resources for which AWS Config records configuration changes (for example,
             C(AWS::EC2::Instance) or C(AWS::CloudTrail::Trail)).
           - Before you can set this option, you must set I(all_supported=false).
+          - If you specify a I(recording_strategy) of 'EXCLUSION_BY_RESOURCE_TYPES', you must define a list of resource types to either
+            include or exclude; the behavior is automatically determined based on the recording strategy.
+      recording_strategy:
+        description:
+          - An string that specifies the recording strategy for the configuration recorder.
+            If you set I(recording_strategy) to ALL_SUPPORTED_RESOURCE_TYPES, Config records configuration changes for
+            all supported regional resource types. You also must set the I(all_supported) parameter to true.
+            If you set the I(recording_strategy) to INCLUSION_BY_RESOURCE_TYPES, Config records configuration changes for
+            only the resource types you specify in the resource_types list.
+            If you set the I(recording_strategy) to EXCLUSION_BY_RESOURCE_TYPES, Config records configuration changes for
+            all supported resource types except the resource types that you specify in the I(resource_types) list.
+          - Requires boto3 >= 1.26.144
     type: dict
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -73,6 +86,30 @@ EXAMPLES = r"""
     recording_group:
         all_supported: true
         include_global_types: true
+
+- name: Define a recording strategy to record global resources defined as resource types
+  community.aws.config_recorder:
+    name: test_configuration_recorder
+    state: present
+    role_arn: 'arn:aws:iam::123456789012:role/AwsConfigRecorder'
+    resource_types:
+      - AWS::EC2::Instance
+    recording_group:
+        all_supported: false
+        include_global_types: false
+        recording_strategy: INCLUSION_BY_RESOURCE_TYPES
+
+- name: Define a recording strategy to record all AWS resources (including global resources) except EC2 instances
+  community.aws.config_recorder:
+    name: test_configuration_recorder
+    state: present
+    role_arn: 'arn:aws:iam::123456789012:role/AwsConfigRecorder'
+    resource_types:
+      - AWS::EC2::Instance
+    recording_group:
+        all_supported: false
+        include_global_types: false
+        recording_strategy: EXCLUSION_BY_RESOURCE_TYPES
 """
 
 RETURN = r"""#"""
@@ -168,7 +205,33 @@ def main():
             params["recordingGroup"].update(
                 {"includeGlobalResourceTypes": module.params.get("recording_group").get("include_global_types")}
             )
-        if module.params.get("recording_group").get("resource_types"):
+        strategy = module.params.get("recording_group").get("recording_strategy")
+        if strategy is not None:
+            if strategy != 'ALL_SUPPORTED_RESOURCE_TYPES':
+                if module.params.get("recording_group").get("resource_types") is None:
+                    module.fail_json(
+                        msg="recording_strategy defined to exclude or include resources, but no resources are defined. "
+                            "Pass a list of AWS resources to include or exclude via the resource_types parameter.")
+                if strategy == 'EXCLUSION_BY_RESOURCE_TYPES':
+                    exclusion = {
+                        "exclusionByResourceTypes": {
+                            "resourceTypes": module.params.get("recording_group").get("resource_types")
+                        }
+                    }
+                    params["recordingGroup"].update(exclusion)
+            else:
+                if module.params.get("recording_group").get("all_supported") != True:
+                    module.fail_json(
+                        msg="recording_strategy defined as 'ALL_SUPPORTED_RESOURCE_TYPES' but 'all_supported' parameter set to 'False'."
+                            "Set 'all_supported' to 'True' with the 'ALL_SUPPORTED_RESOURCE_TYPES' recording strategy")
+            strategy = {
+                "recordingStrategy": {
+                    "useOnly": module.params.get("recording_group").get("recording_strategy")
+                }
+            }
+            params["recordingGroup"].update(strategy)
+
+        if module.params.get("recording_group").get("resource_types") and strategy != 'EXCLUSION_BY_RESOURCE_TYPES':
             params["recordingGroup"].update(
                 {"resourceTypes": module.params.get("recording_group").get("resource_types")}
             )
@@ -176,7 +239,6 @@ def main():
             params["recordingGroup"].update({"resourceTypes": []})
 
     client = module.client("config", retry_decorator=AWSRetry.jittered_backoff())
-
     resource_status = resource_exists(client, module, params)
 
     if state == "present":
