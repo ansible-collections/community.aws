@@ -25,6 +25,12 @@
   - set_fact:
       distribution_id: '{{ cf_distribution.id }}'
 
+  - name: ensure that default value of 'enabled' is 'true'
+    assert:
+      that:
+        - cf_distribution.changed
+        - cf_distribution.enabled
+
   - name: ensure that default value of 'ipv6_enabled' is 'false'
     assert:
       that:
@@ -359,8 +365,9 @@
       wait: true
       state: absent
 
-  - name: create cloudfront distribution with tags
+  - name: create cloudfront distribution with tags and as disabled
     cloudfront_distribution:
+      enabled: false
       origins:
       - domain_name: "{{ resource_prefix }}2.example.com"
         id: "{{ resource_prefix }}2.example.com"
@@ -372,6 +379,12 @@
 
   - set_fact:
       distribution_id: '{{ cf_second_distribution.id }}'
+
+  - name: ensure that the value of 'enabled' is 'false'
+    assert:
+      that:
+        - cf_second_distribution.changed
+        - not cf_second_distribution.enabled
 
   - name: ensure tags were set on creation
     assert:
@@ -555,6 +568,43 @@
     ignore_errors: true
 
   - name: check that custom origin with origin access identity fails
+    # "s3 origin domains and custom_origin_config are mutually exclusive"
+    assert:
+      that:
+        - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed
+
+  - name: check that custom_origin_config can't be used with an region-agnostic S3 domain
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ resource_prefix }}-bucket.s3.{{ aws_region }}.amazonaws.com"
+        id: "{{ resource_prefix }}3.example.com"
+        custom_origin_config:
+          http_port: 8080
+      state: present
+    register: update_origin_to_s3_with_origin_access_and_with_custom_origin_config
+    ignore_errors: true
+
+  - name: check that custom origin with region-agnostic S3 domain fails
+    # "s3 origin domains and custom_origin_config are mutually exclusive"
+    assert:
+      that:
+        - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed
+
+  - name: check that custom_origin_config can't be used with an region-aware S3 domain
+    cloudfront_distribution:
+      distribution_id: "{{ distribution_id }}"
+      origins:
+      - domain_name: "{{ resource_prefix }}-bucket.s3.amazonaws.com"
+        id: "{{ resource_prefix }}3.example.com"
+        custom_origin_config:
+          http_port: 8080
+      state: present
+    register: update_origin_to_s3_with_origin_access_and_with_custom_origin_config
+    ignore_errors: true
+
+  - name: check that custom origin with region-aware S3 domain fails
+    # "s3 origin domains and custom_origin_config are mutually exclusive"
     assert:
       that:
         - update_origin_to_s3_with_origin_access_and_with_custom_origin_config.failed

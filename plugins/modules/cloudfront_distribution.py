@@ -1417,6 +1417,7 @@ web_acl_id:
 
 from collections import OrderedDict
 import datetime
+import re
 
 try:
     import botocore
@@ -1676,7 +1677,7 @@ class CloudFrontValidationManager(object):
                 "http2and3",
             ]
         )
-        self.__s3_bucket_domain_identifier = ".s3.amazonaws.com"
+        self.__s3_bucket_domain_regex = re.compile(r"\.s3(?:\.[^.]+)?\.amazonaws\.com$")
 
     def add_missing_key(self, dict_object, key_to_set, value_to_set):
         if key_to_set not in dict_object and value_to_set is not None:
@@ -1818,7 +1819,7 @@ class CloudFrontValidationManager(object):
                         )
                     else:
                         origin_shield_region = origin_shield_region.lower()
-            if self.__s3_bucket_domain_identifier in origin.get("domain_name").lower():
+            if self.__s3_bucket_domain_regex.search(origin.get("domain_name").lower()):
                 if origin.get("s3_origin_access_identity_enabled") is not None:
                     if origin["s3_origin_access_identity_enabled"]:
                         s3_origin_config = self.validate_s3_origin_configuration(client, existing_config, origin)
@@ -1834,10 +1835,10 @@ class CloudFrontValidationManager(object):
 
                     origin["s3_origin_config"] = dict(origin_access_identity=oai)
 
-                    if "custom_origin_config" in origin:
-                        self.module.fail_json(
-                            msg="s3_origin_access_identity_enabled and custom_origin_config are mutually exclusive"
-                        )
+                if "custom_origin_config" in origin:
+                    self.module.fail_json(
+                        msg="s3 origin domains and custom_origin_config are mutually exclusive",
+                    )
             else:
                 origin = self.add_missing_key(
                     origin, "custom_origin_config", existing_config.get("custom_origin_config", {})
@@ -2218,7 +2219,9 @@ class CloudFrontValidationManager(object):
                 config["aliases"] = ansible_list_to_cloudfront_list(aliases)
             if logging is not None:
                 config["logging"] = self.validate_logging(logging)
-            config["enabled"] = enabled or config.get("enabled", self.__default_distribution_enabled)
+            config["enabled"] = (
+                enabled if enabled is not None else config.get("enabled", self.__default_distribution_enabled)
+            )
             if price_class is not None:
                 self.validate_attribute_with_allowed_values(price_class, "price_class", self.__valid_price_classes)
                 config["price_class"] = price_class
@@ -2316,7 +2319,8 @@ class CloudFrontValidationManager(object):
 
     def wait_until_processed(self, client, wait_timeout, distribution_id, caller_reference):
         if distribution_id is None:
-            distribution_id = self.validate_distribution_from_caller_reference(caller_reference=caller_reference)["Id"]
+            distribution = self.validate_distribution_from_caller_reference(caller_reference=caller_reference)
+            distribution_id = distribution["Distribution"]["Id"]
 
         try:
             waiter = client.get_waiter("distribution_deployed")
