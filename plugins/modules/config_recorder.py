@@ -69,7 +69,7 @@ options:
             only the resource types you specify in the resource_types list.
             If you set the I(recording_strategy) to EXCLUSION_BY_RESOURCE_TYPES, Config records configuration changes for
             all supported resource types except the resource types that you specify in the I(resource_types) list.
-          - Requires boto3 >= 1.26.144
+          - Requires botocore >= 1.29.144
     type: dict
 extends_documentation_fragment:
   - amazon.aws.common.modules
@@ -122,7 +122,7 @@ except ImportError:
 
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
-from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code, botocore_at_least
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
@@ -187,8 +187,10 @@ def main():
         ],
     )
 
+    if not module.botocore_at_least('1.29.144'):
+        module.warn("Botocore did not include resource types exclusion and recording strategies "
+                    "for Config before 1.29.144. To make use of these features, update botocore.")
     result = {"changed": False}
-
     name = module.params.get("name")
     state = module.params.get("state")
 
