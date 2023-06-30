@@ -1,0 +1,2 @@
+bugfixes:
+  - dynamodb_table - secondary indexes are now created (https://github.com/ansible-collections/community.aws/issues/1825).
