@@ -37,7 +37,7 @@ from ansible_collections.community.aws.plugins.inventory.aws_mq import (
     InventoryModule,
     _find_hosts_matching_statuses,
     _get_broker_host_tags,
-    _add_details_to_hosts
+    _add_details_to_hosts,
 )
 
 if not HAS_BOTO3:
@@ -265,7 +265,7 @@ def test_get_broker_host_tags(detail):
     expected_tags = [
         {"Key": "tag1", "Value": "value1"},
         {"Key": "tag2", "Value": "value2"},
-        {"Key": "Tag3", "Value": "Value2"}
+        {"Key": "Tag3", "Value": "Value2"},
     ]
 
     tags = _get_broker_host_tags(detail)
@@ -304,30 +304,31 @@ def test_add_details_to_hosts_with_failure_strict(connection):
 
 
 def test_add_details_to_hosts_with_hosts(connection):
-    hosts = [
-        {"BrokerId": "1"},
-        {"BrokerId": "2"}
-    ]
+    hosts = [{"BrokerId": "1"}, {"BrokerId": "2"}]
     broker_hosts_tags = {
         "1": {"Tags": {"tag10": "value10", "tag11": "value11"}},
-        "2": {"Tags": {"tag20": "value20", "tag21": "value21", "tag22": "value22"}}
+        "2": {"Tags": {"tag20": "value20", "tag21": "value21", "tag22": "value22"}},
     }
     connection.describe_broker.side_effect = lambda **kwargs: broker_hosts_tags.get(kwargs.get("BrokerId"))
 
     _add_details_to_hosts(connection, hosts, strict=False)
 
     assert hosts == [
-        {"BrokerId": "1", "Tags":
-            [
+        {
+            "BrokerId": "1",
+            "Tags": [
                 {"Key": "tag10", "Value": "value10"},
                 {"Key": "tag11", "Value": "value11"},
-            ]},
-        {"BrokerId": "2", "Tags":
-            [
+            ],
+        },
+        {
+            "BrokerId": "2",
+            "Tags": [
                 {"Key": "tag20", "Value": "value20"},
                 {"Key": "tag21", "Value": "value21"},
-                {"Key": "tag22", "Value": "value22"}
-            ]},
+                {"Key": "tag22", "Value": "value22"},
+            ],
+        },
     ]
 
 
@@ -342,7 +343,7 @@ def test_get_broker_hosts(m_add_details_to_hosts, inventory, connection):
         "BrokerName": "brk1",
         "BrokerState": "RUNNING",
         "EngineType": "RABBITMQ",
-        "DeploymentMode": "CLUSTER_MULTI_AZ"
+        "DeploymentMode": "CLUSTER_MULTI_AZ",
     }
 
     conn_paginator = MagicMock()
@@ -412,14 +413,18 @@ def test_inventory_get_all_hosts(m_find_hosts, inventory, regions):
     params = {
         "regions": [f"us-east-{int(i)}" for i in range(regions)],
         "strict": random.choice((True, False)),
-        "statuses": [random.choice(
-            [
-                "RUNNING",
-                "CREATION_IN_PROGRESS",
-                "REBOOT_IN_PROGRESS",
-                "DELETION_IN_PROGRESS",
-                "CRITICAL_ACTION_REQUIRED"
-            ]) for i in range(3)],
+        "statuses": [
+            random.choice(
+                [
+                    "RUNNING",
+                    "CREATION_IN_PROGRESS",
+                    "REBOOT_IN_PROGRESS",
+                    "DELETION_IN_PROGRESS",
+                    "CRITICAL_ACTION_REQUIRED",
+                ]
+            )
+            for i in range(3)
+        ],
     }
 
     connections = [MagicMock() for i in range(regions)]
@@ -441,8 +446,7 @@ def test_inventory_get_all_hosts(m_find_hosts, inventory, regions):
     assert result == inventory._get_all_hosts(**params)
     inventory.all_clients.assert_called_with("mq")
     inventory._get_broker_hosts.assert_has_calls(
-        [call(connections[i], params["strict"]) for i in range(regions)],
-        any_order=True
+        [call(connections[i], params["strict"]) for i in range(regions)], any_order=True
     )
 
     m_find_hosts.assert_called_with(result, params["statuses"])
@@ -571,9 +575,7 @@ BASE_INVENTORY_PARSE = "ansible_collections.community.aws.plugins.inventory.aws_
 @pytest.mark.parametrize("cache", [True, False])
 @pytest.mark.parametrize("cache_hit", [True, False])
 @patch(BASE_INVENTORY_PARSE)
-def test_inventory_parse(
-    m_parse, inventory, user_cache_directive, cache, cache_hit
-):
+def test_inventory_parse(m_parse, inventory, user_cache_directive, cache, cache_hit):
     inventory_data = MagicMock()
     loader = MagicMock()
     path = generate_random_string(with_punctuation=False, with_digits=False)

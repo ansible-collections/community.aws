@@ -161,7 +161,7 @@ def _add_details_to_hosts(connection, hosts, strict):
 
         if detail:
             # special handling of tags
-            host['Tags'] = _get_broker_host_tags(detail)
+            host["Tags"] = _get_broker_host_tags(detail)
 
             # collect rest of attributes
             for attr in broker_attr:
@@ -170,7 +170,6 @@ def _add_details_to_hosts(connection, hosts, strict):
 
 
 class InventoryModule(AWSInventoryBase):
-
     NAME = "community.aws.aws_mq"
     INVENTORY_FILE_SUFFIXES = ("aws_mq.yml", "aws_mq.yaml")
 
@@ -178,7 +177,6 @@ class InventoryModule(AWSInventoryBase):
         super(InventoryModule, self).__init__()
 
     def _get_broker_hosts(self, connection, strict):
-
         def _boto3_paginate_wrapper(func, *args, **kwargs):
             results = []
             try:
@@ -196,6 +194,7 @@ class InventoryModule(AWSInventoryBase):
             ) as e:  # pylint: disable=duplicate-except
                 raise AnsibleError(f"Failed to query MQ: {to_native(e)}")
             return results
+
         return _boto3_paginate_wrapper
 
     def _get_all_hosts(self, regions, strict, statuses):
@@ -209,13 +208,8 @@ class InventoryModule(AWSInventoryBase):
 
         for connection, _region in self.all_clients("mq"):
             paginator = connection.get_paginator("list_brokers")
-            all_instances.extend(
-                self._get_broker_hosts(connection, strict)
-                (paginator.paginate().build_full_result)
-            )
-        sorted_hosts = list(
-            sorted(all_instances, key=lambda x: x["BrokerName"])
-        )
+            all_instances.extend(self._get_broker_hosts(connection, strict)(paginator.paginate().build_full_result))
+        sorted_hosts = list(sorted(all_instances, key=lambda x: x["BrokerName"]))
         return _find_hosts_matching_statuses(sorted_hosts, statuses)
 
     def _populate_from_cache(self, cache_data):
@@ -233,10 +227,7 @@ class InventoryModule(AWSInventoryBase):
         group = inventory_group
         self.inventory.add_group(group)
         if hosts:
-            self._add_hosts(
-                hosts=hosts,
-                group=group
-            )
+            self._add_hosts(hosts=hosts, group=group)
             self.inventory.add_child("all", group)
 
     def _format_inventory(self, hosts):
@@ -247,7 +238,7 @@ class InventoryModule(AWSInventoryBase):
             hostname = _get_mq_hostname(host)
             results[group]["hosts"].append(hostname)
             h = self.inventory.get_host(hostname)
-            results["_meta"]['hostvars'][h.name] = h.vars
+            results["_meta"]["hostvars"][h.name] = h.vars
         return results
 
     def _add_hosts(self, hosts, group):
