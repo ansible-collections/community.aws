@@ -1,0 +1,10 @@
+---
+- name: Find broker by name
+  community.aws.mq_broker_info:
+    broker_name: "{{ broker_name }}"
+  register: broker_info
+  failed_when: false
+
+- name: Find broker by name, if exists
+  set_fact:
+    broker_exists: "{{ not (('Invalid type for parameter BrokerId, value: None' in broker_info.msg) | bool) }}"
