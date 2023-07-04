@@ -84,7 +84,7 @@ options:
   capabilities:
     description:
     - Capabilities allow stacks to create and modify IAM resources, which may include adding users or roles.
-    - Currently the only available values are 'CAPABILITY_IAM' and 'CAPABILITY_NAMED_IAM'. Either or ALL may be provided.
+    - Currently the only available values are 'CAPABILITY_IAM', 'CAPABILITY_NAMED_IAM' and 'CAPABILITY_AUTO_EXPAND'. Either or ALL may be provided.
     - >
         The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey,
         AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition
