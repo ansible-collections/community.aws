@@ -1,0 +1,16 @@
+---
+- hosts: 127.0.0.1
+  connection: local
+  gather_facts: no
+
+  environment: "{{ ansible_test.environment }}"
+
+  collections:
+    - community.aws
+  tasks:
+    - debug: var=groups
+    - name: assert group was populated with inventory but is empty
+      assert:
+        that:
+          - "'aws_mq' in groups"
+          - groups.aws_mq | length == 0
