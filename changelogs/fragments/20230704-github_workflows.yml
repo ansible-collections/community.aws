@@ -1,3 +1,0 @@
-trivial:
-  - "Add GitHub workflows for sanity, units and changelog."
-  - "Remove Python < 3.6 compatibility code for unit tests."
