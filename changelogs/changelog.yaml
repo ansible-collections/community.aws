@@ -3227,3 +3227,20 @@ releases:
     - elasticache_info-ignore-CacheClusterNotFound-when-reading-tags.yaml
     - release-notes.yml
     release_date: '2023-05-05'
+  5.5.1:
+    changes:
+      bugfixes:
+      - cloudfront_distribution - no longer crashes when waiting for completion of
+        creation (https://github.com/ansible-collections/community.aws/issues/255).
+      - cloudfront_distribution - now honours the ``enabled`` setting (https://github.com/ansible-collections/community.aws/issues/1823).
+      release_summary: This release brings several bugfixes.
+    fragments:
+    - 1823-cloudfront_distribution_always_created_enabled.yml
+    - 20230627-ci-fixup.yml
+    - 20230701-ci-fixup.yml
+    - 20230704-github_workflows.yml
+    - 255-cloudfront_distribution_create_wait_crash.yml
+    - release_summary.yml
+    - test-reqs.yml
+    - tests-requirements.yml
+    release_date: '2023-07-05'
