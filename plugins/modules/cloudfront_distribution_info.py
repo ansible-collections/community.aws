@@ -420,7 +420,7 @@ class CloudFrontServiceManager:
                 temp_distribution = {}
                 for key_name in key_list:
                     temp_distribution[key_name] = dist[key_name]
-                temp_distribution['Aliases'] = [alias for alias in dist['Aliases'].get('Items', [])]
+                temp_distribution['Aliases'] = list(dist['Aliases'].get('Items', []))
                 temp_distribution['ETag'] = self.get_etag_from_distribution_id(dist['Id'], streaming)
                 if not streaming:
                     temp_distribution['WebACLId'] = dist['WebACLId']
