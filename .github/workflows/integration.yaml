@@ -8,7 +8,7 @@ on:
   pull_request_target:
     
 env:
-  integration_jobs: 22
+  AWS_INTEGRATION_TOTAL_JOBS: 22
 
 jobs:
   safe-to-test:
@@ -43,7 +43,7 @@ jobs:
         id: splitter
         uses: ansible-network/github_actions/.github/actions/ansible_test_splitter@main
         with:
-          total_jobs: ${{ integration_jobs }}
+          total_jobs: ${{ env.AWS_INTEGRATION_TOTAL_JOBS }}
           collections_to_test: |
             ${{ env.community_dir }}
             ${{ env.amazon_dir }}
