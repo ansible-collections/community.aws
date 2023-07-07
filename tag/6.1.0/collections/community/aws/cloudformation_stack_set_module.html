@@ -1,0 +1,692 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>community.aws.cloudformation_stack_set module – Manage groups of CloudFormation stacks &mdash; Ansible collections  documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/rtd-ethical-ads.css" type="text/css" />
+    <link rel="shortcut icon" href="../../../_static/images/Ansible-Mark-RGB_Black.png"/>
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="community.aws.cloudfront_distribution module – Create, update and delete AWS CloudFront distributions" href="cloudfront_distribution_module.html" />
+    <link rel="prev" title="community.aws.cloudformation_exports_info module – Read a value from CloudFormation Exports" href="cloudformation_exports_info_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+
+
+
+
+</head>
+
+<body class="wy-body-for-nav"><!-- extra body elements for Ansible beyond RTD Sphinx Theme -->
+
+<div class="DocSite-globalNav ansibleNav">
+  <ul>
+    <li><a href="https://www.ansible.com/ansiblefest" target="_blank">AnsibleFest</a></li>
+    <li><a href="https://www.ansible.com/tower" target="_blank">Products</a></li>
+    <li><a href="https://www.ansible.com/community" target="_blank">Community</a></li>
+    <li><a href="https://www.ansible.com/webinars-training" target="_blank">Webinars & Training</a></li>
+    <li><a href="https://www.ansible.com/blog" target="_blank">Blog</a></li>
+  </ul>
+</div>
+
+<a class="DocSite-nav" href="/" style="padding-bottom: 30px;">
+
+  <img class="DocSiteNav-logo"
+    src="../../../_static/images/Ansible-Mark-RGB_White.png"
+    alt="Ansible Logo">
+  <div class="DocSiteNav-title">Ansible Collections Documentation</div>
+</a>
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            Ansible collections
+          </a><!--- Based on https://github.com/rtfd/sphinx_rtd_theme/pull/438/files -->
+
+<div class="version">
+  
+    
+  
+</div>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <label class="sr-only" for="q">Search docs:</label>
+    <input type="text" class="st-default-search-input" id="q" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+  
+              <p class="caption" role="heading"><span class="caption-text">Collections:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../index.html">Collection Index</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../index.html">Collections in the Community Namespace</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="index.html">Community.Aws</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="index.html#description">Description</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#communication">Communication</a></li>
+<li class="toctree-l4"><a class="reference internal" href="index.html#changelog">Changelog</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="index.html#plugin-index">Plugin Index</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Plugin indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../index_connection.html">Index of all Connection Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_inventory.html">Index of all Inventory Plugins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../index_module.html">Index of all Modules</a></li>
+</ul>
+<p class="caption" role="heading"><span class="caption-text">Reference indexes:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../environment_variables.html">Index of all Collection Environment Variables</a></li>
+</ul>
+<!-- extra nav elements for Ansible beyond RTD Sphinx Theme -->
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Ansible collections</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
+          <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
+      <li class="breadcrumb-item active">community.aws.cloudformation_stack_set module – Manage groups of CloudFormation stacks</li>
+      <li class="wy-breadcrumbs-aside">
+              <!-- User defined GitHub URL -->
+              <a href="https://github.com/ansible-collections/community.aws/edit/stable-6/plugins/modules/cloudformation_stack_set.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+
+  
+           <div itemprop="articleBody">
+             
+  <span class="target" id="ansible-collections-community-aws-cloudformation-stack-set-module"></span><section id="community-aws-cloudformation-stack-set-module-manage-groups-of-cloudformation-stacks">
+<h1>community.aws.cloudformation_stack_set module – Manage groups of CloudFormation stacks<a class="headerlink" href="#community-aws-cloudformation-stack-set-module-manage-groups-of-cloudformation-stacks" title="Permalink to this heading"></a></h1>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 6.1.0).</p>
+<p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
+You need further requirements to be able to use this module,
+see <a class="reference internal" href="#ansible-collections-community-aws-cloudformation-stack-set-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.cloudformation_stack_set</span></code>.</p>
+</div>
+<p class="ansible-version-added">New in community.aws 1.0.0</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
+<li><p><a class="reference internal" href="#requirements" id="id2">Requirements</a></p></li>
+<li><p><a class="reference internal" href="#parameters" id="id3">Parameters</a></p></li>
+<li><p><a class="reference internal" href="#notes" id="id4">Notes</a></p></li>
+<li><p><a class="reference internal" href="#examples" id="id5">Examples</a></p></li>
+<li><p><a class="reference internal" href="#return-values" id="id6">Return Values</a></p></li>
+</ul>
+</nav>
+<section id="synopsis">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
+<ul class="simple">
+<li><p>Launches/updates/deletes AWS CloudFormation Stack Sets.</p></li>
+</ul>
+</section>
+<section id="requirements">
+<span id="ansible-collections-community-aws-cloudformation-stack-set-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<p>The below requirements are needed on the host that executes this module.</p>
+<ul class="simple">
+<li><p>python &gt;= 3.6</p></li>
+<li><p>boto3 &gt;= 1.22.0</p></li>
+<li><p>botocore &gt;= 1.25.0</p></li>
+</ul>
+</section>
+<section id="parameters">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Parameters</a><a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<table class="ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Comments</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-access-key"></span><strong>access_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS access key ID.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY_ID</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_ACCESS_KEY</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>aws_access_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_access_key_id</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_access_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_ACCESS_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-accounts"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-accounts"><strong>accounts</strong></p>
+<a class="ansibleOptionLink" href="#parameter-accounts" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A list of AWS accounts in which to create instance of CloudFormation stacks.</p>
+<p>At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will have their stack instances updated.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-administration_role_arn"></div>
+<div class="ansibleOptionAnchor" id="parameter-admin_role_arn"></div>
+<div class="ansibleOptionAnchor" id="parameter-admin_role"></div>
+<div class="ansibleOptionAnchor" id="parameter-administration_role"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-administration-role-arn"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-administration-role"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-admin-role-arn"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-admin-role"></span><strong>administration_role_arn</strong></p>
+<a class="ansibleOptionLink" href="#parameter-administration_role_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: admin_role_arn, admin_role, administration_role</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ARN of the administration role, meaning the role that CloudFormation Stack Sets use to assume the roles in your child accounts.</p>
+<p>This defaults to <code class="docutils literal notranslate"><span class="pre">arn:aws:iam::{{</span> <span class="pre">account</span> <span class="pre">ID</span> <span class="pre">}}:role/AWSCloudFormationStackSetAdministrationRole</span></code> where <code class="docutils literal notranslate"><span class="pre">{{</span> <span class="pre">account</span> <span class="pre">ID</span> <span class="pre">}}</span></code> is replaced with the account number of the current IAM role/user/STS credentials.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_CA_BUNDLE</span></code> environment variable may also be used.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-config"><strong>aws_config</strong></p>
+<a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
+<p>Parameters can be found in the AWS documentation <a class="reference external" href="https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config">https://botocore.amazonaws.com/v1/documentation/api/latest/reference/config.html#botocore.config.Config</a>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-capabilities"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-capabilities"><strong>capabilities</strong></p>
+<a class="ansibleOptionLink" href="#parameter-capabilities" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Capabilities allow stacks to create and modify IAM resources, which may include adding users or roles.</p>
+<p>Currently the only available values are ‘CAPABILITY_IAM’ and ‘CAPABILITY_NAMED_IAM’. Either or both may be provided.</p>
+<p>The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey, AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CAPABILITY_IAM&quot;</span></code></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;CAPABILITY_NAMED_IAM&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
+<a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ANSIBLE_DEBUG_BOTOCORE_LOGS</span></code> environment variable may also be used.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-description"><strong>description</strong></p>
+<a class="ansibleOptionLink" href="#parameter-description" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A description of what this stack set creates.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-s3-url"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>URL to connect to instead of the default AWS endpoints.  While this can be used to connection to other AWS-compatible services the amazon.aws and community.aws collections are only tested against AWS.</p>
+<p>The  <code class="docutils literal notranslate"><span class="pre">AWS_URL</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variables may also be used, in decreasing order of preference.</p>
+<p>The <em>ec2_url</em> and <em>s3_url</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_URL</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-execution_role_name"></div>
+<div class="ansibleOptionAnchor" id="parameter-exec_role_name"></div>
+<div class="ansibleOptionAnchor" id="parameter-exec_role"></div>
+<div class="ansibleOptionAnchor" id="parameter-execution_role"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-execution-role-name"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-execution-role"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-exec-role-name"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-exec-role"></span><strong>execution_role_name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-execution_role_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: exec_role_name, exec_role, execution_role</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>ARN of the execution role, meaning the role that CloudFormation Stack Sets assumes in your child accounts.</p>
+<p>This MUST NOT be an ARN, and the roles must exist in each child account specified.</p>
+<p>The default name for the execution role is <code class="docutils literal notranslate"><span class="pre">AWSCloudFormationStackSetExecutionRole</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-failure_tolerance"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-failure-tolerance"><strong>failure_tolerance</strong></p>
+<a class="ansibleOptionLink" href="#parameter-failure_tolerance" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Settings to change what is considered “failed” when running stack instance updates, and how many to do at a time.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-failure_tolerance/fail_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-failure-tolerance-fail-count"><strong>fail_count</strong></p>
+<a class="ansibleOptionLink" href="#parameter-failure_tolerance/fail_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The number of accounts, per region, for which this operation can fail before CloudFormation stops the operation in that region.</p>
+<p>You must specify one of <em>fail_count</em> and <em>fail_percentage</em>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-failure_tolerance/fail_percentage"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-failure-tolerance-fail-percentage"><strong>fail_percentage</strong></p>
+<a class="ansibleOptionLink" href="#parameter-failure_tolerance/fail_percentage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The percentage of accounts, per region, for which this stack operation can fail before CloudFormation stops the operation in that region.</p>
+<p>You must specify one of <em>fail_count</em> and <em>fail_percentage</em>.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-failure_tolerance/parallel_count"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-failure-tolerance-parallel-count"><strong>parallel_count</strong></p>
+<a class="ansibleOptionLink" href="#parameter-failure_tolerance/parallel_count" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum number of accounts in which to perform this operation at one time.</p>
+<p><em>parallel_count</em> may be at most one more than the <em>fail_count</em>.</p>
+<p>You must specify one of <em>parallel_count</em> and <em>parallel_percentage</em>.</p>
+<p>Note that this setting lets you specify the maximum for operations. For large deployments, under certain circumstances the actual count may be lower.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-failure_tolerance/parallel_percentage"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-failure-tolerance-parallel-percentage"><strong>parallel_percentage</strong></p>
+<a class="ansibleOptionLink" href="#parameter-failure_tolerance/parallel_percentage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The maximum percentage of accounts in which to perform this operation at one time.</p>
+<p>You must specify one of <em>parallel_count</em> and <em>parallel_percentage</em>.</p>
+<p>Note that this setting lets you specify the maximum for operations. For large deployments, under certain circumstances the actual percentage may be lower.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Name of the CloudFormation stack set.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-parameters"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-parameters"><strong>parameters</strong></p>
+<a class="ansibleOptionLink" href="#parameter-parameters" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A list of hashes of all the template variables for the stack. The value can be a string or a dict.</p>
+<p>Dict can be used to set additional template parameter attributes like UsePreviousValue (see example).</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-profile"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-profile"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-profile"></span><strong>profile</strong></p>
+<a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A named AWS profile to use for authentication.</p>
+<p>See the AWS documentation for more information about named profiles <a class="reference external" href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_PROFILE</span></code> environment variable may also be used.</p>
+<p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_stacks"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-purge-stacks"><strong>purge_stacks</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_stacks" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Only applicable when <em>state=absent</em>. Sets whether, when deleting a stack set, the stack instances should also be deleted.</p>
+<p>By default, instances will be deleted. To keep stacks when stack set is deleted set <em>purge_stacks=false</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-region"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-region"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-region"></span><strong>region</strong></p>
+<a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The AWS region to use.</p>
+<p>For global services such as IAM, Route53 and CloudFront, <em>region</em> is ignored.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_REGION</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variables may also be used.</p>
+<p>See the Amazon AWS documentation for more information <a class="reference external" href="http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region">http://docs.aws.amazon.com/general/latest/gr/rande.html#ec2_region</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">ec2_region</span></code> alias has been deprecated and will be removed in a release after 2024-12-01</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-regions"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-regions"><strong>regions</strong></p>
+<a class="ansibleOptionLink" href="#parameter-regions" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A list of AWS regions to create instances of a stack in. The <em>region</em> parameter chooses where the Stack Set is created, and <em>regions</em> specifies the region for stack instances.</p>
+<p>At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will have their stack instances updated.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-secret-key"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS secret access key.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_ACCESS_KEY</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECRET_KEY</span></code>, or <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>secret_key</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>The <em>aws_secret_access_key</em> alias was added in release 5.1.0 for consistency with the AWS botocore SDK.</p>
+<p>The <em>ec2_secret_key</em> alias has been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-session-token"><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-security-token"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-access-token"></span><strong>session_token</strong></p>
+<a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>AWS STS session token for use with temporary credentials.</p>
+<p>See the AWS documentation for more information about access tokens <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys">https://docs.aws.amazon.com/general/latest/gr/aws-sec-cred-types.html#access-keys-and-secret-access-keys</a>.</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">AWS_SESSION_TOKEN</span></code>, <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> or <code class="docutils literal notranslate"><span class="pre">EC2_SECURITY_TOKEN</span></code> environment variables may also be used in decreasing order of preference.</p>
+<p>The <em>security_token</em> and <em>profile</em> options are mutually exclusive.</p>
+<p>Aliases <em>aws_session_token</em> and <em>session_token</em> were added in release 3.2.0, with the parameter being renamed from <em>security_token</em> to <em>session_token</em> in release 6.0.0.</p>
+<p>The <em>security_token</em>, <em>aws_security_token</em>, and <em>access_token</em> aliases have been deprecated and will be removed in a release after 2024-12-01.</p>
+<p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-state"><strong>state</strong></p>
+<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If <em>state=present</em>, stack will be created.  If <em>state=present</em> and if stack exists and template has changed, it will be updated. If <em>state=absent</em>, stack will be removed.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Dictionary of tags to associate with stack and its resources during stack creation.</p>
+<p>Can be updated later, updating tags removes previous entries.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-template"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-template"><strong>template</strong></p>
+<a class="ansibleOptionLink" href="#parameter-template" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The local path of the CloudFormation template.</p>
+<p>This must be the full path to the file, relative to the working directory. If using roles this may look like <code class="docutils literal notranslate"><span class="pre">roles/cloudformation/files/cloudformation-example.json</span></code>.</p>
+<p>If <em>state=present</em> and the stack does not exist yet, either <em>template</em>, <em>template_body</em> or <em>template_url</em> must be specified (but only one of them).</p>
+<p>If <em>state=present</em>, the stack does exist, and neither <em>template</em>, <em>template_body</em> nor <em>template_url</em> are specified, the previous template will be reused.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-template_body"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-template-body"><strong>template_body</strong></p>
+<a class="ansibleOptionLink" href="#parameter-template_body" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Template body. Use this to pass in the actual body of the CloudFormation template.</p>
+<p>If <em>state=present</em> and the stack does not exist yet, either <em>template</em>, <em>template_body</em> or <em>template_url</em> must be specified (but only one of them).</p>
+<p>If <em>state=present</em>, the stack does exist, and neither <em>template</em>, <em>template_body</em> nor <em>template_url</em> are specified, the previous template will be reused.</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-template_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-template-url"><strong>template_url</strong></p>
+<a class="ansibleOptionLink" href="#parameter-template_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Location of file containing the template body.</p>
+<p>The URL must point to a template (max size 307,200 bytes) located in an S3 bucket in the same region as the stack.</p>
+<p>If <em>state=present</em> and the stack does not exist yet, either <em>template</em>, <em>template_body</em> or <em>template_url</em> must be specified (but only one of them).</p>
+<p>If <em>state=present</em>, the stack does exist, and neither <em>template</em>, <em>template_body</em> nor <em>template_url</em> are specified, the previous template will be reused.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-validate-certs"><strong>validate_certs</strong></p>
+<a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
+<p>Setting <em>validate_certs=false</em> is strongly discouraged, as an alternative, consider setting <em>aws_ca_bundle</em> instead.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-wait"><strong>wait</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Whether or not to wait for stack operation to complete. This includes waiting for stack instances to reach UPDATE_COMPLETE status.</p>
+<p>If you choose not to wait, this module will not notify when stack operations fail because it will not wait for them to finish.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">false</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">true</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
+<a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>How long to wait (in seconds) for stacks to complete create/update/delete operations.</p>
+<p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">900</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="notes">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Notes</a><a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<ul class="simple">
+<li><p>To make an individual stack, you want the <a class="reference external" href="https://ansible-collections.github.io/amazon.aws/branch/main/collections/amazon/aws/cloudformation_module.html#ansible-collections-amazon-aws-cloudformation-module" title="(in Ansible collections)"><span class="xref std std-ref">amazon.aws.cloudformation</span></a> module.</p></li>
+<li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
+<li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
+</ul>
+</div>
+</section>
+<section id="examples">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a stack set with instances in two accounts</span>
+<span class="w">  </span><span class="nt">community.aws.cloudformation_stack_set</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-stack</span>
+<span class="w">    </span><span class="nt">description</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Test stack in two accounts</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">template_url</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">https://s3.amazonaws.com/my-bucket/cloudformation.template</span>
+<span class="w">    </span><span class="nt">accounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456789012</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">234567890123</span>
+<span class="w">    </span><span class="nt">regions</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">on subsequent calls, templates are optional but parameters and tags can be altered</span>
+<span class="w">  </span><span class="nt">community.aws.cloudformation_stack_set</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-stack</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">InstanceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_stacked_instance</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">foo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stack</span>
+<span class="w">    </span><span class="nt">accounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456789012</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">234567890123</span>
+<span class="w">    </span><span class="nt">regions</span><span class="p">:</span>
+<span class="w">     </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">The same type of update, but wait for the update to complete in all stacks</span>
+<span class="w">  </span><span class="nt">community.aws.cloudformation_stack_set</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-stack</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">InstanceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_restacked_instance</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">foo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stack</span>
+<span class="w">    </span><span class="nt">accounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456789012</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">234567890123</span>
+<span class="w">    </span><span class="nt">regions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Register new accounts (create new stack instances) with an existing stack set.</span>
+<span class="w">  </span><span class="nt">community.aws.cloudformation_stack_set</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my-stack</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">wait</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<span class="w">    </span><span class="nt">parameters</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">InstanceName</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_restacked_instance</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">foo</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bar</span>
+<span class="w">      </span><span class="nt">test</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">stack</span>
+<span class="w">    </span><span class="nt">accounts</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">123456789012</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">234567890123</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">345678901234</span>
+<span class="w">    </span><span class="nt">regions</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">us-east-1</span>
+</pre></div>
+</div>
+</section>
+<section id="return-values">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Return Values</a><a class="headerlink" href="#return-values" title="Permalink to this heading"></a></h2>
+<p>Common return values are documented <a class="reference external" href="https://docs.ansible.com/ansible-core/devel/reference_appendices/common_return_values.html#common-return-values" title="(in Ansible vdevel)"><span class="xref std std-ref">here</span></a>, the following are the fields unique to this module:</p>
+<table class="ansible-option-table docutils align-default" style="width: 100%">
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-operations"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-return-operations"><strong>operations</strong></p>
+<a class="ansibleOptionLink" href="#return-operations" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>All operations initiated by this run of the cloudformation_stack_set module</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;action&quot;:</span> <span class="pre">&quot;CREATE&quot;,</span> <span class="pre">&quot;administration_role_arn&quot;:</span> <span class="pre">&quot;arn:aws:iam::1234567890:role/AWSCloudFormationStackSetAdministrationRole&quot;,</span> <span class="pre">&quot;creation_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:40:46.372000+00:00&quot;,</span> <span class="pre">&quot;end_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:41:24.560000+00:00&quot;,</span> <span class="pre">&quot;execution_role_name&quot;:</span> <span class="pre">&quot;AWSCloudFormationStackSetExecutionRole&quot;,</span> <span class="pre">&quot;operation_id&quot;:</span> <span class="pre">&quot;Ansible-StackInstance-Create-0ff2af5b-251d-4fdb-8b89-1ee444eba8b8&quot;,</span> <span class="pre">&quot;operation_preferences&quot;:</span> <span class="pre">{&quot;region_order&quot;:</span> <span class="pre">[&quot;us-east-1&quot;,</span> <span class="pre">&quot;us-east-2&quot;]},</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;FAILED&quot;}]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-operations_log"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-return-operations-log"><strong>operations_log</strong></p>
+<a class="ansibleOptionLink" href="#return-operations_log" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Most recent events in CloudFormation’s event log. This may be from a previous run in some cases.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;action&quot;:</span> <span class="pre">&quot;CREATE&quot;,</span> <span class="pre">&quot;creation_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:40:46.372000+00:00&quot;,</span> <span class="pre">&quot;end_timestamp&quot;:</span> <span class="pre">&quot;2018-06-18T17:41:24.560000+00:00&quot;,</span> <span class="pre">&quot;operation_id&quot;:</span> <span class="pre">&quot;Ansible-StackInstance-Create-0ff2af5b-251d-4fdb-8b89-1ee444eba8b8&quot;,</span> <span class="pre">&quot;stack_instances&quot;:</span> <span class="pre">[{&quot;account&quot;:</span> <span class="pre">&quot;1234567890&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-east-1&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;OUTDATED&quot;,</span> <span class="pre">&quot;status_reason&quot;:</span> <span class="pre">&quot;Account</span> <span class="pre">1234567890</span> <span class="pre">should</span> <span class="pre">have</span> <span class="pre">'AWSCloudFormationStackSetAdministrationRole'</span> <span class="pre">role</span> <span class="pre">with</span> <span class="pre">trust</span> <span class="pre">relationship</span> <span class="pre">to</span> <span class="pre">CloudFormation</span> <span class="pre">service.&quot;}],</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;FAILED&quot;}]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-stack_instances"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-return-stack-instances"><strong>stack_instances</strong></p>
+<a class="ansibleOptionLink" href="#return-stack_instances" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>CloudFormation stack instances that are members of this stack set. This will also include their region and account ID.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> state == present</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">[{&quot;account&quot;:</span> <span class="pre">&quot;1234567890&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-east-1&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;OUTDATED&quot;,</span> <span class="pre">&quot;status_reason&quot;:</span> <span class="pre">&quot;Account</span> <span class="pre">1234567890</span> <span class="pre">should</span> <span class="pre">have</span> <span class="pre">'AWSCloudFormationStackSetAdministrationRole'</span> <span class="pre">role</span> <span class="pre">with</span> <span class="pre">trust</span> <span class="pre">relationship</span> <span class="pre">to</span> <span class="pre">CloudFormation</span> <span class="pre">service.\n&quot;},</span> <span class="pre">{&quot;account&quot;:</span> <span class="pre">&quot;1234567890&quot;,</span> <span class="pre">&quot;region&quot;:</span> <span class="pre">&quot;us-east-2&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;OUTDATED&quot;,</span> <span class="pre">&quot;status_reason&quot;:</span> <span class="pre">&quot;Cancelled</span> <span class="pre">since</span> <span class="pre">failure</span> <span class="pre">tolerance</span> <span class="pre">has</span> <span class="pre">exceeded&quot;}]</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-stack_set"></div><p class="ansible-option-title" id="ansible-collections-community-aws-cloudformation-stack-set-module-return-stack-set"><strong>stack_set</strong></p>
+<a class="ansibleOptionLink" href="#return-stack_set" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Facts about the currently deployed stack set, its parameters, and its tags</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> state == present</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;administration_role_arn&quot;:</span> <span class="pre">&quot;arn:aws:iam::1234567890:role/AWSCloudFormationStackSetAdministrationRole&quot;,</span> <span class="pre">&quot;capabilities&quot;:</span> <span class="pre">[],</span> <span class="pre">&quot;description&quot;:</span> <span class="pre">&quot;test</span> <span class="pre">stack</span> <span class="pre">PRIME&quot;,</span> <span class="pre">&quot;execution_role_name&quot;:</span> <span class="pre">&quot;AWSCloudFormationStackSetExecutionRole&quot;,</span> <span class="pre">&quot;parameters&quot;:</span> <span class="pre">[],</span> <span class="pre">&quot;stack_set_arn&quot;:</span> <span class="pre">&quot;arn:aws:cloudformation:us-east-1:1234567890:stackset/TestStackPrime:19f3f684-aae9-467-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;stack_set_id&quot;:</span> <span class="pre">&quot;TestStackPrime:19f3f684-aae9-4e67-ba36-e09f92cf5929&quot;,</span> <span class="pre">&quot;stack_set_name&quot;:</span> <span class="pre">&quot;TestStackPrime&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;ACTIVE&quot;,</span> <span class="pre">&quot;tags&quot;:</span> <span class="pre">{&quot;Some&quot;:</span> <span class="pre">&quot;Thing&quot;,</span> <span class="pre">&quot;an&quot;:</span> <span class="pre">&quot;other&quot;},</span> <span class="pre">&quot;template_body&quot;:</span> <span class="pre">&quot;AWSTemplateFormatVersion:</span> <span class="pre">\&quot;2010-09-09\&quot;\nParameters:</span> <span class="pre">{}\nResources:\n</span>&#160; <span class="pre">Bukkit:\n</span>&#160;&#160;&#160; <span class="pre">Type:</span> <span class="pre">\&quot;AWS::S3::Bucket\&quot;\n</span>&#160;&#160;&#160; <span class="pre">Properties:</span> <span class="pre">{}\n</span>&#160; <span class="pre">other:\n</span>&#160;&#160;&#160; <span class="pre">Type:</span> <span class="pre">\&quot;AWS::SNS::Topic\&quot;\n</span>&#160;&#160;&#160; <span class="pre">Properties:</span> <span class="pre">{}\n&quot;}</span></code></p>
+</div></td>
+</tr>
+</tbody>
+</table>
+<section id="authors">
+<h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
+<ul class="simple">
+<li><p>Ryan Scott Brown (&#64;ryansb)</p></li>
+</ul>
+</section>
+<section id="collection-links">
+<h3>Collection links<a class="headerlink" href="#collection-links" title="Permalink to this heading"></a></h3>
+<p class="ansible-links">
+  <a href="https://github.com/ansible-collections/community.aws/issues?q=is%3Aissue+is%3Aopen+sort%3Aupdated-desc" aria-role="button" target="_blank" rel="noopener external">Issue Tracker</a>
+  <a href="https://github.com/ansible-collections/community.aws" aria-role="button" target="_blank" rel="noopener external">Repository (Sources)</a>
+  <a href="./#communication-for-community-aws" aria-role="button" target="_blank">Communication</a>
+</p></section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          
+
+<footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="cloudformation_exports_info_module.html" class="btn btn-neutral float-left" title="community.aws.cloudformation_exports_info module – Read a value from CloudFormation Exports" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="cloudfront_distribution_module.html" class="btn btn-neutral float-right" title="community.aws.cloudfront_distribution module – Create, update and delete AWS CloudFront distributions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright Ansible contributors.</p>
+  </div>
+
+  
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script><!-- extra footer elements for Ansible beyond RTD Sphinx Theme -->
+
+</body>
+</html>
