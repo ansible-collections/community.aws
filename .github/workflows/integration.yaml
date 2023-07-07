@@ -128,7 +128,7 @@ jobs:
         run: ansible-galaxy collection install --pre true -p /home/runner/collections/
 
       - name: Read collection metadata from galaxy.yml
-        id: identify
+        id: identify-community
         uses: ansible-network/github_actions/.github/actions/identify_collection@main
         with:
           source_path: ${{ env.community_dir }}
@@ -138,8 +138,8 @@ jobs:
         with:
           install_python_dependencies: true
           source_path: ${{ env.community_dir }}
-          collection_path: ${{ steps.identify.outputs.collection_path }}
-          tar_file: ${{ steps.identify.outputs.tar_file }}
+          collection_path: ${{ steps.identify-community.outputs.collection_path }}
+          tar_file: ${{ steps.identify-community.outputs.tar_file }}
           ansible_version: ${{ matrix.ansible-version }}
 
       # install amazon.aws collection
@@ -155,7 +155,7 @@ jobs:
         run: ansible-galaxy collection install --pre true -p /home/runner/collections/
 
       - name: Read collection metadata from galaxy.yml
-        id: identify
+        id: identify-amazon
         uses: ansible-network/github_actions/.github/actions/identify_collection@main
         with:
           source_path: ${{ env.amazon_dir }}
@@ -165,8 +165,8 @@ jobs:
         with:
           install_python_dependencies: true
           source_path: ${{ env.amazon_dir }}
-          collection_path: ${{ steps.identify.outputs.collection_path }}
-          tar_file: ${{ steps.identify.outputs.tar_file }}
+          collection_path: ${{ steps.identify-amazon.outputs.collection_path }}
+          tar_file: ${{ steps.identify-amazon.outputs.tar_file }}
           ansible_version: ${{ matrix.ansible-version }}
 
       - name: Determines path to the collection being tested
