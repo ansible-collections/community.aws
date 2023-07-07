@@ -58,23 +58,24 @@ jobs:
     needs:
       - splitter
     outputs:
-      test_matrix: ${{ steps.compute-matrix.outputs.test_matrix }}
+      test_matrix: ${{ steps.generate-workflow.outputs.targets }}
       test_targets: ${{ needs.splitter.outputs.test_targets }}
     steps:
-      - name: Compute matrix
-        id: compute-matrix
+      - name: Generate workflow id
+        id: generate-workflow
         run: |
           import os, json
-          ids=[
-            item.split(":", maxsplit=1)[0].split('-', maxsplit=1)[1]
-            for item in os.environ.get('TEST_TARGETS').split(';') if item.split(':', maxsplit=1)[1]
-          ]
+          targets=[d.split(':', maxsplit=1)[0] for d in os.environ.get('TEST_TARGETS').split(";")]
           output_path = os.environ.get('GITHUB_OUTPUT')
           with open(output_path, "a", encoding="utf-8") as fw:
-              fw.write(f'job_ids={json.dumps(ids)}\n')
+              fw.write(f'targets={json.dumps(targets)}\n')
         shell: python
         env:
           TEST_TARGETS: ${{ needs.splitter.outputs.test_targets }}
+
+      - name: Display matrix elements
+        run: echo "Workflow list => ${{ steps.generate-workflow.outputs.targets }}"
+        shell: bash
   integration:
     needs:
       - build_jobs
@@ -82,9 +83,7 @@ jobs:
       test_targets: ${{ needs.build_jobs.outputs.test_targets }}
       amazon_dir: "./amazon"
       community_dir: "./community"
-    if: >-
-      contains(github.event.pull_request.labels.*.name, 'run-integration-beta') &&
-      needs.build_jobs.outputs.test_matrix != ''
+    if: ${{ needs.build_jobs.outputs.test_matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -93,20 +92,25 @@ jobs:
           - milestone
         python-version:
           - "3.9"
-        collection:
-          - amazon.aws
-          - community.aws
-        workflow-id: ${{ fromJson(needs.build_jobs.outputs.job_ids) }}
-    name: "integration-${{ matrix.collection }}-py${{ matrix.python-version }}-${{ matrix.ansible-version }}-${{ matrix.workflow-id }}"
+        workflow-id: ${{ fromJson(needs.build_jobs.outputs.test_matrix) }}
+    name: "integration-${{ matrix.workflow-id }}-py${{ matrix.python-version }}-${{ matrix.ansible-version }}"
     steps:
       - name: Read ansible-test targets
         id: read-targets
         run: |
-          python -c "import os; splitter_d={x.split(':', maxsplit=1)[0]:x.split(':', maxsplit=1)[1] for x in os.environ.get('TEST_TARGETS').split(';')}; context=os.environ.get('TEST_CONTEXT'); result=splitter_d.get(context); result and print(f'ansible_test_targets={result}')" >> $GITHUB_OUTPUT
-        shell: bash
+          import os
+          workflow_id = os.environ.get('TEST_WORKFLOW_ID')
+          all_targets = os.environ.get('TEST_TARGETS')
+          workflow_targets={d.split(':', maxsplit=1)[0]: d.split(':', maxsplit=1)[1] for d in all_targets.split(";")}[workflow_id]
+          targets = " ".join(workflow_targets.split(","))
+          output_path = os.environ.get('GITHUB_OUTPUT')
+          with open(output_path, "a", encoding="utf-8") as fw:
+              fw.write(f"ansible_test_targets='{targets}'\n")
+              fw.write(f"ansible_collection_to_test={workflow_id.split('-', maxsplit=1)[0]}\n")
+        shell: python
         env:
-          TEST_CONTEXT: "${{ matrix.collection }}-${{ matrix.workflow-id }}"
-          TEST_TARGETS: "${{ env.test_targets }}"
+          TEST_WORKFLOW_ID: "${{ matrix.workflow-id }}"
+          TEST_TARGETS: ${{ env.test_targets }}
 
       - name: Install ansible-core (${{ matrix.ansible-version }})
         run: python3 -m pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible-version }}.tar.gz --disable-pip-version-check
@@ -179,7 +183,7 @@ jobs:
             echo "path=${COMMUNITY_COLLECTION_PATH}" >> $GITHUB_OUTPUT
           fi
         env:
-          COLLECTION_TO_TEST: ${{ matrix.collection }}
+          COLLECTION_TO_TEST: ${{ steps.read-targets.outputs.ansible_collection_to_test }}
           AMAZON_COLLECTION_PATH: ${{ steps.install-amazon.outputs.collection_path }}
           COMMUNITY_COLLECTION_PATH: ${{ steps.install-community.outputs.collection_path }}
 
