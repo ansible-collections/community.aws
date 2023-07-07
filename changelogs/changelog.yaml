@@ -3360,7 +3360,8 @@ releases:
       - cloudfront_distribution - add ``http3`` support via parameter value ``http2and3``
         for parameter ``http_version`` (https://github.com/ansible-collections/community.aws/pull/1753).
       - cloudfront_distribution - add ``origin_shield`` options (https://github.com/ansible-collections/community.aws/pull/1557).
-      - cloudfront_distribution - documented ``connection_attempts`` and ``connection_timeout`` the module was already capable of using them
+      - cloudfront_distribution - documented ``connection_attempts`` and ``connection_timeout``
+        the module was already capable of using them
       - community.aws - updated document fragments based on changes in amazon.aws
         (https://github.com/ansible-collections/community.aws/pull/1738).
       - community.aws - updated imports based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
@@ -3438,3 +3439,52 @@ releases:
       name: ssm_inventory_info
       namespace: ''
     release_date: '2023-05-10'
+  6.1.0:
+    changes:
+      bugfixes:
+      - batch_compute_environment - fixed incorrect handling of Gov Cloud ARNs in
+        ``compute_environment_name`` parameter (https://github.com/ansible-collections/community.aws/issues/1846).
+      - cloudfront_distribution - The origins  recognises the s3 domains with region
+        part now (https://github.com/ansible-collections/community.aws/issues/1819).
+      - cloudfront_distribution - no longer crashes when waiting for completion of
+        creation (https://github.com/ansible-collections/community.aws/issues/255).
+      - cloudfront_distribution - now honours the ``enabled`` setting (https://github.com/ansible-collections/community.aws/issues/1823).
+      - dynamodb_table - secondary indexes are now created (https://github.com/ansible-collections/community.aws/issues/1825).
+      - ec2_launch_template - fixed incorrect handling of Gov Cloud ARNs in ``compute_environment_name``
+        parameter (https://github.com/ansible-collections/community.aws/issues/1846).
+      - elasticache_info - remove hard coded use of ``aws`` partition (https://github.com/ansible-collections/community.aws/issues/1846).
+      - iam_role - fixed incorrect rejection of Gov Cloud ARNs in ``boundary`` parameter
+        (https://github.com/ansible-collections/community.aws/issues/1846).
+      - msk_cluster - remove hard coded use of ``aws`` partition (https://github.com/ansible-collections/community.aws/issues/1846).
+      - redshift - fixed hard coded use of ``aws`` partition (https://github.com/ansible-collections/community.aws/issues/1846).
+      minor_changes:
+      - dynamodb_table - added waiter when updating indexes to avoid concurrency issues
+        (https://github.com/ansible-collections/community.aws/pull/1866).
+      - dynamodb_table - increased default timeout based on time to update indexes
+        in CI (https://github.com/ansible-collections/community.aws/pull/1866).
+      - iam_group - refactored ARN validation handling (https://github.com/ansible-collections/community.aws/pull/1848).
+      - iam_role - refactored ARN validation handling (https://github.com/ansible-collections/community.aws/pull/1848).
+      - sns_topic - refactored ARN validation handling (https://github.com/ansible-collections/community.aws/pull/1848).
+      release_summary: This release brings a new inventory plugin, some new features,
+        and several bugfixes.
+    fragments:
+    - 1819-cloudfront-distribution-s3-domain-recognise.yaml
+    - 1823-cloudfront_distribution_always_created_enabled.yml
+    - 1825-dynamodb-table-no-secondary-indexes.yml
+    - 1846-arn.yml
+    - 20230531-mq-fix_fqdn.yml
+    - 20230613-black.yml
+    - 20230627-ci-fixup.yml
+    - 20230701-ci-fixup.yml
+    - 20230702-dynamodb_waiter.yml
+    - 255-cloudfront_distribution_create_wait_crash.yml
+    - 6.0.0.yml
+    - release_summary.yml
+    - test-reqs.yml
+    - tests-requirements.yml
+    plugins:
+      inventory:
+      - description: MQ broker inventory source
+        name: aws_mq
+        namespace: null
+    release_date: '2023-07-07'

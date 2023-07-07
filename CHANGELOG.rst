@@ -5,6 +5,45 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v6.1.0
+======
+
+Release Summary
+---------------
+
+This release brings a new inventory plugin, some new features, and several bugfixes.
+
+Minor Changes
+-------------
+
+- dynamodb_table - added waiter when updating indexes to avoid concurrency issues (https://github.com/ansible-collections/community.aws/pull/1866).
+- dynamodb_table - increased default timeout based on time to update indexes in CI (https://github.com/ansible-collections/community.aws/pull/1866).
+- iam_group - refactored ARN validation handling (https://github.com/ansible-collections/community.aws/pull/1848).
+- iam_role - refactored ARN validation handling (https://github.com/ansible-collections/community.aws/pull/1848).
+- sns_topic - refactored ARN validation handling (https://github.com/ansible-collections/community.aws/pull/1848).
+
+Bugfixes
+--------
+
+- batch_compute_environment - fixed incorrect handling of Gov Cloud ARNs in ``compute_environment_name`` parameter (https://github.com/ansible-collections/community.aws/issues/1846).
+- cloudfront_distribution - The origins  recognises the s3 domains with region part now (https://github.com/ansible-collections/community.aws/issues/1819).
+- cloudfront_distribution - no longer crashes when waiting for completion of creation (https://github.com/ansible-collections/community.aws/issues/255).
+- cloudfront_distribution - now honours the ``enabled`` setting (https://github.com/ansible-collections/community.aws/issues/1823).
+- dynamodb_table - secondary indexes are now created (https://github.com/ansible-collections/community.aws/issues/1825).
+- ec2_launch_template - fixed incorrect handling of Gov Cloud ARNs in ``compute_environment_name`` parameter (https://github.com/ansible-collections/community.aws/issues/1846).
+- elasticache_info - remove hard coded use of ``aws`` partition (https://github.com/ansible-collections/community.aws/issues/1846).
+- iam_role - fixed incorrect rejection of Gov Cloud ARNs in ``boundary`` parameter (https://github.com/ansible-collections/community.aws/issues/1846).
+- msk_cluster - remove hard coded use of ``aws`` partition (https://github.com/ansible-collections/community.aws/issues/1846).
+- redshift - fixed hard coded use of ``aws`` partition (https://github.com/ansible-collections/community.aws/issues/1846).
+
+New Plugins
+-----------
+
+Inventory
+~~~~~~~~~
+
+- aws_mq - MQ broker inventory source
+
 v6.0.0
 ======
 
