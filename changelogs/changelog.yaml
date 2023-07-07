@@ -3487,4 +3487,4 @@ releases:
       - description: MQ broker inventory source
         name: aws_mq
         namespace: null
-    release_date: '2023-07-06'
+    release_date: '2023-07-07'
