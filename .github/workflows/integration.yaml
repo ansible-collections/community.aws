@@ -36,8 +36,8 @@ jobs:
         with:
           repository: ansible-collections/amazon.aws
           path: ${{ env.amazon_dir }}
-          ref: ${{ github.event.pull_request.base.ref }}
-          fetch-depth: "0"
+          # ref: ${{ github.event.pull_request.base.ref }} uncomment this before merge
+          ref: main
 
       - name: list changes for pull request
         id: splitter
@@ -148,7 +148,8 @@ jobs:
         with:
           repository: ansible-collections/amazon.aws
           path: ${{ env.amazon_dir }}
-          ref: ${{ github.event.pull_request.base.ref }}
+          # ref: ${{ github.event.pull_request.base.ref }} uncomment this before merge
+          ref: main
           fetch-depth: "0"
 
       - name: Pre install collections dependencies first so the collection install does not
