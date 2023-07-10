@@ -24,6 +24,21 @@ jobs:
     outputs:
       test_targets: ${{ steps.display.outputs.test_targets }}
     steps:
+      - name: Determines number of jobs to run integration tests
+        id: determine-workflow
+        run: |
+          import os, re
+          total_jobs = os.environ.get('AWS_INTEGRATION_TOTAL_JOBS')
+          for line in os.environ.get('PR_BODY'):
+              if m := re.match(r"^GHA_SPLITTER_TOTAL_JOBS=(\d+)$", i):
+                  total_jobs = m.group(1)
+          output_path = os.environ.get('GITHUB_OUTPUT')
+          with open(output_path, "a", encoding="utf-8") as fw:
+              fw.write(f'total_jobs={total_jobs}\n')
+        shell: python
+        env:
+          PR_BODY: "${{ github.event.pull_request.body }}"
+
       - name: Checkout repository
         uses: ansible-network/github_actions/.github/actions/checkout_dependency@main
         with:
@@ -42,7 +57,7 @@ jobs:
         id: splitter
         uses: ansible-network/github_actions/.github/actions/ansible_test_splitter@main
         with:
-          total_jobs: ${{ env.AWS_INTEGRATION_TOTAL_JOBS }}
+          total_jobs: ${{ steps.determine-workflow.outputs.total_jobs }}
           collections_to_test: |
             ${{ env.community_dir }}
             ${{ env.amazon_dir }}
