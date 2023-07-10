@@ -49,8 +49,8 @@ options:
   transit_gateway_id:
     description:
       - The ID of the transit gateway. If you specify a transit gateway, you cannot specify a virtual private gateway.
-    typr: str
-    version_added: 6.1.0
+    type: str
+    version_added: 6.2.0
   tunnel_options:
     description:
       - An optional list object containing no more than two dict members, each of which may contain I(TunnelInsideCidr)
