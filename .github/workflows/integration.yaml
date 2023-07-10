@@ -36,8 +36,7 @@ jobs:
         with:
           repository: ansible-collections/amazon.aws
           path: ${{ env.amazon_dir }}
-          # ref: ${{ github.event.pull_request.base.ref }} uncomment this before merge
-          ref: main
+          ref: ${{ github.event.pull_request.base.ref }}
 
       - name: list changes for pull request
         id: splitter
