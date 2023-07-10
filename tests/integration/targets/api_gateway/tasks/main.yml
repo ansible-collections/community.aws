@@ -148,6 +148,9 @@
     # ==== test create/delete using lookup=tag ====
     - include_tasks: lookup.yml
 
+    # ==== Tagging ====
+    - include_tasks: tagging.yml
+
     # ================= end testing ====================================
 
   always:

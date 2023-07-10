@@ -113,13 +113,6 @@ options:
     default: tag
     choices: [ 'tag', 'id' ]
     type: str
-  tags:
-    description:
-      - A dictionary representing the tags to be applied to the API gateway.
-      - If the I(tags) parameter is not set then tags will not be modified.
-    type: dict
-    required: false
-    version_added: 6.2.0
 author:
   - 'Michael De La Rue (@mikedlr)'
 notes:
@@ -128,6 +121,7 @@ extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
   - amazon.aws.boto3
+  - amazon.aws.tags
 """
 
 EXAMPLES = r"""
@@ -206,6 +200,7 @@ from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import compare_aws_tags
 
 
 def main():
@@ -226,6 +221,7 @@ def main():
         name=dict(type="str"),
         lookup=dict(type="str", choices=["tag", "id"], default="tag"),
         tags=dict(type="dict"),
+        purge_tags=dict(default=True, type="bool"),
     )
 
     mutually_exclusive = [["swagger_file", "swagger_dict", "swagger_text"]]  # noqa: F841
@@ -260,15 +256,26 @@ def main():
                 rest_api = get_api_by_tags(client, module, name, tags)
                 if rest_api:
                     api_id = rest_api["id"]
-        api_data = get_api_definitions(
-            module, swagger_file=swagger_file, swagger_dict=swagger_dict, swagger_text=swagger_text
-        )
         if module.check_mode:
             module.exit_json(changed=True, msg="Create/update operation skipped - running in check mode.")
         if api_id is None:
+            api_data = get_api_definitions(
+                module, swagger_file=swagger_file, swagger_dict=swagger_dict, swagger_text=swagger_text
+            )
             # create new API gateway as non were provided and/or found using lookup=tag
             api_id = create_empty_api(module, client, name, endpoint_type, tags)
-        conf_res, dep_res = ensure_api_in_correct_state(module, client, api_id, api_data)
+            conf_res, dep_res = ensure_api_in_correct_state(module, client, api_id, api_data)
+        tags = module.params.get("tags")
+        purge_tags = module.params.get("purge_tags")
+        if tags:
+            if not conf_res:
+                conf_res = get_rest_api(module, client, api_id=api_id)
+            tag_changed, tag_result = ensure_apigateway_tags(
+                module, client, api_id=api_id, current_tags=conf_res.get("tags"), new_tags=tags, purge_tags=purge_tags
+            )
+            if tag_changed:
+                changed |= tag_changed
+                conf_res = tag_result
     if state == "absent":
         if api_id is None:
             if lookup != "tag" or not tags:
@@ -299,6 +306,24 @@ def main():
     module.exit_json(**exit_args)
 
 
+def ensure_apigateway_tags(module, client, api_id, current_tags, new_tags, purge_tags):
+    changed = False
+    tag_result = {}
+    tags_to_set, tags_to_delete = compare_aws_tags(current_tags, new_tags, purge_tags)
+    if tags_to_set or tags_to_delete:
+        changed = True
+        apigateway_arn = f"arn:aws:apigateway:{module.region}::/restapis/{api_id}"
+        # Remove tags from Resource
+        if tags_to_delete:
+            client.untag_resource(resourceArn=apigateway_arn, tagKeys=tags_to_delete)
+        # add new tags to resource
+        if tags_to_set:
+            client.tag_resource(resourceArn=apigateway_arn, tags=tags_to_set)
+        # Describe API gateway
+        tag_result = get_rest_api(module, client, api_id=api_id)
+    return changed, tag_result
+
+
 def get_api_definitions(module, swagger_file=None, swagger_dict=None, swagger_text=None):
     apidata = None
     if swagger_file is not None:
@@ -316,6 +341,15 @@ def get_api_definitions(module, swagger_file=None, swagger_dict=None, swagger_te
     if apidata is None:
         module.fail_json(msg="module error - no swagger info provided")
     return apidata
+
+
+def get_rest_api(module, client, api_id):
+    try:
+        response = client.get_rest_api(restApiId=api_id)
+        response.pop("ResponseMetadata", None)
+        return response
+    except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:
+        module.fail_json_aws(e, msg=f"failed to get REST API with api_id={api_id}")
 
 
 def create_empty_api(module, client, name, endpoint_type, tags):
@@ -357,6 +391,7 @@ def ensure_api_in_correct_state(module, client, api_id, api_data):
     configure_response = None
     try:
         configure_response = configure_api(client, api_id, api_data=api_data)
+        configure_response.pop("ResponseMetadata", None)
     except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
         module.fail_json_aws(e, msg=f"configuring API {api_id}")
 
@@ -366,6 +401,7 @@ def ensure_api_in_correct_state(module, client, api_id, api_data):
     if stage:
         try:
             deploy_response = create_deployment(client, api_id, **module.params)
+            deploy_response.pop("ResponseMetadata", None)
         except (botocore.exceptions.ClientError, botocore.exceptions.EndpointConnectionError) as e:
             msg = f"deploying api {api_id} to stage {stage}"
             module.fail_json_aws(e, msg)
