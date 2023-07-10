@@ -272,7 +272,9 @@ def main():
     if state == "absent":
         if api_id is None:
             if lookup != "tag" or not tags:
-                module.fail_json(msg="API gateway id must be supplied to delete API gateway or provided tag with lookup=tag to identify API gateway id.")
+                module.fail_json(
+                    msg="API gateway id must be supplied to delete API gateway or provided tag with lookup=tag to identify API gateway id."
+                )
             rest_api = get_api_by_tags(client, module, name, tags)
             if not rest_api:
                 module.exit_json(changed=False, msg="No API gateway identified with tags provided")
@@ -372,7 +374,6 @@ def ensure_api_in_correct_state(module, client, api_id, api_data):
 
 
 def get_api_by_tags(client, module, name, tags):
-
     count = 0
     result = None
     for api in list_apis(client):
