@@ -119,7 +119,7 @@ jobs:
           targets = " ".join(workflow_targets.split(","))
           output_path = os.environ.get('GITHUB_OUTPUT')
           with open(output_path, "a", encoding="utf-8") as fw:
-              fw.write(f"ansible_test_targets='{targets}'\n")
+              fw.write(f"ansible_test_targets={targets}\n")
               fw.write(f"ansible_collection_to_test={workflow_id.split('-', maxsplit=1)[0]}\n")
         shell: python
         env:
@@ -165,26 +165,23 @@ jobs:
       - name: Determines path to the collection being tested
         id: collection-path
         run: |
-          if [ "${COLLECTION_TO_TEST}" == "amazon.aws" ]; then
-            echo "path=${AMAZON_COLLECTION_PATH}" >> $GITHUB_OUTPUT
-          else
-            echo "path=${COMMUNITY_COLLECTION_PATH}" >> $GITHUB_OUTPUT
-          fi
+          [[ $COLLECTION_TO_TEST == "amazon.aws" ]] && test_path=$AMAZON_PATH || test_path=$COMMUNITY_PATH
+          echo "test_path=${test_path}" >> $GITHUB_OUTPUT
         env:
           COLLECTION_TO_TEST: ${{ steps.read-targets.outputs.ansible_collection_to_test }}
-          AMAZON_COLLECTION_PATH: /home/runner/collections/ansible_collections/amazon/aws/
-          COMMUNITY_COLLECTION_PATH: /home/runner/collections/ansible_collections/community/aws/
+          AMAZON_PATH: /home/runner/collections/ansible_collections/amazon/aws/
+          COMMUNITY_PATH: /home/runner/collections/ansible_collections/community/aws/
 
       - name: Create AWS/sts session credentials
         uses: ansible-network/github_actions/.github/actions/ansible_aws_test_provider@main
         with:
-          collection_path: ${{ steps.collection-path.outputs.path }}
+          collection_path: ${{ steps.collection-path.outputs.test_path }}
           ansible_core_ci_key: ${{ secrets.ANSIBLE_CORE_CI_KEY }}
 
       - name: Run integration tests
         uses: ansible-network/github_actions/.github/actions/ansible_test_integration@main
         with:
-          collection_path: ${{ steps.collection-path.outputs.path }}
+          collection_path: ${{ steps.collection-path.outputs.test_path }}
           python_version: ${{ matrix.python-version }}
           ansible_version: ${{ matrix.ansible-version }}
           ansible_test_requirement_files: |
