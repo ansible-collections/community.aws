@@ -102,7 +102,7 @@ options:
     description:
       - The name of the RestApi.
     type: str
-    version_added: 6.1.0
+    version_added: 6.2.0
   lookup:
     description:
       - Look up API gateway by either I(tags) (and I(name) if supplied) or by I(api_id).
@@ -119,11 +119,11 @@ options:
       - If the I(tags) parameter is not set then tags will not be modified.
     type: dict
     required: false
-    version_added: 6.1.0
+    version_added: 6.2.0
 author:
   - 'Michael De La Rue (@mikedlr)'
 notes:
-  - 'Tags are used to uniquely identify API gateway when the I(api_id) is not supplied. version_added=6.1.0'
+  - 'Tags are used to uniquely identify API gateway when the I(api_id) is not supplied. version_added=6.2.0'
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
