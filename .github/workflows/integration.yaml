@@ -97,6 +97,7 @@ jobs:
     env:
       test_targets: ${{ needs.build_jobs.outputs.test_targets }}
       source: "./source"
+      dependency: "./dependency"
     if: ${{ needs.build_jobs.outputs.test_matrix != '' }}
     runs-on: ubuntu-latest
     strategy:
@@ -130,29 +131,44 @@ jobs:
       - name: Install ansible-core (${{ matrix.ansible-version }})
         run: python3 -m pip install https://github.com/ansible/ansible/archive/${{ matrix.ansible-version }}.tar.gz --disable-pip-version-check
 
-      # Install community.aws collection
-      - name: Checkout the collection repository
+      # checkout collections
+      - name: Checkout repository
         uses: ansible-network/github_actions/.github/actions/checkout_dependency@main
         with:
-          repository: ansible-collections/community.aws
           path: ${{ env.source }}
-          ref: main
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Checkout dependency (amazon.aws)
+        uses: ansible-network/github_actions/.github/actions/checkout_dependency@main
+        with:
+          repository: ansible-collections/amazon.aws
+          path: ${{ env.dependency }}
+          ref: ${{ github.event.pull_request.base.ref }}
+
+      # install collection requirements
+      - name: Install test requirements for amazon.aws
+        run: |
+          [[ "$COLLECTION_TO_TEST" == "community.aws" ]] && collection_path=$COMMUNITY_PATH || collection_path=$AMAZON_PATH
+          ansible-galaxy collection install -r ${collection_path}/tests/integration/requirements.yml -p /home/runner/collections/
+        shell: bash
+        env:
+          COMMUNITY_PATH: ${{ env.source }}
+          AMAZON_PATH: ${{ env.dependency }}
+          COLLECTION_TO_TEST: ${{ steps.read-targets.outputs.ansible_collection_to_test }}
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Pre install collections dependencies first so the collection install does not
-        run: ansible-galaxy collection install --pre '-r${{ env.source }}/tests/integration/requirements.yml' -p /home/runner/collections/
-
-      - name: Read collection metadata from galaxy.yml
+      # Install checkout collection (community.aws)
+      - name: Install community.aws - Read collection metadata from galaxy.yml
         id: identify
         uses: ansible-network/github_actions/.github/actions/identify_collection@main
         with:
           source_path: ${{ env.source }}
 
-      - name: Build and install the collection
+      - name: Install community.aws - Build and install the collection
         uses: ansible-network/github_actions/.github/actions/build_install_collection@main
         with:
           install_python_dependencies: true
@@ -161,16 +177,32 @@ jobs:
           tar_file: ${{ steps.identify.outputs.tar_file }}
           ansible_version: ${{ matrix.ansible-version }}
 
+      # Install checkout collection (amazon.aws)
+      - name: Install amazon.aws - Read collection metadata from galaxy.yml
+        id: identify-amazon
+        uses: ansible-network/github_actions/.github/actions/identify_collection@main
+        with:
+          source_path: ${{ env.dependency }}
+
+      - name: Install amazon.aws - Build and install the collection
+        uses: ansible-network/github_actions/.github/actions/build_install_collection@main
+        with:
+          install_python_dependencies: true
+          source_path: ${{ env.dependency }}
+          collection_path: ${{ steps.identify-amazon.outputs.collection_path }}
+          tar_file: ${{ steps.identify-amazon.outputs.tar_file }}
+          ansible_version: ${{ matrix.ansible-version }}
+
       # Determines path to the collection being tested
       - name: Determines path to the collection being tested
         id: collection-path
         run: |
-          [[ $COLLECTION_TO_TEST == "amazon.aws" ]] && test_path=$AMAZON_PATH || test_path=$COMMUNITY_PATH
+          [[ "$COLLECTION_TO_TEST" == "amazon.aws" ]] && test_path=$AMAZON_PATH || test_path=$COMMUNITY_PATH
           echo "test_path=${test_path}" >> $GITHUB_OUTPUT
         env:
           COLLECTION_TO_TEST: ${{ steps.read-targets.outputs.ansible_collection_to_test }}
-          AMAZON_PATH: /home/runner/collections/ansible_collections/amazon/aws/
-          COMMUNITY_PATH: /home/runner/collections/ansible_collections/community/aws/
+          AMAZON_PATH: ${{ steps.identify-amazon.outputs.collection_path }}
+          COMMUNITY_PATH: ${{ steps.identify.outputs.collection_path }}
 
       - name: Create AWS/sts session credentials
         uses: ansible-network/github_actions/.github/actions/ansible_aws_test_provider@main

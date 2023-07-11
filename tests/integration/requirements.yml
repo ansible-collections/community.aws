@@ -6,3 +6,4 @@ collections:
   - ansible.windows
   - community.crypto
   - community.general
+  - ansible.utils # ipaddr
