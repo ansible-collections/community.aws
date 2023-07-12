@@ -53,6 +53,7 @@
     assert:
       that:
         - result is failed
+        - result.msg == "parameters are mutually exclusive: vpn_gateway_id|transit_gateway_id"
 
 
   - name: create vpn connection, with customer gateway and transit_gateway

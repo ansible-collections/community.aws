@@ -35,6 +35,7 @@ options:
   vpn_gateway_id:
     description:
       - The ID of the virtual private gateway.
+      - Mutually exclusive with I(transit_gateway_id).
     type: str
   vpn_connection_id:
     description:
@@ -48,7 +49,8 @@ options:
     required: false
   transit_gateway_id:
     description:
-      - The ID of the transit gateway. If you specify a transit gateway, you cannot specify a virtual private gateway.
+      - The ID of the transit gateway.
+      - Mutually exclusive with I(vpn_gateway_id).
     type: str
     version_added: 6.2.0
   tunnel_options:
@@ -547,8 +549,7 @@ def create_connection(
         raise VPNConnectionException(
             msg=(
                 "No matching connection was found. To create a new connection you must provide "
-                "vpn_gateway_id and customer_gateway_id or "
-                "transit_gateway_id and customer_gateway_id. "
+                "customer_gateway_id and one of either transit_gateway_id or vpn_gateway_id."
             )
         )
     vpn_connection_params = {"Type": connection_type, "CustomerGatewayId": customer_gateway_id, "Options": options}
