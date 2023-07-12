@@ -220,7 +220,7 @@ def main():
         endpoint_type=dict(type="str", default="EDGE", choices=["EDGE", "REGIONAL", "PRIVATE"]),
         name=dict(type="str"),
         lookup=dict(type="str", choices=["tag", "id"], default="tag"),
-        tags=dict(type="dict"),
+        tags=dict(type="dict", aliases=["resource_tags"]),
         purge_tags=dict(default=True, type="bool"),
     )
 
