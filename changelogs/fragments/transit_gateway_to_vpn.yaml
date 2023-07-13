@@ -1,0 +1,3 @@
+---
+minor_changes:
+- ec2_vpc_vpn - add support for connecting VPNs to a transit gateway. (https://github.com/ansible-collections/community.aws/pull/1877).
