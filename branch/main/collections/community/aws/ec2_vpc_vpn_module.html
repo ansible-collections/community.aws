@@ -470,6 +470,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-transit_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-transit-gateway-id"><strong>transit_gateway_id</strong></p>
+<a class="ansibleOptionLink" href="#parameter-transit_gateway_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 6.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The ID of the transit gateway.</p>
+<p>Mutually exclusive with <em>vpn_gateway_id</em>.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tunnel_options"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-tunnel-options"><strong>tunnel_options</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tunnel_options" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span></p>
 </div></td>
@@ -477,21 +486,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">[]</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tunnel_options/PreSharedKey"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-tunnel-options-presharedkey"><strong>PreSharedKey</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tunnel_options/PreSharedKey" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The pre-shared key (PSK) to establish initial authentication between the virtual private gateway and customer gateway.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-tunnel_options/TunnelInsideCidr"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-tunnel-options-tunnelinsidecidr"><strong>TunnelInsideCidr</strong></p>
 <a class="ansibleOptionLink" href="#parameter-tunnel_options/TunnelInsideCidr" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The range of inside IP addresses for the tunnel.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
@@ -504,21 +513,22 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-vpn_connection_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-vpn-connection-id"><strong>vpn_connection_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vpn_connection_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the VPN connection. Required to modify or delete a connection if the filters option does not provide a unique match.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-vpn_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-vpn-gateway-id"><strong>vpn_gateway_id</strong></p>
 <a class="ansibleOptionLink" href="#parameter-vpn_gateway_id" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The ID of the virtual private gateway.</p>
+<p>Mutually exclusive with <em>transit_gateway_id</em>.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-wait_timeout"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-parameter-wait-timeout"><strong>wait_timeout</strong></p>
 <a class="ansibleOptionLink" href="#parameter-wait_timeout" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">integer</span></p>
 </div></td>
@@ -544,10 +554,16 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: None of these examples set aws_access_key, aws_secret_key, or region.</span>
 <span class="c1"># It is assumed that their matching environment variables are set.</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a VPN connection</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create a VPN connection with vpn_gateway_id</span>
 <span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 <span class="w">    </span><span class="nt">vpn_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">vgw-XXXXXXXX</span>
+<span class="w">    </span><span class="nt">customer_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cgw-XXXXXXXX</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Attach a vpn connection to transit gateway</span>
+<span class="w">  </span><span class="nt">community.aws.ec2_vpc_vpn</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">transit_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tgw-XXXXXXXX</span>
 <span class="w">    </span><span class="nt">customer_gateway_id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">cgw-XXXXXXXX</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">modify VPN connection tags</span>
@@ -695,6 +711,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-transit_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-return-transit-gateway-id"><strong>transit_gateway_id</strong></p>
+<a class="ansibleOptionLink" href="#return-transit_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The transit gateway id to which the vpn connection can be attached.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> <em>state=present</em></p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'transit_gateway_id':</span> <span class="pre">'tgw-cb0ae2a2'}&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-return-type"><strong>type</strong></p>
 <a class="ansibleOptionLink" href="#return-type" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -703,7 +728,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'type':</span> <span class="pre">'ipsec.1'}&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vgw_telemetry"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-return-vgw-telemetry"><strong>vgw_telemetry</strong></p>
 <a class="ansibleOptionLink" href="#return-vgw_telemetry" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
 </div></td>
@@ -712,7 +737,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;vgw_telemetry&quot;:</span> <span class="pre">[{&quot;accepted_route_count&quot;:</span> <span class="pre">123,</span> <span class="pre">&quot;last_status_change&quot;:</span> <span class="pre">&quot;datetime(2015,</span> <span class="pre">1,</span> <span class="pre">1)&quot;,</span> <span class="pre">&quot;outside_ip_address&quot;:</span> <span class="pre">&quot;string&quot;,</span> <span class="pre">&quot;status&quot;:</span> <span class="pre">&quot;up&quot;,</span> <span class="pre">&quot;status_message&quot;:</span> <span class="pre">&quot;string&quot;}]}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vpn_connection_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-return-vpn-connection-id"><strong>vpn_connection_id</strong></p>
 <a class="ansibleOptionLink" href="#return-vpn_connection_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -721,7 +746,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-ec2-v
 <p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;{'vpn_connection_id':</span> <span class="pre">'vpn-781e0e19'}&quot;</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="return-vpn_gateway_id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-ec2-vpc-vpn-module-return-vpn-gateway-id"><strong>vpn_gateway_id</strong></p>
 <a class="ansibleOptionLink" href="#return-vpn_gateway_id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
