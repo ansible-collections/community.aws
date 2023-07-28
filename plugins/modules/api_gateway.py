@@ -113,6 +113,7 @@ options:
     default: tag
     choices: [ 'tag', 'id' ]
     type: str
+    version_added: 6.2.0
 author:
   - 'Michael De La Rue (@mikedlr)'
 notes:
