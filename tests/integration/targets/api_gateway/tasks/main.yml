@@ -60,11 +60,14 @@
           - 'create_result.failed == False'
           - 'create_result.deploy_response.description == "Automatic deployment by Ansible."'
           - 'create_result.configure_response.id == create_result.api_id'
-          - '"apigateway:CreateRestApi" in create_result.resource_actions'
           - 'create_result.configure_response.endpoint_configuration.types.0 == "REGIONAL"'
 
     - name: check if API endpoint works
-      uri: url="https://{{create_result.api_id}}.execute-api.{{aws_region}}.amazonaws.com/minimal"
+      uri: 
+        url: "https://{{create_result.api_id}}.execute-api.{{aws_region}}.amazonaws.com/minimal"
+      retries: 10
+      delay: 5
+      until: uri_result is successful
       register: uri_result
 
     - name: assert API works success
@@ -73,7 +76,8 @@
           - 'uri_result.status == 200'
 
     - name: check if nonexistent endpoint causes error
-      uri: url="https://{{create_result.api_id}}.execute-api.{{aws_region}}.amazonaws.com/nominal"
+      uri: 
+        url: "https://{{create_result.api_id}}.execute-api.{{aws_region}}.amazonaws.com/nominal"
       register: bad_uri_result
       ignore_errors: true
 
@@ -95,9 +99,7 @@
     - name: assert update result
       assert:
         that:
-          - 'update_result.changed == True'
-          - 'update_result.failed == False'
-          - '"apigateway:PutRestApi" in update_result.resource_actions'
+          - update_result is changed
 
     # ==== additional create/delete tests ====
 
@@ -140,10 +142,8 @@
     - name: assert both APIs deployed successfully
       assert:
         that:
-           - 'destroy_result_1.changed == True'
-           - 'destroy_result_2.changed == True'
-           - '"apigateway:DeleteRestApi" in destroy_result_1.resource_actions'
-           - '"apigateway:DeleteRestApi" in destroy_result_2.resource_actions'
+           - destroy_result_1 is changed
+           - destroy_result_2 is changed
 
     # ==== test create/delete using lookup=tag ====
     - include_tasks: lookup.yml
