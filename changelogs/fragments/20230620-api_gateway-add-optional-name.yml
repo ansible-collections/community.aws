@@ -1,4 +1,3 @@
 ---
 minor_changes:
-  - api_gateway - add parameter `name` allowing user to choose the name of the API gateway to create, default to `ansible-temp-api` for backward compatibility (https://github.com/ansible-collections/community.aws/pull/1845).
-  - api_gateway - add parameter `lookup` to create API based on supplied tags (https://github.com/ansible-collections/community.aws/pull/1845).
+  - api_gateway - add support for parameters `name`, `lookup`, `tags` and `purge_tags` (https://github.com/ansible-collections/community.aws/pull/1845).
