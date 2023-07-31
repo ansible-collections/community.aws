@@ -1,2 +1,0 @@
-bugfixes:
-  - cloudfront_distribution - no longer crashes when waiting for completion of creation (https://github.com/ansible-collections/community.aws/issues/255).

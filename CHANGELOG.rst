@@ -5,6 +5,20 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v5.5.1
+======
+
+Release Summary
+---------------
+
+This release brings several bugfixes.
+
+Bugfixes
+--------
+
+- cloudfront_distribution - no longer crashes when waiting for completion of creation (https://github.com/ansible-collections/community.aws/issues/255).
+- cloudfront_distribution - now honours the ``enabled`` setting (https://github.com/ansible-collections/community.aws/issues/1823).
+
 v5.5.0
 ======
 
