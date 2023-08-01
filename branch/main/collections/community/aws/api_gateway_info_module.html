@@ -4,7 +4,7 @@
   <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>community.aws.api_gateway_domain module – Manage AWS API Gateway custom domains &mdash; Ansible collections  documentation</title>
+  <title>community.aws.api_gateway_info module – Gather information about ec2 instances in AWS &mdash; Ansible collections  documentation</title>
       <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/css/ansible.css" type="text/css" />
       <link rel="stylesheet" href="../../../_static/antsibull-minimal.css" type="text/css" />
@@ -21,8 +21,8 @@
         <script src="../../../_static/sphinx_highlight.js"></script>
     <script src="../../../_static/js/theme.js"></script>
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="community.aws.api_gateway_info module – Gather information about ec2 instances in AWS" href="api_gateway_info_module.html" />
-    <link rel="prev" title="community.aws.api_gateway module – Manage AWS API Gateway APIs" href="api_gateway_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
+    <link rel="next" title="community.aws.application_autoscaling_policy module – Manage Application Auto Scaling Scaling Policies" href="application_autoscaling_policy_module.html" />
+    <link rel="prev" title="community.aws.api_gateway_domain module – Manage AWS API Gateway custom domains" href="api_gateway_domain_module.html" /><!-- extra head elements for Ansible beyond RTD Sphinx Theme -->
 
 
 
@@ -119,10 +119,10 @@
           <li class="breadcrumb-item"><a href="../../index.html">Collection Index</a></li>
           <li class="breadcrumb-item"><a href="../index.html">Collections in the Community Namespace</a></li>
           <li class="breadcrumb-item"><a href="index.html">Community.Aws</a></li>
-      <li class="breadcrumb-item active">community.aws.api_gateway_domain module – Manage AWS API Gateway custom domains</li>
+      <li class="breadcrumb-item active">community.aws.api_gateway_info module – Gather information about ec2 instances in AWS</li>
       <li class="wy-breadcrumbs-aside">
               <!-- User defined GitHub URL -->
-              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/api_gateway_domain.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
+              <a href="https://github.com/ansible-collections/community.aws/edit/main/plugins/modules/api_gateway_info.py?description=%23%23%23%23%23%20SUMMARY%0A%3C!—%20Your%20description%20here%20–%3E%0A%0A%0A%23%23%23%23%23%20ISSUE%20TYPE%0A-%20Docs%20Pull%20Request%0A%0A%2Blabel:%20docsite_pr" class="fa fa-github"> Edit on GitHub</a>
       </li>
   </ul>
   <hr/>
@@ -132,17 +132,17 @@
   
            <div itemprop="articleBody">
              
-  <span class="target" id="ansible-collections-community-aws-api-gateway-domain-module"></span><section id="community-aws-api-gateway-domain-module-manage-aws-api-gateway-custom-domains">
-<h1>community.aws.api_gateway_domain module – Manage AWS API Gateway custom domains<a class="headerlink" href="#community-aws-api-gateway-domain-module-manage-aws-api-gateway-custom-domains" title="Permalink to this heading"></a></h1>
+  <span class="target" id="ansible-collections-community-aws-api-gateway-info-module"></span><section id="community-aws-api-gateway-info-module-gather-information-about-ec2-instances-in-aws">
+<h1>community.aws.api_gateway_info module – Gather information about ec2 instances in AWS<a class="headerlink" href="#community-aws-api-gateway-info-module-gather-information-about-ec2-instances-in-aws" title="Permalink to this heading"></a></h1>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This module is part of the <a class="reference external" href="https://galaxy.ansible.com/community/aws">community.aws collection</a> (version 6.0.0-dev0).</p>
 <p>To install it, use: <code class="code docutils literal notranslate"><span class="pre">ansible-galaxy</span> <span class="pre">collection</span> <span class="pre">install</span> <span class="pre">community.aws</span></code>.
 You need further requirements to be able to use this module,
-see <a class="reference internal" href="#ansible-collections-community-aws-api-gateway-domain-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
-<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.api_gateway_domain</span></code>.</p>
+see <a class="reference internal" href="#ansible-collections-community-aws-api-gateway-info-module-requirements"><span class="std std-ref">Requirements</span></a> for details.</p>
+<p>To use it in a playbook, specify: <code class="code docutils literal notranslate"><span class="pre">community.aws.api_gateway_info</span></code>.</p>
 </div>
-<p class="ansible-version-added">New in community.aws 3.3.0</p>
+<p class="ansible-version-added">New in community.aws 6.1.0</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#synopsis" id="id1">Synopsis</a></p></li>
@@ -156,14 +156,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <section id="synopsis">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">Synopsis</a><a class="headerlink" href="#synopsis" title="Permalink to this heading"></a></h2>
 <ul class="simple">
-<li><p>Manages API Gateway custom domains for API GW Rest APIs.</p></li>
-<li><p>AWS API Gateway custom domain setups use CloudFront behind the scenes. So you will get a CloudFront distribution as a result, configured to be aliased with your domain.</p></li>
-<li><p>Prior to release 5.0.0 this module was called <code class="docutils literal notranslate"><span class="pre">community.aws.aws_api_gateway_domain</span></code>. The usage did not change.</p></li>
+<li><p>Gather information about ec2 instances in AWS</p></li>
 </ul>
-<p>Aliases: aws_api_gateway_domain</p>
 </section>
 <section id="requirements">
-<span id="ansible-collections-community-aws-api-gateway-domain-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
+<span id="ansible-collections-community-aws-api-gateway-info-module-requirements"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Requirements</a><a class="headerlink" href="#requirements" title="Permalink to this heading"></a></h2>
 <p>The below requirements are needed on the host that executes this module.</p>
 <ul class="simple">
 <li><p>python &gt;= 3.6</p></li>
@@ -184,7 +181,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <div class="ansibleOptionAnchor" id="parameter-access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_access_key_id"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_access_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-access-key"></span><strong>access_key</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_access_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-ec2-access-key"><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-access-key-id"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-access-key"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-access-key"></span><strong>access_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-access_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_access_key_id, aws_access_key, ec2_access_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -198,7 +195,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_ca_bundle"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-ca-bundle"><strong>aws_ca_bundle</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_ca_bundle" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">path</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The location of a CA Bundle to use when validating SSL certificates.</p>
@@ -206,7 +203,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-config"><strong>aws_config</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_config"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-config"><strong>aws_config</strong></p>
 <a class="ansibleOptionLink" href="#parameter-aws_config" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>A dictionary to modify the botocore configuration.</p>
@@ -214,14 +211,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-certificate_arn"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-certificate-arn"><strong>certificate_arn</strong></p>
-<a class="ansibleOptionLink" href="#parameter-certificate_arn" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>AWS Certificate Manger (ACM) TLS certificate ARN.</p>
-</div></td>
-</tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-debug_botocore_endpoint_logs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-debug-botocore-endpoint-logs"><strong>debug_botocore_endpoint_logs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-debug_botocore_endpoint_logs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Use a <code class="docutils literal notranslate"><span class="pre">botocore.endpoint</span></code> logger to parse the unique (rather than total) <code class="docutils literal notranslate"><span class="pre">&quot;resource:action&quot;</span></code> API calls made during a task, outputing the set to the resource_actions key in the task results. Use the <code class="docutils literal notranslate"><span class="pre">aws_resource_action</span></code> callback to output to total list made during a playbook.</p>
@@ -233,41 +223,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </ul>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-domain_mappings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-domain-mappings"><strong>domain_mappings</strong></p>
-<a class="ansibleOptionLink" href="#parameter-domain_mappings" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=dictionary</span> / <span class="ansible-option-required">required</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Map your domain base paths to your API GW REST APIs, that you previously created. Use provided ID of the API setup and the release stage.</p>
-<p>domain_mappings should be a list of dictionaries containing three keys: base_path, rest_api_id and stage.</p>
-<p>Example: <em>[{ base_path: v1, rest_api_id: abc123, stage: production }]</em></p>
-<p>if you want base path to be just <em>/</em> omit the param completely or set it to empty string.</p>
-</div></td>
-</tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-domain_name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-domain-name"><strong>domain_name</strong></p>
-<a class="ansibleOptionLink" href="#parameter-domain_name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span> / <span class="ansible-option-required">required</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Domain name you want to use for your API GW deployment.</p>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-endpoint_type"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-endpoint-type"><strong>endpoint_type</strong></p>
-<a class="ansibleOptionLink" href="#parameter-endpoint_type" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>API endpoint configuration for domain. Use EDGE for edge-optimized endpoint, or use <code class="docutils literal notranslate"><span class="pre">REGIONAL</span></code> or <code class="docutils literal notranslate"><span class="pre">PRIVATE</span></code>.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
-<ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;EDGE&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;REGIONAL&quot;</span></code></p></li>
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;PRIVATE&quot;</span></code></p></li>
-</ul>
-</div></td>
-</tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-endpoint_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_url"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_endpoint_url"></div>
-<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-s3-url"><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-s3_url"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-s3-url"><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-endpoint-url"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-ec2-url"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-endpoint-url"></span><strong>endpoint_url</strong></p>
 <a class="ansibleOptionLink" href="#parameter-endpoint_url" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: ec2_url, aws_endpoint_url, s3_url</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -278,8 +238,15 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-ids"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-ids"><strong>ids</strong></p>
+<a class="ansibleOptionLink" href="#parameter-ids" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">list</span> / <span class="ansible-option-elements">elements=string</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The list of the string identifiers of the associated RestApis.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
-<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-profile"><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-profile"></span><strong>profile</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-profile"><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -289,10 +256,10 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>The <em>profile</em> option is mutually exclusive with the <em>aws_access_key</em>, <em>aws_secret_key</em> and <em>security_token</em> options.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-region"><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-region"></span><strong>region</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-region"><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-region"></span><strong>region</strong></p>
 <a class="ansibleOptionLink" href="#parameter-region" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_region, ec2_region</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -304,11 +271,11 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
-<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-secret-key"><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-ec2_secret_key"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-secret-key"><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-ec2-secret-key"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-secret-key"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-secret-access-key"></span><strong>secret_key</strong></p>
 <a class="ansibleOptionLink" href="#parameter-secret_key" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_secret_access_key, aws_secret_key, ec2_secret_key</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -321,24 +288,12 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-security_policy"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-security-policy"><strong>security_policy</strong></p>
-<a class="ansibleOptionLink" href="#parameter-security_policy" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Set allowed TLS versions through AWS defined policies. Currently only <code class="docutils literal notranslate"><span class="pre">TLS_1_0</span></code> and <code class="docutils literal notranslate"><span class="pre">TLS_1_2</span></code> are available.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
-<ul class="simple">
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;TLS_1_0&quot;</span></code></p></li>
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;TLS_1_2&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
-</ul>
-</div></td>
-</tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_security_token"></div>
-<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-session-token"><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-security-token"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-api-gateway-domain-module-parameter-access-token"></span><strong>session_token</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-access_token"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-session-token"><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-security-token"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-session-token"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-aws-security-token"></span><span id="ansible-collections-community-aws-api-gateway-info-module-parameter-access-token"></span><strong>session_token</strong></p>
 <a class="ansibleOptionLink" href="#parameter-session_token" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_session_token, security_token, aws_security_token, access_token</span></p>
 <p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -352,19 +307,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-state"><strong>state</strong></p>
-<a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
-</div></td>
-<td><div class="ansible-option-cell"><p>Create or delete custom domain setup.</p>
-<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
-<ul class="simple">
-<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;present&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
-<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;absent&quot;</span></code></p></li>
-</ul>
-</div></td>
-</tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-parameter-validate-certs"><strong>validate_certs</strong></p>
+<div class="ansibleOptionAnchor" id="parameter-validate_certs"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-parameter-validate-certs"><strong>validate_certs</strong></p>
 <a class="ansibleOptionLink" href="#parameter-validate_certs" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>When set to <code class="docutils literal notranslate"><span class="pre">false</span></code>, SSL certificates will not be validated for communication with the AWS APIs.</p>
@@ -384,8 +327,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>Does not create a DNS entry on Route53, for that use the <a class="reference internal" href="route53_module.html#ansible-collections-community-aws-route53-module"><span class="std std-ref">community.aws.route53</span></a> module.</p></li>
-<li><p>Only supports TLS certificates from AWS ACM that can just be referenced by the ARN, while the AWS API still offers (deprecated) options to add own Certificates.</p></li>
 <li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
 <li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
@@ -393,26 +334,17 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </section>
 <section id="examples">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Examples</a><a class="headerlink" href="#examples" title="Permalink to this heading"></a></h2>
-<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Setup endpoint for a custom domain for your API Gateway HTTP API</span>
-<span class="w">  </span><span class="nt">community.aws.api_gateway_domain</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">domain_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapi.foobar.com</span>
-<span class="w">    </span><span class="nt">certificate_arn</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;arn:aws:acm:us-east-1:1231123123:certificate/8bd89412-abc123-xxxxx&#39;</span>
-<span class="w">    </span><span class="nt">security_policy</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TLS_1_2</span>
-<span class="w">    </span><span class="nt">endpoint_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">EDGE</span>
-<span class="w">    </span><span class="nt">domain_mappings</span><span class="p">:</span>
-<span class="w">        </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> rest_api_id</span><span class="p">:</span><span class="w"> </span><span class="nv">abc123</span><span class="p p-Indicator">,</span><span class="nt"> stage</span><span class="p">:</span><span class="w"> </span><span class="nv">production</span><span class="w"> </span><span class="p p-Indicator">}</span>
-<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
-<span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">api_gw_domain_result</span>
+<div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="nn">---</span>
+<span class="c1"># List all API gateway</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List all for a specific function</span>
+<span class="w">  </span><span class="nt">community.aws.api_gateway_info</span><span class="p">:</span>
 
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Create a DNS record for your custom domain on route 53 (using route53 module)</span>
-<span class="w">  </span><span class="nt">community.aws.route53</span><span class="p">:</span>
-<span class="w">    </span><span class="nt">record</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">myapi.foobar.com</span>
-<span class="w">    </span><span class="nt">value</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">api_gw_domain_result.response.domain.distribution_domain_name</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">A</span>
-<span class="w">    </span><span class="nt">alias</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<span class="w">    </span><span class="nt">zone</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foobar.com</span>
-<span class="w">    </span><span class="nt">alias_hosted_zone_id</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;</span><span class="cp">{{</span> <span class="nv">api_gw_domain_result.response.domain.distribution_hosted_zone_id</span> <span class="cp">}}</span><span class="s">&quot;</span>
-<span class="w">    </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create</span>
+<span class="c1"># Get information for a specific API gateway</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">List all for a specific function</span>
+<span class="w">  </span><span class="nt">community.aws.api_gateway_info</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">ids</span><span class="p">:</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">012345678a</span>
+<span class="w">    </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">abcdefghij</span>
 </pre></div>
 </div>
 </section>
@@ -427,12 +359,83 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </thead>
 <tbody>
 <tr class="row-even"><td><div class="ansible-option-cell">
-<div class="ansibleOptionAnchor" id="return-response"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-domain-module-return-response"><strong>response</strong></p>
-<a class="ansibleOptionLink" href="#return-response" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+<div class="ansibleOptionAnchor" id="return-rest_apis"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis"><strong>rest_apis</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">complex</span></p>
 </div></td>
-<td><div class="ansible-option-cell"><p>The data returned by create_domain_name (or update and delete) and create_base_path_mapping methods by boto3.</p>
+<td><div class="ansible-option-cell"><p>A list of API gateway.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> always</p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/api_key_source"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-api-key-source"><strong>api_key_source</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/api_key_source" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The source of the API key for metering requests according to a usage plan.</p>
 <p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
-<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;domain&quot;:</span> <span class="pre">{&quot;certificate_arn&quot;:</span> <span class="pre">&quot;arn:aws:acm:xxxxxx&quot;,</span> <span class="pre">&quot;distribution_domain_name&quot;:</span> <span class="pre">&quot;xxxx.cloudfront.net&quot;,</span> <span class="pre">&quot;distribution_hosted_zone_id&quot;:</span> <span class="pre">&quot;ABC123123&quot;,</span> <span class="pre">&quot;domain_name&quot;:</span> <span class="pre">&quot;mydomain.com&quot;,</span> <span class="pre">&quot;domain_name_status&quot;:</span> <span class="pre">&quot;AVAILABLE&quot;,</span> <span class="pre">&quot;endpoint_configuration&quot;:</span> <span class="pre">{&quot;types&quot;:</span> <span class="pre">[&quot;EDGE&quot;]},</span> <span class="pre">&quot;security_policy&quot;:</span> <span class="pre">&quot;TLS_1_2&quot;,</span> <span class="pre">&quot;tags&quot;:</span> <span class="pre">{}},</span> <span class="pre">&quot;path_mappings&quot;:</span> <span class="pre">[{&quot;base_path&quot;:</span> <span class="pre">&quot;(empty)&quot;,</span> <span class="pre">&quot;rest_api_id&quot;:</span> <span class="pre">&quot;abcd123&quot;,</span> <span class="pre">&quot;stage&quot;:</span> <span class="pre">&quot;production&quot;}]}</span></code></p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;HEADER&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/created_date"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-created-date"><strong>created_date</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/created_date" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The timestamp when the API was created.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;2020-01-01T11:37:59+00:00&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/description"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-description"><strong>description</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/description" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The description of the API.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;Automatic</span> <span class="pre">deployment</span> <span class="pre">by</span> <span class="pre">Ansible.&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/disable_execute_api_endpoint"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-disable-execute-api-endpoint"><strong>disable_execute_api_endpoint</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/disable_execute_api_endpoint" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>Specifies whether clients can invoke your API by using the default execute-api endpoint.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">false</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/endpoint_configuration"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-endpoint-configuration"><strong>endpoint_configuration</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/endpoint_configuration" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The endpoint configuration of this RestApi showing the endpoint types of the API.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;types&quot;:</span> <span class="pre">[&quot;REGIONAL&quot;]}</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/id"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-id"><strong>id</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/id" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The identifier of the API.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;abcdefgh&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/name" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The name of the API.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">&quot;ansible-tmp-api&quot;</span></code></p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-indent"></div><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="return-rest_apis/tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-info-module-return-rest-apis-tags"><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#return-rest_apis/tags" title="Permalink to this return value"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-indent-desc"></div><div class="ansible-option-cell"><p>The collection of tags.</p>
+<p class="ansible-option-line"><span class="ansible-option-returned-bold">Returned:</span> success</p>
+<p class="ansible-option-line ansible-option-sample"><span class="ansible-option-sample-bold">Sample:</span> <code class="ansible-option-sample docutils literal notranslate"><span class="pre">{&quot;key&quot;:</span> <span class="pre">&quot;value&quot;}</span></code></p>
 </div></td>
 </tr>
 </tbody>
@@ -440,7 +443,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <section id="authors">
 <h3>Authors<a class="headerlink" href="#authors" title="Permalink to this heading"></a></h3>
 <ul class="simple">
-<li><p>Stefan Horning (&#64;stefanhorning)</p></li>
+<li><p>Aubin Bikouo (&#64;abikouo)</p></li>
 </ul>
 </section>
 <section id="collection-links">
@@ -459,8 +462,8 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
           
 
 <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
-        <a href="api_gateway_module.html" class="btn btn-neutral float-left" title="community.aws.api_gateway module – Manage AWS API Gateway APIs" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="api_gateway_info_module.html" class="btn btn-neutral float-right" title="community.aws.api_gateway_info module – Gather information about ec2 instances in AWS" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="api_gateway_domain_module.html" class="btn btn-neutral float-left" title="community.aws.api_gateway_domain module – Manage AWS API Gateway custom domains" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="application_autoscaling_policy_module.html" class="btn btn-neutral float-right" title="community.aws.application_autoscaling_policy module – Manage Application Auto Scaling Scaling Policies" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>

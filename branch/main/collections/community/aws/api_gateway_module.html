@@ -303,6 +303,30 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-lookup"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-lookup"><strong>lookup</strong></p>
+<a class="ansibleOptionLink" href="#parameter-lookup" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 6.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>Look up API gateway by either <em>tags</em> (and <em>name</em> if supplied) or by <em>api_id</em>.</p>
+<p>If <em>lookup=tag</em> and <em>tags</em> is not specified then no lookup for an existing API gateway is performed and a new API gateway will be created.</p>
+<p>When using <em>lookup=tag</em>, multiple matches being found will result in a failure and no changes will be made.</p>
+<p>To change the tags of a API gateway use <em>lookup=id</em>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">&quot;tag&quot;</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;id&quot;</span></code></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-name"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-name"><strong>name</strong></p>
+<a class="ansibleOptionLink" href="#parameter-name" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
+<p><span class="ansible-option-versionadded">added in community.aws 6.2.0</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>The name of the RestApi.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-profile"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_profile"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-profile"><span id="ansible-collections-community-aws-api-gateway-module-parameter-aws-profile"></span><strong>profile</strong></p>
 <a class="ansibleOptionLink" href="#parameter-profile" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: aws_profile</span></p>
@@ -315,6 +339,20 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-purge_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-purge-tags"><strong>purge_tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-purge_tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">boolean</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>If <em>purge_tags=true</em> and <em>tags</em> is set, existing tags will be purged from the resource to match exactly what is defined by <em>tags</em> parameter.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified, even if <em>purge_tags=True</em>.</p>
+<p>Tag keys beginning with <code class="docutils literal notranslate"><span class="pre">aws:</span></code> are reserved by Amazon and can not be modified.  As such they will be ignored for the purposes of the <em>purge_tags</em> parameter.  See the Amazon documentation for more information <a class="reference external" href="https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions">https://docs.aws.amazon.com/general/latest/gr/aws_tagging.html#tag-conventions</a>.</p>
+<p class="ansible-option-line"><span class="ansible-option-choices">Choices:</span></p>
+<ul class="simple">
+<li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">false</span></code></p></li>
+<li><p><code class="ansible-option-default-bold docutils literal notranslate"><span class="pre">true</span></code> <span class="ansible-option-choices-default-mark">← (default)</span></p></li>
+</ul>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-region"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_region"></div>
 <div class="ansibleOptionAnchor" id="parameter-ec2_region"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-region"><span id="ansible-collections-community-aws-api-gateway-module-parameter-ec2-region"></span><span id="ansible-collections-community-aws-api-gateway-module-parameter-aws-region"></span><strong>region</strong></p>
@@ -329,7 +367,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_REGION</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-secret_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_access_key"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_secret_key"></div>
@@ -346,7 +384,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> environment variable has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-aws_session_token"></div>
 <div class="ansibleOptionAnchor" id="parameter-security_token"></div>
@@ -364,14 +402,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p>Support for the <code class="docutils literal notranslate"><span class="pre">EC2_SECRET_KEY</span></code> and <code class="docutils literal notranslate"><span class="pre">AWS_SECURITY_TOKEN</span></code> environment variables has been deprecated and will be removed in a release after 2024-12-01.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stage"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-stage"><strong>stage</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stage" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>The name of the stage the API should be deployed to.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stage_canary_settings"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-stage-canary-settings"><strong>stage_canary_settings</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stage_canary_settings" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -385,7 +423,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-stage_variables"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-stage-variables"><strong>stage_variables</strong></p>
 <a class="ansibleOptionLink" href="#parameter-stage_variables" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
 </div></td>
@@ -393,7 +431,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <p class="ansible-option-line"><span class="ansible-option-default-bold">Default:</span> <code class="ansible-option-default docutils literal notranslate"><span class="pre">{}</span></code></p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-state"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-state"><strong>state</strong></p>
 <a class="ansibleOptionLink" href="#parameter-state" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
@@ -405,14 +443,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 </ul>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-swagger_dict"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-swagger-dict"><strong>swagger_dict</strong></p>
 <a class="ansibleOptionLink" href="#parameter-swagger_dict" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">json</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Swagger definitions API ansible dictionary which will be converted to JSON and uploaded.</p>
 </div></td>
 </tr>
-<tr class="row-odd"><td><div class="ansible-option-cell">
+<tr class="row-even"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-swagger_file"></div>
 <div class="ansibleOptionAnchor" id="parameter-src"></div>
 <div class="ansibleOptionAnchor" id="parameter-api_file"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-swagger-file"><span id="ansible-collections-community-aws-api-gateway-module-parameter-src"></span><span id="ansible-collections-community-aws-api-gateway-module-parameter-api-file"></span><strong>swagger_file</strong></p>
@@ -422,11 +460,21 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <td><div class="ansible-option-cell"><p>JSON or YAML file containing swagger definitions for API. Exactly one of <em>swagger_file</em>, <em>swagger_text</em> or <em>swagger_dict</em> must be present.</p>
 </div></td>
 </tr>
-<tr class="row-even"><td><div class="ansible-option-cell">
+<tr class="row-odd"><td><div class="ansible-option-cell">
 <div class="ansibleOptionAnchor" id="parameter-swagger_text"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-swagger-text"><strong>swagger_text</strong></p>
 <a class="ansibleOptionLink" href="#parameter-swagger_text" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-type">string</span></p>
 </div></td>
 <td><div class="ansible-option-cell"><p>Swagger definitions for API in JSON or YAML as a string direct from playbook.</p>
+</div></td>
+</tr>
+<tr class="row-even"><td><div class="ansible-option-cell">
+<div class="ansibleOptionAnchor" id="parameter-tags"></div>
+<div class="ansibleOptionAnchor" id="parameter-resource_tags"></div><p class="ansible-option-title" id="ansible-collections-community-aws-api-gateway-module-parameter-tags"><span id="ansible-collections-community-aws-api-gateway-module-parameter-resource-tags"></span><strong>tags</strong></p>
+<a class="ansibleOptionLink" href="#parameter-tags" title="Permalink to this option"></a><p class="ansible-option-type-line"><span class="ansible-option-aliases">aliases: resource_tags</span></p>
+<p class="ansible-option-type-line"><span class="ansible-option-type">dictionary</span></p>
+</div></td>
+<td><div class="ansible-option-cell"><p>A dictionary representing the tags to be applied to the resource.</p>
+<p>If the <em>tags</em> parameter is not set then tags will not be modified.</p>
 </div></td>
 </tr>
 <tr class="row-odd"><td><div class="ansible-option-cell">
@@ -462,8 +510,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <ul class="simple">
-<li><p>A future version of this module will probably use tags or another ID so that an API can be created only once.</p></li>
-<li><p>As an early work around an intermediate version will probably do the same using a tag embedded in the API name.</p></li>
+<li><p>Tags are used to uniquely identify API gateway when the <em>api_id</em> is not supplied. version_added=6.2.0</p></li>
 <li><p><strong>Caution:</strong> For modules, environment variables and configuration files are read from the Ansible ‘host’ context and not the ‘controller’ context. As such, files may need to be explicitly copied to the ‘host’.  For lookup and connection plugins, environment variables and configuration files are read from the Ansible ‘controller’ context and not the ‘host’ context.</p></li>
 <li><p>The AWS SDK (boto3) that Ansible uses may also read defaults for credentials and other settings, such as the region, from its configuration files in the Ansible ‘host’ context (typically <code class="docutils literal notranslate"><span class="pre">~/.aws/credentials</span></code>). See <a class="reference external" href="https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html">https://boto3.amazonaws.com/v1/documentation/api/latest/guide/credentials.html</a> for more information.</p></li>
 </ul>
@@ -499,6 +546,14 @@ see <a class="reference internal" href="#ansible-collections-community-aws-api-g
 <span class="w">    </span><span class="nt">cache_size</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;6.1&#39;</span>
 <span class="w">    </span><span class="nt">canary_settings</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">{</span><span class="nt"> percentTraffic</span><span class="p">:</span><span class="w"> </span><span class="nv">50.0</span><span class="p p-Indicator">,</span><span class="nt"> deploymentId</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;123&#39;</span><span class="p p-Indicator">,</span><span class="nt"> useStageCache</span><span class="p">:</span><span class="w"> </span><span class="nv">True</span><span class="w"> </span><span class="p p-Indicator">}</span>
 <span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Delete API gateway</span>
+<span class="w">  </span><span class="nt">amazon.aws.api_gateway</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible-rest-api</span>
+<span class="w">    </span><span class="nt">tags</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">automation</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">ansible</span>
+<span class="w">    </span><span class="nt">lookup</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tags</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">absent</span>
 </pre></div>
 </div>
 </section>
