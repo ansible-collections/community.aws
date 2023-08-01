@@ -3488,3 +3488,16 @@ releases:
         name: aws_mq
         namespace: null
     release_date: '2023-07-07'
+  6.2.0:
+    changes:
+      minor_changes:
+      - api_gateway - add support for parameters `name`, `lookup`, `tags` and `purge_tags`
+        (https://github.com/ansible-collections/community.aws/pull/1845).
+      - ec2_vpc_vpn - add support for connecting VPNs to a transit gateway. (https://github.com/ansible-collections/community.aws/pull/1877).
+      release_summary: This release includes some new features for the ``community.aws.ec2_vpc_vpn``
+        and ``community.aws.api_gateway`` modules.
+    fragments:
+    - 20230620-api_gateway-add-optional-name.yml
+    - release_summary.yml
+    - transit_gateway_to_vpn.yaml
+    release_date: '2023-08-02'
