@@ -1,0 +1,3 @@
+---
+minor_changes:
+  - api_gateway - add support for parameters `name`, `lookup`, `tags` and `purge_tags` (https://github.com/ansible-collections/community.aws/pull/1845).
