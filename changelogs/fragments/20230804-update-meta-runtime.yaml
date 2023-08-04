@@ -1,3 +1,0 @@
----
-bugfixes:
-  - Remove ``apigateway`` and ``apigateway_deployment`` from meta/runtime.yml (https://github.com/ansible-collections/community.aws/pull/1905).
