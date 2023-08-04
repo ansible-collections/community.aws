@@ -8,8 +8,6 @@ action_groups:
   - api_gateway
   - api_gateway_domain
   - api_gateway_info
-  - apigateway
-  - apigateway_deployment
   - application_autoscaling_policy
   - autoscaling_complete_lifecycle_action
   - autoscaling_instance_refresh_info
