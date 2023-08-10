@@ -1,2 +1,0 @@
-bugfixes:
-- cloudfront_distribution - The origins  recognises the s3 domains with region part now (https://github.com/ansible-collections/community.aws/issues/1819).
