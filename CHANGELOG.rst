@@ -4,6 +4,7 @@ community.aws Release Notes
 
 .. contents:: Topics
 
+
 v6.2.0
 ======
 
@@ -819,6 +820,33 @@ New Modules
 - opensearch_info - obtain information about one or more OpenSearch or ElasticSearch domain
 - rds_cluster_snapshot - Manage Amazon RDS snapshots of DB clusters
 
+v3.6.0
+======
+
+Release Summary
+---------------
+
+Following the release of community.aws 5.0.0, 3.6.0 is a bugfix release and the final planned release for the 3.x series.
+
+
+Minor Changes
+-------------
+
+- autoscaling_group_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudfront_distribution - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudfront_origin_access_identity - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- cloudtrail - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- ec2_asg_lifecycle_hook - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- ec2_vpc_nacl - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- redshift - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+- s3_bucket_info - minor sanity test fixes (https://github.com/ansible-collections/community.aws/pull/1410).
+
+Bugfixes
+--------
+
+- ec2_placement_group - Handle a potential race creation during the creation of a new Placement Group (https://github.com/ansible-collections/community.aws/pull/1477).
+- s3_lifecycle - fix bug when deleting rules with an empty prefix (https://github.com/ansible-collections/community.aws/pull/1398).
+
 v3.5.0
 ======
 
@@ -1130,6 +1158,65 @@ Bugfixes
 --------
 
 - aws_eks - Fix EKS cluster creation with short names (https://github.com/ansible-collections/community.aws/pull/818).
+
+v2.6.1
+======
+
+Release Summary
+---------------
+
+Bump collection from 2.6.0 to 2.6.1 due to a publishing error with 2.6.0.  This release supersedes 2.6.0 entirely, users should skip 2.6.0.
+
+v2.6.0
+======
+
+Release Summary
+---------------
+
+This is the last planned 2.x release of the ``community.aws`` collection.
+Consider upgrading to the latest version of ``community.aws`` soon.
+
+Minor Changes
+-------------
+
+- ecs_service - ``deployment_circuit_breaker`` has been added as a supported feature (https://github.com/ansible-collections/community.aws/pull/1215).
+- ecs_service - add ``service`` alias to address the ecs service name with the same parameter as the ecs_service_info module is doing (https://github.com/ansible-collections/community.aws/pull/1187).
+- ecs_service_info - add ``name`` alias to address the ecs service name with the same parameter as the ecs_service module is doing (https://github.com/ansible-collections/community.aws/pull/1187).
+
+Bugfixes
+--------
+
+- ecs_service - fix broken change detect of ``health_check_grace_period_seconds`` parameter when not specified (https://github.com/ansible-collections/community.aws/pull/1212).
+- ecs_service - use default cluster name of ``default`` when not input (https://github.com/ansible-collections/community.aws/pull/1212).
+- ecs_task - dont require ``cluster`` and use name of ``default`` when not input (https://github.com/ansible-collections/community.aws/pull/1212).
+- wafv2_ip_set - fix bug where incorrect changed state was returned when only changing the description (https://github.com/ansible-collections/community.aws/pull/1211).
+
+v2.5.0
+======
+
+Release Summary
+---------------
+
+This is the minor release of the ``community.aws`` collection.
+
+Minor Changes
+-------------
+
+- iam_policy - update broken examples and add RETURN section to documentation; add extra integration tests for idempotency check mode runs (https://github.com/ansible-collections/community.aws/pull/1093).
+- iam_role - delete inline policies prior to deleting role (https://github.com/ansible-collections/community.aws/pull/1054).
+- iam_role - remove global vars and refactor accordingly (https://github.com/ansible-collections/community.aws/pull/1054).
+
+Bugfixes
+--------
+
+- ecs_service - add missing change detect of ``health_check_grace_period_seconds`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+- ecs_service - fix broken compare of ``task_definition`` that results always in a changed task (https://github.com/ansible-collections/community.aws/pull/1145).
+- ecs_service - fix validation for ``placement_constraints``. It's possible to use ``distinctInstance`` placement constraint now (https://github.com/ansible-collections/community.aws/issues/1058)
+- ecs_taskdefinition - fix broken change detect of ``launch_type`` parameter (https://github.com/ansible-collections/community.aws/pull/1145).
+- execute_lambda - fix check mode and update RETURN documentation (https://github.com/ansible-collections/community.aws/pull/1115).
+- iam_policy - require one of ``policy_document`` and ``policy_json`` when state is present to prevent MalformedPolicyDocumentException from being thrown (https://github.com/ansible-collections/community.aws/pull/1093).
+- s3_lifecycle - add support of value *0* for ``transition_days`` (https://github.com/ansible-collections/community.aws/pull/1077).
+- s3_lifecycle - check that configuration is complete before returning (https://github.com/ansible-collections/community.aws/pull/1085).
 
 v2.4.0
 ======
