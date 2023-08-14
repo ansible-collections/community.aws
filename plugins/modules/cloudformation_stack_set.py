@@ -66,14 +66,19 @@ options:
     type: str
   purge_stacks:
     description:
-    - Only applicable when I(state=absent). Sets whether, when deleting a stack set, the stack instances should also be deleted.
-    - By default, instances will be deleted. To keep stacks when stack set is deleted set I(purge_stacks=false).
+      - Only applicable when I(state=absent). Sets whether, when deleting a stack set, the stack instances should also be deleted.
+      - By default, instances will be deleted. To keep stacks when stack set is deleted set I(purge_stacks=false).
     type: bool
     default: true
+  purge_stack_instances:
+    description:
+      - When set to I(True), instructs the module to delete stack instances that are not defined via the C(accounts) parameter.
+    type: bool
+    default: false
   wait:
     description:
-    - Whether or not to wait for stack operation to complete. This includes waiting for stack instances to reach UPDATE_COMPLETE status.
-    - If you choose not to wait, this module will not notify when stack operations fail because it will not wait for them to finish.
+      - Whether or not to wait for stack operation to complete. This includes waiting for stack instances to reach UPDATE_COMPLETE status.
+      - If you choose not to wait, this module will not notify when stack operations fail because it will not wait for them to finish.
     type: bool
     default: false
   wait_timeout:
@@ -83,51 +88,51 @@ options:
     type: int
   capabilities:
     description:
-    - Capabilities allow stacks to create and modify IAM resources, which may include adding users or roles.
-    - Currently the only available values are 'CAPABILITY_IAM' and 'CAPABILITY_NAMED_IAM'. Either or both may be provided.
-    - >
-        The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey,
-        AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition
+      - Capabilities allow stacks to create and modify IAM resources, which may include adding users or roles.
+      - Currently the only available values are 'CAPABILITY_IAM' and 'CAPABILITY_NAMED_IAM'. Either or both may be provided.
+      - >
+          The following resources require that one or both of these parameters is specified: AWS::IAM::AccessKey,
+          AWS::IAM::Group, AWS::IAM::InstanceProfile, AWS::IAM::Policy, AWS::IAM::Role, AWS::IAM::User, AWS::IAM::UserToGroupAddition
     type: list
     elements: str
     choices:
-    - 'CAPABILITY_IAM'
-    - 'CAPABILITY_NAMED_IAM'
+      - 'CAPABILITY_IAM'
+      - 'CAPABILITY_NAMED_IAM'
   regions:
     description:
-    - A list of AWS regions to create instances of a stack in. The I(region) parameter chooses where the Stack Set is created, and I(regions)
-      specifies the region for stack instances.
-    - At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will
+      - A list of AWS regions to create instances of a stack in. The I(region) parameter chooses where the Stack Set is created, and I(regions)
+        specifies the region for stack instances.
+      - At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will
       have their stack instances updated.
     type: list
     elements: str
   accounts:
     description:
-    - A list of AWS accounts in which to create instance of CloudFormation stacks.
-    - At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will
-      have their stack instances updated.
+      - A list of AWS accounts in which to create instance of CloudFormation stacks.
+      - At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will
+        have their stack instances updated.
     type: list
     elements: str
   administration_role_arn:
     description:
-    - ARN of the administration role, meaning the role that CloudFormation Stack Sets use to assume the roles in your child accounts.
-    - This defaults to C(arn:aws:iam::{{ account ID }}:role/AWSCloudFormationStackSetAdministrationRole) where C({{ account ID }}) is replaced with the
-      account number of the current IAM role/user/STS credentials.
+      - ARN of the administration role, meaning the role that CloudFormation Stack Sets use to assume the roles in your child accounts.
+      - This defaults to C(arn:aws:iam::{{ account ID }}:role/AWSCloudFormationStackSetAdministrationRole) where C({{ account ID }}) is replaced with the
+        account number of the current IAM role/user/STS credentials.
     aliases:
-    - admin_role_arn
-    - admin_role
-    - administration_role
+      - admin_role_arn
+      - admin_role
+      - administration_role
     type: str
   execution_role_name:
     description:
-    - ARN of the execution role, meaning the role that CloudFormation Stack Sets assumes in your child accounts.
-    - This MUST NOT be an ARN, and the roles must exist in each child account specified.
-    - The default name for the execution role is C(AWSCloudFormationStackSetExecutionRole)
+      - ARN of the execution role, meaning the role that CloudFormation Stack Sets assumes in your child accounts.
+      - This MUST NOT be an ARN, and the roles must exist in each child account specified.
+      - The default name for the execution role is C(AWSCloudFormationStackSetExecutionRole)
     aliases:
-    - exec_role_name
-    - exec_role
-    - execution_role
-    type: str
+      - exec_role_name
+      - exec_role
+      - execution_role
+      type: str
   tags:
     description:
       - Dictionary of tags to associate with stack and its resources during stack creation.
@@ -169,6 +174,7 @@ options:
 
 author:
   - "Ryan Scott Brown (@ryansb)"
+  - "Razique Mahroua (@razique)"
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
@@ -224,6 +230,23 @@ EXAMPLES = r"""
     name: my-stack
     state: present
     wait: true
+    parameters:
+      InstanceName: my_restacked_instance
+    tags:
+      foo: bar
+      test: stack
+    accounts:
+      - 123456789012
+      - 234567890123
+      - 345678901234
+    regions:
+    - us-east-1
+
+- name: Delete untracked stack instances for an existing stack set.
+  community.aws.cloudformation_stack_set:
+    name: my-stack
+    state: present
+    purge_stack_instances: true
     parameters:
       InstanceName: my_restacked_instance
     tags:
@@ -459,10 +482,11 @@ def await_stack_instance_completion(module, cfn, stack_set_name, max_wait):
             pass
         time.sleep(15)
 
-    module.warn(
-        f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s['StackId'] for s in to_await)} to"
-        f" complete after {max_wait} seconds. Returning unfinished operation"
-    )
+    if to_await:
+        module.warn(
+            f"Timed out waiting for stack set {stack_set_name} instances {', '.join(s['StackId'] for s in to_await)} to"
+            f" complete after {max_wait} seconds. Returning unfinished operation"
+        )
 
 
 def await_stack_set_exists(cfn, stack_set_name):
@@ -539,6 +563,7 @@ def main():
         wait_timeout=dict(type="int", default=900),
         state=dict(default="present", choices=["present", "absent"]),
         purge_stacks=dict(type="bool", default=True),
+        purge_stack_instances=dict(type="bool", default=False),
         parameters=dict(type="dict", default={}),
         template=dict(type="path"),
         template_url=dict(),
@@ -705,10 +730,21 @@ def main():
             changed = True
             cfn.create_stack_instances(
                 StackSetName=module.params["name"],
-                Accounts=list(set(acct for acct, region in new_stack_instances)),
-                Regions=list(set(region for acct, region in new_stack_instances)),
+                Accounts=list(set(acct for acct, _ in new_stack_instances)),
+                Regions=list(set(region for _, region in new_stack_instances)),
                 OperationPreferences=get_operation_preferences(module),
                 OperationId=operation_ids[-1],
+            )
+        elif unspecified_stack_instances and module.params.get("purge_stack_instances"):
+            operation_ids.append(f"Ansible-StackInstance-RemoveInstance-{operation_uuid}")
+            changed = True
+            cfn.delete_stack_instances(
+                StackSetName=module.params["name"],
+                Accounts=list(set(acct for acct, _ in unspecified_stack_instances)),
+                Regions=list(set(region for _, region in unspecified_stack_instances)),
+                OperationPreferences=get_operation_preferences(module),
+                OperationId=operation_ids[-1],
+                RetainStacks=not(module.params.get("purge_stacks"))
             )
         else:
             operation_ids.append(f"Ansible-StackInstance-Update-{operation_uuid}")
