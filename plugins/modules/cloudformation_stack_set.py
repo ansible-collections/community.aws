@@ -132,7 +132,7 @@ options:
       - exec_role_name
       - exec_role
       - execution_role
-      type: str
+    type: str
   tags:
     description:
       - Dictionary of tags to associate with stack and its resources during stack creation.
@@ -146,31 +146,31 @@ options:
     suboptions:
       fail_count:
         description:
-        - The number of accounts, per region, for which this operation can fail before CloudFormation
-          stops the operation in that region.
-        - You must specify one of I(fail_count) and I(fail_percentage).
+          - The number of accounts, per region, for which this operation can fail before CloudFormation
+            stops the operation in that region.
+          - You must specify one of I(fail_count) and I(fail_percentage).
         type: int
       fail_percentage:
         type: int
         description:
-        - The percentage of accounts, per region, for which this stack operation can fail before CloudFormation
-          stops the operation in that region.
-        - You must specify one of I(fail_count) and I(fail_percentage).
+          - The percentage of accounts, per region, for which this stack operation can fail before CloudFormation
+            stops the operation in that region.
+          - You must specify one of I(fail_count) and I(fail_percentage).
       parallel_percentage:
         type: int
         description:
-        - The maximum percentage of accounts in which to perform this operation at one time.
-        - You must specify one of I(parallel_count) and I(parallel_percentage).
-        - Note that this setting lets you specify the maximum for operations.
-          For large deployments, under certain circumstances the actual percentage may be lower.
+          - The maximum percentage of accounts in which to perform this operation at one time.
+          - You must specify one of I(parallel_count) and I(parallel_percentage).
+          - Note that this setting lets you specify the maximum for operations.
+            For large deployments, under certain circumstances the actual percentage may be lower.
       parallel_count:
         type: int
         description:
-        - The maximum number of accounts in which to perform this operation at one time.
-        - I(parallel_count) may be at most one more than the I(fail_count).
-        - You must specify one of I(parallel_count) and I(parallel_percentage).
-        - Note that this setting lets you specify the maximum for operations.
-          For large deployments, under certain circumstances the actual count may be lower.
+          - The maximum number of accounts in which to perform this operation at one time.
+          - I(parallel_count) may be at most one more than the I(fail_count).
+          - You must specify one of I(parallel_count) and I(parallel_percentage).
+          - Note that this setting lets you specify the maximum for operations.
+            For large deployments, under certain circumstances the actual count may be lower.
 
 author:
   - "Ryan Scott Brown (@ryansb)"
