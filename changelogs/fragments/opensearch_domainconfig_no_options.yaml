@@ -1,0 +1,3 @@
+---
+bugfixes:
+- "opensearch - Don't try to read a non existing key from the domain config (https://github.com/ansible-collections/community.aws/pull/1910)."
