@@ -1,8 +1,8 @@
 - module_defaults:
     group/aws:
-      aws_access_key: "{{ aws_access_key }}"
-      aws_secret_key: "{{ aws_secret_key }}"
-      security_token: "{{ security_token | default(omit) }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
     cloudfront_distribution:
       alias: "{{ cloudfront_alias | default(omit) }}"
       viewer_certificate: "{{ cloudfront_viewer_cert | default(omit) }}"
@@ -502,10 +502,6 @@
   #      - path_pattern: /another/path
   #        target_origin_id: "{{ resource_prefix }}3.example.com"
   #    state: present
-  #    aws_access_key: "{{ aws_access_key|default(omit) }}"
-  #    aws_secret_key: "{{ aws_secret_key|default(omit) }}"
-  #    security_token: "{{ security_token|default(omit) }}"
-  #    profile: "{{ profile|default(omit) }}"
   #  register: update_cache_behaviors in use
 
   - name: create an s3 bucket for next test
