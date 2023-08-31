@@ -9,7 +9,7 @@
 - cloudwatchlogs_log_group:
     log_group_name: "{{ lock_attempt_log_group_name }}"
     state: absent
-    aws_access_key: "{{ aws_access_key }}"
-    aws_secret_key: "{{ aws_secret_key }}"
-    security_token: "{{ security_token }}"
+    access_key: "{{ aws_access_key }}"
+    secret_key: "{{ aws_secret_key }}"
+    session_token: "{{ security_token | default(omit) }}"
     region: "{{ aws_region }}"
