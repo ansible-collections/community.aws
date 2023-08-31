@@ -49,7 +49,8 @@ options:
       - The value provided by the MFA device, if the trust policy of the role being assumed requires MFA.
     type: str
 notes:
-  - In order to use the assumed role in a following playbook task you must pass the I(access_key), I(secret_key) and I(session_token) parameters to modules that should use the assumed credentials.
+  - In order to use the assumed role in a following playbook task you must pass the I(access_key),
+    I(secret_key) and I(session_token) parameters to modules that should use the assumed credentials.
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules

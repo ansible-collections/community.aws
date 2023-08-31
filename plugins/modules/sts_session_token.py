@@ -29,7 +29,8 @@ options:
       - The value provided by the MFA device, if the trust policy of the user requires MFA.
     type: str
 notes:
-  - In order to use the session token in a following playbook task you must pass the I(access_key), I(secret_key) and I(session_token) parameters to modules that should use the session credentials.
+  - In order to use the session token in a following playbook task you must pass the I(access_key),
+    I(secret_key) and I(session_token) parameters to modules that should use the session credentials.
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
