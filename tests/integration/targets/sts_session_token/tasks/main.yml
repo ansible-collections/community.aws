@@ -3,9 +3,9 @@
 - module_defaults:
     group/aws:
         region: "{{ aws_region }}"
-        aws_access_key: "{{ aws_access_key }}"
-        aws_secret_key: "{{ aws_secret_key }}"
-        security_token: "{{ security_token | default(omit) }}"
+        access_key: "{{ aws_access_key }}"
+        secret_key: "{{ aws_secret_key }}"
+        session_token: "{{ security_token | default(omit) }}"
   collections:
     - amazon.aws
   block:
@@ -54,9 +54,9 @@
 
     - name: Get ARN of user when running with generated token
       aws_caller_info:
-        aws_access_key: "{{ token_details.sts_creds.access_key }}"
-        aws_secret_key: "{{ token_details.sts_creds.secret_key }}"
-        security_token: "{{ token_details.sts_creds.session_token }}"
+        access_key: "{{ token_details.sts_creds.access_key }}"
+        secret_key: "{{ token_details.sts_creds.secret_key }}"
+        session_token: "{{ token_details.sts_creds.session_token }}"
       register: token_aws_caller_info
 
     - assert:

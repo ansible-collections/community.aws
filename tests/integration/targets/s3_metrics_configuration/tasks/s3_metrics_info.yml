@@ -6,10 +6,10 @@
     aws s3api list-bucket-metrics-configurations
       --bucket {{ test_bucket }}
   environment:
-    AWS_ACCESS_KEY_ID: "{{ aws_access_key | default(omit) }}"
-    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key | default(omit) }}"
+    AWS_ACCESS_KEY_ID: "{{ aws_access_key }}"
+    AWS_SECRET_ACCESS_KEY: "{{ aws_secret_key }}"
     AWS_SESSION_TOKEN: "{{ security_token | default(omit) }}"
-    AWS_DEFAULT_REGION: "{{ aws_region | default(omit) }}"
+    AWS_DEFAULT_REGION: "{{ aws_region }}"
   register: list_comand_result
 
 - set_fact:
