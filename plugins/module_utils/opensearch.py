@@ -60,7 +60,8 @@ def get_domain_config(client, module, domain_name):
     arn = None
     if response is not None:
         for k in response["DomainConfig"]:
-            domain_config[k] = response["DomainConfig"][k]["Options"]
+            if "Options" in response["DomainConfig"][k]:
+                domain_config[k] = response["DomainConfig"][k]["Options"]
         domain_config["DomainName"] = domain_name
         # If ES cluster is attached to the Internet, the "VPCOptions" property is not present.
         if "VPCOptions" in domain_config:
