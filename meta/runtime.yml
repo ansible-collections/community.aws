@@ -73,6 +73,17 @@ action_groups:
   - cloudfront_invalidation
   - cloudfront_origin_access_identity
   - cloudfront_response_headers_policy
+  - cloudhsm_cluster_info
+  - cloudhsm_cluster
+  - cloudhsm_initialize_cluster
+  - cloudhsm_hsm_info
+  - cloudhsm_hsm
+  - cloudtrail
+  - cloudwatch_metric_alarm
+  - cloudwatchevent_rule
+  - cloudwatchlogs_log_group
+  - cloudwatchlogs_log_group_info
+  - cloudwatchlogs_log_group_metric_filter
   - codebuild_project
   - codecommit_repository
   - codepipeline
