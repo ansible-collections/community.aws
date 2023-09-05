@@ -1,0 +1,2 @@
+trivial:
+  - "Add route53_wait module to community.aws.aws action group (https://github.com/ansible-collections/community.aws/pull/1904)."

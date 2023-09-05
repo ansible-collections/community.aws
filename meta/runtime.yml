@@ -191,6 +191,7 @@ action_groups:
   - redshift_cross_region_snapshots
   - redshift_info
   - redshift_subnet_group
+  - route53_wait
   - s3_bucket_notification
   - s3_bucket_info
   - s3_cors
