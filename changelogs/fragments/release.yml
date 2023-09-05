@@ -1,0 +1,2 @@
+release_summary: |-
+  This release brings a minor bug fix for the ``opensearch`` module and a new ``route53_wait`` module.
