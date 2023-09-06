@@ -1,0 +1,2 @@
+trivial:
+- route53_wait - fix version_added.
