@@ -1643,9 +1643,8 @@ releases:
     release_date: '2022-06-22'
   2.6.1:
     changes:
-      release_summary:
-        Bump collection from 2.6.0 to 2.6.1 due to a publishing error with 2.6.0.  This
-        release supersedes 2.6.0 entirely, users should skip 2.6.0.
+      release_summary: Bump collection from 2.6.0 to 2.6.1 due to a publishing error
+        with 2.6.0.  This release supersedes 2.6.0 entirely, users should skip 2.6.0.
     fragments:
     - 261_increase.yml
     release_date: '2022-06-22'
@@ -3453,7 +3452,8 @@ releases:
       - cloudfront_distribution - add ``http3`` support via parameter value ``http2and3``
         for parameter ``http_version`` (https://github.com/ansible-collections/community.aws/pull/1753).
       - cloudfront_distribution - add ``origin_shield`` options (https://github.com/ansible-collections/community.aws/pull/1557).
-      - cloudfront_distribution - documented ``connection_attempts`` and ``connection_timeout`` the module was already capable of using them
+      - cloudfront_distribution - documented ``connection_attempts`` and ``connection_timeout``
+        the module was already capable of using them
       - community.aws - updated document fragments based on changes in amazon.aws
         (https://github.com/ansible-collections/community.aws/pull/1738).
       - community.aws - updated imports based on changes in amazon.aws (https://github.com/ansible-collections/community.aws/pull/1738).
@@ -3597,3 +3597,18 @@ releases:
     - release_summary.yml
     - transit_gateway_to_vpn.yaml
     release_date: '2023-08-04'
+  6.3.0:
+    changes:
+      bugfixes:
+      - opensearch - Don't try to read a non existing key from the domain config (https://github.com/ansible-collections/community.aws/pull/1910).
+      release_summary: This release brings a minor bug fix for the ``opensearch``
+        module and a new ``route53_wait`` module.
+    fragments:
+    - 1904-route53_wait.yml
+    - opensearch_domainconfig_no_options.yaml
+    - release.yml
+    modules:
+    - description: wait for changes in Amazons Route 53 DNS service to propagate
+      name: route53_wait
+      namespace: ''
+    release_date: '2023-09-06'
