@@ -1,0 +1,245 @@
+---
+# tasks file for route53_wait integration tests
+
+- set_fact:
+    zone_one: '{{ resource_prefix | replace("-", "") }}.one.ansible.test.'
+- debug:
+    msg: Set zone {{ zone_one }}
+
+- name: Test basics (new zone, A and AAAA records)
+  module_defaults:
+    group/aws:
+      aws_access_key: '{{ aws_access_key }}'
+      aws_secret_key: '{{ aws_secret_key }}'
+      security_token: '{{ security_token | default(omit) }}'
+      region: '{{ aws_region }}'
+    amazon.aws.route53:
+      # Route53 is explicitly a global service
+      region:
+  block:
+  - name: create VPC
+    ec2_vpc_net:
+      cidr_block: 192.0.2.0/24
+      name: '{{ resource_prefix }}_vpc'
+      state: present
+    register: vpc
+
+  - name: Create a zone
+    route53_zone:
+      zone: '{{ zone_one }}'
+      comment: Created in Ansible test {{ resource_prefix }}
+      tags:
+        TestTag: '{{ resource_prefix }}.z1'
+    register: z1
+
+  - name: Create A record (check mode)
+    route53:
+      state: present
+      hosted_zone_id: '{{ z1.zone_id }}'
+      record: test.{{ zone_one }}
+      overwrite: true
+      type: A
+      value: 192.0.2.1
+      wait: false
+    register: result
+    check_mode: true
+  - assert:
+      that:
+      - result is not failed
+      - result is changed
+      - "'wait_id' in result"
+      - result.wait_id is none
+
+  - name: Wait for A record to propagate (should do nothing)
+    route53_wait:
+      result: '{{ result }}'
+
+  - name: Create A record
+    route53:
+      state: present
+      hosted_zone_id: '{{ z1.zone_id }}'
+      record: test.{{ zone_one }}
+      overwrite: true
+      type: A
+      value: 192.0.2.1
+      wait: false
+    register: result
+  - assert:
+      that:
+      - result is not failed
+      - result is changed
+      - "'wait_id' in result"
+      - result.wait_id is string
+
+  - name: Wait for A record to propagate
+    route53_wait:
+      result: '{{ result }}'
+
+  - name: Create A record (idempotent)
+    route53:
+      state: present
+      hosted_zone_id: '{{ z1.zone_id }}'
+      record: test.{{ zone_one }}
+      overwrite: true
+      type: A
+      value: 192.0.2.1
+      wait: false
+    register: result
+  - assert:
+      that:
+      - result is not failed
+      - result is not changed
+      - "'wait_id' not in result"
+
+  - name: Wait for A record to propagate (should do nothing)
+    route53_wait:
+      result: '{{ result }}'
+
+  - name: Create A records
+    route53:
+      state: present
+      hosted_zone_id: '{{ z1.zone_id }}'
+      record: '{{ item.record }}'
+      overwrite: true
+      type: A
+      value: '{{ item.value }}'
+      wait: false
+    loop:
+      - record: test-1.{{ zone_one }}
+        value: 192.0.2.1
+      - record: test-2.{{ zone_one }}
+        value: 192.0.2.2
+      - record: test-3.{{ zone_one }}
+        value: 192.0.2.3
+    register: results
+  - assert:
+      that:
+      - results is not failed
+      - results is changed
+      - results.results | length == 3
+      - results.results[0] is changed
+      - results.results[1] is changed
+      - results.results[2] is changed
+
+  - name: Wait for A records to propagate
+    route53_wait:
+      results: '{{ results }}'
+
+  - name: Create A records (idempotent)
+    route53:
+      state: present
+      hosted_zone_id: '{{ z1.zone_id }}'
+      record: '{{ item.record }}'
+      overwrite: true
+      type: A
+      value: '{{ item.value }}'
+      wait: false
+    loop:
+      - record: test-1.{{ zone_one }}
+        value: 192.0.2.1
+      - record: test-2.{{ zone_one }}
+        value: 192.0.2.2
+      - record: test-3.{{ zone_one }}
+        value: 192.0.2.3
+    register: results
+  - assert:
+      that:
+      - results is not failed
+      - results is not changed
+      - results.results | length == 3
+      - results.results[0] is not changed
+      - results.results[1] is not changed
+      - results.results[2] is not changed
+
+  - name: Wait for A records to propagate (should do nothing)
+    route53_wait:
+      results: '{{ results }}'
+
+  - name: Update some A records
+    route53:
+      state: present
+      hosted_zone_id: '{{ z1.zone_id }}'
+      record: '{{ item.record }}'
+      overwrite: true
+      type: A
+      value: '{{ item.value }}'
+      wait: false
+    loop:
+      - record: test-1.{{ zone_one }}
+        value: 192.0.2.1
+      - record: test-2.{{ zone_one }}
+        value: 192.0.2.4
+      - record: test-3.{{ zone_one }}
+        value: 192.0.2.3
+    register: results
+  - assert:
+      that:
+      - results is not failed
+      - results is changed
+      - results.results | length == 3
+      - results.results[0] is not changed
+      - results.results[1] is changed
+      - results.results[2] is not changed
+
+  - name: Wait for A records to propagate
+    route53_wait:
+      results: '{{ results }}'
+
+#Cleanup------------------------------------------------------
+
+  always:
+
+  - route53_info:
+      query: record_sets
+      hosted_zone_id: '{{ z1.zone_id }}'
+    register: z1_records
+
+  - name: Loop over A/AAAA/CNAME records and delete them
+    route53:
+      state: absent
+      zone: '{{ zone_one }}'
+      record: '{{ item.Name }}'
+      type: '{{ item.Type }}'
+      value: '{{ item.ResourceRecords | map(attribute="Value") | join(",") }}'
+      weight: '{{ item.Weight | default(omit) }}'
+      identifier: '{{ item.SetIdentifier }}'
+      region: '{{ omit }}'
+    ignore_errors: true
+    loop: '{{ z1_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA",
+      "CNAME", "CAA"]) | list }}'
+    when:
+    - '"ResourceRecords" in item'
+    - '"SetIdentifier" in item'
+
+  - name: Loop over A/AAAA/CNAME records and delete them
+    route53:
+      state: absent
+      zone: '{{ zone_one }}'
+      record: '{{ item.Name }}'
+      type: '{{ item.Type }}'
+      value: '{{ item.ResourceRecords | map(attribute="Value") | join(",") }}'
+    ignore_errors: true
+    loop: '{{ z1_records.ResourceRecordSets | selectattr("Type", "in", ["A", "AAAA",
+      "CNAME", "CAA"]) | list }}'
+    when:
+    - '"ResourceRecords" in item'
+
+  - name: Delete test zone one {{ zone_one }}
+    route53_zone:
+      state: absent
+      zone: '{{ zone_one }}'
+    register: delete_one
+    ignore_errors: true
+    retries: 10
+    until: delete_one is not failed
+
+  - name: destroy VPC
+    ec2_vpc_net:
+      cidr_block: 192.0.2.0/24
+      name: '{{ resource_prefix }}_vpc'
+      state: absent
+    register: remove_vpc
+    retries: 10
+    delay: 5
+    until: remove_vpc is success
+    ignore_errors: true
