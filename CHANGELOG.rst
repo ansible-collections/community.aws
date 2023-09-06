@@ -5,6 +5,24 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v6.3.0
+======
+
+Release Summary
+---------------
+
+This release brings a minor bug fix for the ``opensearch`` module and a new ``route53_wait`` module.
+
+Bugfixes
+--------
+
+- opensearch - Don't try to read a non existing key from the domain config (https://github.com/ansible-collections/community.aws/pull/1910).
+
+New Modules
+-----------
+
+- route53_wait - wait for changes in Amazons Route 53 DNS service to propagate
+
 v6.2.0
 ======
 
