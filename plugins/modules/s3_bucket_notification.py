@@ -159,7 +159,7 @@ class AmazonBucket:
                 if config.raw["Id"] == config_name:
                     return config
 
-    def apply_config(self, event_config, desired):
+    def apply_config(self, desired):
         configs = dict(QueueConfigurations=[], TopicConfigurations=[], LambdaFunctionConfigurations=[])
 
         # Iterate through existing configs then add the desired config
@@ -178,7 +178,7 @@ class AmazonBucket:
         self._upload_bucket_config(configs)
         return configs
 
-    def delete_config(self, event_config, desired):
+    def delete_config(self, desired):
         configs = dict(QueueConfigurations=[], TopicConfigurations=[], LambdaFunctionConfigurations=[])
 
         # Iterate through existing configs omitting specified config
@@ -190,7 +190,7 @@ class AmazonBucket:
         self._upload_bucket_config(configs)
         return configs
 
-    def _upload_bucket_config(self,event_config, config):
+    def _upload_bucket_config(self, config):
         api_params = dict(Bucket=self.bucket_name, NotificationConfiguration=dict())
 
         # Iterate through available configs
