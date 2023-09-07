@@ -193,6 +193,7 @@ class Config:
         }
         if function_arn:
             qualifier = None
+            config['LambdaFunctionArn'] = params['lambda_function_arn']
             if params['lambda_version'] > 0:
                 qualifier = str(params['lambda_version'])
             elif params['lambda_alias']:
