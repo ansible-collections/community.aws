@@ -153,7 +153,7 @@ class AmazonBucket:
 
         return self._full_config_cache
 
-    def current_config(self,event_config, config_name):
+    def current_config(self, config_name):
         for target_configs in self.full_config():
             for config in self.full_config()[target_configs]:
                 if config.raw["Id"] == config_name:
