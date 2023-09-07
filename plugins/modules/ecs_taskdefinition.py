@@ -628,7 +628,7 @@ options:
                 description: A cluster query language expression to apply to the constraint.
                 type: str
     runtime_platform:
-        version_added: 6.2.0
+        version_added: 6.4.0
         description:
             - runtime platform configuration for the task
         required: false
