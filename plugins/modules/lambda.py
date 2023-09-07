@@ -232,7 +232,7 @@ import traceback
 import re
 
 try:
-    from botocore.exceptions import ClientError, BotoCoreError
+    from botocore.exceptions import ClientError, BotoCoreError, WaiterError
 except ImportError:
     pass  # protected by AnsibleAWSModule
 
@@ -327,6 +327,16 @@ def set_tag(client, module, tags, function):
 
     return changed
 
+def wait_for_lambda(client, module, name):
+    try:
+        client_active_waiter = client.get_waiter('function_active')
+        client_updated_waiter = client.get_waiter('function_updated')
+        client_active_waiter.wait(FunctionName=name)
+        client_updated_waiter.wait(FunctionName=name)
+    except WaiterError as e:
+        module.fail_json_aws(e, msg='Timeout while waiting on lambda to finish updating')
+    except (ClientError, BotoCoreError) as e:
+        module.fail_json_aws(e, msg='Failed while waiting on lambda to finish updating')
 
 def main():
     argument_spec = dict(
@@ -480,6 +490,8 @@ def main():
 
         # Upload new configuration if configuration has changed
         if len(func_kwargs) > 1:
+            if not check_mode:
+               wait_for_lambda(client, module, name)
             try:
                 if not check_mode:
                     response = client.update_function_configuration(aws_retry=True, **func_kwargs)
@@ -524,6 +536,8 @@ def main():
 
         # Upload new code if needed (e.g. code checksum has changed)
         if len(code_kwargs) > 2:
+            if not check_mode:
+               wait_for_lambda(client, module, name)
             try:
                 if not check_mode:
                     response = client.update_function_code(aws_retry=True, **code_kwargs)
