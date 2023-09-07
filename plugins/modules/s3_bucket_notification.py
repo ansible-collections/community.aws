@@ -190,7 +190,7 @@ class AmazonBucket:
         self._upload_bucket_config(configs)
         return configs
 
-    def _upload_bucket_config(self, config):
+    def _upload_bucket_config(self, configs):
         api_params = dict(Bucket=self.bucket_name, NotificationConfiguration=dict())
 
         # Iterate through available configs
