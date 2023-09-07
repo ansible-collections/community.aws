@@ -908,6 +908,65 @@
     started_by: ansible_user
   register: fargate_run_task_output_with_assign_ip
 
+- name: create task definition for ARM
+  ecs_taskdefinition:
+    containers: "{{ ecs_fargate_task_containers }}"
+    family: "{{ ecs_task_name }}-arm"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 512
+    memory: 1024
+    execution_role_arn: "{{ iam_execution_role.arn }}"
+    state: present
+    runtime_platform:
+      cpuArchitecture: "ARM64"
+      operatingSystemFamily: "LINUX"
+  vars:
+    ecs_task_host_port: 8080
+  register: fargate_arm_task_definition
+
+- name: check that initial task definition for ARM changes
+  assert:
+    that:
+      - fargate_arm_task_definition.changed
+
+- name: recreate task definition for ARM
+  ecs_taskdefinition:
+    containers: "{{ ecs_fargate_task_containers }}"
+    family: "{{ ecs_task_name }}-arm"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 512
+    memory: 1024
+    execution_role_arn: "{{ iam_execution_role.arn }}"
+    state: present
+    runtime_platform:
+      cpuArchitecture: "ARM64"
+      operatingSystemFamily: "LINUX"
+  vars:
+    ecs_task_host_port: 8080
+  register: fargate_arm_task_definition_again
+
+- name: check that task definition for ARM does not change
+  assert:
+    that:
+      - not fargate_arm_task_definition_again.changed
+
+- name: delete task definition for ARM
+  ecs_taskdefinition:
+    containers: "{{ ecs_fargate_task_containers }}"
+    family: "{{ ecs_task_name }}-arm"
+    network_mode: awsvpc
+    launch_type: FARGATE
+    cpu: 512
+    memory: 1024
+    execution_role_arn: "{{ iam_execution_role.arn }}"
+    state: present
+    runtime_platform:
+      cpuArchitecture: "ARM64"
+      operatingSystemFamily: "LINUX"
+  vars:
+    ecs_task_host_port: 8080
 
 # ============================================================
 # End tests for Fargate
