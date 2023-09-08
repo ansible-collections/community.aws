@@ -62,7 +62,7 @@
     # Module requirement testing
     # ============================================================
     - name: test rule with no source parameter
-      aws_config_rule:
+      config_rule:
         name: random_name
         state: present
       register: output
@@ -75,7 +75,7 @@
            - 'output.msg.startswith("missing required arguments:")'
 
     - name: test resource_type delivery_channel with no s3_bucket parameter
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: random_name
         state: present
       register: output
@@ -88,7 +88,7 @@
            - 'output.msg.startswith("missing required arguments:")'
 
     - name: test resource_type configuration_recorder with no role_arn parameter
-      aws_config_recorder:
+      config_recorder:
         name: random_name
         state: present
       register: output
@@ -101,7 +101,7 @@
            - 'output.msg.startswith("state is present but all of the following are missing")'
 
     - name: test resource_type configuration_recorder with no recording_group parameter
-      aws_config_recorder:
+      config_recorder:
         name: random_name
         state: present
         role_arn: 'arn:aws:iam::123456789012:role/AwsConfigRecorder'
@@ -115,7 +115,7 @@
            - 'output.msg.startswith("state is present but all of the following are missing")'
 
     - name: test resource_type aggregation_authorization with no authorized_account_id parameter
-      aws_config_aggregation_authorization:
+      config_aggregation_authorization:
         state: present
       register: output
       ignore_errors: true
@@ -127,7 +127,7 @@
            - 'output.msg.startswith("missing required arguments:")'
 
     - name: test resource_type aggregation_authorization with no authorized_aws_region parameter
-      aws_config_aggregation_authorization:
+      config_aggregation_authorization:
         state: present
         authorized_account_id: '123456789012'
       register: output
@@ -140,7 +140,7 @@
            - 'output.msg.startswith("missing required arguments:")'
 
     - name: test resource_type configuration_aggregator with no account_sources parameter
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: present
       register: output
@@ -153,7 +153,7 @@
            - 'output.msg.startswith("missing required arguments: account_sources")'
 
     - name: test resource_type configuration_aggregator with no organization_source parameter
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: present
         account_sources: []
@@ -170,7 +170,7 @@
     # Creation testing
     # ============================================================
     - name: Create Configuration Recorder for AWS Config
-      aws_config_recorder:
+      config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: present
         role_arn: "{{ config_iam_role.arn }}"
@@ -184,7 +184,7 @@
           - output.changed
 
     - name: Create Delivery Channel for AWS Config
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: '{{ resource_prefix }}-channel'
         state: present
         s3_bucket: "{{ config_s3_bucket }}"
@@ -198,7 +198,7 @@
           - output.changed
 
     - name: Create Delivery Channel for AWS Config with a KMS key
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: '{{ resource_prefix }}-channel'
         state: present
         s3_bucket: "{{ config_s3_bucket }}"
@@ -213,7 +213,7 @@
           - output.changed
 
     - name: Create Config Rule for AWS Config
-      aws_config_rule:
+      config_rule:
         name: '{{ resource_prefix }}-rule'
         state: present
         description: 'This AWS Config rule checks for public write access on S3 buckets'
@@ -230,7 +230,7 @@
           - output.changed
 
     - name: Create aws_config_aggregator
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: present
         account_sources: []
@@ -245,7 +245,7 @@
            - output is changed
 
     - name: Create aws_config_aggregator - idempotency
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: present
         account_sources: []
@@ -263,7 +263,7 @@
     # Update testing
     # ============================================================
     - name: Update Configuration Recorder
-      aws_config_recorder:
+      config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: present
         role_arn: "{{ config_iam_role.arn }}"
@@ -279,7 +279,7 @@
           - output.changed
 
     - name: Update Delivery Channel
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: '{{ resource_prefix }}-channel'
         state: present
         s3_bucket: "{{ config_s3_bucket }}"
@@ -292,7 +292,7 @@
           - output.changed
 
     - name: Update Delivery Channel with KMS key
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: '{{ resource_prefix }}-channel'
         state: present
         s3_bucket: "{{ config_s3_bucket }}"
@@ -306,7 +306,7 @@
           - output.changed
 
     - name: Update Config Rule
-      aws_config_rule:
+      config_rule:
         name: '{{ resource_prefix }}-rule'
         state: present
         description: 'This AWS Config rule checks for public write access on S3 buckets'
@@ -323,7 +323,7 @@
           - output.changed
 
     - name: Update Config Rule - idempotency
-      aws_config_rule:
+      config_rule:
         name: '{{ resource_prefix }}-rule'
         state: present
         description: 'This AWS Config rule checks for public write access on S3 buckets'
@@ -340,7 +340,7 @@
           - output is not changed
 
     - name: Update aws_config_aggregator
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: present
         account_sources: []
@@ -357,7 +357,7 @@
            - output is changed
 
     - name: Update aws_config_aggregator - idempotency
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: present
         account_sources: []
@@ -377,7 +377,7 @@
     # Read testing
     # ============================================================
     - name: Don't update Configuration Recorder
-      aws_config_recorder:
+      config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: present
         role_arn: "{{ config_iam_role.arn }}"
@@ -393,7 +393,7 @@
           - not output.changed
 
     - name: Don't update Delivery Channel
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: '{{ resource_prefix }}-channel'
         state: present
         s3_bucket: "{{ config_s3_bucket }}"
@@ -406,7 +406,7 @@
           - not output.changed
 
     - name: Don't update Config Rule
-      aws_config_rule:
+      config_rule:
         name: '{{ resource_prefix }}-rule'
         state: present
         description: 'This AWS Config rule checks for public write access on S3 buckets'
@@ -425,7 +425,7 @@
   always:
 
     - name: delete aws_config_aggregator
-      aws_config_aggregator:
+      config_aggregator:
         name: random_name
         state: absent
       register: output
@@ -435,7 +435,7 @@
     # Destroy testing
     # ============================================================
     - name: Destroy Configuration Recorder
-      aws_config_recorder:
+      config_recorder:
         name: '{{ resource_prefix }}-recorder'
         state: absent
       register: output
@@ -446,7 +446,7 @@
 #          - output.changed
 
     - name: Destroy Delivery Channel
-      aws_config_delivery_channel:
+      config_delivery_channel:
         name: '{{ resource_prefix }}-channel'
         state: absent
         s3_bucket: "{{ config_s3_bucket }}"
@@ -460,7 +460,7 @@
 #          - output.changed
 
     - name: Destroy Config Rule
-      aws_config_rule:
+      config_rule:
         name: '{{ resource_prefix }}-rule'
         state: absent
         description: 'This AWS Config rule checks for public write access on S3 buckets'

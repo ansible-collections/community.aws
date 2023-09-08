@@ -83,7 +83,7 @@
           AnsibleTest: AnsibleTestVpc
 
     - name: Create security group for use in testing
-      ec2_group:
+      ec2_security_group:
         name: "{{ tiny_prefix }}-sg"
         description: a security group for ansible tests
         vpc_id: "{{ testing_vpc.vpc.id }}"
@@ -120,7 +120,7 @@
 
     - name: Create KMS key for test purpose
       # The key is needed for OpenSearch encryption at rest.
-      aws_kms:
+      kms_key:
         alias: "{{ tiny_prefix }}-kms"
         description: a key used for encryption at rest in test OpenSearch cluster
         state: present

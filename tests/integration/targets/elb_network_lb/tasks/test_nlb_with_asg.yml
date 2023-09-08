@@ -1,17 +1,17 @@
 - block:
 
     # create instances
-    - ec2_asg:
+    - autoscaling_group:
         state: absent
         name: "{{ resource_prefix }}-webservers"
         wait_timeout: 900
 
-    - ec2_lc:
+    - autoscaling_launch_config:
         name: "{{ resource_prefix }}-web-lcfg"
         state: absent
 
     - name: Create launch config for testing
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ resource_prefix }}-web-lcfg"
         assign_public_ip: true
         image_id: "{{ ec2_ami_id }}"
@@ -31,7 +31,7 @@
             delete_on_termination: true
 
     - name: Create autoscaling group for app server fleet
-      ec2_asg:
+      autoscaling_group:
         name: "{{ resource_prefix }}-webservers"
         vpc_zone_identifier: "{{ nlb_subnets }}"
         launch_config_name: "{{ resource_prefix }}-web-lcfg"
@@ -50,13 +50,13 @@
 
   always:
 
-    - ec2_asg:
+    - autoscaling_group:
         state: absent
         name: "{{ resource_prefix }}-webservers"
         wait_timeout: 900
       ignore_errors: yes
 
-    - ec2_lc:
+    - autoscaling_launch_config:
         name: "{{ resource_prefix }}-web-lcfg"
         state: absent
       ignore_errors: yes

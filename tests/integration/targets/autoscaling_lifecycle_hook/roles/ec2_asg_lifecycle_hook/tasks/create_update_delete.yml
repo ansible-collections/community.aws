@@ -4,7 +4,7 @@
   block:
   #----------------------------------------------------------------------
     - name: create a launch configuration
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ resource_prefix }}-lc"
         image_id: "{{ ec2_ami_id }}"
         region: "{{ aws_region }}"
@@ -20,7 +20,7 @@
 
     #----------------------------------------------------------------------
     - name: create a AutoScalingGroup
-      ec2_asg:
+      autoscaling_group:
         name: "{{ resource_prefix }}-asg"
         launch_config_name: "{{ resource_prefix }}-lc"
         health_check_period: 60
@@ -42,7 +42,7 @@
     #----------------------------------------------------------------------
 
     - name: Create lifecycle hook - check_mode
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -61,7 +61,7 @@
           - '"Would have created AutoScalingGroup Lifecycle Hook if not in check_mode" in output.msg'
 
     - name: Create lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -79,7 +79,7 @@
           - output.lifecycle_hook_info[0].heartbeat_timeout == 7000
 
     - name: Create lifecycle hook - Idempotency
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -96,7 +96,7 @@
           - '"lifecycle_hook_info" not in output'
 
     - name: Create lifecycle hook - check_mode (Idempotency)
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -114,7 +114,7 @@
           - '"lifecycle_hook_info" not in output'
 
     - name: Update lifecycle hook - check_mode
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -133,7 +133,7 @@
           - '"Would have modified AutoScalingGroup Lifecycle Hook if not in check_mode." in output.msg'
 
     - name: Update lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -151,7 +151,7 @@
           - output.lifecycle_hook_info[0].heartbeat_timeout == 6000
 
     - name: Update lifecycle hook - Idempotency
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -168,7 +168,7 @@
           - '"lifecycle_hook_info" not in output'
 
     - name: Update lifecycle hook - check_mode (Idempotency)
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -186,7 +186,7 @@
           - '"lifecycle_hook_info" not in output'
 
     - name: Delete lifecycle hook - check_mode
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -202,7 +202,7 @@
           - '"Would have deleted AutoScalingGroup Lifecycle Hook if not in check_mode." in output.msg'
 
     - name: Delete lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -216,7 +216,7 @@
           - '"lifecycle_hook_removed" in output'
 
     - name: Delete lifecycle hook - Idempotency
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -230,7 +230,7 @@
           - '"lifecycle_hook_removed" not in output'
 
     - name: Delete lifecycle hook - check_mode (Idempotency)
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"

@@ -15,7 +15,7 @@
       register: aws_caller_info
 
     - name: create KMS key for testing
-      aws_kms:
+      kms_key:
         alias: "{{ resource_prefix }}-ecr"
         description: a key used for testing ECR
         state: present
@@ -607,6 +607,6 @@
         state: absent
 
     - name: Delete KMS key
-      aws_kms:
+      kms_key:
         key_id: '{{ kms_test_key.key_arn }}'
         state: absent

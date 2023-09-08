@@ -9,14 +9,14 @@
   ignore_errors: true
 
 - name: Delete ASG
-  ec2_asg:
+  autoscaling_group:
     name: '{{ asg_name }}'
     state: absent
   ignore_errors: true
   register: ec2_asg_a
 
 - name: Delete Launch Template
-  ec2_lc:
+  autoscaling_launch_config:
     name: '{{ lc_name }}'
     state: absent
   ignore_errors: true

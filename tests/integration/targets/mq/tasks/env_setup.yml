@@ -18,7 +18,7 @@
   register: testing_subnet_a
 
 - name: create a security group with the vpc
-  ec2_group:
+  ec2_security_group:
     name: "{{ sg_name }}"
     description: a security group for ansible tests
     vpc_id: "{{ testing_vpc.vpc.id }}"

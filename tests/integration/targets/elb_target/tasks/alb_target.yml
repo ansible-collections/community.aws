@@ -51,7 +51,7 @@
       register: route_table
 
     - name: create testing security group
-      ec2_group:
+      ec2_security_group:
         name: "{{ resource_prefix }}-sg"
         description: a security group for ansible tests
         vpc_id: "{{ vpc.vpc.id }}"
@@ -177,7 +177,7 @@
     ignore_errors: true
 
   - name: remove testing security group
-    ec2_group:
+    ec2_security_group:
       state: absent
       name: "{{ resource_prefix }}-sg"
     register: removed

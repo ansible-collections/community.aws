@@ -261,7 +261,7 @@
   register: this_deletion
 
 - name: remove security groups
-  ec2_group:
+  ec2_security_group:
     name: '{{ item }}'
     description: 'created by Ansible integration tests'
     state: absent

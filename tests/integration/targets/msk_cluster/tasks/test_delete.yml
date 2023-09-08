@@ -1,6 +1,6 @@
 ---
 - name: delete msk cluster (check mode)
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "absent"
     wait: true
@@ -13,7 +13,7 @@
       - msk_cluster is changed
 
 - name: delete msk cluster
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "absent"
     wait: true
@@ -25,7 +25,7 @@
       - msk_cluster is changed
 
 - name: delete msk cluster (idempotency)
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "absent"
     wait: true

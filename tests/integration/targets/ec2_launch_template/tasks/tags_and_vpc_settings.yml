@@ -31,7 +31,7 @@
     register: testing_subnet_b
 
   - name: create a security group with the vpc
-    ec2_group:
+    ec2_security_group:
       name: "{{ resource_prefix }}-sg"
       description: a security group for ansible tests
       vpc_id: "{{ testing_vpc.vpc.id }}"
@@ -164,7 +164,7 @@
 
   always:
   - name: remove the security group
-    ec2_group:
+    ec2_security_group:
       name: "{{ resource_prefix }}-sg"
       description: a security group for ansible tests
       vpc_id: "{{ testing_vpc.vpc.id }}"

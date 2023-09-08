@@ -7,6 +7,9 @@
 # Prepare the VPC and figure out which AMI to use
 - hosts: all
   gather_facts: no
+  collections:
+    - amazon.aws
+    - community.aws
   tasks:
   - module_defaults:
       group/aws:
