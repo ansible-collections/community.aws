@@ -37,7 +37,7 @@
           - "{{ testing_subnet.subnet.id }}"
 
     - name: create a security group with the vpc created in the ec2_setup
-      ec2_group:
+      ec2_security_group:
         name: "{{ sg_name }}"
         description: a security group for ansible tests
         vpc_id: "{{ testing_vpc.vpc.id }}"
@@ -53,7 +53,7 @@
       register: sg
 
     - name: create a launch configuration
-      ec2_lc:
+      autoscaling_launch_config:
         name: "{{ lc_name }}"
         image_id: "{{ ec2_ami_id }}"
         instance_type: t2.micro
@@ -67,7 +67,7 @@
           - create_lc.failed is false
 
     - name: create a AutoScalingGroup
-      ec2_asg:
+      autoscaling_group:
         name: "{{ asg_name }}"
         launch_config_name: "{{ lc_name }}"
         health_check_period: 60

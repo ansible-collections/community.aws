@@ -25,7 +25,7 @@
     instance_b: "{{ ec2_instance_b.instance_ids[0] }}"
 
 - name: Create a Launch Template
-  ec2_lc:
+  autoscaling_launch_config:
     name: "{{ lc_name }}"
     image_id: "{{ ec2_ami_id }}"
     security_groups: "{{ sg_a }}"
@@ -34,7 +34,7 @@
   register: ec2_lc_a
 
 - name: Create an ASG
-  ec2_asg:
+  autoscaling_group:
     name: "{{ asg_name }}"
     load_balancers:
     - "{{ elb_name_1 }}"

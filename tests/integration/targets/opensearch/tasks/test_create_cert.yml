@@ -21,7 +21,7 @@
     privatekey_path: '{{ tempdir_1.path }}/rsa-private-key.pem'
     selfsigned_digest: sha256
 - name: import certificate to ACM
-  aws_acm:
+  acm_certificate:
     name_tag: 'opensearch.ansible-integ-test.com'
     domain_name: 'opensearch.ansible-integ-test.com'
     certificate: "{{ lookup('file', tempdir_1.path + '/rsa-certificate.pem') }}"

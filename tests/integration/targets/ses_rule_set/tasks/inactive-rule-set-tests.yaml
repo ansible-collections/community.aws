@@ -14,7 +14,7 @@
 - name: test create rule sets
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
       register: result
     - name: assert changed to exists inactive
@@ -24,7 +24,7 @@
           - result.active == False
           - "default_rule_set in result.rule_sets|map(attribute='name')"
     - name: recreate rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
       register: result
     - name: assert changed is False
@@ -33,7 +33,7 @@
           - result.changed == False
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -41,7 +41,7 @@
 - name: Remove No Such Rules Set
   block:
     - name: remove ruleset
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
       register: result
@@ -54,10 +54,10 @@
 - name: Remove Inactive Rule Set
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
     - name: remove rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
       register: result
@@ -68,7 +68,7 @@
           - "default_rule_set not in result.rule_sets|map(attribute='name')"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -76,7 +76,7 @@
 - name: test create in check mode
   block:
     - name: create rule set in check mode
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
       register: result
       check_mode: True
@@ -88,7 +88,7 @@
           - "default_rule_set in result.rule_sets|map(attribute='name')"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -101,10 +101,10 @@
 - name: mark rule set active in check mode
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
     - name: mark rule set active in check mode
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: True
       register: result
@@ -118,7 +118,7 @@
     # it active again as that way this test can be run in 
     # parallel
     - name: Ensure rule set is inactive
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         active: False
       register: result
@@ -128,7 +128,7 @@
           - result.changed == False
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True
@@ -136,10 +136,10 @@
 - name: Remove Inactive Rule Set in check mode
   block:
     - name: create rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
     - name: remove rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
       register: result
@@ -151,7 +151,7 @@
           - "default_rule_set not in result.rule_sets|map(attribute='name')"
   always:
     - name: cleanup rule set
-      aws_ses_rule_set:
+      ses_rule_set:
         name: "{{ default_rule_set }}"
         state: absent
         force: True

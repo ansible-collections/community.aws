@@ -3,7 +3,7 @@
   block:
     #----------------------------------------------------------------------
     - name: Create lifecycle hook
-      ec2_asg_lifecycle_hook:
+      autoscaling_lifecycle_hook:
         autoscaling_group_name: "{{ asg_name }}"
         lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook"
         transition: autoscaling:EC2_INSTANCE_LAUNCHING
@@ -18,7 +18,7 @@
           - output is not failed
 
     - name: Create lifecycle hook
-      ec2_asg_lifecycle_hook:
+      autoscaling_lifecycle_hook:
         autoscaling_group_name: "{{ asg_name }}"
         lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook-terminate"
         transition: autoscaling:EC2_INSTANCE_TERMINATING
@@ -33,7 +33,7 @@
           - output is not failed
 
     - name: Trigger scale-up
-      ec2_asg:
+      autoscaling_group:
         name: "{{ asg_name }}"
         replace_all_instances: yes
         min_size: 0
@@ -47,7 +47,7 @@
           - scale_asg is changed
 
     - name: Describe ASG
-      ec2_asg_info:
+      autoscaling_group_info:
         name: "{{ asg_name }}"
       register: scaled_asg
       retries: 24
@@ -62,7 +62,7 @@
         instance_ids: '{{ scaled_asg.results[0].instances | map(attribute="instance_id") | list }}'
 
     - name: Describe ASG
-      ec2_asg_info:
+      autoscaling_group_info:
         name: "{{ asg_name }}"
 
     - name: Complete Lifecycle Hook
@@ -80,7 +80,7 @@
         instance_id: '{{ instance_ids[1] }}'
 
     - name: Describe ASG
-      ec2_asg_info:
+      autoscaling_group_info:
         name: "{{ asg_name }}"
       register: hooks_pending
       retries: 24
@@ -104,7 +104,7 @@
 
   always:
     - name: Delete lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         autoscaling_group_name: "{{ asg_name }}"
         lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook"
         state: absent
@@ -112,7 +112,7 @@
       ignore_errors: True
 
     - name: Delete lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         autoscaling_group_name: "{{ asg_name }}"
         lifecycle_hook_name: "{{ resource_prefix }}-lifecycle-hook-terminate"
         state: absent

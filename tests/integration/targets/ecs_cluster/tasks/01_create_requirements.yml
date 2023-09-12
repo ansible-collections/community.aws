@@ -72,7 +72,7 @@
   register: igw
 
 - name: create a security group to use for creating an ec2 instance
-  ec2_group:
+  ec2_security_group:
     name: '{{ resource_prefix }}_ecs_cluster-sg'
     description: 'created by Ansible integration tests'
     state: present

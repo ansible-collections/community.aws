@@ -32,7 +32,7 @@
   register: setup_subnet_2
 
 - name: create a security group
-  ec2_group:
+  ec2_security_group:
     name: '{{ sg_name_1 }}'
     description: 'created by Ansible integration tests'
     state: present
@@ -45,7 +45,7 @@
   register: setup_sg_1
 
 - name: create a security group
-  ec2_group:
+  ec2_security_group:
     name: '{{ sg_name_2 }}'
     description: 'created by Ansible integration tests'
     state: present
