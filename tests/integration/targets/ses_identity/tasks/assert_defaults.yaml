@@ -5,8 +5,8 @@
 - name: assert returned identity_arn
   assert:
     that:
-      - "result.identity_arn|regex_search('^arn:aws:ses:' + ec2_region + ':[0-9]*:identity/' + identity + '$')"
-    msg: "'{{ result.identity_arn}}' doesn't match regex '^arn:aws:ses:{{ ec2_region }}:[0-9]*:identity/{{ identity }}'"
+      - "result.identity_arn|regex_search('^arn:aws:ses:' + aws_region + ':[0-9]*:identity/' + identity + '$')"
+    msg: "'{{ result.identity_arn}}' doesn't match regex '^arn:aws:ses:{{ aws_region }}:[0-9]*:identity/{{ identity }}'"
 - name: assert verification_attributes.verification_status == 'Pending'
   assert:
     that:
