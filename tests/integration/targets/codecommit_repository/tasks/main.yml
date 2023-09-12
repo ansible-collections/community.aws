@@ -8,7 +8,7 @@
   block:
   # ============================================================
   - name: Create a repository (CHECK MODE)
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       description: original comment
       state: present
@@ -19,7 +19,7 @@
         - output is changed
 
   - name: Create a repository
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       description: original comment
       state: present
@@ -31,7 +31,7 @@
         - output.repository_metadata.repository_description == 'original comment'
 
   - name: No-op update to repository
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       description: original comment
       state: present
@@ -43,7 +43,7 @@
         - output.repository_metadata.repository_description == 'original comment'
 
   - name: Update repository description (CHECK MODE)
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       description: new comment
       state: present
@@ -56,7 +56,7 @@
         - output.repository_metadata.repository_description == 'original comment'
 
   - name: Update repository description
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       description: new comment
       state: present
@@ -69,7 +69,7 @@
 
   # ============================================================
   - name: Delete  a repository (CHECK MODE)
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       state: absent
     register: output
@@ -79,7 +79,7 @@
         - output is changed
 
   - name: Delete  a repository
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       state: absent
     register: output
@@ -88,7 +88,7 @@
         - output is changed
 
   - name: Delete a non-existent repository
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       state: absent
     register: output
@@ -97,7 +97,7 @@
         - output is not changed
 
   - name: Create a repository without description
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       state: present
     register: output
@@ -107,7 +107,7 @@
         - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
 
   - name: No-op update to repository without description
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       state: present
     register: output
@@ -117,7 +117,7 @@
         - output.repository_metadata.repository_name == '{{ resource_prefix }}_repo'
 
   - name: Delete  a repository without description
-    aws_codecommit:
+    codecommit_repository:
       name: "{{ resource_prefix }}_repo"
       state: absent
     register: output
@@ -128,7 +128,7 @@
   always:
      ###### TEARDOWN STARTS HERE ######
     - name: Delete  a repository
-      aws_codecommit:
+      codecommit_repository:
         name: "{{ resource_prefix }}_repo"
         state: absent
       ignore_errors: yes

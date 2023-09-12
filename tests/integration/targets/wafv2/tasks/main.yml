@@ -126,7 +126,7 @@
       ignore_errors: true
 
     - name: destroy sec group
-      ec2_group:
+      ec2_security_group:
         name: '{{ sec_group.group_name }}'
         description: security group for Ansible ALB integration tests
         state: absent

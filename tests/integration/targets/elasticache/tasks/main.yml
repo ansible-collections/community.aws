@@ -64,7 +64,7 @@
           - elasticache_redis.elasticache.data.CacheSubnetGroupName == "{{ elasticache_subnet_group_name }}"
 
     - name: Add security group for Redis access in Elasticache
-      ec2_group:
+      ec2_security_group:
         name: "{{ elasticache_redis_sg_name }}"
         description: Allow access to Elasticache Redis for testing EC module
         vpc_id: "{{ elasticache_vpc.vpc.id }}"
@@ -186,7 +186,7 @@
         state: absent
 
     - name: Make sure Redis Security Group is deleted again
-      ec2_group:
+      ec2_security_group:
         name: "{{ elasticache_redis_sg_name }}"
         state: absent
 

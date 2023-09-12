@@ -27,7 +27,7 @@
       new_snake_case_key: snake_case_value
   # Mandatory settings
   module_defaults:
-    community.aws.aws_codebuild:
+    community.aws.codebuild_project:
       name: '{{ project_name }}'
 #    community.aws.aws_codebuild_info:
 #      name: '{{ project_name }}'
@@ -36,7 +36,7 @@
   ###
 
 #  - name: test adding tags to aws_codebuild (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: '{{ first_tags }}'
 #      purge_tags: True
 #    register: update_result
@@ -47,7 +47,7 @@
 #      - update_result is changed
 
   - name: test adding tags to aws_codebuild
-    aws_codebuild:
+    codebuild_project:
       resource_tags: '{{ first_tags }}'
       purge_tags: True
     register: update_result
@@ -58,7 +58,7 @@
       - update_result.project.resource_tags == first_tags
 
 #  - name: test adding tags to aws_codebuild - idempotency (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: '{{ first_tags }}'
 #      purge_tags: True
 #    register: update_result
@@ -69,7 +69,7 @@
 #      - update_result is not changed
 
   - name: test adding tags to aws_codebuild - idempotency
-    aws_codebuild:
+    codebuild_project:
       resource_tags: '{{ first_tags }}'
       purge_tags: True
     register: update_result
@@ -82,7 +82,7 @@
   ###
 
 #  - name: test updating tags with purge on aws_codebuild (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: '{{ second_tags }}'
 #      purge_tags: True
 #    register: update_result
@@ -93,7 +93,7 @@
 #      - update_result is changed
 
   - name: test updating tags with purge on aws_codebuild
-    aws_codebuild:
+    codebuild_project:
       resource_tags: '{{ second_tags }}'
       purge_tags: True
     register: update_result
@@ -104,7 +104,7 @@
       - update_result.project.resource_tags == second_tags
 
 #  - name: test updating tags with purge on aws_codebuild - idempotency (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: '{{ second_tags }}'
 #      purge_tags: True
 #    register: update_result
@@ -115,7 +115,7 @@
 #      - update_result is not changed
 
   - name: test updating tags with purge on aws_codebuild - idempotency
-    aws_codebuild:
+    codebuild_project:
       resource_tags: '{{ second_tags }}'
       purge_tags: True
     register: update_result
@@ -128,7 +128,7 @@
   ###
 
 #  - name: test updating tags without purge on aws_codebuild (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: '{{ third_tags }}'
 #      purge_tags: False
 #    register: update_result
@@ -139,7 +139,7 @@
 #      - update_result is changed
 
   - name: test updating tags without purge on aws_codebuild
-    aws_codebuild:
+    codebuild_project:
       resource_tags: '{{ third_tags }}'
       purge_tags: False
     register: update_result
@@ -150,7 +150,7 @@
       - update_result.project.resource_tags == final_tags
 
 #  - name: test updating tags without purge on aws_codebuild - idempotency (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: '{{ third_tags }}'
 #      purge_tags: False
 #    register: update_result
@@ -161,7 +161,7 @@
 #      - update_result is not changed
 
   - name: test updating tags without purge on aws_codebuild - idempotency
-    aws_codebuild:
+    codebuild_project:
       resource_tags: '{{ third_tags }}'
       purge_tags: False
     register: update_result
@@ -184,7 +184,7 @@
 #  ###
 
 #  - name: test no tags param aws_codebuild (check mode)
-#    aws_codebuild: {}
+#    codebuild_project: {}
 #    register: update_result
 #    check_mode: yes
 #  - name: assert no change
@@ -195,7 +195,7 @@
 #
 
   - name: test no tags param aws_codebuild
-    aws_codebuild: {}
+    codebuild_project: {}
     register: update_result
   - name: assert no change
     assert:
@@ -206,7 +206,7 @@
   ###
 
 #  - name: test removing tags from aws_codebuild (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: {}
 #      purge_tags: True
 #    register: update_result
@@ -217,7 +217,7 @@
 #      - update_result is changed
 
   - name: test removing tags from aws_codebuild
-    aws_codebuild:
+    codebuild_project:
       resource_tags: {}
       purge_tags: True
     register: update_result
@@ -228,7 +228,7 @@
       - update_result.project.resource_tags == {}
 
 #  - name: test removing tags from aws_codebuild - idempotency (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      resource_tags: {}
 #      purge_tags: True
 #    register: update_result
@@ -239,7 +239,7 @@
 #      - update_result is not changed
 
   - name: test removing tags from aws_codebuild - idempotency
-    aws_codebuild:
+    codebuild_project:
       resource_tags: {}
       purge_tags: True
     register: update_result

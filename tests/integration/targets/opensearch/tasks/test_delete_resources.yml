@@ -43,12 +43,12 @@
         vpc_name: "{{ item.tags['Name'] }}"
 
     - name: collect info about KMS keys used for test purpose
-      aws_kms_info:
+      kms_key_info:
         filters:
           "tag:AnsibleTest": "AnsibleTestVpc"
       register: kms_info
     - name: Delete KMS keys that were created for test purpose
-      aws_kms:
+      kms_key:
         key_id: "{{ kms_arn }}"
         state: absent
       with_items: "{{ kms_info.kms_keys }}"
@@ -56,6 +56,6 @@
         kms_arn: "{{ item.key_arn }}"
 
     - name: delete certificate from ACM
-      aws_acm:
+      acm_certificate:
         name_tag: 'opensearch.ansible-integ-test.com'
         state: absent

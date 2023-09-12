@@ -1,6 +1,6 @@
 ---
 - name: create a msk cluster with authentication flipped from default (check mode)
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
     version: "{{ msk_version }}"
@@ -24,7 +24,7 @@
       - msk_cluster is changed
 
 - name: create a msk cluster with authentication flipped from default
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
     version: "{{ msk_version }}"
@@ -65,7 +65,7 @@
       - "msk_cluster.cluster_info.cluster_arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
 
 - name: create a msk cluster with authentication flipped from default (idempotency)
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
     version: "{{ msk_version }}"
@@ -89,7 +89,7 @@
 
 ### Keep delete simple as we're not checking delete here
 - name: delete msk cluster
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "absent"
     wait: true

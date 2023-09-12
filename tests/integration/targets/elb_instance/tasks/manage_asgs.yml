@@ -1,6 +1,6 @@
 ---
 - name: Get ASG info
-  ec2_asg_info:
+  autoscaling_group_info:
     name: "{{ asg_name }}$"
   register: asg_info
 

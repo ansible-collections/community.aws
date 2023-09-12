@@ -89,7 +89,7 @@
           gateway_id: "{{ igw.gateway_id }}"
     register: route_table
 
-  - ec2_group:
+  - ec2_security_group:
       name: "{{ resource_prefix }}"
       description: "security group for Ansible NLB integration tests"
       state: present
@@ -173,7 +173,7 @@
       ignore_errors: yes
 
     - name: destroy sec group
-      ec2_group:
+      ec2_security_group:
         name: "{{ sec_group.group_name }}"
         description: "security group for Ansible NLB integration tests"
         state: absent

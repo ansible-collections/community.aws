@@ -2,47 +2,46 @@
 - name: Test create/update/delete AutoScalingGroups Lifecycle Hooks with ec2_asg_lifecycle_hook
 
   block:
-  #----------------------------------------------------------------------
-    - name: create a launch configuration
-      ec2_lc:
+  # ----------------------------------------------------------------------
+    - name: Create a launch configuration
+      community.aws.autoscaling_launch_config:
         name: "{{ resource_prefix }}-lc"
         image_id: "{{ ec2_ami_id }}"
         region: "{{ aws_region }}"
         instance_type: t2.micro
-        assign_public_ip: yes
+        assign_public_ip: true
       register: create_lc
 
-    - name: ensure that lc is created
-      assert:
+    - name: Ensure that lc is created
+      ansible.builtin.assert:
         that:
           - create_lc is changed
           - create_lc.failed is false
 
-    #----------------------------------------------------------------------
-    - name: create a AutoScalingGroup
-      ec2_asg:
+    # ----------------------------------------------------------------------
+    - name: Create a AutoScalingGroup
+      amazon.aws.autoscaling_group:
         name: "{{ resource_prefix }}-asg"
         launch_config_name: "{{ resource_prefix }}-lc"
         health_check_period: 60
         health_check_type: ELB
-        replace_all_instances: yes
+        replace_all_instances: true
         min_size: 1
         max_size: 1
         desired_capacity: 1
         region: "{{ aws_region }}"
       register: create_asg
 
-    - name: ensure that AutoScalingGroup is created
-      assert:
+    - name: Ensure that AutoScalingGroup is created
+      ansible.builtin.assert:
         that:
           - create_asg is changed
           - create_asg.failed is false
           - '"autoscaling:CreateAutoScalingGroup" in create_asg.resource_actions'
 
-    #----------------------------------------------------------------------
-
+    # ----------------------------------------------------------------------
     - name: Create lifecycle hook - check_mode
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -53,7 +52,7 @@
       check_mode: true
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is changed
           - output is not failed
@@ -61,7 +60,7 @@
           - '"Would have created AutoScalingGroup Lifecycle Hook if not in check_mode" in output.msg'
 
     - name: Create lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -71,7 +70,7 @@
         state: present
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is changed
           - output is not failed
@@ -79,7 +78,7 @@
           - output.lifecycle_hook_info[0].heartbeat_timeout == 7000
 
     - name: Create lifecycle hook - Idempotency
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -89,14 +88,14 @@
         state: present
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is not changed
           - output is not failed
           - '"lifecycle_hook_info" not in output'
 
     - name: Create lifecycle hook - check_mode (Idempotency)
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -107,14 +106,14 @@
       check_mode: true
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is not changed
           - output is not failed
           - '"lifecycle_hook_info" not in output'
 
     - name: Update lifecycle hook - check_mode
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -125,7 +124,7 @@
       check_mode: true
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is changed
           - output is not failed
@@ -133,7 +132,7 @@
           - '"Would have modified AutoScalingGroup Lifecycle Hook if not in check_mode." in output.msg'
 
     - name: Update lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -143,7 +142,7 @@
         state: present
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is changed
           - output is not failed
@@ -151,7 +150,7 @@
           - output.lifecycle_hook_info[0].heartbeat_timeout == 6000
 
     - name: Update lifecycle hook - Idempotency
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -161,14 +160,14 @@
         state: present
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is not changed
           - output is not failed
           - '"lifecycle_hook_info" not in output'
 
     - name: Update lifecycle hook - check_mode (Idempotency)
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -179,14 +178,14 @@
       check_mode: true
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is not changed
           - output is not failed
           - '"lifecycle_hook_info" not in output'
 
     - name: Delete lifecycle hook - check_mode
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -194,7 +193,7 @@
       check_mode: true
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is changed
           - output is not failed
@@ -202,35 +201,35 @@
           - '"Would have deleted AutoScalingGroup Lifecycle Hook if not in check_mode." in output.msg'
 
     - name: Delete lifecycle hook
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
         state: absent
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is changed
           - output is not failed
           - '"lifecycle_hook_removed" in output'
 
     - name: Delete lifecycle hook - Idempotency
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
         state: absent
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is not changed
           - output is not failed
           - '"lifecycle_hook_removed" not in output'
 
     - name: Delete lifecycle hook - check_mode (Idempotency)
-      community.aws.ec2_asg_lifecycle_hook:
+      community.aws.autoscaling_lifecycle_hook:
         region: "{{ aws_region }}"
         autoscaling_group_name: "{{ resource_prefix }}-asg"
         lifecycle_hook_name: "{{ resource_prefix }}-test-hook"
@@ -238,7 +237,7 @@
       check_mode: true
       register: output
 
-    - assert:
+    - ansible.builtin.assert:
         that:
           - output is not changed
           - output is not failed

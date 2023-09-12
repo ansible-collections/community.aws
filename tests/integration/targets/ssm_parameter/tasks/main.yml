@@ -87,7 +87,7 @@
   # Create
 
   - name: Create key/value pair in aws parameter store (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ simple_description }}'
       value: '{{ simple_value }}'
@@ -98,7 +98,7 @@
       - result is changed
 
   - name: Create key/value pair in aws parameter store
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ simple_description }}'
       value: '{{ simple_value }}'
@@ -129,7 +129,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Create key/value pair in aws parameter store - idempotency (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ simple_description }}'
       value: '{{ simple_value }}'
@@ -140,7 +140,7 @@
       - result is not changed
 
   - name: Create key/value pair in aws parameter store - idempotency
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ simple_description }}'
       value: '{{ simple_value }}'
@@ -174,7 +174,7 @@
   # Update description
 
   - name: Update description (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ updated_description }}'
     register: result
@@ -184,7 +184,7 @@
       - result is changed
 
   - name: Update description
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ updated_description }}'
     register: result
@@ -214,7 +214,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Update description - idempotency (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ updated_description }}'
     register: result
@@ -224,7 +224,7 @@
       - result is not changed
 
   - name: Update description - idempotency
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       description: '{{ updated_description }}'
     register: result
@@ -258,7 +258,7 @@
   # Update value
 
   - name: Update key/value pair in aws parameter store (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ updated_value }}'
     register: result
@@ -268,7 +268,7 @@
       - result is changed
 
   - name: Update key/value pair in aws parameter store
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ updated_value }}'
     register: result
@@ -298,7 +298,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Update key/value pair in aws parameter store - idempotency (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ updated_value }}'
     register: result
@@ -308,7 +308,7 @@
       - result is not changed
 
   - name: Update key/value pair in aws parameter store - idempotency
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ updated_value }}'
     register: result
@@ -341,7 +341,7 @@
   # Complex update
 
   - name: Complex update to key/value pair in aws parameter store (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ simple_value }}'
       description: '{{ simple_description }}'
@@ -352,7 +352,7 @@
       - result is changed
 
   - name: Complex update to key/value pair in aws parameter store
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ simple_value }}'
       description: '{{ simple_description }}'
@@ -383,7 +383,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Complex update to key/value pair in aws parameter store - idempotency (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ simple_value }}'
       description: '{{ simple_description }}'
@@ -394,7 +394,7 @@
       - result is not changed
 
   - name: Complex update to key/value pair in aws parameter store - idempotency
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ simple_value }}'
       description: '{{ simple_description }}'
@@ -428,7 +428,7 @@
   # Delete
 
   - name: Delete key/value pair in aws parameter store (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       state: absent
     register: result
@@ -438,7 +438,7 @@
       - result is changed
 
   - name: Delete key/value pair in aws parameter store
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       state: absent
     register: result
@@ -454,7 +454,7 @@
       - info_result is failed
 
   - name: Delete key/value pair in aws parameter store - idempotency (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       state: absent
     register: result
@@ -464,7 +464,7 @@
       - result is not changed
 
   - name: Delete key/value pair in aws parameter store - idempotency
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       state: absent
     register: result
@@ -474,7 +474,7 @@
       - result is not changed
 
   - name: Create key/value pair in aws parameter store with no description
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ simple_value }}'
     register: result
@@ -485,7 +485,7 @@
       - '"description" not in result.parameter_metadata'
 
   - name: Add a description
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_name }}'
       value: '{{ simple_value }}'
       description: '{{ simple_description }}'
@@ -501,7 +501,7 @@
   # Test tags - Create parameter with tags case
 
   - name: Create parameter with tags case - Create parameter (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -513,7 +513,7 @@
       - result is changed
 
   - name: Create parameter with tags case - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -560,7 +560,7 @@
   # Test tags - Update description only case
 
   - name: Update description only case - Update parameter (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_updated_description }}'
     register: result
@@ -570,7 +570,7 @@
       - result is changed
 
   - name: Update description only case - Update parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_updated_description }}'
     register: result
@@ -615,7 +615,7 @@
   # Test tags - Add tag to existing parameter case
 
   - name: Add tag to existing parameter case - Update parameter (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_add_owner }}'
     register: result
@@ -625,7 +625,7 @@
       - result is changed
 
   - name: Add tag to existing parameter case - Update parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_add_owner }}'
     register: result
@@ -667,7 +667,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Add tag to existing parameter case - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -678,7 +678,7 @@
   # Test tags - update tags only - change tag
 
   - name: Change single tag case - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -686,7 +686,7 @@
     register: result
 
   - name: Change single tag case - Update tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_change_environment }}'
     register: result
@@ -696,7 +696,7 @@
       - result is changed
 
   - name: Change single tag case - Update tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_change_environment }}'
     register: result
@@ -738,7 +738,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Change single tag case - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -749,7 +749,7 @@
   # Test tags - delete tag case
 
   - name: Delete single tag case - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -757,7 +757,7 @@
     register: result
 
   - name: Delete single tag case - Update tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_delete_version }}'
     register: result
@@ -767,7 +767,7 @@
       - result is changed
 
   - name: Delete single tag case - Update tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_delete_version }}'
     register: result
@@ -809,7 +809,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Delete single tag case - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -820,7 +820,7 @@
   # Test tags - delete tag w/ spaces case
 
   - name: Delete single tag w/ spaces case - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -828,7 +828,7 @@
     register: result
 
   - name: Delete single tag w/ spaces case - Update tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_delete_tag_with_space }}'
     register: result
@@ -838,7 +838,7 @@
       - result is changed
 
   - name: Delete single tag w/ spaces case - Update tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_delete_tag_with_space }}'
     register: result
@@ -880,7 +880,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Delete single tag w/ spaces case - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -891,7 +891,7 @@
   # Test tags - Add/delete/change tags case
 
   - name: Add/delete/change tags case - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -899,7 +899,7 @@
     register: result
 
   - name: Add/delete/change tags case - Update tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_add_delete_change }}'
     register: result
@@ -909,7 +909,7 @@
       - result is changed
 
   - name: Add/delete/change tags case - Update tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_add_delete_change }}'
     register: result
@@ -951,7 +951,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Add/delete/change tags case - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -962,7 +962,7 @@
   # Test tags - Delete all tags case
 
   - name: Delete all tags case - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -970,7 +970,7 @@
     register: result
 
   - name: Delete all tags case - Update tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_delete_all_tags }}'
     register: result
@@ -980,7 +980,7 @@
       - result is changed
 
   - name: Delete all tags case - Update tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_delete_all_tags }}'
     register: result
@@ -1022,7 +1022,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Delete all tags case - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1033,7 +1033,7 @@
   # Test tags - Add tag case (purge_tags=false)
 
   - name: Add tag case (purge_tags=false) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1041,7 +1041,7 @@
     register: result
 
   - name: Add tag case (purge_tags=false) - Add tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_add_owner }}'
       purge_tags: False
@@ -1052,7 +1052,7 @@
       - result is changed
 
   - name: Add tag case (purge_tags=false) - Add tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_add_owner }}'
       purge_tags: False
@@ -1100,7 +1100,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Add tag case (purge_tags=false) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1111,7 +1111,7 @@
   # Test tags - Add multiple tags case (purge_tags=false)
 
   - name: Add multiple tags case (purge_tags=false) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1119,7 +1119,7 @@
     register: result
 
   - name: Add multiple tags case (purge_tags=false) - Add tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_add_multiple }}'
       purge_tags: False
@@ -1130,7 +1130,7 @@
       - result is changed
 
   - name: Add multiple tags case (purge_tags=false) - Add tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_add_multiple }}'
       purge_tags: False
@@ -1178,7 +1178,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Add multiple tags case (purge_tags=false) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1189,7 +1189,7 @@
   # Test tags - Change tag case (purge_tags=false)
 
   - name: Change tag case (purge_tags=false) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1197,7 +1197,7 @@
     register: result
 
   - name: Change tag case (purge_tags=false) - Change tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_change_environment}}'
       purge_tags: False
@@ -1208,7 +1208,7 @@
       - result is changed
 
   - name: Change tag case (purge_tags=false) - Change tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_change_environment }}'
       purge_tags: False
@@ -1259,7 +1259,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Change tag case (purge_tags=false) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1270,7 +1270,7 @@
   # Test tags - Change multiple tags case (purge_tags=false)
 
   - name: Change multiple tags (purge_tags=false) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1278,7 +1278,7 @@
     register: result
 
   - name: Change multiple tags (purge_tags=false) - Change tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_change_multiple}}'
       purge_tags: False
@@ -1289,7 +1289,7 @@
       - result is changed
 
   - name: Change multiple tags (purge_tags=false) - Change tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_change_multiple }}'
       purge_tags: False
@@ -1340,7 +1340,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Change multiple tags (purge_tags=false) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1351,7 +1351,7 @@
   # Test tags - Add/Change multiple tags case (purge_tags=false)
 
   - name: Add/Change multiple tags (purge_tags=false) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1359,7 +1359,7 @@
     register: result
 
   - name: Add/Change multiple tags (purge_tags=false) - Change tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_add_and_change}}'
       purge_tags: False
@@ -1370,7 +1370,7 @@
       - result is changed
 
   - name: Add/Change multiple tags (purge_tags=false) - Change tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: '{{ simple_tags_purge_false_add_and_change }}'
       purge_tags: False
@@ -1421,7 +1421,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Add/Change multiple tags (purge_tags=false) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1432,7 +1432,7 @@
   # Test tags - Empty tags dict case (purge_tags=false) # should be no change
 
   - name: Empty tags dict (purge_tags=false) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1440,7 +1440,7 @@
     register: result
 
   - name: Empty tags dict (purge_tags=false) - Change tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: {}
       purge_tags: False
@@ -1451,7 +1451,7 @@
       - result != 'changed'
 
   - name: Empty tags dict (purge_tags=false) - Change tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       tags: {}
       purge_tags: False
@@ -1500,7 +1500,7 @@
       - result.parameter_metadata.type == 'String'
 
   - name: Empty tags dict (purge_tags=false) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
@@ -1511,7 +1511,7 @@
   # Test tags - No tags parameter (purge_tags=true) case # should be no change
 
   - name: No tags parameter (purge_tags=true) - Create parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_description }}'
       value: '{{ simple_tag_param_value }}'
@@ -1519,7 +1519,7 @@
     register: result
 
   - name: No tags parameter (purge_tags=true) - Change tag (CHECK)
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_updated_description }}'
     register: result
@@ -1529,7 +1529,7 @@
       - result is changed
 
   - name: No tags parameter (purge_tags=true) - Change tag
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: '{{ simple_tag_param_name }}'
       description: '{{ simple_tag_param_updated_description }}'
     register: result
@@ -1578,7 +1578,7 @@
         - result.parameter_metadata.type == 'String'
 
   - name: No tags parameter (purge_tags=true) - Delete parameter
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: true
@@ -1588,7 +1588,7 @@
   always:
   # ============================================================
   - name: Delete remaining key/value pairs in aws parameter store
-    aws_ssm_parameter_store:
+    ssm_parameter:
       name: "{{item}}"
       state: absent
     ignore_errors: True
