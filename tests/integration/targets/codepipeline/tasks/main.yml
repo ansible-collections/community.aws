@@ -23,7 +23,7 @@
     # ================== integration test ==========================================
 
     - name: create CodePipeline
-      aws_codepipeline:
+      codepipeline:
         name: "{{ codepipeline_name }}"
         role_arn: "{{ codepipeline_iam_role.iam_role.arn }}"
         artifact_store:
@@ -70,7 +70,7 @@
           - output.pipeline.stages|length > 1
 
     - name: idempotence check rerunning same CodePipeline task
-      aws_codepipeline:
+      codepipeline:
         name: "{{ codepipeline_name }}"
         role_arn: "{{ codepipeline_iam_role.iam_role.arn }}"
         artifact_store:
@@ -113,7 +113,7 @@
           - rerun_test_output.pipeline == output.pipeline
 
     - name: Test deletion of CodePipeline
-      aws_codepipeline:
+      codepipeline:
         name: "{{ codepipeline_name }}"
         role_arn: ''
         artifact_store: {}
@@ -131,7 +131,7 @@
   always:
 
     - name: Cleanup - delete test CodePipeline
-      aws_codepipeline:
+      codepipeline:
         name: "{{ codepipeline_name }}"
         role_arn: ''
         artifact_store: {}

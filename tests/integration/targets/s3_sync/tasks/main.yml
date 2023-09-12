@@ -158,14 +158,14 @@
     - name: Empty all buckets before deleting
       block:
         - name: list test_bucket objects
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket }}"
             mode: list
           register: objects
           ignore_errors: true
 
         - name: remove objects from test_bucket
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket }}"
             mode: delobj
             object: "{{ obj }}"
@@ -175,14 +175,14 @@
           ignore_errors: true
 
         - name: list test_bucket_2 objects
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_2 }}"
             mode: list
           register: objects
           ignore_errors: true
 
         - name: remove objects from test_bucket_2
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_2 }}"
             mode: delobj
             object: "{{ obj }}"
@@ -192,14 +192,14 @@
           ignore_errors: true
 
         - name: list test_bucket_3 objects
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_3 }}"
             mode: list
           register: objects
           ignore_errors: true
 
         - name: remove objects from test_bucket_3
-          aws_s3:
+          s3_object:
             bucket: "{{ test_bucket_3 }}"
             mode: delobj
             object: "{{ obj }}"

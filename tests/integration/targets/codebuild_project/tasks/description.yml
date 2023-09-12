@@ -4,14 +4,14 @@
     description_two: 'Another_Description - {{ resource_prefix }}'
   # Mandatory settings
   module_defaults:
-    community.aws.aws_codebuild:
+    community.aws.codebuild_project:
       name: '{{ project_name }}'
 #    community.aws.aws_codebuild_info:
 #      name: '{{ project_name }}'
   block:
 
 #  - name: test setting description aws_codebuild (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      description: '{{ description_one }}'
 #    register: update_result
 #    check_mode: yes
@@ -21,7 +21,7 @@
 #      - update_result is changed
 
   - name: test setting description aws_codebuild
-    aws_codebuild:
+    codebuild_project:
       description: '{{ description_one }}'
     register: update_result
   - name: assert that update succeeded
@@ -31,7 +31,7 @@
       - update_result.project.description == description_one
 
 #  - name: test setting description aws_codebuild - idempotency (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      description: '{{ description_one }}'
 #    register: update_result
 #    check_mode: yes
@@ -41,7 +41,7 @@
 #      - update_result is not changed
 
   - name: test setting description aws_codebuild - idempotency
-    aws_codebuild:
+    codebuild_project:
       description: '{{ description_one }}'
     register: update_result
   - name: assert that update succeeded
@@ -53,7 +53,7 @@
   ###
 
 #  - name: test updating description on aws_codebuild (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      description: '{{ description_two }}'
 #    register: update_result
 #    check_mode: yes
@@ -63,7 +63,7 @@
 #      - update_result is changed
 
   - name: test updating description on aws_codebuild
-    aws_codebuild:
+    codebuild_project:
       description: '{{ description_two }}'
     register: update_result
   - name: assert that update succeeded
@@ -73,7 +73,7 @@
       - update_result.project.description == description_two
 
 #  - name: test updating description on aws_codebuild - idempotency (check mode)
-#    aws_codebuild:
+#    codebuild_project:
 #      description: '{{ description_two }}'
 #    register: update_result
 #    check_mode: yes
@@ -83,7 +83,7 @@
 #      - update_result is not changed
 
   - name: test updating description on aws_codebuild - idempotency
-    aws_codebuild:
+    codebuild_project:
       description: '{{ description_two }}'
     register: update_result
   - name: assert that update succeeded
@@ -105,7 +105,7 @@
 #  ###
 
 #  - name: test no description param aws_codebuild (check mode)
-#    aws_codebuild: {}
+#    codebuild_project: {}
 #    register: update_result
 #    check_mode: yes
 #  - name: assert no change
@@ -116,7 +116,7 @@
 
 
   - name: test no description param aws_codebuild
-    aws_codebuild: {}
+    codebuild_project: {}
     register: update_result
   - name: assert no change
     assert:

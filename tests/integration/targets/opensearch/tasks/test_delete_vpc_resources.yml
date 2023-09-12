@@ -30,13 +30,13 @@
   when: route53_zone_ids | length > 0
 
 - name: Get security groups that have been created for test purpose in the VPC
-  ec2_group_info:
+  ec2_security_group_info:
     filters:
       vpc-id: "{{ vpc_id }}"
   register: sg_info
 
 - name: Delete security groups
-  ec2_group:
+  ec2_security_group:
     group_id: "{{ sg_id }}"
     state: absent
   loop_control:

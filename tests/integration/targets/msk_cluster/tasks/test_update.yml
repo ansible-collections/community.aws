@@ -1,6 +1,6 @@
 ---
 - name: update msk cluster (check mode)
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
     version: "{{ msk_version }}"
@@ -22,7 +22,7 @@
       - msk_cluster is changed
 
 - name: update msk cluster
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
     version: "{{ msk_version }}"
@@ -51,7 +51,7 @@
       - "msk_cluster.cluster_info.tags.key3 == 'value3'"
 
 - name: update msk cluster (idempotency)
-  aws_msk_cluster:
+  msk_cluster:
     name: "{{ msk_cluster_name }}"
     state: "present"
     version: "{{ msk_version }}"
