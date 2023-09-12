@@ -602,7 +602,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">    </span><span class="nt">asg_name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;application-asg&quot;</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create TargetTracking predefined policy</span>
-<span class="w">  </span><span class="nt">ec2_scaling_policy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;predefined-policy-1&quot;</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
 <span class="w">    </span><span class="nt">target_tracking_config</span><span class="p">:</span>
@@ -613,7 +613,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create TargetTracking predefined policy with resource_label</span>
-<span class="w">  </span><span class="nt">ec2_scaling_policy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;predefined-policy-1&quot;</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
 <span class="w">    </span><span class="nt">target_tracking_config</span><span class="p">:</span>
@@ -625,7 +625,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-autos
 <span class="w">  </span><span class="nt">register</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">result</span>
 
 <span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">create TargetTrackingScaling custom policy</span>
-<span class="w">  </span><span class="nt">ec2_scaling_policy</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">community.aws.autoscaling_policy</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;custom-policy-1&quot;</span>
 <span class="w">    </span><span class="nt">policy_type</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">TargetTrackingScaling</span>
 <span class="w">    </span><span class="nt">target_tracking_config</span><span class="p">:</span>

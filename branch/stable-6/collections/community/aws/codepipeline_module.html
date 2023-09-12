@@ -410,7 +410,7 @@ see <a class="reference internal" href="#ansible-collections-community-aws-codep
 <div class="highlight-yaml+jinja notranslate"><div class="highlight"><pre><span></span><span class="c1"># Note: These examples do not set authentication details, see the AWS Guide for details.</span>
 
 <span class="c1"># Example for creating a pipeline for continuous deploy of Github code to an ECS cluster (container)</span>
-<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.aws_codepipeline</span><span class="p">:</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">community.aws.codepipeline</span><span class="p">:</span>
 <span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">my_deploy_pipeline</span>
 <span class="w">    </span><span class="nt">role_arn</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">arn:aws:iam::123456:role/AWS-CodePipeline-Service</span>
 <span class="w">    </span><span class="nt">artifact_store</span><span class="p">:</span>
