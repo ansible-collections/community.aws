@@ -31,7 +31,7 @@ options:
     type: dict
   state:
     description:
-      - If I(state=present), stack will be created.  If I(state=present) and if stack exists and template has changed, it will be updated.
+      - If I(state=present), stack will be created. If I(state=present) and if stack exists and template has changed, it will be updated.
         If I(state=absent), stack will be removed.
     default: present
     choices: [ present, absent ]
@@ -72,7 +72,7 @@ options:
     default: true
   purge_stack_instances:
     description:
-      - When set to I(True), instructs the module to delete stack instances that are not defined via the C(accounts) parameter.
+      - When set to C(True), instructs the module to delete stack instances that are not defined via the I(accounts) parameter.
     type: bool
     default: false
   wait:
@@ -83,7 +83,7 @@ options:
     default: false
   wait_timeout:
     description:
-    - How long to wait (in seconds) for stacks to complete create/update/delete operations.
+      - How long to wait (in seconds) for stacks to complete create/update/delete operations.
     default: 900
     type: int
   capabilities:
@@ -103,7 +103,7 @@ options:
       - A list of AWS regions to create instances of a stack in. The I(region) parameter chooses where the Stack Set is created, and I(regions)
         specifies the region for stack instances.
       - At least one region must be specified to create a stack set. On updates, if fewer regions are specified only the specified regions will
-      have their stack instances updated.
+        have their stack instances updated.
     type: list
     elements: str
   accounts:
@@ -140,7 +140,7 @@ options:
     type: dict
   failure_tolerance:
     description:
-    - Settings to change what is considered "failed" when running stack instance updates, and how many to do at a time.
+      - Settings to change what is considered "failed" when running stack instance updates, and how many to do at a time.
     type: dict
     default: {}
     suboptions:
@@ -730,8 +730,8 @@ def main():
             changed = True
             cfn.create_stack_instances(
                 StackSetName=module.params["name"],
-                Accounts=list(set(acct for acct, _ in new_stack_instances)),
-                Regions=list(set(region for _, region in new_stack_instances)),
+                Accounts=list(set(acct for acct, dummy in new_stack_instances)),
+                Regions=list(set(region for dummy, region in new_stack_instances)),
                 OperationPreferences=get_operation_preferences(module),
                 OperationId=operation_ids[-1],
             )
@@ -740,11 +740,11 @@ def main():
             changed = True
             cfn.delete_stack_instances(
                 StackSetName=module.params["name"],
-                Accounts=list(set(acct for acct, _ in unspecified_stack_instances)),
-                Regions=list(set(region for _, region in unspecified_stack_instances)),
+                Accounts=list(set(acct for acct, dummy in unspecified_stack_instances)),
+                Regions=list(set(region for dummy, region in unspecified_stack_instances)),
                 OperationPreferences=get_operation_preferences(module),
                 OperationId=operation_ids[-1],
-                RetainStacks=not(module.params.get("purge_stacks"))
+                RetainStacks=not module.params.get("purge_stacks"),
             )
         else:
             operation_ids.append(f"Ansible-StackInstance-Update-{operation_uuid}")
