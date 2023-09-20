@@ -74,6 +74,7 @@ action_groups:
     - cloudfront_response_headers_policy
     - codebuild_project
     - codecommit_repository
+    - codedeploy_application
     - codepipeline
     - config_aggregation_authorization
     - config_aggregator
