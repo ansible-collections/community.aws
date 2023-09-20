@@ -1,0 +1,29 @@
+- name: create IAM role needed for CodeDeploy deploy 
+  iam_role:
+    name: "{{ codedeploy_service_role_name }}"
+    description: Role with permissions for CodePipeline actions.
+    assume_role_policy_document: "{{ lookup('file', 'codedeploy_iam_trust_policy.json') }}"
+    create_instance_profile: no
+    managed_policies:
+      - 'AWSCodeDeployRole'
+    state: present
+    wait: True    
+  register: codedeploy_service_role
+
+- name: wait for 15 seconds # IAM policy takes time to propagate
+  pause:
+    seconds: 15
+
+- name: create codedeploy_application - Server
+  codedeploy_application:
+    application_name: "{{ resource_prefix }}_app_server"
+    compute_platform: Server
+    state: present
+  register: codedeploy_application_server
+
+- name: create codedeploy_application - Lambda
+  codedeploy_application:
+    application_name: "{{ resource_prefix }}_app_lambda"
+    compute_platform: Lambda
+    state: present
+  register: codedeploy_application_lambda
