@@ -10,11 +10,11 @@ action_groups:
     - api_gateway_info
     - application_autoscaling_policy
     - autoscaling_complete_lifecycle_action
-    - autoscaling_instance_refresh_info
     - autoscaling_instance_refresh
+    - autoscaling_instance_refresh_info
+    - autoscaling_launch_config
     - autoscaling_launch_config_find
     - autoscaling_launch_config_info
-    - autoscaling_launch_config
     - autoscaling_lifecycle_hook
     - autoscaling_policy
     - autoscaling_scheduled_action
@@ -94,10 +94,10 @@ action_groups:
     - ec2_ami_copy
     - ec2_asg
     - ec2_asg_info
-    - ec2_asg_scheduled_action
     - ec2_asg_instance_refresh
     - ec2_asg_instance_refresh_info
     - ec2_asg_lifecycle_hook
+    - ec2_asg_scheduled_action
     - ec2_customer_gateway
     - ec2_customer_gateway_info
     - ec2_elb
@@ -135,16 +135,16 @@ action_groups:
     - ecs_taskdefinition_info
     - efs
     - efs_info
-    - eks_cluster
     - efs_tag
+    - eks_cluster
     - eks_fargate_profile
     - eks_nodegroup
-    - elasticbeanstalk_app
     - elasticache
     - elasticache_info
     - elasticache_parameter_group
     - elasticache_snapshot
     - elasticache_subnet_group
+    - elasticbeanstalk_app
     - elb_classic_lb
     - elb_classic_lb_info
     - elb_instance
@@ -158,7 +158,6 @@ action_groups:
     - glue_job
     - iam_access_key
     - iam_access_key_info
-    - iam_group
     - iam_managed_policy
     - iam_mfa_device_info
     - iam_password_policy
@@ -172,13 +171,13 @@ action_groups:
     - lightsail
     - lightsail_snapshot
     - lightsail_static_ip
-    - msk_cluster
-    - msk_config
     - mq_broker
     - mq_broker_config
     - mq_broker_info
     - mq_user
     - mq_user_info
+    - msk_cluster
+    - msk_config
     - networkfirewall
     - networkfirewall_info
     - networkfirewall_policy
@@ -192,8 +191,8 @@ action_groups:
     - redshift_info
     - redshift_subnet_group
     - route53_wait
-    - s3_bucket_notification
     - s3_bucket_info
+    - s3_bucket_notification
     - s3_cors
     - s3_lifecycle
     - s3_logging
@@ -212,9 +211,9 @@ action_groups:
     - ssm_parameter
     - stepfunctions_state_machine
     - stepfunctions_state_machine_execution
+    - storagegateway_info
     - sts_assume_role
     - sts_session_token
-    - storagegateway_info
     - waf_condition
     - waf_info
     - waf_rule
@@ -508,6 +507,8 @@ plugin_routing:
       redirect: amazon.aws.route53_info
     route53_zone:
       redirect: amazon.aws.route53_zone
+    iam_group:
+      redirect: amazon.aws.iam_group
   module_utils:
     route53:
       redirect: amazon.aws.route53
