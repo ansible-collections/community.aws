@@ -335,7 +335,7 @@ EXAMPLES = r"""
         - DEPLOYMENT_FAILURE
     ec2_tag_set:
       ec2_tag_set_list:
-        - ec2_tag: 
+        - ec2_tag:
             - key: Name
               value: ec2_instance_1
               type: KEY_AND_VALUE
@@ -367,7 +367,7 @@ EXAMPLES = r"""
               type: KEY_AND_VALUE
     state: present
 
-    
+
 # Delete a codedeploy group
 - codedeploy_deployment_group:
     application_name: codedeploy-app
@@ -499,8 +499,6 @@ from ansible_collections.community.aws.plugins.module_utils.modules import Ansib
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 from ansible.module_utils.common.dict_transformations import snake_dict_to_camel_dict
 
-import q  # debug
-
 
 class CodeDeployAnsibleAWSError(AnsibleAWSError):
     pass
@@ -532,16 +530,14 @@ def _create_deployment_group(client, module):
         response = client.create_deployment_group(**params)
         return response
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
-        q("Error: ", e)
         raise CodeDeployAnsibleAWSError(exception=e, message="couldn't create deployment group")
 
 
 def _update_deployment_group(client, module):
     try:
-        q("Update deployment group")
         params = prepare_present_options(module, state="update")
         response = client.update_deployment_group(**params)
-        return response 
+        return response
     except (botocore.exceptions.BotoCoreError, botocore.exceptions.ClientError) as e:
         raise CodeDeployAnsibleAWSError(exception=e, message="couldn't update deployment group")
     return response  # It'll be None
@@ -570,7 +566,7 @@ def ensure_deployment_group_present(client, module):
         state = "create"
         if not module.check_mode:
             response = _create_deployment_group(client, module)
-            
+
         changed = True
     else:
         state = "update"
@@ -601,7 +597,6 @@ def ensure_deployment_group_absent(client, module):
     else:
         if not module.check_mode:
             response = _delete_deployment_group(client, module)
-            q("response: ", response)
         changed = True
         if response is not None and response["hooksNotCleanedUp"]:
             module.debug("AutoScaling LifecycleHook is not deleted. Please delete it manually.")
@@ -620,7 +615,7 @@ def prepare_present_options(module, state="present"):
             raise CodeDeployAnsibleAWSError(message="service_role is required")
         dg_params["deploymentGroupName"] = module.params["deployment_group_name"]
         dg_params["serviceRoleArn"] = module.params["service_role"]
-            
+
     elif state == "update":
         dg_params["currentDeploymentGroupName"] = module.params["deployment_group_name"]
         if module.params["new_deployment_group_name"]:
