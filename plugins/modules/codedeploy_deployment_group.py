@@ -34,7 +34,6 @@ options:
     description: A service role ARN that allows AWS CodeDeploy to act on the user's behalf when interacting with AWS services.
     required: false
     type: str
-    sample: arn:aws:iam::123456789012:role/CodeDeployServiceRole
   state:
     description: Create (C(present)) or delete (C(absent)) application.
     required: true
