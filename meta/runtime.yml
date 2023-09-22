@@ -508,18 +508,12 @@ plugin_routing:
       redirect: amazon.aws.route53_info
     route53_zone:
       redirect: amazon.aws.route53_zone
-<<<<<<< HEAD
     iam_group:
       redirect: amazon.aws.iam_group
-<<<<<<< HEAD
     iam_managed_policy:
       redirect: amazon.aws.iam_managed_policy
-=======
-=======
     iam_mfa_device_info:
-      redirect: community.aws.iam_mfa_device_info
->>>>>>> eb395ab2 (Update runtime)
->>>>>>> 3a23a27f (Update runtime)
+      redirect: amazon.aws.iam_mfa_device_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
