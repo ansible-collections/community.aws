@@ -119,7 +119,7 @@ options:
           volume_type:
             description: The volume type
             type: str
-          volume_type:
+          throughput:
             description:
             - The throughput to provision for a gp3 volume, with a maximum of 1,000 MiB/s.
             - Valid Range: Minimum value of 125. Maximum value of 1000.
