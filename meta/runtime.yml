@@ -155,7 +155,6 @@ action_groups:
     - glue_connection
     - glue_crawler
     - glue_job
-    - iam_password_policy
     - iam_saml_federation
     - iam_server_certificate
     - iam_server_certificate_info
@@ -457,6 +456,8 @@ plugin_routing:
       redirect: amazon.aws.iam_managed_policy
     iam_mfa_device_info:
       redirect: amazon.aws.iam_mfa_device_info
+    iam_password_policy:
+      redirect: amazon.aws.iam_password_policy
     iam_policy:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
