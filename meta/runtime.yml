@@ -512,6 +512,8 @@ plugin_routing:
       redirect: amazon.aws.iam_managed_policy
     s3_bucket_info:
       redirect: amazon.aws.s3_bucket_info
+    iam_managed_policy:
+      redirect: amazon.aws.iam_managed_policy
   module_utils:
     route53:
       redirect: amazon.aws.route53
