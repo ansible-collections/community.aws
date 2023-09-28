@@ -160,8 +160,6 @@ action_groups:
     - iam_access_key_info
     - iam_mfa_device_info
     - iam_password_policy
-    - iam_role
-    - iam_role_info
     - iam_saml_federation
     - iam_server_certificate
     - iam_server_certificate_info
@@ -452,6 +450,10 @@ plugin_routing:
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.lambda_execute
+    iam_role:
+      redirect: amazon.aws.iam_role
+    iam_role_info:
+      redirect: amazon.aws.iam_role_info
     iam_policy:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
