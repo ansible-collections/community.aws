@@ -1,0 +1,2 @@
+minor_changes:
+- community.aws collection - apply isort code formatting to ensure consistent formatting of code (https://github.com/ansible-collections/community.aws/pull/1962)
