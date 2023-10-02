@@ -320,6 +320,8 @@ plugin_routing:
     aws_msk_config:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.msk_config
+    aws_region_info:
+      redirect: amazon.aws.aws_region_info
     aws_s3_bucket_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.s3_bucket_info
@@ -510,10 +512,10 @@ plugin_routing:
       redirect: amazon.aws.iam_group
     iam_managed_policy:
       redirect: amazon.aws.iam_managed_policy
+    iam_mfa_device_info:
+      redirect: amazon.aws.iam_mfa_device_info
     s3_bucket_info:
       redirect: amazon.aws.s3_bucket_info
-    iam_managed_policy:
-      redirect: amazon.aws.iam_managed_policy
   module_utils:
     route53:
       redirect: amazon.aws.route53
