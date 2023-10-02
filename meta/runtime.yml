@@ -320,6 +320,9 @@ plugin_routing:
     aws_msk_config:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.msk_config
+    aws_s3_bucket_info:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: amazon.aws.s3_bucket_info
     aws_s3_cors:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_cors
