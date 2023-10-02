@@ -3612,3 +3612,22 @@ releases:
       name: route53_wait
       namespace: ''
     release_date: '2023-09-06'
+  6.4.0:
+    changes:
+      minor_changes:
+      - ecs_taskdefinition - Add parameter ``runtime_platform`` (https://github.com/ansible-collections/community.aws/issues/1891).
+      release_summary: 'This release is the last planned minor release of ``community.aws``
+        prior to the release of 7.0.0.
+
+        It includes documentation fixes and adds support for setting run time configurations
+        to the ``ecs_taskdefinition`` module.
+
+        '
+    fragments:
+    - 1891_ecs-task-definition-add-runtime-platform.yml
+    - 20230906-galaxy.yml
+    - 20230906-route53_wait.yml
+    - 20230908-alias-cleanup.yml
+    - botocore_params-cleanup.yml
+    - release-summery.yml
+    release_date: '2023-10-03'
