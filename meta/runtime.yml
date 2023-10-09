@@ -157,7 +157,7 @@ action_groups:
     - glue_job
     - iam_access_key
     - iam_access_key_info
-    - iam_mfa_device_info
+    - iam_managed_policy
     - iam_password_policy
     - iam_saml_federation
     - iam_server_certificate
@@ -513,6 +513,8 @@ plugin_routing:
       redirect: amazon.aws.iam_group
     iam_managed_policy:
       redirect: amazon.aws.iam_managed_policy
+    iam_mfa_device_info:
+      redirect: amazon.aws.iam_mfa_device_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
