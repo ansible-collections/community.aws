@@ -47,7 +47,6 @@ action_groups:
     - aws_inspector_target
     - aws_msk_cluster
     - aws_msk_config
-    - aws_region_info
     - aws_s3_bucket_info
     - aws_s3_cors
     - aws_secret
@@ -322,6 +321,8 @@ plugin_routing:
     aws_msk_config:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.msk_config
+    aws_region_info:
+      redirect: amazon.aws.aws_region_info
     aws_s3_bucket_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.s3_bucket_info
