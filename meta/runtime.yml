@@ -155,9 +155,6 @@ action_groups:
     - glue_connection
     - glue_crawler
     - glue_job
-    - iam_access_key
-    - iam_access_key_info
-    - iam_managed_policy
     - iam_password_policy
     - iam_saml_federation
     - iam_server_certificate
@@ -450,14 +447,24 @@ plugin_routing:
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.lambda_execute
-    iam_role:
-      redirect: amazon.aws.iam_role
-    iam_role_info:
-      redirect: amazon.aws.iam_role_info
+    iam_access_key:
+      redirect: amazon.aws.iam_access_key
+    iam_access_key_info:
+      redirect: amazon.aws.iam_access_key_info
+    iam_group:
+      redirect: amazon.aws.iam_group
+    iam_managed_policy:
+      redirect: amazon.aws.iam_managed_policy
+    iam_mfa_device_info:
+      redirect: amazon.aws.iam_mfa_device_info
     iam_policy:
       redirect: amazon.aws.iam_policy
     iam_policy_info:
       redirect: amazon.aws.iam_policy_info
+    iam_role:
+      redirect: amazon.aws.iam_role
+    iam_role_info:
+      redirect: amazon.aws.iam_role_info
     iam_user:
       redirect: amazon.aws.iam_user
     iam_user_info:
@@ -508,12 +515,6 @@ plugin_routing:
       redirect: amazon.aws.route53_info
     route53_zone:
       redirect: amazon.aws.route53_zone
-    iam_group:
-      redirect: amazon.aws.iam_group
-    iam_managed_policy:
-      redirect: amazon.aws.iam_managed_policy
-    iam_mfa_device_info:
-      redirect: amazon.aws.iam_mfa_device_info
     s3_bucket_info:
       redirect: amazon.aws.s3_bucket_info
   module_utils:
