@@ -203,7 +203,6 @@ action_groups:
     - stepfunctions_state_machine
     - stepfunctions_state_machine_execution
     - storagegateway_info
-    - sts_assume_role
     - sts_session_token
     - waf_condition
     - waf_info
@@ -518,6 +517,8 @@ plugin_routing:
       redirect: amazon.aws.route53_zone
     s3_bucket_info:
       redirect: amazon.aws.s3_bucket_info
+    sts_assume_role:
+      redirect: amazon.aws.sts_assume_role
   module_utils:
     route53:
       redirect: amazon.aws.route53
