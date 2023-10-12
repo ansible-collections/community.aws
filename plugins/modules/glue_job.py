@@ -124,6 +124,13 @@ EXAMPLES = r"""
 - community.aws.glue_job:
     name: my-glue-job
     state: absent
+
+# Configure Glue job with more workers and higher allocated capacity
+  community.aws.glue_job:
+    name: my-glue-job
+    number_of_workers: 5
+    allocated_capacity: 10
+    state: present
 """
 
 RETURN = r"""
