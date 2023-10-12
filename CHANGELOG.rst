@@ -5,6 +5,21 @@ community.aws Release Notes
 .. contents:: Topics
 
 
+v6.4.0
+======
+
+Release Summary
+---------------
+
+This release is the last planned minor release of ``community.aws`` prior to the release of 7.0.0.
+It includes documentation fixes and adds support for setting run time configurations to the ``ecs_taskdefinition`` module.
+
+
+Minor Changes
+-------------
+
+- ecs_taskdefinition - Add parameter ``runtime_platform`` (https://github.com/ansible-collections/community.aws/issues/1891).
+
 v6.3.0
 ======
 
