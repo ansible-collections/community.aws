@@ -463,6 +463,10 @@ plugin_routing:
       redirect: amazon.aws.iam_role
     iam_role_info:
       redirect: amazon.aws.iam_role_info
+    iam_server_certificate:
+      redirect: amazon.aws.iam_server_certificate
+    iam_server_certificate_info:
+      redirect: amazon.aws.iam_server_certificate_info
     iam_user:
       redirect: amazon.aws.iam_user
     iam_user_info:
@@ -517,12 +521,6 @@ plugin_routing:
       redirect: amazon.aws.s3_bucket_info
     sts_assume_role:
       redirect: amazon.aws.sts_assume_role
-    iam_group:
-      redirect: amazon.aws.iam_group
-    iam_server_certificate:
-      redirect: amazon.aws.iam_server_certificate
-    iam_server_certificate_info:
-      redirect: amazon.aws.iam_server_certificate_info
   module_utils:
     route53:
       redirect: amazon.aws.route53
