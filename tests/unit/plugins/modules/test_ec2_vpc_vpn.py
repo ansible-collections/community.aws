@@ -16,11 +16,14 @@ from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_conn
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import boto3_tag_list_to_ansible_dict
 from ansible_collections.amazon.aws.plugins.module_utils.ec2 import get_aws_connection_info
 
-# pylint: disable-next=unused-import
 # Magic...  Incorrectly identified by pylint as unused
-# pylint: disable-next=unused-import
+# isort: off
+# pylint: disable=unused-import
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify
+
+# pylint: enable=unused-import
+# isort: on
 
 from ansible_collections.community.aws.plugins.modules import ec2_vpc_vpn
 
