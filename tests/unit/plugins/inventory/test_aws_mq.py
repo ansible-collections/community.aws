@@ -18,12 +18,13 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 import copy
-import pytest
 import random
 import string
 from unittest.mock import MagicMock
 from unittest.mock import call
 from unittest.mock import patch
+
+import pytest
 
 try:
     import botocore
@@ -32,13 +33,13 @@ except ImportError:
     pass
 
 from ansible.errors import AnsibleError
+
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from ansible_collections.community.aws.plugins.inventory.aws_mq import (
-    InventoryModule,
-    _find_hosts_matching_statuses,
-    _get_broker_host_tags,
-    _add_details_to_hosts,
-)
+
+from ansible_collections.community.aws.plugins.inventory.aws_mq import InventoryModule
+from ansible_collections.community.aws.plugins.inventory.aws_mq import _add_details_to_hosts
+from ansible_collections.community.aws.plugins.inventory.aws_mq import _find_hosts_matching_statuses
+from ansible_collections.community.aws.plugins.inventory.aws_mq import _get_broker_host_tags
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_aws_mq.py requires the python modules 'boto3' and 'botocore'")

@@ -161,8 +161,8 @@ region:
   returned: when I(state=present)
 """
 
-import traceback
 import time
+import traceback
 
 try:
     import botocore

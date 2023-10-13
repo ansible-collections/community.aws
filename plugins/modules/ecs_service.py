@@ -695,7 +695,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.transformation import m
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
 DEPLOYMENT_CONTROLLER_TYPE_MAP = {
     "type": "str",
 }

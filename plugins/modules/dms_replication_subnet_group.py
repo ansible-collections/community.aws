@@ -65,7 +65,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
 backoff_params = dict(retries=5, delay=1, backoff=1.5)
 
 

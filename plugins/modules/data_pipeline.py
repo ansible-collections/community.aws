@@ -210,7 +210,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
 DP_ACTIVE_STATES = ["ACTIVE", "SCHEDULED"]
 DP_INACTIVE_STATES = ["INACTIVE", "PENDING", "FINISHED", "DELETING"]
 DP_ACTIVATING_STATE = "ACTIVATING"

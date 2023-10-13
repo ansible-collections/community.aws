@@ -236,7 +236,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.batch import set_api_pa
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
 # ---------------------------------------------------------------------------------------------------
 #
 #   Helper Functions & classes
