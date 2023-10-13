@@ -88,7 +88,6 @@ options:
         - A map of custom response keys and content bodies. Define response bodies here and reference them in the rules by providing
         - the key of the body dictionary element.
         - Each element must have a unique dict key and in the dict two keys for I(content_type) and I(content).
-        - Requires botocore >= 1.20.40
       type: dict
       version_added: 3.1.0
     purge_rules:
@@ -503,7 +502,6 @@ def main():
 
     custom_response_bodies = module.params.get("custom_response_bodies")
     if custom_response_bodies:
-        module.require_botocore_at_least("1.20.40", reason="to set custom response bodies")
         custom_response_bodies = {}
 
         for custom_name, body in module.params.get("custom_response_bodies").items():

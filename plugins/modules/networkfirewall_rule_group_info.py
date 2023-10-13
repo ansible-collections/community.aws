@@ -36,7 +36,6 @@ options:
       - When I(scope='account') returns a description of all rule groups in the account.
       - When I(scope='managed') returns a list of available managed rule group arns.
       - By default searches only at the account scope.
-      - I(scope='managed') requires botocore>=1.23.23.
     required: false
     choices: ['managed', 'account']
     type: str
@@ -412,15 +411,10 @@ def main():
         ],
     )
 
-    module.require_botocore_at_least("1.19.20")
-
     arn = module.params.get("arn")
     name = module.params.get("name")
     rule_type = module.params.get("rule_type")
     scope = module.params.get("scope")
-
-    if module.params.get("scope") == "managed":
-        module.require_botocore_at_least("1.23.23", reason="to list managed rules")
 
     manager = NetworkFirewallRuleManager(module, name=name, rule_type=rule_type)
 

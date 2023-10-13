@@ -1310,8 +1310,6 @@ def main():
         supports_check_mode=True,
     )
 
-    module.require_botocore_at_least("1.21.38")
-
     try:
         client = module.client("opensearch", retry_decorator=AWSRetry.jittered_backoff())
     except (botocore.exceptions.ClientError, botocore.exceptions.BotoCoreError) as e:

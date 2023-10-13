@@ -58,7 +58,6 @@ options:
       - Mutually exclusive with I(rule_type=stateless).
       - For more information on how rules are evaluated read the AWS documentation
         U(https://docs.aws.amazon.com/network-firewall/latest/developerguide/suricata-rule-evaluation-order.html).
-      - I(rule_order) requires botocore>=1.23.23.
     type: str
     required: false
     choices: ['default', 'strict']
@@ -772,8 +771,6 @@ def main():
         ],
     )
 
-    module.require_botocore_at_least("1.19.20")
-
     state = module.params.get("state")
     name = module.params.get("name")
     arn = module.params.get("arn")
@@ -788,9 +785,6 @@ def main():
             module.fail_json("rule_list can only be used for stateful rule groups")
         if module.params.get("domain_list"):
             module.fail_json("domain_list can only be used for stateful rule groups")
-
-    if module.params.get("rule_order"):
-        module.require_botocore_at_least("1.23.23", reason="to set the rule order")
 
     manager = NetworkFirewallRuleManager(module, arn=arn, name=name, rule_type=rule_type)
     manager.set_wait(module.params.get("wait", None))

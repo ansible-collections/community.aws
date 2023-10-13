@@ -68,7 +68,6 @@ options:
   noncurrent_version_keep_newer:
     description:
       - The minimum number of non-current versions to retain.
-      - Requires C(botocore >= 1.23.12)
       - Requres I(noncurrent_version_expiration_days).
     required: false
     type: int
@@ -637,11 +636,6 @@ def main():
     expiration_date = module.params.get("expiration_date")
     transition_date = module.params.get("transition_date")
     state = module.params.get("state")
-
-    if module.params.get("noncurrent_version_keep_newer"):
-        module.require_botocore_at_least(
-            "1.23.12", reason="to set number of versions to keep with noncurrent_version_keep_newer"
-        )
 
     if state == "present" and module.params["status"] == "enabled":  # allow deleting/disabling a rule by id/prefix
         required_when_present = (
