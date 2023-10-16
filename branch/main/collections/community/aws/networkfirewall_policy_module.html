@@ -374,7 +374,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <p>Common actions are <code class="docutils literal notranslate"><span class="pre">aws:drop_strict</span></code>, <code class="docutils literal notranslate"><span class="pre">aws:drop_established</span></code>, <code class="docutils literal notranslate"><span class="pre">aws:alert_strict</span></code> and <code class="docutils literal notranslate"><span class="pre">aws:alert_established</span></code>.</p>
 <p>Only valid for policies where <em>strict_rule_order=true</em>.</p>
 <p>When creating a new policy defaults to <code class="docutils literal notranslate"><span class="pre">aws:drop_strict</span></code>.</p>
-<p><em>stateful_default_actions</em> requires botocore&gt;=1.21.52.</p>
 </div></td>
 </tr>
 <tr class="row-even"><td><div class="ansible-option-cell">
@@ -395,7 +394,6 @@ see <a class="reference internal" href="#ansible-collections-community-aws-netwo
 <td><div class="ansible-option-cell"><p>Indicates how to manage the order of stateful rule evaluation for the policy.</p>
 <p>When <em>strict_rule_order=’strict’</em> rules and rule groups are evaluated in the order that they’re defined.</p>
 <p>Cannot be updated after creation.</p>
-<p><em>stateful_rule_order</em> requires botocore&gt;=1.21.52.</p>
 <p class="ansible-option-line"><strong class="ansible-option-choices">Choices:</strong></p>
 <ul class="simple">
 <li><p><code class="ansible-option-choices-entry docutils literal notranslate"><span class="pre">&quot;default&quot;</span></code></p></li>
