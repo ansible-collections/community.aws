@@ -76,7 +76,6 @@ options:
         C(aws:alert_strict) and C(aws:alert_established).
       - Only valid for policies where I(strict_rule_order=true).
       - When creating a new policy defaults to C(aws:drop_strict).
-      - I(stateful_default_actions) requires botocore>=1.21.52.
     required: false
     type: list
     elements: str
@@ -86,7 +85,6 @@ options:
       - When I(strict_rule_order='strict') rules and rule groups are evaluated in
         the order that they're defined.
       - Cannot be updated after creation.
-      - I(stateful_rule_order) requires botocore>=1.21.52.
     required: false
     type: str
     choices: ['default', 'strict']
@@ -398,10 +396,6 @@ def main():
     manager.set_wait_timeout(module.params.get("wait_timeout", None))
 
     rule_order = module.params.get("stateful_rule_order")
-    if rule_order and rule_order != "default":
-        module.require_botocore_at_least("1.21.52", reason="to set the rule order")
-    if module.params.get("stateful_default_actions"):
-        module.require_botocore_at_least("1.21.52", reason="to set the default actions for stateful flows")
 
     if state == "absent":
         manager.delete()

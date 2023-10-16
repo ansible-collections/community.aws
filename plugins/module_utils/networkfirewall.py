@@ -513,7 +513,9 @@ class BaseNetworkFirewallManager(BaseResourceManager):
         Removes information from the metadata which can't be updated.
         Returns a *copy* of the metadata dictionary.
         """
-        return deepcopy(metadata)
+        meta = deepcopy(metadata)
+        meta.pop("LastModifiedTime", None)
+        return meta
 
     def _flush_create(self):
         changed = super(BaseNetworkFirewallManager, self)._flush_create()

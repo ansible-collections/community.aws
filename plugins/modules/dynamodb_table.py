@@ -123,7 +123,6 @@ options:
   table_class:
     description:
       - The class of the table.
-      - Requires at least botocore version 1.23.18.
     choices: ['STANDARD', 'STANDARD_INFREQUENT_ACCESS']
     type: str
     version_added: 3.1.0
@@ -1055,9 +1054,6 @@ def main():
         catch_extra_error_codes=["LimitExceededException", "ResourceInUseException", "ResourceNotFoundException"],
     )
     client = module.client("dynamodb", retry_decorator=retry_decorator)
-
-    if module.params.get("table_class"):
-        module.require_botocore_at_least("1.23.18", reason="to set table_class")
 
     current_table = get_dynamodb_table()
     changed = False
