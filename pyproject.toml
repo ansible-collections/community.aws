@@ -28,6 +28,11 @@ src_paths = [
     "tests/integration",
 ]
 
+# Unstable
+skip = [
+    "aws_ssm.py"
+]
+
 sections = ["FUTURE", "STDLIB", "THIRDPARTY", "FIRSTPARTY", "ANSIBLE_CORE", "ANSIBLE_AMAZON_AWS", "ANSIBLE_COMMUNITY_AWS", "LOCALFOLDER"]
 known_third_party = ["botocore", "boto3"]
 known_ansible_core = ["ansible"]
