@@ -5,10 +5,7 @@
 
 import pytest
 
-from ansible_collections.community.aws.plugins.modules.route53_wait import (
-    detect_task_results,
-)
-
+from ansible_collections.community.aws.plugins.modules.route53_wait import detect_task_results
 
 _SINGLE_RESULT_SUCCESS = {
     "changed": True,

@@ -1,8 +1,9 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-import pytest
 from unittest.mock import call
 from unittest.mock import patch
+
+import pytest
 
 try:
     from botocore.exceptions import ClientError
@@ -10,12 +11,12 @@ except ImportError:
     pass
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
+
+from ansible_collections.community.aws.plugins.modules import directconnect_confirm_connection
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import AnsibleExitJson
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import AnsibleFailJson
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import ModuleTestCase
 from ansible_collections.community.aws.tests.unit.plugins.modules.utils import set_module_args
-
-from ansible_collections.community.aws.plugins.modules import directconnect_confirm_connection
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip(

@@ -15,15 +15,18 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __metaclass__ = type
 
 from pprint import pprint
 
+from ansible.module_utils._text import to_text
+
 from ansible_collections.community.aws.plugins.modules.acm_certificate import chain_compare
 from ansible_collections.community.aws.plugins.modules.acm_certificate import pem_chain_split
-from ansible.module_utils._text import to_text
 
 
 def test_chain_compare():

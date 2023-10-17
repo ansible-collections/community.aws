@@ -86,9 +86,9 @@ except ImportError as ex:
     # handled by AnsibleAWSModule
     pass
 
-from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
 
+from ansible_collections.amazon.aws.plugins.module_utils.core import AnsibleAWSModule
 
 DEFAULTS = {"max_results": 100, "skip_pending_create": False, "skip_pending_delete": False, "as_dict": True}
 

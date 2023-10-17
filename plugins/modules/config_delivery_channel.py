@@ -89,7 +89,6 @@ from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
-
 # this waits for an IAM role to become fully available, at the cost of
 # taking a long time to fail when the IAM role/policy really is invalid
 retry_unavailable_iam_on_put_delivery = AWSRetry.jittered_backoff(

@@ -138,10 +138,10 @@ except ImportError:
     pass  # handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
-from ansible_collections.community.aws.plugins.module_utils.sns import list_topics
-from ansible_collections.community.aws.plugins.module_utils.sns import get_info
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
+from ansible_collections.community.aws.plugins.module_utils.sns import get_info
+from ansible_collections.community.aws.plugins.module_utils.sns import list_topics
 
 
 def main():

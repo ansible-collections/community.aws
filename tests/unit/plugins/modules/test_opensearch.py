@@ -1,15 +1,16 @@
 # Copyright: Ansible Project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __metaclass__ = type
 
 import functools
-from ansible_collections.community.aws.plugins.module_utils.opensearch import (
-    compare_domain_versions,
-    parse_version,
-)
+
+from ansible_collections.community.aws.plugins.module_utils.opensearch import compare_domain_versions
+from ansible_collections.community.aws.plugins.module_utils.opensearch import parse_version
 
 
 def test_parse_version():

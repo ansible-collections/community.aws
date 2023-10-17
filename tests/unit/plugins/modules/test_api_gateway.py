@@ -5,18 +5,21 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # Make coding more python3-ish
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __metaclass__ = type
 
 import sys
+
 import pytest
 
 from ansible_collections.amazon.aws.plugins.module_utils import modules as aws_modules
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
-from ansible_collections.community.aws.tests.unit.plugins.modules.utils import set_module_args
 
 import ansible_collections.community.aws.plugins.modules.api_gateway as agw
+from ansible_collections.community.aws.tests.unit.plugins.modules.utils import set_module_args
 
 if not HAS_BOTO3:
     pytestmark = pytest.mark.skip("test_api_gateway.py requires the `boto3` and `botocore` modules")

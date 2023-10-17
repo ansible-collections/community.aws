@@ -4,7 +4,9 @@
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
 # Make coding more python3-ish
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __metaclass__ = type
 
@@ -13,11 +15,13 @@ import pytest
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import HAS_BOTO3
 
 # Magic...  Incorrectly identified by pylint as unused
-# pylint: disable-next=unused-import
+# isort: off
+# pylint: disable=unused-import
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import maybe_sleep
-
-# pylint: disable-next=unused-import
 from ansible_collections.amazon.aws.tests.unit.utils.amazon_placebo_fixtures import placeboify
+
+# pylint: enable=unused-import
+# isort: on
 
 from ansible_collections.community.aws.plugins.modules import directconnect_connection
 

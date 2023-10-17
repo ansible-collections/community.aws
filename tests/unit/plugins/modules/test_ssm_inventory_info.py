@@ -3,15 +3,15 @@
 # Copyright: Contributors to the Ansible project
 # GNU General Public License v3.0+ (see COPYING or https://www.gnu.org/licenses/gpl-3.0.txt)
 
+from unittest.mock import MagicMock
+from unittest.mock import patch
+
 import pytest
 from botocore.exceptions import BotoCoreError
 
-from unittest.mock import MagicMock, patch
-from ansible_collections.community.aws.plugins.modules.ssm_inventory_info import (
-    execute_module,
-    get_ssm_inventory,
-    SsmInventoryInfoFailure,
-)
+from ansible_collections.community.aws.plugins.modules.ssm_inventory_info import SsmInventoryInfoFailure
+from ansible_collections.community.aws.plugins.modules.ssm_inventory_info import execute_module
+from ansible_collections.community.aws.plugins.modules.ssm_inventory_info import get_ssm_inventory
 
 
 def test_get_ssm_inventory():

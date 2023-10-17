@@ -35,8 +35,8 @@ export_items:
 """
 
 try:
-    from botocore.exceptions import ClientError
     from botocore.exceptions import BotoCoreError
+    from botocore.exceptions import ClientError
 except ImportError:
     pass  # handled by AnsibleAWSModule
 

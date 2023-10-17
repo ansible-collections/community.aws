@@ -16,14 +16,15 @@
 # You should have received a copy of the GNU General Public License
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
-import sys
 import json
-
-from contextlib import contextmanager
-from io import BytesIO, StringIO
+import sys
 import unittest
-from ansible.module_utils.six import PY3
+from contextlib import contextmanager
+from io import BytesIO
+from io import StringIO
+
 from ansible.module_utils._text import to_bytes
+from ansible.module_utils.six import PY3
 
 
 @contextmanager

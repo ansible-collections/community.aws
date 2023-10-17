@@ -220,9 +220,9 @@ EXAMPLES = r"""
         storage_class: glacier
 """
 
-from copy import deepcopy
 import datetime
 import time
+from copy import deepcopy
 
 try:
     from dateutil import parser as date_parser

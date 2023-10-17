@@ -16,15 +16,18 @@
 # along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
 
 # Make coding more python3-ish
-from __future__ import absolute_import, division, print_function
+from __future__ import absolute_import
+from __future__ import division
+from __future__ import print_function
 
 __metaclass__ = type
 
 import os
 
 from ansible.errors import AnsibleParserError
+from ansible.module_utils._text import to_bytes
+from ansible.module_utils._text import to_text
 from ansible.parsing.dataloader import DataLoader
-from ansible.module_utils._text import to_bytes, to_text
 
 
 class DictDataLoader(DataLoader):
