@@ -342,15 +342,15 @@ class ElastiCacheManager:
             self._wait_for_status("available")
 
     def apply_tags(self):
-        cluster_arn = self.data['ARN']
+        cluster_arn = self.data["ARN"]
         tags = self.tags
 
         resp = self.conn.list_tags_for_resource(ResourceName=cluster_arn)
-        existing_tags = resp['TagList']
+        existing_tags = resp["TagList"]
         if existing_tags:
             if tags != existing_tags:
                 if self.purge_tags:
-                    keys = [item['Key'] for item in existing_tags]
+                    keys = [item["Key"] for item in existing_tags]
                     # simply remove all existing tags here, as we will re-add tags from module input below anyways
                     self.conn.remove_tags_from_resource(ResourceName=cluster_arn, TagKeys=keys)
                 self.conn.add_tags_to_resource(ResourceName=cluster_arn, Tags=tags)
