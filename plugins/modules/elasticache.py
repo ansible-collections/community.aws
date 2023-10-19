@@ -357,7 +357,6 @@ class ElastiCacheManager:
         else:
             self.conn.add_tags_to_resource(ResourceName=cluster_arn, Tags=tags)
 
-
     def reboot(self):
         """Reboot the cache cluster"""
         if not self.exists():
