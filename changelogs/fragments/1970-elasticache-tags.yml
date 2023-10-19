@@ -1,0 +1,3 @@
+---
+_minor_changes:
+- elasticache - Add AWS resource tagging option to module (https://github.com/ansible-collections/community.aws/pull/1970)
