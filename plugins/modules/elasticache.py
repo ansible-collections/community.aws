@@ -316,8 +316,7 @@ class ElastiCacheManager:
             self.modify()
 
         if self.tags:
-            arn = self.data['ARN']
-            apply_tags(self, arn, self.tags)
+            self.apply_tags
 
     def modify(self):
         """Modify the cache cluster. Note it's only possible to modify a few select options."""
@@ -342,8 +341,10 @@ class ElastiCacheManager:
         if self.wait:
             self._wait_for_status("available")
 
+    def apply_tags(self):
+        cluster_arn = self.data['ARN']
+        tags = self.tags
 
-    def apply_tags(self, cluster_arn, tags):
         resp = self.conn.list_tags_for_resource(ResourceName=cluster_arn)
         existing_tags = resp['TagList']
         if existing_tags:
