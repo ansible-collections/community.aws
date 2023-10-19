@@ -73,6 +73,10 @@ options:
     type: list
     elements: str
     default: []
+  tags:
+    description:
+      - A dictionary of tags to apply when creating an Elasticache instance.
+    type: dict
   cache_security_groups:
     description:
       - A list of cache security group names to associate with this cache cluster.
@@ -97,6 +101,7 @@ options:
 extends_documentation_fragment:
   - amazon.aws.common.modules
   - amazon.aws.region.modules
+  - amazon.aws.tags
   - amazon.aws.boto3
 """
 
@@ -138,6 +143,7 @@ except ImportError:
     pass  # Handled by AnsibleAWSModule
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
+from ansible_collections.amazon.aws.plugins.module_utils.tagging import ansible_dict_to_boto3_tag_list
 
 from ansible_collections.community.aws.plugins.module_utils.modules import AnsibleCommunityAWSModule as AnsibleAWSModule
 
@@ -161,6 +167,8 @@ class ElastiCacheManager:
         cache_subnet_group,
         cache_security_groups,
         security_group_ids,
+        tags,
+        purge_tags,
         zone,
         wait,
         hard_modify,
@@ -176,6 +184,8 @@ class ElastiCacheManager:
         self.cache_subnet_group = cache_subnet_group
         self.cache_security_groups = cache_security_groups
         self.security_group_ids = security_group_ids
+        self.tags = ansible_dict_to_boto3_tag_list(tags)
+        self.purge_tags = purge_tags
         self.zone = zone
         self.wait = wait
         self.hard_modify = hard_modify
@@ -230,6 +240,8 @@ class ElastiCacheManager:
             CacheParameterGroupName=self.cache_parameter_group,
             CacheSubnetGroupName=self.cache_subnet_group,
         )
+        if self.tags:
+            kwargs["Tags"] = self.tags
         if self.cache_port is not None:
             kwargs["Port"] = self.cache_port
         if self.zone is not None:
@@ -307,7 +319,7 @@ class ElastiCacheManager:
         """Modify the cache cluster. Note it's only possible to modify a few select options."""
         nodes_to_remove = self._get_nodes_to_remove()
         try:
-            self.conn.modify_cache_cluster(
+            cluster = self.conn.modify_cache_cluster(
                 CacheClusterId=self.name,
                 NumCacheNodes=self.num_nodes,
                 CacheNodeIdsToRemove=nodes_to_remove,
@@ -325,6 +337,21 @@ class ElastiCacheManager:
         self.changed = True
         if self.wait:
             self._wait_for_status("available")
+
+        if self.tags
+            arn = cluster['CacheCluster']['ARN']
+            apply_tags(self, arn, self.tags)
+
+    def apply_tags(self, cluster_arn, tags):
+        if self.purge_tags
+            existing_tags = self.conn.list_tags_for_resource(ResourceName=cluster_arn)
+            if existing_tags['TagList']:
+                keys = [item['Key'] for item in existing_tags['TagList']]
+                # simply remove all existing tags here, as we will re-add tags from module input below anyways
+                self.conn.remove_tags_from_resource(ResourceName=cluster_arn, TagKeys=keys)
+
+        self.conn.add_tags_to_resource(ResourceName=cluster_arn, Tags=tags)
+
 
     def reboot(self):
         """Reboot the cache cluster"""
@@ -489,6 +516,8 @@ def main():
         cache_subnet_group=dict(default=""),
         cache_security_groups=dict(default=[], type="list", elements="str"),
         security_group_ids=dict(default=[], type="list", elements="str"),
+        tags=dict(type="dict", aliases=["resource_tags"]),
+        purge_tags=dict(type="bool", default=True),
         zone=dict(),
         wait=dict(default=True, type="bool"),
         hard_modify=dict(type="bool"),
@@ -508,6 +537,8 @@ def main():
     cache_subnet_group = module.params["cache_subnet_group"]
     cache_security_groups = module.params["cache_security_groups"]
     security_group_ids = module.params["security_group_ids"]
+    tags = module.params.get("tags")
+    purge_tags = module.params.get("purge_tags")
     zone = module.params["zone"]
     wait = module.params["wait"]
     hard_modify = module.params["hard_modify"]
@@ -531,6 +562,8 @@ def main():
         cache_subnet_group,
         cache_security_groups,
         security_group_ids,
+        tags,
+        purge_tags,
         zone,
         wait,
         hard_modify,
