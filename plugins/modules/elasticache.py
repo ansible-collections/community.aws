@@ -315,6 +315,10 @@ class ElastiCacheManager:
         if self._requires_modification():
             self.modify()
 
+        if self.tags:
+            arn = self.data['ARN']
+            apply_tags(self, arn, self.tags)
+
     def modify(self):
         """Modify the cache cluster. Note it's only possible to modify a few select options."""
         nodes_to_remove = self._get_nodes_to_remove()
@@ -338,19 +342,19 @@ class ElastiCacheManager:
         if self.wait:
             self._wait_for_status("available")
 
-        if self.tags
-            arn = cluster['CacheCluster']['ARN']
-            apply_tags(self, arn, self.tags)
 
     def apply_tags(self, cluster_arn, tags):
-        if self.purge_tags
-            existing_tags = self.conn.list_tags_for_resource(ResourceName=cluster_arn)
-            if existing_tags['TagList']:
-                keys = [item['Key'] for item in existing_tags['TagList']]
-                # simply remove all existing tags here, as we will re-add tags from module input below anyways
-                self.conn.remove_tags_from_resource(ResourceName=cluster_arn, TagKeys=keys)
-
-        self.conn.add_tags_to_resource(ResourceName=cluster_arn, Tags=tags)
+        resp = self.conn.list_tags_for_resource(ResourceName=cluster_arn)
+        existing_tags = resp['TagList']
+        if existing_tags:
+            if tags != existing_tags:
+                if self.purge_tags:
+                    keys = [item['Key'] for item in existing_tags]
+                    # simply remove all existing tags here, as we will re-add tags from module input below anyways
+                    self.conn.remove_tags_from_resource(ResourceName=cluster_arn, TagKeys=keys)
+                self.conn.add_tags_to_resource(ResourceName=cluster_arn, Tags=tags)
+        else:
+            self.conn.add_tags_to_resource(ResourceName=cluster_arn, Tags=tags)
 
 
     def reboot(self):
