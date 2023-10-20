@@ -228,10 +228,12 @@ except ImportError:
     # handled by AnsibleAWSModule
     pass
 
-from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
-from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 from time import sleep
 from time import time
+
+from ansible.module_utils.common.dict_transformations import camel_dict_to_snake_dict
+
+from ansible_collections.amazon.aws.plugins.module_utils.modules import AnsibleAWSModule
 
 PARAMS_MAP = {
     "authentication_strategy": "AuthenticationStrategy",
@@ -405,12 +407,8 @@ def wait_for_status(conn, module):
     desired_state = module.params.get("state")
     done = False
 
-    paginator = conn.get_paginator('list_brokers')
-    page_iterator = paginator.paginate(PaginationConfig={
-        'MaxItems': 100,
-        'PageSize': 100,
-        'StartingToken': ''
-    })
+    paginator = conn.get_paginator("list_brokers")
+    page_iterator = paginator.paginate(PaginationConfig={"MaxItems": 100, "PageSize": 100, "StartingToken": ""})
     wait_timeout = time() + timeout
 
     while wait_timeout > time():
