@@ -128,6 +128,13 @@ EXAMPLES = r"""
     state: absent
     region: us-east-1
     name: my_instance
+
+- name: Reboot a Lightsail instance
+  community.aws.lightsail:
+    state: restarted
+    region: us-west-2
+    name: my_instance
+  register: rebooted_instance 
 """
 
 RETURN = r"""
