@@ -237,6 +237,7 @@ PARAMS_MAP = {
     "storage_type": "StorageType",
     "subnet_ids": "SubnetIds",
     "users": "Users",
+    "tags": "Tags",
 }
 
 

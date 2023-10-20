@@ -3,6 +3,7 @@
     broker_name: "{{ broker_name }}"
     security_groups: "{{ broker_sg_ids.split(',') }}"
     subnet_ids: "{{ broker_subnet_ids.split(',') }}"
+    tags: "{{ tags }}"
   register: result
 - set_fact:
     broker_id: "{{ result.broker['broker_id'] }}"
@@ -20,6 +21,7 @@
       - result_c1.broker['broker_name'] == broker_name
       - result_c1.broker['broker_state'] == 'CREATION_IN_PROGRESS'
       - ( result_c1.broker['storage_type'] | upper ) == 'EFS'
+      - result_c1.broker['tags'] == tags
   when: not ansible_check_mode
 - debug:
     msg: "Wait until broker {{ broker_name }} ({{ broker_id }}) enters running state. This may take several minutes"
