@@ -3,8 +3,6 @@ requires_ansible: '>=2.12.0'
 action_groups:
   aws:
     - accessanalyzer_validate_policy_info
-    - acm_certificate
-    - acm_certificate_info
     - api_gateway
     - api_gateway_domain
     - api_gateway_info
@@ -90,7 +88,6 @@ action_groups:
     - dms_replication_subnet_group
     - dynamodb_table
     - dynamodb_ttl
-    - ec2_ami_copy
     - ec2_asg
     - ec2_asg_info
     - ec2_asg_instance_refresh
@@ -218,10 +215,14 @@ action_groups:
     - wafv2_web_acl_info
 plugin_routing:
   modules:
-    autoscaling_group_info:
-      redirect: amazon.aws.autoscaling_group_info
+    acm_certificate:
+      redirect: amazon.aws.acm_certificate
+    acm_certificate_info:
+      redirect: amazon.aws.acm_certificate_info
     autoscaling_group:
       redirect: amazon.aws.autoscaling_group
+    autoscaling_group_info:
+      redirect: amazon.aws.autoscaling_group_info
     aws_acm:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.acm_certificate
@@ -359,12 +360,14 @@ plugin_routing:
     aws_waf_web_acl:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.waf_web_acl
-    cloudtrail:
-      # Deprecation for this alias should not *start* prior to 2024-11-01
-      redirect: amazon.aws.cloudtrail
     cloudfront_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.cloudfront_distribution_info
+    cloudtrail:
+      # Deprecation for this alias should not *start* prior to 2024-11-01
+      redirect: amazon.aws.cloudtrail
+    cloudwatch_metric_alarm:
+      redirect: amazon.aws.cloudwatch_metric_alarm
     cloudwatchevent_rule:
       redirect: amazon.aws.cloudwatchevent_rule
     cloudwatchlogs_log_group:
@@ -373,8 +376,8 @@ plugin_routing:
       redirect: amazon.aws.cloudwatchlogs_log_group_info
     cloudwatchlogs_log_group_metric_filter:
       redirect: amazon.aws.cloudwatchlogs_log_group_metric_filter
-    cloudwatch_metric_alarm:
-      redirect: amazon.aws.cloudwatch_metric_alarm
+    ec2_ami_copy:
+      redirect: amazon.aws.ec2_ami_copy
     ec2_asg:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.autoscaling_group
@@ -399,9 +402,6 @@ plugin_routing:
       redirect: amazon.aws.ec2_eip_info
     ec2_elb:
       redirect: community.aws.elb_instance
-    ec2_metric_alarm:
-      # Deprecation for this alias should not *start* prior to 2024-09-01
-      redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_instance:
       redirect: amazon.aws.ec2_instance
     ec2_instance_info:
@@ -415,6 +415,9 @@ plugin_routing:
     ec2_lc_info:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_launch_config_info
+    ec2_metric_alarm:
+      # Deprecation for this alias should not *start* prior to 2024-09-01
+      redirect: amazon.aws.cloudwatch_metric_alarm
     ec2_scaling_policy:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: community.aws.autoscaling_policy
@@ -436,12 +439,12 @@ plugin_routing:
       redirect: amazon.aws.ec2_vpc_route_table
     ec2_vpc_route_table_info:
       redirect: amazon.aws.ec2_vpc_route_table_info
-    elb_classic_lb:
-      redirect: amazon.aws.ec2_elb_lb
     elb_application_lb:
       redirect: amazon.aws.elb_application_lb
     elb_application_lb_info:
       redirect: amazon.aws.elb_application_lb_info
+    elb_classic_lb:
+      redirect: amazon.aws.ec2_elb_lb
     execute_lambda:
       # Deprecation for this alias should not *start* prior to 2024-09-01
       redirect: amazon.aws.lambda_execute
