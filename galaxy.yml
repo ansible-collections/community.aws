@@ -1,7 +1,7 @@
 ---
 namespace: community
 name: aws
-version: 7.0.0-dev0
+version: 7.0.0
 readme: README.md
 authors:
   - Ansible (https://github.com/ansible)
@@ -9,7 +9,7 @@ description: A variety of Ansible content to help automate the management of AWS
 license_file: COPYING
 tags: [community, aws, cloud, amazon]
 dependencies:
-  amazon.aws: '>=7.0.0-dev0'
+  amazon.aws: '>=8.0.0-dev0'
 repository: https://github.com/ansible-collections/community.aws
 documentation: https://ansible-collections.github.io/community.aws/branch/stable-7/collections/community/aws/index.html
 homepage: https://github.com/ansible-collections/community.aws
