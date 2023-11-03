@@ -74,7 +74,7 @@
     state: absent
     vpc_id: '{{ setup_vpc.vpc.id}}'
   ignore_errors: 'yes'
-    
+
 - name: remove setup VPC
   ec2_vpc_net:
     cidr_block: 10.0.0.0/16
