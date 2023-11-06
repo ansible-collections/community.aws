@@ -3671,6 +3671,8 @@ releases:
       - community.aws collection - apply isort code formatting to ensure consistent
         formatting of code (https://github.com/ansible-collections/community.aws/pull/1962)
       - ecs_taskdefinition - Add parameter ``runtime_platform`` (https://github.com/ansible-collections/community.aws/issues/1891).
+      - eks_nodegroup - ensure wait also waits for deletion to complete when ``wait==True``
+        (https://github.com/ansible-collections/community.aws/pull/1994).
       release_summary: This release includes some new features, bugfixes and breaking
         changes. Several modules have been migrated to amazon.aws and the Fully Qualified
         Collection Name for these modules needs to be updated. The community.aws collection
@@ -3693,6 +3695,7 @@ releases:
     - 7.0.0-dev0.yml
     - botocore.yml
     - botocore_params-cleanup.yml
+    - eks_nodegroup-integration-wait-delete.yml
     - galaxy_importer.yml
     - migrate_aws_region_info.yml
     - migrate_iam_access_key.yml
@@ -3706,4 +3709,4 @@ releases:
     - python37.yml
     - release_summary.yml
     - workflow-requirements.yml
-    release_date: '2023-11-02'
+    release_date: '2023-11-06'
