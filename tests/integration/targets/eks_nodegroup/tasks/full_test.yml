@@ -445,7 +445,6 @@
     state: absent
     cluster_name: '{{ eks_cluster_name }}'
   register: eks_nodegroup_result
-  check_mode: True
 
 - name: check that eks_nodegroup is not changed (idempotency)
   assert:
@@ -578,7 +577,19 @@
     cluster_name: '{{ eks_cluster_name }}'
     wait: True
   register: eks_nodegroup_result
-  check_mode: True
+
+- name: check that eks_nodegroup is not changed (idempotency)
+  assert:
+    that:
+      - eks_nodegroup_result is not changed
+
+- name: wait for deletion of name_a nodegroup (idempotency)
+  eks_nodegroup:
+    name: '{{ eks_nodegroup_name_a }}'
+    state: absent
+    cluster_name: '{{ eks_cluster_name }}'
+    wait: True
+  register: eks_nodegroup_result
 
 - name: check that eks_nodegroup is not changed (idempotency)
   assert:
