@@ -9,6 +9,7 @@
     chars_upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     chars_lower: "abcdefghijklmnopqrstuvwxyz"
     chars_numbs: "0123456789"
+  no_log: True
 
 - module_defaults:
     group/aws:
