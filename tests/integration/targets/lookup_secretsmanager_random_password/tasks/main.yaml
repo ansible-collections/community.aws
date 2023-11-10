@@ -1,0 +1,41 @@
+- set_fact:
+    # As a lookup plugin we don't have access to module_defaults
+    connection_args:
+      region: "{{ aws_region }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+  no_log: True
+
+- module_defaults:
+    group/aws:
+      region: "{{ aws_region }}"
+      access_key: "{{ aws_access_key }}"
+      secret_key: "{{ aws_secret_key }}"
+      session_token: "{{ security_token | default(omit) }}"
+  collections:
+    - amazon.aws
+    - community.aws
+  block:
+
+  - name: generate random password
+    set_fact:
+      gen_pass: "{{ lookup('amazon.aws.secretsmanager_random_password', **connection_args) }}"
+
+  - name: assert that random password was successfully retrieved
+    assert:
+      that:
+        - gen_pass is defined
+        - gen_pass is string
+        - "{{ gen_pass | length }}" is 32
+
+  - name: generate random password length 12
+    set_fact:
+      gen_pass: "{{ lookup('amazon.aws.secretsmanager_random_password', 12, **connection_args) }}"
+
+  - name: assert that random password length 12 was successfully retrieved
+    assert:
+      that:
+        - gen_pass is defined
+        - gen_pass is string
+        - "{{ gen_pass | length }}" is 12
