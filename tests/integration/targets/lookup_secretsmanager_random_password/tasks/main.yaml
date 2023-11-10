@@ -5,7 +5,10 @@
       access_key: "{{ aws_access_key }}"
       secret_key: "{{ aws_secret_key }}"
       session_token: "{{ security_token | default(omit) }}"
-  no_log: True
+    chars_punct: "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"
+    chars_upper: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    chars_lower: "abcdefghijklmnopqrstuvwxyz"
+    chars_numbs: "0123456789"
 
 - module_defaults:
     group/aws:
@@ -20,22 +23,74 @@
 
   - name: generate random password
     set_fact:
-      gen_pass: "{{ lookup('amazon.aws.secretsmanager_random_password', **connection_args) }}"
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', **connection_args) }}"
 
   - name: assert that random password was successfully retrieved
     assert:
       that:
         - gen_pass is defined
         - gen_pass is string
-        - "{{ gen_pass | length }}" is 32
+        - gen_pass|length == 32
 
   - name: generate random password length 12
     set_fact:
-      gen_pass: "{{ lookup('amazon.aws.secretsmanager_random_password', 12, **connection_args) }}"
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', 12, **connection_args) }}"
 
   - name: assert that random password length 12 was successfully retrieved
     assert:
       that:
-        - gen_pass is defined
         - gen_pass is string
-        - "{{ gen_pass | length }}" is 12
+        - gen_pass|length == 12
+
+  - name: generate random password without punctuation
+    set_fact:
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', exclude_punctuation=True, **connection_args) }}"
+
+  - name: assert that random password is without punctuation
+    assert:
+      that:
+        - gen_pass is string
+        - gen_pass|intersect(chars_punct)|length == 0
+
+  - name: generate random password without uppercase letters
+    set_fact:
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', exclude_uppercase=True, **connection_args) }}"
+
+  - name: assert that random password is without uppercase
+    assert:
+      that:
+        - gen_pass is string
+        - gen_pass|intersect(chars_upper)|length == 0
+
+  - name: generate random password without lowercase
+    set_fact:
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', exclude_lowercase=True, **connection_args) }}"
+
+  - name: assert that random password is without lowercase
+    assert:
+      that:
+        - gen_pass is string
+        - gen_pass|intersect(chars_lower)|length == 0
+
+  - name: generate random password without numbers
+    set_fact:
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', exclude_numbers=True, **connection_args) }}"
+
+  - name: assert that random password is without numbers
+    assert:
+      that:
+        - gen_pass is string
+        - gen_pass|intersect(chars_numbs)|length == 0
+
+  - name: generate random password with a space
+    # all but numbers are excluded to increase the probability of a space being randomly included.
+    set_fact:
+      gen_pass: "{{ lookup('community.aws.secretsmanager_random_password', exclude_punctuation=True, exclude_uppercase=True, exclude_lowercase=True, include_space=True, **connection_args) }}"
+
+  - name: assert that random password has a space
+    # while this has a high probability of passing, it is possible that a space might not be included in the random password
+    # please re-run the test to confirm if the failure is random or real.
+    assert:
+      that:
+        - gen_pass is string
+        - gen_pass|intersect(" ")|length > 0

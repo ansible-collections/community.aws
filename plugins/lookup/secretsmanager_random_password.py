@@ -96,7 +96,7 @@ except ImportError:
 
 from ansible.errors import AnsibleLookupError
 from ansible.module_utils._text import to_native
-from ansible.module_utils.six import string_types
+from ansible.module_utils.six import string_types, integer_types
 
 from ansible_collections.amazon.aws.plugins.module_utils.botocore import is_boto3_error_code
 from ansible_collections.amazon.aws.plugins.module_utils.retries import AWSRetry
@@ -141,9 +141,9 @@ class LookupModule(AWSLookupBase):
                 )
             password_length = terms[0]
         if password_length is not None:
-            if not isinstance(password_length, string_types):
+            if not isinstance(password_length, integer_types) or password_length < 1:
                 raise AnsibleLookupError(
-                    f'"password_length" must be a string, if provided'
+                    f'"password_length" must be an integer greater than zero, if provided'
                 )
             params["PasswordLength"] = password_length
 
