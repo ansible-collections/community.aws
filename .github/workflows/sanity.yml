@@ -10,11 +10,11 @@ jobs:
     with:
       matrix_include: >-
           []
+      # devel and milestone are a moving target while we should fix issues in the
+      # main and our current major releases, they're no always appropriate to
+      # backport to older releases.
       matrix_exclude: >-
           [
-            # devel and milestone are a moving target while we should fix issues in the
-            # main and our current major releases, they're no always appropriate to
-            # backport to older releases.
             {
               "ansible-version": "milestone"
             },
