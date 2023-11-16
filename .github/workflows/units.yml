@@ -30,4 +30,4 @@ jobs:
               "python-version": "3.9"
             }
           ]
-      collection_pre_install: 'git+https://github.com/ansible-collections/amazon.aws.git,stable-6'
+      collection_pre_install: "-r source/tests/unit/requirements.yml"
