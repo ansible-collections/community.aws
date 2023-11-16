@@ -18,6 +18,7 @@ netaddr
 # Sometimes needed where we don't have features we need in modules
 awscli
 # Used for comparing SSH Public keys to the Amazon fingerprints
-pycrypto
+# pycrypto is EoL using pycryptodome for now
+pycryptodome
 # Used by ec2_win_password
 cryptography
