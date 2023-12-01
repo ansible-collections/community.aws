@@ -348,7 +348,7 @@
   assert:
     that:
       - ecs_service_creation_hcgp.changed
-      - "{{ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds}} == 30"
+      - ecs_service_creation_hcgp.service.healthCheckGracePeriodSeconds == 30
 
 - name: update ecs_service using health_check_grace_period_seconds
   ecs_service:
@@ -368,7 +368,7 @@
   assert:
     that:
       - ecs_service_creation_hcgp2.changed
-      - "{{ecs_service_creation_hcgp2.service.healthCheckGracePeriodSeconds}} == 10"
+      - ecs_service_creation_hcgp2.service.healthCheckGracePeriodSeconds == 10
 
 - name: update ecs_service using REPLICA scheduling_strategy
   ecs_service:
@@ -453,8 +453,8 @@
   assert:
     that:
       - ecs_task_definition_constraints is changed
-      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].type == "{{ ecs_taskdefinition_placement_constraints[0].type }}"
-      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].expression == "{{ ecs_taskdefinition_placement_constraints[0].expression }}"
+      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].type == ecs_taskdefinition_placement_constraints[0].type
+      - ecs_task_definition_constraints.taskdefinition.placementConstraints[0].expression == ecs_taskdefinition_placement_constraints[0].expression
 
 - name: Remove ecs task definition with placement constraints
   ecs_taskdefinition:

@@ -14,4 +14,4 @@
         that:
           - "'aws_mq' in groups"
           - "groups.aws_mq | length == 1"
-          - "groups.aws_mq.0 == '{{ broker_name }}'"
+          - groups.aws_mq.0 == broker_name
