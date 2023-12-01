@@ -168,7 +168,7 @@
       that:
         - update_origin_origin_shield.changed
         - update_origin_origin_shield.origins['items'][0].origin_shield.enabled
-        - update_origin_origin_shield.origins['items'][0].origin_shield.origin_shield_region == '{{ aws_region }}'
+        - update_origin_origin_shield.origins['items'][0].origin_shield.origin_shield_region == aws_region
 
   # TODO: fix module idempotency issue
   # - name: enable origin Origin Shield again to test idempotency

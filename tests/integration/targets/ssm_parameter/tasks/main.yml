@@ -523,7 +523,7 @@
   - name: Create parameter with tags case - Ensure tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_orig[item.key]
     loop: "{{ simple_tags_orig | dict2items }}"
 
   - name: Create parameter with tags case - Ensure no missing or additional tags
@@ -578,7 +578,7 @@
   - name: Update description only case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_orig[item.key]
     loop: "{{ simple_tags_orig | dict2items }}"
 
   - name: Update description only case - Ensure no missing or additional tags
@@ -633,7 +633,7 @@
   - name: Add tag to existing parameter case - Ensure tags correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_add_owner['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_add_owner[item.key]
     loop: "{{ simple_tags_add_owner | dict2items }}"
 
   - name: Add tag to existing parameter case - Ensure no missing or additional tags
@@ -704,7 +704,7 @@
   - name: Change single tag case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_change_environment['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_change_environment[item.key]
     loop: "{{ simple_tags_change_environment | dict2items }}"
 
   - name: Change single tag case - Ensure no missing or additional tags
@@ -775,7 +775,7 @@
   - name: Delete single tag case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_delete_version['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_delete_version[item.key]
     loop: "{{ simple_tags_delete_version | dict2items }}"
 
   - name: Delete single tag case - Ensure no missing or additional tags
@@ -846,7 +846,7 @@
   - name: Delete single tag w/ spaces case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_delete_tag_with_space['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_delete_tag_with_space[item.key]
     loop: "{{ simple_tags_delete_tag_with_space | dict2items }}"
 
   - name: Delete single tag w/ spaces case - Ensure no missing or additional tags
@@ -917,7 +917,7 @@
   - name: Add/delete/change tags case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_add_delete_change['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_add_delete_change[item.key]
     loop: "{{ simple_tags_add_delete_change | dict2items }}"
 
   - name: Add/delete/change tags case - Ensure no missing or additional tags
@@ -988,7 +988,7 @@
   - name: Delete all tags case - Ensure expected tags is correct
     assert:
       that:
-      - result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_delete_all_tags['{{ item.key }}']
+      - result.parameter_metadata.tags[item.key] == simple_tags_delete_all_tags[item.key]
     loop: "{{ simple_tags_delete_all_tags | dict2items }}"
 
   - name: Delete all tags case - Ensure no missing or additional tags
@@ -1062,8 +1062,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags['{{ item.key }}'] ==
-        (simple_tags_orig | combine(simple_tags_purge_false_add_owner))['{{ item.key }}']
+        result.parameter_metadata.tags[item.key] ==
+        (simple_tags_orig | combine(simple_tags_purge_false_add_owner))[item.key]
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_add_owner) | dict2items }}
 
@@ -1071,8 +1071,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags | length == {{ simple_tags_orig |
-        combine(simple_tags_purge_false_add_owner) | dict2items }} | length
+        result.parameter_metadata.tags | length == simple_tags_orig |
+        combine(simple_tags_purge_false_add_owner) | dict2items | length
 
   - name: Add tag case (purge_tags=false) - Lookup a tagged parameter
     set_fact:
@@ -1140,8 +1140,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags['{{ item.key }}'] ==
-        (simple_tags_orig | combine(simple_tags_purge_false_add_multiple))['{{ item.key }}']
+        result.parameter_metadata.tags[item.key] ==
+        (simple_tags_orig | combine(simple_tags_purge_false_add_multiple))[item.key]
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_add_multiple) | dict2items }}
 
@@ -1149,8 +1149,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags | length == {{ simple_tags_orig |
-        combine(simple_tags_purge_false_add_multiple) | dict2items }} | length
+        result.parameter_metadata.tags | length == simple_tags_orig |
+        combine(simple_tags_purge_false_add_multiple) | dict2items | length
 
   - name: Add multiple tags case (purge_tags=false) - Lookup a tagged parameter
     set_fact:
@@ -1218,8 +1218,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags['{{ item.key }}'] ==
-        (simple_tags_orig | combine(simple_tags_purge_false_change_environment))['{{ item.key }}']
+        result.parameter_metadata.tags[item.key] ==
+        (simple_tags_orig | combine(simple_tags_purge_false_change_environment))[item.key]
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_change_environment) | dict2items }}
     loop_control:
@@ -1230,8 +1230,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags | length == {{ simple_tags_orig |
-        combine(simple_tags_purge_false_change_environment) | dict2items }} | length
+        result.parameter_metadata.tags | length == simple_tags_orig |
+        combine(simple_tags_purge_false_change_environment) | dict2items | length
 
   - name: Change tag case (purge_tags=false) - Lookup a tagged parameter
     set_fact:
@@ -1299,8 +1299,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags['{{ item.key }}'] ==
-        (simple_tags_orig | combine(simple_tags_purge_false_change_multiple))['{{ item.key }}']
+        result.parameter_metadata.tags[item.key] ==
+        (simple_tags_orig | combine(simple_tags_purge_false_change_multiple))[item.key]
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_change_multiple) | dict2items }}
     loop_control:
@@ -1311,8 +1311,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags | length == {{ simple_tags_orig |
-        combine(simple_tags_purge_false_change_multiple) | dict2items }} | length
+        result.parameter_metadata.tags | length == simple_tags_orig |
+        combine(simple_tags_purge_false_change_multiple) | dict2items | length
 
   - name: Change multiple tags (purge_tags=false) - Lookup a tagged parameter
     set_fact:
@@ -1380,8 +1380,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags['{{ item.key }}'] ==
-        (simple_tags_orig | combine(simple_tags_purge_false_add_and_change))['{{ item.key }}']
+        result.parameter_metadata.tags[item.key] ==
+        (simple_tags_orig | combine(simple_tags_purge_false_add_and_change))[item.key]
     loop: >
       {{ simple_tags_orig | combine(simple_tags_purge_false_add_and_change) | dict2items }}
     loop_control:
@@ -1392,8 +1392,8 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags | length == {{ simple_tags_orig |
-        combine(simple_tags_purge_false_add_and_change) | dict2items }} | length
+        result.parameter_metadata.tags | length == simple_tags_orig |
+        combine(simple_tags_purge_false_add_and_change) | dict2items | length
 
   - name: Add/Change multiple tags (purge_tags=false) - Lookup a tagged parameter
     set_fact:
@@ -1461,7 +1461,7 @@
     assert:
       that:
       - >
-        result.parameter_metadata.tags['{{ item.key }}'] == simple_tags_orig['{{ item.key }}']
+        result.parameter_metadata.tags[item.key] == simple_tags_orig[item.key]
     loop: >
       {{ simple_tags_orig | dict2items }}
     loop_control:
@@ -1472,7 +1472,7 @@
       that:
       - >
         result.parameter_metadata.tags | length
-        == {{ simple_tags_orig | dict2items }} | length
+        == simple_tags_orig | dict2items | length
 
   - name: Empty tags dict (purge_tags=false) - Lookup a tagged parameter
     set_fact:
@@ -1538,8 +1538,8 @@
     assert:
       that:
         - >
-          result.parameter_metadata.tags['{{ item.key }}']
-           == simple_tags_orig['{{ item.key }}']
+          result.parameter_metadata.tags[item.key]
+           == simple_tags_orig[item.key]
     loop: >
       {{ simple_tags_orig | dict2items }}
     loop_control:
@@ -1550,7 +1550,7 @@
       that:
         - >
           result.parameter_metadata.tags | length
-          == {{ simple_tags_orig | dict2items }} | length
+          == simple_tags_orig | dict2items | length
 
   - name: No tags parameter (purge_tags=true) - Lookup a tagged parameter
     set_fact:

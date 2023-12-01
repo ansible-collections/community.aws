@@ -32,7 +32,7 @@
           - "'instance' in result and result.instance.name == instance_name"
           - "result.instance.state.name == 'running'"
           - "result.instance.networking.ports[0].from_port == 50"
-          - "{{ result.instance.networking.ports|length }} == 1"
+          - result.instance.networking.ports|length == 1
 
     - name: Check if it does not delete public ports config when no value is provided
       lightsail:
