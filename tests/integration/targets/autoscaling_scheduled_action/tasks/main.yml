@@ -101,7 +101,7 @@
         that:
           - scheduled_action is successful
           - scheduled_action is changed
-          - scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test"
+          - scheduled_action.scheduled_action_name == resource_prefix ~ '-test'
           - scheduled_action.desired_capacity == 2
 
     - name: Create basic scheduled_action - idempotent
@@ -155,7 +155,7 @@
         that:
           - scheduled_action is successful
           - scheduled_action is changed
-          - scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test"
+          - scheduled_action.scheduled_action_name == resource_prefix ~ '-test'
           - scheduled_action.desired_capacity == 3
           - scheduled_action.min_size == 3
 
@@ -217,7 +217,7 @@
         that:
           - advanced_scheduled_action is successful
           - advanced_scheduled_action is changed
-          - advanced_scheduled_action.scheduled_action_name == "{{ resource_prefix }}-test1"
+          - advanced_scheduled_action.scheduled_action_name == resource_prefix ~ '-test1'
           - advanced_scheduled_action.desired_capacity == 2
           - advanced_scheduled_action.min_size == 2
           - advanced_scheduled_action.max_size == 5

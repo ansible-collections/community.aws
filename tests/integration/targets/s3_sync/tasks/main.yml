@@ -23,7 +23,7 @@
     - assert:
         that:
           - output.changed
-          - output.name == "{{ test_bucket }}"
+          - output.name == test_bucket
           - not output.requester_pays
     # ============================================================
     - name: Prepare fixtures folder
@@ -67,7 +67,7 @@
     - assert:
         that:
           - output.changed
-          - output.name == "{{ test_bucket_2 }}"
+          - output.name == test_bucket_2
           - not output.requester_pays
 
     - name: Sync files with remote bucket using glacier storage class
@@ -113,7 +113,7 @@
     - assert:
         that:
           - output.changed
-          - output.name == "{{ test_bucket_3 }}"
+          - output.name == test_bucket_3
           - not output.requester_pays
 
     - name: Sync individual file with remote bucket

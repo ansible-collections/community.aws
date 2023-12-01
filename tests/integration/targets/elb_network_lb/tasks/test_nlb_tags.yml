@@ -34,7 +34,7 @@
   - assert:
       that:
         - nlb.changed
-        - 'nlb.tags.created_by == "NLB test {{ resource_prefix }}"'
+        - nlb.tags.created_by == 'NLB test ' ~ resource_prefix
 
   - name: test tags are not removed if unspecified
     elb_network_lb:
@@ -46,7 +46,7 @@
   - assert:
       that:
         - not nlb.changed
-        - 'nlb.tags.created_by == "NLB test {{ resource_prefix }}"'
+        - nlb.tags.created_by == 'NLB test ' ~ resource_prefix
 
   - name: remove tags from NLB
     elb_network_lb:
