@@ -561,7 +561,7 @@
     assert:
       that:
         - remove_in_use_condition.failed
-        - "'Condition {{ resource_prefix }}_size_condition is in use' in remove_in_use_condition.msg"
+        - "'Condition ' ~ resource_prefix ~ '_size_condition is in use' in remove_in_use_condition.msg"
 
   - name: create WAF Regional rule
     waf_rule:
@@ -674,7 +674,7 @@
     assert:
       that:
         - remove_in_use_condition.failed
-        - "'Condition {{ resource_prefix }}_size_condition is in use' in remove_in_use_condition.msg"
+        - "'Condition ' ~ resource_prefix ~ '_size_condition is in use' in remove_in_use_condition.msg"
 
   ##################################################
   # aws_waf_web_acl tests
