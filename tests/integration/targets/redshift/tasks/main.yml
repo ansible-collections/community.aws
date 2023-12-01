@@ -166,7 +166,7 @@
       assert:
         that:
           - 'result.changed'
-          - result.cluster.identifier == redshift_cluster_name ~ '.-modified'
+          - result.cluster.identifier == redshift_cluster_name ~ '-modified'
           - 'result.cluster.enhanced_vpc_routing == True'
           - 'result.cluster.tags | count() == 1'
           - 'result.cluster.tags.foo == "bar"'
