@@ -597,7 +597,7 @@
     - name: it should use the provided KMS key
       assert:
         that:
-          - result.repository.encryptionConfiguration.kmsKey == '{{ kms_test_key.key_arn }}'
+          - result.repository.encryptionConfiguration.kmsKey == kms_test_key.key_arn
 
   always:
 

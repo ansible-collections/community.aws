@@ -53,7 +53,7 @@
       assert:
         that:
           - msk_config.revision == 1
-          - "msk_config.arn.startswith('arn:aws:kafka:{{ aws_region }}:')"
+          - "msk_config.arn.startswith('arn:aws:kafka:' ~ aws_region ~ ':')"
           - "'auto.create.topics.enable=True' in msk_config.server_properties"
           - "'zookeeper.session.timeout.ms=18000' in msk_config.server_properties"
 
